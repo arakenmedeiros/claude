@@ -1,0 +1,269 @@
+MC: Os métodos de Monte Carlo (MC) em AR estimam valores:
+a) resolvendo equações lineares com o modelo.
+b) pela média dos retornos obtidos em episódios jogados.
+c) por descida do gradiente em redes neurais.
+d) por agrupamento de estados.
+R: b | MC usa experiência: a média dos retornos reais.
+
+MC: Uma característica dos métodos MC é:
+a) exigirem o modelo do ambiente.
+b) não fazerem bootstrapping.
+c) funcionarem apenas em tarefas contínuas.
+d) atualizarem todos os estados a cada passo.
+R: b | O MC usa retornos completos, não estimativas de outros estados.
+
+MC: Os métodos MC básicos exigem que a tarefa seja:
+a) contínua.
+b) episódica.
+c) determinística.
+d) de uma só ação.
+R: b | O retorno só é conhecido ao fim do episódio.
+
+MC: No MC de primeira visita, para cada episódio:
+a) usa-se o retorno de todas as visitas ao estado.
+b) usa-se só o retorno a partir da primeira visita ao estado.
+c) usa-se o retorno da última visita.
+d) não se usam retornos.
+R: b | A primeira ocorrência de cada estado no episódio é a considerada.
+
+MC: No MC de toda visita:
+a) conta-se o retorno de cada visita ao estado no episódio.
+b) conta-se só a primeira visita.
+c) ignoram-se estados repetidos.
+d) usa-se o modelo.
+R: a | Todas as ocorrências contribuem para a média.
+
+MC: Para calcular os retornos G_t de um episódio de forma eficiente, percorre-se:
+a) do início ao fim, somando recompensas futuras.
+b) do fim para o início, acumulando G = R + γG.
+c) em ordem aleatória.
+d) apenas os estados terminais.
+R: b | A recursão G_t = R_(t+1) + γ G_(t+1) torna isso natural.
+
+MC: Um episódio de Blackjack com recompensas 0, 0 e +1 e γ = 1 dá ao primeiro passo o retorno:
+a) 0.
+b) +1.
+c) +3.
+d) −1.
+R: b | G₁ = 0 + 0 + 1 = +1.
+
+MC: No Blackjack do Gymnasium, o estado é formado por:
+a) soma do jogador, carta visível do crupiê e se há ás usável.
+b) apenas a soma do jogador.
+c) todas as cartas do baralho.
+d) o histórico completo das jogadas.
+R: a | São três componentes: soma, carta do crupiê e ás usável.
+
+MC: Em Blackjack, "ás usável" significa que o jogador:
+a) tem um ás que pode valer 11 sem estourar.
+b) não tem ás.
+c) já estourou.
+d) tem 21.
+R: a | O ás conta como 11 enquanto a soma não passar de 21.
+
+MC: A política "parar só com 20 ou 21" é ruim porque:
+a) o jogador quase nunca pede carta.
+b) o jogador pede carta com somas como 16 ou 19, estourando com frequência.
+c) o crupiê sempre vence.
+d) ela é estocástica.
+R: b | Pedir carta com somas altas leva a estourar muitas vezes.
+
+MC: Para controle (sem modelo), o MC estima q(s, a) em vez de v(s) porque:
+a) q é mais fácil de calcular.
+b) sem o modelo, só v não permite escolher ações por um passo à frente.
+c) v não existe.
+d) q usa menos memória.
+R: b | Escolher uma ação exige conhecer o valor de cada ação.
+
+MC: O problema do "início exploratório" (exploring starts) é que:
+a) exige iniciar cada episódio num par estado-ação sorteado, o que raramente é possível.
+b) torna o algoritmo mais rápido.
+c) elimina a exploração.
+d) dispensa recompensas.
+R: a | Em muitos ambientes não controlamos o estado inicial.
+
+MC: Uma alternativa ao início exploratório é usar:
+a) política ε-gulosa.
+b) política totalmente gulosa.
+c) γ = 0.
+d) modelo do ambiente.
+R: a | A política ε-gulosa garante exploração contínua.
+
+MC: Num método on-policy, o agente:
+a) aprende o valor da política que usa para jogar.
+b) aprende sobre uma política diferente da que joga.
+c) não usa política.
+d) usa apenas dados históricos.
+R: a | As políticas de comportamento e de alvo coincidem.
+
+MC: Num método off-policy:
+a) a política de comportamento difere da política-alvo.
+b) não há política de comportamento.
+c) só se usa a política ótima.
+d) o valor de γ é zero.
+R: a | Aprende-se sobre π enquanto se observam dados de b.
+
+MC: A política-alvo é a política:
+a) que gera os dados.
+b) cujo valor queremos estimar ou melhorar.
+c) sempre aleatória.
+d) sempre determinística.
+R: b | É o alvo do aprendizado.
+
+MC: A razão de importância ρ = Π π(A_t|S_t)/b(A_t|S_t) serve para:
+a) comparar a duração de episódios.
+b) corrigir a diferença entre as probabilidades das trajetórias sob π e sob b.
+c) calcular o desconto.
+d) escolher ε.
+R: b | Pondera cada episódio pela plausibilidade sob a política-alvo.
+
+MC: Se a política-alvo determinística nunca faria uma ação do episódio, então ρ vale:
+a) 1.
+b) 0.
+c) infinito.
+d) 0,5.
+R: b | O termo π(a|s) é zero e o produto se anula.
+
+MC: A amostragem por importância ordinária:
+a) não tem viés, mas pode ter variância muito alta.
+b) tem sempre variância baixa.
+c) é biaseada e estável.
+d) não usa ρ.
+R: a | A média de ρ·G é não viesada, porém instável.
+
+MC: A amostragem por importância ponderada:
+a) tem viés que desaparece com mais dados e menor variância.
+b) é sempre exata.
+c) usa γ = 0.
+d) ignora as recompensas.
+R: a | Σρ G/Σρ é consistente e mais estável.
+
+MC: Uma desvantagem do MC é que:
+a) usa o modelo.
+b) tem alta variância e só aprende ao fim do episódio.
+c) exige conhecer p.
+d) só serve para bandits.
+R: b | Retornos de episódios inteiros variam bastante.
+
+MC: Uma vantagem do MC é que:
+a) aprende direto da experiência, sem modelo.
+b) não precisa de nenhum dado.
+c) funciona em tarefas sem fim.
+d) tem variância nula.
+R: a | Dispensa a dinâmica p.
+
+MC: Em comparação com a PD, o MC atualiza:
+a) todos os estados a cada varredura.
+b) apenas os estados visitados nos episódios.
+c) nenhum estado.
+d) apenas os estados terminais.
+R: b | O custo não depende do tamanho total do espaço de estados.
+
+MC: Na prática com ε-gulosa decrescente, a política final é testada com ε = 0 porque:
+a) queremos medir o desempenho da política gulosa, sem sorteios.
+b) ε = 0 aumenta a exploração.
+c) o Gymnasium exige.
+d) para eliminar o desconto.
+R: a | A política ε-gulosa ainda sorteia ações; o teste usa a gulosa.
+
+MC: Na implementação incremental do MC, a atualização é:
+a) Q ← Q + (1/N)(G − Q).
+b) Q ← G.
+c) Q ← Q × G.
+d) Q ← N.
+R: a | É a regra novo = velho + passo × (alvo − velho).
+
+MC: Com passo constante α no lugar de 1/N, o MC:
+a) esquece gradualmente o passado, adaptando-se a mudanças.
+b) torna-se exato.
+c) deixa de usar retornos.
+d) exige o modelo.
+R: a | Recompensas recentes pesam mais.
+
+MC: Treinar uma árvore de decisão para imitar a política aprendida serve para:
+a) torná-la mais lenta.
+b) obter regras legíveis que resumem a política (interpretabilidade).
+c) eliminar a necessidade de treino.
+d) mudar a recompensa.
+R: b | A árvore oferece uma explicação aproximada da política.
+
+MC: A "fidelidade" da árvore à política é:
+a) a proporção de estados em que a árvore prevê a mesma ação da política.
+b) o número de folhas.
+c) o valor de ε.
+d) o retorno médio.
+R: a | Mede quão bem a árvore reproduz as decisões.
+
+MC: No projeto, comparamos o valor de vida estimado por simulação MC com o valor analítico para:
+a) mostrar que o MC converge para o valor exato com mais trajetórias.
+b) provar que o MC é sempre pior.
+c) eliminar a cadeia de Markov.
+d) estimar ε.
+R: a | O erro de MC cai com o número de trajetórias.
+
+MC: O nome "Monte Carlo" remete a:
+a) um algoritmo de redes neurais.
+b) o uso de sorteios aleatórios para resolver problemas, como num cassino.
+c) um jogador famoso.
+d) uma linguagem de programação.
+R: b | Foi popularizado por cientistas que usavam amostragem aleatória (Metropolis e Ulam, 1949).
+
+DISC: Explique, com suas palavras, por que a média dos retornos de muitos episódios estima o valor de um estado.
+R: O valor é o retorno esperado ao partir do estado. A média amostral de muitos retornos independentes converge para a esperança (lei dos grandes números), então a média dos retornos observados estima o valor.
+
+DISC: Compare MC e PD quanto ao uso do modelo, ao bootstrapping e aos estados atualizados.
+R: A PD precisa do modelo, usa bootstrapping e atualiza todos os estados por varredura. O MC não precisa do modelo, não usa bootstrapping (usa o retorno real) e atualiza apenas os estados visitados.
+
+DISC: Diferencie MC de primeira visita e de toda visita com um exemplo.
+R: Num episódio A→B→C→B→D, B aparece duas vezes. Primeira visita usa o retorno apenas da primeira ocorrência; toda visita usa o retorno de ambas e tira a média.
+
+DISC: Calcule os retornos G₁, G₂, G₃ de um episódio com recompensas 0, 2, 4, com γ = 0,5.
+R: G₃ = 4; G₂ = 2 + 0,5 × 4 = 4; G₁ = 0 + 0,5 × 4 = 2.
+
+DISC: Por que, sem modelo, o controle por MC precisa estimar q em vez de v?
+R: Para escolher uma ação é preciso saber o valor de cada ação. Com o modelo, v permitiria olhar um passo à frente; sem ele, é necessário estimar diretamente q(s, a).
+
+DISC: Explique o problema do início exploratório e como a política ε-gulosa o contorna.
+R: Garantir a visita a todos os pares estado-ação exigiria começar episódios em pares sorteados, o que muitas vezes é impossível. A política ε-gulosa mantém probabilidade positiva de qualquer ação, e assim todos os pares continuam sendo visitados.
+
+DISC: Qual a diferença entre aprendizado on-policy e off-policy? Dê um exemplo de situação em que o off-policy é útil.
+R: On-policy aprende sobre a política que gera os dados; off-policy aprende sobre outra política. É útil para aprender de dados históricos, de humanos ou de outros agentes.
+
+DISC: Explique a amostragem por importância e por que a versão ponderada costuma ser preferida.
+R: Corrige a diferença entre as políticas ponderando retornos por ρ. A ordinária é não viesada, mas de variância alta; a ponderada tem viés que desaparece e variância muito menor, sendo mais estável.
+
+DISC: No exemplo de amostragem por importância do capítulo, por que só cerca de um terço dos episódios é útil?
+R: A política-alvo é determinística e só aceita episódios em que todas as ações da política aleatória coincidam com as dela. Isso ocorre em cerca de 1/3 dos casos, pois os episódios são curtos.
+
+DISC: Descreva três limitações dos métodos MC.
+R: Exigem tarefas episódicas; têm alta variância (retornos longos e aleatórios); só aprendem ao fim do episódio, sem aproveitar informação parcial.
+
+DISC: Por que a política ε-gulosa treinada é um pouco pior que a ótima, e como avaliamos a política final?
+R: Ela ainda sorteia ações com probabilidade ε, perdendo recompensa. Avalia-se a política gulosa (ε = 0) derivada de q, que mede a qualidade real da decisão aprendida.
+
+DISC: Descreva como o agente de Blackjack aprende a "estratégia básica" sem conhecê-la.
+R: Joga milhares de mãos, estima q(s, a) pela média dos retornos e torna a política gulosa. Com o tempo, passa a pedir carta com somas baixas e a parar com somas altas, de acordo com a carta do crupiê e o ás.
+
+DISC: Mostre que a média incremental com passo 1/N equivale à média aritmética dos retornos.
+R: Se Q_N é a média de N − 1 valores, então Q_(N+1) = (1/N)(G_N + (N − 1)Q_N) = Q_N + (1/N)(G_N − Q_N); a regra reproduz a média aritmética.
+
+DISC: Quando o passo constante α é preferível ao passo 1/N em MC? Dê um exemplo.
+R: Em ambientes não estacionários, em que o valor das ações muda com o tempo (por exemplo, o comportamento de clientes que muda por estação). O passo constante dá mais peso ao que aconteceu recentemente.
+
+DISC: Interprete a Figura de valores do Blackjack: por que somas 20 e 21 têm valores altos na política "parar em 20"?
+R: Com 20 ou 21 o jogador para e ganha na maior parte das vezes, pois o crupiê raramente chega a essas somas. Com somas menores, a política pede carta e estoura com frequência, produzindo valores negativos.
+
+DISC: Descreva como interpretar a política aprendida por meio de uma árvore de decisão e quais as limitações dessa interpretação.
+R: Treina-se a árvore para prever a ação da política a partir do estado, obtendo regras legíveis. A árvore rasa só aproxima a política (fidelidade menor que 100%) e não pondera estados pela frequência, podendo omitir exceções.
+
+DISC: Por que o erro de uma estimativa MC cai aproximadamente com 1/√n, e o que isso implica para o número de episódios?
+R: O desvio-padrão da média amostral é σ/√n. Para reduzir o erro à metade é preciso quadruplicar o número de episódios, o que torna o MC caro quando a variância é alta.
+
+DISC: Dê um exemplo, fora de jogos, de tarefa episódica em que o MC seria adequado, definindo estados, ações e recompensa.
+R: Atendimento ao cliente: estado = situação da conversa; ações = respostas; recompensa final = satisfação ao encerrar o chamado. Cada atendimento é um episódio completo.
+
+DISC: Discuta por que simular trajetórias de uma cadeia de Markov pode ser útil mesmo quando existe a solução analítica.
+R: Simulação funciona com modelos complexos sem solução fechada, permite estimar incerteza e distribuições (não só médias) e valida modelos. Porém é mais lenta e menos precisa que a solução exata quando esta existe.
+
+DISC: Por que o MC pode ser vantajoso sobre a PD quando o espaço de estados é enorme, mas poucas regiões são relevantes?
+R: O MC só atualiza os estados visitados, e o custo de estimar um estado não depende do tamanho total do espaço. A PD varre todos os estados e fica proibitiva; o MC concentra o esforço onde o agente realmente passa.

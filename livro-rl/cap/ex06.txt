@@ -1,0 +1,269 @@
+MC: A aprendizagem por diferença temporal (TD) combina ideias de:
+a) bandits e clustering.
+b) Monte Carlo (sem modelo) e programação dinâmica (bootstrapping).
+c) redes neurais e árvores.
+d) PCA e regressão.
+R: b | O TD aprende da experiência como o MC e faz bootstrapping como a PD.
+
+MC: A principal vantagem do TD sobre o MC é que o TD:
+a) exige o modelo.
+b) atualiza a cada passo, sem esperar o fim do episódio.
+c) não usa recompensas.
+d) elimina o viés.
+R: b | O TD aprende online, durante o episódio.
+
+MC: O alvo do TD(0) para V(S_t) é:
+a) G_t.
+b) R_(t+1) + γ V(S_(t+1)).
+c) max_a Q(S, a).
+d) apenas R_(t+1).
+R: b | Recompensa imediata mais estimativa descontada do próximo estado.
+
+MC: O erro TD é:
+a) δ = R + γV(S′) − V(S).
+b) δ = V(S) − R.
+c) δ = γ − α.
+d) δ = G − R.
+R: a | É a diferença entre o alvo TD e a estimativa atual.
+
+MC: Com V(A) = 2, V(B) = 6, R = 1, γ = 1 e α = 0,5, após a transição A → B o novo V(A) é:
+a) 4,5.
+b) 7.
+c) 2,5.
+d) 5.
+R: a | δ = 1 + 6 − 2 = 5; V(A) = 2 + 0,5 × 5 = 4,5.
+
+MC: O erro TD pode ser interpretado como:
+a) a surpresa em relação ao esperado.
+b) o número de episódios.
+c) o valor de ε.
+d) a política ótima.
+R: a | Mostra se o resultado foi melhor ou pior que a previsão.
+
+MC: Neurônios dopaminérgicos foram associados, por Schultz, Dayan e Montague (1997), a:
+a) um sinal parecido com o erro TD.
+b) o desconto γ.
+c) a função valor.
+d) a exploração ε-gulosa.
+R: a | Disparam conforme o resultado supera ou fica abaixo do esperado.
+
+MC: Em comparação com o MC, o TD costuma ter:
+a) variância menor e algum viés inicial.
+b) variância maior.
+c) nenhum viés e nenhuma variância.
+d) necessidade de episódios completos.
+R: a | O bootstrapping reduz a variância ao custo de viés que diminui.
+
+MC: SARSA é on-policy porque seu alvo usa:
+a) o máximo de Q em S′.
+b) a ação A′ efetivamente escolhida pela política de comportamento.
+c) a média de todas as ações.
+d) o retorno completo.
+R: b | O alvo contém Q(S′, A′), com A′ vinda da política que explora.
+
+MC: O nome SARSA vem de:
+a) uma doença.
+b) a sequência S, A, R, S′, A′.
+c) um autor.
+d) uma biblioteca.
+R: b | São os cinco elementos usados em cada atualização.
+
+MC: Q-learning é off-policy porque seu alvo usa:
+a) a ação escolhida pela política exploratória.
+b) o máximo de Q em S′, independente da ação que o agente escolherá.
+c) a média das ações.
+d) o retorno do episódio.
+R: b | Aprende sobre a política gulosa enquanto se comporta de outro modo.
+
+MC: Qual das fórmulas corresponde à atualização do Q-learning?
+a) Q(S,A) ← Q + α[R + γ Q(S′,A′) − Q].
+b) Q(S,A) ← Q + α[R + γ max Q(S′,·) − Q].
+c) Q(S,A) ← R.
+d) Q(S,A) ← Q + α[G − Q].
+R: b | O alvo contém o máximo sobre as ações de S′.
+
+MC: O Expected SARSA usa no alvo:
+a) o máximo das ações.
+b) a média das ações de S′, ponderada pela política.
+c) a última ação.
+d) o retorno completo.
+R: b | A esperança remove a variância da escolha de A′.
+
+MC: Se a política do Expected SARSA for totalmente gulosa, ele equivale ao:
+a) SARSA.
+b) Q-learning.
+c) Monte Carlo.
+d) TD(0) de estados.
+R: b | A média ponderada por uma política gulosa é o máximo.
+
+MC: No CliffWalking, durante o treino com ε-gulosa, o SARSA tende a obter retorno:
+a) pior que o do Q-learning.
+b) melhor que o do Q-learning, por seguir um caminho mais seguro.
+c) igual em todos os casos.
+d) infinito.
+R: b | O SARSA considera sua própria exploração e evita a beira do penhasco.
+
+MC: O caminho aprendido pelo Q-learning no penhasco é:
+a) o mais longo e seguro.
+b) o mais curto, rente ao penhasco.
+c) aleatório.
+d) impossível.
+R: b | Ele aprende a política ótima gulosa, ignorando a exploração.
+
+MC: No penhasco, a recompensa por cair é:
+a) −1.
+b) −100.
+c) 0.
+d) +100.
+R: b | Cair custa −100 e o agente volta ao início.
+
+MC: O viés de maximização ocorre porque:
+a) o máximo de estimativas ruidosas tende a superestimar o verdadeiro máximo.
+b) o desconto é grande.
+c) a recompensa é negativa.
+d) a tabela é pequena.
+R: a | Ruído positivo é favorecido na escolha do máximo.
+
+MC: O Double Q-learning usa:
+a) duas tabelas, uma para escolher a ação e outra para avaliá-la.
+b) dois episódios por passo.
+c) duas políticas aleatórias.
+d) dois fatores de desconto.
+R: a | Separar escolha e avaliação reduz o viés.
+
+MC: O TD de n passos usa como alvo:
+a) n recompensas reais seguidas da estimativa do estado n passos adiante.
+b) só a primeira recompensa.
+c) o retorno infinito.
+d) o máximo de n ações.
+R: a | G_(t:t+n) = R_(t+1) + ... + γ^(n−1)R_(t+n) + γⁿV(S_(t+n)).
+
+MC: TD(λ) com λ = 0 equivale a:
+a) TD(0).
+b) Monte Carlo.
+c) SARSA.
+d) PD.
+R: a | Só o próximo passo conta.
+
+MC: TD(λ) com λ = 1 equivale (em episódios completos) a:
+a) TD(0).
+b) Monte Carlo.
+c) Q-learning.
+d) iteração de valor.
+R: b | Usa o retorno completo.
+
+MC: Os traços de elegibilidade servem para:
+a) distribuir o crédito entre estados e ações recentes.
+b) aumentar o desconto.
+c) reduzir o número de estados.
+d) escolher ε.
+R: a | Estados visitados recentemente têm traço maior e recebem mais da atualização.
+
+MC: Uma boa prática ao reportar resultados de AR é:
+a) mostrar só a melhor execução.
+b) mostrar média e variação sobre várias sementes.
+c) usar sempre a mesma semente.
+d) não reportar variação.
+R: b | A variabilidade entre execuções é grande (Henderson et al., 2018).
+
+MC: No Taxi, a recompensa por entregar o passageiro corretamente é:
+a) +20.
+b) −10.
+c) 0.
+d) +1.
+R: a | Entregar no destino dá +20; passos custam −1; ações ilegais, −10.
+
+MC: No Taxi, o número de estados é:
+a) 25.
+b) 500.
+c) 5.
+d) 5.000.
+R: b | 25 posições do táxi × 5 locais do passageiro × 4 destinos.
+
+MC: O ParameterGrid do scikit-learn é útil porque:
+a) gera todas as combinações de hiperparâmetros a serem testadas.
+b) treina redes neurais.
+c) calcula o desconto.
+d) escolhe a política.
+R: a | Permite varrer sistematicamente combinações de α, ε etc.
+
+MC: No CartPole tabular, o KBinsDiscretizer com strategy="quantile" cria faixas:
+a) de largura igual.
+b) com aproximadamente o mesmo número de observações em cada uma.
+c) aleatórias.
+d) sempre binárias.
+R: b | Os quantis dividem os dados em grupos de mesmo tamanho.
+
+MC: No projeto de preços, o estoque não vendido no domingo:
+a) é guardado para a semana seguinte.
+b) é descartado.
+c) aumenta o lucro.
+d) vira recompensa.
+R: b | O produto é perecível; o que sobra é perdido.
+
+MC: A estimativa de elasticidade com a base Online Retail exige cautela porque:
+a) os dados são observacionais e podem estar confundidos por promoções e atacado.
+b) a base é sintética.
+c) não há coluna de preço.
+d) a regressão de Poisson é proibida.
+R: a | Associação não implica causalidade; por isso usamos hipótese de segurança.
+
+DISC: Explique o TD(0) com uma analogia do cotidiano e destaque a diferença para o Monte Carlo.
+R: Ao voltar para casa, você ajusta a previsão do tempo restante a cada trecho (TD), em vez de esperar chegar para comparar com o tempo real (MC). O TD atualiza a cada passo usando uma estimativa do próximo estado.
+
+DISC: Defina o erro TD e explique como ele corrige a estimativa. Dê um exemplo numérico.
+R: δ = R + γV(S′) − V(S). A estimativa é corrigida por α·δ. Ex.: V(S) = 2, R = 1, γ = 1, V(S′) = 6, α = 0,5: δ = 5; V(S) passa a 4,5.
+
+DISC: Compare TD, MC e PD quanto ao modelo, bootstrapping e momento da atualização.
+R: PD usa o modelo, faz bootstrapping e atualiza varrendo estados. MC não usa o modelo, não faz bootstrapping e atualiza no fim do episódio. TD não usa o modelo, faz bootstrapping e atualiza a cada passo.
+
+DISC: Por que o TD costuma aprender mais rápido que o MC no passeio aleatório?
+R: O TD usa a estimativa dos vizinhos, reduzindo a variância do alvo, e propaga a informação a cada passo; o MC depende do retorno final de cada episódio, que é mais ruidoso.
+
+DISC: Explique a diferença entre SARSA e Q-learning e dê o motivo de um ser on-policy e o outro off-policy.
+R: SARSA usa a ação A′ escolhida pela política de comportamento; aprende sobre a política que segue. O Q-learning usa o máximo de Q(S′,·), aprendendo sobre a política gulosa, independente da exploração.
+
+DISC: No penhasco, por que o Q-learning aprende um caminho mais arriscado que o SARSA?
+R: O Q-learning supõe que no futuro agirá de forma gulosa e aprende o caminho mais curto, rente ao precipício. O SARSA inclui no alvo a chance de explorar e escorregar, e por isso valoriza um caminho mais afastado e seguro.
+
+DISC: Qual seria o efeito de reduzir ε para zero ao longo do treino sobre o caminho do SARSA e do Q-learning?
+R: Com ε → 0 deixa de haver risco de escorregões aleatórios, e o SARSA tende a convergir para a política ótima, o caminho rente ao penhasco, como o Q-learning.
+
+DISC: Explique o Expected SARSA e por que ele pode ter melhor desempenho que o SARSA.
+R: Usa a média ponderada de Q(S′,a) sob a política em vez de uma ação sorteada, eliminando a variância da escolha de A′ e permitindo passos maiores e atualizações mais estáveis.
+
+DISC: Explique o viés de maximização com um exemplo simples e como o Double Q-learning o corrige.
+R: Se várias ações têm valor 0 verdadeiro, mas estimativas ruidosas, o máximo das estimativas é positivo em média. O Double Q-learning usa uma tabela para escolher e outra para avaliar, e a avaliação não herda o ruído da escolha.
+
+DISC: Descreva TD de n passos e o que muda ao aumentar n.
+R: O alvo usa n recompensas reais e depois estima o resto. Com n maior, há menos viés (mais dados reais) e mais variância; n = 1 é TD(0) e n até o fim é MC.
+
+DISC: Explique o que são traços de elegibilidade e como ajudam na atribuição de crédito.
+R: Cada estado ou ação visitado recebe um traço que decai com o tempo. Quando ocorre um erro TD, todos os pares com traço são atualizados proporcionalmente, distribuindo o crédito entre jogadas recentes.
+
+DISC: Por que ε decrescente é comum em Q-learning tabular e quais os riscos de reduzi-lo rápido demais?
+R: No início é necessária exploração; depois, aproveitar o conhecimento. Reduzir ε cedo demais pode fixar o agente numa política subótima por falta de exploração.
+
+DISC: Interprete o papel do passo α e justifique a necessidade de testar diferentes valores.
+R: α controla o tamanho do ajuste. Valores pequenos aprendem devagar e valores grandes podem oscilar em ambientes ruidosos. O melhor depende do ambiente, logo deve ser testado com várias sementes.
+
+DISC: Por que usar várias sementes e reportar média e variação ao avaliar um agente?
+R: O AR tem grande variabilidade por inicialização, exploração e ambiente. Uma única execução pode ser sorte ou azar, enquanto várias sementes dão uma visão confiável do desempenho.
+
+DISC: Descreva como o Q-learning resolve o Taxi e por que a tabela Q é viável nesse ambiente.
+R: Cada um dos 500 estados tem 6 ações; a tabela Q tem 3.000 valores e o agente a atualiza a cada passo pela regra do Q-learning. O espaço pequeno permite visitar bastante cada par.
+
+DISC: Explique como o KBinsDiscretizer foi usado para o CartPole e quais as limitações dessa discretização.
+R: Os quantis de dados aleatórios definem faixas para cada variável; cada combinação é um estado da tabela. Limitações: perda de informação, explosão de estados com mais variáveis e falta de generalização entre estados vizinhos.
+
+DISC: Por que, no projeto de preços, o ganho da política dinâmica sobre o melhor preço fixo é pequeno e como verificar se é significativo?
+R: O melhor preço fixo já está perto do ótimo; a dinâmica só ajusta com base no estoque e no dia. Para verificar, repetem-se treino e avaliação com várias sementes e comparam-se médias com intervalos de confiança.
+
+DISC: Critique a estimativa de elasticidade com dados observacionais e proponha uma forma de obter uma estimativa mais confiável.
+R: Preços variam com promoções, sazonalidade e tipos de cliente, confundindo a relação. Seria mais confiável usar experimentos controlados (testes A/B de preço) ou métodos de inferência causal com variáveis de controle.
+
+DISC: Dê um exemplo de problema real em que SARSA seria preferível ao Q-learning e justifique.
+R: Um robô que aprende a andar perto de um precipício com exploração real: erros durante o treino são caros, então convém aprender uma política que leve em conta a própria exploração, como o SARSA.
+
+DISC: Por que, para controle sem modelo, usamos Q(S, A) em vez de V(S) nos métodos TD?
+R: Sem o modelo, saber V(S′) não permite escolher a ação que leva ao melhor próximo estado, pois não sabemos para onde cada ação levará. Estimando Q(S, A) diretamente, a política gulosa é apenas o argmax sobre as ações.

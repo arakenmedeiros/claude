@@ -63,3 +63,25 @@ Política gulosa: política que escolhe a ação de maior valor estimado.
 Programação dinâmica (PD): métodos que resolvem MDPs conhecidos por meio das equações de Bellman.
 Varredura (sweep): passagem completa por todos os estados atualizando seus valores.
 Discretização: transformar variáveis contínuas em faixas (estados discretos).
+Amostragem por importância: técnica que corrige a diferença entre políticas ponderando os retornos pela razão de probabilidades das trajetórias.
+Aprendizado off-policy: aprender sobre uma política (alvo) a partir de dados gerados por outra (comportamento).
+Aprendizado on-policy: aprender sobre a mesma política que gera os dados.
+Início exploratório (exploring starts): sortear o par estado-ação inicial de cada episódio para garantir que todos sejam visitados.
+Monte Carlo (MC): métodos que estimam valores pela média dos retornos de episódios completos.
+Política de comportamento: política que gera os dados.
+Política-alvo: política cujo valor queremos estimar ou melhorar.
+Primeira visita / toda visita: variantes do MC que usam o retorno da primeira ocorrência do estado ou de todas.
+Retorno amostral: retorno observado em um episódio.
+CliffWalking: ambiente em grade com um penhasco, usado para comparar SARSA e Q-learning.
+Double Q-learning: variante do Q-learning com duas tabelas que reduz o viés de maximização.
+Erro TD (δ): diferença entre o alvo TD e a estimativa atual do valor.
+Expected SARSA: variante que usa a média ponderada das ações no próximo estado.
+Q-learning: algoritmo TD off-policy que usa o máximo de Q no próximo estado.
+SARSA: algoritmo TD on-policy que usa o par (S, A, R, S′, A′).
+TD(0): predição por diferença temporal de um passo.
+TD(λ): método que mistura retornos de n passos com pesos que decaem por λ.
+TD de n passos: método que usa n recompensas reais antes de estimar o resto.
+Traço de elegibilidade: memória que marca estados recentes para receberem parte do crédito por um erro TD.
+Viés de maximização: superestimação causada por usar o máximo de estimativas ruidosas.
+Hiperparâmetro: parâmetro definido pelo usuário (como α e ε) que não é aprendido pelo algoritmo.
+Semente aleatória: valor que inicializa o gerador de números aleatórios, permitindo reproduzir ou repetir experimentos.
