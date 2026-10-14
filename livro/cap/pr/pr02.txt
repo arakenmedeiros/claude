@@ -6,14 +6,18 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import pairwise_distances
 
-df = pd.DataFrame({"idade": [25, 62, 31, 58], "gasto": [120, 340, 95, 310], "visitas": [8, 12, 4, 10]},
-                  index=["Ana", "Bruno", "Carla", "Diego"])
+df = pd.DataFrame(
+    {"idade": [25, 62, 31, 58], "gasto": [120, 340, 95, 310], "visitas": [8, 12, 4, 10]},
+    index=["Ana", "Bruno", "Carla", "Diego"],
+)
 
 for metrica in ["euclidean", "manhattan", "cosine"]:
     D = pd.DataFrame(pairwise_distances(df, metric=metrica), index=df.index, columns=df.index)
-    M = D.where(~np.eye(len(D), dtype=bool))      # ignora a diagonal (zeros)
+    M = D.where(~np.eye(len(D), dtype=bool))  # ignora a diagonal (zeros)
     i, j = np.unravel_index(np.nanargmin(M.values), M.shape)
-    print(f"{metrica:10s} par mais próximo: {df.index[i]} e {df.index[j]}  (distância = {M.values[i, j]:.3f})")
+    print(
+        f"{metrica:10s} par mais próximo: {df.index[i]} e {df.index[j]}  (distância = {M.values[i, j]:.3f})"
+    )
 ```
 @@NOTE Nas distâncias Euclidiana e de Manhattan, o par mais próximo é Ana e Carla (poucas diferenças absolutas). No cosseno, é Bruno e Diego, cujos vetores têm quase a mesma direção. A escolha da métrica muda quem é "parecido" com quem. (Os dados aqui não foram padronizados; a escala também pesa.)
 @@EX 2 | Três escalonadores diante de um outlier | básico
@@ -24,7 +28,11 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 
 x = np.array([10, 12, 11, 13, 12, 11, 10, 500], dtype=float).reshape(-1, 1)
-for nome, esc in [("Padronização", StandardScaler()), ("Min-Max", MinMaxScaler()), ("Robusto", RobustScaler())]:
+for nome, esc in [
+    ("Padronização", StandardScaler()),
+    ("Min-Max", MinMaxScaler()),
+    ("Robusto", RobustScaler()),
+]:
     z = esc.fit_transform(x).ravel()
     print(f"{nome:13s} 7 primeiros: {np.round(z[:7], 2)}  | outlier: {z[7]:.2f}")
 ```
@@ -41,10 +49,14 @@ from sklearn.impute import SimpleImputer, KNNImputer
 X = StandardScaler().fit_transform(load_wine().data)
 rng = np.random.default_rng(0)
 mascara = rng.random(X.shape) < 0.10
-Xn = X.copy(); Xn[mascara] = np.nan
+Xn = X.copy()
+Xn[mascara] = np.nan
 print("Valores apagados:", int(mascara.sum()))
 
-for nome, imp in [("Mediana", SimpleImputer(strategy="median")), ("KNN (k=5)", KNNImputer(n_neighbors=5))]:
+for nome, imp in [
+    ("Mediana", SimpleImputer(strategy="median")),
+    ("KNN (k=5)", KNNImputer(n_neighbors=5)),
+]:
     Xi = imp.fit_transform(Xn)
     rmse = np.sqrt(np.mean((Xi[mascara] - X[mascara]) ** 2))
     print(f"{nome:10s} RMSE = {rmse:.3f}")
@@ -58,15 +70,21 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
 
-df = pd.DataFrame({"cidade": ["SP", "RJ", "BH", "SP", "RJ"],
-                   "plano": ["básico", "premium", "médio", "médio", "básico"],
-                   "gasto": [120.0, 340.0, 210.0, 190.0, 95.0]})
+df = pd.DataFrame(
+    {
+        "cidade": ["SP", "RJ", "BH", "SP", "RJ"],
+        "plano": ["básico", "premium", "médio", "médio", "básico"],
+        "gasto": [120.0, 340.0, 210.0, 190.0, 95.0],
+    }
+)
 
-ct = ColumnTransformer([
-    ("cidade", OneHotEncoder(), ["cidade"]),
-    ("plano", OrdinalEncoder(categories=[["básico", "médio", "premium"]]), ["plano"]),
-    ("gasto", StandardScaler(), ["gasto"]),
-])
+ct = ColumnTransformer(
+    [
+        ("cidade", OneHotEncoder(), ["cidade"]),
+        ("plano", OrdinalEncoder(categories=[["básico", "médio", "premium"]]), ["plano"]),
+        ("gasto", StandardScaler(), ["gasto"]),
+    ]
+)
 M = ct.fit_transform(df)
 print(ct.get_feature_names_out())
 print(M.round(2))
@@ -93,6 +111,8 @@ print(pd.DataFrame(linhas).round(3).to_string(index=False))
 ```
 @@NOTE O contraste cai rapidamente nas duas métricas. A de Manhattan mantém, em geral, um contraste um pouco maior que a Euclidiana, o que concorda com Aggarwal, Hinneburg e Keim (2001).
 @@PROJ Pipeline de preparação para uma carteira de clientes | Cap02
+**Fonte dos dados.** Simulados pela função abaixo (nenhum dado real de clientes foi usado).
+
 **Contexto.** Uma seguradora (fictícia) quer segmentar seus clientes, mas a base está "suja": há valores ausentes, outliers, atributos de escalas diferentes e variáveis categóricas. Seu trabalho é construir um **pipeline de preparação reprodutível** e mostrar que ele melhora o agrupamento.
 
 **Dados.** Use a função abaixo para gerar a base (dados sintéticos, com semente fixa).
@@ -101,18 +121,31 @@ print(pd.DataFrame(linhas).round(3).to_string(index=False))
 import numpy as np
 import pandas as pd
 
+
 def gerar_clientes(n=600, seed=0):
     rng = np.random.default_rng(seed)
-    g = rng.integers(0, 3, n)                         # 3 perfis ocultos
-    idade = np.where(g == 0, rng.normal(28, 4, n), np.where(g == 1, rng.normal(45, 6, n), rng.normal(63, 5, n)))
+    g = rng.integers(0, 3, n)  # 3 perfis ocultos
+    idade = np.where(
+        g == 0,
+        rng.normal(28, 4, n),
+        np.where(g == 1, rng.normal(45, 6, n), rng.normal(63, 5, n)),
+    )
     renda = np.exp(rng.normal(np.where(g == 0, 8.0, np.where(g == 1, 8.8, 8.4)), 0.35, n))
     sinistros = rng.poisson(np.where(g == 0, 2.0, np.where(g == 1, 0.6, 1.2)))
     cidade = rng.choice(["SP", "RJ", "BH", "POA"], n, p=[0.4, 0.3, 0.2, 0.1])
     plano = np.where(g == 0, "básico", np.where(g == 1, "premium", "médio"))
-    df = pd.DataFrame({"idade": idade, "renda": renda, "sinistros": sinistros, "cidade": cidade, "plano": plano})
-    df.loc[rng.random(n) < 0.08, "idade"] = np.nan    # ausentes
+    df = pd.DataFrame(
+        {
+            "idade": idade,
+            "renda": renda,
+            "sinistros": sinistros,
+            "cidade": cidade,
+            "plano": plano,
+        }
+    )
+    df.loc[rng.random(n) < 0.08, "idade"] = np.nan  # ausentes
     df.loc[rng.random(n) < 0.05, "cidade"] = np.nan
-    df.loc[rng.choice(n, 5, replace=False), "renda"] *= 40   # outliers
+    df.loc[rng.choice(n, 5, replace=False), "renda"] *= 40  # outliers
     return df, g
 ```
 
@@ -131,23 +164,42 @@ import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import FunctionTransformer, RobustScaler, OneHotEncoder, OrdinalEncoder
+from sklearn.preprocessing import (
+    FunctionTransformer,
+    RobustScaler,
+    OneHotEncoder,
+    OrdinalEncoder,
+)
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score, adjusted_rand_score
+
 
 def gerar_clientes(n=600, seed=0):
     rng = np.random.default_rng(seed)
     g = rng.integers(0, 3, n)
-    idade = np.where(g == 0, rng.normal(28, 4, n), np.where(g == 1, rng.normal(45, 6, n), rng.normal(63, 5, n)))
+    idade = np.where(
+        g == 0,
+        rng.normal(28, 4, n),
+        np.where(g == 1, rng.normal(45, 6, n), rng.normal(63, 5, n)),
+    )
     renda = np.exp(rng.normal(np.where(g == 0, 8.0, np.where(g == 1, 8.8, 8.4)), 0.35, n))
     sinistros = rng.poisson(np.where(g == 0, 2.0, np.where(g == 1, 0.6, 1.2)))
     cidade = rng.choice(["SP", "RJ", "BH", "POA"], n, p=[0.4, 0.3, 0.2, 0.1])
     plano = np.where(g == 0, "básico", np.where(g == 1, "premium", "médio"))
-    df = pd.DataFrame({"idade": idade, "renda": renda, "sinistros": sinistros, "cidade": cidade, "plano": plano})
+    df = pd.DataFrame(
+        {
+            "idade": idade,
+            "renda": renda,
+            "sinistros": sinistros,
+            "cidade": cidade,
+            "plano": plano,
+        }
+    )
     df.loc[rng.random(n) < 0.08, "idade"] = np.nan
     df.loc[rng.random(n) < 0.05, "cidade"] = np.nan
     df.loc[rng.choice(n, 5, replace=False), "renda"] *= 40
     return df, g
+
 
 df, g = gerar_clientes()
 print("Ausentes por coluna:\n", df.isna().sum().to_string())
@@ -159,21 +211,33 @@ for c in ["cidade", "plano"]:
     d1[c] = d1[c].astype("category").cat.codes
 X1 = d1.values.astype(float)
 r1 = KMeans(3, n_init=10, random_state=0).fit_predict(X1)
-print(f"Ingênuo : linhas usadas = {ok.sum()}, silhueta = {silhouette_score(X1, r1):.3f}, ARI = {adjusted_rand_score(g[ok], r1):.3f}, tamanhos = {np.bincount(r1)}")
+print(
+    f"Ingênuo : linhas usadas = {ok.sum()}, silhueta = {silhouette_score(X1, r1):.3f}, ARI = {adjusted_rand_score(g[ok], r1):.3f}, tamanhos = {np.bincount(r1)}"
+)
 
 # 2) Pipeline
 num = Pipeline([("imp", SimpleImputer(strategy="median")), ("esc", RobustScaler())])
-renda = Pipeline([("imp", SimpleImputer(strategy="median")), ("log", FunctionTransformer(np.log1p)), ("esc", RobustScaler())])
+renda = Pipeline(
+    [
+        ("imp", SimpleImputer(strategy="median")),
+        ("log", FunctionTransformer(np.log1p)),
+        ("esc", RobustScaler()),
+    ]
+)
 cat = Pipeline([("imp", SimpleImputer(strategy="most_frequent")), ("oh", OneHotEncoder())])
-pre = ColumnTransformer([
-    ("num", num, ["idade", "sinistros"]),
-    ("renda", renda, ["renda"]),
-    ("cidade", cat, ["cidade"]),
-    ("plano", OrdinalEncoder(categories=[["básico", "médio", "premium"]]), ["plano"]),
-])
+pre = ColumnTransformer(
+    [
+        ("num", num, ["idade", "sinistros"]),
+        ("renda", renda, ["renda"]),
+        ("cidade", cat, ["cidade"]),
+        ("plano", OrdinalEncoder(categories=[["básico", "médio", "premium"]]), ["plano"]),
+    ]
+)
 X2 = pre.fit_transform(df)
 r2 = KMeans(3, n_init=10, random_state=0).fit_predict(X2)
-print(f"Pipeline: linhas usadas = {len(df)}, silhueta = {silhouette_score(X2, r2):.3f}, ARI = {adjusted_rand_score(g, r2):.3f}, tamanhos = {np.bincount(r2)}")
+print(
+    f"Pipeline: linhas usadas = {len(df)}, silhueta = {silhouette_score(X2, r2):.3f}, ARI = {adjusted_rand_score(g, r2):.3f}, tamanhos = {np.bincount(r2)}"
+)
 ```
 @@RUBRICA
 - Todas as linhas foram aproveitadas (imputação), e não descartadas.
@@ -182,3 +246,6 @@ print(f"Pipeline: linhas usadas = {len(df)}, silhueta = {silhouette_score(X2, r2
 - Foram comparadas silhueta e ARI nas duas abordagens.
 - O texto explica o papel de cada etapa.
 @@NOTE Repare no contraste: a abordagem ingênua tem silhueta altíssima (cerca de 0,98), mas ARI zero. Sem escalar, os outliers de renda dominam: o K-means separa só os pontos extremos e coloca 512 dos 516 clientes em um único grupo. O pipeline tem silhueta menor (cerca de 0,26) e ARI alto (cerca de 0,94), recuperando os perfis ocultos. Lição: uma silhueta alta não garante grupos úteis; confira tamanhos dos grupos, perfis e, quando possível, estabilidade.
+@@ALEM
+- **UCI:** Adult (censo, com valores ausentes e variáveis categóricas e numéricas), Statlog (German Credit Data) e Bank Marketing.
+- **Kaggle:** Telco Customer Churn (clientes de telecom, com dados mistos).

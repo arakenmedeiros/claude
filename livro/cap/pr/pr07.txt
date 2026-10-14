@@ -7,15 +7,17 @@ from sklearn.datasets import make_blobs, load_wine
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
 
+
 def hopkins(X, m=50, seed=42):
     r = np.random.default_rng(seed)
     n, d = X.shape
     nn = NearestNeighbors(n_neighbors=2).fit(X)
     idx = r.choice(n, m, replace=False)
-    w = nn.kneighbors(X[idx], 2)[0][:, 1]                       # vizinho mais próximo (reais)
+    w = nn.kneighbors(X[idx], 2)[0][:, 1]  # vizinho mais próximo (reais)
     U = r.uniform(X.min(0), X.max(0), (m, d))
-    u = nn.kneighbors(U, 1)[0][:, 0]                            # vizinho mais próximo (artificiais)
-    return (u ** d).sum() / ((u ** d).sum() + (w ** d).sum())
+    u = nn.kneighbors(U, 1)[0][:, 0]  # vizinho mais próximo (artificiais)
+    return (u**d).sum() / ((u**d).sum() + (w**d).sum())
+
 
 rng = np.random.default_rng(0)
 print("Uniforme:", round(hopkins(rng.random((500, 2))), 2))
@@ -38,7 +40,12 @@ rot = KMeans(3, n_init=10, random_state=0).fit_predict(X)
 s = silhouette_samples(X, rot)
 for g in range(3):
     print(f"grupo {g}: n = {(rot == g).sum():3d}  silhueta média = {s[rot == g].mean():.3f}")
-print("Silhueta média geral:", round(s.mean(), 3), "| pontos com silhueta negativa:", int((s < 0).sum()))
+print(
+    "Silhueta média geral:",
+    round(s.mean(), 3),
+    "| pontos com silhueta negativa:",
+    int((s < 0).sum()),
+)
 ```
 @@NOTE Grupos com silhueta média baixa e muitos pontos negativos são sinais de fronteira confusa. Observe também o equilíbrio entre os tamanhos dos grupos.
 @@EX 3 | Um painel de índices internos | intermediário
@@ -55,10 +62,24 @@ X = StandardScaler().fit_transform(load_wine().data)
 linhas = []
 for k in range(2, 9):
     r = KMeans(k, n_init=10, random_state=0).fit_predict(X)
-    linhas.append({"k": k, "silhueta": silhouette_score(X, r), "CH": calinski_harabasz_score(X, r), "DB": davies_bouldin_score(X, r)})
+    linhas.append(
+        {
+            "k": k,
+            "silhueta": silhouette_score(X, r),
+            "CH": calinski_harabasz_score(X, r),
+            "DB": davies_bouldin_score(X, r),
+        }
+    )
 t = pd.DataFrame(linhas)
 print(t.round(3).to_string(index=False))
-print("k preferido -> silhueta:", int(t.loc[t.silhueta.idxmax(), "k"]), "| CH:", int(t.loc[t.CH.idxmax(), "k"]), "| DB:", int(t.loc[t.DB.idxmin(), "k"]))
+print(
+    "k preferido -> silhueta:",
+    int(t.loc[t.silhueta.idxmax(), "k"]),
+    "| CH:",
+    int(t.loc[t.CH.idxmax(), "k"]),
+    "| DB:",
+    int(t.loc[t.DB.idxmin(), "k"]),
+)
 ```
 @@NOTE Em dados reais, os índices podem discordar. Neste conjunto, os três apontam para k = 3. Quando discordarem, combine com estabilidade e interpretação.
 @@EX 4 | Avaliação externa de três algoritmos | intermediário
@@ -70,19 +91,34 @@ from sklearn.datasets import load_digits
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.mixture import GaussianMixture
-from sklearn.metrics import (adjusted_rand_score, normalized_mutual_info_score, homogeneity_score,
-                             completeness_score, v_measure_score)
+from sklearn.metrics import (
+    adjusted_rand_score,
+    normalized_mutual_info_score,
+    homogeneity_score,
+    completeness_score,
+    v_measure_score,
+)
 
 X, y = load_digits(return_X_y=True)
 Z = PCA(20, random_state=0).fit_transform(X)
-modelos = {"K-means": KMeans(10, n_init=10, random_state=0),
-           "Ward": AgglomerativeClustering(10, linkage="ward"),
-           "GMM": GaussianMixture(10, covariance_type="diag", n_init=3, random_state=0)}
+modelos = {
+    "K-means": KMeans(10, n_init=10, random_state=0),
+    "Ward": AgglomerativeClustering(10, linkage="ward"),
+    "GMM": GaussianMixture(10, covariance_type="diag", n_init=3, random_state=0),
+}
 linhas = []
 for nome, m in modelos.items():
     r = m.fit_predict(Z)
-    linhas.append({"modelo": nome, "ARI": adjusted_rand_score(y, r), "NMI": normalized_mutual_info_score(y, r),
-                   "homog.": homogeneity_score(y, r), "compl.": completeness_score(y, r), "V": v_measure_score(y, r)})
+    linhas.append(
+        {
+            "modelo": nome,
+            "ARI": adjusted_rand_score(y, r),
+            "NMI": normalized_mutual_info_score(y, r),
+            "homog.": homogeneity_score(y, r),
+            "compl.": completeness_score(y, r),
+            "V": v_measure_score(y, r),
+        }
+    )
 print(pd.DataFrame(linhas).round(3).to_string(index=False))
 ```
 @@NOTE Os três algoritmos têm desempenho parecido (ARI na faixa de 0,6 a 0,8). Nenhum é perfeito: o agrupamento nos dígitos mistura classes parecidas, como 3, 5, 8 e 9.
@@ -100,13 +136,17 @@ rng = np.random.default_rng(0)
 for k in range(2, 8):
     sc = []
     for _ in range(15):
-        i1 = rng.choice(len(X), 300, replace=False); i2 = rng.choice(len(X), 300, replace=False)
-        m1 = KMeans(k, n_init=3, random_state=0).fit(X[i1]); m2 = KMeans(k, n_init=3, random_state=1).fit(X[i2])
+        i1 = rng.choice(len(X), 300, replace=False)
+        i2 = rng.choice(len(X), 300, replace=False)
+        m1 = KMeans(k, n_init=3, random_state=0).fit(X[i1])
+        m2 = KMeans(k, n_init=3, random_state=1).fit(X[i2])
         sc.append(adjusted_rand_score(m1.predict(X), m2.predict(X)))
     print(f"k = {k}  ARI médio = {np.mean(sc):.3f}  desvio = {np.std(sc):.3f}")
 ```
 @@NOTE Valores de k que cortam um grupo natural em pedaços arbitrários tendem a ser instáveis (ARI médio menor e desvio maior). Para k = 2 e k = 4 a estabilidade costuma ser alta, o que combina com a estrutura (grupos que se juntam em pares).
 @@PROJ Painel de avaliação de agrupamentos | Cap07
+**Fonte dos dados.** Três conjuntos do repositório **UCI Machine Learning** incluídos no scikit-learn: Wine, Optical Digits e Iris.
+
 **Contexto.** A sua equipe vai agrupar três conjuntos de dados com vários algoritmos e precisa de um **procedimento padronizado e justo de avaliação**, que não dependa de um único número.
 
 **Tarefas.**
@@ -128,53 +168,100 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.mixture import GaussianMixture
 from sklearn.neighbors import NearestNeighbors
-from sklearn.metrics import (silhouette_score, calinski_harabasz_score, davies_bouldin_score, adjusted_rand_score)
+from sklearn.metrics import (
+    silhouette_score,
+    calinski_harabasz_score,
+    davies_bouldin_score,
+    adjusted_rand_score,
+)
+
 
 def hopkins(X, m=50, seed=42):
-    r = np.random.default_rng(seed); n, d = X.shape
-    nn = NearestNeighbors(n_neighbors=2).fit(X); idx = r.choice(n, m, replace=False)
-    w = nn.kneighbors(X[idx], 2)[0][:, 1]; U = r.uniform(X.min(0), X.max(0), (m, d)); u = nn.kneighbors(U, 1)[0][:, 0]
-    return (u ** d).sum() / ((u ** d).sum() + (w ** d).sum())
+    r = np.random.default_rng(seed)
+    n, d = X.shape
+    nn = NearestNeighbors(n_neighbors=2).fit(X)
+    idx = r.choice(n, m, replace=False)
+    w = nn.kneighbors(X[idx], 2)[0][:, 1]
+    U = r.uniform(X.min(0), X.max(0), (m, d))
+    u = nn.kneighbors(U, 1)[0][:, 0]
+    return (u**d).sum() / ((u**d).sum() + (w**d).sum())
 
-FABRICAS = {"K-means": lambda k: KMeans(k, n_init=5, random_state=0),
-            "Ward": lambda k: AgglomerativeClustering(k, linkage="ward"),
-            "GMM": lambda k: GaussianMixture(k, covariance_type="diag", n_init=2, random_state=0)}
+
+FABRICAS = {
+    "K-means": lambda k: KMeans(k, n_init=5, random_state=0),
+    "Ward": lambda k: AgglomerativeClustering(k, linkage="ward"),
+    "GMM": lambda k: GaussianMixture(k, covariance_type="diag", n_init=2, random_state=0),
+}
+
 
 def estabilidade(X, fab, k, pares=10, seed=0):
-    rng = np.random.default_rng(seed); n = len(X); sc = []
+    rng = np.random.default_rng(seed)
+    n = len(X)
+    sc = []
     for _ in range(pares):
-        i1 = rng.choice(n, int(0.7 * n), replace=False); i2 = rng.choice(n, int(0.7 * n), replace=False)
+        i1 = rng.choice(n, int(0.7 * n), replace=False)
+        i2 = rng.choice(n, int(0.7 * n), replace=False)
+
         # Ward não tem predict: usa-se 1-NN para estender a solução ao conjunto todo
         def ajustar(idx):
             r = fab(k).fit_predict(X[idx])
-            return NearestNeighbors(n_neighbors=1).fit(X[idx]).kneighbors(X, return_distance=False).ravel(), r
-        a1, r1 = ajustar(i1); a2, r2 = ajustar(i2)
+            return (
+                NearestNeighbors(n_neighbors=1)
+                .fit(X[idx])
+                .kneighbors(X, return_distance=False)
+                .ravel(),
+                r,
+            )
+
+        a1, r1 = ajustar(i1)
+        a2, r2 = ajustar(i2)
         sc.append(adjusted_rand_score(r1[a1], r2[a2]))
     return float(np.mean(sc))
+
 
 def avaliar(X, ks=range(2, 7)):
     linhas = []
     for nome, fab in FABRICAS.items():
         for k in ks:
             rot = fab(k).fit_predict(X)
-            linhas.append({"algoritmo": nome, "k": k, "sil": silhouette_score(X, rot), "CH": calinski_harabasz_score(X, rot),
-                           "DB": davies_bouldin_score(X, rot), "estab": estabilidade(X, fab, k), "rotulos": rot})
+            linhas.append(
+                {
+                    "algoritmo": nome,
+                    "k": k,
+                    "sil": silhouette_score(X, rot),
+                    "CH": calinski_harabasz_score(X, rot),
+                    "DB": davies_bouldin_score(X, rot),
+                    "estab": estabilidade(X, fab, k),
+                    "rotulos": rot,
+                }
+            )
     t = pd.DataFrame(linhas)
-    t["rank"] = t.sil.rank(ascending=False) + t.CH.rank(ascending=False) + t.DB.rank(ascending=True) + t.estab.rank(ascending=False)
+    t["rank"] = (
+        t.sil.rank(ascending=False)
+        + t.CH.rank(ascending=False)
+        + t.DB.rank(ascending=True)
+        + t.estab.rank(ascending=False)
+    )
     return t
 
+
 conjuntos = {}
-Xw, yw = load_wine(return_X_y=True); conjuntos["Wine"] = (StandardScaler().fit_transform(Xw), yw)
-Xd, yd = load_digits(return_X_y=True); conjuntos["Dígitos"] = (PCA(20, random_state=0).fit_transform(Xd), yd)
-Xi, yi = load_iris(return_X_y=True); conjuntos["Iris"] = (StandardScaler().fit_transform(Xi), yi)
+Xw, yw = load_wine(return_X_y=True)
+conjuntos["Wine"] = (StandardScaler().fit_transform(Xw), yw)
+Xd, yd = load_digits(return_X_y=True)
+conjuntos["Dígitos"] = (PCA(20, random_state=0).fit_transform(Xd), yd)
+Xi, yi = load_iris(return_X_y=True)
+conjuntos["Iris"] = (StandardScaler().fit_transform(Xi), yi)
 
 for nome, (X, y) in conjuntos.items():
     ks = range(2, 7) if nome != "Dígitos" else range(6, 13)
     t = avaliar(X, ks)
     melhor = t.loc[t["rank"].idxmin()]
     ari = adjusted_rand_score(y, melhor.rotulos)
-    print(f"{nome:8s} Hopkins = {hopkins(X):.2f} | melhor pelo ranking: {melhor.algoritmo}, k = {int(melhor.k)} "
-          f"(sil {melhor.sil:.2f}, estab {melhor.estab:.2f}) | ARI com os rótulos reais = {ari:.2f}")
+    print(
+        f"{nome:8s} Hopkins = {hopkins(X):.2f} | melhor pelo ranking: {melhor.algoritmo}, k = {int(melhor.k)} "
+        f"(sil {melhor.sil:.2f}, estab {melhor.estab:.2f}) | ARI com os rótulos reais = {ari:.2f}"
+    )
     print(t.drop(columns="rotulos").sort_values("rank").head(3).round(2).to_string(index=False))
 ```
 @@RUBRICA
@@ -184,3 +271,6 @@ for nome, (X, y) in conjuntos.items():
 - Resultados comparados com os rótulos reais apenas no final.
 - O parágrafo defende o uso de vários critérios, estabilidade e interpretação, e não de um único número.
 @@NOTE Para o Iris, é comum o ranking preferir k = 2, pois duas espécies se sobrepõem, embora existam 3 classes reais. Para os dígitos, o intervalo de k é de 6 a 12 para ficar perto do número real (10). Observe que o k "melhor" pelos índices internos nem sempre coincide com o número de classes: isso é esperado e deve ser discutido, e não escondido.
+@@ALEM
+- **UCI:** Seeds, Wine Quality, Dry Bean e Optical Recognition of Handwritten Digits (versão completa).
+- **Kaggle:** Mall Customers.

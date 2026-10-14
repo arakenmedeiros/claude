@@ -13,6 +13,7 @@ def parse(path):
             else:
                 title=parts[0];num=0;level=parts[1] if len(parts)>1 else ""
             cur={"kind":kind,"num":num,"title":title,"level":level,"stmt":[],"sol":[],"rubrica":[],"note":[]};items.append(cur);mode="stmt";continue
+        if ln.startswith("@@ALEM"): cur=None; mode=None; continue
         if ln.startswith("@@SOL"): mode="sol";continue
         if ln.startswith("@@RUBRICA"): mode="rubrica";continue
         if ln.startswith("@@NOTE"): mode="note"; rest=ln[6:].strip(); 

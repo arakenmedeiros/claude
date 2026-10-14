@@ -1,0 +1,181 @@
+@@EX 1 | Quantas componentes para 90% da variância? | básico
+No **Wine** padronizado, ajuste um PCA completo. Mostre a variância explicada acumulada e o menor número de componentes que alcança 90%. Depois mostre os três atributos de maior peso (em valor absoluto) na primeira componente.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+d = load_wine()
+X = StandardScaler().fit_transform(d.data)
+pca = PCA().fit(X)
+acum = pca.explained_variance_ratio_.cumsum()
+print("Variância acumulada:", acum.round(3))
+print("Componentes para 90%:", int(np.argmax(acum >= 0.90)) + 1)
+
+pesos = pca.components_[0]
+top = np.argsort(-np.abs(pesos))[:3]
+print("Maiores pesos na PC1:", [(d.feature_names[i], round(float(pesos[i]), 2)) for i in top])
+```
+@@NOTE Em geral, 8 componentes bastam para 90% da variância dos 13 atributos. A PC1 combina, sobretudo, atributos ligados a fenóis (flavanoids, total_phenols) e à diluição do vinho (od280/od315).
+@@EX 2 | Reconstrução e compressão de dígitos | básico
+Nos **dígitos** (64 atributos), reduza com PCA a k = 2, 5, 10, 20 e 40 componentes e reconstrua as imagens. Para cada k, mostre a variância explicada, o erro quadrático médio (MSE) e a razão de compressão (64 / k).
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+
+X, _ = load_digits(return_X_y=True)
+for k in [2, 5, 10, 20, 40]:
+    p = PCA(k, random_state=0).fit(X)
+    R = p.inverse_transform(p.transform(X))
+    print(
+        f"k = {k:2d}  variância = {p.explained_variance_ratio_.sum():.1%}  MSE = {np.mean((X - R) ** 2):6.3f}  compressão = {64 / k:5.1f}x"
+    )
+```
+@@NOTE O erro cai rápido com as primeiras componentes e depois diminui devagar. Com 20 componentes (compressão de 3,2 vezes) já se retém cerca de 90% da variância.
+@@EX 3 | PCA "na unha" com autovetores | intermediário
+No Wine padronizado, calcule o PCA manualmente: matriz de covariância (`np.cov`), autovalores e autovetores (`np.linalg.eigh`), ordenação decrescente e projeção. Compare as variâncias explicadas com as de `PCA` e confira se as componentes são ortogonais.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+X = StandardScaler().fit_transform(load_wine().data)
+C = np.cov(X.T)
+autoval, autovet = np.linalg.eigh(C)
+ordem = np.argsort(autoval)[::-1]
+autoval, autovet = autoval[ordem], autovet[:, ordem]
+Z = X @ autovet[:, :2]
+
+print("Variância explicada (manual)     :", (autoval / autoval.sum())[:3].round(4))
+print(
+    "Variância explicada (scikit-learn):", PCA().fit(X).explained_variance_ratio_[:3].round(4)
+)
+print("Componentes ortogonais? (V'V = I):", np.allclose(autovet.T @ autovet, np.eye(13)))
+pc = PCA(2).fit_transform(X)
+print("Projeção igual, a menos do sinal?", np.allclose(np.abs(Z), np.abs(pc), atol=1e-6))
+```
+@@NOTE As variâncias coincidem. As projeções são iguais a menos do sinal de cada componente, pois o sinal é arbitrário.
+@@EX 4 | Kernel PCA em anéis | intermediário
+Em `make_circles(500, factor=0.3, noise=0.05, random_state=0)`, aplique PCA linear e `KernelPCA(kernel="rbf", gamma=10)` com 2 componentes. Treine uma regressão logística usando **apenas a primeira componente** de cada representação e compare a acurácia (use as classes reais só para essa avaliação).
+@@SOL
+```python
+from sklearn.datasets import make_circles
+from sklearn.decomposition import PCA, KernelPCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
+
+X, y = make_circles(500, factor=0.3, noise=0.05, random_state=0)
+for nome, red in [
+    ("PCA linear", PCA(2)),
+    ("Kernel PCA rbf", KernelPCA(2, kernel="rbf", gamma=10)),
+]:
+    z1 = red.fit_transform(X)[:, [0]]
+    acc = cross_val_score(LogisticRegression(), z1, y, cv=5).mean()
+    print(f"{nome:15s} acurácia usando só a 1ª componente = {acc:.3f}")
+```
+@@NOTE No PCA linear, a primeira componente não separa os anéis (acurácia em torno de 0,47, pior que o acaso por pouco). No Kernel PCA, a primeira componente já ajuda bastante (cerca de 0,77); com as duas componentes a separação seria ainda melhor.
+@@EX 5 | Separando fontes com ICA | avançado
+Crie três sinais independentes (senoide, onda quadrada e dente de serra), misture-os com uma matriz aleatória e recupere as fontes com `FastICA`. Para cada fonte original, mostre a maior correlação absoluta com alguma componente recuperada e, para comparação, com alguma componente do PCA.
+@@SOL
+```python
+import numpy as np
+from scipy import signal
+from sklearn.decomposition import FastICA, PCA
+
+t = np.linspace(0, 8, 3000)
+S = np.c_[np.sin(2 * t), np.sign(np.sin(3 * t)), signal.sawtooth(2 * np.pi * 0.7 * t)]
+S += 0.03 * np.random.default_rng(0).normal(size=S.shape)
+A = np.random.default_rng(1).uniform(0.5, 1.5, (3, 3))
+X = S @ A.T
+
+ica = FastICA(3, random_state=0, max_iter=1000).fit_transform(X)
+pca = PCA(3).fit_transform(X)
+
+
+def melhor(R):
+    c = np.abs(np.corrcoef(S.T, R.T)[:3, 3:])
+    return c.max(axis=1).round(2)
+
+
+print("ICA:", melhor(ica))
+print("PCA:", melhor(pca))
+```
+@@NOTE O ICA recupera as três fontes (correlações próximas de 1), enquanto o PCA, que apenas decorrela e ordena por variância, mistura as fontes.
+@@PROJ Compressão, limpeza e partes de dígitos | Cap08
+**Contexto.** Uma empresa de digitalização de documentos quer **reduzir o tamanho** de imagens de dígitos manuscritos, **limpar ruído** e entender as "partes" que formam os traços, sem perder muita capacidade de reconhecimento.
+
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits* (**UCI Machine Learning**), via `load_digits` do scikit-learn.
+
+**Tarefas.**
+1. Divida os dados em treino e teste (70/30, com `stratify` e semente fixa). **Ajuste todas as transformações só no treino.**
+2. Treine uma linha de base: regressão logística nos 64 pixels. Anote a acurácia no teste.
+3. Para k = 5, 10, 20 e 30, ajuste um PCA no treino, treine a regressão logística nas componentes e anote a acurácia no teste e a razão de compressão. Desenhe o gráfico acurácia × k.
+4. **Limpeza de ruído:** adicione ruído gaussiano (desvio 4, em escala de 0 a 16) às imagens de teste, reconstrua com PCA de 15 componentes e compare o MSE contra a imagem limpa, antes e depois.
+5. **Partes:** ajuste NMF com 12 componentes no treino e desenhe as 12 "peças". Compare a acurácia da regressão logística nas ativações do NMF com a do PCA de 12 componentes.
+6. Escreva uma recomendação: qual k você usaria e por quê (compressão × acurácia)?
+
+**Entregáveis.** Script, gráfico acurácia × k, figuras das peças do NMF, tabela de resultados e recomendação.
+@@SOL
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA, NMF
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_digits(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+
+def acuracia(Ztr, Zte):
+    return LogisticRegression(max_iter=2000).fit(Ztr, ytr).score(Zte, yte)
+
+
+print("Linha de base (64 pixels): acurácia =", round(acuracia(Xtr, Xte), 3))
+ks = [5, 10, 20, 30]
+accs = []
+for k in ks:
+    p = PCA(k, random_state=0).fit(Xtr)
+    accs.append(acuracia(p.transform(Xtr), p.transform(Xte)))
+    print(f"PCA k = {k:2d}  acurácia = {accs[-1]:.3f}  compressão = {64 / k:.1f}x")
+plt.plot(ks, accs, "o-")
+plt.xlabel("k")
+plt.ylabel("Acurácia no teste")
+plt.title("Acurácia × componentes")
+plt.show()
+
+rng = np.random.default_rng(0)
+ruidoso = Xte + rng.normal(0, 4, Xte.shape)
+p15 = PCA(15, random_state=0).fit(Xtr)
+rec = p15.inverse_transform(p15.transform(ruidoso))
+print("MSE da imagem ruidosa    :", round(np.mean((ruidoso - Xte) ** 2), 2))
+print("MSE após PCA (15 comp.)  :", round(np.mean((rec - Xte) ** 2), 2))
+
+nmf = NMF(12, init="nndsvda", random_state=0, max_iter=800).fit(Xtr)
+fig, ax = plt.subplots(2, 6, figsize=(9, 3.2))
+for a, comp in zip(ax.ravel(), nmf.components_):
+    a.imshow(comp.reshape(8, 8), cmap="gray_r")
+    a.axis("off")
+plt.suptitle("As 12 peças do NMF")
+plt.show()
+print("NMF (12): acurácia =", round(acuracia(nmf.transform(Xtr), nmf.transform(Xte)), 3))
+p12 = PCA(12, random_state=0).fit(Xtr)
+print("PCA (12): acurácia =", round(acuracia(p12.transform(Xtr), p12.transform(Xte)), 3))
+```
+@@RUBRICA
+- Nenhuma transformação ajustada com dados de teste (sem vazamento).
+- Linha de base e acurácia por k apresentadas com a razão de compressão.
+- Limpeza de ruído avaliada com MSE antes e depois.
+- Peças do NMF mostradas e interpretadas.
+- A recomendação equilibra compressão e acurácia.
+@@NOTE A linha de base com 64 pixels tem acurácia de cerca de 0,96. Com apenas 10 componentes (compressão de 6,4 vezes) a acurácia é cerca de 0,94, e com 30 componentes chega a cerca de 0,96. A reconstrução com 15 componentes reduz o MSE do ruído de cerca de 16 para cerca de 7. As peças do NMF lembram traços de dígitos, mas as ativações do NMF com 12 peças deram acurácia bem menor (cerca de 0,75) que o PCA com 12 componentes (cerca de 0,94) quando usadas com um classificador linear: interpretabilidade e desempenho nem sempre andam juntos.
+@@ALEM
+- **UCI:** Pen-Based Recognition of Handwritten Digits, Wine Quality e Gas Sensor Array Drift (muitos atributos).
+- **Kaggle:** Fashion-MNIST (imagens de roupas, 28×28).

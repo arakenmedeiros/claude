@@ -1,0 +1,236 @@
+@@PROJ Laboratório de Dígitos: do dado bruto à decisão | Cap13
+**Contexto.** Um banco (fictício) digitaliza cheques e formulários escritos à mão. Existem milhares de imagens de dígitos, mas **só alguém caro e lento pode rotulá-las**. A diretoria de dados pediu a você um **estudo completo** de aprendizado não supervisionado para responder, ao final, a pergunta: *"Podemos reduzir o custo de rotulagem e encontrar imagens problemáticas usando apenas as imagens?"*
+
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits*, do repositório **UCI Machine Learning**, incluído no scikit-learn (`load_digits`): 1.797 imagens de 8×8 pixels, com valores de 0 a 16. Os rótulos (dígitos de 0 a 9) **só podem ser usados para avaliar** os resultados, exceto na Etapa 7, em que você simulará um orçamento pequeno de rotulagem.
+
+**Etapa 1 — Entender e preparar.** Escale os pixels para [0, 1]. Calcule a estatística de Hopkins e o número de componentes do PCA para reter 95% da variância. Reduza os dados a 30 componentes para as próximas etapas.
+
+**Etapa 2 — Agrupar.** Agrupe com K-means, Ward, GMM (covariância `diag`), agrupamento espectral e HDBSCAN. Para os métodos com k fixo, use k = 10. Compare silhueta (interna), estabilidade (ARI entre reamostragens) e, **só no final**, ARI e NMI contra os dígitos reais.
+
+**Etapa 3 — Visualizar.** Gere projeções 2D com PCA, Isomap e t-SNE e compare-as por confiança (`trustworthiness`). Desenhe o t-SNE colorido pelos grupos do melhor método.
+
+**Etapa 4 — Representações aprendidas.** Treine um autoencoder (`MLPRegressor`) com código de 16 dimensões e verifique se agrupar o código supera agrupar o PCA de 16 componentes.
+
+**Etapa 5 — Anomalias.** Use um escore combinado (Isolation Forest e LOF, média dos postos) para encontrar as 12 imagens "mais estranhas". Desenhe-as e descreva, em uma frase cada, o que parece estranho. Quais dígitos dominam os 30 principais alertas?
+
+**Etapa 6 — Regras de traços.** Divida cada imagem em 16 blocos (grade 4×4 de blocos 2×2). Para cada bloco, crie dois itens: `ativo_rc` (média maior que 8, na escala de 0 a 16) e `vazio_rc` (caso contrário). Inclua também um item por dígito. Use `fpgrowth` (suporte mínimo de 0,03, no máximo 4 itens) para encontrar regras do tipo *blocos → dígito* com confiança de pelo menos 0,6 e lift de pelo menos 1,5. Liste a melhor regra de cada dígito para o qual existir alguma. Por que os blocos das bordas quase nunca aparecem nas regras?
+
+**Etapa 7 — Rotular com pouco orçamento.** Suponha que você só possa rotular **30 imagens**. Estratégia A: agrupe em 30 grupos (K-means), rotule a imagem mais próxima do centro de cada grupo e propague o rótulo ao grupo ("agrupar e rotular"). Estratégia B: sorteie 30 imagens, rotule-as e treine uma regressão logística. Compare a acurácia (contra os rótulos reais, em todas as imagens) das duas estratégias, repetindo o sorteio da estratégia B 20 vezes.
+
+**Etapa 8 — Relatório final.** Escreva um relatório de 1 a 2 páginas com: resumo executivo (3 linhas), método, principais resultados (tabela), limitações, riscos éticos (erros em cheques afetam pessoas; viés de escrita; privacidade) e recomendação ao banco.
+
+**Entregáveis.** Um script (ou notebook) organizado por etapas, os gráficos e o relatório final.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import NearestNeighbors
+from sklearn.cluster import KMeans, AgglomerativeClustering, SpectralClustering, HDBSCAN
+from sklearn.mixture import GaussianMixture
+from sklearn.manifold import Isomap, TSNE, trustworthiness
+from sklearn.neural_network import MLPRegressor
+from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import silhouette_score, adjusted_rand_score, normalized_mutual_info_score
+from mlxtend.frequent_patterns import fpgrowth, association_rules
+
+# ---------------------------------------------------------------- Etapa 1
+dig = load_digits()
+X = dig.data / 16.0
+y = dig.target  # só para avaliar (e na Etapa 7, como "oráculo" de rotulagem)
+
+
+def hopkins(A, m=100, seed=42):
+    r = np.random.default_rng(seed)
+    n, d = A.shape
+    nn = NearestNeighbors(n_neighbors=2).fit(A)
+    idx = r.choice(n, m, replace=False)
+    w = nn.kneighbors(A[idx], 2)[0][:, 1]
+    U = r.uniform(A.min(0), A.max(0), (m, d))
+    u = nn.kneighbors(U, 1)[0][:, 0]
+    return u.sum() / (u.sum() + w.sum())
+
+
+pca_full = PCA().fit(X)
+n95 = int(np.argmax(pca_full.explained_variance_ratio_.cumsum() >= 0.95)) + 1
+Z = PCA(30, random_state=0).fit_transform(X)
+print(f"[1] Hopkins = {hopkins(X):.2f} | componentes para 95% da variância = {n95}")
+
+
+# ---------------------------------------------------------------- Etapa 2
+def estabilidade(fab, A, pares=8, seed=0):
+    rng = np.random.default_rng(seed)
+    n = len(A)
+    sc = []
+    for _ in range(pares):
+        i1 = rng.choice(n, int(0.7 * n), replace=False)
+        i2 = rng.choice(n, int(0.7 * n), replace=False)
+        v1 = (
+            NearestNeighbors(n_neighbors=1)
+            .fit(A[i1])
+            .kneighbors(A, return_distance=False)
+            .ravel()
+        )
+        v2 = (
+            NearestNeighbors(n_neighbors=1)
+            .fit(A[i2])
+            .kneighbors(A, return_distance=False)
+            .ravel()
+        )
+        r1 = fab().fit_predict(A[i1])
+        r2 = fab().fit_predict(A[i2])
+        sc.append(adjusted_rand_score(r1[v1], r2[v2]))
+    return float(np.mean(sc))
+
+
+metodos = {
+    "K-means": lambda: KMeans(10, n_init=10, random_state=0),
+    "Ward": lambda: AgglomerativeClustering(10, linkage="ward"),
+    "GMM (diag)": lambda: GaussianMixture(10, covariance_type="diag", n_init=3, random_state=0),
+    "Espectral": lambda: SpectralClustering(
+        10, affinity="nearest_neighbors", n_neighbors=15, random_state=0
+    ),
+    "HDBSCAN": lambda: HDBSCAN(min_cluster_size=20),
+}
+linhas = []
+rotulos = {}
+for nome, fab in metodos.items():
+    r = fab().fit_predict(Z)
+    rotulos[nome] = r
+    ok = r >= 0
+    sil = silhouette_score(Z[ok], r[ok]) if len(set(r[ok])) > 1 else np.nan
+    linhas.append(
+        {
+            "método": nome,
+            "grupos": len(set(r[ok])),
+            "ruído": int((~ok).sum()),
+            "silhueta": sil,
+            "estabilidade": estabilidade(fab, Z),
+            "ARI": adjusted_rand_score(y[ok], r[ok]),
+            "NMI": normalized_mutual_info_score(y[ok], r[ok]),
+        }
+    )
+tab = pd.DataFrame(linhas)
+print("[2] Comparação de agrupamentos (ARI e NMI só para conferência):")
+print(tab.round(3).to_string(index=False))
+dez = tab[tab.grupos == 10].copy()  # escolha SEM usar rótulos: silhueta + estabilidade
+dez["postos"] = dez.silhueta.rank(ascending=False) + dez.estabilidade.rank(ascending=False)
+melhor = dez.loc[dez.postos.idxmin(), "método"]
+print("    Escolhido por silhueta e estabilidade (sem rótulos):", melhor)
+
+# ---------------------------------------------------------------- Etapa 3
+proj = {
+    "PCA": PCA(2).fit_transform(X),
+    "Isomap": Isomap(n_neighbors=10).fit_transform(X),
+    "t-SNE": TSNE(2, init="pca", random_state=0).fit_transform(X),
+}
+print(
+    "[3] Confiança (k=10):",
+    {k: round(float(trustworthiness(X, v, n_neighbors=10)), 3) for k, v in proj.items()},
+)
+plt.scatter(proj["t-SNE"][:, 0], proj["t-SNE"][:, 1], c=rotulos[melhor], cmap="tab10", s=6)
+plt.title(f"t-SNE colorido por {melhor}")
+plt.show()
+
+# ---------------------------------------------------------------- Etapa 4
+Xtr_ae = X
+ae = MLPRegressor(hidden_layer_sizes=(64, 16, 64), max_iter=1500, random_state=0).fit(X, X)
+relu = lambda a: np.maximum(a, 0)
+W, b = ae.coefs_, ae.intercepts_
+codigo = relu(relu(X @ W[0] + b[0]) @ W[1] + b[1])
+pca16 = PCA(16, random_state=0).fit_transform(X)
+for nome, R in [("PCA (16)", pca16), ("Autoencoder (16)", codigo)]:
+    r = KMeans(10, n_init=10, random_state=0).fit_predict(StandardScaler().fit_transform(R))
+    print(
+        f"[4] {nome:17s} K-means: ARI = {adjusted_rand_score(y, r):.3f}  NMI = {normalized_mutual_info_score(y, r):.3f}"
+    )
+
+# ---------------------------------------------------------------- Etapa 5
+Z20 = PCA(20, random_state=0).fit_transform(X)
+s_if = -IsolationForest(n_estimators=300, random_state=0).fit(Z20).score_samples(Z20)
+s_lof = -LocalOutlierFactor(n_neighbors=20).fit(Z20).negative_outlier_factor_
+comb = (pd.Series(s_if).rank() + pd.Series(s_lof).rank()).values / 2
+topo = np.argsort(-comb)
+print(
+    "[5] Dígitos entre os 30 maiores alertas:",
+    np.bincount(y[topo[:30]], minlength=10),
+    "| índices dos 12 primeiros:",
+    topo[:12].tolist(),
+)
+fig, ax = plt.subplots(2, 6, figsize=(9, 3.4))
+for a, i in zip(ax.ravel(), topo[:12]):
+    a.imshow(dig.images[i], cmap="gray_r")
+    a.set_title(f"#{i} (dígito {y[i]})", fontsize=8)
+    a.axis("off")
+plt.suptitle("As 12 imagens mais estranhas")
+plt.show()
+
+# ---------------------------------------------------------------- Etapa 6
+blocos = X.reshape(-1, 4, 2, 4, 2).mean(axis=(2, 4)).reshape(len(X), 16) > 0.5
+itens = {}
+for r in range(4):
+    for c in range(4):
+        itens[f"ativo_{r}{c}"] = blocos[:, 4 * r + c]
+        itens[f"vazio_{r}{c}"] = ~blocos[:, 4 * r + c]
+for d in range(10):
+    itens[f"digito_{d}"] = y == d
+df_i = pd.DataFrame(itens)
+freq = fpgrowth(df_i, min_support=0.03, use_colnames=True, max_len=4)
+regras = association_rules(freq, metric="lift", min_threshold=1.5)
+so_digito = regras.consequents.apply(
+    lambda s: len(s) == 1 and next(iter(s)).startswith("digito_")
+)
+so_blocos = regras.antecedents.apply(lambda s: all(not i.startswith("digito") for i in s))
+r2 = regras[so_digito & so_blocos & (regras.confidence >= 0.6)].sort_values(
+    ["lift", "confidence"], ascending=False
+)
+print(
+    f"[6] {len(r2)} regras blocos → dígito (confiança ≥ 0,6, lift ≥ 1,5). Melhor regra por dígito:"
+)
+for d in range(10):
+    sub = r2[r2.consequents.apply(lambda s: f"digito_{d}" in s)].head(1)
+    for _, r in sub.iterrows():
+        print(
+            f"    dígito {d}: {sorted(r.antecedents)}  conf = {r.confidence:.2f}  lift = {r.lift:.1f}"
+        )
+print(
+    "    Fração de imagens com bloco ativo nas colunas das bordas (0 e 3):",
+    round(float(blocos.reshape(-1, 4, 4)[:, :, [0, 3]].mean()), 3),
+)
+
+# ---------------------------------------------------------------- Etapa 7
+km30 = KMeans(30, n_init=10, random_state=0).fit(Z)
+d2c = np.linalg.norm(Z[:, None, :] - km30.cluster_centers_[None], axis=2)
+representantes = d2c.argmin(axis=0)  # imagem mais próxima de cada centro
+rot_grupo = {g: y[representantes[g]] for g in range(30)}  # "oráculo" rotula só 30 imagens
+pred_A = np.array([rot_grupo[g] for g in km30.labels_])
+acc_A = (pred_A == y).mean()
+accs_B = []
+for s in range(20):
+    rng = np.random.default_rng(s)
+    idx = rng.choice(len(X), 30, replace=False)
+    if len(set(y[idx])) < 2:
+        continue
+    accs_B.append(LogisticRegression(max_iter=2000).fit(X[idx], y[idx]).score(X, y))
+print(
+    f"[7] Acurácia com 30 rótulos: agrupar e rotular = {acc_A:.3f} | amostra aleatória + regressão logística = {np.mean(accs_B):.3f} ± {np.std(accs_B):.3f}"
+)
+```
+@@RUBRICA
+- Preparação adequada e justificativa do número de componentes.
+- Cinco métodos de agrupamento comparados por critérios internos, estabilidade e (apenas no final) externos.
+- Projeções comparadas por confiança, com gráfico interpretado com cuidado.
+- Autoencoder comparado a uma linha de base (PCA) sem concluir que "profundo é melhor" sem evidência.
+- Imagens estranhas descritas e dígitos predominantes nos alertas identificados.
+- Regras de traços interpretadas como coocorrência, não causalidade.
+- Comparação justa entre rotular por grupos e rotular ao acaso, com repetições.
+- Relatório com resumo executivo, limitações, riscos éticos e recomendação clara.
+@@NOTE O resultado exato depende do computador e das versões das bibliotecas. Nesta execução: (i) a estatística de Hopkins é alta (cerca de 0,74) e são necessárias 29 componentes para reter 95% da variância; (ii) o agrupamento espectral é o mais estável (cerca de 0,89) e tem ARI de cerca de 0,76, seguido por Ward (ARI de cerca de 0,72); o GMM é o menos estável; o HDBSCAN encontra 7 grupos e marca 873 imagens como ruído, mas os grupos que forma são muito puros (ARI de cerca de 0,87 só nos pontos não ruidosos), o que mostra que ele troca cobertura por pureza; (iii) o t-SNE tem a maior confiança (cerca de 0,99, contra cerca de 0,83 do PCA e do Isomap); (iv) o autoencoder (ARI de cerca de 0,44) é pior que o PCA de 16 componentes (cerca de 0,69); (v) com apenas 30 rótulos, "agrupar e rotular" alcança acurácia de cerca de 0,93, contra cerca de 0,66 da amostra aleatória com regressão logística, porque cada rótulo é propagado a dezenas de imagens parecidas. (vi) com blocos de 2×2 pixels, só se encontram regras confiáveis para os dígitos 4, 5 e 7, e os blocos das colunas das bordas quase nunca ficam ativos (cerca de 0,6% das vezes), por isso quase não aparecem nas regras. Atenção: no passo (v), escolher a imagem mais próxima do centro para rotular depende de um "oráculo" humano; o resultado depende da qualidade dos grupos.
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits (a versão completa tem 3.823 imagens de treino e 1.797 de teste), Pen-Based Recognition of Handwritten Digits, Dry Bean e Wine Quality.
+- **Kaggle:** Fashion-MNIST e MNIST (Digit Recognizer). Repita o projeto final em outro conjunto e compare as conclusões.

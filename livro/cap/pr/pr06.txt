@@ -11,7 +11,9 @@ X, y = load_iris(return_X_y=True)
 X = StandardScaler().fit_transform(X)
 for tipo in ["spherical", "diag", "tied", "full"]:
     g = GaussianMixture(3, covariance_type=tipo, n_init=5, random_state=0).fit(X)
-    print(f"{tipo:10s} BIC = {g.bic(X):7.1f}   ARI = {adjusted_rand_score(y, g.predict(X)):.3f}")
+    print(
+        f"{tipo:10s} BIC = {g.bic(X):7.1f}   ARI = {adjusted_rand_score(y, g.predict(X)):.3f}"
+    )
 ```
 @@NOTE Neste conjunto, o tipo `full` tem o menor BIC (cerca de 800), e `tied` obtém o mesmo ARI (cerca de 0,90), com menos parâmetros. O tipo `spherical` é o pior, pois obriga os grupos a serem círculos. Em outros dados, tipos mais simples podem vencer pelo BIC; vale comparar sempre.
 @@EX 2 | Quantas gaussianas? | básico
@@ -29,7 +31,12 @@ for K in range(1, 9):
     linhas.append({"K": K, "BIC": g.bic(X), "AIC": g.aic(X)})
 t = pd.DataFrame(linhas)
 print(t.round(1).to_string(index=False))
-print("K pelo BIC:", int(t.loc[t.BIC.idxmin(), "K"]), "| K pelo AIC:", int(t.loc[t.AIC.idxmin(), "K"]))
+print(
+    "K pelo BIC:",
+    int(t.loc[t.BIC.idxmin(), "K"]),
+    "| K pelo AIC:",
+    int(t.loc[t.AIC.idxmin(), "K"]),
+)
 ```
 @@NOTE Nos dois critérios, o mínimo ocorre em K = 4, o número verdadeiro de grupos. Com grupos sobrepostos, o AIC tende a escolher mais componentes que o BIC.
 @@EX 3 | Pontos ambíguos e pertinência suave | intermediário
@@ -60,9 +67,10 @@ from sklearn.mixture import GaussianMixture
 rng = np.random.default_rng(0)
 normais = np.vstack([rng.normal([0, 0], 0.8, (400, 2)), rng.normal([4, 3], 0.6, (400, 2))])
 anom = rng.uniform(-6, 10, (30, 2))
-X = np.vstack([normais, anom]); y = np.r_[np.zeros(800), np.ones(30)]
+X = np.vstack([normais, anom])
+y = np.r_[np.zeros(800), np.ones(30)]
 
-g = GaussianMixture(2, n_init=3, random_state=0).fit(normais)      # treina só com normais
+g = GaussianMixture(2, n_init=3, random_state=0).fit(normais)  # treina só com normais
 escore = g.score_samples(X)
 limiar = np.percentile(escore, 3)
 marcado = escore < limiar
@@ -79,15 +87,21 @@ from sklearn.cluster import SpectralClustering, KMeans
 from sklearn.metrics import adjusted_rand_score
 
 X, y = make_moons(500, noise=0.07, random_state=0)
-print(f"K-means                  ARI = {adjusted_rand_score(y, KMeans(2, n_init=10, random_state=0).fit_predict(X)):.3f}")
+print(
+    f"K-means                  ARI = {adjusted_rand_score(y, KMeans(2, n_init=10, random_state=0).fit_predict(X)):.3f}"
+)
 for gamma in [0.1, 1, 10, 100]:
     r = SpectralClustering(2, affinity="rbf", gamma=gamma, random_state=0).fit_predict(X)
     print(f"Espectral rbf gamma={gamma:<5} ARI = {adjusted_rand_score(y, r):.3f}")
-r = SpectralClustering(2, affinity="nearest_neighbors", n_neighbors=10, random_state=0).fit_predict(X)
+r = SpectralClustering(
+    2, affinity="nearest_neighbors", n_neighbors=10, random_state=0
+).fit_predict(X)
 print(f"Espectral 10-vizinhos     ARI = {adjusted_rand_score(y, r):.3f}")
 ```
 @@NOTE O resultado depende muito da afinidade. Com gamma pequeno (0,1 ou 1), tudo parece similar e o ARI fica baixo (cerca de 0,23 a 0,29, como o K-means); com gamma = 100, o ARI chega a 1,0. O grafo de 10 vizinhos também atinge 1,0 e é uma escolha robusta para formas curvas.
 @@PROJ Perfis com probabilidades: uma operadora de telecomunicações | Cap06
+**Fonte dos dados.** Simulados pela função abaixo.
+
 **Contexto.** Uma operadora (fictícia) quer entender o comportamento de seus clientes pelo **consumo de dados** (GB/mês) e pelo **tempo de chamadas** (minutos/mês). Os perfis se sobrepõem, e o time de marketing quer saber **com que confiança** cada cliente pertence a um perfil.
 
 **Dados.**
@@ -95,12 +109,14 @@ print(f"Espectral 10-vizinhos     ARI = {adjusted_rand_score(y, r):.3f}")
 ```python
 import numpy as np
 
+
 def gerar_telecom(seed=0):
     rng = np.random.default_rng(seed)
-    a = rng.multivariate_normal([4, 300], [[3, 40], [40, 4000]], 350)      # voz
+    a = rng.multivariate_normal([4, 300], [[3, 40], [40, 4000]], 350)  # voz
     b = rng.multivariate_normal([25, 120], [[30, -30], [-30, 1500]], 450)  # dados
-    c = rng.multivariate_normal([14, 210], [[20, 10], [10, 2500]], 300)    # misto
-    X = np.vstack([a, b, c]); y = np.repeat([0, 1, 2], [350, 450, 300])
+    c = rng.multivariate_normal([14, 210], [[20, 10], [10, 2500]], 300)  # misto
+    X = np.vstack([a, b, c])
+    y = np.repeat([0, 1, 2], [350, 450, 300])
     return np.clip(X, 0, None), y
 ```
 
@@ -121,13 +137,16 @@ from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import adjusted_rand_score
 
+
 def gerar_telecom(seed=0):
     rng = np.random.default_rng(seed)
     a = rng.multivariate_normal([4, 300], [[3, 40], [40, 4000]], 350)
     b = rng.multivariate_normal([25, 120], [[30, -30], [-30, 1500]], 450)
     c = rng.multivariate_normal([14, 210], [[20, 10], [10, 2500]], 300)
-    X = np.vstack([a, b, c]); y = np.repeat([0, 1, 2], [350, 450, 300])
+    X = np.vstack([a, b, c])
+    y = np.repeat([0, 1, 2], [350, 450, 300])
     return np.clip(X, 0, None), y
+
 
 X, y = gerar_telecom()
 esc = StandardScaler().fit(X)
@@ -135,10 +154,20 @@ Xp = esc.transform(X)
 
 km = KMeans(3, n_init=10, random_state=0).fit(Xp)
 gm = GaussianMixture(3, covariance_type="full", n_init=5, random_state=0).fit(Xp)
-print("ARI K-means:", round(adjusted_rand_score(y, km.labels_), 3), "| ARI GMM:", round(adjusted_rand_score(y, gm.predict(Xp)), 3))
+print(
+    "ARI K-means:",
+    round(adjusted_rand_score(y, km.labels_), 3),
+    "| ARI GMM:",
+    round(adjusted_rand_score(y, gm.predict(Xp)), 3),
+)
 
 bics = {K: GaussianMixture(K, n_init=5, random_state=0).fit(Xp).bic(Xp) for K in range(1, 8)}
-print("BIC por K:", {k: round(v, 1) for k, v in bics.items()}, "-> melhor K =", min(bics, key=bics.get))
+print(
+    "BIC por K:",
+    {k: round(v, 1) for k, v in bics.items()},
+    "-> melhor K =",
+    min(bics, key=bics.get),
+)
 
 P = gm.predict_proba(Xp)
 fronteira = P.max(axis=1) < 0.7
@@ -150,7 +179,9 @@ print("Médias sintéticas:", sint.mean(axis=0).round(1))
 
 esc_dens = gm.score_samples(Xp)
 atip = esc_dens <= np.percentile(esc_dens, 1)
-print("Atípicos (1%): n =", int(atip.sum()), "| média [GB, min] =", X[atip].mean(axis=0).round(1))
+print(
+    "Atípicos (1%): n =", int(atip.sum()), "| média [GB, min] =", X[atip].mean(axis=0).round(1)
+)
 ```
 @@RUBRICA
 - Comparação justificada entre K-means e GMM, com ARI.
@@ -160,3 +191,6 @@ print("Atípicos (1%): n =", int(atip.sum()), "| média [GB, min] =", X[atip].me
 - Atípicos descritos em unidades originais.
 - Texto reconhece as limitações (perfis sobrepostos, suposição gaussiana).
 @@NOTE Em perfis elípticos e sobrepostos, o GMM tende a superar o K-means, pois modela covariâncias diferentes. Os clientes de fronteira são ótimos candidatos a ofertas combinadas (voz + dados). Os dados sintéticos preservam as médias, mas não substituem dados reais em decisões.
+@@ALEM
+- **UCI:** Dry Bean e Seeds.
+- **Kaggle:** Mall Customers e Credit Card Dataset for Clustering (comportamento de uso de cartões).

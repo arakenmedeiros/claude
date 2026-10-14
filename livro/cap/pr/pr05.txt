@@ -10,7 +10,9 @@ from sklearn.cluster import DBSCAN
 X = StandardScaler().fit_transform(make_moons(500, noise=0.07, random_state=0)[0])
 for eps in [0.05, 0.1, 0.2, 0.3, 0.6]:
     rot = DBSCAN(eps=eps, min_samples=5).fit_predict(X)
-    print(f"eps = {eps:4.2f}  grupos = {len(set(rot)) - (1 if -1 in rot else 0):2d}  ruído = {(rot == -1).sum():3d}")
+    print(
+        f"eps = {eps:4.2f}  grupos = {len(set(rot)) - (1 if -1 in rot else 0):2d}  ruído = {(rot == -1).sum():3d}"
+    )
 ```
 @@NOTE Com eps muito pequeno, quase tudo vira ruído e surgem muitos grupos pequenos. Com valores intermediários, aparecem os 2 grupos corretos. Com eps grande, os dois grupos se fundem em um só.
 @@EX 2 | Achando o joelho do gráfico de k-distâncias | intermediário
@@ -32,7 +34,7 @@ x = np.arange(len(dk))
 p1, p2 = np.array([0, dk[0]]), np.array([len(dk) - 1, dk[-1]])
 v = (p2 - p1) / np.linalg.norm(p2 - p1)
 pts = np.c_[x, dk] - p1
-distancia = np.abs(pts[:, 0] * v[1] - pts[:, 1] * v[0])     # distância à reta
+distancia = np.abs(pts[:, 0] * v[1] - pts[:, 1] * v[0])  # distância à reta
 eps = dk[np.argmax(distancia)]
 print("eps sugerido pelo joelho:", round(eps, 3))
 
@@ -49,9 +51,13 @@ from sklearn.cluster import KMeans, SpectralClustering, DBSCAN
 from sklearn.metrics import adjusted_rand_score
 
 X, y = make_circles(600, factor=0.4, noise=0.05, random_state=0)
-modelos = {"K-means": KMeans(2, n_init=10, random_state=0),
-           "Espectral": SpectralClustering(2, affinity="nearest_neighbors", n_neighbors=10, random_state=0),
-           "DBSCAN": DBSCAN(eps=0.15, min_samples=5)}
+modelos = {
+    "K-means": KMeans(2, n_init=10, random_state=0),
+    "Espectral": SpectralClustering(
+        2, affinity="nearest_neighbors", n_neighbors=10, random_state=0
+    ),
+    "DBSCAN": DBSCAN(eps=0.15, min_samples=5),
+}
 for nome, m in modelos.items():
     rot = m.fit_predict(X)
     print(f"{nome:10s} ARI = {adjusted_rand_score(y, rot):.3f}")
@@ -66,17 +72,26 @@ from sklearn.cluster import DBSCAN, OPTICS, HDBSCAN
 from sklearn.metrics import adjusted_rand_score
 
 rng = np.random.default_rng(0)
-G = [rng.normal([0, 0], 0.3, (250, 2)), rng.normal([5, 5], 0.6, (250, 2)), rng.normal([-5, 5], 1.2, (250, 2))]
+G = [
+    rng.normal([0, 0], 0.3, (250, 2)),
+    rng.normal([5, 5], 0.6, (250, 2)),
+    rng.normal([-5, 5], 1.2, (250, 2)),
+]
 y = np.repeat([0, 1, 2], 250)
 ruido = rng.uniform(-9, 9, (40, 2))
-X = np.vstack(G + [ruido]); y = np.r_[y, np.full(40, -1)]
+X = np.vstack(G + [ruido])
+y = np.r_[y, np.full(40, -1)]
 real = y >= 0
 
-for nome, m in [("DBSCAN", DBSCAN(eps=0.5, min_samples=10)),
-                ("OPTICS", OPTICS(min_samples=10, xi=0.05, min_cluster_size=0.05)),
-                ("HDBSCAN", HDBSCAN(min_cluster_size=30))]:
+for nome, m in [
+    ("DBSCAN", DBSCAN(eps=0.5, min_samples=10)),
+    ("OPTICS", OPTICS(min_samples=10, xi=0.05, min_cluster_size=0.05)),
+    ("HDBSCAN", HDBSCAN(min_cluster_size=30)),
+]:
     rot = m.fit_predict(X)
-    print(f"{nome:8s} grupos = {len(set(rot)) - (1 if -1 in rot else 0)}  ruído = {(rot == -1).sum():3d}  ARI = {adjusted_rand_score(y[real], rot[real]):.3f}")
+    print(
+        f"{nome:8s} grupos = {len(set(rot)) - (1 if -1 in rot else 0)}  ruído = {(rot == -1).sum():3d}  ARI = {adjusted_rand_score(y[real], rot[real]):.3f}"
+    )
 ```
 @@NOTE O HDBSCAN obtém o melhor resultado (ARI ≈ 0,99, com 30 pontos de ruído). Com um único eps, o DBSCAN tem ARI ≈ 0,90 e marca 95 pontos como ruído, pois o grupo mais difuso é parcialmente descartado. O OPTICS, com esses parâmetros, extrai grupos pelo método xi e marca muito ruído (ARI ≈ 0,55): ele exige ajuste fino de xi e min_cluster_size. Densidades variáveis são um ponto forte do HDBSCAN.
 @@EX 5 | Pontos quentes com a distância haversine | avançado
@@ -92,15 +107,21 @@ quentes = np.vstack([c + rng.normal(0, 0.004, (120, 2)) for c in centros])
 disp = np.c_[rng.uniform(-23.70, -23.40, 80), rng.uniform(-46.80, -46.45, 80)]
 coords = np.vstack([quentes, disp])
 
-R = 6371.0   # raio da Terra em km
-db = DBSCAN(eps=0.4 / R, min_samples=15, metric="haversine", algorithm="ball_tree").fit(np.radians(coords))
+R = 6371.0  # raio da Terra em km
+db = DBSCAN(eps=0.4 / R, min_samples=15, metric="haversine", algorithm="ball_tree").fit(
+    np.radians(coords)
+)
 for g in sorted(set(db.labels_) - {-1}):
     pts = coords[db.labels_ == g]
-    print(f"ponto quente {g}: {len(pts):3d} ocorrências, centro = ({pts[:, 0].mean():.3f}, {pts[:, 1].mean():.3f})")
+    print(
+        f"ponto quente {g}: {len(pts):3d} ocorrências, centro = ({pts[:, 0].mean():.3f}, {pts[:, 1].mean():.3f})"
+    )
 print("ruído:", int((db.labels_ == -1).sum()))
 ```
 @@NOTE Os três centros simulados são recuperados com boa precisão (as coordenadas médias ficam muito próximas das originais). O eps precisa estar em radianos: distância em km dividida pelo raio da Terra.
 @@PROJ Pontos quentes de ocorrências urbanas | Cap05
+**Fonte dos dados.** Simulados pela função abaixo.
+
 **Contexto.** A secretaria de segurança de uma cidade (fictícia) quer decidir **onde posicionar patrulhas**. Você recebeu coordenadas de ocorrências registradas de dia e de noite. Seu trabalho é identificar os **pontos quentes**, ignorar ocorrências isoladas e sugerir a distribuição das patrulhas.
 
 **Dados.** Use a função abaixo (dados sintéticos).
@@ -109,16 +130,27 @@ print("ruído:", int((db.labels_ == -1).sum()))
 import numpy as np
 import pandas as pd
 
+
 def gerar_ocorrencias(seed=0):
     rng = np.random.default_rng(seed)
-    quentes = [(-23.550, -46.633, 0.003, 220, "dia"), (-23.520, -46.690, 0.006, 260, "noite"),
-               (-23.610, -46.560, 0.004, 150, "dia"), (-23.480, -46.620, 0.010, 200, "noite")]
+    quentes = [
+        (-23.550, -46.633, 0.003, 220, "dia"),
+        (-23.520, -46.690, 0.006, 260, "noite"),
+        (-23.610, -46.560, 0.004, 150, "dia"),
+        (-23.480, -46.620, 0.010, 200, "noite"),
+    ]
     linhas = []
     for lat, lon, s, n, turno in quentes:
         P = np.c_[rng.normal(lat, s, n), rng.normal(lon, s, n)]
         linhas += [(a, b, turno) for a, b in P]
     for _ in range(120):
-        linhas.append((rng.uniform(-23.70, -23.40), rng.uniform(-46.80, -46.45), rng.choice(["dia", "noite"])))
+        linhas.append(
+            (
+                rng.uniform(-23.70, -23.40),
+                rng.uniform(-46.80, -46.45),
+                rng.choice(["dia", "noite"]),
+            )
+        )
     return pd.DataFrame(linhas, columns=["lat", "lon", "turno"])
 ```
 
@@ -139,17 +171,29 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN, HDBSCAN
 from sklearn.neighbors import NearestNeighbors
 
+
 def gerar_ocorrencias(seed=0):
     rng = np.random.default_rng(seed)
-    quentes = [(-23.550, -46.633, 0.003, 220, "dia"), (-23.520, -46.690, 0.006, 260, "noite"),
-               (-23.610, -46.560, 0.004, 150, "dia"), (-23.480, -46.620, 0.010, 200, "noite")]
+    quentes = [
+        (-23.550, -46.633, 0.003, 220, "dia"),
+        (-23.520, -46.690, 0.006, 260, "noite"),
+        (-23.610, -46.560, 0.004, 150, "dia"),
+        (-23.480, -46.620, 0.010, 200, "noite"),
+    ]
     linhas = []
     for lat, lon, s, n, turno in quentes:
         P = np.c_[rng.normal(lat, s, n), rng.normal(lon, s, n)]
         linhas += [(a, b, turno) for a, b in P]
     for _ in range(120):
-        linhas.append((rng.uniform(-23.70, -23.40), rng.uniform(-46.80, -46.45), rng.choice(["dia", "noite"])))
+        linhas.append(
+            (
+                rng.uniform(-23.70, -23.40),
+                rng.uniform(-46.80, -46.45),
+                rng.choice(["dia", "noite"]),
+            )
+        )
     return pd.DataFrame(linhas, columns=["lat", "lon", "turno"])
+
 
 df = gerar_ocorrencias()
 R = 6371.0
@@ -158,7 +202,10 @@ rad = np.radians(df[["lat", "lon"]].values)
 k = 15
 dist, _ = NearestNeighbors(n_neighbors=k, metric="haversine").fit(rad).kneighbors(rad)
 dk_km = np.sort(dist[:, -1]) * R
-print("Distância ao 15º vizinho (km) - percentis 50/80/90/95:", np.percentile(dk_km, [50, 80, 90, 95]).round(2))
+print(
+    "Distância ao 15º vizinho (km) - percentis 50/80/90/95:",
+    np.percentile(dk_km, [50, 80, 90, 95]).round(2),
+)
 
 eps_km = 0.8
 db = DBSCAN(eps=eps_km / R, min_samples=k, metric="haversine", algorithm="ball_tree").fit(rad)
@@ -167,7 +214,9 @@ hd = HDBSCAN(min_cluster_size=40, metric="haversine").fit(rad)
 df["hdbscan"] = hd.labels_
 for nome in ["dbscan", "hdbscan"]:
     r = df[nome]
-    print(f"{nome:8s} pontos quentes = {len(set(r)) - (1 if -1 in set(r) else 0)}  ruído = {(r == -1).sum()}")
+    print(
+        f"{nome:8s} pontos quentes = {len(set(r)) - (1 if -1 in set(r) else 0)}  ruído = {(r == -1).sum()}"
+    )
 
 tabela = []
 for g in sorted(set(db.labels_) - {-1}):
@@ -177,23 +226,43 @@ for g in sorted(set(db.labels_) - {-1}):
     dx = (P.lat - c[0]) * 111.0
     dy = (P.lon - c[1]) * 111.0 * np.cos(np.radians(c[0]))
     r90 = np.percentile(np.hypot(dx, dy), 90)
-    area = np.pi * r90 ** 2
-    tabela.append({"ponto": g, "n": len(P), "lat": round(c[0], 3), "lon": round(c[1], 3), "raio90_km": round(r90, 2),
-                   "dens_por_km2": round(0.9 * len(P) / area), "dia": int((P.turno == "dia").sum()), "noite": int((P.turno == "noite").sum())})
+    area = np.pi * r90**2
+    tabela.append(
+        {
+            "ponto": g,
+            "n": len(P),
+            "lat": round(c[0], 3),
+            "lon": round(c[1], 3),
+            "raio90_km": round(r90, 2),
+            "dens_por_km2": round(0.9 * len(P) / area),
+            "dia": int((P.turno == "dia").sum()),
+            "noite": int((P.turno == "noite").sum()),
+        }
+    )
 tab = pd.DataFrame(tabela)
 print(tab.to_string(index=False))
 
 quentes = tab.n.sum()
 tab["patrulhas"] = (20 * tab.n / quentes).round().astype(int)
-print("Patrulhas por ponto quente:", dict(zip(tab.ponto, tab.patrulhas)), "| total:", tab.patrulhas.sum())
+print(
+    "Patrulhas por ponto quente:",
+    dict(zip(tab.ponto, tab.patrulhas)),
+    "| total:",
+    tab.patrulhas.sum(),
+)
 
 for turno in ["dia", "noite"]:
     sub = df[df.turno == turno]
-    r = DBSCAN(eps=eps_km / R, min_samples=8, metric="haversine", algorithm="ball_tree").fit(np.radians(sub[["lat", "lon"]].values)).labels_
+    r = (
+        DBSCAN(eps=eps_km / R, min_samples=8, metric="haversine", algorithm="ball_tree")
+        .fit(np.radians(sub[["lat", "lon"]].values))
+        .labels_
+    )
     print(f"turno {turno}: pontos quentes = {len(set(r)) - (1 if -1 in set(r) else 0)}")
 
 plt.scatter(df.lon, df.lat, c=np.where(df.dbscan >= 0, df.dbscan, -1), cmap="tab10", s=8)
-plt.title("Pontos quentes (DBSCAN haversine); cinza = ruído"); plt.show()
+plt.title("Pontos quentes (DBSCAN haversine); cinza = ruído")
+plt.show()
 ```
 @@RUBRICA
 - Gráfico exploratório inicial e leitura qualitativa.
@@ -203,3 +272,6 @@ plt.title("Pontos quentes (DBSCAN haversine); cinza = ruído"); plt.show()
 - Análise por turno.
 - Proposta de patrulhas proporcional e reflexão ética (viés de policiamento, privacidade, uso de dados por território).
 @@NOTE O DBSCAN com eps de 0,8 km encontra os quatro pontos quentes, e o HDBSCAN também. As densidades diferem muito: o ponto 0 (cerca de 150 ocorrências por km²) é bem mais concentrado que o ponto 3 (cerca de 12 por km²), que é difuso. O ponto 1 só ocorre à noite e o ponto 0, só de dia. Por isso, a distribuição de patrulhas deve considerar também o turno, e não apenas o total. Sempre discuta o viés: ocorrências registradas refletem onde há mais policiamento e mais registro, não necessariamente onde há mais crime.
+@@ALEM
+- **UCI:** Dry Bean (medidas de forma de feijões) e Wireless Indoor Localization.
+- **Kaggle:** New York City Airbnb Open Data (latitude e longitude de imóveis, ótimo para DBSCAN e HDBSCAN com distância haversine).

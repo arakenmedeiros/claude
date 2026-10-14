@@ -1,0 +1,234 @@
+@@EX 1 | O mapa do Brasil a partir de distâncias | básico
+Use as coordenadas aproximadas de dez capitais brasileiras (código abaixo), calcule a matriz de distâncias em km (fórmula haversine) e recupere um mapa 2D com `MDS(dissimilarity="precomputed")`. Mostre o *stress* e a correlação entre as distâncias originais e as do mapa.
+
+```python
+cidades = {
+    "São Paulo": (-23.55, -46.63),
+    "Rio de Janeiro": (-22.91, -43.17),
+    "Brasília": (-15.78, -47.93),
+    "Salvador": (-12.97, -38.51),
+    "Fortaleza": (-3.73, -38.53),
+    "Manaus": (-3.12, -60.02),
+    "Porto Alegre": (-30.03, -51.23),
+    "Belo Horizonte": (-19.92, -43.94),
+    "Recife": (-8.05, -34.88),
+    "Curitiba": (-25.43, -49.27),
+}
+```
+@@SOL
+```python
+import numpy as np
+from sklearn.manifold import MDS
+from sklearn.metrics import pairwise_distances
+from scipy.spatial.distance import pdist
+
+cidades = {
+    "São Paulo": (-23.55, -46.63),
+    "Rio de Janeiro": (-22.91, -43.17),
+    "Brasília": (-15.78, -47.93),
+    "Salvador": (-12.97, -38.51),
+    "Fortaleza": (-3.73, -38.53),
+    "Manaus": (-3.12, -60.02),
+    "Porto Alegre": (-30.03, -51.23),
+    "Belo Horizonte": (-19.92, -43.94),
+    "Recife": (-8.05, -34.88),
+    "Curitiba": (-25.43, -49.27),
+}
+ll = np.radians(np.array(list(cidades.values())))
+D = pairwise_distances(ll, metric="haversine") * 6371.0  # km
+
+mds = MDS(2, dissimilarity="precomputed", random_state=0, n_init=8, normalized_stress="auto")
+Y = mds.fit_transform(D)
+d_orig = D[np.triu_indices(10, 1)]
+d_mapa = pdist(Y)
+stress = np.sqrt(np.sum((d_orig - d_mapa) ** 2) / np.sum(d_orig**2))
+print("Stress normalizado:", round(float(stress), 4))
+print(
+    "Correlação entre distâncias originais e do mapa:",
+    round(float(np.corrcoef(d_mapa, d_orig)[0, 1]), 4),
+)
+print(
+    "Distância São Paulo - Rio: original",
+    round(D[0, 1]),
+    "km | mapa",
+    round(float(np.linalg.norm(Y[0] - Y[1]))),
+    "km",
+)
+```
+@@NOTE Como o mapa 2D de uma superfície esférica é quase plano para distâncias dessa escala, a reconstrução é muito boa (correlação acima de 0,99). O mapa pode sair girado ou espelhado: só as distâncias importam.
+@@EX 2 | Desenrolando o rocambole | intermediário
+Gere `make_swiss_roll(1500, noise=0.05, random_state=0)`. Reduza a 2 dimensões com PCA, Isomap (12 vizinhos) e LLE (12 vizinhos). Calcule a correlação de Spearman entre a primeira coordenada de cada método e o parâmetro verdadeiro `t` (posição ao longo do rocambole). Qual desenrola melhor?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import spearmanr
+from sklearn.datasets import make_swiss_roll
+from sklearn.decomposition import PCA
+from sklearn.manifold import Isomap, LocallyLinearEmbedding
+
+X, t = make_swiss_roll(1500, noise=0.05, random_state=0)
+metodos = {
+    "PCA": PCA(2),
+    "Isomap": Isomap(n_neighbors=12, n_components=2),
+    "LLE": LocallyLinearEmbedding(n_neighbors=12, n_components=2, random_state=0),
+}
+for nome, m in metodos.items():
+    Z = m.fit_transform(X)
+    r = max(abs(spearmanr(Z[:, j], t)[0]) for j in range(2))
+    print(f"{nome:7s} |correlação de Spearman| com t = {r:.3f}")
+```
+@@NOTE O Isomap e o LLE recuperam quase perfeitamente a posição ao longo do rocambole (correlação de Spearman próxima de 1). O PCA, linear, sobrepõe as voltas e fica longe disso (cerca de 0,2).
+@@EX 3 | Perplexidade e qualidade do t-SNE | intermediário
+Nos **dígitos**, rode `TSNE` com perplexidade 5, 30 e 100 (`init="pca"`, `random_state=0`). Para cada uma, mostre a confiança (`trustworthiness`, k = 10) e a divergência de KL final (`kl_divergence_`).
+@@SOL
+```python
+from sklearn.datasets import load_digits
+from sklearn.manifold import TSNE, trustworthiness
+
+X, _ = load_digits(return_X_y=True)
+for p in [5, 30, 100]:
+    t = TSNE(2, perplexity=p, init="pca", learning_rate="auto", random_state=0)
+    Z = t.fit_transform(X)
+    print(
+        f"perplexidade = {p:3d}  trustworthiness = {trustworthiness(X, Z, n_neighbors=10):.3f}  KL final = {t.kl_divergence_:.3f}"
+    )
+```
+@@NOTE A confiança é alta nos três casos (acima de 0,98), mas a KL não é comparável entre perplexidades diferentes. Escolha a perplexidade pela qualidade visual e por métricas externas ao t-SNE, e não pela KL.
+@@EX 4 | PCA antes do t-SNE: tempo e qualidade | intermediário
+Compare o t-SNE aplicado aos 64 pixels com o t-SNE aplicado a 20 componentes de PCA: meça o tempo (`time.perf_counter`) e a confiança (k = 10) em relação aos dados originais.
+@@SOL
+```python
+import time
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE, trustworthiness
+
+X, _ = load_digits(return_X_y=True)
+for nome, ent in [("64 pixels", X), ("PCA 20", PCA(20, random_state=0).fit_transform(X))]:
+    t0 = time.perf_counter()
+    Z = TSNE(2, perplexity=30, init="pca", random_state=0).fit_transform(ent)
+    dt = time.perf_counter() - t0
+    print(
+        f"{nome:10s} tempo = {dt:5.1f} s   trustworthiness = {trustworthiness(X, Z, n_neighbors=10):.3f}"
+    )
+```
+@@NOTE Nos dígitos, que têm só 64 atributos, o tempo e a qualidade ficam praticamente iguais. Com centenas ou milhares de atributos, reduzir antes com PCA acelera muito o t-SNE e remove ruído, por isso é uma etapa comum.
+@@EX 5 | Quem preserva melhor os vizinhos? | avançado
+Nos dígitos, projete em 2D com PCA, Isomap e t-SNE. Para cada projeção, calcule (a) a fração média de vizinhos preservados (os 10 vizinhos mais próximos no espaço original que continuam entre os 10 mais próximos na projeção) e (b) a acurácia de um KNN (5-fold) usando apenas as 2 coordenadas.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+from sklearn.manifold import Isomap, TSNE
+from sklearn.neighbors import NearestNeighbors, KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
+
+X, y = load_digits(return_X_y=True)
+
+
+def vizinhos(A, k=10):
+    return (
+        NearestNeighbors(n_neighbors=k + 1).fit(A).kneighbors(A, return_distance=False)[:, 1:]
+    )
+
+
+orig = vizinhos(X)
+proj = {
+    "PCA": PCA(2).fit_transform(X),
+    "Isomap": Isomap(n_neighbors=10).fit_transform(X),
+    "t-SNE": TSNE(2, init="pca", random_state=0).fit_transform(X),
+}
+for nome, Z in proj.items():
+    v = vizinhos(Z)
+    pres = np.mean([len(set(orig[i]) & set(v[i])) / 10 for i in range(len(X))])
+    acc = cross_val_score(KNeighborsClassifier(5), Z, y, cv=5).mean()
+    print(f"{nome:7s} vizinhos preservados = {pres:.2f}   acurácia KNN em 2D = {acc:.3f}")
+```
+@@NOTE O t-SNE preserva muito mais vizinhos que o PCA e o Isomap e produz grupos mais separados (acurácia KNN em 2D bem maior). Isso não significa que o t-SNE "seja melhor" em tudo: ele não preserva distâncias globais.
+@@PROJ Comparando mapas dos dígitos e dos vinhos | Cap09
+**Contexto.** Um grupo de pesquisa quer escolher **uma técnica de visualização padrão** para seus conjuntos de dados. Cabe a você fazer uma comparação justa e propor a escolha.
+
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits* e *Wine*, ambos do repositório **UCI Machine Learning**, incluídos no scikit-learn.
+
+**Tarefas.**
+1. Para cada conjunto (dígitos e Wine padronizado), gere projeções 2D com PCA, Isomap, LLE e t-SNE. (Se tiver o pacote `umap-learn`, inclua o UMAP; o código deve funcionar mesmo sem ele.)
+2. Calcule, para cada projeção, a **confiança** (`trustworthiness`) e a **continuidade** (confiança com os papéis trocados) com k = 10, e a acurácia de um KNN nas coordenadas 2D.
+3. Meça a **estabilidade do t-SNE**: repita com 5 sementes e calcule o desvio padrão da confiança.
+4. Monte uma tabela por conjunto e desenhe um painel com as projeções.
+5. Escreva uma recomendação (máximo de 8 linhas) que diga **quando** usar cada técnica e quais **armadilhas** de interpretação você destacaria para quem lê esses mapas.
+
+**Entregáveis.** Script, tabelas, painel de gráficos e recomendação.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits, load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.manifold import Isomap, LocallyLinearEmbedding, TSNE, trustworthiness
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
+
+try:
+    import umap
+except ImportError:
+    umap = None
+
+
+def projecoes(X):
+    d = {
+        "PCA": PCA(2).fit_transform(X),
+        "Isomap": Isomap(n_neighbors=10).fit_transform(X),
+        "LLE": LocallyLinearEmbedding(n_neighbors=10, random_state=0).fit_transform(X),
+        "t-SNE": TSNE(2, init="pca", random_state=0).fit_transform(X),
+    }
+    if umap is not None:
+        d["UMAP"] = umap.UMAP(random_state=0).fit_transform(X)
+    return d
+
+
+conj = {
+    "Dígitos": load_digits(return_X_y=True),
+    "Wine": (StandardScaler().fit_transform(load_wine().data), load_wine().target),
+}
+fig, axes = plt.subplots(2, 5, figsize=(14, 6))
+for r, (nome, (X, y)) in enumerate(conj.items()):
+    linhas = []
+    for c, (m, Z) in enumerate(projecoes(X).items()):
+        linhas.append(
+            {
+                "método": m,
+                "confiança": trustworthiness(X, Z, n_neighbors=10),
+                "continuidade": trustworthiness(Z, X, n_neighbors=10),
+                "KNN 2D": cross_val_score(KNeighborsClassifier(5), Z, y, cv=5).mean(),
+            }
+        )
+        axes[r, c].scatter(Z[:, 0], Z[:, 1], c=y, cmap="tab10", s=4)
+        axes[r, c].set_title(f"{nome}: {m}", fontsize=8)
+        axes[r, c].axis("off")
+    print(nome)
+    print(pd.DataFrame(linhas).round(3).to_string(index=False))
+    conf = [
+        trustworthiness(
+            X, TSNE(2, init="random", random_state=s).fit_transform(X), n_neighbors=10
+        )
+        for s in range(5)
+    ]
+    print(
+        f"Estabilidade do t-SNE (5 sementes): confiança média = {np.mean(conf):.3f}, desvio = {np.std(conf):.4f}\n"
+    )
+plt.tight_layout()
+plt.show()
+```
+@@RUBRICA
+- Quatro ou mais técnicas comparadas nos dois conjuntos.
+- Confiança, continuidade e acurácia KNN calculadas e comparadas.
+- Estabilidade do t-SNE avaliada com várias sementes.
+- A recomendação diferencia usos (exploração, comunicação, pré-processamento) e destaca armadilhas (tamanho e distância entre grupos no t-SNE, ausência de transform, parâmetros).
+- O código funciona sem o UMAP.
+@@NOTE No Wine, que é mais simples, o PCA já separa bem as classes e preserva bem a estrutura global. Nos dígitos, as técnicas não lineares (t-SNE, Isomap) revelam melhor os grupos. A confiança do t-SNE varia muito pouco entre sementes, mas a *posição* dos grupos no mapa muda, por isso as distâncias globais não devem ser interpretadas.
+@@ALEM
+- **UCI:** Pen-Based Recognition of Handwritten Digits e Optical Recognition of Handwritten Digits (versão completa, 5.620 imagens).
+- **Kaggle:** Fashion-MNIST e MNIST (Digit Recognizer).

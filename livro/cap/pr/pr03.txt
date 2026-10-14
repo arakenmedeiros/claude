@@ -10,12 +10,14 @@ from sklearn.cluster import KMeans
 
 X, _ = make_blobs(300, centers=3, cluster_std=1.0, random_state=7)
 rng = np.random.default_rng(0)
-C = X[rng.choice(len(X), 3, replace=False)]          # centros iniciais
+C = X[rng.choice(len(X), 3, replace=False)]  # centros iniciais
 
 for _ in range(20):
-    D = ((X[:, None, :] - C[None, :, :]) ** 2).sum(axis=2)   # distâncias ao quadrado
-    rot = D.argmin(axis=1)                                   # atribuição
-    C = np.array([X[rot == k].mean(axis=0) if np.any(rot == k) else C[k] for k in range(3)])  # atualização
+    D = ((X[:, None, :] - C[None, :, :]) ** 2).sum(axis=2)  # distâncias ao quadrado
+    rot = D.argmin(axis=1)  # atribuição
+    C = np.array(
+        [X[rot == k].mean(axis=0) if np.any(rot == k) else C[k] for k in range(3)]
+    )  # atualização
 
 inercia = ((X - C[rot]) ** 2).sum()
 sk = KMeans(3, init="random", n_init=1, random_state=0).fit(X)
@@ -53,10 +55,14 @@ from sklearn.cluster import KMeans
 X, _ = make_blobs(1000, centers=8, random_state=1)
 res = {}
 for init in ["random", "k-means++"]:
-    res[init] = np.array([KMeans(8, init=init, n_init=1, random_state=s).fit(X).inertia_ for s in range(100)])
+    res[init] = np.array(
+        [KMeans(8, init=init, n_init=1, random_state=s).fit(X).inertia_ for s in range(100)]
+    )
 melhor = min(r.min() for r in res.values())
 for init, r in res.items():
-    print(f"{init:10s} média = {r.mean():8.1f}  desvio = {r.std():7.1f}  acertou o melhor = {(r <= melhor * 1.01).mean():.0%}")
+    print(
+        f"{init:10s} média = {r.mean():8.1f}  desvio = {r.std():7.1f}  acertou o melhor = {(r <= melhor * 1.01).mean():.0%}"
+    )
 ```
 @@NOTE O k-means++ costuma ter média menor, menos variação e mais execuções boas, como previsto por Arthur e Vassilvitskii (2007).
 @@EX 4 | Mini-Batch K-means em dados grandes | intermediário
@@ -68,9 +74,13 @@ from sklearn.datasets import make_blobs
 from sklearn.cluster import KMeans, MiniBatchKMeans
 
 X, _ = make_blobs(200_000, centers=6, n_features=10, random_state=0)
-for nome, modelo in [("KMeans", KMeans(6, n_init=3, random_state=0)),
-                     ("MiniBatchKMeans", MiniBatchKMeans(6, batch_size=2048, n_init=3, random_state=0))]:
-    t0 = time.perf_counter(); modelo.fit(X); dt = time.perf_counter() - t0
+for nome, modelo in [
+    ("KMeans", KMeans(6, n_init=3, random_state=0)),
+    ("MiniBatchKMeans", MiniBatchKMeans(6, batch_size=2048, n_init=3, random_state=0)),
+]:
+    t0 = time.perf_counter()
+    modelo.fit(X)
+    dt = time.perf_counter() - t0
     print(f"{nome:16s} tempo = {dt:5.2f} s   inércia = {modelo.inertia_:,.0f}")
 ```
 @@NOTE O Mini-Batch costuma ser bem mais rápido e ter inércia apenas ligeiramente maior. Os tempos exatos dependem do seu computador.
@@ -82,7 +92,7 @@ import numpy as np
 from sklearn.datasets import load_sample_images
 from sklearn.cluster import KMeans
 
-img = load_sample_images().images[0] / 255.0          # (altura, largura, 3)
+img = load_sample_images().images[0] / 255.0  # (altura, largura, 3)
 h, w, _ = img.shape
 px = img.reshape(-1, 3)
 rng = np.random.default_rng(0)
@@ -96,6 +106,8 @@ for k in [8, 16, 32]:
 ```
 @@NOTE Mais cores significam menor erro e menos compressão. A amostragem de pixels torna o ajuste rápido sem perda visível.
 @@PROJ Segmentação RFM de uma loja | Cap03
+**Fonte dos dados.** Simulados pela função abaixo.
+
 **Contexto.** Uma loja virtual (fictícia) quer criar campanhas diferentes para tipos diferentes de clientes. Você receberá o histórico de compras e deverá produzir uma **segmentação RFM** (recência, frequência, valor) com K-means e **propor ações de marketing**.
 
 **Dados.** Gere o histórico com a função abaixo.
@@ -104,9 +116,15 @@ for k in [8, 16, 32]:
 import numpy as np
 import pandas as pd
 
+
 def gerar_compras(seed=0):
     rng = np.random.default_rng(seed)
-    perfis = [("fiel", 120, 22, 90.0), ("ocasional", 260, 5, 70.0), ("inativo", 150, 1.5, 55.0), ("vip", 60, 40, 220.0)]
+    perfis = [
+        ("fiel", 120, 22, 90.0),
+        ("ocasional", 260, 5, 70.0),
+        ("inativo", 150, 1.5, 55.0),
+        ("vip", 60, 40, 220.0),
+    ]
     linhas, cid = [], 0
     for nome, n, freq, ticket in perfis:
         for _ in range(n):
@@ -137,9 +155,15 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score, adjusted_rand_score
 
+
 def gerar_compras(seed=0):
     rng = np.random.default_rng(seed)
-    perfis = [("fiel", 120, 22, 90.0), ("ocasional", 260, 5, 70.0), ("inativo", 150, 1.5, 55.0), ("vip", 60, 40, 220.0)]
+    perfis = [
+        ("fiel", 120, 22, 90.0),
+        ("ocasional", 260, 5, 70.0),
+        ("inativo", 150, 1.5, 55.0),
+        ("vip", 60, 40, 220.0),
+    ]
     linhas, cid = [], 0
     for nome, n, freq, ticket in perfis:
         for _ in range(n):
@@ -150,10 +174,14 @@ def gerar_compras(seed=0):
                 linhas.append((cid, int(d), float(rng.gamma(4, ticket / 4)), nome))
     return pd.DataFrame(linhas, columns=["cliente", "dia", "valor", "perfil_oculto"])
 
+
 compras = gerar_compras()
-rfm = compras.groupby("cliente").agg(recencia=("dia", lambda d: 365 - d.max()),
-                                     frequencia=("dia", "size"), valor=("valor", "sum"),
-                                     perfil=("perfil_oculto", "first"))
+rfm = compras.groupby("cliente").agg(
+    recencia=("dia", lambda d: 365 - d.max()),
+    frequencia=("dia", "size"),
+    valor=("valor", "sum"),
+    perfil=("perfil_oculto", "first"),
+)
 print("Clientes:", len(rfm))
 
 Xr = rfm[["recencia", "frequencia", "valor"]].copy()
@@ -167,14 +195,20 @@ for k in range(2, 9):
 K = 4
 km = KMeans(K, n_init=10, random_state=0).fit(Xp)
 rfm["segmento"] = km.labels_
-print(rfm.groupby("segmento")[["recencia", "frequencia", "valor"]].mean().round(1).assign(n=rfm.segmento.value_counts().sort_index()))
+print(
+    rfm.groupby("segmento")[["recencia", "frequencia", "valor"]]
+    .mean()
+    .round(1)
+    .assign(n=rfm.segmento.value_counts().sort_index())
+)
 
 rng = np.random.default_rng(1)
 aris = []
 for _ in range(20):
     i1 = rng.choice(len(Xp), int(0.8 * len(Xp)), replace=False)
     i2 = rng.choice(len(Xp), int(0.8 * len(Xp)), replace=False)
-    m1 = KMeans(K, n_init=5, random_state=0).fit(Xp[i1]); m2 = KMeans(K, n_init=5, random_state=1).fit(Xp[i2])
+    m1 = KMeans(K, n_init=5, random_state=0).fit(Xp[i1])
+    m2 = KMeans(K, n_init=5, random_state=1).fit(Xp[i2])
     aris.append(adjusted_rand_score(m1.predict(Xp), m2.predict(Xp)))
 print("Estabilidade (ARI médio):", round(float(np.mean(aris)), 3))
 print("ARI contra o perfil oculto:", round(adjusted_rand_score(rfm.perfil, rfm.segmento), 3))
@@ -188,3 +222,6 @@ print(pd.crosstab(rfm.segmento, rfm.perfil))
 - Estabilidade avaliada com reamostragens.
 - Cada segmento recebe uma ação coerente (por exemplo: fidelidade para VIPs, cupom de reativação para inativos).
 @@NOTE Repare que a silhueta é ligeiramente maior para k = 3 (cerca de 0,60) do que para k = 4 (cerca de 0,59). Com k = 4, porém, o grupo dos clientes VIP se separa dos fiéis, o que tem grande valor de negócio. A escolha de k combina critérios numéricos e utilidade. Com k = 4, a estabilidade é alta (ARI médio de cerca de 0,95) e o ARI contra os perfis ocultos fica em torno de 0,82: os "ocasionais" e "inativos" se misturam em parte (33 ocasionais caem no grupo dos inativos). Discuta isso no relatório.
+@@ALEM
+- **UCI:** Online Retail (transações de uma loja virtual, excelente para RFM) e Wholesale Customers.
+- **Kaggle:** Mall Customers e Customer Personality Analysis.

@@ -5,9 +5,9 @@ rm -f pages.json
 node build.js /tmp/pass1.docx >/dev/null
 python3 $SOFF --headless --convert-to pdf --outdir /tmp/pdf1 /tmp/pass1.docx >/dev/null 2>&1
 python3 pages.py /tmp/pdf1/pass1.pdf
-node build.js /home/user/claude/livro/livro.docx
-python3 $SOFF --headless --convert-to pdf --outdir /tmp/pdf2 /home/user/claude/livro/livro.docx >/dev/null 2>&1
+node build.js /home/user/claude/livro/Aprendizado_Nao_Supervisionado.docx
+python3 $SOFF --headless --convert-to pdf --outdir /tmp/pdf2 /home/user/claude/livro/Aprendizado_Nao_Supervisionado.docx >/dev/null 2>&1
 cp pages.json pages_pass1.json
-python3 pages.py /tmp/pdf2/livro.pdf
+python3 pages.py /tmp/pdf2/Aprendizado_Nao_Supervisionado.pdf
 cmp pages.json pages_pass1.json && echo "PAGINAS ESTAVEIS"
-pdfinfo /tmp/pdf2/livro.pdf | grep Pages
+pdfinfo /tmp/pdf2/Aprendizado_Nao_Supervisionado.pdf | grep Pages

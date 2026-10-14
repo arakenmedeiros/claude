@@ -45,13 +45,17 @@ from scipy.cluster.hierarchy import linkage
 
 X = StandardScaler().fit_transform(load_iris().data)
 for h in [5, 8, 12, 20]:
-    n = AgglomerativeClustering(n_clusters=None, distance_threshold=h, linkage="ward").fit(X).n_clusters_
+    n = (
+        AgglomerativeClustering(n_clusters=None, distance_threshold=h, linkage="ward")
+        .fit(X)
+        .n_clusters_
+    )
     print(f"altura = {h:2d}  ->  {n} grupos")
 
 alturas = linkage(X, method="ward")[:, 2]
 n = len(X)
 saltos = np.diff(alturas)
-j = int(np.argmax(saltos))               # maior salto entre a fusão j e a fusão j+1
+j = int(np.argmax(saltos))  # maior salto entre a fusão j e a fusão j+1
 print("Últimos saltos entre fusões:", saltos[-5:].round(2))
 print("O maior salto sugere cortar para obter", n - (j + 1), "grupos")
 ```
@@ -63,6 +67,7 @@ Crie dois grupos densos ligados por uma "ponte" de pontos (código abaixo) e agr
 
 ```python
 import numpy as np
+
 rng = np.random.default_rng(0)
 A = rng.normal([0, 0], 0.4, (100, 2))
 B = rng.normal([6, 0], 0.4, (100, 2))
@@ -115,6 +120,8 @@ plt.show()
 ```
 @@NOTE Atributos fortemente correlacionados (como flavanoids, total_phenols e od280/od315) ficam adjacentes. O mapa mostra blocos de vinhos com perfis químicos parecidos.
 @@PROJ A árvore dos dígitos | Cap04
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits*, do repositório **UCI Machine Learning** (a parte de teste, com 1.797 imagens, vem incluída no scikit-learn).
+
 **Contexto.** Um laboratório de visão computacional quer entender **quais dígitos manuscritos se parecem mais entre si**. Você usará o conjunto `load_digits` (1.797 imagens de 8×8) e o agrupamento hierárquico para construir uma "árvore dos dígitos".
 
 **Tarefas.**
@@ -148,7 +155,9 @@ print("Grupos dos dígitos 0..9 (corte em 3):", cortes)
 
 for lig in ["ward", "average", "single"]:
     rot = AgglomerativeClustering(10, linkage=lig).fit_predict(X)
-    print(f"{lig:8s} ARI = {adjusted_rand_score(y, rot):.3f}   NMI = {normalized_mutual_info_score(y, rot):.3f}")
+    print(
+        f"{lig:8s} ARI = {adjusted_rand_score(y, rot):.3f}   NMI = {normalized_mutual_info_score(y, rot):.3f}"
+    )
 
 rot = AgglomerativeClustering(10, linkage="ward").fit_predict(X)
 tab = pd.crosstab(rot, y, rownames=["grupo"], colnames=["dígito"])
@@ -167,3 +176,6 @@ print("Maior e segunda maior classe em cada grupo (classe1, classe2, nº da 2ª)
 - Matriz de contingência analisada, com os dígitos mais confundidos apontados.
 - Parágrafo final relaciona a árvore das médias às confusões do agrupamento.
 @@NOTE Ward tem o melhor ARI (cerca de 0,79); a ligação média, cerca de 0,51; e a simples, zero (efeito corrente). Na matriz de contingência, o grupo 1 mistura 169 dígitos "3" com 145 dígitos "9", e o dígito "1" se divide entre vários grupos (inclusive com o "8" e o "9"). Na árvore das imagens médias com corte em 3, o "0" fica isolado, e "4" e "6" formam outro grupo. Discuta por que imagens médias e imagens individuais contam histórias diferentes.
+@@ALEM
+- **UCI:** Seeds, Glass Identification e Wine Quality.
+- **Kaggle:** Spotify Tracks Dataset (agrupar gêneros ou artistas por características de áudio).

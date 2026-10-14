@@ -1,0 +1,338 @@
+@@EX 1 | Regras estatísticas simples em uma medida real | básico
+No **Breast Cancer Wisconsin** (UCI, via scikit-learn), monte um conjunto em que os casos **malignos** são "anomalias": use todos os 357 benignos e uma amostra de 18 malignos (semente fixa). Na medida `mean area`, aplique três regras: |z| > 3, z-score modificado (MAD) > 3,5 e a regra do IQR (1,5 × IQR). Para cada regra, mostre quantos pontos foram marcados e quantos eram malignos.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+
+d = load_breast_cancer()
+rng = np.random.default_rng(0)
+benigno = np.where(d.target == 1)[0]
+maligno = rng.choice(np.where(d.target == 0)[0], 18, replace=False)
+idx = np.r_[benigno, maligno]
+x = d.data[idx, list(d.feature_names).index("mean area")]
+anom = np.r_[np.zeros(len(benigno)), np.ones(len(maligno))]
+
+z = (x - x.mean()) / x.std()
+mad = np.median(np.abs(x - np.median(x)))
+zmod = 0.6745 * (x - np.median(x)) / mad
+q1, q3 = np.percentile(x, [25, 75])
+iqr = q3 - q1
+regras = {
+    "|z| > 3": np.abs(z) > 3,
+    "MAD > 3,5": np.abs(zmod) > 3.5,
+    "IQR 1,5": (x < q1 - 1.5 * iqr) | (x > q3 + 1.5 * iqr),
+}
+for nome, m in regras.items():
+    print(
+        f"{nome:10s} marcados = {m.sum():3d}   malignos entre os marcados = {int(anom[m].sum()):2d} de {len(maligno)}"
+    )
+```
+@@NOTE As regras marcam poucos pontos e quase todos são malignos (alta precisão), mas deixam passar a maioria dos malignos (baixa revocação), pois uma única medida não basta. Por isso se usam métodos multivariados.
+@@EX 2 | Isolation Forest | básico
+Com o mesmo conjunto (357 benignos + 18 malignos), padronize os 30 atributos e aplique `IsolationForest(n_estimators=300, random_state=0)`. Calcule o escore de anomalia (`-score_samples`), o AUC-ROC e o AUPRC (`average_precision_score`). Compare o AUPRC com a linha de base (proporção de malignos).
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import IsolationForest
+from sklearn.metrics import roc_auc_score, average_precision_score
+
+d = load_breast_cancer()
+rng = np.random.default_rng(0)
+idx = np.r_[
+    np.where(d.target == 1)[0], rng.choice(np.where(d.target == 0)[0], 18, replace=False)
+]
+X = StandardScaler().fit_transform(d.data[idx])
+y = (d.target[idx] == 0).astype(int)
+
+escore = -IsolationForest(n_estimators=300, random_state=0).fit(X).score_samples(X)
+print("AUC-ROC:", round(roc_auc_score(y, escore), 3))
+print(
+    "AUPRC  :",
+    round(average_precision_score(y, escore), 3),
+    "| linha de base:",
+    round(y.mean(), 3),
+)
+```
+@@NOTE O AUC-ROC é alto (acima de 0,9). O AUPRC é bem menor, mas muito acima da linha de base (cerca de 0,05), o que mostra que o detector concentra anomalias no topo do ranking. Em dados muito desbalanceados, o AUPRC é a medida mais informativa.
+@@EX 3 | LOF e a escolha de n_neighbors | intermediário
+Com os mesmos dados padronizados, aplique `LocalOutlierFactor` para n_neighbors = 5, 10, 20 e 50. Calcule o AUPRC de cada um.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.metrics import average_precision_score
+
+d = load_breast_cancer()
+rng = np.random.default_rng(0)
+idx = np.r_[
+    np.where(d.target == 1)[0], rng.choice(np.where(d.target == 0)[0], 18, replace=False)
+]
+X = StandardScaler().fit_transform(d.data[idx])
+y = (d.target[idx] == 0).astype(int)
+
+for k in [5, 10, 20, 50]:
+    escore = -LocalOutlierFactor(n_neighbors=k).fit(X).negative_outlier_factor_
+    print(f"n_neighbors = {k:2d}  AUPRC = {average_precision_score(y, escore):.3f}")
+```
+@@NOTE O LOF é sensível a n_neighbors. Valores muito baixos tornam o escore ruidoso; o melhor valor depende dos dados e deve ser escolhido com cuidado e, se possível, com validação.
+@@EX 4 | One-Class SVM treinado só com o normal | intermediário
+Divida os 357 benignos em treino (70%) e teste (30%) e acrescente os 18 malignos ao teste. Padronize com o treino. Treine `OneClassSVM(gamma=0.002)` **só com os benignos de treino** para nu = 0,01; 0,05; 0,1 e 0,3. No teste, calcule precisão e revocação para detectar os malignos. (Depois, repita com `gamma="scale"` e compare.)
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import OneClassSVM
+from sklearn.metrics import precision_score, recall_score
+
+d = load_breast_cancer()
+rng = np.random.default_rng(0)
+ben = d.data[d.target == 1]
+mal = d.data[d.target == 0][rng.choice(212, 18, replace=False)]
+ben_tr, ben_te = train_test_split(ben, test_size=0.3, random_state=0)
+esc = StandardScaler().fit(ben_tr)
+Xte = esc.transform(np.vstack([ben_te, mal]))
+yte = np.r_[np.zeros(len(ben_te)), np.ones(len(mal))]
+
+for gamma in [0.002, "scale"]:
+    for nu in [0.01, 0.05, 0.1, 0.3]:
+        m = OneClassSVM(gamma=gamma, nu=nu).fit(esc.transform(ben_tr))
+        pred = (m.predict(Xte) == -1).astype(int)
+        print(
+            f"gamma = {str(gamma):6s} nu = {nu:4.2f}  precisão = {precision_score(yte, pred):.2f}  revocação = {recall_score(yte, pred):.2f}  alertas = {pred.sum()}"
+        )
+```
+@@NOTE Com gamma = 0,002, aumentar nu eleva a revocação (de 0,83 para 1,0), mas a precisão cai de 0,94 para 0,38: é o compromisso do limiar. Com `gamma="scale"` (cerca de 0,033 para 30 atributos), o kernel é estreito demais: o modelo marca cerca de 10% dos benignos como anômalos qualquer que seja nu (precisão de 0,47). Os hiperparâmetros do One-Class SVM, sobretudo gamma, importam muito.
+@@EX 5 | Cinco detectores nos dígitos | avançado
+Use os **dígitos** (UCI, via scikit-learn): considere "normais" todos os dígitos de 0 a 8 e "anomalias" 30 imagens do dígito 9. Reduza a 15 componentes com PCA (ajustado nos normais de treino). Compare `IsolationForest`, `LocalOutlierFactor(novelty=True)`, `OneClassSVM`, `EllipticEnvelope` e o **erro de reconstrução do PCA** pelo AUC-ROC e pelo AUPRC no teste.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA
+from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.svm import OneClassSVM
+from sklearn.covariance import EllipticEnvelope
+from sklearn.metrics import roc_auc_score, average_precision_score
+
+X, y = load_digits(return_X_y=True)
+rng = np.random.default_rng(0)
+normais = X[y != 9]
+nove = X[y == 9][rng.choice((y == 9).sum(), 30, replace=False)]
+tr, te = train_test_split(normais, test_size=0.3, random_state=0)
+Xte = np.vstack([te, nove])
+yte = np.r_[np.zeros(len(te)), np.ones(len(nove))]
+
+pca = PCA(15, random_state=0).fit(tr)
+Ztr, Zte = pca.transform(tr), pca.transform(Xte)
+
+escores = {}
+escores["Isolation Forest"] = (
+    -IsolationForest(n_estimators=300, random_state=0).fit(Ztr).score_samples(Zte)
+)
+escores["LOF"] = -LocalOutlierFactor(n_neighbors=20, novelty=True).fit(Ztr).score_samples(Zte)
+escores["One-Class SVM (gamma=scale)"] = (
+    -OneClassSVM(gamma="scale", nu=0.05).fit(Ztr).score_samples(Zte)
+)
+escores["One-Class SVM (gamma=0,005)"] = (
+    -OneClassSVM(gamma=0.005, nu=0.05).fit(Ztr).score_samples(Zte)
+)
+escores["Elíptico"] = -EllipticEnvelope(random_state=0).fit(Ztr).score_samples(Zte)
+rec = pca.inverse_transform(Zte)
+escores["Erro de reconstrução"] = ((Xte - rec) ** 2).sum(axis=1)
+
+linhas = [
+    {"detector": n, "AUC-ROC": roc_auc_score(yte, e), "AUPRC": average_precision_score(yte, e)}
+    for n, e in escores.items()
+]
+print(pd.DataFrame(linhas).round(3).to_string(index=False))
+print("Linha de base AUPRC:", round(yte.mean(), 3))
+```
+@@NOTE Os desempenhos variam muito (todos os valores abaixo são aproximados). O One-Class SVM com gamma = 0,005 e o LOF vão muito bem (AUC-ROC de 0,95 e 0,88). O mesmo One-Class SVM com `gamma="scale"` fica abaixo do acaso (AUC-ROC em torno de 0,44), e o Isolation Forest e o detector elíptico têm resultados fracos (0,70 e 0,62). Moral: sem ajustar hiperparâmetros e comparar vários detectores com AUPRC, é fácil tirar conclusões erradas. O dígito 9 se parece com 4, 7 e 8, o que o torna uma anomalia "difícil".
+@@PROJ Detecção de fraude em transações de cartão | Cap11
+**Contexto.** Um banco (fictício) quer ser alertado sobre transações suspeitas. A equipe de análise só consegue investigar **no máximo 50 alertas a cada 10.000 transações**. Quase não há fraudes rotuladas, por isso você usará **aprendizado não supervisionado**: os rótulos serão usados apenas para avaliar.
+
+**Fonte dos dados.** Transações **simuladas** pela função abaixo, com 1% de fraudes. (Para praticar com dados reais, veja o quadro "Para ir além".)
+
+```python
+import numpy as np
+import pandas as pd
+
+
+def gerar_transacoes(n=40000, taxa_fraude=0.01, seed=0):
+    rng = np.random.default_rng(seed)
+    fraude = rng.random(n) < taxa_fraude
+    valor = np.where(fraude, np.exp(rng.normal(5.8, 0.9, n)), np.exp(rng.normal(3.9, 0.8, n)))
+    hora = np.where(
+        fraude,
+        rng.choice([0, 1, 2, 3, 4, 23], n),
+        rng.choice(24, n, p=np.r_[np.full(6, 0.01), np.full(18, 0.94 / 18)]),
+    )
+    distancia = np.where(fraude, rng.gamma(3, 120, n), rng.gamma(2, 6, n))
+    n24h = np.where(fraude, rng.poisson(6, n), rng.poisson(1.5, n))
+    minutos = np.where(fraude, rng.exponential(15, n), rng.exponential(400, n))
+    exterior = np.where(fraude, rng.random(n) < 0.35, rng.random(n) < 0.03).astype(int)
+    df = pd.DataFrame(
+        {
+            "valor": valor,
+            "hora": hora,
+            "distancia_km": distancia,
+            "n_24h": n24h,
+            "min_desde_ultima": minutos,
+            "exterior": exterior,
+        }
+    )
+    return df, fraude.astype(int)
+```
+
+**Tarefas.**
+1. Aplique `log1p` às variáveis assimétricas (valor, distância, minutos), represente a hora por seno e cosseno e padronize. Separe 50% dos dados para treino e 50% para teste (sem usar rótulos no treino).
+2. Treine `IsolationForest`, `LocalOutlierFactor(novelty=True)`, `GaussianMixture` (use o log da densidade) e `OneClassSVM` (em uma subamostra de 5.000 pontos). Calcule AUC-ROC e AUPRC no teste. **No LOF, compare n_neighbors = 30, 100 e 300 e explique a diferença** (dica: quantas fraudes há no treino?).
+3. Crie um **escore combinado** pela média dos postos (ranks) dos detectores e avalie-o. Ele supera o melhor detector isolado?
+4. Escolha o limiar pela **capacidade**: 50 alertas por 10.000 transações. No teste, quantos alertas, quantas fraudes capturadas, qual a precisão e a revocação?
+5. Para os 5 alertas de maior escore, **explique** o motivo: liste os 3 atributos com maior valor absoluto de z-score robusto (mediana/MAD).
+6. Compare com um limiar escolhido por **custo** (falso negativo custa 100 vezes um falso positivo). Qual a diferença no número de alertas?
+7. Escreva um parágrafo com riscos éticos e operacionais (viés, deriva dos dados, adversários).
+
+**Entregáveis.** Script, tabela de desempenho, análise de limiares e parágrafo.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.mixture import GaussianMixture
+from sklearn.svm import OneClassSVM
+from sklearn.metrics import roc_auc_score, average_precision_score
+
+
+def gerar_transacoes(n=40000, taxa_fraude=0.01, seed=0):
+    rng = np.random.default_rng(seed)
+    fraude = rng.random(n) < taxa_fraude
+    valor = np.where(fraude, np.exp(rng.normal(5.8, 0.9, n)), np.exp(rng.normal(3.9, 0.8, n)))
+    hora = np.where(
+        fraude,
+        rng.choice([0, 1, 2, 3, 4, 23], n),
+        rng.choice(24, n, p=np.r_[np.full(6, 0.01), np.full(18, 0.94 / 18)]),
+    )
+    distancia = np.where(fraude, rng.gamma(3, 120, n), rng.gamma(2, 6, n))
+    n24h = np.where(fraude, rng.poisson(6, n), rng.poisson(1.5, n))
+    minutos = np.where(fraude, rng.exponential(15, n), rng.exponential(400, n))
+    exterior = np.where(fraude, rng.random(n) < 0.35, rng.random(n) < 0.03).astype(int)
+    df = pd.DataFrame(
+        {
+            "valor": valor,
+            "hora": hora,
+            "distancia_km": distancia,
+            "n_24h": n24h,
+            "min_desde_ultima": minutos,
+            "exterior": exterior,
+        }
+    )
+    return df, fraude.astype(int)
+
+
+df, y = gerar_transacoes()
+F = pd.DataFrame(
+    {
+        "log_valor": np.log1p(df.valor),
+        "log_dist": np.log1p(df.distancia_km),
+        "log_min": np.log1p(df.min_desde_ultima),
+        "n_24h": df.n_24h,
+        "exterior": df.exterior,
+        "hora_sen": np.sin(2 * np.pi * df.hora / 24),
+        "hora_cos": np.cos(2 * np.pi * df.hora / 24),
+    }
+)
+Ftr, Fte, ytr, yte = train_test_split(F, y, test_size=0.5, random_state=0, stratify=y)
+esc = StandardScaler().fit(Ftr)
+Xtr, Xte = esc.transform(Ftr), esc.transform(Fte)
+print("Fraudes no teste:", int(yte.sum()), "de", len(yte))
+
+rng = np.random.default_rng(0)
+sub = Xtr[rng.choice(len(Xtr), 5000, replace=False)]
+for k in [30, 100, 300]:
+    e_k = -LocalOutlierFactor(n_neighbors=k, novelty=True).fit(Xtr).score_samples(Xte)
+    print(f"LOF n_neighbors = {k:3d}  AUPRC = {average_precision_score(yte, e_k):.3f}")
+escores = {
+    "Isolation Forest": -IsolationForest(n_estimators=200, random_state=0)
+    .fit(Xtr)
+    .score_samples(Xte),
+    "LOF (k=300)": -LocalOutlierFactor(n_neighbors=300, novelty=True)
+    .fit(Xtr)
+    .score_samples(Xte),
+    "GMM": -GaussianMixture(4, random_state=0).fit(Xtr).score_samples(Xte),
+    "One-Class SVM": -OneClassSVM(gamma=0.05, nu=0.05).fit(sub).score_samples(Xte),
+}
+escores["Combinado (ranks)"] = np.mean(
+    [pd.Series(e).rank().values for e in escores.values()], axis=0
+)
+linhas = [
+    {"detector": n, "AUC-ROC": roc_auc_score(yte, e), "AUPRC": average_precision_score(yte, e)}
+    for n, e in escores.items()
+]
+print(
+    pd.DataFrame(linhas).round(3).to_string(index=False),
+    "\nLinha de base AUPRC:",
+    round(yte.mean(), 4),
+)
+
+e = escores["Combinado (ranks)"]
+n_alertas = int(round(50 * len(yte) / 10000))
+corte = np.sort(e)[::-1][n_alertas - 1]
+alerta = e >= corte
+print(
+    f"\nCapacidade: {n_alertas} alertas | fraudes capturadas = {int(yte[alerta].sum())} | precisão = {yte[alerta].mean():.2f} | revocação = {yte[alerta].sum() / yte.sum():.2f}"
+)
+
+med = np.median(Xte, axis=0)
+mad = np.median(np.abs(Xte - med), axis=0)
+escala = np.where(
+    mad > 0, mad / 0.6745, Xte.std(axis=0)
+)  # variáveis binárias têm MAD = 0: usa o desvio padrão
+top5 = np.argsort(-e)[:5]
+for i in top5:
+    z = (Xte[i] - med) / escala
+    cols = np.argsort(-np.abs(z))[:3]
+    print(
+        "alerta",
+        i,
+        "-> motivos:",
+        [(F.columns[c], round(float(z[c]), 1)) for c in cols],
+        "| fraude real?",
+        bool(yte[i]),
+    )
+
+ordem = np.argsort(-e)
+fn_custo, fp_custo = 100, 1
+custos = [
+    fn_custo * (yte.sum() - yte[ordem[:k]].sum()) + fp_custo * (k - yte[ordem[:k]].sum())
+    for k in range(0, 3001)
+]
+k_otimo = int(np.argmin(custos))
+print(
+    f"Limiar por custo (FN = 100 × FP): {k_otimo} alertas | fraudes capturadas = {int(yte[ordem[:k_otimo]].sum())}"
+)
+```
+@@RUBRICA
+- Transformações adequadas (logaritmo, hora circular, padronização) e treino sem rótulos.
+- Quatro detectores avaliados com AUC-ROC e AUPRC, comparados com a linha de base.
+- Escore combinado construído e avaliado.
+- Limiar por capacidade e por custo, com precisão e revocação interpretadas.
+- Explicação dos alertas por atributos de maior desvio robusto.
+- Parágrafo sobre riscos: viés, deriva, adversários, impacto sobre clientes.
+@@NOTE Um achado importante: o LOF com n_neighbors = 30 falha (AUPRC de cerca de 0,015, pior que a linha de base de 1%), pois o treino contém cerca de 200 fraudes parecidas entre si, que formam um grupo denso: com 30 vizinhos, cada fraude só enxerga outras fraudes e parece normal. Com n_neighbors = 300 (maior que o grupo de fraudes), o LOF vai muito bem (AUPRC de cerca de 0,91). O escore combinado por postos atinge AUPRC de cerca de 0,98. Com a capacidade de 100 alertas no teste (50 por 10.000), são capturadas 99 das 198 fraudes (precisão de 0,99 e revocação de 0,50): a revocação fica limitada pela capacidade da equipe. O limiar por custo (FN = 100 × FP) pede cerca de 290 alertas e captura 197 das 198 fraudes. Atenção: nesta simulação, escolhi hiperparâmetros (k do LOF, gamma e nu do One-Class SVM) usando os rótulos como validação. Em produção, use uma pequena amostra rotulada ou critérios de estabilidade, e monitore a deriva.
+@@ALEM
+- **UCI:** Statlog (Shuttle), Ionosphere, Breast Cancer Wisconsin e Default of Credit Card Clients.
+- **Kaggle:** Credit Card Fraud Detection (ULB), o conjunto clássico de fraude em cartões, com cerca de 285 mil transações e 0,17% de fraudes.

@@ -34,12 +34,12 @@ function mulberry32(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; 
 // inline parser: **bold**, *italic*, `code`
 function runs(text, base = {}) {
   const out = [];
-  const re = /(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|`[^`]+`)/g;
+  const re = /(\*\*(?:[^*]|\*(?!\*)[^*]+\*)+\*\*|\*[^*\s][^*]*\*|`[^`]+`)/g;
   let last = 0, m;
   while ((m = re.exec(text)) !== null) {
     if (m.index > last) out.push(new TextRun({ text: text.slice(last, m.index), ...base }));
     const t = m[0];
-    if (t.startsWith("**")) out.push(new TextRun({ text: t.slice(2, -2), ...base, bold: true }));
+    if (t.startsWith("**")) out.push(...runs(t.slice(2, -2), { ...base, bold: true }));
     else if (t.startsWith("`")) out.push(new TextRun({ text: t.slice(1, -1), ...base, font: MONO, size: (base.size || 21) - 2, color: "B91C1C", shading: { type: ShadingType.CLEAR, fill: "F3F4F6", color: "auto" } }));
     else out.push(new TextRun({ text: t.slice(1, -1), ...base, italics: true }));
     last = m.index + t.length;
@@ -136,7 +136,7 @@ function spacer(after = 120) { return new Paragraph({ spacing: { after, line: 12
 const KW = new Set("def class for in import from as if elif else return with while lambda and or not True False None try except pass break continue yield".split(" "));
 function codeRuns(line) {
   const out = []; const re = /(#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b([A-Za-z_]+)\b|(\b\d+(?:\.\d+)?\b)/g; let last = 0, m;
-  const base = { font: MONO, size: 16 };
+  const base = { font: MONO, size: 15 };
   while ((m = re.exec(line)) !== null) {
     if (m.index > last) out.push(new TextRun({ text: line.slice(last, m.index), ...base, color: C.ink }));
     if (m[1]) out.push(new TextRun({ text: m[1], ...base, color: "6B7280", italics: true }));
@@ -151,7 +151,7 @@ function codeRuns(line) {
 }
 function codeBlock(b) {
   const nb = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
-  const kids = b.code.map((ln) => new Paragraph({ spacing: { after: 0, line: 240 }, children: b.lang === "bash" ? [new TextRun({ text: ln || " ", font: MONO, size: 16, color: C.ink })] : codeRuns(ln) }));
+  const kids = b.code.map((ln) => new Paragraph({ spacing: { after: 0, line: 240 }, children: (b.lang === "bash" || b.lang === "saída") ? [new TextRun({ text: ln || " ", font: MONO, size: 15, color: C.ink })] : codeRuns(ln) }));
   const label = b.lang ? b.lang.toUpperCase() : "CÓDIGO";
   return [new Table({ width: { size: CW, type: WidthType.DXA }, columnWidths: [CW], rows: [new TableRow({ children: [new TableCell({ width: { size: CW, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, fill: "F8FAFC", color: "auto" }, margins: { top: 100, bottom: 100, left: 200, right: 120 }, borders: { top: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, bottom: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, right: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, left: { style: BorderStyle.SINGLE, size: 24, color: C.ind } }, children: [new Paragraph({ spacing: { after: 60 }, children: [new TextRun({ text: label, bold: true, size: 14, color: C.ind, characterSpacing: 30 })] }), ...kids] })] })] }), spacer(140)];
 }
@@ -250,6 +250,60 @@ function exercises(ex) {
   return out;
 }
 
+
+// ---------------------------------------------------------------- exercícios práticos e projetos
+const PR_OUT = fs.existsSync(path.join(__dirname, "pr_out.json")) ? JSON.parse(fs.readFileSync(path.join(__dirname, "pr_out.json"), "utf8")) : {};
+function parsePr(text) {
+  const lines = text.replace(/\r/g, "").split("\n"); const items = []; const alem = []; let cur = null, mode = null;
+  for (const ln of lines) {
+    if (ln.startsWith("@@EX ") || ln.startsWith("@@PROJ ")) {
+      const kind = ln.startsWith("@@EX ") ? "EX" : "PROJ";
+      const parts = ln.slice(ln.indexOf(" ") + 1).split("|").map((x) => x.trim());
+      cur = kind === "EX" ? { kind, num: parseInt(parts[0]), title: parts[1], level: parts[2] || "", stmt: [], sol: [], rubrica: [], note: [] } : { kind, num: 0, title: parts[0], level: parts[1] || "", stmt: [], sol: [], rubrica: [], note: [] };
+      items.push(cur); mode = "stmt"; continue;
+    }
+    if (ln.startsWith("@@ALEM")) { cur = null; mode = "alem"; continue; }
+    if (ln.startsWith("@@SOL")) { mode = "sol"; continue; }
+    if (ln.startsWith("@@RUBRICA")) { mode = "rubrica"; continue; }
+    if (ln.startsWith("@@NOTE")) { mode = "note"; const rest = ln.slice(6).trim(); if (rest && cur) cur.note.push(rest); continue; }
+    if (mode === "alem") { if (ln.trim()) alem.push(ln); continue; }
+    if (cur && mode) cur[mode].push(ln);
+  }
+  return { items, alem };
+}
+function codeOf(it) { const m = it.sol.join("\n").match(/```python\n([\s\S]*?)```/); return m ? m[1].replace(/\n$/, "").split("\n") : []; }
+function saidaOf(ch, it) {
+  const key = `${ch}-${it.kind}${it.num}`; let out = PR_OUT[key]; if (out === undefined) return null;
+  let L = out.replace(/\s+$/, "").split("\n").map((l) => (l.length > 118 ? l.slice(0, 117) + "…" : l));
+  if (L.length > 48) L = L.slice(0, 48).concat(["… (saída truncada)"]);
+  return L;
+}
+function praticos(c) {
+  const pr = c.pr; if (!pr) return [];
+  const exs = pr.items.filter((x) => x.kind === "EX"); const proj = pr.items.find((x) => x.kind === "PROJ");
+  const out = [];
+  if (exs.length) {
+    out.push(heading(3, "Exercícios práticos em Python (scikit-learn)", { pageBreak: true }));
+    out.push(P("Resolva os exercícios no seu computador (ou no Google Colab). Eles usam conjuntos de dados da UCI que já vêm no scikit-learn ou dados simulados. Tente resolver **antes** de consultar a solução, no Apêndice D. As saídas apresentadas lá foram obtidas com as versões de bibliotecas listadas na Apresentação.", { run: { color: C.gry } }));
+    for (const it of exs) {
+      out.push(heading(4, `Exercício ${it.num} — ${it.title}`));
+      out.push(new Paragraph({ spacing: { after: 80 }, keepNext: true, children: [new TextRun({ text: `NÍVEL: ${it.level.toUpperCase()}`, bold: true, size: 15, color: C.ind, characterSpacing: 30 })] }));
+      out.push(...renderBlocks(parseMd(it.stmt.join("\n")).blocks));
+    }
+  }
+  if (pr.alem.length) {
+    out.push(callout({ kind: "saibamais", title: "Para ir além: bases públicas da UCI e do Kaggle", body: [...pr.alem, "", "Estes conjuntos não foram usados nem testados nos códigos do livro. Confira, nos sites, a descrição, a licença e as colunas antes de usá-los."] }));
+    out.push(spacer(140));
+  }
+  if (proj) {
+    out.push(heading(3, c.n === 13 ? "Projeto integrador final" : "Projeto integrador do capítulo", { pageBreak: true }));
+    out.push(heading(4, proj.title));
+    out.push(...renderBlocks(parseMd(proj.stmt.join("\n")).blocks));
+    out.push(P(`A solução de referência está no Apêndice E.`, { run: { color: C.gry, italics: true } }));
+  }
+  return out;
+}
+
 // ---------------------------------------------------------------- headers/footers
 function mkHeader(text) {
   return new Header({ children: [new Paragraph({ alignment: AlignmentType.LEFT, border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: C.ind, space: 4 } }, tabStops: [{ type: TabStopType.RIGHT, position: CW }], children: [new TextRun({ text: TITLE, size: 17, color: C.gry }), new TextRun({ text: "\t" + text, size: 17, color: C.ind, bold: true })] })] });
@@ -280,11 +334,12 @@ function SectionVerticalAlignCenter() { return D.VerticalAlignSection.CENTER; }
 
 // load content
 const chapters = [];
-for (let n = 1; n <= 12; n++) {
+for (let n = 1; n <= 13; n++) {
   const nn = String(n).padStart(2, "0");
   const md = parseMd(readTxt(`ch${nn}.md`));
   const ex = parseEx(readTxt(`ex${nn}.txt`), 1000 + n);
-  chapters.push({ n, ...md, ex });
+  const prf = path.join(CAP, "pr", `pr${nn}.txt`);
+  chapters.push({ n, ...md, ex, pr: fs.existsSync(prf) ? parsePr(readTxt("pr/pr" + nn + ".txt")) : null });
 }
 const PART_DESC = {
   "Parte I — Fundamentos": "Os conceitos que sustentam tudo o que vem depois: o que é aprender sem rótulos, como os dados são organizados, como medir semelhança e como preparar os dados.",
@@ -292,8 +347,9 @@ const PART_DESC = {
   "Parte III — Redução de Dimensionalidade": "Como resumir e visualizar dados com muitos atributos: métodos lineares (PCA, ICA, NMF) e o aprendizado de variedades (MDS, Isomap, t-SNE, UMAP).",
   "Parte IV — Padrões e Anomalias": "Como descobrir o que costuma aparecer junto (regras de associação) e o que foge do normal (detecção de anomalias).",
   "Parte V — Aprendizado Profundo": "Como redes neurais aprendem representações sem rótulos: autoencoders, VAEs, GANs, difusão e aprendizado auto-supervisionado e contrastivo.",
+  "Parte VI — Projeto Final": "Um estudo completo que integra agrupamento, visualização, representações, anomalias, regras de associação e rotulagem com poucos exemplos, da pergunta de negócio ao relatório.",
 };
-const PART_COL = { "Parte I": C.ind, "Parte II": C.cya, "Parte III": C.grn, "Parte IV": C.amb, "Parte V": C.red };
+const PART_COL = { "Parte I": C.ind, "Parte II": C.cya, "Parte III": C.grn, "Parte IV": C.amb, "Parte V": C.red, "Parte VI": C.vio };
 
 // TOC placeholder section is built after we know headings -> build content first into temp arrays
 const contentSections = [];
@@ -330,6 +386,7 @@ for (const c of chapters) {
   kids.push(spacer(200));
   kids.push(...renderBlocks(c.blocks));
   kids.push(...exercises(c.ex));
+  kids.push(...praticos(c));
   contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader(`Capítulo ${c.n} — ${c.meta.title.split(":")[0]}`) }, footers: { default: mkFooter() }, children: kids });
 }
 
@@ -364,6 +421,45 @@ for (const c of chapters) {
   const md = parseMd(readTxt("guia.md"));
   const kids = [heading(1, md.meta.title), ...renderBlocks(md.blocks)];
   contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Apêndice C — Guia rápido") }, footers: { default: mkFooter() }, children: kids });
+}
+
+// D: soluções dos exercícios práticos
+{
+  const kids = [heading(1, "Apêndice D — Soluções dos exercícios práticos")];
+  kids.push(P("Cada solução traz o código, a **saída obtida** na elaboração do livro e um comentário sobre o que observar. Há várias maneiras corretas de resolver um exercício: o importante é que o seu resultado seja coerente e que você consiga explicá-lo. Pequenas diferenças numéricas podem ocorrer com outras versões das bibliotecas. Os gráficos aparecem quando você executa o código."));
+  for (const c of chapters) {
+    if (!c.pr) continue;
+    const exs = c.pr.items.filter((x) => x.kind === "EX"); if (!exs.length) continue;
+    kids.push(heading(2, `Capítulo ${c.n} — ${c.meta.title.split(":")[0]}`, { pageBreak: true }));
+    for (const it of exs) {
+      kids.push(heading(3, `Exercício ${it.num} — ${it.title}`));
+      kids.push(...codeBlock({ lang: "python", code: codeOf(it) }));
+      const sd = saidaOf(c.n, it);
+      if (sd) kids.push(...codeBlock({ lang: "saída", code: sd }));
+      if (it.note.length) kids.push(callout({ kind: "exemplo", title: "O que observar", body: it.note }), spacer(120));
+    }
+  }
+  contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Apêndice D — Soluções práticas") }, footers: { default: mkFooter() }, children: kids });
+}
+// E: projetos integradores
+{
+  const kids = [heading(1, "Apêndice E — Soluções de referência dos projetos integradores")];
+  kids.push(P("Estas são **soluções de referência**: caminhos possíveis, e não os únicos. Compare com o seu trabalho, observe as decisões e discuta as diferenças. A avaliação de um projeto deve considerar também a qualidade da argumentação, e não apenas o código. Os critérios de avaliação de cada projeto aparecem antes do código."));
+  for (const c of chapters) {
+    if (!c.pr) continue;
+    const proj = c.pr.items.find((x) => x.kind === "PROJ"); if (!proj) continue;
+    kids.push(heading(2, `Capítulo ${c.n} — ${c.meta.title.split(":")[0]}`, { pageBreak: true }));
+    kids.push(heading(3, proj.title));
+    if (proj.rubrica.filter((l) => l.trim()).length) {
+      kids.push(new Paragraph({ spacing: { after: 80 }, keepNext: true, children: [new TextRun({ text: "Critérios de avaliação", bold: true, size: 22, color: C.indD })] }));
+      kids.push(...renderBlocks(parseMd(proj.rubrica.join("\n")).blocks));
+    }
+    kids.push(...codeBlock({ lang: "python", code: codeOf(proj) }));
+    const sd = saidaOf(c.n, proj);
+    if (sd) kids.push(...codeBlock({ lang: "saída", code: sd }));
+    if (proj.note.length) kids.push(callout({ kind: "exemplo", title: "Discussão dos resultados", body: proj.note }), spacer(120));
+  }
+  contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Apêndice E — Projetos") }, footers: { default: mkFooter() }, children: kids });
 }
 // Referências
 {

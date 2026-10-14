@@ -1,0 +1,213 @@
+@@EX 1 | Um autoencoder com MLPRegressor | básico
+Nos **dígitos** (UCI, via scikit-learn), escale os pixels para [0, 1] e divida em treino e teste (70/30). Treine um autoencoder com `MLPRegressor(hidden_layer_sizes=(32, 8, 32))`, usando a **própria entrada como alvo** (`fit(Xtr, Xtr)`). Compare o erro quadrático médio de reconstrução no teste com o de um PCA de 8 componentes.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.decomposition import PCA
+
+X = load_digits().data / 16.0
+Xtr, Xte = train_test_split(X, test_size=0.3, random_state=0)
+
+ae = MLPRegressor(
+    hidden_layer_sizes=(32, 8, 32), activation="relu", max_iter=1000, random_state=0
+).fit(Xtr, Xtr)
+mse_ae = np.mean((ae.predict(Xte) - Xte) ** 2)
+
+pca = PCA(8, random_state=0).fit(Xtr)
+mse_pca = np.mean((pca.inverse_transform(pca.transform(Xte)) - Xte) ** 2)
+print(f"MSE do autoencoder (código de 8 dimensões): {mse_ae:.4f}")
+print(f"MSE do PCA com 8 componentes              : {mse_pca:.4f}")
+```
+@@NOTE Aqui o PCA com 8 componentes teve erro menor (cerca de 0,025) que o autoencoder (cerca de 0,036). O autoencoder não linear pode ser melhor ou pior que o PCA, dependendo da arquitetura, do tempo de treino e da semente. Em dados pequenos como esse, o PCA é uma linha de base muito forte.
+@@EX 2 | Abrindo o autoencoder: extraindo o código | intermediário
+O `MLPRegressor` não tem um método "encoder", mas guarda os pesos em `coefs_` e `intercepts_`. Calcule manualmente as ativações das duas primeiras camadas (ReLU) para obter o **código de 8 dimensões** do teste. Depois passe esse código pela última parte da rede e verifique se o resultado é igual a `predict` (`np.allclose`).
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+
+X = load_digits().data / 16.0
+Xtr, Xte = train_test_split(X, test_size=0.3, random_state=0)
+ae = MLPRegressor(hidden_layer_sizes=(32, 8, 32), max_iter=1000, random_state=0).fit(Xtr, Xtr)
+
+relu = lambda a: np.maximum(a, 0)
+W, b = ae.coefs_, ae.intercepts_
+h1 = relu(Xte @ W[0] + b[0])  # 64 -> 32
+codigo = relu(h1 @ W[1] + b[1])  # 32 -> 8  (o "código")
+h3 = relu(codigo @ W[2] + b[2])  # 8 -> 32
+saida = h3 @ W[3] + b[3]  # 32 -> 64 (saída linear no MLPRegressor)
+
+print("Formato do código:", codigo.shape)
+print("Reconstrução manual igual ao predict?", np.allclose(saida, ae.predict(Xte)))
+print("Fração de neurônios do código inativos (zero):", round(float((codigo == 0).mean()), 2))
+```
+@@NOTE Os resultados coincidem, o que confirma que a camada de 8 neurônios é o "gargalo" (código). A ReLU deixa vários neurônios do código em zero, o que se comporta como uma representação esparsa.
+@@EX 3 | Autoencoder de remoção de ruído | intermediário
+Adicione ruído gaussiano (desvio 0,3, com valores cortados em [0, 1]) às imagens. Treine `MLPRegressor(hidden_layer_sizes=(64, 16, 64))` com as imagens **ruidosas** de treino como entrada e as **limpas** como alvo. No teste, compare o MSE (contra a imagem limpa) da imagem ruidosa, da reconstrução do autoencoder e da reconstrução com PCA de 15 componentes.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.decomposition import PCA
+
+X = load_digits().data / 16.0
+Xtr, Xte = train_test_split(X, test_size=0.3, random_state=0)
+rng = np.random.default_rng(0)
+ruido = lambda A: np.clip(A + rng.normal(0, 0.3, A.shape), 0, 1)
+Xtr_r, Xte_r = ruido(Xtr), ruido(Xte)
+
+dae = MLPRegressor(hidden_layer_sizes=(64, 16, 64), max_iter=1500, random_state=0).fit(
+    Xtr_r, Xtr
+)
+pca = PCA(15, random_state=0).fit(Xtr)
+mse = lambda A: np.mean((A - Xte) ** 2)
+print("MSE da imagem ruidosa      :", round(mse(Xte_r), 4))
+print("MSE após autoencoder       :", round(mse(dae.predict(Xte_r)), 4))
+print(
+    "MSE após PCA (15 comp.)    :", round(mse(pca.inverse_transform(pca.transform(Xte_r))), 4)
+)
+```
+@@NOTE Os dois reduzem o erro da imagem ruidosa (de cerca de 0,052 para cerca de 0,032 com o autoencoder e cerca de 0,028 com o PCA). Em dados simples e pequenos, o PCA fica ligeiramente à frente. A vantagem dos autoencoders cresce com dados maiores e estruturas não lineares.
+@@EX 4 | Usando a RBM como extratora de atributos | intermediário
+A `BernoulliRBM` (máquina de Boltzmann restrita) aprende atributos sem rótulos. Num `Pipeline`, use `BernoulliRBM(n_components=100, learning_rate=0.05, n_iter=20, random_state=0)` seguida de `LogisticRegression` e compare, no teste, a acurácia com a de uma regressão logística diretamente nos pixels.
+@@SOL
+```python
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import BernoulliRBM
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+
+X = load_digits().data / 16.0
+y = load_digits().target
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+base = LogisticRegression(max_iter=3000).fit(Xtr, ytr)
+rbm = Pipeline(
+    [
+        ("rbm", BernoulliRBM(n_components=100, learning_rate=0.05, n_iter=20, random_state=0)),
+        ("log", LogisticRegression(max_iter=3000)),
+    ]
+).fit(Xtr, ytr)
+print("Acurácia (pixels)      :", round(base.score(Xte, yte), 3))
+print("Acurácia (RBM + logist.):", round(rbm.score(Xte, yte), 3))
+```
+@@NOTE A RBM aprende os atributos **sem usar os rótulos**; os rótulos entram só no classificador final. Aqui, a regressão logística nos pixels (cerca de 0,97) foi melhor que a combinação com a RBM (cerca de 0,88). Com mais ajuste (componentes, taxa de aprendizado, iterações) a RBM pode melhorar, mas é uma boa lição: atributos aprendidos sem rótulos não garantem vantagem sobre a linha de base.
+@@EX 5 | Anomalias pelo erro de reconstrução | avançado
+Treine o autoencoder `(32, 8, 32)` apenas com dígitos de 0 a 8 (treino). No teste, junte 30 imagens do dígito 9 aos normais. Use o erro de reconstrução por imagem como escore e calcule AUC-ROC e AUPRC. Compare com o erro de reconstrução de um PCA de 8 componentes.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.decomposition import PCA
+from sklearn.metrics import roc_auc_score, average_precision_score
+
+X, y = load_digits(return_X_y=True)
+X = X / 16.0
+rng = np.random.default_rng(0)
+normais = X[y != 9]
+nove = X[y == 9][rng.choice((y == 9).sum(), 30, replace=False)]
+tr, te = train_test_split(normais, test_size=0.3, random_state=0)
+Xte = np.vstack([te, nove])
+yte = np.r_[np.zeros(len(te)), np.ones(len(nove))]
+
+ae = MLPRegressor(hidden_layer_sizes=(32, 8, 32), max_iter=1500, random_state=0).fit(tr, tr)
+pca = PCA(8, random_state=0).fit(tr)
+esc = {
+    "Autoencoder": ((ae.predict(Xte) - Xte) ** 2).sum(axis=1),
+    "PCA (8 comp.)": ((pca.inverse_transform(pca.transform(Xte)) - Xte) ** 2).sum(axis=1),
+}
+for nome, e in esc.items():
+    print(
+        f"{nome:14s} AUC-ROC = {roc_auc_score(yte, e):.3f}   AUPRC = {average_precision_score(yte, e):.3f}"
+    )
+print("Linha de base AUPRC:", round(yte.mean(), 3))
+```
+@@NOTE O 9 é uma anomalia difícil: se parece com 4, 7 e 8, que o autoencoder aprendeu a reconstruir. O desempenho é modesto para os dois métodos: o PCA (AUC-ROC de cerca de 0,85) ficou à frente do autoencoder (cerca de 0,79). Quanto mais "diferente" é a anomalia, mais fácil fica detectá-la pelo erro de reconstrução.
+@@PROJ Que representação ajuda mais a agrupar? | Cap12
+**Contexto.** Sua equipe quer saber se vale a pena trocar a representação dos dados (pixels) por uma representação aprendida antes de agrupar. Você comparará quatro representações dos dígitos manuscritos: **pixels**, **PCA**, **código de um autoencoder** e **atributos de uma RBM**.
+
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits* (**UCI Machine Learning**), via `load_digits`.
+
+**Tarefas.**
+1. Escale os pixels para [0, 1] e divida em treino e teste (70/30, estratificado). Ajuste **todas** as representações no treino.
+2. Gere quatro representações: (a) pixels, (b) PCA com 16 componentes, (c) código de 16 dimensões de um autoencoder `(64, 16, 64)` (extraia o código com `coefs_` e `intercepts_`, como no Exercício 2) e (d) 64 atributos de uma `BernoulliRBM`.
+3. Em cada representação, padronize e agrupe o **teste** com `KMeans(10)` (modelo ajustado no treino e aplicado ao teste). Calcule ARI, NMI e a homogeneidade.
+4. Avalie também a **qualidade supervisionada** da representação: acurácia de uma regressão logística treinada no treino e avaliada no teste.
+5. Monte uma tabela e escreva uma discussão (até 10 linhas): a representação aprendida compensa? Em que condições você esperaria um resultado diferente (mais dados, imagens maiores, outra arquitetura)?
+
+**Entregáveis.** Script, tabela e discussão.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.neural_network import MLPRegressor, BernoulliRBM
+from sklearn.cluster import KMeans
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score, homogeneity_score
+
+X, y = load_digits(return_X_y=True)
+X = X / 16.0
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+relu = lambda a: np.maximum(a, 0)
+ae = MLPRegressor(hidden_layer_sizes=(64, 16, 64), max_iter=1500, random_state=0).fit(Xtr, Xtr)
+
+
+def codigo(A):
+    W, b = ae.coefs_, ae.intercepts_
+    return relu(relu(A @ W[0] + b[0]) @ W[1] + b[1])
+
+
+pca = PCA(16, random_state=0).fit(Xtr)
+rbm = BernoulliRBM(n_components=64, learning_rate=0.05, n_iter=30, random_state=0).fit(Xtr)
+
+reps = {
+    "Pixels": (lambda A: A),
+    "PCA (16)": pca.transform,
+    "Autoencoder (16)": codigo,
+    "RBM (64)": rbm.transform,
+}
+linhas = []
+for nome, f in reps.items():
+    Ztr, Zte = f(Xtr), f(Xte)
+    esc = StandardScaler().fit(Ztr)
+    Ztr, Zte = esc.transform(Ztr), esc.transform(Zte)
+    km = KMeans(10, n_init=10, random_state=0).fit(Ztr)
+    r = km.predict(Zte)
+    acc = LogisticRegression(max_iter=3000).fit(Ztr, ytr).score(Zte, yte)
+    linhas.append(
+        {
+            "representação": nome,
+            "dim": Ztr.shape[1],
+            "ARI": adjusted_rand_score(yte, r),
+            "NMI": normalized_mutual_info_score(yte, r),
+            "homog.": homogeneity_score(yte, r),
+            "acurácia (logist.)": acc,
+        }
+    )
+print(pd.DataFrame(linhas).round(3).to_string(index=False))
+```
+@@RUBRICA
+- Todas as representações foram ajustadas no treino e aplicadas ao teste (sem vazamento).
+- O código do autoencoder foi extraído corretamente da rede.
+- Agrupamento e avaliação supervisionada comparados em uma tabela.
+- A discussão relaciona o resultado ao tamanho do problema e a alternativas (outras arquiteturas, mais dados, PyTorch).
+- A discussão evita concluir que "profundo é sempre melhor".
+@@NOTE Neste teste, o PCA com 16 componentes foi a melhor representação para agrupar (ARI de cerca de 0,64, contra 0,49 dos pixels, 0,53 do autoencoder e 0,57 da RBM). Para classificar com regressão logística, os próprios pixels foram os melhores (acurácia de cerca de 0,97). Ou seja: a representação aprendida não é automaticamente melhor. Cada uma tem custo de treino, hiperparâmetros e variabilidade entre sementes. A lição do capítulo se confirma: **compare sempre com uma linha de base simples**. Para imagens maiores e coloridas, redes convolucionais e o aprendizado auto-supervisionado costumam fazer grande diferença.
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits (versão completa) e Pen-Based Recognition of Handwritten Digits.
+- **Kaggle:** Fashion-MNIST e MNIST (Digit Recognizer). Com imagens maiores, vale usar PyTorch ou TensorFlow.

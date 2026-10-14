@@ -20,7 +20,7 @@ def f7_tendencia():
     rng=np.random.default_rng(0); U=rng.random((300,2)); C,_=make_blobs(300,centers=4,cluster_std=0.6,random_state=2)
     def hop(X,seed=42):
         r=np.random.default_rng(seed); n,d=X.shape; m=30; nn=NearestNeighbors(n_neighbors=2).fit(X); idx=r.choice(n,m,replace=False)
-        w=nn.kneighbors(X[idx],2)[0][:,1]; Uu=r.uniform(X.min(0),X.max(0),(m,d)); u=nn.kneighbors(Uu,1)[0][:,0]; return u.sum()/(u.sum()+w.sum())
+        w=nn.kneighbors(X[idx],2)[0][:,1]; Uu=r.uniform(X.min(0),X.max(0),(m,d)); u=nn.kneighbors(Uu,1)[0][:,0]; return (u**d).sum()/((u**d).sum()+(w**d).sum())
     fig,ax=plt.subplots(1,2,figsize=(8,3.5))
     pts(ax[0],U,GRY,16); ax[0].set_title(f"Uniforme: Hopkins ≈ {hop(U):.2f}\\n(sem grupos)".replace("\\n","\n")); clean(ax[0],True)
     pts(ax[1],C,[CL[i] for i in KMeans(4,n_init=5,random_state=0).fit_predict(C)],16); ax[1].set_title(f"Agrupado: Hopkins ≈ {hop(C):.2f}\n(forte tendência)"); clean(ax[1],True)

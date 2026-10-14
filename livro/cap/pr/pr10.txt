@@ -1,0 +1,376 @@
+@@EX 1 | Suporte, confiança e lift "na unha" | básico
+Use as dez compras do Capítulo 10 (lista abaixo). Com `pandas`, calcule suporte, confiança e lift da regra **{pão} → {manteiga}** e confira os valores com `mlxtend` (`apriori` + `association_rules`).
+
+```python
+compras = [
+    ["pão", "leite"],
+    ["pão", "manteiga", "leite"],
+    ["pão", "manteiga"],
+    ["leite", "café"],
+    ["pão", "leite", "café"],
+    ["pão", "manteiga", "café"],
+    ["leite", "manteiga"],
+    ["pão", "manteiga", "leite", "café"],
+    ["pão", "café"],
+    ["pão", "leite", "manteiga"],
+]
+```
+@@SOL
+```python
+import pandas as pd
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import apriori, association_rules
+
+compras = [
+    ["pão", "leite"],
+    ["pão", "manteiga", "leite"],
+    ["pão", "manteiga"],
+    ["leite", "café"],
+    ["pão", "leite", "café"],
+    ["pão", "manteiga", "café"],
+    ["leite", "manteiga"],
+    ["pão", "manteiga", "leite", "café"],
+    ["pão", "café"],
+    ["pão", "leite", "manteiga"],
+]
+te = TransactionEncoder()
+df = pd.DataFrame(te.fit(compras).transform(compras), columns=te.columns_)
+
+sup_a = df["pão"].mean()
+sup_b = df["manteiga"].mean()
+sup_ab = (df["pão"] & df["manteiga"]).mean()
+print(
+    f"suporte(A→B) = {sup_ab:.2f} | confiança = {sup_ab / sup_a:.3f} | lift = {sup_ab / (sup_a * sup_b):.3f}"
+)
+
+regras = association_rules(
+    apriori(df, min_support=0.3, use_colnames=True), metric="confidence", min_threshold=0.0
+)
+r = regras[
+    (regras.antecedents == frozenset({"pão"})) & (regras.consequents == frozenset({"manteiga"}))
+]
+print(r[["support", "confidence", "lift"]].round(3).to_string(index=False))
+```
+@@NOTE Os dois cálculos coincidem: suporte 0,50; confiança 0,625; lift de cerca de 1,04. O lift próximo de 1 indica associação fraca: pão e manteiga aparecem juntos quase tanto quanto se esperaria por acaso.
+@@EX 2 | Apriori ou FP-Growth? | intermediário
+Gere 20 mil cestas simuladas (código abaixo) e compare `apriori` e `fpgrowth` (suporte mínimo 0,02) quanto ao tempo e ao número de itemsets. Confirme que encontram os mesmos itemsets.
+
+```python
+import numpy as np
+import pandas as pd
+
+
+def gerar_cestas(n=20000, seed=0):
+    rng = np.random.default_rng(seed)
+    p = np.array(
+        [0.5, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.12, 0.1, 0.08, 0.06, 0.05, 0.04, 0.03, 0.02]
+    )
+    M = rng.random((n, len(p))) < p
+    M[M[:, 0], 1] |= rng.random(M[:, 0].sum()) < 0.5  # regra plantada: item0 -> item1
+    return pd.DataFrame(M, columns=[f"item{i}" for i in range(len(p))])
+```
+@@SOL
+```python
+import time
+import numpy as np
+import pandas as pd
+from mlxtend.frequent_patterns import apriori, fpgrowth
+
+
+def gerar_cestas(n=20000, seed=0):
+    rng = np.random.default_rng(seed)
+    p = np.array(
+        [0.5, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.12, 0.1, 0.08, 0.06, 0.05, 0.04, 0.03, 0.02]
+    )
+    M = rng.random((n, len(p))) < p
+    M[M[:, 0], 1] |= rng.random(M[:, 0].sum()) < 0.5
+    return pd.DataFrame(M, columns=[f"item{i}" for i in range(len(p))])
+
+
+df = gerar_cestas()
+res = {}
+for nome, f in [("apriori", apriori), ("fpgrowth", fpgrowth)]:
+    t0 = time.perf_counter()
+    r = f(df, min_support=0.02, use_colnames=True)
+    dt = time.perf_counter() - t0
+    res[nome] = set(map(frozenset, r["itemsets"]))
+    print(f"{nome:9s} tempo = {dt:5.2f} s   itemsets = {len(r)}")
+print("Mesmos itemsets?", res["apriori"] == res["fpgrowth"])
+```
+@@NOTE Os dois algoritmos devolvem exatamente os mesmos itemsets (92). Neste teste, com apenas 15 itens, o Apriori foi mais rápido que o FP-Growth. A vantagem do FP-Growth aparece com muitos itens e suporte mínimo baixo, quando o número de candidatos explode. Tempos dependem do computador e da implementação.
+@@EX 3 | Como o suporte mínimo controla a explosão de regras | intermediário
+Com as cestas do exercício anterior, varie `min_support` em 0,10; 0,05; 0,03 e 0,02 (use `fpgrowth`). Para cada valor, conte itemsets e regras (confiança mínima de 0,3).
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from mlxtend.frequent_patterns import fpgrowth, association_rules
+
+
+def gerar_cestas(n=20000, seed=0):
+    rng = np.random.default_rng(seed)
+    p = np.array(
+        [0.5, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.12, 0.1, 0.08, 0.06, 0.05, 0.04, 0.03, 0.02]
+    )
+    M = rng.random((n, len(p))) < p
+    M[M[:, 0], 1] |= rng.random(M[:, 0].sum()) < 0.5
+    return pd.DataFrame(M, columns=[f"item{i}" for i in range(len(p))])
+
+
+df = gerar_cestas()
+for s in [0.10, 0.05, 0.03, 0.02]:
+    f = fpgrowth(df, min_support=s, use_colnames=True)
+    n_regras = (
+        len(association_rules(f, metric="confidence", min_threshold=0.3)) if len(f) > 1 else 0
+    )
+    print(f"min_support = {s:.2f}  itemsets = {len(f):3d}  regras = {n_regras:4d}")
+```
+@@NOTE Quanto menor o suporte mínimo, mais itemsets e regras aparecem, em crescimento rápido. Um suporte mínimo muito baixo gera ruído; muito alto esconde padrões raros porém valiosos.
+@@EX 4 | Regras em dados reais: o conjunto Wine | avançado
+Transforme o **Wine** (UCI, via scikit-learn) em "itens": discretize cada atributo em 3 faixas (baixo, médio, alto) com `KBinsDiscretizer` (estratégia `quantile`) e acrescente a classe do vinho como item (`classe_0`, `classe_1`, `classe_2`). Minere regras com `fpgrowth` (suporte mínimo 0,1) e liste as 5 regras de maior lift cujo **consequente seja uma classe** e cuja confiança seja de pelo menos 0,9.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import KBinsDiscretizer
+from mlxtend.frequent_patterns import fpgrowth, association_rules
+
+d = load_wine()
+X = (
+    KBinsDiscretizer(n_bins=3, encode="ordinal", strategy="quantile")
+    .fit_transform(d.data)
+    .astype(int)
+)
+nomes = ["baixo", "médio", "alto"]
+itens = {}
+for j, f in enumerate(d.feature_names):
+    for b in range(3):
+        itens[f"{f[:12]}={nomes[b]}"] = X[:, j] == b
+for c in range(3):
+    itens[f"classe_{c}"] = d.target == c
+df = pd.DataFrame(itens)
+
+freq = fpgrowth(df, min_support=0.1, use_colnames=True, max_len=3)
+regras = association_rules(freq, metric="confidence", min_threshold=0.9)
+alvo = regras[
+    regras.consequents.apply(lambda s: len(s) == 1 and next(iter(s)).startswith("classe_"))
+]
+alvo = (
+    alvo[alvo.antecedents.apply(len) <= 2]
+    .sort_values(["lift", "support"], ascending=False)
+    .head(5)
+)
+for _, r in alvo.iterrows():
+    print(
+        f"{sorted(r.antecedents)} -> {sorted(r.consequents)}  sup = {r.support:.2f}  conf = {r.confidence:.2f}  lift = {r.lift:.2f}"
+    )
+```
+@@NOTE Aparecem regras como "flavanoids = baixo e hue = baixo → classe_2" com confiança alta e lift acima de 3. É uma forma interpretável de descrever o que distingue as classes, mas lembre-se: regras de associação descrevem coocorrência, não causalidade, e variam com a discretização.
+@@EX 5 | Filtrando regras e recomendando produtos | avançado
+Com as cestas do Exercício 2 (suporte mínimo 0,02), gere regras com lift de pelo menos 1,2 e confiança de pelo menos 0,3. Elimine redundâncias: descarte uma regra se existir outra com o **mesmo consequente**, antecedente **menor** (subconjunto) e confiança pelo menos igual. Escreva uma função `recomendar(itens_na_cesta, regras, n=3)` que devolva os consequentes das melhores regras aplicáveis.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from mlxtend.frequent_patterns import fpgrowth, association_rules
+
+
+def gerar_cestas(n=20000, seed=0):
+    rng = np.random.default_rng(seed)
+    p = np.array(
+        [0.5, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.12, 0.1, 0.08, 0.06, 0.05, 0.04, 0.03, 0.02]
+    )
+    M = rng.random((n, len(p))) < p
+    M[M[:, 0], 1] |= rng.random(M[:, 0].sum()) < 0.5
+    return pd.DataFrame(M, columns=[f"item{i}" for i in range(len(p))])
+
+
+df = gerar_cestas()
+f = fpgrowth(df, min_support=0.02, use_colnames=True)
+regras = association_rules(f, metric="lift", min_threshold=1.2)
+regras = regras[regras.confidence >= 0.3].reset_index(drop=True)
+print("Regras antes de remover redundâncias:", len(regras))
+
+
+def redundante(r, todas):
+    for _, o in todas.iterrows():
+        if (
+            o.consequents == r.consequents
+            and o.antecedents < r.antecedents
+            and o.confidence >= r.confidence
+        ):
+            return True
+    return False
+
+
+manter = [not redundante(r, regras) for _, r in regras.iterrows()]
+limpas = regras[manter].sort_values(["lift", "confidence"], ascending=False)
+print("Regras depois:", len(limpas))
+print(
+    limpas[["antecedents", "consequents", "support", "confidence", "lift"]]
+    .head(5)
+    .round(2)
+    .to_string(index=False)
+)
+
+
+def recomendar(cesta, regras, n=3):
+    cesta = frozenset(cesta)
+    ok = regras[
+        regras.antecedents.apply(lambda a: a <= cesta)
+        & ~regras.consequents.apply(lambda c: c <= cesta)
+    ]
+    ok = ok.sort_values(["lift", "confidence"], ascending=False)
+    saida = []
+    for c in ok.consequents:
+        for item in c:
+            if item not in saida:
+                saida.append(item)
+    return saida[:n]
+
+
+print("Recomendações para {item0}:", recomendar({"item0"}, limpas))
+```
+@@NOTE A remoção de redundâncias reduz as regras de 30 para 16. A recomendação para quem tem o item0 na cesta é o item1, o par plantado. Repare que várias regras de maior lift envolvem item0 e item1 com antecedentes maiores: a dependência plantada "contamina" combinações maiores. Por isso se preferem regras curtas e se removem as redundantes.
+@@PROJ Cesta de supermercado: encontrando regras de verdade | Cap10
+**Contexto.** O mercado (fictício) "Bom Preço" quer reorganizar prateleiras e criar combos. Você analisará o histórico de cestas e deverá separar **regras reais** de **coincidências**.
+
+**Fonte dos dados.** Cestas **simuladas** pela função abaixo, em que **regras foram plantadas de propósito**. Assim você poderá medir se o seu método as recupera. (Para praticar com dados reais, veja o quadro "Para ir além" no final do capítulo.)
+
+```python
+import numpy as np
+import pandas as pd
+
+PRODUTOS = [
+    "pão",
+    "manteiga",
+    "leite",
+    "café",
+    "açúcar",
+    "arroz",
+    "feijão",
+    "macarrão",
+    "molho",
+    "queijo",
+    "presunto",
+    "cerveja",
+    "salgadinho",
+    "fralda",
+    "refrigerante",
+    "sabão",
+    "detergente",
+    "esponja",
+]
+PLANTADAS = [
+    ("pão", "manteiga"),
+    ("café", "açúcar"),
+    ("macarrão", "molho"),
+    ("cerveja", "salgadinho"),
+    ("sabão", "detergente"),
+]
+
+
+def gerar_mercado(n=12000, seed=0):
+    rng = np.random.default_rng(seed)
+    p = rng.uniform(0.04, 0.35, len(PRODUTOS))
+    M = rng.random((n, len(PRODUTOS))) < p
+    ix = {nome: i for i, nome in enumerate(PRODUTOS)}
+    for a, b in PLANTADAS:
+        tem = M[:, ix[a]]
+        M[tem, ix[b]] |= rng.random(tem.sum()) < 0.55
+    return pd.DataFrame(M, columns=PRODUTOS)
+```
+
+**Tarefas.**
+1. Calcule o suporte de cada produto e liste os 5 mais frequentes.
+2. Minere regras com `fpgrowth` (suporte mínimo 0,02) e confiança mínima de 0,3. Quantas regras surgem?
+3. Filtre por **lift ≥ 1,5** e mantenha só regras de um item → um item. Compare com a lista de regras plantadas: calcule **precisão** (fração das regras mantidas que são plantadas, em qualquer sentido) e **revocação** (fração das plantadas recuperadas).
+4. Varie o lift mínimo (1,2; 1,5; 2,0) e mostre como precisão e revocação mudam.
+5. Proponha 3 combos de promoção a partir das melhores regras, com justificativa baseada em suporte, confiança e lift.
+6. Discuta dois cuidados: correlação ≠ causa e o risco de regras espúrias com muitos testes.
+
+**Entregáveis.** Script, tabela de precisão/revocação por limiar, 3 combos e texto de cuidados.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from mlxtend.frequent_patterns import fpgrowth, association_rules
+
+PRODUTOS = [
+    "pão",
+    "manteiga",
+    "leite",
+    "café",
+    "açúcar",
+    "arroz",
+    "feijão",
+    "macarrão",
+    "molho",
+    "queijo",
+    "presunto",
+    "cerveja",
+    "salgadinho",
+    "fralda",
+    "refrigerante",
+    "sabão",
+    "detergente",
+    "esponja",
+]
+PLANTADAS = [
+    ("pão", "manteiga"),
+    ("café", "açúcar"),
+    ("macarrão", "molho"),
+    ("cerveja", "salgadinho"),
+    ("sabão", "detergente"),
+]
+
+
+def gerar_mercado(n=12000, seed=0):
+    rng = np.random.default_rng(seed)
+    p = rng.uniform(0.04, 0.35, len(PRODUTOS))
+    M = rng.random((n, len(PRODUTOS))) < p
+    ix = {nome: i for i, nome in enumerate(PRODUTOS)}
+    for a, b in PLANTADAS:
+        tem = M[:, ix[a]]
+        M[tem, ix[b]] |= rng.random(tem.sum()) < 0.55
+    return pd.DataFrame(M, columns=PRODUTOS)
+
+
+df = gerar_mercado()
+print("Mais frequentes:", df.mean().sort_values(ascending=False).head(5).round(3).to_dict())
+
+freq = fpgrowth(df, min_support=0.02, use_colnames=True)
+todas = association_rules(freq, metric="confidence", min_threshold=0.3)
+print("Regras (confiança ≥ 0,3):", len(todas))
+
+simples = todas[(todas.antecedents.apply(len) == 1) & (todas.consequents.apply(len) == 1)]
+planta = {frozenset(p) for p in PLANTADAS}
+for lift_min in [1.2, 1.5, 2.0]:
+    r = simples[simples.lift >= lift_min]
+    pares = {frozenset(list(a) + list(c)) for a, c in zip(r.antecedents, r.consequents)}
+    acertos = pares & planta
+    prec = len(acertos) / len(pares) if pares else 0
+    rev = len(acertos) / len(planta)
+    print(
+        f"lift ≥ {lift_min}: pares distintos = {len(pares):2d}  precisão = {prec:.2f}  revocação = {rev:.2f}"
+    )
+
+melhores = simples[simples.lift >= 1.5].sort_values("lift", ascending=False)
+print(
+    melhores[["antecedents", "consequents", "support", "confidence", "lift"]]
+    .head(6)
+    .round(2)
+    .to_string(index=False)
+)
+```
+@@RUBRICA
+- Produtos mais frequentes e suporte calculados.
+- Regras filtradas por lift, mantendo apenas regras simples.
+- Precisão e revocação calculadas para vários limiares e interpretadas.
+- Três combos justificados com suporte, confiança e lift.
+- O texto discute causalidade, regras espúrias, itens muito frequentes e a necessidade de teste A/B.
+@@NOTE Neste conjunto simulado, com lift ≥ 1,2 e com lift ≥ 1,5, o método recupera as cinco regras plantadas sem nenhum par espúrio (precisão e revocação iguais a 1,0). Com lift ≥ 2,0, perde-se uma regra plantada (revocação de 0,8). Em dados reais não há gabarito, e a precisão tende a ser bem menor: o limiar de lift deve ser escolhido pelo custo de agir sobre uma regra falsa e validado com teste A/B.
+@@ALEM
+- **UCI:** Online Retail e Online Retail II (cada nota fiscal é uma cesta).
+- **Kaggle:** Market Basket Optimisation, Groceries Dataset e Instacart Market Basket Analysis.

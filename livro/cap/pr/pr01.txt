@@ -56,11 +56,18 @@ grupos = KMeans(3, n_init=10, random_state=0).fit_predict(Xp)
 
 pca = PCA(n_components=2).fit(Xp)
 Z = pca.transform(Xp)
-print("Variância explicada:", pca.explained_variance_ratio_.round(3), "| soma:", pca.explained_variance_ratio_.sum().round(3))
+print(
+    "Variância explicada:",
+    pca.explained_variance_ratio_.round(3),
+    "| soma:",
+    pca.explained_variance_ratio_.sum().round(3),
+)
 
 fig, ax = plt.subplots(1, 2, figsize=(9, 4))
-ax[0].scatter(Z[:, 0], Z[:, 1], c=grupos, cmap="viridis", s=25); ax[0].set_title("Grupos do K-means")
-ax[1].scatter(Z[:, 0], Z[:, 1], c=y, cmap="viridis", s=25);      ax[1].set_title("Classes reais")
+ax[0].scatter(Z[:, 0], Z[:, 1], c=grupos, cmap="viridis", s=25)
+ax[0].set_title("Grupos do K-means")
+ax[1].scatter(Z[:, 0], Z[:, 1], c=y, cmap="viridis", s=25)
+ax[1].set_title("Classes reais")
 plt.show()
 ```
 @@NOTE As duas componentes retêm cerca de 55% da variância. Mesmo assim, os grupos são bem visíveis e muito parecidos com as classes.
@@ -100,10 +107,14 @@ Xw = StandardScaler().fit_transform(load_wine().data)
 
 for nome, X in [("Aleatório", aleatorio), ("Wine", Xw)]:
     g = KMeans(3, n_init=10, random_state=0).fit_predict(X)
-    print(f"{nome:10s} tamanhos dos grupos: {np.bincount(g)}  silhueta: {silhouette_score(X, g):.3f}")
+    print(
+        f"{nome:10s} tamanhos dos grupos: {np.bincount(g)}  silhueta: {silhouette_score(X, g):.3f}"
+    )
 ```
 @@NOTE O K-means sempre devolve k grupos. A silhueta dos dados aleatórios é bem menor que a do Wine, o que ajuda a perceber a ausência de estrutura. Esse tema volta no Capítulo 7.
 @@PROJ Primeiro diagnóstico de um conjunto de dados | Cap01
+**Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)*, do repositório **UCI Machine Learning**, incluído no scikit-learn.
+
 **Contexto.** Uma equipe de pesquisa recebeu o conjunto de dados de câncer de mama do scikit-learn (`load_breast_cancer`): 569 exames com 30 medidas cada. Pediram a você um **primeiro diagnóstico exploratório** usando apenas aprendizado não supervisionado.
 
 **Atenção ética.** Os dados são de uso didático. Os grupos que você encontrar **não são diagnóstico médico**.
@@ -151,3 +162,6 @@ print("ARI:", round(adjusted_rand_score(y, km.labels_), 3))
 - O rótulo real só foi usado no final, para conferência.
 - O texto discute limites da análise e cuidados éticos (saúde, privacidade, viés, não substituir o diagnóstico).
 @@NOTE Com a padronização, os dois grupos reproduzem bem o rótulo real (ARI em torno de 0,65). Mesmo assim, é uma análise exploratória: não serve para decidir sobre pacientes.
+@@ALEM
+- **UCI:** Iris, Wine e Seeds (grãos de trigo, com 3 variedades).
+- **Kaggle:** Mall Customers (200 clientes de shopping, com renda e pontuação de gastos).

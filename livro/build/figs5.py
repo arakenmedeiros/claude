@@ -1,6 +1,6 @@
 from fc import *
 from matplotlib.colors import LinearSegmentedColormap
-PART={1:(IND,CYA),2:(IND,CYA),3:(CYA,GRN),4:(CYA,GRN),5:(CYA,GRN),6:(CYA,GRN),7:(CYA,GRN),8:(GRN,AMB),9:(GRN,AMB),10:(AMB,RED),11:(AMB,RED),12:(RED,VIO)}
+PART={1:(IND,CYA),2:(IND,CYA),3:(CYA,GRN),4:(CYA,GRN),5:(CYA,GRN),6:(CYA,GRN),7:(CYA,GRN),8:(GRN,AMB),9:(GRN,AMB),10:(AMB,RED),11:(AMB,RED),12:(RED,VIO),13:(VIO,PNK)}
 def banner(n):
     c1,c2=PART[n]; rng=np.random.default_rng(100+n)
     fig,ax=plt.subplots(figsize=(10,1.9)); fig.patch.set_facecolor(NAVY); ax.set_facecolor(NAVY); ax.set_xlim(0,10); ax.set_ylim(0,1.9); ax.axis("off")
@@ -43,4 +43,4 @@ def cover():
     fig.savefig(OUT+"capa.png",facecolor=NAVY,dpi=220); plt.close(fig); print("capa")
 if __name__=="__main__":
     cover()
-    for n in range(1,13): banner(n)
+    for n in range(1,14): banner(n)

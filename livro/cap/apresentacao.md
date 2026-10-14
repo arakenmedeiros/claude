@@ -9,13 +9,14 @@ Ao mesmo tempo, o livro avança. Os capítulos começam no nível básico, passa
 
 ## Como o livro está organizado
 
-O livro tem **cinco partes** e **doze capítulos**.
+O livro tem **seis partes** e **treze capítulos**.
 
 - **Parte I — Fundamentos:** o que é aprendizado não supervisionado; dados, distâncias e pré-processamento.
 - **Parte II — Agrupamento:** K-means, hierárquico, densidade (DBSCAN, OPTICS, HDBSCAN), modelos de mistura, agrupamento espectral e avaliação.
 - **Parte III — Redução de dimensionalidade:** PCA, ICA, NMF, MDS, Isomap, t-SNE e UMAP.
 - **Parte IV — Padrões e anomalias:** regras de associação e detecção de anomalias.
 - **Parte V — Aprendizado profundo:** autoencoders, VAEs, GANs, difusão e aprendizado auto-supervisionado.
+- **Parte VI — Projeto final:** um estudo completo que integra todas as técnicas em um mesmo conjunto de dados.
 
 Cada capítulo segue o mesmo roteiro:
 
@@ -23,8 +24,11 @@ Cada capítulo segue o mesmo roteiro:
 2. **Conteúdo** com analogias, figuras, exemplos e códigos em Python.
 3. **Resumo** em cartões de memorização.
 4. **30 questões de múltipla escolha** e **20 questões discursivas**.
+5. **Exercícios práticos em Python** com a biblioteca scikit-learn, em ordem crescente de dificuldade.
+6. **Projeto integrador do capítulo**, com contexto, tarefas, entregáveis e critérios de avaliação.
+7. Um quadro **"Para ir além"**, com conjuntos de dados públicos da UCI e do Kaggle para praticar.
 
-O **gabarito de todas as questões** está no Apêndice A.
+O **gabarito de todas as questões** está no Apêndice A. As **soluções dos exercícios práticos** estão no Apêndice D, e a **solução de referência dos projetos integradores**, no Apêndice E. Tente resolver sozinho antes de consultá-las.
 
 ## Como estudar com este livro
 
@@ -76,7 +80,18 @@ Todos os trechos de código em Python deste livro foram executados durante a ela
 | umap-learn | 0.5 |
 | PyTorch | 2.14 |
 
-Os exemplos usam **conjuntos de dados embutidos no scikit-learn** (como Iris, Wine e Dígitos) ou **dados sintéticos** gerados no próprio código, com sementes fixas. Assim, você não precisa baixar arquivos externos. Os dados de clientes, de pedidos e de coordenadas geográficas dos exemplos são simulados e servem apenas para fins didáticos.
+Os exemplos e projetos usam **conjuntos de dados embutidos no scikit-learn** ou **dados simulados** gerados no próprio código, com sementes fixas. Assim, você não precisa baixar arquivos externos e consegue reproduzir os resultados.
+
+Os conjuntos embutidos vêm do repositório **UCI Machine Learning**: *Iris*, *Wine*, *Breast Cancer Wisconsin (Diagnostic)* e *Optical Recognition of Handwritten Digits* (a parte de teste, com 1.797 imagens). Os dados de clientes, de transações, de cestas de compras e de coordenadas geográficos usados em alguns projetos são **simulados** e servem apenas para fins didáticos; cada projeto informa a origem dos seus dados.
+
+### Bases públicas da UCI e do Kaggle
+
+Ao final de cada capítulo, o quadro **"Para ir além"** sugere conjuntos de dados públicos do repositório **UCI Machine Learning** e do **Kaggle** para você repetir os exercícios com dados reais. Esses conjuntos **não foram usados nem testados nos códigos deste livro**: confira nos sites a descrição, a licença e as colunas antes de usá-los. Em geral, o fluxo é este:
+
+- **UCI:** baixe o arquivo no site do repositório ou use o pacote `ucimlrepo`.
+- **Kaggle:** baixe o arquivo no site (é preciso criar uma conta) ou use a API do Kaggle com um token pessoal.
+
+Depois, carregue os dados com `pandas`, inspecione-os (formato, tipos, ausentes) e aplique o roteiro do capítulo.
 
 ## Leituras recomendadas
 
