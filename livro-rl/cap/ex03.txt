@@ -1,0 +1,269 @@
+MC: A diferença essencial entre um bandit e um MDP é que, no MDP:
+a) não há recompensas.
+b) as ações alteram o estado futuro do ambiente.
+c) só existe uma ação.
+d) o agente não aprende.
+R: b | No MDP, a ação de agora influencia o estado futuro e as recompensas seguintes.
+
+MC: A propriedade de Markov afirma que:
+a) o futuro depende de todo o passado.
+b) o futuro depende do passado apenas por meio do estado presente.
+c) as ações são independentes.
+d) as recompensas são sempre positivas.
+R: b | O estado atual resume o que importa do passado.
+
+MC: Se o estado não contém uma informação importante do passado, o problema:
+a) continua sendo Markov.
+b) deixa de ser Markov e o estado deve ser enriquecido.
+c) fica sem recompensa.
+d) vira um bandit.
+R: b | A propriedade depende de como definimos o estado.
+
+MC: Por que o DQN empilha 4 imagens consecutivas dos jogos de Atari?
+a) Para economizar memória.
+b) Para que o estado inclua informações de movimento, como velocidade e direção.
+c) Para aumentar a resolução.
+d) Para eliminar a recompensa.
+R: b | Uma única imagem não mostra velocidade; várias, sim.
+
+MC: Numa cadeia de Markov, a soma de cada linha da matriz de transição é:
+a) 0.
+b) 1.
+c) igual ao número de estados.
+d) variável.
+R: b | Cada linha é uma distribuição de probabilidade sobre os próximos estados.
+
+MC: Um processo de recompensa de Markov (MRP) é:
+a) um MDP com muitas ações.
+b) uma cadeia de Markov em que cada estado paga uma recompensa.
+c) um bandit contextual.
+d) um modelo sem estados.
+R: b | Ele acrescenta recompensas à cadeia de Markov, sem ações.
+
+MC: Os cinco ingredientes de um MDP são:
+a) S, A, p, R e γ.
+b) X, y, w, b e α.
+c) Q, N, t, c e ε.
+d) π, v, q, G e H.
+R: a | Estados, ações, dinâmica, recompensas e desconto.
+
+MC: A dinâmica p(s′, r | s, a) representa:
+a) a probabilidade de a política escolher a.
+b) a probabilidade de ir a s′ e receber r, dados s e a.
+c) o valor do estado s.
+d) o fator de desconto.
+R: b | É a descrição probabilística de como o ambiente responde.
+
+MC: Um MDP "conhecido" é aquele em que:
+a) conhecemos a dinâmica p.
+b) conhecemos a política ótima.
+c) todas as recompensas são iguais.
+d) há apenas um estado.
+R: a | Com a dinâmica conhecida podemos planejar sem interagir.
+
+MC: Uma política determinística:
+a) associa a cada estado uma distribuição de ações.
+b) associa a cada estado uma única ação.
+c) escolhe sempre ao acaso.
+d) não depende do estado.
+R: b | π(s) devolve uma ação para cada estado.
+
+MC: Uma política estocástica π(a | s):
+a) dá a probabilidade de escolher a ação a no estado s.
+b) é sempre ótima.
+c) elimina a exploração.
+d) é proibida em MDPs.
+R: a | Ela é uma distribuição sobre ações para cada estado.
+
+MC: O valor v_π(s) é:
+a) o retorno esperado ao começar em s e seguir π.
+b) a recompensa imediata em s.
+c) o número de visitas a s.
+d) o retorno máximo possível.
+R: a | É o retorno esperado a partir de s sob a política π.
+
+MC: O valor q_π(s, a) é o retorno esperado ao:
+a) seguir π desde s sem escolher nada.
+b) começar em s, executar a e depois seguir π.
+c) escolher sempre a melhor ação possível.
+d) ficar parado em s.
+R: b | q avalia a ação a no estado s e depois a política.
+
+MC: A relação entre v e q é:
+a) v_π(s) = Σ_a π(a|s) q_π(s, a).
+b) v_π(s) = max_a q_π(s, a) para qualquer π.
+c) q_π(s, a) = π(a|s).
+d) v e q não se relacionam.
+R: a | O valor do estado é a média dos valores das ações, ponderada pela política.
+
+MC: A equação de Bellman expressa o valor de um estado em função:
+a) apenas da recompensa imediata.
+b) da recompensa imediata e do valor dos estados seguintes, com desconto.
+c) do número de episódios.
+d) do tamanho da tabela.
+R: b | v(s) = média de [r + γ v(s′)].
+
+MC: A relação recursiva do retorno é:
+a) G_t = R_(t+1) + γ G_(t+1).
+b) G_t = G_(t+1) − R_t.
+c) G_t = γ R_t.
+d) G_t = R_t × R_(t+1).
+R: a | O retorno é a recompensa imediata mais o retorno descontado do passo seguinte.
+
+MC: No robô de entrega, com v(alta) = 31,5 e γ = 0,9, o valor de "baixa" sob a política "baixa → recarregar" é:
+a) 28,35.
+b) 31,5.
+c) 0.
+d) 35.
+R: a | Recarregar dá recompensa 0 e leva à alta: 0,9 × 31,5 = 28,35.
+
+MC: Para o robô de entrega, a melhor política determinística (γ = 0,9) é:
+a) esperar sempre.
+b) buscar com bateria alta e recarregar com bateria baixa.
+c) recarregar sempre.
+d) buscar sempre.
+R: b | Ela obtém v = (31,5; 28,35), o maior entre as nove políticas.
+
+MC: Na forma matricial, o valor de uma política é:
+a) v = (I − γP)^(−1) r.
+b) v = P r.
+c) v = γ r.
+d) v = P + r.
+R: a | Resolve-se o sistema linear v = r + γPv.
+
+MC: Resolver o sistema linear da forma matricial não é viável para problemas enormes porque:
+a) o custo cresce rapidamente com o número de estados.
+b) não há solução.
+c) as recompensas são negativas.
+d) exige gamma maior que 1.
+R: a | A inversão ou resolução do sistema custa aproximadamente o cubo do número de estados.
+
+MC: Uma política π é melhor ou igual a π′ quando:
+a) v_π(s) ≥ v_π′(s) para todo estado s.
+b) v_π(s) ≥ v_π′(s) para algum estado s.
+c) π tem mais ações.
+d) π é estocástica.
+R: a | A comparação vale em todos os estados.
+
+MC: A equação de otimalidade de Bellman difere da de expectativa por:
+a) trocar a média sobre ações por um máximo.
+b) eliminar a recompensa.
+c) usar γ = 1.
+d) ignorar a dinâmica.
+R: a | v*(s) = max_a [ ... ].
+
+MC: Conhecendo q*, a política ótima é:
+a) escolher, em cada estado, a ação de maior q*.
+b) escolher uma ação aleatória.
+c) escolher a ação de menor q*.
+d) impossível de obter.
+R: a | π*(s) = argmax_a q*(s, a).
+
+MC: Em um MDP finito, sempre existe uma política ótima:
+a) estocástica e nunca determinística.
+b) determinística.
+c) que depende do tempo.
+d) com valor negativo.
+R: b | Existe ao menos uma política determinística ótima (Puterman, 1994).
+
+MC: Um POMDP é um MDP em que:
+a) as recompensas são desconhecidas.
+b) o agente não observa completamente o estado.
+c) só há duas ações.
+d) γ = 0.
+R: b | O agente recebe observações parciais do estado real.
+
+MC: Um conceito usado para lidar com observações parciais é manter:
+a) uma crença (distribuição sobre os estados) ou memória do passado.
+b) apenas a última recompensa.
+c) uma tabela vazia.
+d) γ igual a zero.
+R: a | Crença ou memória ajudam a inferir o estado oculto.
+
+MC: A recompensa potencial (shaping) de Ng, Harada e Russell (1999) tem a propriedade de:
+a) mudar a política ótima.
+b) preservar a política ótima.
+c) eliminar o desconto.
+d) tornar o ambiente determinístico.
+R: b | Termos da forma γΦ(s′) − Φ(s) não alteram as políticas ótimas.
+
+MC: No FrozenLake escorregadio, ao escolher uma direção, o agente a executa com probabilidade:
+a) 1.
+b) 1/3, e cada direção perpendicular com 1/3.
+c) 1/2.
+d) 0.
+R: b | O gelo escorregadio torna a transição estocástica.
+
+MC: Na prática do capítulo, o K-Means foi usado para:
+a) definir estados de clientes a partir de recência, frequência e gasto.
+b) calcular o desconto.
+c) escolher ações.
+d) gerar recompensas.
+R: a | Os grupos formam os estados da cadeia de Markov.
+
+MC: Num MDP com γ = 0, o agente maximiza:
+a) apenas a recompensa imediata.
+b) o retorno infinito sem desconto.
+c) a soma de todas as recompensas futuras igualmente.
+d) a probabilidade de transição.
+R: a | Com γ = 0 só a recompensa do próximo passo conta; o agente é totalmente míope.
+
+DISC: Explique, com um exemplo do cotidiano, a propriedade de Markov. Dê também um exemplo em que ela falha e como corrigir.
+R: No xadrez, a posição atual basta para decidir a jogada. Ela falha quando o estado omite informação, como uma foto que não mostra a velocidade do carro. Corrige-se enriquecendo o estado, por exemplo incluindo quadros anteriores.
+
+DISC: Descreva os cinco componentes de um MDP e dê um exemplo de cada para um robô aspirador.
+R: Estados: posição, sujeira, bateria. Ações: avançar, girar, voltar à base. Dinâmica: probabilidade de chegar ao novo estado após uma ação. Recompensa: +1 por sujeira, −10 ao bater. Desconto γ: peso das recompensas futuras.
+
+DISC: Qual a diferença entre uma cadeia de Markov, um MRP e um MDP?
+R: A cadeia tem estados e transições; o MRP acrescenta recompensas; o MDP acrescenta ações que influenciam as transições e as recompensas.
+
+DISC: Diferencie política determinística e estocástica. Por que políticas estocásticas podem ser úteis?
+R: A determinística mapeia cada estado a uma ação; a estocástica dá probabilidades a cada ação. Estocásticas favorecem a exploração e evitam previsibilidade em jogos contra adversários ou com informação oculta.
+
+DISC: Defina v_π e q_π e mostre como obter v_π a partir de q_π.
+R: v_π(s) é o retorno esperado começando em s e seguindo π; q_π(s, a) é o retorno esperado começando em s, fazendo a e depois seguindo π. v_π(s) = Σ_a π(a|s) q_π(s, a).
+
+DISC: Escreva a equação de Bellman para v_π e explique cada termo em palavras.
+R: v_π(s) = Σ_a π(a|s) Σ_(s′,r) p(s′,r|s,a)[r + γ v_π(s′)]. Média sobre ações escolhidas pela política e resultados possíveis do ambiente, da recompensa imediata mais o valor descontado do estado seguinte.
+
+DISC: Deduza a relação G_t = R_(t+1) + γ G_(t+1) a partir da definição do retorno.
+R: G_t = R_(t+1) + γR_(t+2) + γ²R_(t+3) + ... Colocando γ em evidência a partir do segundo termo: G_t = R_(t+1) + γ(R_(t+2) + γR_(t+3) + ...) = R_(t+1) + γ G_(t+1).
+
+DISC: Calcule v para um MRP de dois estados: do estado A vai-se sempre para B com recompensa 1; de B volta-se sempre para A com recompensa 0; γ = 0,5.
+R: v(A) = 1 + 0,5 v(B); v(B) = 0 + 0,5 v(A). Substituindo: v(A) = 1 + 0,25 v(A), logo v(A) = 4/3 ≈ 1,333 e v(B) = 2/3 ≈ 0,667.
+
+DISC: Mostre, para o robô de entrega com política "esperar sempre" e γ = 0,9, que v = 10 em ambos os estados.
+R: Esperar mantém o estado e rende +1 a cada passo. v = 1 + 0,9 v, logo v = 1/(1 − 0,9) = 10, tanto em alta quanto em baixa.
+
+DISC: Por que buscar sempre é pior que "buscar com alta e recarregar com baixa" no robô de entrega?
+R: Buscar com bateria baixa tem 40% de chance de resgate com −3 e leva a estados de menor valor. Recarregar custa um passo, mas devolve o robô à bateria alta, onde buscar rende mais no longo prazo.
+
+DISC: Explique a diferença entre as equações de Bellman de expectativa e de otimalidade.
+R: A de expectativa avalia uma política fixa, com média sobre as ações que ela escolhe. A de otimalidade usa o máximo sobre as ações, caracterizando v*/q*; é não linear e não tem forma fechada.
+
+DISC: Dado q*, como obter a política ótima? Dê um exemplo numérico com três ações.
+R: Escolhe-se, em cada estado, a ação de maior q*. Se q*(s, ·) = (2,0; 3,5; 1,0), a ação ótima é a segunda, por ter o maior valor.
+
+DISC: Por que não podemos resolver todo MDP pela equação matricial? Cite três obstáculos.
+R: Muitas vezes não conhecemos p; o número de estados pode ser enorme (custo cúbico da resolução e memória); o agente pode não observar o estado completo.
+
+DISC: O que é um POMDP e como um agente pode lidar com observação parcial?
+R: É um MDP em que o agente recebe só observações parciais. Pode manter uma crença sobre o estado real ou usar memória (histórico de observações), por exemplo empilhando quadros ou usando redes recorrentes.
+
+DISC: Explique por que dar uma recompensa extra por "chegar mais perto da meta" pode atrapalhar, e como a recompensa potencial evita isso.
+R: Uma recompensa ingênua pode levar o agente a explorá-la (por exemplo, ficar perto da meta sem terminar). A forma potencial R + γΦ(s′) − Φ(s) mantém a política ótima inalterada.
+
+DISC: Interprete a matriz de transição P da cadeia de clientes: o que significa a diagonal e o que significa uma linha que concentra probabilidade em "inativo"?
+R: A diagonal dá a probabilidade de permanecer no mesmo segmento. Uma linha com muita massa em "inativo" indica um estado de alto risco de perder o cliente no mês seguinte.
+
+DISC: Por que a cadeia de clientes estimada com a base Online Retail é um MRP e não um MDP?
+R: Porque não registramos as ações da empresa (cupons, e-mails) como parte dos dados. Sem ações, só estimamos transições e recompensas do segmento.
+
+DISC: Discuta como a escolha do número de estados k no K-Means afeta a modelagem do MDP e como o coeficiente de silhueta pode ajudar.
+R: Poucos estados misturam clientes diferentes e violam Markov; muitos estados deixam pouca amostra por transição. A silhueta mede a qualidade dos grupos e orienta uma escolha, sem ser critério único.
+
+DISC: Como o fator de desconto γ altera o valor de vida estimado de um cliente?
+R: γ maior dá mais peso a meses futuros, elevando os valores; γ menor aproxima o valor da recompensa imediata. Em MRPs com recompensas positivas, o valor cresce com γ.
+
+DISC: Dê um exemplo do seu cotidiano ou profissão modelado como MDP e liste S, A, p, R e γ, discutindo se vale a propriedade de Markov.
+R: Resposta livre. Deve apresentar os cinco elementos de modo coerente e discutir se o estado resume o passado relevante, propondo ajustes caso não resuma.

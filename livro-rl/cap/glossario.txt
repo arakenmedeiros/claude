@@ -1,0 +1,65 @@
+Agente: quem aprende e toma decisões no aprendizado por reforço.
+Ambiente: tudo que está fora do agente e reage às suas ações.
+Ação: escolha que o agente pode fazer em cada estado.
+Aprendizado por reforço (AR): aprender a decidir por tentativa e erro, maximizando a recompensa acumulada.
+Atribuição de crédito: problema de descobrir quais ações passadas merecem crédito por uma recompensa tardia.
+Bootstrap: técnica que reamostra os dados muitas vezes para estimar a incerteza de uma estatística.
+Desconto (γ): número entre 0 e 1 que diminui o peso das recompensas futuras.
+Episódio: sequência de interações do início até um estado terminal.
+Estado: descrição da situação atual percebida pelo agente.
+Exploração × aproveitamento: dilema entre tentar ações novas e repetir a que parece melhor.
+Função valor: estimativa da recompensa total futura a partir de um estado ou par estado-ação.
+Gymnasium: biblioteca Python com ambientes padronizados para AR.
+Livre de modelo (model-free): método que aprende sem prever a dinâmica do ambiente.
+Baseado em modelo (model-based): método que usa ou aprende um modelo do ambiente para planejar.
+Modelo (do ambiente): previsão do próximo estado e da recompensa dado o estado e a ação.
+Política (π): regra que associa estados a ações.
+Recompensa: número que o ambiente devolve após a ação, indicando se o resultado foi bom ou ruim.
+Retorno (G): soma, geralmente descontada, das recompensas futuras.
+Estado terminal: estado em que o episódio termina.
+Hipótese da recompensa: ideia de que objetivos podem ser descritos como maximizar a soma esperada de um sinal escalar.
+Método da entropia cruzada: método simples que imita as ações dos melhores episódios.
+Arrependimento (regret): perda acumulada por não ter escolhido sempre a melhor ação.
+Bandit multi-armado: problema de decisão com uma única situação e várias ações com prêmio médio desconhecido.
+Bandit contextual: bandit em que o agente observa um contexto antes de decidir.
+Beta (distribuição): distribuição de probabilidade em [0, 1], usada para representar a crença sobre uma taxa de sucesso.
+Braço: cada uma das ações de um bandit.
+ε-gulosa (ε-greedy): estratégia que escolhe a melhor ação com probabilidade 1 − ε e uma ação aleatória com probabilidade ε.
+Estacionário / não estacionário: ambiente cujas regras não mudam / mudam com o tempo.
+Gulosa (greedy): estratégia que sempre escolhe a ação de maior valor estimado.
+LinUCB: algoritmo de bandit contextual com modelo linear e bônus de incerteza.
+Passo (taxa de aprendizado, α): tamanho do ajuste feito a cada atualização.
+Softmax: função que transforma números quaisquer em probabilidades que somam 1.
+Teste A/B: experimento que divide o público igualmente entre duas opções para compará-las.
+Thompson Sampling: estratégia que sorteia uma taxa de cada crença e escolhe a de maior sorteio.
+UCB (limite superior de confiança): estratégia que soma à estimativa um bônus de incerteza.
+Valor verdadeiro q*(a): recompensa média esperada ao escolher a ação a.
+Vetorizar: escrever cálculos para operar sobre vetores inteiros de uma vez, em vez de laços.
+Cadeia de Markov: sistema que muda de estado segundo probabilidades que dependem só do estado atual.
+Crença: distribuição de probabilidade sobre os estados possíveis quando o estado não é totalmente observado.
+Dinâmica do ambiente (p): probabilidade de cada próximo estado e recompensa, dados o estado e a ação.
+Equação de Bellman: relação recursiva que expressa o valor de um estado em função do valor dos estados seguintes.
+Equação de otimalidade de Bellman: equação de Bellman com máximo sobre as ações, que caracteriza v* e q*.
+MDP (Processo de Decisão de Markov): modelo de decisões em sequência com estados, ações, dinâmica, recompensas e desconto.
+MRP (Processo de Recompensa de Markov): cadeia de Markov em que cada estado paga uma recompensa.
+Matriz de transição: matriz cujas linhas dão a distribuição do próximo estado a partir de cada estado.
+POMDP: MDP com observação parcial do estado.
+Política ótima (π*): política com o maior valor possível em todos os estados.
+Propriedade de Markov: o futuro depende do passado apenas por meio do estado atual.
+Recompensa potencial (shaping): recompensa extra da forma γΦ(s′) − Φ(s) que não altera a política ótima.
+Valor de vida do cliente (CLV): valor esperado do total de gastos futuros de um cliente.
+v* e q*: funções valor ótimas de estado e de estado-ação.
+v_π e q_π: funções valor de estado e de estado-ação sob a política π.
+Avaliação de política (predição): cálculo do valor v_π de uma política fixa.
+Bootstrapping (em AR): atualizar uma estimativa de valor usando outra estimativa.
+Contração: operação que sempre aproxima dois pontos por um fator menor que 1; garante convergência.
+GPI (iteração de política generalizada): ciclo entre avaliação e melhoria de política presente em quase todos os métodos.
+Iteração de política: algoritmo que alterna avaliação e melhoria até a política estabilizar.
+Iteração de valor: algoritmo que usa a equação de otimalidade como regra de atualização.
+Maldição da dimensionalidade: crescimento exponencial do número de estados com o número de variáveis.
+Melhoria de política: tornar a política gulosa em relação à função valor.
+Planejamento: calcular a política usando um modelo, sem interagir com o ambiente real.
+Política gulosa: política que escolhe a ação de maior valor estimado.
+Programação dinâmica (PD): métodos que resolvem MDPs conhecidos por meio das equações de Bellman.
+Varredura (sweep): passagem completa por todos os estados atualizando seus valores.
+Discretização: transformar variáveis contínuas em faixas (estados discretos).

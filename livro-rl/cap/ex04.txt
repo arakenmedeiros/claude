@@ -1,0 +1,269 @@
+MC: A programação dinâmica em AR exige, em sua forma clássica:
+a) apenas uma política inicial.
+b) o conhecimento completo do modelo do MDP.
+c) um simulador com imagens.
+d) dados rotulados.
+R: b | A PD usa a dinâmica p(s′, r | s, a) para calcular os valores.
+
+MC: A palavra "programação" em "programação dinâmica" significa:
+a) escrever código em Python.
+b) planejamento.
+c) programação de TV.
+d) aprendizado supervisionado.
+R: b | Foi usada no sentido de planejamento, como em "programa de governo".
+
+MC: Por que estudamos a PD mesmo quando raramente conhecemos o modelo?
+a) Porque ela é a única técnica de AR.
+b) Porque os algoritmos de AR podem ser vistos como aproximações da PD.
+c) Porque ela dispensa recompensas.
+d) Porque funciona em qualquer escala.
+R: b | Os métodos sem modelo aproximam o que a PD calcula exatamente.
+
+MC: A avaliação iterativa de política (predição) calcula:
+a) a política ótima.
+b) v_π para uma política π dada.
+c) a dinâmica do ambiente.
+d) o fator de desconto.
+R: b | Ela aproxima o valor dos estados sob a política fixa.
+
+MC: A regra de atualização da avaliação de política é baseada na:
+a) equação de Bellman de expectativa.
+b) equação de otimalidade com máximo.
+c) lei dos grandes números.
+d) descida do gradiente.
+R: a | V_(k+1)(s) = Σ π Σ p [r + γ V_k(s′)].
+
+MC: Uma "varredura" (sweep) é:
+a) um episódio completo.
+b) uma passada por todos os estados atualizando seus valores.
+c) a escolha de uma ação aleatória.
+d) uma troca de política.
+R: b | Cada varredura atualiza os valores de todos os estados.
+
+MC: No gridworld 4×4 com política aleatória e −1 por passo, na varredura 1 o valor de todo estado não terminal é:
+a) 0.
+b) −1.
+c) −14.
+d) −22.
+R: b | V₁(s) = −1 + média dos V₀ = −1 + 0.
+
+MC: Na varredura 2, o valor da casa vizinha à ★ no canto superior esquerdo é:
+a) −1.
+b) −1,75.
+c) −2.
+d) −14.
+R: b | −1 + (−1 − 1 + 0 − 1)/4 = −1,75.
+
+MC: Os valores da política aleatória no gridworld convergem para valores como −14, −20 e −22, que representam:
+a) o número esperado de passos até um destino.
+b) probabilidades de vitória.
+c) o desconto.
+d) as ações escolhidas.
+R: a | Com −1 por passo e γ = 1, o valor é menos o número esperado de passos.
+
+MC: A política gulosa em relação a v é aquela que:
+a) escolhe sempre uma ação aleatória.
+b) escolhe em cada estado a ação de maior valor esperado segundo v.
+c) nunca muda.
+d) escolhe a ação de menor valor.
+R: b | π′(s) = argmax_a Σ p [r + γ v(s′)].
+
+MC: O teorema da melhoria de política garante que a política gulosa em relação a v_π é:
+a) pior que π.
+b) melhor ou igual a π em todos os estados.
+c) igual a π.
+d) aleatória.
+R: b | A política gulosa nunca piora e frequentemente melhora.
+
+MC: A iteração de política consiste em:
+a) alternar avaliação e melhoria até a política estabilizar.
+b) executar apenas a avaliação.
+c) sortear políticas.
+d) fazer uma varredura e parar.
+R: a | Avalia, melhora e repete até a política não mudar.
+
+MC: Quando a iteração de política termina, a política obtida é:
+a) a política inicial.
+b) uma política ótima.
+c) uma política aleatória.
+d) uma política inválida.
+R: b | Se a política não muda ao melhorar, a equação de otimalidade é satisfeita.
+
+MC: A iteração de valor usa como regra de atualização:
+a) a equação de Bellman de expectativa.
+b) a equação de otimalidade de Bellman, com máximo sobre ações.
+c) a média das recompensas.
+d) a regra incremental dos bandits.
+R: b | V_(k+1)(s) = max_a Σ p [r + γ V_k(s′)].
+
+MC: Em relação à iteração de política, a iteração de valor:
+a) faz uma só varredura de avaliação antes de melhorar, de forma implícita.
+b) nunca converge.
+c) exige política inicial aleatória.
+d) usa dados rotulados.
+R: a | A avaliação é truncada em uma varredura.
+
+MC: A iteração de política generalizada (GPI) descreve:
+a) um algoritmo específico de bandits.
+b) a interação entre avaliação e melhoria, presente em quase todos os métodos de AR.
+c) um tipo de rede neural.
+d) uma técnica de discretização.
+R: b | Duas forças em ciclo convergem para v* e π*.
+
+MC: Bootstrapping, em AR, significa:
+a) reamostrar dados para calcular intervalos de confiança.
+b) atualizar uma estimativa usando outra estimativa.
+c) iniciar o programa.
+d) escolher ações ao acaso.
+R: b | A atualização usa V_k(s′) para calcular V_(k+1)(s).
+
+MC: Não confunda: o "bootstrap" do scikit-learn (resample) serve para:
+a) estimar a incerteza de uma estatística reamostrando os dados.
+b) atualizar valores em programação dinâmica.
+c) discretizar estados.
+d) treinar redes neurais.
+R: a | É outro uso do termo: reamostragem estatística.
+
+MC: A convergência da avaliação e da iteração de valor é garantida porque a atualização é:
+a) uma contração (reduz o erro máximo por um fator γ).
+b) aleatória.
+c) não linear em todos os pontos.
+d) idêntica a uma regressão.
+R: a | Para γ < 1 (ou condições adequadas), cada varredura reduz o erro máximo.
+
+MC: Quanto mais próximo de 1 o fator γ, a convergência da iteração de valor tende a ser:
+a) mais rápida.
+b) mais lenta.
+c) impossível.
+d) independente de γ.
+R: b | O erro cai por um fator γ por varredura, que é próximo de 1.
+
+MC: A PD assíncrona difere da síncrona porque:
+a) atualiza os estados em ordem e frequência flexíveis, sem varredura completa fixa.
+b) exige mais memória.
+c) não usa o modelo.
+d) só serve para bandits.
+R: a | Pode atualizar um estado por vez, desde que todos continuem sendo atualizados.
+
+MC: A maldição da dimensionalidade refere-se a:
+a) valores de γ muito altos.
+b) o número de estados crescer exponencialmente com o número de variáveis do estado.
+c) ao excesso de recompensas.
+d) ao número de ações.
+R: b | Com d variáveis em b faixas, são b^d estados.
+
+MC: Com 10 variáveis, cada uma discretizada em 10 faixas, o número de estados é:
+a) 100.
+b) 10¹⁰.
+c) 1.000.
+d) 10.000.
+R: b | 10 elevado a 10, ou seja, dez bilhões.
+
+MC: No FrozenLake escorregadio, a política ótima não vence em 100% dos casos porque:
+a) o algoritmo está errado.
+b) o ambiente é estocástico e o gelo faz o agente escorregar.
+c) não existe política ótima.
+d) o desconto é zero.
+R: b | Nenhum plano elimina o acaso das transições.
+
+MC: Na prática do CartPole, a função do KBinsDiscretizer é:
+a) treinar uma rede neural.
+b) transformar o estado contínuo em faixas discretas, formando estados de uma tabela.
+c) calcular o desconto.
+d) gerar recompensas.
+R: b | Cada combinação de faixas vira um estado discreto.
+
+MC: Para estimar o modelo do CartPole discretizado, contamos:
+a) o número de episódios.
+b) as transições (estado, ação, próximo estado) observadas.
+c) as recompensas máximas.
+d) os pesos de uma rede.
+R: b | As frequências relativas estimam p(s′ | s, a).
+
+MC: No CartPole planejado, pares estado-ação nunca visitados foram tratados com valor 0 porque:
+a) era a melhor ação.
+b) assim a escolha é pessimista: sem dados, evita-se apostar neles.
+c) o código exige.
+d) a recompensa é negativa.
+R: b | Evitar pares desconhecidos reduz o risco de confiar em estimativas inexistentes.
+
+MC: A política planejada sobre o modelo estimado do CartPole supera o agente aleatório porque:
+a) aprendeu com um modelo, embora os dados tenham sido coletados de forma aleatória.
+b) trapaceia.
+c) usa mais passos por episódio.
+d) usa outra recompensa.
+R: a | O modelo estimado captura a dinâmica, e o planejamento explora esse conhecimento.
+
+MC: O algoritmo de iteração de política tem origem em:
+a) Howard (1960).
+b) Mnih (2015).
+c) Silver (2016).
+d) Ouyang (2022).
+R: a | Howard descreveu a iteração de política em 1960.
+
+MC: Na análise de sensibilidade do projeto, o objetivo de variar c e δ é:
+a) escolher a melhor semente.
+b) verificar quais conclusões sobre o cupom são robustas às hipóteses.
+c) treinar um classificador.
+d) estimar a política aleatória.
+R: b | O efeito do cupom é suposto; é preciso ver quanto as conclusões dependem disso.
+
+DISC: Explique o que é programação dinâmica e em que condição ela pode ser usada em AR.
+R: É um conjunto de métodos que calculam valores e políticas ótimas usando as equações de Bellman. Exige que o MDP seja conhecido (dinâmica e recompensas) e que o número de estados seja tratável.
+
+DISC: Por que as varreduras da avaliação de política "propagam informação" a partir dos estados terminais? Use o gridworld como exemplo.
+R: Na varredura 1 só o valor imediato (−1) aparece; na seguinte, estados vizinhos ao destino incorporam o valor do destino (0), e assim por diante. A informação viaja uma casa a cada varredura, como uma onda.
+
+DISC: Calcule V₂ para a casa ao lado da ★ no canto superior esquerdo do gridworld, passo a passo.
+R: V₁ = −1 para todo estado não terminal. Vizinhos: ela mesma (parede), casa abaixo, ★ e casa à direita. V₂ = −1 + (−1 − 1 + 0 − 1)/4 = −1 − 0,75 = −1,75.
+
+DISC: Descreva o algoritmo de iteração de política e explique por que ele termina.
+R: Inicializa-se uma política; avalia-se v_π; torna-se a política gulosa; repete-se até não haver mudança. Termina porque cada melhoria é estritamente melhor ou igual e há um número finito de políticas determinísticas.
+
+DISC: Descreva a iteração de valor e compare-a com a iteração de política.
+R: Atualiza V(s) ← max_a Σ p [r + γ V(s′)] até a mudança máxima ser menor que θ e depois extrai a política gulosa. É como iteração de política com avaliação truncada em uma varredura: mais iterações, cada uma mais barata.
+
+DISC: Explique o conceito de iteração de política generalizada (GPI) e dê exemplos de outros algoritmos que o seguem.
+R: Duas forças em ciclo: avaliação (valores coerentes com a política) e melhoria (política gulosa nos valores). Quase todo método de AR, como Q-learning, SARSA e atores-críticos, alterna aproximadamente essas duas etapas.
+
+DISC: O que é bootstrapping? Por que, apesar de parecer circular, ele funciona em PD?
+R: É atualizar uma estimativa com base em outra estimativa. Funciona porque cada atualização incorpora informação real (a recompensa e a dinâmica), e a atualização é uma contração que converge para o ponto fixo correto.
+
+DISC: Mostre que, se a atualização reduz o erro máximo por um fator γ a cada varredura, o número de varreduras para atingir erro ε é aproximadamente log(ε/e₀)/log γ.
+R: Após k varreduras, o erro é no máximo γᵏ e₀. Exigir γᵏ e₀ ≤ ε implica k ≥ log(ε/e₀)/log γ. Como log γ é pequeno em módulo quando γ é próximo de 1, k cresce.
+
+DISC: Por que γ próximo de 1 deixa a iteração de valor mais lenta? Dê um exemplo numérico.
+R: O erro cai por um fator γ por varredura. Para reduzir o erro por 10⁻⁶, γ = 0,9 exige cerca de 131 varreduras; γ = 0,99, cerca de 1.375.
+
+DISC: Explique a maldição da dimensionalidade com um exemplo e cite uma saída.
+R: Com 8 variáveis em 10 faixas há 10⁸ estados, e o número cresce exponencialmente com as variáveis. Saídas: aproximação de funções, generalização por redes neurais ou amostragem.
+
+DISC: Qual a diferença entre PD síncrona e assíncrona? Quais as vantagens da assíncrona?
+R: A síncrona usa uma cópia dos valores antigos em cada varredura; a assíncrona atualiza estados em qualquer ordem, usando valores recém-atualizados. Pode ser mais rápida e permite focar nos estados relevantes.
+
+DISC: Como a política ótima é extraída de v* quando se conhece o modelo?
+R: Em cada estado, calcula-se o valor esperado de cada ação, Σ p (r + γ v*(s′)), e escolhe-se a de maior valor (argmax).
+
+DISC: No FrozenLake, por que a política ótima às vezes "se afasta" da meta?
+R: O gelo escorrega: a ação escolhida só é executada com 1/3 de chance. Afastar-se de buracos reduz o risco de escorregar para eles, mesmo que alongue o caminho.
+
+DISC: Descreva os quatro passos usados para resolver o CartPole com PD e explique o papel do scikit-learn.
+R: (1) Coletar transições aleatórias; (2) discretizar o estado com KBinsDiscretizer e contar transições para estimar o modelo; (3) rodar iteração de valor no modelo estimado; (4) testar no ambiente real. O scikit-learn faz a discretização e, em outras etapas, a reamostragem para avaliação.
+
+DISC: Quais as limitações de estimar o modelo apenas com dados aleatórios? Como poderíamos melhorar?
+R: Estados importantes (como os de equilíbrio prolongado) podem raramente aparecer, deixando lacunas no modelo. Pode-se coletar mais dados, alternar coleta e planejamento, ou usar a política atual para coletar dados em regiões relevantes.
+
+DISC: Por que tratar pares estado-ação nunca visitados como valor 0 é uma escolha pessimista e qual alternativa otimista existe?
+R: O valor 0 é menor que o valor típico (positivo) das ações boas, desencorajando estados desconhecidos. A alternativa otimista atribui valor alto a pares desconhecidos, estimulando a exploração (como valores iniciais otimistas nos bandits).
+
+DISC: Explique por que, no projeto de retenção de clientes, a conclusão depende das hipóteses e como a análise de sensibilidade ajuda.
+R: O efeito do cupom (δ) e seu custo (c) não vêm dos dados. A sensibilidade mostra em que regiões de (c, δ) o cupom é ótimo, indicando quais conclusões são robustas e quais dependem das suposições.
+
+DISC: Compare PD e métodos sem modelo quanto a exigências, vantagens e limitações.
+R: PD exige o modelo e poucos estados, mas calcula soluções exatas sem interagir. Métodos sem modelo aprendem pela experiência sem conhecer p, ao custo de muitas amostras e de variância nas estimativas.
+
+DISC: Por que a política gulosa em relação a V_π nunca é pior que π? Dê a intuição do teorema da melhoria de política.
+R: Escolher, em um estado, a melhor ação segundo q_π e depois seguir π já produz valor maior ou igual a v_π(s). Aplicando isso em todos os estados e repetidamente, o valor da nova política não é menor em nenhum estado.
+
+DISC: Dê um exemplo, fora do livro, de um problema de decisão com modelo conhecido em que a PD seria adequada, definindo estados, ações e recompensas.
+R: Controle de estoque: estado = nível do estoque; ação = quantidade a encomendar; transições dadas pela distribuição da demanda; recompensa = lucro das vendas menos custos de pedido e de armazenagem.

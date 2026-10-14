@@ -1,0 +1,269 @@
+MC: Em aprendizado por reforço, o agente aprende principalmente a partir de:
+a) exemplos rotulados com a resposta correta.
+b) uma recompensa recebida após agir.
+c) agrupamentos formados sem nenhum feedback.
+d) regras escritas manualmente por especialistas.
+R: b | No AR o único feedback é uma recompensa numérica que avalia o resultado das ações.
+
+MC: A lei do efeito, de Thorndike, afirma que:
+a) comportamentos seguidos de consequências agradáveis tendem a se repetir.
+b) todo comportamento é inato e imutável.
+c) o aprendizado só ocorre com um professor presente.
+d) recompensas atrasadas não influenciam o comportamento.
+R: a | Consequências agradáveis reforçam o comportamento; é a semente do AR.
+
+MC: No ciclo do AR, depois que o agente executa uma ação, o ambiente devolve:
+a) apenas o gabarito da ação.
+b) uma nova política.
+c) uma recompensa e um novo estado.
+d) um conjunto de rótulos.
+R: c | O ambiente responde com R_(t+1) e S_(t+1).
+
+MC: Qual elemento do robô aspirador representa o ambiente?
+a) A regra "se há sujeira, avance".
+b) A casa, os móveis e a sujeira.
+c) O número +1 recebido ao coletar sujeira.
+d) A escolha de girar à esquerda.
+R: b | O ambiente é tudo que está fora do agente e reage às suas ações.
+
+MC: A principal diferença entre aprendizado supervisionado e por reforço é que, no AR:
+a) não existem dados.
+b) as ações do agente influenciam os dados que ele verá depois.
+c) o modelo nunca erra.
+d) o objetivo é agrupar exemplos.
+R: b | No AR, o que o agente faz muda as situações futuras e, portanto, os dados observados.
+
+MC: Um episódio, em AR, é:
+a) um único número de recompensa.
+b) uma sequência de interações que vai do início até um estado terminal.
+c) um tipo de política.
+d) um conjunto de rótulos de treino.
+R: b | Episódios têm começo e fim, como uma partida.
+
+MC: O retorno G_t representa:
+a) apenas a recompensa imediata.
+b) a soma (geralmente descontada) das recompensas futuras.
+c) o número de ações disponíveis.
+d) a probabilidade de escolher uma ação.
+R: b | O retorno acumula as recompensas futuras, com pesos decrescentes pelo desconto.
+
+MC: Para as recompensas 1, 0, 0 e 5 e γ = 0,9, o retorno é aproximadamente:
+a) 6,000.
+b) 4,645.
+c) 5,500.
+d) 1,625.
+R: b | 1 + 0,9³ × 5 = 1 + 0,729 × 5 = 4,645.
+
+MC: Com as mesmas recompensas 1, 0, 0 e 5 e γ = 0,5, o retorno é:
+a) 1,625.
+b) 4,645.
+c) 3,000.
+d) 6,000.
+R: a | 1 + 0,5³ × 5 = 1 + 0,125 × 5 = 1,625.
+
+MC: Um fator de desconto γ próximo de 0 produz um agente:
+a) visionário, que valoriza muito o futuro distante.
+b) míope, que valoriza sobretudo recompensas imediatas.
+c) que nunca aprende.
+d) que explora sempre.
+R: b | γ pequeno reduz drasticamente o peso das recompensas distantes.
+
+MC: A "hipótese da recompensa" diz que:
+a) objetivos podem ser descritos como maximização da soma esperada de um sinal escalar.
+b) toda recompensa é sempre positiva.
+c) o agente deve conhecer o modelo do ambiente.
+d) o desconto deve ser sempre igual a 1.
+R: a | É a premissa que sustenta a formulação do AR (Sutton e Barto, 2018).
+
+MC: Uma política é:
+a) uma estimativa de quão bom é um estado.
+b) uma previsão do próximo estado.
+c) uma regra que associa estados a ações.
+d) o conjunto de recompensas possíveis.
+R: c | A política π define o comportamento do agente.
+
+MC: A função valor serve para:
+a) escolher a semente aleatória.
+b) estimar a recompensa total futura esperada a partir de um estado ou par estado-ação.
+c) rotular exemplos.
+d) substituir o ambiente.
+R: b | O valor mede quão promissora é uma situação.
+
+MC: Um modelo, no contexto do AR, é:
+a) uma rede neural obrigatória em todo agente.
+b) a previsão de como o ambiente reage às ações.
+c) o conjunto de dados de treino.
+d) o fator de desconto.
+R: b | Modelos permitem planejar prevendo o próximo estado e a recompensa.
+
+MC: Métodos "livres de modelo" (model-free) são aqueles que:
+a) aprendem sem construir ou usar um modelo do ambiente.
+b) não usam recompensas.
+c) só funcionam em jogos.
+d) dispensam a política.
+R: a | Eles aprendem direto da experiência, sem prever a dinâmica do ambiente.
+
+MC: O dilema exploração × aproveitamento descreve a tensão entre:
+a) treinar e testar.
+b) tentar ações novas e repetir a que parece melhor.
+c) política e valor.
+d) episódios e passos.
+R: b | Explorar traz informação; aproveitar traz recompensa imediata.
+
+MC: O problema da atribuição de crédito consiste em:
+a) calcular o fator de desconto.
+b) descobrir quais ações passadas foram responsáveis por uma recompensa tardia.
+c) dividir os dados em treino e teste.
+d) escolher a quantidade de episódios.
+R: b | Com recompensas atrasadas, é difícil saber qual ação merece o crédito.
+
+MC: Premiar um robô aspirador por cada porção de sujeira coletada pode levá-lo a derrubar a lixeira. Isso ilustra:
+a) o dilema exploração-aproveitamento.
+b) uma recompensa mal especificada.
+c) o desconto excessivo.
+d) um estado terminal.
+R: b | O agente maximiza a recompensa de modo que contraria a intenção do projetista.
+
+MC: Quem escreveu a base teórica da programação dinâmica, central para o AR?
+a) Richard Bellman.
+b) Frank Rosenblatt.
+c) Arthur Samuel.
+d) Geoffrey Hinton.
+R: a | Bellman (1957) criou a programação dinâmica e a equação que leva seu nome.
+
+MC: O programa de damas que melhorava jogando contra si mesmo foi criado por:
+a) Tesauro.
+b) Samuel.
+c) Watkins.
+d) Silver.
+R: b | Arthur Samuel, em 1959.
+
+MC: O TD-Gammon, de Tesauro, aprendeu a jogar:
+a) xadrez.
+b) Go.
+c) gamão.
+d) damas.
+R: c | TD-Gammon aprendeu gamão por diferença temporal e autojogo.
+
+MC: O algoritmo DQN (Mnih et al., 2015) ficou famoso por jogar:
+a) jogos de Atari a partir dos pixels da tela.
+b) somente xadrez.
+c) apenas jogos de tabuleiro clássicos sem imagens.
+d) jogos sem recompensa.
+R: a | O DQN aprendeu dezenas de jogos de Atari usando apenas imagens e a pontuação.
+
+MC: No CartPole, a recompensa é:
+a) +1 por passo em que o poste continua em pé.
+b) −1 por passo.
+c) 0 durante o episódio e +1 ao final.
+d) igual ao ângulo do poste.
+R: a | O retorno do episódio é o número de passos que o poste se manteve equilibrado.
+
+MC: No método da entropia cruzada descrito no capítulo, a "elite" é:
+a) o pior grupo de episódios.
+b) os episódios de maior retorno, cujas ações serão imitadas.
+c) o conjunto de ações proibidas.
+d) o ambiente inicial.
+R: b | Selecionam-se os melhores episódios e treina-se um classificador para imitá-los.
+
+MC: Qual biblioteca fornece os ambientes de AR usados neste livro?
+a) Gymnasium.
+b) pandas.
+c) Matplotlib.
+d) Seaborn.
+R: a | Gymnasium é a biblioteca de ambientes (sucessora do OpenAI Gym).
+
+MC: Sobre o scikit-learn e o AR, é correto afirmar que:
+a) ele implementa nativamente todos os algoritmos de AR.
+b) ele não implementa AR, mas apoia o preparo de dados, a aproximação de funções e a avaliação.
+c) ele só serve para imagens.
+d) ele substitui o Gymnasium.
+R: b | O scikit-learn é a ferramenta de apoio; os ambientes vêm do Gymnasium.
+
+MC: Comer um cogumelo dá +5 se comestível e −35 se venenoso; não comer dá 0. Comer compensa quando a probabilidade p de ser venenoso satisfaz:
+a) p < 0,5.
+b) p < 0,125.
+c) p > 0,125.
+d) p > 0,5.
+R: b | O ganho esperado é 5 − 40p, positivo apenas se p < 0,125.
+
+MC: Por que o limiar ótimo no problema dos cogumelos não é 0,5?
+a) Porque o modelo é ruim.
+b) Porque os custos dos erros são assimétricos.
+c) Porque o desconto é alto.
+d) Porque a base é pequena.
+R: b | Comer um venenoso custa sete vezes o ganho de comer um comestível.
+
+MC: Por que repetimos experimentos de AR com várias sementes aleatórias?
+a) Porque os resultados costumam variar bastante entre execuções.
+b) Porque o Python exige.
+c) Para aumentar o desconto.
+d) Para eliminar o ambiente.
+R: a | A variabilidade é grande; várias sementes dão uma avaliação mais confiável (Henderson et al., 2018).
+
+MC: Em quais áreas de alto risco o AR costuma ser treinado em simuladores ou com dados históricos?
+a) Apenas em jogos de tabuleiro.
+b) Saúde, finanças e direção autônoma.
+c) Somente em planilhas.
+d) Em nenhuma área.
+R: b | Errar nessas áreas custa caro, então evita-se a exploração direta.
+
+DISC: Explique com suas palavras a diferença entre aprendizado supervisionado e aprendizado por reforço. Dê um exemplo de cada.
+R: No supervisionado, o aprendiz recebe exemplos com a resposta correta (ex.: fotos rotuladas gato/cão). No AR, só recebe uma recompensa depois de agir e precisa descobrir quais ações a causaram (ex.: aprender a jogar xadrez). Além disso, no AR as ações mudam os dados futuros.
+
+DISC: Identifique agente, ambiente, estados, ações e recompensas num sistema de recomendação de vídeos.
+R: Agente: o algoritmo de recomendação. Ambiente: usuário e plataforma. Estado: histórico e perfil do usuário. Ações: vídeos a recomendar. Recompensa: cliques, tempo assistido ou satisfação declarada.
+
+DISC: Por que o estado é importante? O que aconteceria se o agente não percebesse o estado?
+R: O estado resume a situação em que a decisão é tomada. Sem ele, o agente decidiria sempre igual, ignorando o contexto, e só conseguiria políticas que não dependem da situação.
+
+DISC: Calcule o retorno das recompensas 2, 2, 2 com γ = 0,5.
+R: G = 2 + 0,5 × 2 + 0,25 × 2 = 2 + 1 + 0,5 = 3,5.
+
+DISC: Calcule o retorno das recompensas 0, 0, 10 com γ = 0,9 e compare com γ = 0,1. O que isso diz sobre o agente?
+R: Com γ = 0,9: 0,81 × 10 = 8,1. Com γ = 0,1: 0,01 × 10 = 0,1. Com γ pequeno o agente é míope e quase ignora a recompensa distante.
+
+DISC: Por que o desconto γ é útil, tanto do ponto de vista prático quanto matemático?
+R: Na prática, reflete a incerteza do futuro e a preferência por ganhos próximos. Matematicamente, garante que a soma infinita de recompensas converja para um número finito quando γ < 1 e as recompensas são limitadas.
+
+DISC: Descreva, com um exemplo do cotidiano, o dilema entre explorar e aproveitar.
+R: Escolher um restaurante: ir ao favorito garante boa refeição (aproveitar), mas testar um novo pode revelar algo melhor ou pior (explorar). Só aproveitar impede descobertas; só explorar desperdiça o que já se sabe.
+
+DISC: O que é atribuição de crédito? Por que ela é difícil em jogos como o xadrez?
+R: É descobrir quais ações passadas contribuíram para um resultado. No xadrez, a recompensa só vem ao fim da partida, então é difícil saber quais das dezenas de jogadas foram decisivas.
+
+DISC: Diferencie política, função valor e modelo, dando um exemplo de cada num jogo de labirinto.
+R: Política: "em cada corredor, vire à direita". Valor: estimativa de quão perto da saída está cada posição. Modelo: previsão de em qual posição o agente estará após uma ação e qual recompensa receberá.
+
+DISC: Dê um exemplo de recompensa mal especificada diferente do apresentado no capítulo e explique o risco.
+R: Premiar um agente de atendimento pelo menor tempo de ligação pode levá-lo a encerrar chamadas sem resolver o problema. Ele otimiza a métrica, mas trai o objetivo real de satisfazer o cliente.
+
+DISC: Por que o scikit-learn é útil no estudo do AR, apesar de não implementar algoritmos de AR?
+R: Ele fornece classificadores, regressores, pré-processamento e métricas que servem para aproximar políticas e funções valor, preparar dados e avaliar resultados, como no método da entropia cruzada.
+
+DISC: Explique o método da entropia cruzada usado no CartPole, passo a passo.
+R: Joga-se muitos episódios com a política atual; selecionam-se os de maior retorno (elite); treina-se um classificador para prever, dado o estado, a ação tomada pela elite; esse classificador vira a nova política; repete-se o processo.
+
+DISC: No problema dos cogumelos, demonstre que o limiar de decisão ótimo para comer é p < 0,125.
+R: O ganho esperado de comer é (1 − p)·5 + p·(−35) = 5 − 40p. Comer compensa quando esse valor é positivo, ou seja, 5 − 40p > 0, o que dá p < 5/40 = 0,125.
+
+DISC: Por que um classificador com 99% de acurácia pode ainda ser ruim como política de decisão?
+R: Porque a acurácia trata todos os erros como iguais. Se um tipo de erro custa muito mais (como comer um cogumelo venenoso), o 1% de erros pode destruir a recompensa total. O que importa é a recompensa esperada.
+
+DISC: Cite dois marcos históricos do AR e explique a importância de cada um.
+R: Exemplos: Bellman (1957), criou a programação dinâmica, base teórica dos métodos de valor; Mnih et al. (2015), o DQN, mostrou que redes profundas aprendem a jogar Atari a partir de pixels.
+
+DISC: Por que o AR é mais difícil de avaliar do que um classificador supervisionado?
+R: Porque os resultados variam entre execuções (sementes), os dados dependem da política do agente e o desempenho é um retorno acumulado, não um acerto simples. Por isso se usam várias sementes e intervalos de confiança.
+
+DISC: Qual a diferença entre tarefas episódicas e contínuas? Dê um exemplo de cada.
+R: Episódicas terminam em um estado terminal (uma partida de xadrez). Contínuas não têm fim definido (controle de temperatura de um prédio).
+
+DISC: Por que o AR em saúde costuma usar simuladores ou dados históricos?
+R: Porque explorar por tentativa e erro em pacientes pode causar dano. Simuladores e aprendizado offline permitem aprender sem expor pessoas a riscos.
+
+DISC: No projeto do capítulo, por que a profundidade da árvore e o percentil da elite afetam o desempenho?
+R: Árvores rasas podem não capturar a política; muito profundas podem decorar o ruído. Elites pequenas dão poucos dados e muito ruído; elites grandes incluem episódios ruins e diluem a imitação.
+
+DISC: Proponha uma situação do seu cotidiano ou profissão que possa ser modelada como AR e defina seus elementos.
+R: Resposta livre. Deve identificar agente, ambiente, estados, ações e uma recompensa coerente, discutindo possíveis armadilhas da recompensa escolhida.

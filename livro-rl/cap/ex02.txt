@@ -1,0 +1,269 @@
+MC: No problema dos bandits multi-armados, o objetivo do agente é:
+a) aprender um modelo completo do ambiente.
+b) maximizar a recompensa acumulada descobrindo quais ações são melhores enquanto joga.
+c) agrupar ações semelhantes.
+d) minimizar o número de ações disponíveis.
+R: b | O desafio é descobrir o melhor braço e, ao mesmo tempo, ganhar recompensa.
+
+MC: O valor verdadeiro q*(a) de uma ação é:
+a) a última recompensa recebida.
+b) a recompensa média esperada ao escolher a ação a.
+c) o número de vezes que a foi escolhida.
+d) a maior recompensa possível.
+R: b | q*(a) = E[R | A = a], a média esperada de longo prazo.
+
+MC: A atualização incremental da média é:
+a) Q ← Q + passo × (alvo − Q).
+b) Q ← alvo.
+c) Q ← Q × alvo.
+d) Q ← Q − alvo.
+R: a | Novo = velho + passo × (alvo − velho).
+
+MC: Recompensas 4, 6 e 5 chegam uma por vez, com passo 1/n. A estimativa final é:
+a) 4.
+b) 5.
+c) 6.
+d) 15.
+R: b | É a média de 4, 6 e 5, que vale 5.
+
+MC: Com passo constante α, as recompensas recentes:
+a) pesam menos que as antigas.
+b) pesam mais que as antigas.
+c) pesam igual às antigas.
+d) deixam de ser usadas.
+R: b | O peso de cada recompensa decai exponencialmente com sua idade, o que ajuda em ambientes que mudam.
+
+MC: Para um ambiente que muda ao longo do tempo (não estacionário), o mais adequado é:
+a) média amostral com passo 1/n.
+b) passo constante α.
+c) nunca atualizar.
+d) usar apenas a primeira recompensa.
+R: b | Passo constante esquece gradualmente o passado.
+
+MC: A principal fraqueza da estratégia gulosa é:
+a) consumir muita memória.
+b) poder ficar presa a uma ação medíocre por não explorar.
+c) escolher sempre ao acaso.
+d) não usar estimativas.
+R: b | Sem exploração, tentativas iniciais enganosas podem travar o agente.
+
+MC: Na estratégia ε-gulosa com ε = 0,1, o agente:
+a) explora em 90% das vezes.
+b) escolhe a ação de maior estimativa em cerca de 90% das vezes e sorteia ação nas demais.
+c) nunca aproveita.
+d) escolhe a pior ação em 10% das vezes.
+R: b | Com probabilidade 1 − ε aproveita; com probabilidade ε explora ao acaso.
+
+MC: Valores iniciais otimistas servem para:
+a) acelerar o cálculo.
+b) estimular a exploração no início.
+c) eliminar o ruído.
+d) garantir a ação ótima.
+R: b | Toda ação testada "decepciona" e o agente tenta outras até as estimativas se ajustarem.
+
+MC: No UCB, o termo de bônus de incerteza é:
+a) maior para ações pouco testadas.
+b) maior para ações muito testadas.
+c) sempre zero.
+d) igual para todas as ações.
+R: a | O bônus cresce quando N(a) é pequeno, estimulando testar o desconhecido.
+
+MC: O parâmetro c do UCB controla:
+a) o número de braços.
+b) o quanto o agente explora.
+c) a semente aleatória.
+d) o desconto.
+R: b | c maior significa bônus maior e mais exploração.
+
+MC: O Thompson Sampling para recompensas 0/1 usa tipicamente:
+a) uma distribuição Beta para a crença de cada braço.
+b) uma árvore de decisão.
+c) um clustering.
+d) uma média móvel apenas.
+R: a | Sucessos e fracassos atualizam uma Beta(S+1, F+1).
+
+MC: A distribuição Beta(1, 1) representa:
+a) certeza de sucesso.
+b) uma crença uniforme (nenhuma opinião prévia).
+c) certeza de fracasso.
+d) 50% de sucesso exato.
+R: b | Beta(1, 1) é uniforme em [0, 1].
+
+MC: No Thompson Sampling, a ação escolhida em cada passo é:
+a) a de maior média observada.
+b) a de maior valor sorteado de sua crença.
+c) sempre aleatória.
+d) a menos testada.
+R: b | Sorteia-se uma taxa de cada crença e escolhe-se o maior sorteio.
+
+MC: Arrependimento (regret) acumulado mede:
+a) a recompensa total.
+b) a perda total por não ter jogado sempre o melhor braço.
+c) o número de braços.
+d) o tempo de execução.
+R: b | É a soma, ao longo do tempo, da diferença entre o valor do melhor braço e o do braço escolhido.
+
+MC: Uma estratégia gulosa que travou no braço errado tem arrependimento:
+a) nulo.
+b) que cresce linearmente com o tempo.
+c) que decresce.
+d) que oscila em torno de zero.
+R: b | Ela perde a mesma quantidade a cada passo, para sempre.
+
+MC: Entre os braços com taxas 0,45, 0,55 e 0,60, jogar sempre o pior por 2.000 passos produz arrependimento de:
+a) 100.
+b) 200.
+c) 300.
+d) 600.
+R: c | A perda por passo é 0,60 − 0,45 = 0,15; 0,15 × 2000 = 300.
+
+MC: Um bandit contextual difere do bandit simples porque:
+a) não tem recompensa.
+b) o agente observa um contexto antes de decidir.
+c) possui um só braço.
+d) usa apenas passos constantes.
+R: b | A melhor ação passa a depender do contexto observado.
+
+MC: O algoritmo LinUCB (Li et al., 2010) foi usado para:
+a) jogar xadrez.
+b) recomendar notícias.
+c) controlar robôs bípedes.
+d) diagnosticar imagens.
+R: b | Foi aplicado a recomendação personalizada de notícias.
+
+MC: No bandit dos cogumelos, o agente só descobre se um cogumelo é venenoso:
+a) sempre, antes de decidir.
+b) se o comer.
+c) se não o comer.
+d) nunca.
+R: b | O feedback só existe para a ação escolhida (comer).
+
+MC: Por que o agente do problema dos cogumelos precisa explorar?
+a) Para economizar memória.
+b) Porque quem nunca come nunca aprende quais são venenosos.
+c) Porque ε deve ser sempre alto.
+d) Porque a regressão logística exige.
+R: b | Sem experimentar, não há dados sobre o resultado da ação.
+
+MC: A regra "comer se p < 0,125" vem do fato de que:
+a) 0,125 = 1/8 é o dobro de 0,0625.
+b) o ganho esperado de comer, 5 − 40p, é positivo apenas para p < 0,125.
+c) todos os classificadores usam 0,125.
+d) a base tem 125 exemplos.
+R: b | Com +5 e −35, o ganho esperado é 5 − 40p.
+
+MC: Em comparação com o teste A/B tradicional, um bandit:
+a) divide sempre o tráfego igualmente.
+b) desloca o tráfego para as opções boas durante o experimento.
+c) não coleta dados.
+d) dispensa análise estatística.
+R: b | Isso reduz o custo de testar, mas torna a análise mais delicada.
+
+MC: No banco de testes de 10 braços, a estratégia gulosa tende a:
+a) obter a maior recompensa média.
+b) estagnar com recompensa média menor que as demais.
+c) escolher sempre o melhor braço.
+d) ter arrependimento zero.
+R: b | Sem exploração, ela frequentemente trava num braço subótimo.
+
+MC: Em horizontes longos, a ε-gulosa com ε fixo tem arrependimento que:
+a) cresce linearmente, pois continua explorando ao acaso.
+b) cai a zero.
+c) permanece constante.
+d) é sempre menor que o do UCB.
+R: a | Com ε fixo, uma fração constante de passos é gasta explorando.
+
+MC: Para recompensas de cliques (sucesso/fracasso), o Thompson Sampling atualiza:
+a) apenas a média.
+b) S e F (sucessos e fracassos) do braço escolhido.
+c) todos os braços igualmente.
+d) a taxa de aprendizado.
+R: b | A crença do braço jogado recebe +1 em S ou em F.
+
+MC: Em AR, a regra "novo = velho + passo × (alvo − velho)" aparece:
+a) apenas em bandits.
+b) em quase todos os algoritmos, incluindo o Q-learning.
+c) apenas em redes neurais.
+d) nunca fora deste capítulo.
+R: b | É um padrão básico de aprendizado incremental.
+
+MC: Qual afirmação sobre o desempate (argmax com sorteio entre empates) é correta?
+a) Evita viés sistemático em favor do primeiro índice.
+b) Aumenta o arrependimento sempre.
+c) É proibido em AR.
+d) Só serve para o UCB.
+R: a | Sem desempate aleatório, o primeiro braço empatado seria sempre escolhido.
+
+MC: Um dado observacional como o Bank Marketing, usado para estimar taxas por mês, exige cautela porque:
+a) as taxas observadas podem refletir decisões do banco e não efeito causal do mês.
+b) o Python não lê arquivos CSV.
+c) a base tem poucos atributos.
+d) não existe coluna de resultado.
+R: a | Correlação não prova causa; a escolha dos meses não foi aleatória.
+
+MC: Um agente que escolhe sempre o melhor braço desde o primeiro passo tem arrependimento:
+a) positivo e crescente.
+b) igual a zero.
+c) negativo.
+d) igual à recompensa total.
+R: b | Não há diferença entre o braço escolhido e o melhor, logo a perda é nula.
+
+DISC: Descreva o dilema exploração × aproveitamento usando um exemplo próprio e explique por que não existe estratégia livre de custo.
+R: Exemplo: escolher entre um fornecedor conhecido e um novo. Aproveitar rende o que já se sabe; explorar pode revelar algo melhor, mas custa tentativas possivelmente ruins. Qualquer informação nova exige testar, e testar tem custo.
+
+DISC: Demonstre que a atualização Q ← Q + (1/n)(R − Q) calcula a média das n recompensas.
+R: Seja Q_n a média das n − 1 recompensas anteriores, ou seja, Σ_(i<n) R_i = (n − 1) Q_n. Então Q_(n+1) = (1/n) Σ_(i≤n) R_i = (1/n)(R_n + (n − 1) Q_n) = Q_n + (1/n)(R_n − Q_n), que é a regra incremental.
+
+DISC: Qual a diferença de efeito entre o passo 1/n e o passo constante α? Em que situações usar cada um?
+R: Com 1/n, todas as recompensas pesam igual (média simples); é adequado a ambientes estacionários. Com α constante, as recentes pesam mais e o passado é esquecido; adequado a ambientes não estacionários.
+
+DISC: Explique por que a estratégia gulosa pode ficar presa a uma ação ruim. Dê um exemplo numérico simples.
+R: Se o braço A paga 1 e o braço B, melhor, paga em média 2, mas a primeira tentativa em B rende 0 por sorte, o agente passará a preferir A e nunca testará B de novo, mantendo-se com 1.
+
+DISC: Explique a ideia do UCB em palavras simples e o papel do parâmetro c.
+R: UCB escolhe a ação com maior estimativa mais um bônus de incerteza, grande para ações pouco testadas. É "otimismo diante da incerteza". c regula o peso do bônus: maior c, mais exploração.
+
+DISC: Calcule o valor do UCB (com c = 2) para uma ação com Q = 0,5, N = 10, no passo t = 100. Use ln 100 ≈ 4,605.
+R: Bônus = 2 × √(4,605/10) = 2 × √0,4605 ≈ 2 × 0,6786 = 1,357. UCB = 0,5 + 1,357 ≈ 1,857.
+
+DISC: Descreva os passos de uma rodada do Thompson Sampling para três anúncios.
+R: Sorteia-se uma taxa de cada Beta(S+1, F+1); escolhe-se o anúncio de maior sorteio; observa-se clique ou não; atualiza-se S ou F daquele anúncio; repete-se.
+
+DISC: Por que a distribuição Beta se estreita com o tempo e qual é a consequência para o Thompson Sampling?
+R: Mais dados dão mais certeza sobre a taxa, estreitando a curva. Os sorteios variam menos, e o braço melhor passa a vencer quase sempre: a exploração diminui sozinha.
+
+DISC: Defina arrependimento acumulado e explique por que ele é uma medida melhor que a recompensa média para comparar estratégias de bandit.
+R: É a soma das perdas em relação ao melhor braço. Ele isola o custo de não conhecer o melhor braço e mostra como a perda cresce no tempo, o que a média não revela.
+
+DISC: O que significa dizer que uma estratégia tem arrependimento logarítmico? E linear?
+R: Logarítmico: a perda total cresce muito devagar, pois o agente aprende e passa a escolher o melhor braço. Linear: a perda por passo é constante, pois a estratégia não converge (ex.: ε fixo ou travada).
+
+DISC: Cite duas aplicações reais dos bandits e explique como definir braços e recompensa em cada uma.
+R: Anúncios: braços = banners, recompensa = clique. Notícias: braços = manchetes, recompensa = leitura. Também testes clínicos: braços = tratamentos, recompensa = melhora do paciente.
+
+DISC: Explique a diferença entre um bandit simples e um bandit contextual com um exemplo.
+R: No simples, o melhor braço é o mesmo sempre. No contextual, depende do contexto: o melhor anúncio varia com idade ou localização do visitante, que o agente observa antes de decidir.
+
+DISC: Por que um bandit contextual ainda não é um problema completo de AR?
+R: Porque a ação de agora não afeta o contexto futuro nem as recompensas futuras. Não há planejamento de longo prazo, característico dos MDPs.
+
+DISC: Por que o agente do problema dos cogumelos paga caro no primeiro lote e como o custo diminui depois?
+R: No primeiro lote ele come tudo, pois não sabe nada, e come muitos venenosos. Depois, o modelo aprende a probabilidade de veneno e passa a comer apenas os de baixa probabilidade, elevando a recompensa média.
+
+DISC: Mostre que, com recompensas +5 (comestível) e −35 (venenoso), comer só vale a pena se p < 1/8.
+R: Ganho esperado = (1 − p)·5 + p·(−35) = 5 − 40p. É positivo se p < 5/40 = 1/8 = 0,125.
+
+DISC: Compare teste A/B tradicional e bandit quanto a custo de oportunidade e dificuldade de análise.
+R: O A/B divide o tráfego igualmente e perde recompensa em opções ruins durante todo o teste, mas facilita a inferência. O bandit reduz esse custo ao deslocar o tráfego para opções boas, mas a alocação adaptativa complica a análise estatística.
+
+DISC: Por que é necessário desempate aleatório ao escolher o argmax das estimativas?
+R: Se várias ações empatam (por exemplo, no início, todas com Q = 0), escolher sempre o primeiro índice cria viés e deixa as demais sem teste; o sorteio entre empatadas evita isso.
+
+DISC: Discuta como valores iniciais otimistas geram exploração, e por que isso não resolve exploração permanente.
+R: Estimativas iniciais altas fazem cada ação testada parecer decepcionante, levando o agente a testar outras. Mas o efeito é transitório e some quando as estimativas convergem; não ajuda em ambientes que mudam depois.
+
+DISC: Por que não se deve concluir, no projeto, que "ligar em junho causa mais contratações" a partir da taxa de sucesso de junho nos dados?
+R: Os dados são observacionais; o banco escolheu quando e a quem ligar. Diferenças de taxa podem refletir o perfil dos clientes contatados ou outros fatores, e não um efeito causal do mês.
+
+DISC: Se a taxa de clique do melhor anúncio for muito próxima da do segundo melhor, o que acontece com o arrependimento e com a dificuldade do problema?
+R: A diferença entre os braços é pequena, então cada erro custa pouco, mas distinguir os braços exige muito mais dados. O problema fica mais difícil de resolver, embora o arrependimento por passo seja menor.
