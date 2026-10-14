@@ -1,0 +1,153 @@
+@@EX 1 | Primeiro contato com o conjunto Wine | básico
+Carregue o conjunto **Wine** (`load_wine`). Mostre o formato de X, os nomes dos 13 atributos e quantos exemplos existem em cada classe. Depois, **esconda** o rótulo e agrupe os vinhos com `KMeans(n_clusters=3)`. Use `pd.crosstab` para comparar os grupos com as classes reais.
+
+*Pergunta:* os grupos coincidem com as classes? Por que isso seria improvável?
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_wine
+from sklearn.cluster import KMeans
+
+dados = load_wine()
+X, y = dados.data, dados.target
+print("Formato de X:", X.shape)
+print("Atributos:", list(dados.feature_names)[:5], "...")
+print("Exemplos por classe:", np.bincount(y))
+
+grupos = KMeans(n_clusters=3, n_init=10, random_state=0).fit_predict(X)
+print(pd.crosstab(grupos, y, rownames=["grupo"], colnames=["classe"]))
+```
+@@NOTE Sem padronizar, o atributo "proline" (valores de centenas a mil) domina a distância. Por isso os grupos se misturam com as classes. Você corrigirá isso no próximo exercício.
+@@EX 2 | O efeito da escala | básico
+Repita o agrupamento do exercício anterior, agora **padronizando** os dados com `StandardScaler`. Calcule o índice de Rand ajustado (`adjusted_rand_score`) entre os grupos e as classes reais, antes e depois da padronização.
+
+*Pergunta:* o que mudou? Qual atributo dominava os cálculos antes?
+@@SOL
+```python
+from sklearn.datasets import load_wine
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import adjusted_rand_score
+
+X, y = load_wine(return_X_y=True)
+bruto = KMeans(3, n_init=10, random_state=0).fit_predict(X)
+Xp = StandardScaler().fit_transform(X)
+padr = KMeans(3, n_init=10, random_state=0).fit_predict(Xp)
+
+print("ARI sem padronizar:", round(adjusted_rand_score(y, bruto), 3))
+print("ARI padronizado   :", round(adjusted_rand_score(y, padr), 3))
+print("Desvio padrão de alcohol e proline:", X.std(axis=0).round(1)[[0, 12]])
+```
+@@NOTE O ARI sobe de cerca de 0,37 para cerca de 0,90 depois da padronização. O atributo "proline" (desvio padrão acima de 300, contra menos de 1 do álcool) dominava as distâncias.
+@@EX 3 | Enxergando os grupos com PCA | intermediário
+Reduza o Wine padronizado a **2 componentes** com `PCA` e faça dois gráficos lado a lado: um colorido pelos grupos do K-means e outro colorido pelas classes reais. Imprima a variância explicada pelas duas componentes.
+@@SOL
+```python
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_wine
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+X, y = load_wine(return_X_y=True)
+Xp = StandardScaler().fit_transform(X)
+grupos = KMeans(3, n_init=10, random_state=0).fit_predict(Xp)
+
+pca = PCA(n_components=2).fit(Xp)
+Z = pca.transform(Xp)
+print("Variância explicada:", pca.explained_variance_ratio_.round(3), "| soma:", pca.explained_variance_ratio_.sum().round(3))
+
+fig, ax = plt.subplots(1, 2, figsize=(9, 4))
+ax[0].scatter(Z[:, 0], Z[:, 1], c=grupos, cmap="viridis", s=25); ax[0].set_title("Grupos do K-means")
+ax[1].scatter(Z[:, 0], Z[:, 1], c=y, cmap="viridis", s=25);      ax[1].set_title("Classes reais")
+plt.show()
+```
+@@NOTE As duas componentes retêm cerca de 55% da variância. Mesmo assim, os grupos são bem visíveis e muito parecidos com as classes.
+@@EX 4 | A sorte da inicialização | intermediário
+Rode o K-means **30 vezes** com `n_init=1` e sementes diferentes (`random_state` de 0 a 29) no Wine padronizado. Guarde a inércia de cada execução. Mostre mínimo, máximo e quantas soluções diferentes apareceram (arredonde a inércia a 1 casa decimal). Compare com `n_init=10`.
+
+*Pergunta:* por que usar vários `n_init` é uma boa prática?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+X = StandardScaler().fit_transform(load_wine().data)
+ines = [KMeans(3, n_init=1, random_state=s).fit(X).inertia_ for s in range(30)]
+print("Inércia mínima:", round(min(ines), 1), "| máxima:", round(max(ines), 1))
+print("Soluções distintas:", len(set(np.round(ines, 1))))
+print("Com n_init=10   :", round(KMeans(3, n_init=10, random_state=0).fit(X).inertia_, 1))
+```
+@@NOTE Aparecem várias soluções distintas (mínimos locais). Neste conjunto a diferença é pequena, mas em outros dados pode ser grande. Com `n_init=10`, escolhe-se a melhor entre dez tentativas, o que reduz esse risco.
+@@EX 5 | O algoritmo sempre responde | avançado
+Gere dados **puramente aleatórios** (uniformes) com o mesmo formato do Wine (178 linhas e 13 colunas). Agrupe-os com `KMeans(3)` e calcule a silhueta média. Compare com a silhueta do Wine padronizado.
+
+*Pergunta:* o K-means entregou grupos para dados sem estrutura? O que isso ensina sobre avaliação?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+
+rng = np.random.default_rng(0)
+aleatorio = rng.random((178, 13))
+Xw = StandardScaler().fit_transform(load_wine().data)
+
+for nome, X in [("Aleatório", aleatorio), ("Wine", Xw)]:
+    g = KMeans(3, n_init=10, random_state=0).fit_predict(X)
+    print(f"{nome:10s} tamanhos dos grupos: {np.bincount(g)}  silhueta: {silhouette_score(X, g):.3f}")
+```
+@@NOTE O K-means sempre devolve k grupos. A silhueta dos dados aleatórios é bem menor que a do Wine, o que ajuda a perceber a ausência de estrutura. Esse tema volta no Capítulo 7.
+@@PROJ Primeiro diagnóstico de um conjunto de dados | Cap01
+**Contexto.** Uma equipe de pesquisa recebeu o conjunto de dados de câncer de mama do scikit-learn (`load_breast_cancer`): 569 exames com 30 medidas cada. Pediram a você um **primeiro diagnóstico exploratório** usando apenas aprendizado não supervisionado.
+
+**Atenção ética.** Os dados são de uso didático. Os grupos que você encontrar **não são diagnóstico médico**.
+
+**Tarefas.**
+1. Carregue os dados, mostre o formato e verifique se há valores ausentes.
+2. Padronize os atributos.
+3. Agrupe com `KMeans(n_clusters=2)`. Calcule a silhueta média.
+4. Reduza a 2 dimensões com PCA e desenhe os grupos.
+5. **Só agora** compare os grupos com o rótulo real (`target`) usando `pd.crosstab` e o ARI.
+6. Escreva um parágrafo (5 a 8 linhas) com suas conclusões e **três cuidados éticos** ao usar esse tipo de análise na saúde.
+
+**Entregáveis.** Um notebook (ou script) comentado e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.metrics import silhouette_score, adjusted_rand_score
+
+dados = load_breast_cancer(as_frame=True)
+X, y = dados.data, dados.target
+print("Formato:", X.shape, "| ausentes:", int(X.isna().sum().sum()))
+
+Xp = StandardScaler().fit_transform(X)
+km = KMeans(n_clusters=2, n_init=10, random_state=0).fit(Xp)
+print("Silhueta média:", round(silhouette_score(Xp, km.labels_), 3))
+
+Z = PCA(n_components=2).fit_transform(Xp)
+plt.scatter(Z[:, 0], Z[:, 1], c=km.labels_, cmap="coolwarm", s=18)
+plt.title("Câncer de mama: grupos do K-means em 2 componentes")
+plt.show()
+
+print(pd.crosstab(km.labels_, y, rownames=["grupo"], colnames=["rótulo real"]))
+print("ARI:", round(adjusted_rand_score(y, km.labels_), 3))
+```
+@@RUBRICA
+- Os dados foram inspecionados (formato, ausentes) antes da modelagem.
+- Os atributos foram padronizados e a escolha foi justificada.
+- Os grupos foram avaliados por silhueta e visualizados em 2D.
+- O rótulo real só foi usado no final, para conferência.
+- O texto discute limites da análise e cuidados éticos (saúde, privacidade, viés, não substituir o diagnóstico).
+@@NOTE Com a padronização, os dois grupos reproduzem bem o rótulo real (ARI em torno de 0,65). Mesmo assim, é uma análise exploratória: não serve para decidir sobre pacientes.

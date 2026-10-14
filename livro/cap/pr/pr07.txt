@@ -1,0 +1,186 @@
+@@EX 1 | Há grupos para encontrar? A estatística de Hopkins | básico
+Implemente a estatística de Hopkins (use `NearestNeighbors`) e aplique-a a três conjuntos: dados uniformes (500 × 2), dados com 4 blobs e o Wine padronizado. Interprete os valores.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import make_blobs, load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import NearestNeighbors
+
+def hopkins(X, m=50, seed=42):
+    r = np.random.default_rng(seed)
+    n, d = X.shape
+    nn = NearestNeighbors(n_neighbors=2).fit(X)
+    idx = r.choice(n, m, replace=False)
+    w = nn.kneighbors(X[idx], 2)[0][:, 1]                       # vizinho mais próximo (reais)
+    U = r.uniform(X.min(0), X.max(0), (m, d))
+    u = nn.kneighbors(U, 1)[0][:, 0]                            # vizinho mais próximo (artificiais)
+    return (u ** d).sum() / ((u ** d).sum() + (w ** d).sum())
+
+rng = np.random.default_rng(0)
+print("Uniforme:", round(hopkins(rng.random((500, 2))), 2))
+print("4 blobs :", round(hopkins(make_blobs(500, centers=4, random_state=2)[0]), 2))
+print("Wine    :", round(hopkins(StandardScaler().fit_transform(load_wine().data)), 2))
+```
+@@NOTE Perto de 0,5 indica dados uniformes; valores perto de 1 indicam tendência de agrupamento. O Wine fica claramente acima de 0,5. Nesta versão, usamos a distância elevada à dimensão d, como na definição original.
+@@EX 2 | Silhueta por grupo e por ponto | básico
+No Wine padronizado, agrupe com K-means (k = 3). Calcule a silhueta de cada ponto (`silhouette_samples`). Mostre a silhueta média por grupo e o número de pontos com silhueta negativa.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_samples
+
+X = StandardScaler().fit_transform(load_wine().data)
+rot = KMeans(3, n_init=10, random_state=0).fit_predict(X)
+s = silhouette_samples(X, rot)
+for g in range(3):
+    print(f"grupo {g}: n = {(rot == g).sum():3d}  silhueta média = {s[rot == g].mean():.3f}")
+print("Silhueta média geral:", round(s.mean(), 3), "| pontos com silhueta negativa:", int((s < 0).sum()))
+```
+@@NOTE Grupos com silhueta média baixa e muitos pontos negativos são sinais de fronteira confusa. Observe também o equilíbrio entre os tamanhos dos grupos.
+@@EX 3 | Um painel de índices internos | intermediário
+No Wine padronizado, para k de 2 a 8, calcule a silhueta, o índice de Calinski-Harabasz e o de Davies-Bouldin para o K-means. Mostre uma tabela e indique o k preferido por cada índice. Eles concordam?
+@@SOL
+```python
+import pandas as pd
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
+
+X = StandardScaler().fit_transform(load_wine().data)
+linhas = []
+for k in range(2, 9):
+    r = KMeans(k, n_init=10, random_state=0).fit_predict(X)
+    linhas.append({"k": k, "silhueta": silhouette_score(X, r), "CH": calinski_harabasz_score(X, r), "DB": davies_bouldin_score(X, r)})
+t = pd.DataFrame(linhas)
+print(t.round(3).to_string(index=False))
+print("k preferido -> silhueta:", int(t.loc[t.silhueta.idxmax(), "k"]), "| CH:", int(t.loc[t.CH.idxmax(), "k"]), "| DB:", int(t.loc[t.DB.idxmin(), "k"]))
+```
+@@NOTE Em dados reais, os índices podem discordar. Neste conjunto, os três apontam para k = 3. Quando discordarem, combine com estabilidade e interpretação.
+@@EX 4 | Avaliação externa de três algoritmos | intermediário
+Nos dígitos (`load_digits`), reduza a 20 componentes com PCA e agrupe em 10 grupos com K-means, Ward e GMM. Compare ARI, NMI, homogeneidade, completude e V-measure.
+@@SOL
+```python
+import pandas as pd
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.mixture import GaussianMixture
+from sklearn.metrics import (adjusted_rand_score, normalized_mutual_info_score, homogeneity_score,
+                             completeness_score, v_measure_score)
+
+X, y = load_digits(return_X_y=True)
+Z = PCA(20, random_state=0).fit_transform(X)
+modelos = {"K-means": KMeans(10, n_init=10, random_state=0),
+           "Ward": AgglomerativeClustering(10, linkage="ward"),
+           "GMM": GaussianMixture(10, covariance_type="diag", n_init=3, random_state=0)}
+linhas = []
+for nome, m in modelos.items():
+    r = m.fit_predict(Z)
+    linhas.append({"modelo": nome, "ARI": adjusted_rand_score(y, r), "NMI": normalized_mutual_info_score(y, r),
+                   "homog.": homogeneity_score(y, r), "compl.": completeness_score(y, r), "V": v_measure_score(y, r)})
+print(pd.DataFrame(linhas).round(3).to_string(index=False))
+```
+@@NOTE Os três algoritmos têm desempenho parecido (ARI na faixa de 0,6 a 0,8). Nenhum é perfeito: o agrupamento nos dígitos mistura classes parecidas, como 3, 5, 8 e 9.
+@@EX 5 | Estabilidade para escolher k | avançado
+Em `make_blobs(600, centers=4, random_state=8)`, para k de 2 a 7, repita 15 vezes: sorteie duas subamostras de 300 pontos, agrupe cada uma, e compare as duas soluções no conjunto inteiro com o ARI. Mostre o ARI médio e o desvio por k. Qual k é mais estável?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+from sklearn.metrics import adjusted_rand_score
+
+X, _ = make_blobs(600, centers=4, random_state=8)
+rng = np.random.default_rng(0)
+for k in range(2, 8):
+    sc = []
+    for _ in range(15):
+        i1 = rng.choice(len(X), 300, replace=False); i2 = rng.choice(len(X), 300, replace=False)
+        m1 = KMeans(k, n_init=3, random_state=0).fit(X[i1]); m2 = KMeans(k, n_init=3, random_state=1).fit(X[i2])
+        sc.append(adjusted_rand_score(m1.predict(X), m2.predict(X)))
+    print(f"k = {k}  ARI médio = {np.mean(sc):.3f}  desvio = {np.std(sc):.3f}")
+```
+@@NOTE Valores de k que cortam um grupo natural em pedaços arbitrários tendem a ser instáveis (ARI médio menor e desvio maior). Para k = 2 e k = 4 a estabilidade costuma ser alta, o que combina com a estrutura (grupos que se juntam em pares).
+@@PROJ Painel de avaliação de agrupamentos | Cap07
+**Contexto.** A sua equipe vai agrupar três conjuntos de dados com vários algoritmos e precisa de um **procedimento padronizado e justo de avaliação**, que não dependa de um único número.
+
+**Tarefas.**
+1. Escreva uma função `avaliar(X, modelos, ks)` que, para cada algoritmo (K-means, Ward, GMM) e cada k, calcule: silhueta, Calinski-Harabasz, Davies-Bouldin e **estabilidade** (ARI médio em 10 pares de subamostras de 70%).
+2. Aplique a função ao **Wine** (padronizado), aos **dígitos** (PCA com 20 componentes) e ao **Iris** (padronizado), com k de 2 a 6.
+3. Calcule a estatística de Hopkins de cada conjunto antes de agrupar.
+4. Crie um **ranking combinado**: para cada linha, some os postos (ranks) dos quatro critérios (para DB, menor é melhor). Indique a melhor combinação algoritmo/k de cada conjunto.
+5. Compare a recomendação do ranking com o ARI contra os rótulos reais (usados só no final).
+6. Escreva um parágrafo de recomendação: o que você diria a um colega que só quer "o melhor k"?
+
+**Entregáveis.** Função, tabelas por conjunto, ranking e parágrafo.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_wine, load_digits, load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.mixture import GaussianMixture
+from sklearn.neighbors import NearestNeighbors
+from sklearn.metrics import (silhouette_score, calinski_harabasz_score, davies_bouldin_score, adjusted_rand_score)
+
+def hopkins(X, m=50, seed=42):
+    r = np.random.default_rng(seed); n, d = X.shape
+    nn = NearestNeighbors(n_neighbors=2).fit(X); idx = r.choice(n, m, replace=False)
+    w = nn.kneighbors(X[idx], 2)[0][:, 1]; U = r.uniform(X.min(0), X.max(0), (m, d)); u = nn.kneighbors(U, 1)[0][:, 0]
+    return (u ** d).sum() / ((u ** d).sum() + (w ** d).sum())
+
+FABRICAS = {"K-means": lambda k: KMeans(k, n_init=5, random_state=0),
+            "Ward": lambda k: AgglomerativeClustering(k, linkage="ward"),
+            "GMM": lambda k: GaussianMixture(k, covariance_type="diag", n_init=2, random_state=0)}
+
+def estabilidade(X, fab, k, pares=10, seed=0):
+    rng = np.random.default_rng(seed); n = len(X); sc = []
+    for _ in range(pares):
+        i1 = rng.choice(n, int(0.7 * n), replace=False); i2 = rng.choice(n, int(0.7 * n), replace=False)
+        # Ward não tem predict: usa-se 1-NN para estender a solução ao conjunto todo
+        def ajustar(idx):
+            r = fab(k).fit_predict(X[idx])
+            return NearestNeighbors(n_neighbors=1).fit(X[idx]).kneighbors(X, return_distance=False).ravel(), r
+        a1, r1 = ajustar(i1); a2, r2 = ajustar(i2)
+        sc.append(adjusted_rand_score(r1[a1], r2[a2]))
+    return float(np.mean(sc))
+
+def avaliar(X, ks=range(2, 7)):
+    linhas = []
+    for nome, fab in FABRICAS.items():
+        for k in ks:
+            rot = fab(k).fit_predict(X)
+            linhas.append({"algoritmo": nome, "k": k, "sil": silhouette_score(X, rot), "CH": calinski_harabasz_score(X, rot),
+                           "DB": davies_bouldin_score(X, rot), "estab": estabilidade(X, fab, k), "rotulos": rot})
+    t = pd.DataFrame(linhas)
+    t["rank"] = t.sil.rank(ascending=False) + t.CH.rank(ascending=False) + t.DB.rank(ascending=True) + t.estab.rank(ascending=False)
+    return t
+
+conjuntos = {}
+Xw, yw = load_wine(return_X_y=True); conjuntos["Wine"] = (StandardScaler().fit_transform(Xw), yw)
+Xd, yd = load_digits(return_X_y=True); conjuntos["Dígitos"] = (PCA(20, random_state=0).fit_transform(Xd), yd)
+Xi, yi = load_iris(return_X_y=True); conjuntos["Iris"] = (StandardScaler().fit_transform(Xi), yi)
+
+for nome, (X, y) in conjuntos.items():
+    ks = range(2, 7) if nome != "Dígitos" else range(6, 13)
+    t = avaliar(X, ks)
+    melhor = t.loc[t["rank"].idxmin()]
+    ari = adjusted_rand_score(y, melhor.rotulos)
+    print(f"{nome:8s} Hopkins = {hopkins(X):.2f} | melhor pelo ranking: {melhor.algoritmo}, k = {int(melhor.k)} "
+          f"(sil {melhor.sil:.2f}, estab {melhor.estab:.2f}) | ARI com os rótulos reais = {ari:.2f}")
+    print(t.drop(columns="rotulos").sort_values("rank").head(3).round(2).to_string(index=False))
+```
+@@RUBRICA
+- Função de avaliação reutilizável, com os quatro critérios.
+- Hopkins calculado antes da modelagem.
+- Ranking combinado construído de modo explícito (postos somados).
+- Resultados comparados com os rótulos reais apenas no final.
+- O parágrafo defende o uso de vários critérios, estabilidade e interpretação, e não de um único número.
+@@NOTE Para o Iris, é comum o ranking preferir k = 2, pois duas espécies se sobrepõem, embora existam 3 classes reais. Para os dígitos, o intervalo de k é de 6 a 12 para ficar perto do número real (10). Observe que o k "melhor" pelos índices internos nem sempre coincide com o número de classes: isso é esperado e deve ser discutido, e não escondido.

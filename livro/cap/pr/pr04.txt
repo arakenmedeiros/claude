@@ -1,0 +1,169 @@
+@@EX 1 | O dendrograma à mão, conferido pelo computador | básico
+Aplique `linkage` com ligação **simples** aos pontos 1, 2, 6, 7 e 15 (uma dimensão). Mostre a matriz `Z` e confira se as alturas das fusões são 1, 1, 4 e 8. Depois corte a árvore em 2 grupos com `fcluster`.
+@@SOL
+```python
+import numpy as np
+from scipy.cluster.hierarchy import linkage, fcluster
+
+pts = np.array([1, 2, 6, 7, 15], dtype=float).reshape(-1, 1)
+Z = linkage(pts, method="single")
+print("Matriz de ligações (grupo A, grupo B, altura, tamanho):")
+print(Z)
+print("Alturas das fusões:", Z[:, 2])
+print("Rótulos com 2 grupos:", fcluster(Z, t=2, criterion="maxclust"))
+```
+@@NOTE As alturas são 1, 1, 4 e 8, como no cálculo manual do Capítulo 4. Com 2 grupos, o ponto 15 fica sozinho.
+@@EX 2 | Qual ligação reproduz melhor as classes? | intermediário
+No Wine padronizado, aplique `AgglomerativeClustering(n_clusters=3)` com as ligações `single`, `complete`, `average` e `ward`. Calcule o ARI contra as classes reais e a **correlação cofenética** (use `scipy` para a cofenética).
+@@SOL
+```python
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import adjusted_rand_score
+from scipy.cluster.hierarchy import linkage, cophenet
+from scipy.spatial.distance import pdist
+
+X, y = load_wine(return_X_y=True)
+X = StandardScaler().fit_transform(X)
+d = pdist(X)
+for lig in ["single", "complete", "average", "ward"]:
+    rot = AgglomerativeClustering(n_clusters=3, linkage=lig).fit_predict(X)
+    coph, _ = cophenet(linkage(X, method=lig), d)
+    print(f"{lig:9s} ARI = {adjusted_rand_score(y, rot):.3f}   cofenética = {coph:.3f}")
+```
+@@NOTE Ward obtém o melhor ARI (cerca de 0,79) e a completa vem em seguida (cerca de 0,58). As ligações simples e média têm ARI próximo de zero: produzem grupos muito desequilibrados. A correlação cofenética é maior para a ligação média (cerca de 0,76), mas isso não garante grupos melhores.
+@@EX 3 | Cortando a árvore por altura | intermediário
+No Iris padronizado com ligação de Ward, use `AgglomerativeClustering(n_clusters=None, distance_threshold=h)` para h = 5, 8, 12 e 20. Quantos grupos surgem em cada corte? Depois use os saltos entre alturas consecutivas de `linkage` para sugerir um corte.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import linkage
+
+X = StandardScaler().fit_transform(load_iris().data)
+for h in [5, 8, 12, 20]:
+    n = AgglomerativeClustering(n_clusters=None, distance_threshold=h, linkage="ward").fit(X).n_clusters_
+    print(f"altura = {h:2d}  ->  {n} grupos")
+
+alturas = linkage(X, method="ward")[:, 2]
+n = len(X)
+saltos = np.diff(alturas)
+j = int(np.argmax(saltos))               # maior salto entre a fusão j e a fusão j+1
+print("Últimos saltos entre fusões:", saltos[-5:].round(2))
+print("O maior salto sugere cortar para obter", n - (j + 1), "grupos")
+```
+@@NOTE Alturas maiores produzem menos grupos. O maior salto está entre as duas últimas fusões e sugere 2 grupos; o salto seguinte sugere 3. No Iris, é comum haver essa ambiguidade, pois duas espécies se sobrepõem.
+@@EX 4 | O efeito corrente | intermediário
+Crie dois grupos densos ligados por uma "ponte" de pontos (código abaixo) e agrupe com ligação `single` e `ward` (k = 2). Mostre o tamanho de cada grupo nos dois casos.
+
+*Pergunta:* qual ligação separou corretamente os dois blocos? Por quê?
+
+```python
+import numpy as np
+rng = np.random.default_rng(0)
+A = rng.normal([0, 0], 0.4, (100, 2))
+B = rng.normal([6, 0], 0.4, (100, 2))
+ponte = np.c_[np.linspace(0.8, 5.2, 12), rng.normal(0, 0.05, 12)]
+X = np.vstack([A, B, ponte])
+```
+@@SOL
+```python
+import numpy as np
+from sklearn.cluster import AgglomerativeClustering
+
+rng = np.random.default_rng(0)
+A = rng.normal([0, 0], 0.4, (100, 2))
+B = rng.normal([6, 0], 0.4, (100, 2))
+ponte = np.c_[np.linspace(0.8, 5.2, 12), rng.normal(0, 0.05, 12)]
+X = np.vstack([A, B, ponte])
+for lig in ["single", "ward"]:
+    rot = AgglomerativeClustering(2, linkage=lig).fit_predict(X)
+    print(f"{lig:7s} tamanhos dos grupos: {np.bincount(rot)}")
+```
+@@NOTE Com a ligação simples, os pontos da ponte unem os dois blocos e a solução costuma isolar poucos pontos (tamanhos desequilibrados). Ward divide em dois blocos equilibrados (108 e 104 pontos). Atenção: com a ligação simples, um único ponto ficou isolado.
+@@EX 5 | Agrupando exemplos e atributos ao mesmo tempo | avançado
+No Wine padronizado, calcule a hierarquia dos **vinhos** (linhas) e a dos **atributos** (colunas, usando distância de correlação: `1 − |correlação|`). Reordene a matriz segundo as duas hierarquias e desenhe um mapa de calor. Imprima a ordem dos atributos e diga quais ficam juntos.
+@@SOL
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from scipy.cluster.hierarchy import linkage, dendrogram
+from scipy.spatial.distance import squareform
+
+d = load_wine()
+X = StandardScaler().fit_transform(d.data)
+
+Zl = linkage(X, method="ward")
+ordem_l = dendrogram(Zl, no_plot=True)["leaves"]
+
+corr = np.corrcoef(X.T)
+dist = 1 - np.abs(corr)
+np.fill_diagonal(dist, 0)
+Zc = linkage(squareform(dist, checks=False), method="average")
+ordem_c = dendrogram(Zc, no_plot=True)["leaves"]
+print("Ordem dos atributos:", [d.feature_names[i] for i in ordem_c])
+
+plt.imshow(X[ordem_l][:, ordem_c], aspect="auto", cmap="viridis")
+plt.xticks(range(13), [d.feature_names[i][:8] for i in ordem_c], rotation=90)
+plt.title("Wine: linhas e colunas reordenadas")
+plt.show()
+```
+@@NOTE Atributos fortemente correlacionados (como flavanoids, total_phenols e od280/od315) ficam adjacentes. O mapa mostra blocos de vinhos com perfis químicos parecidos.
+@@PROJ A árvore dos dígitos | Cap04
+**Contexto.** Um laboratório de visão computacional quer entender **quais dígitos manuscritos se parecem mais entre si**. Você usará o conjunto `load_digits` (1.797 imagens de 8×8) e o agrupamento hierárquico para construir uma "árvore dos dígitos".
+
+**Tarefas.**
+1. Calcule a **imagem média** de cada dígito (10 vetores de 64 atributos) e aplique agrupamento hierárquico (ligação média, distância Euclidiana). Desenhe o dendrograma com os rótulos 0 a 9.
+2. Corte a árvore em 3 grupos e descreva-os. Que dígitos parecem "primos"?
+3. Agora agrupe as **1.797 imagens** com `AgglomerativeClustering` (ligação de Ward, k = 10). Calcule o ARI e o NMI contra os dígitos reais.
+4. Monte a matriz de contingência e identifique os dois dígitos mais confundidos.
+5. Compare Ward com ligação média e simples quanto ao ARI. Explique as diferenças.
+6. Escreva um parágrafo relacionando suas conclusões entre os itens 2 e 4.
+
+**Entregáveis.** Script, dendrograma, matriz de contingência e parágrafo.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
+from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+
+X, y = load_digits(return_X_y=True)
+
+medias = np.array([X[y == d].mean(axis=0) for d in range(10)])
+Z = linkage(medias, method="average")
+dendrogram(Z, labels=[str(d) for d in range(10)])
+plt.title("Árvore dos dígitos (imagens médias)")
+plt.show()
+cortes = fcluster(Z, t=3, criterion="maxclust")
+print("Grupos dos dígitos 0..9 (corte em 3):", cortes)
+
+for lig in ["ward", "average", "single"]:
+    rot = AgglomerativeClustering(10, linkage=lig).fit_predict(X)
+    print(f"{lig:8s} ARI = {adjusted_rand_score(y, rot):.3f}   NMI = {normalized_mutual_info_score(y, rot):.3f}")
+
+rot = AgglomerativeClustering(10, linkage="ward").fit_predict(X)
+tab = pd.crosstab(rot, y, rownames=["grupo"], colnames=["dígito"])
+print(tab)
+conf = {}
+for g in range(10):
+    ordem = np.argsort(-tab.values[g])
+    conf[g] = (int(ordem[0]), int(ordem[1]), int(tab.values[g, ordem[1]]))
+print("Maior e segunda maior classe em cada grupo (classe1, classe2, nº da 2ª):", conf)
+```
+@@RUBRICA
+- Imagens médias calculadas corretamente (uma por dígito).
+- Dendrograma legível, com rótulos.
+- Corte da árvore descrito e interpretado (dígitos "primos").
+- ARI e NMI calculados para as três ligações e comparados.
+- Matriz de contingência analisada, com os dígitos mais confundidos apontados.
+- Parágrafo final relaciona a árvore das médias às confusões do agrupamento.
+@@NOTE Ward tem o melhor ARI (cerca de 0,79); a ligação média, cerca de 0,51; e a simples, zero (efeito corrente). Na matriz de contingência, o grupo 1 mistura 169 dígitos "3" com 145 dígitos "9", e o dígito "1" se divide entre vários grupos (inclusive com o "8" e o "9"). Na árvore das imagens médias com corte em 3, o "0" fica isolado, e "4" e "6" formam outro grupo. Discuta por que imagens médias e imagens individuais contam histórias diferentes.

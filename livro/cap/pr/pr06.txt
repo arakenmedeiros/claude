@@ -1,0 +1,162 @@
+@@EX 1 | Tipos de covariância no Iris | básico
+Ajuste `GaussianMixture(n_components=3)` ao Iris padronizado, com `covariance_type` igual a `spherical`, `diag`, `tied` e `full`. Para cada um, mostre o BIC e o ARI contra as espécies. Qual tipo tem o menor BIC?
+@@SOL
+```python
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.mixture import GaussianMixture
+from sklearn.metrics import adjusted_rand_score
+
+X, y = load_iris(return_X_y=True)
+X = StandardScaler().fit_transform(X)
+for tipo in ["spherical", "diag", "tied", "full"]:
+    g = GaussianMixture(3, covariance_type=tipo, n_init=5, random_state=0).fit(X)
+    print(f"{tipo:10s} BIC = {g.bic(X):7.1f}   ARI = {adjusted_rand_score(y, g.predict(X)):.3f}")
+```
+@@NOTE Neste conjunto, o tipo `full` tem o menor BIC (cerca de 800), e `tied` obtém o mesmo ARI (cerca de 0,90), com menos parâmetros. O tipo `spherical` é o pior, pois obriga os grupos a serem círculos. Em outros dados, tipos mais simples podem vencer pelo BIC; vale comparar sempre.
+@@EX 2 | Quantas gaussianas? | básico
+Gere 600 pontos com 4 grupos (`make_blobs(600, centers=4, cluster_std=1.1, random_state=11)`). Ajuste GMMs com K de 1 a 8 e mostre BIC e AIC. Qual K cada critério escolhe?
+@@SOL
+```python
+import pandas as pd
+from sklearn.datasets import make_blobs
+from sklearn.mixture import GaussianMixture
+
+X, _ = make_blobs(600, centers=4, cluster_std=1.1, random_state=11)
+linhas = []
+for K in range(1, 9):
+    g = GaussianMixture(K, n_init=3, random_state=0).fit(X)
+    linhas.append({"K": K, "BIC": g.bic(X), "AIC": g.aic(X)})
+t = pd.DataFrame(linhas)
+print(t.round(1).to_string(index=False))
+print("K pelo BIC:", int(t.loc[t.BIC.idxmin(), "K"]), "| K pelo AIC:", int(t.loc[t.AIC.idxmin(), "K"]))
+```
+@@NOTE Nos dois critérios, o mínimo ocorre em K = 4, o número verdadeiro de grupos. Com grupos sobrepostos, o AIC tende a escolher mais componentes que o BIC.
+@@EX 3 | Pontos ambíguos e pertinência suave | intermediário
+Gere dados com 3 grupos que se sobrepõem (`make_blobs(400, centers=[[0,0],[2.5,0.5],[1.2,3]], cluster_std=1.0, random_state=2)`). Ajuste um GMM com K = 3 e use `predict_proba`. Liste os 5 pontos mais ambíguos (menor probabilidade máxima) com suas probabilidades. Quantos pontos têm probabilidade máxima abaixo de 0,8?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import make_blobs
+from sklearn.mixture import GaussianMixture
+
+X, _ = make_blobs(400, centers=[[0, 0], [2.5, 0.5], [1.2, 3]], cluster_std=1.0, random_state=2)
+g = GaussianMixture(3, n_init=5, random_state=0).fit(X)
+P = g.predict_proba(X)
+pmax = P.max(axis=1)
+idx = np.argsort(pmax)[:5]
+for i in idx:
+    print(f"ponto {i:3d}  probabilidades = {P[i].round(2)}")
+print("Pontos com probabilidade máxima < 0,8:", int((pmax < 0.8).sum()), "de", len(X))
+```
+@@NOTE Os pontos mais ambíguos têm probabilidades quase iguais entre dois ou três grupos (cerca de 0,3 a 0,4 cada) e ficam nas regiões de sobreposição. Cerca de um quarto dos pontos (93 de 400) tem probabilidade máxima abaixo de 0,8. Em um negócio, esses clientes podem receber ações combinadas.
+@@EX 4 | GMM como detector de anomalias | intermediário
+Treine um GMM (K = 2) em 800 pontos normais (dois grupos). Gere 30 anomalias uniformes numa região ampla. Use `score_samples` e marque como anomalia os 3% de menor densidade. Quantas das 30 anomalias foram detectadas e quantos pontos normais foram marcados por engano?
+@@SOL
+```python
+import numpy as np
+from sklearn.mixture import GaussianMixture
+
+rng = np.random.default_rng(0)
+normais = np.vstack([rng.normal([0, 0], 0.8, (400, 2)), rng.normal([4, 3], 0.6, (400, 2))])
+anom = rng.uniform(-6, 10, (30, 2))
+X = np.vstack([normais, anom]); y = np.r_[np.zeros(800), np.ones(30)]
+
+g = GaussianMixture(2, n_init=3, random_state=0).fit(normais)      # treina só com normais
+escore = g.score_samples(X)
+limiar = np.percentile(escore, 3)
+marcado = escore < limiar
+print("Anomalias detectadas:", int(marcado[y == 1].sum()), "de 30")
+print("Normais marcados por engano:", int(marcado[y == 0].sum()), "de 800")
+```
+@@NOTE O GMM detecta 24 das 30 anomalias, com apenas 1 falso alarme entre os 800 pontos normais. As 6 anomalias perdidas caíram em regiões de densidade alta, perto dos grupos normais. O limiar de 3% é uma escolha: mudar o percentil troca falsos alarmes por anomalias perdidas.
+@@EX 5 | Espectral: o papel da afinidade | avançado
+Em `make_moons(500, noise=0.07, random_state=0)`, aplique `SpectralClustering(2)` com `affinity="rbf"` e gamma = 0,1; 1; 10 e 100, e também `affinity="nearest_neighbors"` com 10 vizinhos. Compare o ARI com o K-means.
+@@SOL
+```python
+from sklearn.datasets import make_moons
+from sklearn.cluster import SpectralClustering, KMeans
+from sklearn.metrics import adjusted_rand_score
+
+X, y = make_moons(500, noise=0.07, random_state=0)
+print(f"K-means                  ARI = {adjusted_rand_score(y, KMeans(2, n_init=10, random_state=0).fit_predict(X)):.3f}")
+for gamma in [0.1, 1, 10, 100]:
+    r = SpectralClustering(2, affinity="rbf", gamma=gamma, random_state=0).fit_predict(X)
+    print(f"Espectral rbf gamma={gamma:<5} ARI = {adjusted_rand_score(y, r):.3f}")
+r = SpectralClustering(2, affinity="nearest_neighbors", n_neighbors=10, random_state=0).fit_predict(X)
+print(f"Espectral 10-vizinhos     ARI = {adjusted_rand_score(y, r):.3f}")
+```
+@@NOTE O resultado depende muito da afinidade. Com gamma pequeno (0,1 ou 1), tudo parece similar e o ARI fica baixo (cerca de 0,23 a 0,29, como o K-means); com gamma = 100, o ARI chega a 1,0. O grafo de 10 vizinhos também atinge 1,0 e é uma escolha robusta para formas curvas.
+@@PROJ Perfis com probabilidades: uma operadora de telecomunicações | Cap06
+**Contexto.** Uma operadora (fictícia) quer entender o comportamento de seus clientes pelo **consumo de dados** (GB/mês) e pelo **tempo de chamadas** (minutos/mês). Os perfis se sobrepõem, e o time de marketing quer saber **com que confiança** cada cliente pertence a um perfil.
+
+**Dados.**
+
+```python
+import numpy as np
+
+def gerar_telecom(seed=0):
+    rng = np.random.default_rng(seed)
+    a = rng.multivariate_normal([4, 300], [[3, 40], [40, 4000]], 350)      # voz
+    b = rng.multivariate_normal([25, 120], [[30, -30], [-30, 1500]], 450)  # dados
+    c = rng.multivariate_normal([14, 210], [[20, 10], [10, 2500]], 300)    # misto
+    X = np.vstack([a, b, c]); y = np.repeat([0, 1, 2], [350, 450, 300])
+    return np.clip(X, 0, None), y
+```
+
+**Tarefas.**
+1. Padronize os dados. Compare K-means (k = 3) e GMM (K = 3, covariância `full`) usando o ARI contra os perfis ocultos.
+2. Escolha K de 1 a 7 por **BIC** e discuta se confirma 3 perfis.
+3. Calcule a pertinência suave. Quantos clientes têm probabilidade máxima abaixo de 0,7? Chame-os "clientes de fronteira".
+4. Proponha uma ação de marketing para os clientes de fronteira.
+5. Use `gmm.sample(300)` para gerar 300 clientes sintéticos e compare as médias com as dos dados reais (dados sintéticos para testes e demonstrações).
+6. Marque os 1% de clientes com menor `score_samples` como atípicos e descreva-os.
+
+**Entregáveis.** Script, tabela de comparação, gráfico com elipses e texto de recomendações.
+@@SOL
+```python
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
+from sklearn.metrics import adjusted_rand_score
+
+def gerar_telecom(seed=0):
+    rng = np.random.default_rng(seed)
+    a = rng.multivariate_normal([4, 300], [[3, 40], [40, 4000]], 350)
+    b = rng.multivariate_normal([25, 120], [[30, -30], [-30, 1500]], 450)
+    c = rng.multivariate_normal([14, 210], [[20, 10], [10, 2500]], 300)
+    X = np.vstack([a, b, c]); y = np.repeat([0, 1, 2], [350, 450, 300])
+    return np.clip(X, 0, None), y
+
+X, y = gerar_telecom()
+esc = StandardScaler().fit(X)
+Xp = esc.transform(X)
+
+km = KMeans(3, n_init=10, random_state=0).fit(Xp)
+gm = GaussianMixture(3, covariance_type="full", n_init=5, random_state=0).fit(Xp)
+print("ARI K-means:", round(adjusted_rand_score(y, km.labels_), 3), "| ARI GMM:", round(adjusted_rand_score(y, gm.predict(Xp)), 3))
+
+bics = {K: GaussianMixture(K, n_init=5, random_state=0).fit(Xp).bic(Xp) for K in range(1, 8)}
+print("BIC por K:", {k: round(v, 1) for k, v in bics.items()}, "-> melhor K =", min(bics, key=bics.get))
+
+P = gm.predict_proba(Xp)
+fronteira = P.max(axis=1) < 0.7
+print("Clientes de fronteira (prob. máx. < 0,7):", int(fronteira.sum()), "de", len(X))
+
+sint = esc.inverse_transform(gm.sample(300)[0])
+print("Médias reais     :", X.mean(axis=0).round(1))
+print("Médias sintéticas:", sint.mean(axis=0).round(1))
+
+esc_dens = gm.score_samples(Xp)
+atip = esc_dens <= np.percentile(esc_dens, 1)
+print("Atípicos (1%): n =", int(atip.sum()), "| média [GB, min] =", X[atip].mean(axis=0).round(1))
+```
+@@RUBRICA
+- Comparação justificada entre K-means e GMM, com ARI.
+- Escolha de K por BIC discutida.
+- Clientes de fronteira identificados e ação de marketing coerente.
+- Dados sintéticos gerados e comparados com os reais.
+- Atípicos descritos em unidades originais.
+- Texto reconhece as limitações (perfis sobrepostos, suposição gaussiana).
+@@NOTE Em perfis elípticos e sobrepostos, o GMM tende a superar o K-means, pois modela covariâncias diferentes. Os clientes de fronteira são ótimos candidatos a ofertas combinadas (voz + dados). Os dados sintéticos preservam as médias, mas não substituem dados reais em decisões.
