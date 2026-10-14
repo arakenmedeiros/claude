@@ -1,0 +1,269 @@
+MC: No aprendizado não supervisionado, os dados de treinamento contêm:
+a) atributos e rótulos (X e y).
+b) apenas atributos (X), sem rótulos.
+c) apenas rótulos (y), sem atributos.
+d) recompensas e punições.
+R: b | O aprendizado não supervisionado trabalha só com X e busca estrutura nos dados.
+
+MC: Na analogia da biblioteca com 10 mil livros sem etiqueta, organizar os livros por semelhança corresponde a:
+a) classificação supervisionada.
+b) aprendizado por reforço.
+c) agrupamento.
+d) regressão.
+R: c | Agrupar por semelhança, sem etiquetas prévias, é a essência do agrupamento.
+
+MC: Em uma tabela de dados, cada linha representa normalmente:
+a) um atributo.
+b) um rótulo.
+c) um algoritmo.
+d) um exemplo (instância).
+R: d | Linhas são exemplos; colunas são atributos.
+
+MC: A letra y, em aprendizado de máquina, designa em geral:
+a) a matriz de atributos.
+b) o rótulo ou resposta correta.
+c) o número de grupos.
+d) a distância entre pontos.
+R: b | y é o rótulo (alvo), quando existe.
+
+MC: Qual paradigma usa um "gabarito" para corrigir os erros do modelo?
+a) Não supervisionado.
+b) Supervisionado.
+c) Por reforço.
+d) Redução de dimensionalidade.
+R: b | O supervisionado compara a previsão com a resposta correta.
+
+MC: Prever o preço de uma casa a partir de suas características é um exemplo de:
+a) agrupamento.
+b) detecção de anomalias.
+c) regras de associação.
+d) regressão supervisionada.
+R: d | Há um alvo numérico conhecido (preço), logo é regressão.
+
+MC: No aprendizado por reforço, o agente aprende principalmente por meio de:
+a) rótulos fornecidos por especialistas.
+b) recompensas e punições.
+c) redução de dimensões.
+d) distâncias entre exemplos.
+R: b | O agente age no ambiente e recebe recompensas ou punições.
+
+MC: O aprendizado semissupervisionado caracteriza-se por:
+a) não usar nenhum dado.
+b) usar apenas dados rotulados.
+c) usar poucos dados rotulados e muitos não rotulados.
+d) usar só recompensas.
+R: c | Mistura uma pequena parte rotulada com uma grande parte sem rótulo.
+
+MC: No aprendizado auto-supervisionado, o rótulo:
+a) é criado a partir dos próprios dados.
+b) é sempre fornecido por humanos.
+c) não existe nem é criado.
+d) é uma recompensa do ambiente.
+R: a | A máquina inventa a tarefa-pretexto e seus rótulos a partir dos dados.
+
+MC: Qual das alternativas NÃO é uma das quatro grandes famílias de tarefas do aprendizado não supervisionado vistas no capítulo?
+a) Agrupamento.
+b) Redução de dimensionalidade.
+c) Classificação supervisionada.
+d) Detecção de anomalias.
+R: c | As quatro famílias são agrupamento, redução de dimensionalidade, regras de associação e detecção de anomalias.
+
+MC: A pergunta "quem se parece com quem?" corresponde à tarefa de:
+a) agrupamento.
+b) regras de associação.
+c) regressão.
+d) aprendizado por reforço.
+R: a | Agrupamento organiza exemplos em grupos de semelhantes.
+
+MC: Reduzir uma foto de 784 pixels a 2 números para visualização é uma aplicação de:
+a) regras de associação.
+b) redução de dimensionalidade.
+c) detecção de fraude.
+d) aprendizado por reforço.
+R: b | Reduzir o número de atributos preservando o essencial é redução de dimensionalidade.
+
+MC: A descoberta de que "quem compra fraldas costuma comprar cerveja" é um exemplo típico de:
+a) regras de associação.
+b) agrupamento hierárquico.
+c) PCA.
+d) regressão linear.
+R: a | É a análise da cesta de compras (Agrawal et al., 1993).
+
+MC: Um exemplo muito diferente do comportamento normal é chamado de:
+a) centroide.
+b) atributo.
+c) rótulo.
+d) anomalia (outlier).
+R: d | Anomalias são exemplos que destoam do padrão esperado.
+
+MC: Uma razão importante para estudar aprendizado não supervisionado é que:
+a) rótulos são sempre baratos.
+b) rótulos podem ser caros ou inexistentes.
+c) dados sem rótulo não existem.
+d) ele dispensa qualquer avaliação.
+R: b | Rotular em grande escala custa tempo e dinheiro; às vezes nem existe rótulo.
+
+MC: O maior desafio de avaliação no aprendizado não supervisionado é:
+a) a ausência de gabarito.
+b) o excesso de rótulos.
+c) a falta de algoritmos.
+d) a impossibilidade de usar Python.
+R: a | Sem gabarito, a avaliação depende de critérios internos, estabilidade e julgamento humano.
+
+MC: Quem formalizou e nomeou a Análise de Componentes Principais em 1933 foi:
+a) Hotelling.
+b) MacQueen.
+c) Ester.
+d) Kingma.
+R: a | Hotelling (1933) formalizou o método; Pearson (1901) é o precursor.
+
+MC: O algoritmo DBSCAN foi apresentado em:
+a) 1957.
+b) 1977.
+c) 1996.
+d) 2018.
+R: c | Ester, Kriegel, Sander e Xu publicaram o DBSCAN em 1996.
+
+MC: A primeira etapa recomendada de um projeto de aprendizado não supervisionado é:
+a) rodar o algoritmo.
+b) entender o problema.
+c) comunicar os resultados.
+d) escolher o número de grupos.
+R: b | Antes de tudo, é preciso saber qual decisão os resultados vão apoiar.
+
+MC: Em um projeto típico, a etapa "explorar e limpar" tem como objetivo:
+a) escolher o algoritmo final.
+b) publicar o livro.
+c) identificar valores ausentes, erros e repetições.
+d) criar rótulos manualmente.
+R: c | Verifica-se a qualidade dos dados antes de modelar.
+
+MC: Qual biblioteca Python reúne a maioria dos algoritmos de aprendizado de máquina usados no livro?
+a) matplotlib.
+b) scikit-learn.
+c) os.
+d) json.
+R: b | O scikit-learn (Pedregosa et al., 2011) oferece os algoritmos.
+
+MC: No primeiro exemplo do capítulo, o conjunto de dados utilizado foi:
+a) Iris.
+b) MNIST.
+c) Titanic.
+d) Wine Quality.
+R: a | O Iris, com 150 flores e 4 medidas, foi usado para o primeiro agrupamento.
+
+MC: No código do K-means do capítulo, o argumento n_clusters=3 indica que:
+a) o algoritmo deve rodar 3 vezes.
+b) existem 3 atributos.
+c) queremos 3 grupos.
+d) o conjunto tem 3 exemplos.
+R: c | n_clusters define o número de grupos desejados.
+
+MC: Por que o código do capítulo usa PCA(n_components=2) antes de desenhar o gráfico?
+a) Para melhorar a precisão do K-means.
+b) Para reduzir de 4 para 2 dimensões, só para visualizar.
+c) Para criar rótulos.
+d) Para remover o ruído.
+R: b | O PCA resume as medidas em 2 dimensões apenas para podermos desenhar.
+
+MC: Qual cuidado ético foi destacado no capítulo?
+a) Dados reais nunca têm viés.
+b) Agrupar pessoas é também decidir sobre pessoas, e os dados podem refletir preconceitos.
+c) A privacidade só importa para dados públicos.
+d) Nomes ofensivos para grupos não causam dano.
+R: b | Viés, privacidade e rótulos que estigmatizam exigem cuidado.
+
+MC: A "regra de ouro" do capítulo afirma que:
+a) o algoritmo decide e pessoas obedecem.
+b) o algoritmo sugere; pessoas decidem e respondem pelas decisões.
+c) pessoas não precisam interpretar resultados.
+d) dados dispensam responsabilidade.
+R: b | A responsabilidade pelas decisões permanece humana.
+
+MC: No Brasil, a lei que trata da proteção de dados pessoais, mencionada no capítulo, é a:
+a) LGPD.
+b) CLT.
+c) LDB.
+d) LAI.
+R: a | A Lei Geral de Proteção de Dados (LGPD) exige proteção e base legal para dados pessoais.
+
+MC: Segundo Bengio, Courville e Vincent (2013), uma chave do sucesso do aprendizado profundo é:
+a) aprender boas representações dos dados.
+b) eliminar todos os dados.
+c) usar apenas rótulos manuais.
+d) evitar redes neurais.
+R: a | Representações úteis, muitas vezes aprendidas sem rótulos, são centrais.
+
+MC: Na estrutura do livro, a Parte V trata de:
+a) fundamentos.
+b) agrupamento.
+c) regras de associação.
+d) aprendizado profundo.
+R: d | A Parte V (Capítulo 12) cobre autoencoders, VAEs, GANs e auto-supervisão.
+
+DISC: Explique, com suas palavras e usando uma analogia do cotidiano, o que é aprendizado não supervisionado.
+R: É aprender estrutura a partir de dados que só têm atributos (X), sem rótulos. Analogia: organizar uma biblioteca sem etiquetas, agrupando livros parecidos; ninguém dá a resposta, a organização é descoberta.
+
+DISC: Diferencie aprendizado supervisionado de não supervisionado quanto aos dados e ao tipo de feedback.
+R: No supervisionado há X e y e o feedback é o gabarito, usado para medir o erro. No não supervisionado há só X e não há gabarito; o objetivo é descobrir grupos, padrões ou exceções.
+
+DISC: Descreva as cinco principais formas de aprendizado apresentadas no capítulo, com um exemplo de cada.
+R: Supervisionado (classificar e-mails em spam), não supervisionado (segmentar clientes), semissupervisionado (poucos rótulos e muitos dados sem rótulo), auto-supervisionado (prever palavra oculta) e por reforço (agente que aprende por recompensas, como em jogos).
+
+DISC: Cite cinco motivos para estudar aprendizado não supervisionado.
+R: Rótulos são caros; rótulos podem não existir; exploração dos dados; pré-processamento e representações melhores; detecção de eventos raros e mutáveis, como fraudes e falhas.
+
+DISC: Descreva as quatro famílias de tarefas e dê um exemplo de aplicação para cada.
+R: Agrupamento (perfis de clientes); redução de dimensionalidade (mapa 2D de fotos); regras de associação (cesta de compras); detecção de anomalias (fraude em cartão).
+
+DISC: O que é um exemplo e o que é um atributo? Mostre com uma tabela de clientes de uma loja.
+R: Exemplo é uma linha (um cliente); atributo é uma coluna (idade, gasto, visitas). Resposta deve apresentar tabela com linhas de clientes e colunas de características.
+
+DISC: Explique por que avaliar um agrupamento é mais difícil do que avaliar um classificador.
+R: Não há gabarito; o algoritmo sempre devolve algum agrupamento, mesmo em dados aleatórios. É preciso usar critérios internos, estabilidade e interpretação por especialistas.
+
+DISC: Descreva as oito etapas de um projeto de aprendizado não supervisionado.
+R: Entender o problema, coletar dados, explorar e limpar, preparar atributos, escolher e rodar o algoritmo, avaliar, interpretar e comunicar, agir e repetir.
+
+DISC: Por que a etapa de interpretação e comunicação é especialmente importante em agrupamento?
+R: Porque, sem gabarito, o valor dos grupos depende de fazerem sentido para especialistas, de terem nomes e perfis claros e de apoiarem ações concretas.
+
+DISC: Explique por que o aprendizado auto-supervisionado é visto como uma ponte entre o supervisionado e o não supervisionado.
+R: Usa dados sem rótulos humanos (como o não supervisionado), mas treina com rótulos criados automaticamente a partir dos dados (como o supervisionado).
+
+DISC: No código do primeiro agrupamento, por que o vetor y foi usado só no final?
+R: Para conferir o resultado. Na prática, não teríamos y; o algoritmo descobre os grupos sem ele. Comparar com y é apenas um exercício didático de verificação.
+
+DISC: O que acontece com os grupos quando mudamos n_clusters de 3 para 2 ou 5 no exemplo do Iris? Como decidir o melhor valor?
+R: Com 2, duas espécies tendem a se fundir; com 5, grupos naturais são subdivididos. Para decidir, usam-se critérios como cotovelo, silhueta e gap (Capítulos 3 e 7), além de interpretação.
+
+DISC: Cite três riscos éticos ao agrupar pessoas e uma medida de mitigação para cada.
+R: Viés nos dados (auditar e rebalancear); violação de privacidade (anonimizar, seguir a LGPD); rótulos que estigmatizam (nomear grupos de forma neutra e revisar com especialistas).
+
+DISC: Explique a diferença entre regressão e classificação, citando um exemplo de cada.
+R: Regressão prevê um valor numérico (preço de imóvel); classificação prevê uma categoria (gato ou cachorro). Ambas são supervisionadas.
+
+DISC: Relacione três marcos históricos da linha do tempo do capítulo com as famílias de tarefas.
+R: Pearson/Hotelling (PCA) com redução de dimensionalidade; Lloyd/MacQueen (K-means) e DBSCAN com agrupamento; Agrawal et al. (1993) com regras de associação.
+
+DISC: Por que o agrupamento pode ser considerado uma "hipótese" e não uma verdade?
+R: Porque diferentes algoritmos, parâmetros e escolhas de atributos geram divisões distintas; os grupos dependem do objetivo e devem ser validados, não aceitos cegamente.
+
+DISC: Dê dois exemplos de aplicações de detecção de anomalias e explique por que são difíceis de resolver só com aprendizado supervisionado.
+R: Fraude em cartão e falha de máquina. São raras, mudam de forma ao longo do tempo e são difíceis de rotular, então detectar o "diferente" sem rótulos é mais prático.
+
+DISC: Escreva, com suas palavras, o que você espera aprender em cada uma das cinco partes do livro.
+R: Resposta pessoal coerente com o roteiro: Parte I conceitos e dados; Parte II agrupamento; Parte III redução de dimensionalidade; Parte IV associação e anomalias; Parte V aprendizado profundo.
+
+DISC: Descreva um problema real da sua área de interesse em que o aprendizado não supervisionado poderia ajudar, indicando a tarefa e os dados necessários.
+R: Resposta pessoal. Deve indicar a família de tarefa (por exemplo, agrupamento de clientes), descrever os atributos necessários e como os resultados apoiariam uma decisão.
+
+MC: Qual das situações abaixo é um exemplo de aprendizado não supervisionado?
+a) Prever se um e-mail é spam, tendo e-mails já marcados como spam.
+b) Descobrir perfis de clientes sem nenhuma classificação prévia.
+c) Ensinar um robô a andar com recompensas.
+d) Prever o preço de uma casa a partir de vendas anteriores.
+R: b | Não há rótulos: o objetivo é descobrir grupos (perfis) nos dados.
+
+DISC: Explique a diferença entre os termos "dados", "atributo" e "rótulo" usando o exemplo de um conjunto de fotos de animais.
+R: Dados são o conjunto de fotos; atributos são as características que descrevem cada foto (pixels, cores, formas); rótulo é a resposta correta, como "gato" ou "cachorro", quando existe.

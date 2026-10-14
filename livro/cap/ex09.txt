@@ -1,0 +1,269 @@
+MC: A hipótese da variedade (manifold hypothesis) afirma que dados de alta dimensão:
+a) geralmente ficam sobre ou perto de uma variedade de dimensão muito menor.
+b) ocupam uniformemente todo o espaço.
+c) não têm estrutura.
+d) são sempre lineares.
+R: a | A estrutura real tem poucos graus de liberdade.
+
+MC: Uma variedade é uma superfície que:
+a) vista de perto parece plana, mesmo sendo globalmente curva.
+b) é sempre um plano.
+c) não pode ser curva.
+d) só existe em duas dimensões.
+R: a | A Terra é o exemplo clássico.
+
+MC: Na estrutura "rocambole suíço", dois pontos de voltas diferentes:
+a) podem estar próximos em linha reta e distantes ao longo da superfície.
+b) estão sempre distantes em linha reta.
+c) são sempre idênticos.
+d) não existem.
+R: a | A distância geodésica difere da euclidiana.
+
+MC: A distância geodésica é a distância:
+a) em linha reta.
+b) medida ao longo da superfície (variedade).
+c) do cosseno.
+d) de Hamming.
+R: b | É como a distância por rodovia, e não de voo.
+
+MC: O MDS (escalonamento multidimensional) recebe como entrada principal:
+a) uma tabela de distâncias entre os objetos.
+b) rótulos de classe.
+c) apenas o número de grupos.
+d) uma imagem.
+R: a | Constrói um mapa em baixa dimensão que respeite essas distâncias.
+
+MC: O "stress" no MDS mede:
+a) o erro entre as distâncias originais e as do mapa.
+b) o tempo de execução.
+c) o número de grupos.
+d) a variância.
+R: a | Quanto menor, melhor o mapa.
+
+MC: O MDS clássico, quando as distâncias são euclidianas, é equivalente ao:
+a) PCA.
+b) K-means.
+c) DBSCAN.
+d) t-SNE.
+R: a | Usa autovetores e recupera o mesmo subespaço.
+
+MC: O MDS não métrico preserva:
+a) apenas a ordem das distâncias.
+b) distâncias exatas.
+c) rótulos.
+d) densidades.
+R: a | Útil quando só há ranking de semelhança.
+
+MC: O Isomap realiza, nesta ordem:
+a) grafo de vizinhos, caminhos mínimos e MDS.
+b) PCA, K-means e dendrograma.
+c) corte, regras e lift.
+d) bootstrap e silhueta.
+R: a | Aproxima a distância geodésica pelo menor caminho no grafo.
+
+MC: Uma limitação do Isomap é:
+a) sensibilidade a ruído (atalhos no grafo) e custo da ordem de n².
+b) não usar vizinhos.
+c) funcionar só com dois pontos.
+d) exigir rótulos.
+R: a | Também exige um grafo conectado.
+
+MC: O LLE (Locally Linear Embedding) parte da ideia de que:
+a) cada ponto é reconstruído como combinação linear de seus vizinhos, e esses pesos devem ser preservados.
+b) todos os pontos são independentes.
+c) a distância global é a única relevante.
+d) os dados são aleatórios.
+R: a | Preserva relações locais ao desenrolar a variedade.
+
+MC: O t-SNE tem como objetivo principal:
+a) preservar vizinhanças locais em um mapa de baixa dimensão.
+b) preservar a variância global.
+c) ordenar os pontos.
+d) calcular regras de associação.
+R: a | Quem era vizinho continua vizinho.
+
+MC: No t-SNE, as probabilidades no mapa de baixa dimensão usam:
+a) uma distribuição t de Student, com caudas pesadas.
+b) uma distribuição uniforme.
+c) uma distribuição binária.
+d) uma gaussiana apenas.
+R: a | As caudas pesadas evitam o amontoamento (crowding) no centro.
+
+MC: A medida que o t-SNE minimiza ao aproximar as duas distribuições é:
+a) a divergência de Kullback-Leibler.
+b) a soma dos quadrados.
+c) o índice de Rand.
+d) o BIC.
+R: a | Mede a diferença entre as probabilidades originais e as do mapa.
+
+MC: A perplexidade no t-SNE pode ser interpretada como:
+a) o número aproximado de vizinhos considerados por ponto.
+b) o número de grupos.
+c) o número de iterações.
+d) a taxa de aprendizado.
+R: a | Valores típicos: 5 a 50.
+
+MC: Perplexidade muito baixa tende a:
+a) fragmentar grupos em pedaços.
+b) fundir tudo em um grupo.
+c) não alterar o resultado.
+d) remover ruído.
+R: a | Foca em estruturas muito locais.
+
+MC: Em um mapa t-SNE, o tamanho aparente dos grupos:
+a) não tem significado confiável.
+b) indica a quantidade de pontos exatamente.
+c) indica a variância.
+d) é sempre proporcional à densidade.
+R: a | O t-SNE adapta a escala local; grupos densos e esparsos podem parecer iguais.
+
+MC: Em um mapa t-SNE, a distância entre grupos muito afastados:
+a) quase não significa nada.
+b) é sempre fiel.
+c) indica a ordem temporal.
+d) é proporcional à similaridade original.
+R: a | Só a vizinhança local é confiável.
+
+MC: Uma recomendação prática para o t-SNE é:
+a) reduzir antes a 30–50 dimensões com PCA e usar init="pca".
+b) usar apenas dados categóricos.
+c) rodar uma única vez.
+d) nunca padronizar dados.
+R: a | Acelera e estabiliza o resultado.
+
+MC: O UMAP, ao contrário do t-SNE original:
+a) aprende uma função e permite transformar pontos novos.
+b) não usa vizinhos.
+c) não tem parâmetros.
+d) só funciona em 1D.
+R: a | O método transform do UMAP projeta novos dados.
+
+MC: O parâmetro n_neighbors do UMAP controla:
+a) o tamanho da vizinhança local considerada.
+b) o número de grupos.
+c) o número de iterações.
+d) a escala do eixo.
+R: a | Pequeno: detalhes locais; grande: estrutura global.
+
+MC: O parâmetro min_dist do UMAP controla:
+a) o quão compactos os pontos podem ficar no mapa.
+b) o número de componentes.
+c) a métrica.
+d) a semente.
+R: a | Pequeno: blocos densos; grande: pontos mais espalhados.
+
+MC: Segundo Kobak e Linderman (2021), a melhor preservação global do UMAP deve-se em grande parte:
+a) à inicialização (por exemplo, PCA ou espectral).
+b) a um segredo teórico.
+c) ao número de cores.
+d) ao tamanho do arquivo.
+R: a | Com boa inicialização, o t-SNE se aproxima do UMAP na estrutura global.
+
+MC: Os Laplacian Eigenmaps utilizam:
+a) autovetores do grafo Laplaciano.
+b) a função sigmoide.
+c) o algoritmo Apriori.
+d) a árvore de isolamento.
+R: a | Relaciona-se ao agrupamento espectral (Capítulo 6).
+
+MC: A medida trustworthiness (confiança) de uma projeção avalia:
+a) se os vizinhos no mapa eram de fato vizinhos no espaço original.
+b) a velocidade do algoritmo.
+c) o número de grupos.
+d) a inércia.
+R: a | Venna e Kaski (2006).
+
+MC: Se você precisa projetar novos dados em um mapa já aprendido, qual opção é mais direta?
+a) UMAP ou PCA, que possuem transform.
+b) t-SNE original.
+c) MDS clássico sem refazer o cálculo.
+d) Nenhuma técnica permite.
+R: a | PCA, Kernel PCA e UMAP aprendem uma função de projeção.
+
+MC: Para bases muito grandes, uma boa opção de visualização é:
+a) UMAP ou PCA aleatorizado.
+b) MDS com todos os pares.
+c) Isomap com todos os pares.
+d) dendrograma completo.
+R: a | São mais escaláveis.
+
+MC: Para preservar a geometria global das distâncias, são indicados:
+a) Isomap e MDS.
+b) apenas t-SNE.
+c) apenas DBSCAN.
+d) apenas Apriori.
+R: a | Ambos buscam preservar distâncias globais (geodésicas no Isomap).
+
+DISC: Explique a hipótese da variedade com o exemplo do tapete enrolado e das fotos de um rosto girando.
+R: Pontos em voltas vizinhas do tapete parecem próximos em linha reta, mas são distantes sobre a superfície. Fotos de rosto têm milhares de pixels, mas variam por um parâmetro (o ângulo): os dados vivem numa curva de baixa dimensão.
+
+DISC: Diferencie distância euclidiana de geodésica e explique como o Isomap aproxima a geodésica.
+R: A euclidiana é a linha reta; a geodésica é ao longo da variedade. O Isomap liga cada ponto a k vizinhos e usa o menor caminho no grafo como aproximação da geodésica.
+
+DISC: Descreva o MDS e como ele reconstruiria um mapa de cidades a partir da tabela de distâncias.
+R: Busca posições 2D cujas distâncias reproduzam as da tabela, minimizando o stress; o mapa resultante pode sair girado ou espelhado, mas preserva as distâncias relativas.
+
+DISC: Diferencie MDS clássico, métrico por stress e não métrico.
+R: Clássico: via autovetores (equivale ao PCA para distâncias euclidianas). Métrico por stress (SMACOF): otimiza iterativamente o stress. Não métrico: preserva apenas a ordem das distâncias.
+
+DISC: Descreva a ideia do LLE em linguagem simples.
+R: Cada ponto é reconstruído como combinação de seus vizinhos; procura-se um mapa de baixa dimensão que mantenha esses mesmos pesos, preservando relações locais.
+
+DISC: Descreva o funcionamento do t-SNE em quatro passos.
+R: Calcular probabilidades de vizinhança no espaço original (gaussiana); inicializar o mapa e calcular probabilidades com t de Student; minimizar a divergência KL por gradiente; os pontos se atraem (vizinhos) e se repelem (não vizinhos).
+
+DISC: Por que o t-SNE usa a distribuição t de Student no mapa?
+R: Em baixa dimensão há menos espaço; as caudas pesadas permitem que pontos não vizinhos fiquem bem afastados, evitando o amontoamento no centro (crowding).
+
+DISC: Explique o papel da perplexidade e como escolher seu valor.
+R: É o número aproximado de vizinhos efetivos de cada ponto. Valores de 5 a 50 são típicos; testam-se vários valores, pois baixos fragmentam grupos e altos podem fundi-los.
+
+DISC: Liste cinco armadilhas na interpretação de um t-SNE.
+R: Tamanho dos grupos sem significado; distâncias entre grupos distantes pouco informativas; formas podem enganar; resultado varia com semente e perplexidade; versão original sem projeção de novos pontos.
+
+DISC: Explique as duas etapas do UMAP e seus parâmetros n_neighbors e min_dist.
+R: Constrói um grafo difuso de vizinhos em alta dimensão e encontra um layout de baixa dimensão cujo grafo seja parecido. n_neighbors controla a escala local; min_dist, a compactação dos pontos no mapa.
+
+DISC: Compare t-SNE e UMAP quanto à velocidade, ao transform, ao parâmetro principal e à estrutura global.
+R: UMAP é mais rápido, tem transform e costuma preservar mais estrutura global (muito devido à inicialização); t-SNE usa perplexidade e preserva sobretudo a estrutura local.
+
+DISC: Por que não se deve usar o t-SNE como prova de existência de grupos?
+R: Pode criar estrutura aparente a partir de ruído e depende de parâmetros; deve-se confirmar com outros métodos e testes estatísticos.
+
+DISC: Explique como avaliar uma projeção usando trustworthiness e correlação das distâncias.
+R: Trustworthiness mede se vizinhos no mapa eram vizinhos no original; a correlação de distâncias mede a fidelidade da estrutura global. Combinam-se para comparar métodos.
+
+DISC: Por que PCA, Isomap, t-SNE e UMAP contam histórias diferentes sobre os mesmos dados?
+R: Cada um otimiza um critério distinto: variância global (PCA), distâncias geodésicas (Isomap), vizinhança local probabilística (t-SNE) e grafo difuso (UMAP).
+
+DISC: Proponha um guia de escolha entre PCA, Isomap, t-SNE e UMAP para quatro situações.
+R: Visualizar rapidamente: PCA; transformar dados novos: PCA ou UMAP; base enorme: UMAP; geometria global: Isomap/MDS; componentes interpretáveis: PCA ou NMF.
+
+DISC: Explique como os Laplacian Eigenmaps se relacionam com o agrupamento espectral.
+R: Ambos usam autovetores do Laplaciano do grafo de vizinhos; Eigenmaps os usam como coordenadas de baixa dimensão e o espectral aplica K-means a essas coordenadas.
+
+DISC: Descreva por que reduzir antes com PCA ajuda o t-SNE.
+R: Remove ruído e reduz o custo; trabalhar com 30–50 componentes preserva o essencial e torna o t-SNE mais rápido e estável.
+
+DISC: Dê um exemplo de aplicação de UMAP ou t-SNE em biologia e comente cuidados.
+R: Visualização de células individuais em transcriptômica: cada ponto é uma célula e grupos são tipos celulares. Cuidados: não interpretar distâncias globais, testar parâmetros e validar com marcadores.
+
+DISC: Explique por que o rocambole suíço não pode ser bem representado pelo PCA.
+R: O PCA projeta em planos e sobrepõe voltas distintas; a estrutura é não linear e exige desenrolar a variedade (Isomap, LLE, UMAP).
+
+MC: Qual técnica foi criada por Tenenbaum, de Silva e Langford (2000) e publicada na revista Science?
+a) Isomap.
+b) K-means.
+c) DBSCAN.
+d) Apriori.
+R: a | O Isomap e o LLE inauguraram o aprendizado de variedades.
+
+MC: No t-SNE, o resultado pode variar entre execuções porque:
+a) há inicialização aleatória e otimização por gradiente.
+b) o algoritmo é analítico.
+c) os dados são alterados.
+d) a perplexidade é sempre zero.
+R: a | Por isso se recomenda fixar a semente e testar mais de uma execução.
+
+DISC: Explique por que o resultado do t-SNE deve ser conferido com mais de uma semente e mais de um valor de perplexidade.
+R: A otimização é não convexa e depende da inicialização; estruturas que só aparecem em uma configuração podem ser artefatos. Estruturas que persistem em várias execuções são mais confiáveis.

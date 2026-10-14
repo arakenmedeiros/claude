@@ -1,0 +1,269 @@
+MC: Em uma matriz de dados com n exemplos e d atributos, a forma da matriz X é:
+a) d linhas e n colunas.
+b) n linhas e d colunas.
+c) n linhas e n colunas.
+d) d linhas e d colunas.
+R: b | Cada linha é um exemplo e cada coluna é um atributo.
+
+MC: O CEP de uma cidade deve ser tratado, em geral, como:
+a) quantidade contínua.
+b) variável categórica.
+c) variável ordinal.
+d) variável binária.
+R: b | O CEP é um número "disfarçado": não representa uma quantidade, e sim uma categoria.
+
+MC: "Baixo, médio, alto" é um exemplo de atributo:
+a) nominal.
+b) contínuo.
+c) ordinal.
+d) binário.
+R: c | São categorias com uma ordem natural.
+
+MC: Qual propriedade NÃO é exigida de uma métrica de distância?
+a) Não negatividade.
+b) Simetria.
+c) Desigualdade triangular.
+d) Distância sempre menor que 1.
+R: d | A distância pode assumir qualquer valor não negativo; não há limite superior obrigatório.
+
+MC: A distância Euclidiana entre os pontos (0, 0) e (3, 4) é:
+a) 3.
+b) 4.
+c) 5.
+d) 7.
+R: c | raiz(3² + 4²) = raiz(25) = 5.
+
+MC: A distância de Manhattan entre (0, 0) e (3, 4) é:
+a) 5.
+b) 7.
+c) 4.
+d) 12.
+R: b | |3 − 0| + |4 − 0| = 7.
+
+MC: A distância de Chebyshev entre (0, 0) e (3, 4) é:
+a) 4.
+b) 3.
+c) 5.
+d) 7.
+R: a | É a maior diferença entre atributos: máx(3, 4) = 4.
+
+MC: A distância de Minkowski com p = 1 equivale à distância:
+a) Euclidiana.
+b) de Chebyshev.
+c) de Manhattan.
+d) do cosseno.
+R: c | Com p = 1, soma-se o valor absoluto das diferenças.
+
+MC: A "bola unitária" (conjunto de pontos a distância 1 da origem) na distância de Manhattan, em duas dimensões, tem forma de:
+a) círculo.
+b) quadrado.
+c) losango.
+d) triângulo.
+R: c | Em L1, a bola unitária é um losango.
+
+MC: A similaridade do cosseno entre dois vetores com a mesma direção é:
+a) 0.
+b) −1.
+c) 1.
+d) 0,5.
+R: c | Ângulo zero implica cosseno igual a 1, independentemente do tamanho dos vetores.
+
+MC: A distância do cosseno é indicada principalmente para:
+a) texto e embeddings.
+b) atributos binários simples apenas.
+c) coordenadas geográficas.
+d) dados ordenados no tempo.
+R: a | Ela ignora o tamanho e compara a direção (o "perfil") dos vetores.
+
+MC: A distância de Hamming entre "casa" e "cama" é:
+a) 0.
+b) 1.
+c) 2.
+d) 4.
+R: b | As palavras diferem em apenas uma posição.
+
+MC: Os carrinhos {pão, leite, café} e {pão, café, açúcar} têm distância de Jaccard igual a:
+a) 0,25.
+b) 0,5.
+c) 0,75.
+d) 1.
+R: b | Interseção = 2, união = 4, similaridade = 0,5; distância = 1 − 0,5 = 0,5.
+
+MC: A distância de Gower é apropriada quando os dados são:
+a) todos numéricos e na mesma escala.
+b) mistos (numéricos, categóricos, ordinais).
+c) apenas texto.
+d) apenas imagens.
+R: b | Ela calcula distâncias parciais por atributo e faz a média.
+
+MC: Ao aplicar a distância Euclidiana sem escalar, o atributo que domina o resultado é aquele que:
+a) tem menor amplitude.
+b) tem maior amplitude de valores.
+c) é categórico.
+d) tem mais valores ausentes.
+R: b | Diferenças grandes em valor absoluto pesam mais na soma dos quadrados.
+
+MC: A padronização (z-score) produz atributos com:
+a) mínimo 0 e máximo 1.
+b) média 0 e desvio padrão 1.
+c) mediana 1 e média 0.
+d) soma igual a 1.
+R: b | z = (x − média) / desvio padrão.
+
+MC: Um valor 70 em um atributo com média 50 e desvio padrão 10 tem z-score igual a:
+a) 1.
+b) 2.
+c) 20.
+d) 0,5.
+R: b | z = (70 − 50) / 10 = 2.
+
+MC: Um valor 30, em um atributo com mínimo 10 e máximo 110, vale na normalização min-max:
+a) 0,2.
+b) 0,3.
+c) 0,5.
+d) 1.
+R: a | (30 − 10) / (110 − 10) = 0,2.
+
+MC: O escalonamento robusto usa:
+a) média e desvio padrão.
+b) mínimo e máximo.
+c) mediana e intervalo interquartil.
+d) moda e variância.
+R: c | É menos sensível a valores extremos.
+
+MC: Para evitar vazamento de dados (data leakage), o escalonador deve ser ajustado (fit):
+a) apenas no conjunto de treino.
+b) apenas no conjunto de teste.
+c) nos conjuntos de treino e teste juntos.
+d) depois da avaliação.
+R: a | O teste só deve receber a transformação já ajustada (transform).
+
+MC: A imputação de valores ausentes pela mediana é preferível à média quando:
+a) há muitos valores extremos (outliers).
+b) os dados são categóricos.
+c) não há ausentes.
+d) os dados já estão padronizados.
+R: a | A mediana é robusta a extremos.
+
+MC: O KNNImputer preenche um valor ausente com:
+a) zero.
+b) a média dos exemplos mais parecidos.
+c) um valor aleatório.
+d) o máximo da coluna.
+R: b | Usa os vizinhos mais próximos para estimar o valor faltante.
+
+MC: Para a cor (azul, verde, vermelho), sem ordem natural, a codificação mais adequada é:
+a) one-hot.
+b) ordinal 0, 1, 2.
+c) logarítmica.
+d) min-max.
+R: a | Evita criar uma ordem inexistente entre as cores.
+
+MC: O problema da codificação ordinal aplicada a categorias sem ordem é que:
+a) o algoritmo trava.
+b) o algoritmo supõe distâncias e ordens que não existem.
+c) aumenta demais a memória.
+d) remove atributos.
+R: b | Faria o vermelho parecer "duas vezes mais longe" do azul.
+
+MC: Um atributo com cauda longa, como renda, costuma ser tratado com:
+a) transformação logarítmica.
+b) codificação one-hot.
+c) remoção da linha.
+d) distância de Hamming.
+R: a | O logaritmo aproxima os extremos.
+
+MC: A "maldição da dimensionalidade" foi nomeada por:
+a) Pearson.
+b) Hotelling.
+c) Bellman.
+d) Lloyd.
+R: c | Richard Bellman usou a expressão em 1957.
+
+MC: Em alta dimensão, a razão entre a maior e a menor distância tende a:
+a) infinito.
+b) 1.
+c) zero.
+d) 100.
+R: b | As distâncias ficam parecidas, e "vizinho mais próximo" perde significado (Beyer et al., 1999).
+
+MC: Qual medida é, segundo Aggarwal, Hinneburg e Keim (2001), menos afetada pela alta dimensão?
+a) Normas com p menor, como Manhattan.
+b) Normas com p muito grande.
+c) A distância de Hamming apenas.
+d) Nenhuma é afetada.
+R: a | Normas com p menor sofrem menos com a concentração de distâncias.
+
+MC: Um pipeline do scikit-learn serve para:
+a) encadear etapas de pré-processamento e modelo, aplicadas sempre na mesma ordem.
+b) plotar gráficos.
+c) baixar dados da internet.
+d) substituir o Python.
+R: a | Garante consistência e evita esquecer passos.
+
+MC: Atributos muito correlacionados entre si indicam, em geral:
+a) informação repetida.
+b) ausência de variância.
+c) dados inválidos.
+d) necessidade de aumentar k.
+R: a | Podem ser removidos ou combinados.
+
+DISC: Explique por que "semelhança = proximidade" é a ideia central de muitos algoritmos deste livro.
+R: Cada exemplo é um ponto no espaço de atributos; exemplos parecidos ficam próximos. Agrupamento, redução de dimensionalidade e detecção de anomalias dependem de medir distância ou vizinhança.
+
+DISC: Calcule a distância Euclidiana, de Manhattan e de Chebyshev entre Ana (25, 120, 8) e Carla (31, 95, 4).
+R: Diferenças: 6, 25, 4. Euclidiana = raiz(36+625+16) = raiz(677) ≈ 26,0. Manhattan = 6+25+4 = 35. Chebyshev = 25.
+
+DISC: Descreva a analogia usada para explicar as distâncias Euclidiana, Manhattan e Chebyshev.
+R: Euclidiana: régua em linha reta. Manhattan: táxi em quarteirões, andando em "L". Chebyshev: rei do xadrez, que anda em qualquer direção por casa, contando só a maior diferença.
+
+DISC: Quando a distância do cosseno é preferível à Euclidiana? Dê um exemplo.
+R: Quando a direção importa mais que o tamanho, como textos de comprimentos diferentes sobre o mesmo assunto: as proporções de palavras são parecidas, embora as contagens difiram.
+
+DISC: Calcule a similaridade e a distância de Jaccard entre {pão, leite, café} e {pão, café, açúcar}.
+R: Interseção {pão, café} = 2 itens; união = 4 itens. Similaridade = 2/4 = 0,5; distância = 0,5.
+
+DISC: Explique o problema da escala usando o exemplo da padaria (gasto e visitas).
+R: O gasto varia em centenas de reais e as visitas em unidades; na distância Euclidiana o gasto domina e as visitas quase não pesam. Padronizar iguala a contribuição dos atributos.
+
+DISC: Compare padronização, normalização min-max e escalonamento robusto, indicando quando usar cada uma.
+R: Padronização: média 0 e desvio 1; padrão para K-means, PCA e GMM. Min-max: intervalo [0,1], útil quando se precisam limites fixos. Robusto: mediana e IQR; indicado com muitos outliers.
+
+DISC: O que é vazamento de dados (data leakage) no pré-processamento e como evitá-lo?
+R: É quando informação do teste influencia o treino, por exemplo ajustando o escalonador com todos os dados. Evita-se ajustando (fit) só no treino e aplicando (transform) no teste, de preferência com pipelines.
+
+DISC: Liste cinco estratégias para tratar valores ausentes e comente uma vantagem ou risco de cada.
+R: Remover (perde dados); imputar média ou mediana (rápido, mas reduz variância); imputar moda (para categorias); imputar por KNN (usa estrutura, mais caro); indicador de ausência (preserva a informação de que faltava).
+
+DISC: Explique a codificação one-hot e por que ela é preferível à codificação ordinal para categorias sem ordem.
+R: Cria uma coluna binária por categoria. Assim nenhuma categoria parece maior ou mais distante que outra, evitando uma ordem artificial.
+
+DISC: Explique o que são atributos constantes ou redundantes e por que removê-los ajuda o agrupamento.
+R: Atributos constantes não distinguem exemplos; redundantes repetem informação. Mantê-los adiciona ruído às distâncias e aumenta a dimensão sem ganho.
+
+DISC: Descreva a maldição da dimensionalidade e duas consequências para algoritmos baseados em distância.
+R: Com muitas dimensões, o espaço fica vazio e as distâncias se concentram. Consequências: vizinho mais próximo perde sentido e grupos ficam difíceis de separar; é preciso muito mais exemplos.
+
+DISC: Quais ações podem mitigar a maldição da dimensionalidade?
+R: Selecionar atributos relevantes, reduzir dimensionalidade (PCA, UMAP), usar métricas mais robustas (Manhattan, cosseno) e coletar mais dados.
+
+DISC: Qual é a diferença entre atributos nominais, ordinais e binários? Dê um exemplo de cada.
+R: Nominal: categorias sem ordem (cidade). Ordinal: categorias com ordem (baixo, médio, alto). Binário: apenas dois valores (comprou ou não).
+
+DISC: Explique as quatro propriedades de uma métrica e dê um exemplo de medida que as viole.
+R: Não negatividade, identidade, simetria e desigualdade triangular. Exemplo: a distância ao quadrado viola a desigualdade triangular; medidas assimétricas violam a simetria.
+
+DISC: Explique como a distância de Gower trata atributos numéricos e categóricos.
+R: Para numéricos, diferença dividida pela amplitude do atributo; para categóricos, 0 se iguais e 1 se diferentes. A distância final é a média das distâncias parciais.
+
+DISC: Por que a transformação logarítmica ajuda em atributos como renda?
+R: A renda tem cauda longa e poucos valores muito altos dominam as distâncias. O logaritmo comprime a escala e aproxima os extremos do restante.
+
+DISC: Descreva o experimento do contraste relativo de distâncias em função do número de dimensões e o que ele mostra.
+R: Gera pontos uniformes e mede (maior − menor)/menor distância a um ponto de referência. O contraste cai rapidamente com a dimensão, mostrando que as distâncias ficam parecidas.
+
+DISC: Monte um pipeline em palavras (ou código) que impute ausentes, padronize e agrupe com K-means.
+R: Pipeline com SimpleImputer (mediana), StandardScaler e KMeans, na ordem; chamar fit_predict nos dados.
+
+DISC: Por que valores extremos prejudicam a média e o desvio padrão, e que alternativa existe?
+R: Eles puxam a média e inflam o desvio, distorcendo z-scores. Alternativas robustas: mediana, MAD e IQR.

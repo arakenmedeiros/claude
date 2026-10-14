@@ -1,0 +1,269 @@
+MC: Qual é uma diferença entre seleção e extração de atributos?
+a) A seleção escolhe colunas originais; a extração cria novas colunas por combinação.
+b) A seleção cria combinações; a extração apaga colunas.
+c) Ambas criam novas colunas.
+d) Ambas não alteram os dados.
+R: a | O PCA é um método de extração.
+
+MC: O PCA foi proposto por Pearson em 1901 e desenvolvido por:
+a) Hotelling, em 1933.
+b) Lloyd, em 1957.
+c) Ward, em 1963.
+d) Kingma, em 2014.
+R: a | Hotelling (1933) formalizou e nomeou o método.
+
+MC: No PCA, "informação" significa principalmente:
+a) variância.
+b) média.
+c) moda.
+d) número de classes.
+R: a | O PCA busca direções de máxima variância.
+
+MC: A primeira componente principal (PC1) é:
+a) a direção de maior variância dos dados.
+b) a direção de menor variância.
+c) o eixo y original.
+d) a média dos atributos.
+R: a | PC2 é perpendicular a PC1 e tem a maior variância restante.
+
+MC: As componentes principais são, entre si:
+a) perpendiculares (ortogonais).
+b) paralelas.
+c) idênticas.
+d) aleatórias.
+R: a | Cada componente é perpendicular às anteriores.
+
+MC: Qual é o primeiro passo do PCA?
+a) Centralizar (e, se necessário, padronizar) os dados.
+b) Calcular a inércia.
+c) Escolher k.
+d) Criar o dendrograma.
+R: a | Subtrai-se a média de cada coluna.
+
+MC: Em termos de álgebra, as componentes principais são:
+a) autovetores da matriz de covariância.
+b) a diagonal da matriz de dados.
+c) as linhas da matriz identidade.
+d) os centroides.
+R: a | Os autovalores são as variâncias ao longo das componentes.
+
+MC: Na decomposição X = U·S·Vᵀ (SVD), as direções principais estão em:
+a) V.
+b) U.
+c) S.
+d) nenhuma delas.
+R: a | V contém as direções principais; U·S, os escores.
+
+MC: O teorema de Eckart-Young garante que a SVD truncada nos k maiores valores singulares dá:
+a) a melhor aproximação de posto k, no sentido dos mínimos quadrados.
+b) a pior aproximação.
+c) uma aproximação aleatória.
+d) um agrupamento.
+R: a | Fundamenta a compressão por PCA/SVD.
+
+MC: No scikit-learn, a fração da variância explicada por cada componente está em:
+a) explained_variance_ratio_.
+b) cluster_centers_.
+c) labels_.
+d) inertia_.
+R: a | Somando-se, obtém-se a variância acumulada.
+
+MC: A variância acumulada serve para:
+a) escolher o menor número de componentes que atinge um limiar (como 90 a 95%).
+b) escolher eps.
+c) escolher a ligação.
+d) escolher o kernel.
+R: a | Equilibra compressão e informação retida.
+
+MC: O gráfico scree mostra:
+a) a variância de cada componente, para identificar o cotovelo.
+b) o dendrograma.
+c) a silhueta.
+d) a matriz de contingência.
+R: a | Após o cotovelo, as componentes acrescentam pouco.
+
+MC: O critério de Kaiser mantém componentes com autovalor:
+a) maior que 1 (com dados padronizados).
+b) menor que 1.
+c) igual a zero.
+d) negativo.
+R: a | Cada componente retida explica mais que um atributo original sozinho.
+
+MC: A análise paralela de Horn compara:
+a) os autovalores reais com os de dados aleatórios de mesmo tamanho.
+b) o K-means com o DBSCAN.
+c) o PCA com o t-SNE.
+d) a precisão com a revocação.
+R: a | Mantêm-se apenas as componentes que superam o acaso.
+
+MC: As cargas (loadings) do PCA indicam:
+a) o peso de cada atributo original em cada componente.
+b) as novas coordenadas dos exemplos.
+c) o número de grupos.
+d) a distância entre pontos.
+R: a | Os escores são as novas coordenadas.
+
+MC: O biplot mostra, no mesmo gráfico:
+a) exemplos (pontos) e atributos (setas).
+b) apenas centroides.
+c) apenas o dendrograma.
+d) apenas ruído.
+R: a | Setas na mesma direção indicam atributos correlacionados.
+
+MC: Os sinais das componentes principais são:
+a) arbitrários: multiplicar por −1 não muda nada.
+b) sempre positivos.
+c) sempre negativos.
+d) importantes para a interpretação.
+R: a | A direção é a mesma, só o sentido muda.
+
+MC: Reconstruir dados com inverse_transform após reduzir componentes:
+a) devolve uma aproximação dos dados originais.
+b) devolve os dados exatamente iguais sempre.
+c) gera rótulos.
+d) apaga atributos.
+R: a | Perde-se os detalhes das componentes descartadas.
+
+MC: Uma limitação do PCA é que ele:
+a) captura apenas relações lineares.
+b) não reduz dimensões.
+c) exige rótulos.
+d) é insensível à escala.
+R: a | Para estruturas curvas, usam-se Kernel PCA ou aprendizado de variedades.
+
+MC: O PCA é sensível:
+a) à escala dos atributos e a outliers.
+b) apenas ao idioma.
+c) a nenhum fator.
+d) apenas ao número de grupos.
+R: a | Padronize os dados e considere versões robustas.
+
+MC: O PCA incremental é útil quando:
+a) a base não cabe na memória.
+b) há poucos dados.
+c) os dados são categóricos.
+d) só há uma coluna.
+R: a | Processa os dados em lotes.
+
+MC: O PCA esparso procura:
+a) cargas com muitos zeros, para componentes mais interpretáveis.
+b) cargas todas iguais.
+c) menos exemplos.
+d) mais dimensões.
+R: a | Zou, Hastie e Tibshirani (2006).
+
+MC: O Kernel PCA é adequado para:
+a) estruturas não lineares, como anéis.
+b) dados já lineares apenas.
+c) dados categóricos.
+d) ordenar exemplos.
+R: a | Usa um kernel para fazer PCA implicitamente num espaço de maior dimensão.
+
+MC: O ICA procura componentes:
+a) estatisticamente independentes.
+b) apenas não correlacionadas.
+c) iguais.
+d) ordenadas por tamanho.
+R: a | É um critério mais forte que a ausência de correlação do PCA.
+
+MC: O problema do "cocktail party" é um exemplo de:
+a) separação cega de fontes.
+b) agrupamento hierárquico.
+c) regras de associação.
+d) detecção de ruído.
+R: a | Separar vozes misturadas em microfones, sem conhecer a mistura.
+
+MC: O ICA explora o fato de que fontes independentes e não gaussianas, quando somadas:
+a) ficam mais gaussianas.
+b) ficam menos gaussianas.
+c) desaparecem.
+d) ficam constantes.
+R: a | Pelo Teorema Central do Limite; o ICA maximiza a não gaussianidade.
+
+MC: O NMF exige que os dados e os fatores sejam:
+a) não negativos.
+b) negativos.
+c) inteiros.
+d) binários.
+R: a | X ≈ W·H, com todos os elementos maiores ou iguais a zero.
+
+MC: Lee e Seung (1999) mostraram que o NMF, aplicado a rostos, aprende:
+a) partes, como olhos, narizes e bocas.
+b) rostos fantasmas globais.
+c) rótulos.
+d) apenas bordas.
+R: a | A natureza aditiva favorece partes interpretáveis.
+
+MC: Em tópicos de texto com NMF, cada linha de H representa:
+a) um tópico (conjunto de palavras que aparecem juntas).
+b) um documento.
+c) uma palavra isolada.
+d) um grupo de distâncias.
+R: a | W indica o quanto cada documento fala de cada tópico.
+
+DISC: Explique com a analogia da sombra a ideia do PCA.
+R: Projetar um objeto 3D em uma parede produz sombras diferentes conforme o ângulo; o PCA procura o ângulo cuja projeção preserva o máximo de variância, isto é, de informação.
+
+DISC: Descreva os seis passos do PCA via matriz de covariância.
+R: Centralizar; calcular a covariância; obter autovalores e autovetores; ordenar do maior para o menor autovalor; escolher os k primeiros; projetar Z = X_centralizado × W.
+
+DISC: Por que a variância é usada como medida de informação no PCA? Em que situação essa suposição falha?
+R: Atributos com pouca variação distinguem pouco os exemplos. Falha quando uma direção de baixa variância separa classes importantes, pois o PCA não conhece rótulos.
+
+DISC: Explique a relação entre PCA e SVD e por que a SVD é usada na prática.
+R: As direções principais coincidem com os vetores singulares à direita; autovalor = s²/(n−1). A SVD é numericamente mais estável e rápida do que diagonalizar a covariância.
+
+DISC: Como escolher o número de componentes? Compare variância acumulada, scree, Kaiser e análise paralela.
+R: Variância acumulada: atingir limiar (90–95%). Scree: cotovelo. Kaiser: autovalor > 1 (simples, discutível). Análise paralela: superar o acaso (mais confiável).
+
+DISC: Interprete: um PCA em dados padronizados retorna variâncias explicadas de 62%, 25%, 8% e 5%. Quantas componentes manter para 90%?
+R: Duas componentes somam 87%; três somam 95%. Para pelo menos 90%, mantêm-se três.
+
+DISC: Diferencie escores e cargas e explique como ler um biplot.
+R: Escores são as coordenadas dos exemplos; cargas são os pesos dos atributos em cada componente. No biplot, pontos são exemplos e setas são atributos; setas próximas indicam correlação, opostas anticorrelação, perpendiculares independência.
+
+DISC: Explique como o PCA pode ser usado para compressão e remoção de ruído.
+R: Mantêm-se poucas componentes e reconstrói-se com inverse_transform; o ruído, em direções de baixa variância, é descartado, enquanto o essencial é preservado.
+
+DISC: Cite quatro limitações ou cuidados do PCA.
+R: Linearidade; sensibilidade à escala; sensibilidade a outliers; variância não é importância; componentes de difícil interpretação; sinais arbitrários.
+
+DISC: Compare PCA incremental, aleatorizado, esparso e com kernel.
+R: Incremental: lotes, para bases grandes. Aleatorizado: aproxima a SVD rapidamente. Esparso: cargas com zeros, interpretável. Kernel: captura relações não lineares.
+
+DISC: Descreva o problema do cocktail party e como o ICA o resolve de forma diferente do PCA.
+R: Dois microfones gravam misturas de duas vozes. O PCA busca não correlação e não separa as fontes; o ICA maximiza a independência (não gaussianidade) e recupera as vozes.
+
+DISC: Explique a decomposição X ≈ W·H do NMF e por que as peças tendem a ser interpretáveis.
+R: H guarda peças básicas e W a quantidade de cada peça em cada exemplo; como só há adição (valores não negativos), as peças formam partes do todo.
+
+DISC: Mostre como o NMF poderia descobrir tópicos em um conjunto de textos.
+R: Constrói-se matriz TF-IDF documento × palavra, aplica-se NMF com k tópicos; cada linha de H lista as palavras de maior peso de um tópico e W indica a presença de cada tópico por documento.
+
+DISC: Compare PCA e NMF quanto às restrições e à interpretação.
+R: PCA: eixos ortogonais com valores positivos e negativos, componentes globais. NMF: valores não negativos, componentes aditivos como partes.
+
+DISC: Por que é recomendado padronizar os dados antes do PCA?
+R: Atributos de maior escala teriam maior variância e dominariam as primeiras componentes, distorcendo a análise.
+
+DISC: Explique a diferença entre PCA e seleção de atributos usando uma analogia de receita.
+R: A seleção retira ingredientes originais; o PCA cria misturas prontas (combinações) que resumem vários ingredientes.
+
+DISC: Para dados de imagens de dígitos 8×8 (64 atributos), explique como usar PCA para reduzir a dimensão e avaliar a perda.
+R: Padronizar, ajustar PCA com k componentes, medir variância acumulada e erro de reconstrução (inverse_transform), escolhendo k pelo equilíbrio entre compressão e erro.
+
+DISC: Explique o que é variância explicada e como o parâmetro n_components=0.95 do PCA a utiliza.
+R: Variância explicada é a fração da variância total capturada por cada componente. Com n_components=0.95, o PCA escolhe o menor número de componentes que somam pelo menos 95%.
+
+DISC: Dê um exemplo em que ICA seria preferível ao PCA e justifique.
+R: Remoção de piscadas em eletroencefalograma: as fontes (cérebro e artefato) são independentes e não gaussianas; o ICA as separa, o PCA não.
+
+MC: Se duas variáveis são fortemente correlacionadas, o PCA tende a:
+a) representá-las bem com uma única componente principal.
+b) exigir duas componentes de variância igual.
+c) descartá-las por completo.
+d) transformá-las em categorias.
+R: a | A direção comum concentra grande parte da variância.
+
+DISC: Explique o que significa dizer que as componentes principais são "não correlacionadas" e por que isso é útil.
+R: Os escores das componentes têm covariância zero entre si, de modo que cada componente carrega informação não repetida; isso reduz redundância e facilita análises posteriores.

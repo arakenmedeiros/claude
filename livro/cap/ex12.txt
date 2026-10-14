@@ -1,0 +1,269 @@
+MC: Em um neurônio artificial, a saída é calculada como:
+a) uma função de ativação aplicada à soma ponderada das entradas mais um viés.
+b) a média das entradas.
+c) o máximo das entradas.
+d) o produto das entradas.
+R: a | saída = ativação(w₁x₁ + w₂x₂ + … + b).
+
+MC: A função de ativação ReLU devolve:
+a) 0 para valores negativos e o próprio valor para positivos.
+b) sempre 1.
+c) o quadrado do valor.
+d) o logaritmo do valor.
+R: a | É simples e muito usada em redes profundas.
+
+MC: A retropropagação (backpropagation) é usada para:
+a) calcular como cada peso contribuiu para o erro.
+b) escolher o número de neurônios.
+c) gerar rótulos.
+d) normalizar dados.
+R: a | Rumelhart, Hinton e Williams (1986).
+
+MC: A descida do gradiente:
+a) ajusta levemente os pesos para diminuir a perda.
+b) aumenta a perda.
+c) remove camadas.
+d) calcula distâncias.
+R: a | É repetida milhares de vezes.
+
+MC: Um autoencoder é treinado para:
+a) reconstruir a própria entrada a partir de um código comprimido.
+b) classificar imagens com rótulos.
+c) maximizar recompensas.
+d) calcular regras de associação.
+R: a | O alvo é a própria entrada; não há rótulos.
+
+MC: O espaço latente é:
+a) o conjunto dos códigos de baixa dimensão aprendidos pelo codificador.
+b) o conjunto dos rótulos.
+c) a imagem original.
+d) o conjunto das distâncias.
+R: a | Concentra os fatores essenciais dos dados.
+
+MC: Um autoencoder linear com perda quadrática aprende o mesmo subespaço do:
+a) PCA.
+b) K-means.
+c) DBSCAN.
+d) Apriori.
+R: a | Baldi e Hornik (1989).
+
+MC: O gargalo (bottleneck) de um autoencoder subcompleto serve para:
+a) forçar a rede a aprender o essencial.
+b) aumentar a dimensão.
+c) apagar o erro.
+d) rotular dados.
+R: a | O código tem dimensão menor que a entrada.
+
+MC: Em um autoencoder esparso, o código:
+a) pode ser grande, mas poucos neurônios ficam ativos por exemplo.
+b) tem sempre 2 dimensões.
+c) é binário.
+d) não existe.
+R: a | Penaliza-se o número de neurônios ativos.
+
+MC: Em um autoencoder de remoção de ruído (denoising):
+a) a entrada é corrompida e o alvo é a versão limpa.
+b) o alvo é a versão ruidosa.
+c) não há alvo.
+d) o ruído é removido antes do treino.
+R: a | Vincent et al. (2008; 2010).
+
+MC: Em detecção de anomalias com autoencoder, a anomalia é sinalizada por:
+a) erro de reconstrução alto.
+b) erro de reconstrução zero.
+c) número de grupos.
+d) alta densidade.
+R: a | A rede só aprendeu a reconstruir o padrão normal.
+
+MC: Para imagens, os autoencoders costumam usar camadas:
+a) convolucionais.
+b) apenas lineares.
+c) de regras.
+d) de poda.
+R: a | Respeitam a estrutura espacial (LeCun et al., 1998).
+
+MC: O VAE (Kingma e Welling, 2014) difere do autoencoder comum porque o codificador devolve:
+a) uma distribuição (média e desvio), da qual se sorteia o código.
+b) um único ponto fixo.
+c) um rótulo.
+d) uma árvore.
+R: a | O espaço latente fica contínuo e preenchido.
+
+MC: A perda do VAE é composta por:
+a) erro de reconstrução e divergência KL.
+b) inércia e silhueta.
+c) suporte e confiança.
+d) precisão e revocação.
+R: a | A KL aproxima a distribuição de cada exemplo de uma normal padrão.
+
+MC: O truque da reparametrização escreve z como:
+a) μ + σ·ε, com ε ~ N(0, 1).
+b) μ · σ.
+c) μ − σ.
+d) σ / μ.
+R: a | Permite retropropagar o gradiente apesar do sorteio.
+
+MC: A principal vantagem do VAE sobre o autoencoder comum é:
+a) permitir gerar dados novos e interpolar no espaço latente.
+b) ser mais simples.
+c) não precisar de dados.
+d) não ter perda.
+R: a | Qualquer ponto do espaço latente corresponde a algo plausível.
+
+MC: Na GAN, o gerador:
+a) cria dados falsos a partir de ruído, tentando enganar o discriminador.
+b) classifica dados reais.
+c) calcula a perda.
+d) remove ruído.
+R: a | É o "falsificador".
+
+MC: O discriminador de uma GAN:
+a) tenta distinguir dados reais de falsos.
+b) cria imagens.
+c) escolhe k.
+d) calcula distâncias.
+R: a | É o "policial".
+
+MC: Qual problema é característico do treino de GANs?
+a) Instabilidade e colapso de modos.
+b) Ausência de gradiente por definição.
+c) Falta de dados em todos os casos.
+d) Uso de rótulos obrigatórios.
+R: a | O gerador pode produzir pouca variedade de imagens.
+
+MC: Os modelos de difusão geram dados:
+a) removendo ruído passo a passo, a partir de ruído puro.
+b) pesquisando regras.
+c) agrupando pixels.
+d) comparando perplexidades.
+R: a | Ho, Jain e Abbeel (2020).
+
+MC: Aprendizado auto-supervisionado cria o rótulo:
+a) a partir dos próprios dados, por meio de uma tarefa-pretexto.
+b) com especialistas humanos.
+c) com recompensas.
+d) a partir de regras.
+R: a | Exemplo: prever palavras ocultas.
+
+MC: O BERT (Devlin et al., 2019) usa como tarefa-pretexto principal:
+a) prever palavras ocultas (mascaradas).
+b) classificar imagens.
+c) comprimir áudio.
+d) reconstruir séries temporais.
+R: a | Aprende representações de linguagem sem rótulos.
+
+MC: Na aprendizagem contrastiva, um par positivo é formado por:
+a) duas visões diferentes da mesma imagem.
+b) duas imagens de classes diferentes.
+c) uma imagem e seu rótulo.
+d) duas distâncias.
+R: a | Devem ter representações próximas.
+
+MC: O objetivo da perda contrastiva é:
+a) aproximar positivos e afastar negativos no espaço de representação.
+b) afastar positivos e aproximar negativos.
+c) igualar todos os pontos.
+d) maximizar o ruído.
+R: a | Ex.: NT-Xent ou InfoNCE.
+
+MC: O SimCLR (Chen et al., 2020) usa como negativos:
+a) os outros exemplos do lote.
+b) nenhum exemplo.
+c) apenas imagens duplicadas.
+d) rótulos.
+R: a | Usa lotes grandes para ter muitos negativos.
+
+MC: O MoCo (He et al., 2020) mantém:
+a) uma fila de representações antigas como negativos.
+b) um dendrograma.
+c) uma árvore de prefixos.
+d) uma matriz de contingência.
+R: a | Evita a necessidade de lotes gigantes.
+
+MC: O CLIP (Radford et al., 2021) aprende a:
+a) alinhar imagens e textos.
+b) agrupar clientes.
+c) detectar anomalias.
+d) calcular regras.
+R: a | Possibilita busca de imagens por descrição.
+
+MC: Os métodos BYOL e DINO caracterizam-se por funcionar:
+a) sem negativos explícitos.
+b) sem imagens.
+c) sem redes neurais.
+d) sem dados.
+R: a | Usam uma rede aluna e uma professora.
+
+MC: No exemplo do capítulo, o K-means no espaço latente do autoencoder:
+a) não superou o K-means nos pixels, mostrando a importância de uma linha de base simples.
+b) superou sempre o K-means nos pixels.
+c) não pôde ser executado.
+d) deu ARI igual a 1.
+R: a | Em imagens 8×8, os pixels já eram informativos (ARI de 0,67 contra 0,58).
+
+DISC: Explique o que é um neurônio artificial, uma camada e como a rede aprende.
+R: Neurônio: soma ponderada das entradas mais viés e ativação. Camada: conjunto de neurônios; várias camadas formam uma rede profunda. Aprende por retropropagação e descida do gradiente, ajustando pesos para reduzir a perda.
+
+DISC: Descreva a arquitetura de um autoencoder e use a analogia do telegrama.
+R: Codificador comprime a entrada em um código; decodificador reconstrói. Como um resumo curto de telegrama que o receptor tenta expandir; se a reconstrução é boa, o resumo guardou o essencial.
+
+DISC: Explique a relação entre autoencoder linear e PCA, e a vantagem do autoencoder não linear.
+R: O linear com perda quadrática aprende o mesmo subespaço do PCA; com ativações não lineares e várias camadas, captura estruturas curvas que o PCA não captura.
+
+DISC: Diferencie autoencoders subcompleto, esparso e de remoção de ruído.
+R: Subcompleto: código menor que a entrada. Esparso: código grande com poucas ativações. Denoising: entrada corrompida, alvo limpo, aprendendo estrutura robusta.
+
+DISC: Explique como usar um autoencoder para detectar anomalias.
+R: Treinar apenas com dados normais; calcular o erro de reconstrução; erros altos indicam anomalias; definir limiar adequado.
+
+DISC: Descreva o VAE e a função de cada termo da perda.
+R: O codificador produz μ e σ; sorteia-se z; o decodificador reconstrói. O erro de reconstrução faz a saída parecer a entrada; a KL aproxima a distribuição latente de N(0,1), tornando o espaço contínuo.
+
+DISC: Explique o truque da reparametrização e por que ele é necessário.
+R: Escreve z = μ + σε com ε ~ N(0,1), tirando a aleatoriedade do caminho dos parâmetros; permite retropropagar gradientes até μ e σ.
+
+DISC: Explique como funciona uma GAN e o jogo entre gerador e discriminador.
+R: O gerador cria falsificações a partir de ruído; o discriminador diferencia real de falso; cada um melhora para vencer o outro, até o discriminador acertar cerca de 50%.
+
+DISC: Cite três dificuldades de treinar GANs e soluções propostas na literatura.
+R: Instabilidade, colapso de modos e avaliação difícil; soluções: DCGAN, Wasserstein GAN, StyleGAN e métricas como FID.
+
+DISC: Explique em linhas gerais como funcionam os modelos de difusão.
+R: Processo direto adiciona ruído em muitos passos até restar ruído; uma rede aprende a remover um pouco de ruído por passo; para gerar, parte-se de ruído e aplica-se a rede repetidamente.
+
+DISC: Defina aprendizado auto-supervisionado e dê três exemplos de tarefas-pretexto.
+R: O rótulo é criado a partir dos dados. Exemplos: prever palavras ocultas, prever a rotação de uma imagem, reconstruir regiões mascaradas, resolver quebra-cabeças, colorir imagens.
+
+DISC: Descreva o aprendizado contrastivo e a perda NT-Xent.
+R: Duas visões da mesma imagem formam par positivo (aproximar) e imagens diferentes formam pares negativos (afastar). A perda usa similaridade do cosseno com temperatura e compara o positivo com todos os negativos do lote.
+
+DISC: Compare SimCLR, MoCo, CLIP e BYOL/DINO.
+R: SimCLR: negativos do lote. MoCo: fila de negativos. CLIP: alinha imagens e textos. BYOL/DINO: sem negativos explícitos, com rede aluna e professora.
+
+DISC: Explique como o aprendizado auto-supervisionado é aproveitado em tarefas com poucos rótulos.
+R: Pré-treina-se em muitos dados sem rótulo; depois reaproveita-se a rede com ajuste fino ou avaliação linear usando poucos rótulos.
+
+DISC: Como as representações aprendidas podem ser usadas para agrupar, visualizar e buscar?
+R: Agrupar com K-means nos códigos; visualizar com t-SNE ou UMAP; buscar por vizinhos mais próximos no espaço; detectar anomalias por distância; transferir para classificadores.
+
+DISC: Interprete: no exemplo dos dígitos 8×8, o K-means nos pixels teve ARI de 0,67 e no espaço latente 0,58. O que isso ensina?
+R: Que o aprendizado profundo nem sempre supera uma linha de base simples, sobretudo em dados pequenos e simples; é preciso comparar com alternativas.
+
+DISC: Cite riscos éticos e limites dos modelos generativos.
+R: Reproduzem vieses dos dados; deepfakes podem enganar; interpretabilidade limitada do espaço latente; alto consumo de energia (Strubell et al., 2019).
+
+DISC: Explique a diferença entre autoencoder e VAE quanto à capacidade de gerar dados novos.
+R: O autoencoder comum pode ter buracos no espaço latente e decodificar lixo fora dos códigos vistos; o VAE regulariza o espaço, permitindo amostrar e interpolar.
+
+DISC: Faça um resumo da trajetória do livro, relacionando as quatro famílias de tarefas aos métodos clássicos e aos profundos.
+R: Agrupar: K-means, hierárquico, DBSCAN, GMM e espectral; reduzir: PCA, ICA, NMF, Isomap, t-SNE, UMAP e autoencoders; associar: Apriori e FP-Growth; detectar anomalias: IF, LOF, OCSVM e autoencoders. Os métodos profundos aprendem as representações.
+
+MC: Qual das alternativas descreve corretamente a perda de um autoencoder simples?
+a) O erro quadrático médio entre a entrada e a reconstrução.
+b) A soma dos rótulos.
+c) O número de camadas.
+d) A inércia dos grupos.
+R: a | perda = (1/n) · Σ ‖x − x̂‖².
+
+DISC: Explique por que, em um autoencoder, a entrada é também o alvo e em que sentido isso é auto-supervisão.
+R: Não há rótulos humanos: a própria entrada serve de resposta que a rede tenta reproduzir. O "rótulo" é criado automaticamente, característica da auto-supervisão no sentido mais simples.

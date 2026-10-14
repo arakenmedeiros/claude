@@ -1,0 +1,269 @@
+MC: Hawkins (1980) definiu outlier como uma observação que:
+a) se desvia tanto das demais que desperta a suspeita de ter sido gerada por outro mecanismo.
+b) é sempre um erro de digitação.
+c) é a média dos dados.
+d) é o ponto mais frequente.
+R: a | A definição enfatiza a diferença de mecanismo gerador.
+
+MC: Uma compra de R$ 50.000 em um cartão que gasta em média R$ 300 é uma anomalia:
+a) pontual.
+b) contextual.
+c) coletiva.
+d) inexistente.
+R: a | Um único ponto muito diferente do resto.
+
+MC: Uma temperatura de 30 °C é normal em janeiro e anormal em julho no Sul do Brasil. Trata-se de anomalia:
+a) contextual.
+b) pontual.
+c) coletiva.
+d) supervisionada.
+R: a | O valor só é estranho em certo contexto.
+
+MC: Uma sequência de batimentos que, individualmente, parecem normais, mas juntos revelam arritmia, é uma anomalia:
+a) coletiva.
+b) pontual.
+c) contextual.
+d) de rótulo.
+R: a | O conjunto é anormal, mesmo que cada ponto não seja.
+
+MC: No cenário semissupervisionado (one-class), o treino usa:
+a) apenas exemplos normais.
+b) apenas anomalias.
+c) nenhum dado.
+d) exemplos normais e anômalos rotulados em igual número.
+R: a | Qualquer coisa muito diferente do normal é suspeita.
+
+MC: A regra |z| > 3 aponta como suspeitos os valores:
+a) a mais de três desvios padrão da média.
+b) iguais à média.
+c) abaixo da mediana.
+d) com variância zero.
+R: a | O z-score mede o afastamento em desvios padrão.
+
+MC: Uma fraqueza do z-score é que:
+a) média e desvio são afetados pelos próprios outliers (mascaramento).
+b) não usa números.
+c) não é padronizado.
+d) só funciona em 3 dimensões.
+R: a | Outliers inflam o desvio e escondem a si mesmos.
+
+MC: O z-score modificado usa:
+a) a mediana e o desvio absoluto mediano (MAD).
+b) a média e o máximo.
+c) o mínimo e a moda.
+d) o suporte e a confiança.
+R: a | É robusto a valores extremos.
+
+MC: Pela regra do IQR (Tukey), um valor é suspeito se estiver:
+a) abaixo de Q1 − 1,5·IQR ou acima de Q3 + 1,5·IQR.
+b) entre Q1 e Q3.
+c) igual à mediana.
+d) abaixo de zero.
+R: a | É a regra do boxplot.
+
+MC: A distância de Mahalanobis, ao contrário da euclidiana, considera:
+a) a covariância entre atributos.
+b) apenas a média.
+c) o número de grupos.
+d) a ordem das colunas.
+R: a | Percebe que a combinação 1,90 m e 50 kg é incomum, mesmo que cada valor seja comum.
+
+MC: A ideia central do Isolation Forest é que anomalias:
+a) são poucas e diferentes, logo fáceis de isolar.
+b) são numerosas e iguais.
+c) estão sempre no centro.
+d) são difíceis de isolar.
+R: a | Pontos anômalos são isolados com menos cortes.
+
+MC: No Isolation Forest, um ponto é considerado anômalo se sua profundidade média de isolamento for:
+a) pequena.
+b) grande.
+c) igual à altura da árvore.
+d) negativa.
+R: a | Caminho curto significa isolamento rápido.
+
+MC: Os cortes das árvores do Isolation Forest são escolhidos:
+a) ao acaso (atributo e valor aleatórios).
+b) para maximizar a variância.
+c) pelo menor erro.
+d) por votação.
+R: a | Escolhem-se um atributo e um valor de corte aleatórios.
+
+MC: Em IsolationForest do scikit-learn, predict devolve:
+a) +1 para normal e −1 para anomalia.
+b) 0 para normal e 1 para anomalia.
+c) o escore contínuo.
+d) a probabilidade.
+R: a | score_samples dá o escore contínuo (quanto menor, mais anômalo).
+
+MC: O parâmetro contamination do IsolationForest representa:
+a) a fração esperada de anomalias.
+b) o número de árvores.
+c) a profundidade.
+d) a escala dos dados.
+R: a | Define o limiar de decisão com base na proporção esperada.
+
+MC: O LOF (Local Outlier Factor) compara:
+a) a densidade em torno de um ponto com a de seus vizinhos.
+b) a média global com a mediana.
+c) a distância ao centroide.
+d) a variância total.
+R: a | Breunig et al. (2000).
+
+MC: Um LOF aproximadamente igual a 1 indica:
+a) densidade parecida com a dos vizinhos (normal).
+b) anomalia forte.
+c) ponto isolado.
+d) erro.
+R: a | LOF muito maior que 1 sugere anomalia.
+
+MC: O LOF é útil sobretudo quando:
+a) as densidades locais variam.
+b) todos os pontos têm a mesma densidade.
+c) há apenas um grupo.
+d) os dados são categóricos.
+R: a | A anomalia depende da densidade local.
+
+MC: O One-Class SVM aprende:
+a) a fronteira que envolve os dados normais.
+b) as regras de associação.
+c) o número de grupos.
+d) a matriz de ligações.
+R: a | Schölkopf et al. (2001).
+
+MC: No One-Class SVM, o parâmetro nu é:
+a) um limite superior para a fração de anomalias.
+b) o número de vizinhos.
+c) o raio.
+d) a profundidade.
+R: a | Fica entre 0 e 1.
+
+MC: O erro de reconstrução do PCA pode detectar anomalias porque:
+a) pontos que não seguem a estrutura principal são mal reconstruídos.
+b) o PCA elimina todos os outliers.
+c) o PCA cria rótulos.
+d) o PCA aumenta a dimensão.
+R: a | O erro de reconstrução é alto para anomalias.
+
+MC: Um autoencoder treinado só com dados normais, ao receber uma anomalia, tende a:
+a) ter erro de reconstrução alto.
+b) reconstruir perfeitamente.
+c) falhar ao executar.
+d) criar novos grupos.
+R: a | Ele aprendeu a reconstruir apenas o padrão normal.
+
+MC: A principal razão para não usar a acurácia em detecção de anomalias é que:
+a) as classes são muito desbalanceadas.
+b) a acurácia não existe.
+c) anomalias são frequentes.
+d) o modelo é supervisionado.
+R: a | Um modelo que sempre diz "normal" teria 99,9% de acurácia e seria inútil.
+
+MC: Precisão (precision) é:
+a) a fração dos alertas que eram anomalias reais.
+b) a fração das anomalias reais detectadas.
+c) a média dos escores.
+d) o número de falsos negativos.
+R: a | Revocação é a fração das anomalias reais que foram pegas.
+
+MC: A revocação (recall) é:
+a) a fração das anomalias reais que foram detectadas.
+b) a fração dos alertas corretos.
+c) o total de alertas.
+d) o limiar.
+R: a | Combina-se com a precisão no F1.
+
+MC: Para dados muito desbalanceados, é geralmente mais informativa que a curva ROC:
+a) a curva Precisão-Revocação (AUPRC).
+b) o histograma.
+c) o dendrograma.
+d) o gráfico scree.
+R: a | Saito e Rehmsmeier (2015).
+
+MC: A baseline de AUPRC para um classificador aleatório é igual:
+a) à proporção de anomalias nos dados.
+b) a 0,5.
+c) a 1.
+d) a 0.
+R: a | No exemplo, 20 anomalias em 1020 dão cerca de 0,02.
+
+MC: Qual é uma forma de definir o limiar de alerta com base em capacidade operacional?
+a) Usar o escore do 50º maior alerta se o time só investiga 50 por dia.
+b) Escolher sempre 0,5.
+c) Ignorar a capacidade.
+d) Escolher o menor escore.
+R: a | O limiar é uma decisão de negócio.
+
+MC: Para explicar um alerta de anomalia, pode-se usar:
+a) técnicas como SHAP, que indicam quais atributos mais contribuíram.
+b) apenas a média.
+c) o número de grupos.
+d) a silhueta.
+R: a | Lundberg e Lee (2017).
+
+DISC: Defina anomalia e descreva os três tipos (pontual, contextual e coletiva) com exemplos.
+R: Anomalia é um dado que destoa do padrão. Pontual: um único valor muito diferente (compra de R$ 50.000). Contextual: normal em um contexto e anormal em outro (30 °C em julho). Coletiva: conjunto anormal (batimentos que juntos revelam arritmia).
+
+DISC: Diferencie os cenários supervisionado, semissupervisionado e não supervisionado na detecção de anomalias.
+R: Supervisionado: exemplos rotulados de normal e anômalo (classificação desbalanceada). Semissupervisionado: só normais no treino. Não supervisionado: sem rótulos, supondo anomalias raras e diferentes.
+
+DISC: Calcule o z-score de um valor 150 em dados com média 100 e desvio padrão 20. Ele seria suspeito?
+R: z = (150 − 100)/20 = 2,5. Pela regra |z| > 3, não seria marcado como suspeito, embora mereça atenção.
+
+DISC: Compare z-score, z-score modificado (MAD) e IQR quanto à robustez.
+R: O z-score usa média e desvio, afetados por outliers. O MAD usa a mediana e é robusto. O IQR usa quartis, também robusto e a base do boxplot.
+
+DISC: Explique por que a distância de Mahalanobis detecta a combinação 1,90 m e 50 kg como atípica.
+R: Altura e peso são correlacionados; a Mahalanobis leva em conta a covariância e mede o afastamento na direção do ponto em unidades do desvio, revelando a combinação incomum.
+
+DISC: Explique o Isolation Forest usando a analogia do jogo das 20 perguntas.
+R: Para achar uma pessoa comum numa multidão são necessárias muitas perguntas; para achar a única de smoking, basta uma. Pontos anômalos são isolados com poucos cortes.
+
+DISC: Descreva a construção do Isolation Forest e como o escore é obtido.
+R: Constroem-se muitas árvores de isolamento com cortes aleatórios em subamostras; mede-se a profundidade média de isolamento de cada ponto; profundidades pequenas geram escores maiores (mais anômalos).
+
+DISC: Explique o LOF e por que ele funciona com densidades variáveis.
+R: Compara a densidade local de um ponto com a de seus vizinhos. Um ponto numa região esparsa cercada por vizinhos mais densos tem LOF alto; em região naturalmente esparsa, LOF ≈ 1.
+
+DISC: Explique a ideia do One-Class SVM e o papel do kernel.
+R: Mapeia os dados via kernel para um espaço de maior dimensão e separa os dados da origem com margem máxima, criando uma fronteira flexível em volta da região normal.
+
+DISC: Compare Isolation Forest, LOF e One-Class SVM em ideia, pontos fortes e fracos.
+R: IF: facilidade de isolar; escalável. LOF: densidade local; bom com densidades variáveis, depende de k. OCSVM: fronteira em espaço kernel; flexível, sensível a gamma e nu.
+
+DISC: Como o PCA e o autoencoder podem ser usados para detectar anomalias?
+R: Treina-se com dados normais e usa-se o erro de reconstrução como escore; anomalias não seguem a estrutura aprendida e têm erro maior.
+
+DISC: Descreva cinco formas de definir o limiar de alerta.
+R: Fração esperada (contaminação); percentil dos escores; teoria de valores extremos; custo de falsos positivos e negativos; capacidade operacional da equipe.
+
+DISC: Explique por que acurácia é enganosa em detecção de anomalias e que métricas usar.
+R: Com 0,1% de fraude, dizer sempre "normal" dá 99,9% de acurácia. Usar precisão, revocação, F1, AUPRC e precisão@k.
+
+DISC: Interprete: AUC-ROC de 0,997 e AUPRC de 0,95 com linha de base de 0,02.
+R: O detector separa muito bem anomalias de normais; a AUPRC é muito superior ao acaso (0,02), confirmando alto desempenho mesmo com forte desbalanceamento.
+
+DISC: Descreva uma estratégia de tratamento de falsos positivos em um sistema real.
+R: Usar regras de negócio e verificação em segundo estágio, explicar os alertas, coletar feedback dos analistas e treinar depois um modelo supervisionado com os casos confirmados.
+
+DISC: Por que é preciso monitorar a deriva (drift) em detectores de anomalia?
+R: O que é normal muda com o tempo; um detector treinado no passado pode gerar alertas falsos ou perder anomalias novas.
+
+DISC: Cite riscos éticos e de segurança de detectores de anomalia.
+R: Viés contra grupos minoritários, alertas injustos sobre pessoas, adversários que imitam o normal e uso indevido de dados pessoais.
+
+DISC: Como o GMM e o DBSCAN podem ser usados para detectar anomalias?
+R: GMM: baixa log-densidade (score_samples) indica anomalia. DBSCAN: pontos de ruído (rótulo −1) são candidatos a anomalias.
+
+DISC: Explique a diferença entre anomalia e ruído e por que ela importa.
+R: Ruído é variação aleatória sem interesse; anomalia pode ser um evento relevante (fraude, falha). Distingui-las evita descartar sinais importantes ou alertar sobre variações triviais.
+
+DISC: Proponha um pipeline para detectar falhas em máquinas industriais usando sensores.
+R: Coletar e limpar séries; extrair atributos; padronizar; treinar Isolation Forest ou autoencoder com dados normais; definir limiar por capacidade; validar com especialistas; monitorar drift.
+
+MC: Qual técnica usa a distância ao k-ésimo vizinho como escore de anomalia?
+a) kNN (Ramaswamy, Rastogi e Shim, 2000).
+b) Apriori.
+c) PCA incremental.
+d) Ward.
+R: a | Pontos distantes de seus vizinhos recebem escores altos.

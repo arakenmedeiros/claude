@@ -1,0 +1,269 @@
+MC: Por que avaliar agrupamentos é difícil?
+a) Porque não há um gabarito oficial.
+b) Porque os algoritmos nunca retornam respostas.
+c) Porque só existe uma forma de agrupar.
+d) Porque os dados são sempre rotulados.
+R: a | Sem gabarito, é preciso usar critérios internos, relativos, externos e interpretação.
+
+MC: A validação interna utiliza:
+a) apenas os dados e os grupos obtidos.
+b) rótulos de referência.
+c) recompensas.
+d) a opinião de um juiz externo.
+R: a | Mede coesão e separação sem consultar rótulos.
+
+MC: A validação externa compara os grupos com:
+a) rótulos de referência conhecidos.
+b) a inércia.
+c) o dendrograma.
+d) o número de iterações.
+R: a | Índices como ARI e NMI exigem uma classificação de referência.
+
+MC: A validação relativa:
+a) compara várias soluções (por exemplo, vários k) para escolher a melhor.
+b) usa só rótulos.
+c) elimina atributos.
+d) é sempre subjetiva.
+R: a | Varia k ou parâmetros e compara índices.
+
+MC: A estatística de Hopkins testa:
+a) a tendência de agrupamento dos dados.
+b) a pureza.
+c) a estabilidade.
+d) a qualidade do dendrograma.
+R: a | Verifica se os dados têm estrutura agrupável ou são uniformes.
+
+MC: Uma estatística de Hopkins próxima de 0,5 sugere dados:
+a) fortemente agrupados.
+b) aproximadamente uniformes, sem grupos.
+c) muito regulares como uma grade.
+d) sem variação.
+R: b | Perto de 1 indica forte agrupamento; perto de 0, dados muito regulares.
+
+MC: Um valor de Hopkins próximo de 1 indica:
+a) dados uniformes.
+b) forte tendência de agrupamento.
+c) dados constantes.
+d) ruído puro.
+R: b | Os pontos reais estão mais próximos entre si do que pontos aleatórios.
+
+MC: Na silhueta de um ponto, a(i) representa:
+a) a distância média aos pontos do mesmo grupo (coesão).
+b) a distância ao grupo mais distante.
+c) o número de grupos.
+d) a inércia total.
+R: a | b(i) é a menor distância média a outro grupo.
+
+MC: A fórmula da silhueta é:
+a) s = (b − a) / máx(a, b).
+b) s = a / b.
+c) s = a + b.
+d) s = máx(a, b).
+R: a | O valor fica entre −1 e 1.
+
+MC: Um coeficiente de silhueta negativo para um ponto indica que ele:
+a) está muito bem encaixado.
+b) provavelmente está no grupo errado.
+c) é o centroide.
+d) é ruído obrigatório.
+R: b | Está mais próximo de outro grupo do que do seu.
+
+MC: Silhuetas médias acima de 0,5 costumam indicar:
+a) estrutura razoável.
+b) ausência de estrutura.
+c) erro de cálculo.
+d) dados idênticos.
+R: a | Abaixo de 0,25, a estrutura é considerada fraca (Kaufman e Rousseeuw, 1990).
+
+MC: O índice de Calinski-Harabasz é:
+a) melhor quando maior.
+b) melhor quando menor.
+c) sempre igual a 1.
+d) melhor quando negativo.
+R: a | É a razão entre dispersão entre e dentro dos grupos.
+
+MC: O índice de Davies-Bouldin é melhor quando:
+a) maior.
+b) menor (zero é o ideal).
+c) igual a 1.
+d) negativo.
+R: b | Mede a similaridade média entre cada grupo e seu mais parecido.
+
+MC: O índice de Dunn é a razão entre:
+a) a menor distância entre grupos e o maior diâmetro de grupo.
+b) inércia e silhueta.
+c) média e mediana.
+d) k e n.
+R: a | Quanto maior, melhor; é muito sensível a outliers.
+
+MC: Os índices internos têm um viés comum:
+a) favorecem grupos convexos e compactos.
+b) favorecem grupos de formas arbitrárias.
+c) ignoram as distâncias.
+d) exigem rótulos.
+R: a | Podem punir resultados corretos do DBSCAN em luas ou anéis.
+
+MC: Para avaliar agrupamentos baseados em densidade, é mais adequado o índice:
+a) DBCV.
+b) Calinski-Harabasz.
+c) Dunn.
+d) BIC.
+R: a | Moulavi et al. (2014) propuseram o DBCV para esse fim.
+
+MC: A estatística gap compara a inércia observada com a esperada:
+a) em dados de referência uniformes, sem grupos.
+b) em dados rotulados.
+c) em dados duplicados.
+d) em dados ordenados.
+R: a | Tibshirani, Walther e Hastie (2001).
+
+MC: A estabilidade de um agrupamento é avaliada:
+a) comparando soluções obtidas em reamostragens dos dados.
+b) pelo número de iterações.
+c) pela altura do dendrograma.
+d) pelo tamanho da imagem.
+R: a | Se os grupos são reais, resistem a pequenas perturbações.
+
+MC: Para comparar duas soluções de agrupamento na estabilidade, usa-se com frequência:
+a) o ARI.
+b) o z-score.
+c) a distância de Hamming.
+d) o eigengap.
+R: a | O ARI é invariante à troca dos nomes dos grupos.
+
+MC: Em validação externa, as medidas devem ser invariantes:
+a) à troca dos nomes dos grupos.
+b) ao número de pontos.
+c) ao tipo de computador.
+d) ao idioma.
+R: a | Os números dos grupos são arbitrários.
+
+MC: Uma matriz de contingência cruza:
+a) grupos (linhas) e classes de referência (colunas).
+b) atributos e exemplos.
+c) distâncias e ligações.
+d) k e inércia.
+R: a | Mostra quantos pontos de cada classe caíram em cada grupo.
+
+MC: A pureza tem como defeito:
+a) crescer com o número de grupos (com n grupos, é 1).
+b) ser sempre zero.
+c) ser sempre negativa.
+d) depender do idioma.
+R: a | Por isso é pouco informativa sem controle do número de grupos.
+
+MC: O índice de Rand ajustado (ARI) vale aproximadamente zero quando:
+a) a concordância é ao nível do acaso.
+b) a concordância é perfeita.
+c) os grupos são idênticos.
+d) há um único grupo.
+R: a | O ARI desconta a concordância esperada ao acaso (Hubert e Arabie, 1985).
+
+MC: Um ARI igual a 1 indica:
+a) concordância perfeita entre os dois agrupamentos.
+b) pior que o acaso.
+c) desacordo total.
+d) estrutura fraca.
+R: a | Os agrupamentos coincidem, a menos dos nomes dos grupos.
+
+MC: A informação mútua normalizada (NMI) vem:
+a) da teoria da informação.
+b) da álgebra de matrizes esparsas.
+c) da geometria euclidiana.
+d) da física de partículas.
+R: a | Mede quanto um agrupamento informa sobre o outro, entre 0 e 1.
+
+MC: A V-measure é:
+a) a média harmônica de homogeneidade e completude.
+b) a diferença entre silhueta e Davies-Bouldin.
+c) o produto de ARI e NMI.
+d) o logaritmo da inércia.
+R: a | Rosenberg e Hirschberg (2007).
+
+MC: Homogeneidade alta significa que:
+a) cada grupo contém membros de uma única classe.
+b) todos os membros de uma classe estão no mesmo grupo.
+c) há um único grupo.
+d) todos os pontos são ruído.
+R: a | A completude é o inverso: classes não divididas.
+
+MC: Segundo von Luxburg, Williamson e Guyon (2012), a melhor solução de agrupamento depende:
+a) do objetivo de quem agrupa.
+b) apenas do algoritmo.
+c) apenas dos dados.
+d) do tamanho da tela.
+R: a | Agrupamento não tem uma definição única.
+
+MC: Uma tabela de perfil dos grupos mostra:
+a) a média (ou mediana) de cada atributo por grupo, comparada à média geral.
+b) o dendrograma.
+c) a matriz de distâncias.
+d) as probabilidades do EM.
+R: a | Ajuda a nomear e interpretar os grupos.
+
+MC: Qual conduta é recomendada quando os critérios de avaliação discordam entre si?
+a) Preferir o k em que vários critérios concordam, a solução estável e a mais interpretável.
+b) Escolher sempre o menor k.
+c) Escolher o maior k.
+d) Escolher aleatoriamente.
+R: a | Combinar critérios e interpretação.
+
+DISC: Explique por que um algoritmo de agrupamento sempre devolve uma resposta, mesmo com dados aleatórios, e o que isso implica.
+R: Os algoritmos particionam os dados por construção; isso não prova que haja grupos reais. Por isso é preciso avaliar a tendência de agrupamento e a qualidade dos grupos.
+
+DISC: Descreva as três famílias de validação (interna, externa e relativa) com um exemplo de índice de cada.
+R: Interna: silhueta (só dados e grupos). Externa: ARI ou NMI (compara com rótulos). Relativa: gap ou estabilidade (compara soluções para escolher k).
+
+DISC: Explique a estatística de Hopkins e como interpretá-la.
+R: Compara distâncias de pontos reais ao vizinho mais próximo com as de pontos aleatórios uniformes. H ≈ 0,5: sem grupos; H próximo de 1: forte tendência; H próximo de 0: dados regulares.
+
+DISC: Calcule a silhueta de um ponto com a = 2 e b = 6 e interprete.
+R: s = (6 − 2) / máx(2, 6) = 4/6 ≈ 0,67; o ponto está bem encaixado no seu grupo.
+
+DISC: Explique por que um ponto com s próximo de 0 está na fronteira entre grupos.
+R: Quando a ≈ b, a distância média ao seu grupo é parecida com a do grupo vizinho, ficando no limite entre os dois.
+
+DISC: Compare silhueta, Calinski-Harabasz e Davies-Bouldin: o que medem, qual valor é melhor e que viés compartilham.
+R: Silhueta: encaixe individual (maior é melhor). CH: razão entre/dentro (maior). DB: similaridade entre grupos (menor). Todos tendem a favorecer grupos convexos e compactos.
+
+DISC: Por que índices internos podem penalizar injustamente o resultado correto do DBSCAN em luas?
+R: Pressupõem compacidade e convexidade; grupos alongados ou curvos têm baixa coesão segundo esses índices, mesmo estando corretamente separados.
+
+DISC: Descreva a estatística gap e o critério para escolher k.
+R: Gap(k) = E[log W_k de referência] − log W_k observado; escolhe-se o menor k tal que Gap(k) ≥ Gap(k+1) − desvio padrão de Gap(k+1).
+
+DISC: Descreva um procedimento de avaliação de estabilidade com bootstrap e ARI.
+R: Sortear subamostras, agrupar cada uma, comparar pares de soluções (no conjunto inteiro) com ARI e tomar a média; alta concordância indica agrupamento estável.
+
+DISC: Interprete a matriz de contingência [[48,2,0],[1,45,6],[1,3,44]]. O agrupamento reproduz bem as classes?
+R: A diagonal domina, com poucos erros: o grupo 0 corresponde à classe A, o 1 à B e o 2 à C. Reproduz bem as classes, com pequenas confusões entre B e C.
+
+DISC: Calcule a pureza do agrupamento da matriz de contingência acima.
+R: Soma das maiores classes por grupo: 48 + 45 + 44 = 137; total = 150; pureza ≈ 0,913.
+
+DISC: Explique o ARI e por que é preferível ao índice de Rand simples.
+R: O Rand conta pares concordantes, mas inclui concordância ao acaso. O ARI desconta a concordância esperada ao acaso, indo de 1 (perfeita) a perto de 0 (acaso).
+
+DISC: Diferencie homogeneidade, completude e V-measure.
+R: Homogeneidade: cada grupo tem uma só classe. Completude: cada classe está em um só grupo. V-measure: média harmônica das duas.
+
+DISC: Dê três perguntas de validação pelo uso e pela interpretação dos grupos.
+R: Os grupos fazem sentido para o especialista? São acionáveis? Têm tamanho útil? São estáveis no tempo? Diferem em variáveis de negócio?
+
+DISC: Por que perfilar os grupos com a razão (média do grupo)/(média geral) é útil?
+R: Mostra, por atributo, se o grupo está acima (maior que 1) ou abaixo (menor que 1) da média geral, facilitando nomear e comparar os grupos.
+
+DISC: Descreva um roteiro de avaliação com sete passos.
+R: Hopkins; variar k e calcular índices; testar estabilidade; comparar algoritmos; visualizar; perfilar e validar com especialistas; documentar escolhas.
+
+DISC: Por que, em validação externa, os rótulos de referência nem sempre são o agrupamento "correto"?
+R: Representam uma possível organização, vinculada a um objetivo; outros agrupamentos podem ser igualmente válidos para outros fins (von Luxburg et al., 2012).
+
+DISC: Dados os índices silhueta 0,62 (k = 3), 0,71 (k = 4) e 0,55 (k = 5), qual k seria sugerido e que outros passos você faria antes de decidir?
+R: k = 4 pelo maior valor de silhueta. Confirmar com CH, DB e gap, testar estabilidade, visualizar e verificar a interpretabilidade com especialistas.
+
+DISC: Explique por que usar o gap em vez de apenas o cotovelo pode ser mais objetivo para escolher k.
+R: O gap compara com dados de referência sem estrutura e fornece um critério quantitativo com desvio padrão, reduzindo a subjetividade de procurar o "cotovelo" a olho.
+
+DISC: Explique a diferença entre coesão e separação e use a analogia da festa para ilustrá-la.
+R: Coesão é a proximidade dos pontos dentro do mesmo grupo; separação é a distância entre grupos diferentes. Numa festa, cada rodinha de conversa deve ser unida (coesão) e as rodinhas devem ficar afastadas (separação).

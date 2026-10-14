@@ -1,0 +1,269 @@
+MC: O agrupamento hierárquico produz como resultado:
+a) uma única partição fixa.
+b) uma hierarquia completa de partições, de cada ponto sozinho até todos juntos.
+c) apenas os centroides.
+d) somente pontos de ruído.
+R: b | Entrega uma árvore de fusões, e não apenas uma divisão.
+
+MC: Na abordagem aglomerativa, o algoritmo começa:
+a) com todos os pontos em um único grupo.
+b) com cada ponto em seu próprio grupo.
+c) com k grupos aleatórios.
+d) com os outliers.
+R: b | É um processo de baixo para cima (bottom-up): junta os mais próximos.
+
+MC: A abordagem divisiva funciona:
+a) de baixo para cima.
+b) de cima para baixo, dividindo recursivamente o grupo inicial.
+c) apenas com dados categóricos.
+d) apenas com dois grupos.
+R: b | Começa com tudo em um grupo e vai dividindo.
+
+MC: O gráfico em forma de árvore que registra as fusões chama-se:
+a) histograma.
+b) dendrograma.
+c) biplot.
+d) diagrama de Voronoi.
+R: b | O dendrograma mostra a sequência de fusões e as alturas.
+
+MC: No dendrograma, a altura de uma junção indica:
+a) o número de pontos do grupo.
+b) a distância entre os grupos fundidos.
+c) a ordem de leitura dos dados.
+d) a densidade do grupo.
+R: b | Fusões baixas indicam grupos muito parecidos; altas, grupos diferentes.
+
+MC: É correto afirmar que duas folhas vizinhas no desenho do dendrograma:
+a) são sempre muito parecidas.
+b) não são necessariamente parecidas; o que importa é a altura da junção entre elas.
+c) pertencem sempre ao mesmo grupo.
+d) têm distância zero.
+R: b | A ordem horizontal das folhas não tem significado por si só.
+
+MC: Para obter k grupos a partir de um dendrograma, deve-se:
+a) trocar a distância.
+b) traçar um corte horizontal na altura adequada.
+c) remover as folhas.
+d) refazer o cálculo com k centroides.
+R: b | Cada ramo cortado forma um grupo.
+
+MC: Uma regra prática para escolher o corte é:
+a) cortar sempre na menor altura.
+b) cortar no maior salto vertical sem fusões.
+c) cortar sempre em 2 grupos.
+d) cortar na altura média.
+R: b | Um grande salto indica que a próxima fusão juntaria coisas bem diferentes.
+
+MC: A ligação simples define a distância entre grupos como a distância:
+a) entre os pontos mais distantes.
+b) entre os pontos mais próximos, um de cada grupo.
+c) entre os centroides.
+d) média entre todos os pares.
+R: b | É a ligação do vizinho mais próximo (single linkage).
+
+MC: O "efeito corrente" (chaining) está associado à ligação:
+a) completa.
+b) de Ward.
+c) simples.
+d) média.
+R: c | Uma fileira de pontos intermediários pode unir grupos distintos.
+
+MC: A ligação completa mede a distância entre grupos usando:
+a) o par de pontos mais próximos.
+b) o par de pontos mais distantes.
+c) a média dos pares.
+d) a variância.
+R: b | Tende a gerar grupos compactos, mas é sensível a outliers.
+
+MC: A ligação média (UPGMA) calcula:
+a) a menor distância entre grupos.
+b) a média das distâncias entre todos os pares de pontos, um de cada grupo.
+c) a variância total.
+d) a distância entre medianas.
+R: b | É um meio-termo entre a simples e a completa.
+
+MC: A ligação de Ward junta os grupos cuja fusão:
+a) tem a menor distância entre centroides apenas.
+b) causa o menor aumento da variância dentro dos grupos.
+c) tem o maior diâmetro.
+d) ocorre aleatoriamente.
+R: b | É a "irmã hierárquica" do K-means, pois minimiza somas de quadrados.
+
+MC: A ligação de Ward exige:
+a) distância Euclidiana.
+b) distância de Hamming.
+c) dados binários.
+d) nenhum tipo de distância.
+R: a | Ward é definida em termos de variância e requer a distância Euclidiana.
+
+MC: Para os pontos A=1, B=2, C=6, D=7, E=15, com ligação simples, a primeira fusão ocorre na altura:
+a) 1.
+b) 4.
+c) 8.
+d) 14.
+R: a | A menor distância é 1 (A–B e C–D).
+
+MC: No mesmo exemplo (A=1, B=2, C=6, D=7, E=15), a altura da fusão entre {A, B} e {C, D} na ligação simples é:
+a) 1.
+b) 4.
+c) 5.
+d) 8.
+R: b | A menor distância entre os grupos é B a C = 4.
+
+MC: Ainda no mesmo exemplo, a última fusão (que inclui E) ocorre, na ligação simples, na altura:
+a) 4.
+b) 8.
+c) 9.
+d) 14.
+R: b | A menor distância entre {A,B,C,D} e E é D a E = 8.
+
+MC: O custo de memória do hierárquico ingênuo é da ordem de:
+a) n.
+b) n log n.
+c) n².
+d) 2ⁿ.
+R: c | Armazena a matriz de distâncias n × n.
+
+MC: O agrupamento hierárquico é mais indicado para bases com:
+a) milhões de exemplos.
+b) centenas ou poucos milhares de exemplos.
+c) apenas um exemplo.
+d) bilhões de linhas.
+R: b | O custo quadrático ou cúbico limita sua escalabilidade.
+
+MC: A fórmula de Lance-Williams serve para:
+a) atualizar as distâncias após cada fusão, unificando as ligações.
+b) calcular a inércia.
+c) escolher k.
+d) calcular o silhouette.
+R: a | Expressa as várias ligações em uma única fórmula com parâmetros diferentes.
+
+MC: O algoritmo BIRCH é indicado para:
+a) bases grandes, construindo um resumo compacto em uma passada.
+b) dados categóricos.
+c) reduzir dimensões.
+d) detectar anomalias.
+R: a | Zhang, Ramakrishnan e Livny (1996) propuseram o resumo compacto dos dados.
+
+MC: No SciPy, a função que calcula a matriz de ligações é:
+a) linkage.
+b) fcluster.
+c) cophenet.
+d) pdist.
+R: a | Z = linkage(X, method="ward") devolve a matriz de ligações.
+
+MC: A função fcluster do SciPy é usada para:
+a) desenhar o dendrograma.
+b) cortar a árvore e obter os rótulos dos grupos.
+c) calcular distâncias.
+d) escalar dados.
+R: b | Com criterion="maxclust", obtém-se k grupos.
+
+MC: A correlação cofenética mede:
+a) a pureza dos grupos.
+b) o quanto o dendrograma preserva as distâncias originais.
+c) a inércia.
+d) a quantidade de ruído.
+R: b | Quanto mais próxima de 1, mais fiel é a árvore.
+
+MC: Para cortar por altura no AgglomerativeClustering do scikit-learn, usa-se:
+a) n_clusters=None e distance_threshold.
+b) n_init.
+c) eps.
+d) perplexity.
+R: a | distance_threshold define a altura do corte.
+
+MC: Um mapa de calor com dendrogramas nos dois eixos serve para:
+a) reordenar linhas e colunas e revelar blocos de padrão semelhante.
+b) calcular a inércia.
+c) escalonar dados.
+d) remover outliers.
+R: a | Mostra grupos de linhas e colunas com comportamento parecido.
+
+MC: Uma limitação do hierárquico é que as fusões são:
+a) reversíveis.
+b) irreversíveis (algoritmo guloso).
+c) aleatórias.
+d) sempre binárias em número par.
+R: b | Uma fusão errada nunca é desfeita.
+
+MC: Em comparação com o K-means, o hierárquico:
+a) é não determinístico.
+b) é determinístico e não exige k de antemão.
+c) escala melhor para milhões de pontos.
+d) só aceita grupos esféricos.
+R: b | Os mesmos dados produzem sempre a mesma árvore.
+
+MC: A ligação UPGMA é muito usada, em biologia, para construir:
+a) árvores fenéticas de similaridade entre espécies.
+b) redes neurais.
+c) regras de associação.
+d) variedades.
+R: a | Sokal e Michener (1958) usaram a ligação média em taxonomia numérica.
+
+MC: Qual conjunto de dados Eisen et al. (1998) agruparam, popularizando o mapa de calor com dendrogramas?
+a) Genes de levedura, segundo a expressão ao longo do tempo.
+b) Imagens de dígitos.
+c) Cestas de supermercado.
+d) Séries financeiras.
+R: a | O trabalho é muito citado na biologia computacional.
+
+DISC: Explique a analogia da árvore genealógica para o agrupamento hierárquico.
+R: Como numa família, dois irmãos se juntam num ramo (pais), que se une ao dos primos (avós) e assim por diante. O método junta exemplos semelhantes em níveis sucessivos até formar um único grupo.
+
+DISC: Diferencie o agrupamento aglomerativo do divisivo, indicando qual é mais usado e por quê.
+R: Aglomerativo junta de baixo para cima; divisivo separa de cima para baixo. O aglomerativo é mais usado por ser mais simples e menos custoso.
+
+DISC: Explique como ler um dendrograma: o que significam folhas, ramos, altura e ordem horizontal.
+R: Folhas são os exemplos; cada junção é uma fusão; a altura é a distância entre os grupos fundidos; a ordem horizontal não tem significado por si só.
+
+DISC: Como escolher o número de grupos cortando um dendrograma? Quais cuidados?
+R: Traça-se um corte horizontal, de preferência onde há um grande salto vertical. Cuidado: depende da ligação; validar com critérios de avaliação e interpretação.
+
+DISC: Descreva as quatro ligações (simples, completa, média e Ward) e uma vantagem ou desvantagem de cada.
+R: Simples: par mais próximo; capta formas alongadas, mas sofre de efeito corrente. Completa: par mais distante; grupos compactos, sensível a outliers. Média: média dos pares; equilíbrio. Ward: minimiza aumento da variância; grupos equilibrados, exige Euclidiana.
+
+DISC: O que é o efeito corrente e por que ocorre?
+R: Na ligação simples, pontos intermediários formam uma ponte entre grupos distintos; como basta um par próximo, os grupos se unem em cadeia.
+
+DISC: Construa à mão o dendrograma, com ligação simples, para A=1, B=2, C=6, D=7, E=15 e indique o corte para 2 grupos.
+R: Fusões nas alturas 1 (A–B), 1 (C–D), 4 ({A,B}–{C,D}) e 8 (E). Corte entre 4 e 8 produz {A,B,C,D} e {E}.
+
+DISC: Qual a complexidade do hierárquico e como lidar com bases grandes?
+R: Memória da ordem de n² e tempo entre n² log n e n³. Pode-se amostrar, agrupar com K-means e aplicar o hierárquico aos centroides ou usar o BIRCH.
+
+DISC: Descreva o que a correlação cofenética mede e como usá-la para escolher a ligação.
+R: Mede a correlação entre as distâncias originais e as distâncias implícitas no dendrograma. Escolhe-se a ligação com maior correlação, indicando melhor representação das distâncias.
+
+DISC: Explique como um mapa de calor com dendrogramas (clustermap) ajuda a analisar dados de expressão gênica ou de clientes.
+R: Reordena linhas e colunas segundo as árvores, formando blocos de padrão semelhante, como grupos de genes com expressão parecida em certos experimentos ou clientes que compram certos produtos.
+
+DISC: Por que o hierárquico é considerado determinístico? Compare com o K-means.
+R: Dados e ligação fixos geram sempre a mesma árvore. O K-means depende da inicialização aleatória e pode dar resultados diferentes.
+
+DISC: Quais as vantagens e limitações do agrupamento hierárquico?
+R: Vantagens: sem k prévio, hierarquia completa, dendrograma comunicável, flexível em distâncias. Limitações: custo alto, fusões irreversíveis, sensível a ruído e à ligação escolhida.
+
+DISC: Explique a relação entre a ligação de Ward e o K-means.
+R: Ambas minimizam somas de quadrados dentro dos grupos: Ward o faz de modo hierárquico e guloso; o K-means, por partição iterativa.
+
+DISC: Compare hierárquico e K-means em uma tabela ou texto: k, resultado, escalabilidade e determinismo.
+R: K-means exige k, dá uma partição, escala bem e é não determinístico; hierárquico não exige k prévio, dá árvore de partições, escala mal e é determinístico.
+
+DISC: Explique por que a ordem das folhas num dendrograma pode ser alterada sem mudar o agrupamento.
+R: Em cada junção, os dois ramos podem trocar de lado; o que define o agrupamento é quem se junta com quem e a que altura.
+
+DISC: Mostre como obter 3 grupos de um conjunto de dados com SciPy ou scikit-learn.
+R: Com SciPy: Z = linkage(X, "ward"); fcluster(Z, t=3, criterion="maxclust"). Com scikit-learn: AgglomerativeClustering(n_clusters=3, linkage="ward").fit_predict(X).
+
+DISC: Quando o hierárquico com ligação simples seria preferível a Ward? Justifique.
+R: Quando os grupos são alongados ou de forma irregular e bem separados por vazios, pois a ligação simples os acompanha; Ward favorece grupos esféricos.
+
+DISC: Dê um exemplo de aplicação do hierárquico em taxonomia e explique como a hierarquia é útil.
+R: Classificar espécies por características morfológicas: a árvore mostra relações em vários níveis, de espécies a gêneros e famílias, algo que uma partição única não mostra.
+
+DISC: Explique o que são fusões irreversíveis e uma consequência prática.
+R: O algoritmo é guloso: uma vez unidos, dois grupos nunca se separam. Um erro de fusão no início se propaga, o que torna o método sensível a ruído e a outliers.
+
+DISC: Descreva a fórmula de Lance-Williams e sua utilidade no agrupamento hierárquico.
+R: É uma fórmula única para atualizar as distâncias entre o novo grupo e os demais após uma fusão; variando seus parâmetros, obtêm-se as ligações simples, completa, média e de Ward (Lance e Williams, 1967).

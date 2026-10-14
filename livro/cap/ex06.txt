@@ -1,0 +1,269 @@
+MC: A distribuição normal é descrita por:
+a) média e desvio padrão.
+b) moda e amplitude.
+c) mínimo e máximo.
+d) apenas a mediana.
+R: a | A média dá o centro do sino e o desvio padrão a sua largura.
+
+MC: Aproximadamente que fração dos valores de uma normal cai entre μ − σ e μ + σ?
+a) 50%.
+b) 68%.
+c) 95%.
+d) 99,9%.
+R: b | Cerca de 68% dos valores ficam a até um desvio padrão da média.
+
+MC: Em várias dimensões, a variância é generalizada pela:
+a) matriz de covariância.
+b) moda.
+c) mediana.
+d) distância de Hamming.
+R: a | A matriz Σ descreve a variância de cada atributo e a covariância entre eles.
+
+MC: Em duas dimensões, atributos correlacionados formam uma nuvem em forma de:
+a) elipse inclinada.
+b) círculo perfeito.
+c) reta vertical apenas.
+d) quadrado.
+R: a | A inclinação reflete a correlação entre os atributos.
+
+MC: Um Modelo de Mistura Gaussiana escreve a densidade dos dados como:
+a) uma única gaussiana.
+b) uma soma ponderada de gaussianas.
+c) um produto de médias.
+d) uma árvore de decisão.
+R: b | p(x) = Σ π_k · N(x | μ_k, Σ_k).
+
+MC: Em um GMM, os pesos π_k:
+a) somam 1 e representam a proporção de cada componente.
+b) somam zero.
+c) são distâncias.
+d) são os centroides.
+R: a | Indicam a fração dos dados vinda de cada componente.
+
+MC: O algoritmo EM alterna os passos:
+a) E (esperança) e M (maximização).
+b) A (atribuição) e C (corte).
+c) D (divisão) e F (fusão).
+d) L (limpeza) e T (treino).
+R: a | Passo E: responsabilidades; passo M: parâmetros.
+
+MC: No passo E do EM para GMM, calcula-se, para cada ponto:
+a) a responsabilidade (probabilidade de pertencer a cada componente).
+b) a média global.
+c) o dendrograma.
+d) o número de componentes.
+R: a | Dados os parâmetros atuais, estima-se a pertinência suave.
+
+MC: No passo M do EM para GMM:
+a) recalculam-se médias, covariâncias e pesos usando as responsabilidades.
+b) calculam-se autovalores.
+c) remove-se o ruído.
+d) escolhe-se k.
+R: a | Usam-se médias e covariâncias ponderadas pelas responsabilidades.
+
+MC: A cada iteração, o EM garante que a verossimilhança:
+a) diminui.
+b) não diminui.
+c) oscila livremente.
+d) fica sempre igual.
+R: b | O EM aumenta ou mantém a verossimilhança, convergindo a um máximo local.
+
+MC: O K-means pode ser visto como um GMM:
+a) em que as gaussianas são esféricas, de mesma variância, com atribuição rígida.
+b) com dimensões ocultas.
+c) sem médias.
+d) com infinitos componentes.
+R: a | O GMM generaliza o K-means com covariâncias flexíveis e pertinências suaves.
+
+MC: No agrupamento suave, cada ponto:
+a) pertence a um único grupo.
+b) tem uma probabilidade de pertencer a cada grupo.
+c) é ruído.
+d) não é atribuído.
+R: b | O GMM devolve probabilidades por componente.
+
+MC: No scikit-learn, o método que devolve as probabilidades de pertinência do GMM é:
+a) predict.
+b) predict_proba.
+c) fit_predict.
+d) inertia_.
+R: b | predict_proba dá o agrupamento suave.
+
+MC: O tipo de covariância mais flexível do GaussianMixture é:
+a) spherical.
+b) diag.
+c) tied.
+d) full.
+R: d | Cada componente pode ter elipse de forma e inclinação livres.
+
+MC: O tipo "spherical" no GaussianMixture implica elipses:
+a) livres.
+b) circulares, com tamanhos que podem variar por componente.
+c) alinhadas ao eixo apenas.
+d) inexistentes.
+R: b | É o tipo mais restrito, com poucos parâmetros.
+
+MC: Qual é a desvantagem de um modelo muito flexível (muitos parâmetros)?
+a) Risco de sobreajuste.
+b) Nunca converge.
+c) Não funciona com números.
+d) Aceita só uma dimensão.
+R: a | Pode memorizar o ruído dos dados.
+
+MC: Para escolher o número de componentes do GMM, usam-se:
+a) BIC e AIC, menores sendo melhores.
+b) inércia e cotovelo apenas.
+c) corte do dendrograma.
+d) eigengap.
+R: a | Penalizam a complexidade do modelo.
+
+MC: O BIC, comparado ao AIC, tende a:
+a) penalizar mais a complexidade, escolhendo modelos mais simples.
+b) penalizar menos.
+c) ignorar o número de parâmetros.
+d) preferir sempre mais componentes.
+R: a | O termo p·ln(n) penaliza mais quando n é grande.
+
+MC: O parâmetro reg_covar do GaussianMixture serve para:
+a) evitar covariâncias singulares, adicionando um pequeno valor à diagonal.
+b) escolher o número de componentes.
+c) definir o raio.
+d) escolher o kernel.
+R: a | Impede que uma gaussiana colapse sobre um único ponto.
+
+MC: O método score_samples do GaussianMixture pode ser usado para:
+a) detectar anomalias, pois pontos com baixa densidade são suspeitos.
+b) escolher k.
+c) padronizar dados.
+d) desenhar dendrogramas.
+R: a | Devolve o log da densidade de cada ponto.
+
+MC: No agrupamento espectral, o primeiro passo é:
+a) calcular centroides.
+b) construir um grafo de similaridade entre os pontos.
+c) cortar o dendrograma.
+d) reduzir a dimensão com t-SNE.
+R: b | Pontos são nós e semelhanças são arestas ponderadas.
+
+MC: A matriz Laplaciana de um grafo é definida como:
+a) L = D − W.
+b) L = D + W.
+c) L = W².
+d) L = D / W.
+R: a | D é a matriz de graus e W a matriz de afinidade.
+
+MC: Se o grafo tem k componentes perfeitamente separados, a Laplaciana possui:
+a) exatamente k autovalores iguais a zero.
+b) nenhum autovalor nulo.
+c) k² autovalores nulos.
+d) apenas um autovalor nulo.
+R: a | A multiplicidade do autovalor zero é o número de componentes conexas.
+
+MC: No final do agrupamento espectral, o algoritmo aplicado nas linhas dos autovetores é:
+a) o K-means.
+b) o Apriori.
+c) o DBSCAN.
+d) o PCA.
+R: a | As linhas viram pontos compactos e o K-means os separa.
+
+MC: O agrupamento espectral é particularmente útil para:
+a) formas não convexas, como anéis concêntricos.
+b) bases com bilhões de pontos.
+c) dados sem nenhuma estrutura.
+d) detectar regras de associação.
+R: a | Separa estruturas que o K-means não consegue.
+
+MC: O critério "eigengap" sugere o número de grupos observando:
+a) o maior salto entre autovalores consecutivos da Laplaciana.
+b) o cotovelo da inércia.
+c) a altura do dendrograma.
+d) a silhueta.
+R: a | O número de autovalores antes do salto sugere k.
+
+MC: O corte normalizado (normalized cut) evita:
+a) cortes que isolam poucos pontos, favorecendo divisões equilibradas.
+b) qualquer corte.
+c) o uso de grafos.
+d) o uso de autovetores.
+R: a | Cortar só pelo menor número de arestas pode isolar um único ponto.
+
+MC: Uma limitação do agrupamento espectral é:
+a) custo alto (autovetores de uma matriz n × n).
+b) só aceitar 2 grupos.
+c) não usar grafo.
+d) ser determinístico em qualquer base.
+R: a | Para bases grandes, usam-se aproximações como Nyström ou grafos esparsos.
+
+MC: O kernel gaussiano (RBF) em um grafo de afinidade atribui:
+a) peso próximo de 1 a pontos próximos e perto de 0 a pontos distantes.
+b) o mesmo peso a todos.
+c) peso negativo.
+d) peso apenas a vizinhos de índice par.
+R: a | O peso é exp(−γ‖x − y‖²).
+
+MC: Para grupos elípticos e probabilidades de pertinência, a escolha mais adequada dentre as abaixo é:
+a) K-means.
+b) GMM.
+c) DBSCAN.
+d) Mean-shift.
+R: b | O GMM captura elipses e dá pertinência suave.
+
+DISC: Explique a ideia de mistura gaussiana com um exemplo do cotidiano (alturas de crianças e adultos).
+R: O histograma de alturas tem duas corcovas: cada uma é uma normal. A mistura é a soma ponderada das duas; o GMM estima médias, desvios e pesos de cada componente.
+
+DISC: Descreva o algoritmo EM aplicado ao GMM e o problema do "ovo e a galinha".
+R: Não se conhecem nem os grupos de cada ponto nem os parâmetros. O EM alterna: passo E calcula responsabilidades dados os parâmetros; passo M recalcula os parâmetros dadas as responsabilidades; repete até a verossimilhança estabilizar.
+
+DISC: Diferencie agrupamento rígido de suave e dê um exemplo em que o suave é vantajoso.
+R: Rígido atribui um único grupo; suave dá probabilidades por grupo. É vantajoso com fronteiras ambíguas, como um cliente de perfil misto que pode receber duas campanhas.
+
+DISC: Explique os quatro tipos de covariância do GaussianMixture e o compromisso entre flexibilidade e sobreajuste.
+R: spherical (círculos), diag (elipses alinhadas aos eixos), tied (mesma forma para todas) e full (livre). Mais flexibilidade ajusta melhor, mas aumenta parâmetros e o risco de sobreajuste.
+
+DISC: Como escolher o número de componentes com BIC e AIC? O que significa "menor é melhor"?
+R: Ajustam-se modelos com K variando e calcula-se o critério, que equilibra verossimilhança e número de parâmetros. Escolhe-se o K de menor valor; BIC penaliza mais a complexidade.
+
+DISC: Cite três cuidados ao usar GMM.
+R: Inicialização (várias execuções), singularidades (reg_covar), alta dimensão (covariância full tem muitos parâmetros) e suposição gaussiana.
+
+DISC: Explique como o GMM pode ser usado para detectar anomalias e gerar dados sintéticos.
+R: score_samples devolve a log-densidade; pontos de baixa densidade são suspeitos. O método sample gera novos dados a partir do modelo ajustado.
+
+DISC: Descreva os quatro passos do agrupamento espectral.
+R: Construir o grafo de similaridade; calcular a Laplaciana; obter os k menores autovetores; aplicar K-means às linhas.
+
+DISC: Explique o papel da matriz Laplaciana e de seus autovalores no agrupamento espectral.
+R: L = D − W codifica a conectividade do grafo; o número de autovalores zero igual ao de componentes conexas, e os menores autovetores revelam comunidades que se tornam nuvens compactas.
+
+DISC: Por que o agrupamento espectral separa anéis concêntricos e o K-means não?
+R: O grafo de vizinhos liga pontos de um mesmo anel, e a representação nos autovetores separa os anéis em nuvens compactas; o K-means, usando distância ao centro, corta os anéis.
+
+DISC: O que é o corte normalizado e por que é melhor que o corte mínimo simples?
+R: Equilibra o custo do corte com o tamanho dos grupos, penalizando grupos minúsculos. O corte mínimo simples poderia isolar um único ponto.
+
+DISC: Como o eigengap ajuda a escolher k?
+R: Ordenam-se os autovalores da Laplaciana; o maior salto entre consecutivos indica o número de grupos (os autovalores antes do salto).
+
+DISC: Cite três formas de construir o grafo de similaridade.
+R: k vizinhos mais próximos; vizinhos dentro de um raio ε; kernel gaussiano (RBF).
+
+DISC: Quais as limitações do agrupamento espectral e como contorná-las?
+R: Custo alto de autovetores, sensibilidade à similaridade e dificuldade com pontos novos. Contornos: aproximação de Nyström, grafos esparsos de vizinhos e extensões para novos pontos.
+
+DISC: Compare K-means, GMM, espectral e DBSCAN quanto à pertinência, forma dos grupos e necessidade de k.
+R: K-means: rígida, esféricos, exige k. GMM: suave, elípticos, exige K (BIC). Espectral: rígida, arbitrária, exige k (eigengap). DBSCAN: rígida com ruído, arbitrária, sem k.
+
+DISC: Explique por que a verossimilhança do GMM sempre cresce com mais componentes e como evitar o sobreajuste.
+R: Mais componentes ajustam melhor os dados, até decorar o ruído. Evita-se com BIC/AIC, validação e limitação do tipo de covariância.
+
+DISC: Explique o conceito de "responsabilidade" no EM com um exemplo numérico.
+R: É a probabilidade de um ponto vir de cada componente. Exemplo: 80% do grupo A, 15% do B e 5% do C; somam 100%.
+
+DISC: Dê um exemplo de aplicação do GMM em segmentação de clientes e comente o benefício da pertinência suave.
+R: Clientes com comportamento misto recebem probabilidades por segmento (por exemplo 60% econômico e 40% premium), permitindo campanhas combinadas ou análise de transição entre perfis.
+
+DISC: Escreva um roteiro de decisão entre K-means, GMM, espectral e DBSCAN/HDBSCAN.
+R: Esféricos e base grande: K-means; elípticos e probabilidades: GMM; formas complicadas e base média: espectral; ruído e forma livre: DBSCAN ou HDBSCAN.
+
+DISC: Explique por que dizemos que o GMM é um modelo gerativo e o K-means não.
+R: O GMM define uma distribuição de probabilidade para os dados e permite gerar novas amostras; o K-means só particiona os dados, sem modelo probabilístico.

@@ -1,0 +1,269 @@
+MC: Um grupo, no agrupamento por densidade, é:
+a) um conjunto de pontos próximos ao centroide.
+b) uma região densa separada de outras por regiões pouco povoadas.
+c) um nó do dendrograma.
+d) um conjunto de pontos com mesmo rótulo.
+R: b | Grupos são regiões densas cercadas por vazio.
+
+MC: Qual das vantagens abaixo é típica do DBSCAN?
+a) Exige o número de grupos de antemão.
+b) Descobre grupos de formas arbitrárias e identifica ruído.
+c) Só funciona com grupos esféricos.
+d) Dispensa qualquer parâmetro.
+R: b | Não precisa de k, aceita formas livres e rotula ruído.
+
+MC: Os dois parâmetros principais do DBSCAN são:
+a) k e n_init.
+b) eps e min_samples.
+c) perplexity e n_neighbors.
+d) linkage e metric.
+R: b | eps é o raio da vizinhança; min_samples é o mínimo de pontos para ser denso.
+
+MC: O parâmetro eps do DBSCAN representa:
+a) o número de grupos.
+b) o raio da vizinhança de cada ponto.
+c) o número de iterações.
+d) a taxa de aprendizado.
+R: b | Define o tamanho do círculo em volta de cada ponto.
+
+MC: Um ponto central (core) do DBSCAN é aquele que:
+a) tem pelo menos min_samples pontos no raio eps.
+b) está isolado.
+c) é o centroide do grupo.
+d) tem o maior desvio padrão.
+R: a | Está "no coração" de uma região densa.
+
+MC: Um ponto de borda é aquele que:
+a) é central.
+b) não é central, mas está no raio eps de algum ponto central.
+c) está longe de todos.
+d) é o centro do grupo.
+R: b | Fica na periferia de um grupo.
+
+MC: No scikit-learn, o rótulo −1 em labels_ do DBSCAN indica:
+a) o primeiro grupo.
+b) ruído.
+c) ponto central.
+d) erro de execução.
+R: b | Pontos que não pertencem a nenhum grupo recebem −1.
+
+MC: Se eps é pequeno demais, ocorre tipicamente:
+a) fusão de todos os grupos.
+b) quase tudo vira ruído e surgem muitos micro-grupos.
+c) um único grupo.
+d) convergência mais rápida sem efeitos.
+R: b | A vizinhança é tão estreita que poucos pontos são centrais.
+
+MC: Se eps é grande demais, ocorre tipicamente:
+a) grupos distintos se fundem em um só.
+b) todos viram ruído.
+c) o algoritmo trava.
+d) k aumenta.
+R: a | A vizinhança abrange regiões que deveriam ficar separadas.
+
+MC: O gráfico de k-distâncias serve para:
+a) escolher o valor de eps pelo "joelho" da curva.
+b) escolher min_samples.
+c) calcular a inércia.
+d) comparar dendrogramas.
+R: a | O valor de y no joelho é um bom candidato a eps.
+
+MC: Uma regra comum para min_samples é:
+a) min_samples ≥ d + 1, onde d é o número de atributos.
+b) sempre 1.
+c) sempre igual a n.
+d) igual a eps.
+R: a | Em 2D, valores entre 4 e 10 costumam funcionar.
+
+MC: Por que é preciso padronizar os dados antes do DBSCAN?
+a) Porque usa raio único, e todos os atributos devem estar na mesma escala.
+b) Porque exige média zero para funcionar.
+c) Porque a padronização remove o ruído.
+d) Porque o algoritmo é probabilístico.
+R: a | O raio eps vale para todos os atributos igualmente.
+
+MC: Uma fraqueza do DBSCAN é:
+a) não detectar ruído.
+b) lidar mal com grupos de densidades muito diferentes.
+c) exigir k de antemão.
+d) só aceitar dados categóricos.
+R: b | Com um só eps, um grupo difuso pode virar ruído ou grupos densos se fundirem.
+
+MC: A complexidade do DBSCAN com índices espaciais é da ordem de:
+a) n!
+b) 2ⁿ
+c) n log n
+d) n³
+R: c | Árvores espaciais aceleram a busca de vizinhos.
+
+MC: O OPTICS produz como saída principal:
+a) uma partição única.
+b) uma ordenação dos pontos com distâncias de alcançabilidade.
+c) os centroides.
+d) a matriz de ligações.
+R: b | O gráfico de alcançabilidade mostra a estrutura de densidade.
+
+MC: No gráfico de alcançabilidade, os vales correspondem a:
+a) ruído.
+b) grupos (regiões densas).
+c) fronteiras entre grupos.
+d) pontos centrais únicos.
+R: b | Picos são fronteiras; vales são grupos.
+
+MC: O HDBSCAN combina duas ideias:
+a) densidade e hierarquia.
+b) média e mediana.
+c) probabilidade e grafos.
+d) votação e regressão.
+R: a | Constrói uma hierarquia de densidades e escolhe os grupos mais estáveis.
+
+MC: O principal parâmetro do HDBSCAN é:
+a) eps.
+b) min_cluster_size.
+c) k.
+d) perplexity.
+R: b | Intuitivo: o menor grupo que interessa.
+
+MC: O HDBSCAN passou a integrar o scikit-learn a partir da versão:
+a) 0.9.
+b) 1.0.
+c) 1.3.
+d) 2.5.
+R: c | Antes, era distribuído no pacote independente hdbscan.
+
+MC: O atributo probabilities_ do HDBSCAN informa:
+a) a probabilidade de pertinência de cada ponto ao seu grupo.
+b) a inércia.
+c) o número de grupos.
+d) o valor de eps.
+R: a | Dá uma medida de quão bem cada ponto pertence ao grupo.
+
+MC: O Mean-shift (Comaniciu e Meer, 2002) baseia-se em:
+a) subir o "morro" da densidade estimada até um pico.
+b) somar probabilidades.
+c) cortar dendrogramas.
+d) calcular autovetores.
+R: a | Os picos de densidade são os centros dos grupos.
+
+MC: Em um estudo de pontos quentes de embarque de táxi, usa-se a distância haversine porque:
+a) mede distâncias sobre a esfera terrestre.
+b) é a mais rápida.
+c) ignora a latitude.
+d) é uma distância binária.
+R: a | Coordenadas geográficas exigem a distância sobre a esfera.
+
+MC: No exemplo geográfico, eps = 0,5 km é convertido para radianos dividindo por:
+a) 100.
+b) o raio da Terra (6371 km).
+c) 360.
+d) o número de pontos.
+R: b | A distância haversine opera em radianos sobre a esfera.
+
+MC: Para dados em formato de luas, o resultado típico é:
+a) K-means acerta; DBSCAN erra.
+b) DBSCAN acerta; K-means erra.
+c) Ambos erram sempre.
+d) Ambos acertam sempre.
+R: b | O DBSCAN segue a forma dos grupos; o K-means os corta ao meio.
+
+MC: Qual combinação descreve melhor o HDBSCAN versus DBSCAN?
+a) HDBSCAN lida melhor com densidades variáveis.
+b) HDBSCAN não detecta ruído.
+c) HDBSCAN exige eps.
+d) HDBSCAN só funciona em 1D.
+R: a | Ele escolhe grupos estáveis em várias escalas de densidade.
+
+MC: Em alta dimensão, métodos baseados em densidade:
+a) funcionam melhor.
+b) sofrem porque o conceito de vizinhança perde sentido.
+c) não são afetados.
+d) tornam-se determinísticos.
+R: b | A maldição da dimensionalidade afeta as distâncias.
+
+MC: Qual das opções NÃO descreve ponto de ruído no DBSCAN?
+a) Não é central.
+b) Não está no raio eps de nenhum ponto central.
+c) Recebe o rótulo −1.
+d) É o centro de um grupo.
+R: d | Ruído nunca é centro de grupo.
+
+MC: Uma diferença entre DBSCAN e K-means é que o DBSCAN:
+a) exige k.
+b) não exige k e aceita formas arbitrárias.
+c) usa centroides.
+d) é sempre mais lento.
+R: b | O K-means exige k e supõe grupos esféricos.
+
+MC: Em duas dimensões, o gráfico de k-distâncias com k = min_samples é construído:
+a) ordenando as distâncias ao k-ésimo vizinho e procurando o joelho.
+b) somando todas as distâncias.
+c) calculando a média das distâncias.
+d) removendo os pontos centrais.
+R: a | Pontos de ruído aparecem na subida acentuada da curva.
+
+MC: Qual é a interpretação do OPTICS "alagar" a paisagem de alcançabilidade?
+a) Definir os grupos escolhendo um nível de corte na curva.
+b) Calcular a inércia.
+c) Escolher o número de iterações.
+d) Remover o ruído.
+R: a | Escolhe-se onde cortar para definir os grupos.
+
+DISC: Explique, com a analogia das luzes das cidades à noite, a ideia do agrupamento por densidade.
+R: Manchas brilhantes (cidades) separadas por áreas escuras correspondem a grupos (regiões densas) e vazio; luzes isoladas são ruído. Percebem-se as manchas sem fixar a quantidade.
+
+DISC: Defina ponto central, ponto de borda e ruído no DBSCAN, com um exemplo numérico (eps e min_samples).
+R: Com min_samples = 4, é central o ponto com pelo menos 4 pontos (incluindo ele) no raio eps; borda é não central dentro do raio de um central; ruído é o que não é nenhum dos dois.
+
+DISC: Descreva, passo a passo, o algoritmo DBSCAN.
+R: Escolher ponto não visitado; se é central, criar grupo e expandir pelos vizinhos centrais; se não, marcar como ruído provisório (pode virar borda); repetir até visitar todos.
+
+DISC: Explique a analogia do boato para pontos centrais e de borda.
+R: Quem tem muitos amigos próximos (central) repassa o boato; quem está na periferia (borda) o recebe, mas não repassa. O grupo é a cadeia de quem recebeu.
+
+DISC: Como escolher eps e min_samples na prática? Descreva o gráfico de k-distâncias.
+R: min_samples ≥ d + 1 (4 a 10 em 2D). Para eps, ordenam-se as distâncias ao k-ésimo vizinho e procura-se o joelho da curva; o valor nesse ponto é candidato a eps.
+
+DISC: Explique o efeito de eps muito pequeno e muito grande sobre o resultado.
+R: Muito pequeno: quase tudo vira ruído e micro-grupos. Muito grande: grupos distintos se fundem em um só.
+
+DISC: Por que o DBSCAN falha com grupos de densidades muito diferentes? Que alternativas existem?
+R: Um único eps não serve a densidades distintas: ou o grupo difuso vira ruído ou o denso se funde. Alternativas: OPTICS e HDBSCAN.
+
+DISC: Como funciona o gráfico de alcançabilidade do OPTICS e como interpretá-lo?
+R: Mostra a distância de alcançabilidade dos pontos na ordem calculada; vales profundos são grupos densos, vales rasos são difusos, picos são fronteiras.
+
+DISC: Descreva as principais etapas do HDBSCAN.
+R: Distância de alcançabilidade mútua; árvore geradora mínima e hierarquia; condensação da árvore descartando divisões minúsculas; seleção dos grupos mais estáveis.
+
+DISC: Compare DBSCAN, OPTICS e HDBSCAN quanto aos parâmetros e às densidades variáveis.
+R: DBSCAN: eps e min_samples; fraco com densidades variáveis. OPTICS: min_samples e xi; lida bem, com gráfico. HDBSCAN: min_cluster_size; muito bom com densidades variáveis, dá probabilidades.
+
+DISC: Por que o DBSCAN exige padronização dos atributos?
+R: Usa um raio único; atributos de maior escala dominariam a vizinhança, distorcendo os grupos.
+
+DISC: Descreva um estudo de caso de pontos quentes geográficos e justifique a escolha de DBSCAN em vez de K-means.
+R: Embarques de táxi: pontos quentes têm formas irregulares, há ruído e k é desconhecido. DBSCAN com distância haversine encontra regiões densas e isola embarques isolados.
+
+DISC: Explique por que métodos de densidade sofrem em alta dimensão.
+R: Em alta dimensão as distâncias se concentram e o espaço fica vazio; a noção de vizinhança perde sentido, tornando eps difícil de calibrar.
+
+DISC: Qual é o papel do rótulo −1 e como contar grupos e ruído no scikit-learn?
+R: −1 marca ruído. Grupos = número de rótulos distintos menos 1 se −1 existir; ruído = soma de labels_ == −1.
+
+DISC: Explique o Mean-shift e compare-o ao K-means quanto a k.
+R: Cada ponto sobe o gradiente da densidade até um pico; os picos são os centros. Não exige k, ao contrário do K-means.
+
+DISC: Por que pontos de borda podem ser atribuídos a grupos diferentes conforme a ordem de visita?
+R: Um ponto de borda pode estar no raio de centrais de dois grupos; será do primeiro que o alcançar na ordem de visita.
+
+DISC: Proponha um roteiro para aplicar DBSCAN a um conjunto de dados novo.
+R: Limpar e padronizar; escolher min_samples; plotar k-distâncias para eps; rodar; verificar ruído e grupos; comparar com HDBSCAN; interpretar.
+
+DISC: Quando preferir HDBSCAN a DBSCAN? Justifique com duas razões.
+R: Densidades variáveis e dificuldade de escolher eps; HDBSCAN só pede min_cluster_size e dá probabilidades de pertinência.
+
+DISC: Explique por que o ruído é uma informação valiosa e não apenas um descarte.
+R: Pontos de ruído podem indicar anomalias, erros ou eventos raros; identificá-los evita forçá-los a grupos e pode orientar investigações.
+
+DISC: Compare o tratamento de formas de grupos por K-means, hierárquico com ligação simples e DBSCAN.
+R: K-means: esféricos. Hierárquico simples: formas alongadas, mas sofre efeito corrente. DBSCAN: formas arbitrárias, resistente a ruído.

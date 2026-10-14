@@ -1,0 +1,269 @@
+MC: Na analogia da pizzaria, os centroides do K-means correspondem:
+a) aos moradores da cidade.
+b) às pizzarias.
+c) às ruas.
+d) aos pedidos.
+R: b | As pizzarias (centros) mudam de endereço para o centro dos moradores que atendem.
+
+MC: Qual é a ordem correta dos passos do algoritmo de Lloyd?
+a) Atribuir pontos, inicializar centros, atualizar centros.
+b) Atualizar centros, atribuir pontos, inicializar centros.
+c) Inicializar centros, atribuir pontos ao centro mais próximo, atualizar centros, repetir.
+d) Escolher k, ordenar os pontos, calcular a mediana.
+R: c | Inicialização, atribuição, atualização e repetição até convergir.
+
+MC: No passo de atualização do K-means, o novo centroide de cada grupo é:
+a) a mediana dos pontos do grupo.
+b) o ponto mais distante do grupo.
+c) a média dos pontos do grupo.
+d) um ponto sorteado.
+R: c | O centroide é a média (por isso "k-means").
+
+MC: A função objetivo (inércia) minimizada pelo K-means é:
+a) a soma das distâncias entre grupos.
+b) a soma dos quadrados das distâncias dos pontos ao centro do seu grupo.
+c) o número de grupos.
+d) o maior diâmetro de grupo.
+R: b | J = soma, em todos os grupos, de ‖x − μ‖².
+
+MC: Aplicando K-means com k = 2 aos pontos 1, 2, 3, 10, 11, 12, o resultado final é:
+a) {1, 2} e {3, 10, 11, 12}.
+b) {1, 2, 3} e {10, 11, 12}.
+c) {1} e {2, 3, 10, 11, 12}.
+d) {1, 2, 3, 10} e {11, 12}.
+R: b | Os centroides convergem para 2 e 11, separando os dois blocos naturais.
+
+MC: Sobre a convergência do K-means, é correto afirmar que:
+a) a inércia nunca diminui.
+b) o algoritmo sempre termina, mas pode parar em mínimo local.
+c) sempre encontra o ótimo global.
+d) nunca converge.
+R: b | A inércia não aumenta a cada iteração, mas o resultado depende da inicialização.
+
+MC: Cada região do plano dominada por um centroide é chamada de:
+a) célula de Voronoi.
+b) dendrograma.
+c) variedade.
+d) eixo principal.
+R: a | As fronteiras entre regiões formam retas (diagrama de Voronoi).
+
+MC: No scikit-learn, o atributo que guarda o valor final da função objetivo do K-means é:
+a) labels_.
+b) cluster_centers_.
+c) inertia_.
+d) n_iter_.
+R: c | inertia_ guarda o valor de J.
+
+MC: O atributo que traz as coordenadas dos centroides é:
+a) inertia_.
+b) cluster_centers_.
+c) labels_.
+d) n_init.
+R: b | cluster_centers_ contém os centros finais.
+
+MC: A principal vantagem do k-means++ é:
+a) eliminar a necessidade de escolher k.
+b) espalhar os centros iniciais, melhorando a qualidade e a estabilidade.
+c) funcionar com dados categóricos.
+d) detectar outliers.
+R: b | Os centros são sorteados com probabilidade proporcional ao quadrado da distância ao centro mais próximo.
+
+MC: O parâmetro n_init do KMeans indica:
+a) o número de grupos.
+b) o número de atributos.
+c) quantas inicializações diferentes são testadas, mantendo a de menor inércia.
+d) o número máximo de iterações.
+R: c | Rodar várias vezes reduz o risco de mínimos locais ruins.
+
+MC: A inércia, quando k aumenta:
+a) sempre aumenta.
+b) sempre diminui (ou se mantém).
+c) permanece constante.
+d) oscila sem padrão.
+R: b | No limite, com k = n, a inércia é zero.
+
+MC: O método do cotovelo escolhe k procurando:
+a) o menor valor da inércia.
+b) o ponto em que a queda da inércia desacelera.
+c) o k mais alto possível.
+d) o k em que a inércia é máxima.
+R: b | O cotovelo é onde acrescentar grupos traz ganhos cada vez menores.
+
+MC: Qual técnica foi proposta por Tibshirani, Walther e Hastie (2001) para escolher k de modo mais objetivo?
+a) Estatística gap.
+b) Critério de Kaiser.
+c) Corte do dendrograma.
+d) Eigengap.
+R: a | A estatística gap compara a inércia observada com a esperada em dados sem estrutura.
+
+MC: O K-means tem dificuldade com:
+a) grupos esféricos de mesmo tamanho.
+b) grupos em forma de luas ou anéis.
+c) dados numéricos padronizados.
+d) bases pequenas.
+R: b | Ele busca grupos esféricos; formas não convexas são mal separadas.
+
+MC: Por que o K-means é sensível a outliers?
+a) Porque usa a mediana.
+b) Porque a média é puxada por valores extremos.
+c) Porque ignora distâncias.
+d) Porque exige dados categóricos.
+R: b | Um único valor extremo pode deslocar muito o centroide.
+
+MC: O K-means exige escalonamento porque:
+a) usa distância Euclidiana, e atributos de grande amplitude dominam.
+b) só aceita valores entre 0 e 1.
+c) usa a distância de Jaccard.
+d) não aceita números negativos.
+R: a | Atributos de grande escala dominariam o cálculo das distâncias.
+
+MC: O Mini-Batch K-means é indicado para:
+a) bases muito grandes, pois usa pequenos lotes aleatórios.
+b) dados categóricos.
+c) formas aneladas.
+d) hierarquias.
+R: a | É muito mais rápido, com pequena perda de qualidade.
+
+MC: O K-medoids usa como centro:
+a) a média dos pontos.
+b) um ponto real do conjunto, o mais central do grupo.
+c) o ponto mais distante.
+d) a moda.
+R: b | O medoide é robusto a outliers e aceita qualquer distância.
+
+MC: Para dados categóricos, a variante apropriada do K-means é:
+a) K-modes.
+b) Mini-Batch.
+c) Fuzzy C-means.
+d) K-means++.
+R: a | Usa a moda no lugar da média e uma medida de discordância no lugar da distância.
+
+MC: No Fuzzy C-means, cada ponto:
+a) pertence a um único grupo.
+b) pertence a todos os grupos com graus entre 0 e 1.
+c) é descartado.
+d) não tem pertinência.
+R: b | A pertinência é parcial, como um cliente 70% "econômico" e 30% "premium".
+
+MC: Em segmentação RFM, as letras significam:
+a) recência, frequência e valor monetário.
+b) região, faixa etária e média.
+c) regressão, fidelidade e margem.
+d) risco, fraude e mercado.
+R: a | Recência (dias desde a última compra), Frequência e valor (Monetary).
+
+MC: Na quantização de cores com K-means, os pontos a agrupar são:
+a) os pixels, vistos como pontos 3D (R, G, B).
+b) as colunas da imagem.
+c) os nomes dos arquivos.
+d) as bordas.
+R: a | Cada pixel vira um ponto no espaço de cores; os centroides formam a paleta.
+
+MC: Na compressão de uma imagem por K-means com 8 cores, cada pixel passa a ser descrito:
+a) por três números reais.
+b) por um índice de 0 a 7.
+c) por um valor binário.
+d) por nenhuma informação.
+R: b | O índice aponta para a cor correspondente na paleta.
+
+MC: Em uma boa prática de uso do K-means, deve-se:
+a) rodar uma única inicialização.
+b) escalar os atributos e testar vários valores de k.
+c) ignorar a inspeção dos grupos.
+d) usar k fixo sem verificar.
+R: b | Escalar, rodar várias inicializações, testar k e inspecionar os grupos.
+
+MC: Quem batizou o algoritmo como "k-means" em 1967 foi:
+a) MacQueen.
+b) Lloyd.
+c) Hotelling.
+d) Ward.
+R: a | MacQueen (1967) nomeou o método; Lloyd o propôs em 1957 (publicado em 1982).
+
+MC: O problema geral de minimizar a inércia é:
+a) trivial.
+b) NP-difícil.
+c) linear.
+d) impossível de aproximar.
+R: b | Não se conhece algoritmo rápido que garanta o ótimo; usam-se heurísticas.
+
+MC: O que o atributo n_iter_ informa?
+a) O número de iterações até a convergência.
+b) O número de grupos.
+c) O número de pontos.
+d) O valor da inércia.
+R: a | Indica quantas iterações foram necessárias.
+
+MC: Para classificar novos pontos em grupos já aprendidos, usa-se no scikit-learn:
+a) fit_predict nos novos pontos.
+b) predict do modelo treinado.
+c) inertia_.
+d) score_samples.
+R: b | km.predict(novos_pontos) devolve o grupo mais próximo.
+
+MC: Quando os grupos têm densidades e tamanhos muito diferentes, o K-means:
+a) funciona melhor.
+b) pode dividi-los de modo inadequado.
+c) detecta ruído.
+d) cria hierarquias.
+R: b | Ele supõe grupos de tamanho e densidade semelhantes.
+
+DISC: Explique o K-means usando a analogia da pizzaria e identifique o que corresponde a centroide, grupo e convergência.
+R: Pizzarias são centroides; bairros atendidos são os grupos. Cada morador escolhe a pizzaria mais próxima e cada pizzaria se muda para o centro dos seus moradores. Quando ninguém muda de pizzaria, houve convergência.
+
+DISC: Descreva, passo a passo, o algoritmo de Lloyd.
+R: Inicializar k centros; atribuir cada ponto ao centro mais próximo; recalcular cada centro como a média do seu grupo; repetir até as atribuições não mudarem ou atingir o limite de iterações.
+
+DISC: Execute o K-means à mão para os pontos 1, 2, 3, 10, 11, 12 com k = 2 e centros iniciais 1 e 2. Mostre as iterações.
+R: Rodada 1: A={1}, B={2,3,10,11,12}; centros 1 e 7,6. Rodada 2: A={1,2,3}, B={10,11,12}; centros 2 e 11. Rodada 3: nenhuma mudança, convergiu.
+
+DISC: Defina inércia e explique por que ela sempre diminui (ou não aumenta) a cada iteração.
+R: Inércia é a soma dos quadrados das distâncias dos pontos ao centro do seu grupo. A atribuição ao centro mais próximo não aumenta J, e a média minimiza J dentro de cada grupo; logo, J não aumenta.
+
+DISC: Por que o K-means pode parar em um mínimo local? Como reduzir esse problema?
+R: O resultado depende dos centros iniciais, e a otimização é local. Reduz-se usando k-means++, várias inicializações (n_init) e escolhendo a menor inércia.
+
+DISC: Explique como funciona o k-means++ e por que ele é melhor que a inicialização aleatória.
+R: O primeiro centro é aleatório; cada novo centro é sorteado com probabilidade proporcional ao quadrado da distância ao centro mais próximo. Isso espalha os centros e, em média, o resultado é O(log k) vezes pior que o ótimo, com garantia teórica.
+
+DISC: Descreva o método do cotovelo e dois cuidados ao usá-lo.
+R: Calcula-se a inércia para vários k e procura-se onde a queda desacelera. Cuidados: o cotovelo pode ser suave ou ambíguo; combinar com silhueta, gap e interpretação.
+
+DISC: Liste cinco limitações do K-means e uma forma de contorná-las.
+R: Grupos esféricos (GMM, espectral); tamanhos desiguais (GMM); densidades diferentes (DBSCAN); outliers (K-medoids); necessidade de k (cotovelo, silhueta); só numérico (K-modes ou Gower).
+
+DISC: Explique as diferenças entre K-means, K-medoids e K-modes.
+R: K-means usa a média e distância Euclidiana; K-medoids usa um ponto real central, robusto a outliers e flexível quanto à distância; K-modes usa a moda e é indicado para dados categóricos.
+
+DISC: O que é o agrupamento difuso (fuzzy) e em que situação é vantajoso?
+R: Cada ponto tem grau de pertinência a todos os grupos. É vantajoso quando as fronteiras são ambíguas, como clientes com perfil misto.
+
+DISC: Por que o Mini-Batch K-means é mais rápido e qual o custo dessa rapidez?
+R: Usa pequenos lotes aleatórios a cada passo em vez de todos os dados. O custo é uma pequena perda de qualidade da solução.
+
+DISC: No estudo de caso RFM, explique como os grupos recebem nomes e como orientar ações de marketing.
+R: Analisa-se o perfil médio de cada grupo: recência baixa com frequência e valor altos indica clientes fiéis; recência alta e baixo valor indica inativos. Cada grupo recebe ação própria: fidelidade, cupons, reativação.
+
+DISC: Explique como o K-means realiza a quantização de cores de uma imagem e qual é o ganho.
+R: Cada pixel é um ponto (R, G, B); K-means encontra k cores representativas; cada pixel é substituído pela cor do centroide. O arquivo passa a guardar índices e uma paleta, reduzindo o tamanho.
+
+DISC: Por que é recomendável escalar os atributos antes do K-means? Dê um exemplo.
+R: Distância Euclidiana é dominada por atributos de grande amplitude. Em dados de clientes, o gasto em reais domina o número de visitas; padronizando, ambos contribuem igualmente.
+
+DISC: Explique a célula de Voronoi e sua relação com as fronteiras do K-means.
+R: É a região dos pontos mais próximos de um dado centroide. As fronteiras entre grupos são retas equidistantes de dois centroides, o que explica grupos convexos.
+
+DISC: O que significa dizer que o K-means "impõe bolas"? Dê um exemplo em que isso falha.
+R: Supõe grupos esféricos de tamanhos similares. Falha em luas, anéis concêntricos ou elipses alongadas, cortando o grupo real ao meio.
+
+DISC: Por que a média é o centro ideal quando se usa a distância Euclidiana ao quadrado?
+R: A média minimiza a soma dos quadrados das distâncias dentro do grupo. Com outras distâncias, o centro ótimo muda (por exemplo, mediana ou medoide).
+
+DISC: Proponha um roteiro de boas práticas para aplicar K-means a dados reais de clientes.
+R: Limpar e escalar os dados; rodar várias inicializações; testar k com cotovelo, silhueta e gap; verificar a estabilidade; perfilar e nomear os grupos; documentar as escolhas.
+
+DISC: Compare o K-means com o hierárquico quanto à escalabilidade e à necessidade de definir k.
+R: K-means escala bem para grandes bases, mas exige k de antemão; o hierárquico não exige k antes (corta-se a árvore), porém tem custo quadrático ou cúbico.
+
+DISC: Dê um exemplo, fora dos citados no capítulo, de aplicação do K-means e justifique por que ele seria adequado.
+R: Resposta pessoal coerente, como agrupar estações meteorológicas por padrão de chuva; justificativa: atributos numéricos padronizados e grupos aproximadamente esféricos.

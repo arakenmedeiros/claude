@@ -1,0 +1,269 @@
+MC: A análise da cesta de compras busca descobrir:
+a) itens que costumam ser comprados juntos.
+b) o preço ideal de cada item.
+c) clientes com menor renda.
+d) o estoque mínimo.
+R: a | É a aplicação clássica das regras de associação.
+
+MC: Em regras de associação, uma transação é:
+a) um conjunto de itens que ocorrem juntos (por exemplo, uma compra).
+b) uma regra.
+c) um item isolado.
+d) um grupo de clientes.
+R: a | Cada cesta, sessão ou consulta é uma transação.
+
+MC: Em uma regra A → B, A é chamado de:
+a) antecedente.
+b) consequente.
+c) suporte.
+d) lift.
+R: a | B é o consequente.
+
+MC: A regra A → B significa que:
+a) A e B coocorrem com certa frequência, sem implicar causalidade.
+b) A causa B.
+c) B causa A.
+d) A e B são idênticos.
+R: a | Sorvete e afogamentos coocorrem no verão, mas um não causa o outro.
+
+MC: O suporte de um itemset é:
+a) a fração de transações que o contêm.
+b) a probabilidade condicional de B dado A.
+c) a razão entre confiança e lift.
+d) o número de itens.
+R: a | suporte(A) = transações com A / total de transações.
+
+MC: Na base de 10 compras do capítulo, o suporte do pão é:
+a) 0,5.
+b) 0,6.
+c) 0,8.
+d) 1,0.
+R: c | O pão aparece em 8 das 10 compras.
+
+MC: A confiança de A → B é calculada como:
+a) suporte(A ∪ B) / suporte(A).
+b) suporte(A) / suporte(B).
+c) suporte(A) × suporte(B).
+d) suporte(B) − suporte(A).
+R: a | É P(B | A).
+
+MC: O lift de uma regra igual a 1 indica que A e B são:
+a) independentes.
+b) fortemente associados.
+c) negativamente associados.
+d) idênticos.
+R: a | Lift > 1 indica associação positiva; < 1, negativa.
+
+MC: Um lift igual a 1,67 significa que A e B aparecem juntos:
+a) 67% mais do que o esperado se fossem independentes.
+b) 67% menos do que o esperado.
+c) exatamente como esperado.
+d) nunca juntos.
+R: a | Lift = confiança / suporte(B).
+
+MC: Por que o lift é útil além da confiança?
+a) Porque a confiança pode ser alta só porque B é muito frequente.
+b) Porque o lift é sempre maior.
+c) Porque a confiança não existe.
+d) Porque o lift não depende dos dados.
+R: a | O lift compara com o que se esperaria por acaso.
+
+MC: Na regra pão → manteiga da base de 10 compras, a confiança é:
+a) 0,5.
+b) 0,625.
+c) 0,8.
+d) 1,0.
+R: b | suporte({pão, manteiga}) = 0,5 e suporte(pão) = 0,8; 0,5/0,8 = 0,625.
+
+MC: Na mesma base, a confiança de manteiga → pão é aproximadamente:
+a) 0,50.
+b) 0,62.
+c) 0,83.
+d) 1,00.
+R: c | 0,5 / 0,6 ≈ 0,83.
+
+MC: A propriedade Apriori diz que:
+a) todo subconjunto de um itemset frequente também é frequente.
+b) todo superconjunto de um itemset frequente é frequente.
+c) todo itemset é frequente.
+d) nenhum itemset é frequente.
+R: a | Equivalentemente, se um itemset é infrequente, seus superconjuntos também são.
+
+MC: A propriedade Apriori permite:
+a) podar candidatos sem contar seu suporte.
+b) calcular o lift diretamente.
+c) escolher k.
+d) padronizar atributos.
+R: a | Candidatos com subconjunto infrequente são descartados.
+
+MC: No exemplo do capítulo, o candidato {pão, leite, manteiga} é podado porque:
+a) {leite, manteiga} não é frequente (suporte 0,4 < 0,5).
+b) pão não é frequente.
+c) manteiga não existe.
+d) o suporte do pão é zero.
+R: a | Um subconjunto infrequente torna o conjunto maior infrequente.
+
+MC: O número de itemsets possíveis para n itens é:
+a) 2ⁿ − 1.
+b) n².
+c) n!
+d) 2n.
+R: a | Por isso a explosão combinatória inviabiliza testar todos.
+
+MC: O FP-Growth difere do Apriori principalmente porque:
+a) não gera candidatos, usando uma árvore de prefixos (FP-tree).
+b) usa distância Euclidiana.
+c) exige rótulos.
+d) depende de k.
+R: a | Requer apenas duas leituras da base.
+
+MC: Em uma FP-tree, transações que começam do mesmo modo:
+a) compartilham o caminho, e cada nó guarda uma contagem.
+b) são removidas.
+c) são duplicadas.
+d) viram ruído.
+R: a | A árvore comprime a base.
+
+MC: O algoritmo Eclat usa:
+a) listas verticais de identificadores de transações.
+b) árvores de isolamento.
+c) autovetores.
+d) kernels.
+R: a | Zaki (2000).
+
+MC: No pacote mlxtend, os dados de transações precisam ser transformados com:
+a) TransactionEncoder, gerando uma tabela verdadeiro/falso.
+b) StandardScaler.
+c) PCA.
+d) KMeans.
+R: a | A tabela one-hot é a entrada de apriori e fpgrowth.
+
+MC: A função que gera as regras a partir dos itemsets frequentes é:
+a) association_rules.
+b) fit_predict.
+c) linkage.
+d) score_samples.
+R: a | Permite filtrar por confiança ou lift.
+
+MC: A alavancagem (leverage) mede:
+a) suporte(A ∪ B) − suporte(A)·suporte(B).
+b) a razão entre confiança e suporte.
+c) a distância entre A e B.
+d) o número de transações.
+R: a | Diferença absoluta em relação à independência.
+
+MC: Qual é um bom critério para filtrar regras úteis?
+a) Lift acima de um limiar (por exemplo, 1,2) combinado a suporte e confiança adequados.
+b) Escolher regras ao acaso.
+c) Escolher só as de suporte mínimo.
+d) Escolher só as triviais.
+R: a | Além de eliminar regras redundantes e triviais.
+
+MC: Uma regra "feijão → arroz" numa loja brasileira seria um exemplo de regra:
+a) trivial.
+b) anômala.
+c) de lift negativo.
+d) inválida.
+R: a | Regras óbvias dão pouco valor de negócio.
+
+MC: O paradoxo de Simpson refere-se a:
+a) uma associação que pode se inverter quando os dados são segmentados.
+b) um tipo de kernel.
+c) a distribuição de probabilidade.
+d) uma regra de poda.
+R: a | Por exemplo, ao separar por região ou tipo de cliente.
+
+MC: Com milhares de regras testadas, o risco é que:
+a) algumas apareçam por puro acaso.
+b) nenhuma seja válida.
+c) o suporte seja negativo.
+d) o lift seja sempre 1.
+R: a | Convém aplicar correções estatísticas (Webb, 2007).
+
+MC: Padrões sequenciais diferem de regras de associação comuns porque:
+a) a ordem dos itens importa.
+b) usam distâncias.
+c) usam rótulos.
+d) exigem k.
+R: a | Agrawal e Srikant (1995).
+
+MC: Para usar atributos numéricos (como idade) em regras de associação, deve-se:
+a) discretizá-los em faixas para tratá-los como itens.
+b) mantê-los contínuos sem tratamento.
+c) excluí-los sempre.
+d) multiplicá-los por zero.
+R: a | Srikant e Agrawal (1996).
+
+MC: Em um teste A/B para validar recomendações "compre junto", compara-se:
+a) a taxa de conversão com e sem as sugestões.
+b) a inércia dos grupos.
+c) a perplexidade.
+d) o tamanho da base.
+R: a | Valida o impacto real das regras.
+
+DISC: Explique a análise da cesta de compras e cite três aplicações fora do varejo.
+R: Busca itens que ocorrem juntos nas transações. Aplicações: medicina (sintomas e diagnósticos), web (páginas visitadas na mesma sessão), bioinformática (genes expressos em conjunto), streaming (quem viu A também viu B).
+
+DISC: Defina item, transação, itemset e regra de associação com um exemplo.
+R: Item: produto (pão). Transação: uma cesta ({pão, leite}). Itemset: qualquer conjunto de itens. Regra: {pão, manteiga} → {leite}, lida como "quem leva pão e manteiga costuma levar leite".
+
+DISC: Por que "A → B" não significa que A causa B? Dê um exemplo.
+R: Indica coocorrência, não causalidade. Vendas de sorvete e afogamentos aumentam juntas no verão, mas o calor é a causa comum.
+
+DISC: Calcule suporte, confiança e lift da regra {pão} → {leite}, sabendo que suporte(pão) = 0,8, suporte(leite) = 0,7 e suporte({pão, leite}) = 0,5.
+R: Suporte = 0,5; confiança = 0,5/0,8 = 0,625; lift = 0,625/0,7 ≈ 0,89, ou seja, associação ligeiramente negativa.
+
+DISC: Interprete um lift de 1,67 para fraldas → cerveja com suporte de 20%.
+R: Fraldas e cerveja aparecem juntas 67% mais do que o esperado por acaso. O suporte de 20% indica que o padrão não é raro; é uma associação positiva relevante.
+
+DISC: Explique por que a confiança sozinha pode enganar e como o lift corrige isso.
+R: Se B é muito frequente, qualquer regra terminando em B terá confiança alta sem valor. O lift divide a confiança pelo suporte de B, comparando com a independência.
+
+DISC: Descreva a propriedade Apriori e dê um exemplo de poda.
+R: Se um itemset é infrequente, todos os seus superconjuntos também são. Exemplo: se {leite, manteiga} é infrequente, {pão, leite, manteiga} é descartado sem contagem.
+
+DISC: Descreva, passo a passo, o algoritmo Apriori.
+R: Contar itens e manter os frequentes; gerar candidatos de tamanho k+1 e podar; contar e manter os frequentes; repetir até acabar; gerar regras dos itemsets frequentes e filtrar por confiança.
+
+DISC: Aplique o Apriori à base de 10 compras com suporte mínimo 0,5 e liste os itemsets frequentes.
+R: 1-itemsets: pão (0,8), leite (0,7), manteiga (0,6), café (0,5). 2-itemsets: {pão, leite} e {pão, manteiga} (0,5 cada). Não há 3-itemsets frequentes.
+
+DISC: Explique como o FP-Growth funciona e por que costuma ser mais rápido que o Apriori.
+R: Duas leituras: conta itens e constrói a FP-tree, que comprime as transações; minera a árvore recursivamente com bases condicionais. Evita gerar e testar candidatos.
+
+DISC: Compare Apriori e FP-Growth em estratégia, leituras da base, memória e velocidade.
+R: Apriori gera e testa candidatos, lê a base uma vez por nível, usa menos memória, mais lento. FP-Growth usa árvore, duas leituras, mais memória, em geral mais rápido.
+
+DISC: Cite cinco boas práticas para filtrar regras úteis em um conjunto com milhares de regras.
+R: Suporte mínimo realista; lift acima de um limiar; eliminar redundantes; descartar triviais e inexplicáveis; validar com especialistas e teste A/B.
+
+DISC: Descreva um fluxo para construir um sistema "compre junto" em uma loja virtual.
+R: Pedidos como transações; minerar regras com suporte baixo e lift alto; recomendar os consequentes das melhores regras; validar com teste A/B; reavaliar periodicamente.
+
+DISC: Explique o paradoxo de Simpson no contexto das regras de associação.
+R: Uma associação observada nos dados agregados pode desaparecer ou inverter-se ao segmentar por região, tipo de cliente etc.; por isso convém analisar por segmentos.
+
+DISC: Por que itens muito frequentes (como a sacola plástica) geram regras sem interesse?
+R: Aparecem em quase todas as transações, produzindo regras de alta confiança e lift próximo de 1, sem informação.
+
+DISC: Explique a importância de corrigir testes múltiplos ao minerar regras.
+R: Com muitos testes, algumas regras aparecem por acaso; correções estatísticas (Webb, 2007) controlam falsos positivos.
+
+DISC: Dê dois exemplos de extensões das regras de associação e explique-as.
+R: Padrões sequenciais (a ordem importa, como celular → capinha → película) e regras com hierarquia de itens (refrigerante e refrigerante de cola), ou quantitativas.
+
+DISC: Por que os hábitos de consumo exigem reavaliação periódica das regras?
+R: Preferências, sazonalidade e produtos mudam com o tempo; regras antigas podem perder validade.
+
+DISC: Explique a diferença entre alavancagem e lift.
+R: Lift é uma razão em relação à independência; alavancagem é a diferença absoluta entre o suporte observado e o esperado por independência.
+
+DISC: Descreva como transformar uma lista de compras em tabela binária para usar no mlxtend e para que serve.
+R: Usa-se TransactionEncoder para criar colunas por item com valores verdadeiro/falso; é a entrada de apriori e fpgrowth.
+
+MC: Qual é uma limitação do Apriori em bases grandes?
+a) Muitas leituras da base e geração de muitos candidatos.
+b) Não calcular suporte.
+c) Exigir rótulos.
+d) Funcionar só com dois itens.
+R: a | O FP-Growth foi proposto para contornar essa limitação (Han, Pei e Yin, 2000).

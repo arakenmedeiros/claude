@@ -1,0 +1,68 @@
+Agrupamento (clustering): tarefa de dividir exemplos em grupos de modo que os de um mesmo grupo sejam parecidos entre si e diferentes dos demais.
+Agrupamento rígido: cada exemplo pertence a um único grupo.
+Agrupamento suave: cada exemplo tem uma probabilidade ou grau de pertinência a cada grupo.
+AIC / BIC: critérios de informação que equilibram ajuste e complexidade de um modelo; menor é melhor.
+Alavancagem (leverage): diferença entre o suporte observado de A e B juntos e o esperado se fossem independentes.
+Anomalia (outlier): exemplo muito diferente do comportamento normal dos dados.
+Antecedente / consequente: lado esquerdo (A) e lado direito (B) de uma regra A → B.
+Apriori: algoritmo de regras de associação que gera candidatos e os poda com a propriedade de anti-monotonicidade do suporte.
+ARI (índice de Rand ajustado): medida de concordância entre dois agrupamentos corrigida pelo acaso; 1 indica concordância perfeita.
+Atributo (feature): característica que descreve um exemplo; uma coluna da tabela de dados.
+Autoencoder: rede neural que comprime a entrada em um código e tenta reconstruí-la.
+Autovalor e autovetor: um autovetor é uma direção que uma matriz apenas estica; o autovalor é o fator de esticamento.
+Biplot: gráfico que mostra, juntos, exemplos (pontos) e atributos (setas) de uma análise de componentes principais.
+Centroide: ponto que representa o centro de um grupo, em geral a média de seus pontos.
+Chebyshev (distância de): maior diferença absoluta entre os atributos de dois pontos.
+Confiança: probabilidade de B aparecer dado que A apareceu; suporte(A ∪ B) / suporte(A).
+Convicção (conviction): medida que compara a frequência esperada de A sem B com a observada.
+Correlação cofenética: correlação entre as distâncias originais e as distâncias implícitas em um dendrograma.
+Cosseno (similaridade do): medida do ângulo entre dois vetores; ignora seu tamanho.
+Covariância: medida de quanto dois atributos variam juntos.
+DBSCAN: algoritmo de agrupamento por densidade com os parâmetros eps e min_samples.
+Dendrograma: gráfico em árvore que registra as fusões do agrupamento hierárquico.
+Descida do gradiente: método que ajusta parâmetros aos poucos para reduzir uma função de perda.
+Dimensionalidade: número de atributos dos dados.
+Distância de Gower: distância para dados mistos, que combina diferenças parciais por atributo.
+Distância geodésica: distância medida ao longo de uma superfície (variedade).
+Distância de Mahalanobis: distância que leva em conta a covariância entre atributos.
+Distância de Manhattan: soma das diferenças absolutas entre atributos (distância do quarteirão).
+Eigengap: maior salto entre autovalores consecutivos da Laplaciana, usado para escolher k no agrupamento espectral.
+EM (Esperança-Maximização): algoritmo que alterna um passo de cálculo de responsabilidades (E) e de atualização de parâmetros (M).
+Escore (score): coordenada de um exemplo no espaço das componentes principais; também, valor numérico de anomalia.
+Espaço latente: espaço de baixa dimensão formado pelos códigos aprendidos por um modelo.
+Estatística gap: método para escolher k comparando a inércia observada com a de dados sem estrutura.
+Euclidiana (distância): distância em linha reta entre dois pontos.
+Exemplo (instância, amostra): uma linha da tabela de dados.
+FP-Growth: algoritmo de itemsets frequentes que usa uma árvore de prefixos e não gera candidatos.
+GAN: rede adversarial generativa, formada por um gerador e um discriminador que competem.
+GMM (modelo de mistura gaussiana): modelo que descreve os dados como soma ponderada de distribuições normais.
+Inércia: soma dos quadrados das distâncias dos pontos ao centro de seus grupos; função objetivo do K-means.
+Isolation Forest: detector de anomalias que mede a facilidade de isolar cada ponto com cortes aleatórios.
+Itemset: conjunto de itens que ocorrem juntos.
+K-means: algoritmo que divide os dados em k grupos representados por suas médias.
+K-medoids: variante do K-means que usa um ponto real do conjunto como centro.
+Kernel: função que mede similaridade e permite trabalhar implicitamente em um espaço de maior dimensão.
+Laplaciana de um grafo: matriz L = D − W cujos autovetores revelam a estrutura de comunidades do grafo.
+Lift: razão entre a confiança de uma regra e o suporte do consequente; acima de 1 indica associação positiva.
+LOF (Local Outlier Factor): escore de anomalia que compara a densidade local de um ponto com a de seus vizinhos.
+Maldição da dimensionalidade: conjunto de dificuldades que surgem quando há muitos atributos, como o espaço vazio e a concentração de distâncias.
+MDS (escalonamento multidimensional): técnica que reconstrói um mapa a partir de uma tabela de distâncias.
+Métrica: distância que respeita não negatividade, identidade, simetria e desigualdade triangular.
+NMF (fatoração de matrizes não negativas): decomposição de uma matriz não negativa em duas matrizes não negativas.
+NMI (informação mútua normalizada): medida, entre 0 e 1, da informação compartilhada por dois agrupamentos.
+One-hot: codificação de categorias em colunas binárias, uma por categoria.
+One-Class SVM: detector de anomalias que aprende a fronteira em torno dos dados normais.
+Padronização (z-score): transformação que subtrai a média e divide pelo desvio padrão.
+PCA (análise de componentes principais): técnica linear que encontra as direções de máxima variância.
+Perplexidade: parâmetro do t-SNE que equivale, aproximadamente, ao número de vizinhos considerados por ponto.
+Pipeline: sequência encadeada de etapas de pré-processamento e modelo.
+Rótulo (label): resposta correta associada a um exemplo, usada no aprendizado supervisionado.
+Silhueta: medida, entre −1 e 1, de quão bem cada ponto se encaixa em seu grupo.
+SVD (decomposição em valores singulares): fatoração X = U·S·Vᵀ usada para calcular o PCA.
+Suporte: fração das transações que contêm um itemset.
+t-SNE: técnica de visualização que preserva vizinhanças locais por meio de probabilidades.
+Transação: conjunto de itens que ocorrem juntos, como uma compra.
+UMAP: técnica de redução de dimensionalidade baseada em grafos difusos de vizinhos.
+VAE (autoencoder variacional): autoencoder probabilístico cujo espaço latente é regularizado para ser contínuo.
+Variância explicada: fração da variância total dos dados capturada por uma componente principal.
+Variedade (manifold): superfície que, localmente, parece plana, mesmo sendo curva em escala global.
