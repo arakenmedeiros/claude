@@ -1,0 +1,6 @@
+mensagens: 5572 | spam: 13.4%
+método                       | F1 da classe spam (média ± desvio, 10 sorteios, 40 rótulos)
+palavras (só rotulados)      |  70.8% ± 4.2
+caracteres (só rotulados)    |  85.7% ± 3.0
+duas visões (só rotulados)   |  83.3% ± 3.2
+co-training (2 visões)       |  80.7% ± 4.0

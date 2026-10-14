@@ -1,0 +1,6 @@
+modelo base              | só rotulados | self-training | ganho (p.p.) | melhor/pior em 10
+Regressão logística      |        86.3% |         90.6% |        +4.3 | 10/0
+Naive Bayes gaussiano    |        60.2% |         62.1% |        +1.9 | 6/3
+k vizinhos (k=5)         |        79.4% |         66.1% |       -13.3 | 0/10
+Floresta aleatória       |        81.8% |         81.2% |        -0.6 | 5/5
+SVM (probability=True)   |        85.6% |         85.6% |        +0.0 | 0/0

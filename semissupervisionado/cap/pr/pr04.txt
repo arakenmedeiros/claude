@@ -1,0 +1,269 @@
+@@EX 1 | Self-training manual no Wine | básico
+No conjunto **Wine** (UCI, 178 vinhos, 3 classes), padronize os atributos e mantenha **12 rótulos** (4 por classe) com a função `esconder_rotulos` do Capítulo 2. Escreva um laço de self-training (regressão logística, limiar 0,9, até 10 rodadas) que imprima, a cada rodada, quantos pseudo-rótulos entraram e qual fração deles está certa. Ao final, compare a acurácia no teste com a da referência (só os 12 rotulados).
+
+*Pergunta:* quantas rodadas foram úteis? O que acontece quando poucos exemplos atingem o limiar?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+def esconder_rotulos(y, n_rot, semente):
+    rng = np.random.RandomState(semente)
+    classes = np.unique(y)
+    idx = np.concatenate([rng.choice(np.where(y == c)[0], n_rot // len(classes), replace=False) for c in classes])
+    y_parcial = np.full(len(y), -1); y_parcial[idx] = y[idx]
+    return y_parcial, idx
+
+X, y = load_wine(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+yp, idx = esconder_rotulos(y_tr, 12, 0)
+
+ref = LogisticRegression(max_iter=1000).fit(X_tr[idx], y_tr[idx])
+print("Referência (12 rótulos): %.1f%%" % (100 * ref.score(X_te, y_te)))
+
+y_atual = yp.copy(); modelo = LogisticRegression(max_iter=1000)
+for rodada in range(1, 11):
+    com = y_atual != -1
+    modelo.fit(X_tr[com], y_atual[com])
+    sem = np.where(~com)[0]
+    if len(sem) == 0: break
+    prob = modelo.predict_proba(X_tr[sem]); conf = prob.max(axis=1)
+    aceitos = sem[conf >= 0.9]
+    if len(aceitos) == 0: print(f"rodada {rodada}: ninguém atinge o limiar. Fim."); break
+    y_atual[aceitos] = modelo.classes_[prob[conf >= 0.9].argmax(axis=1)]
+    print(f"rodada {rodada}: +{len(aceitos):3d} pseudo-rótulos, {100 * np.mean(y_atual[aceitos] == y_tr[aceitos]):5.1f}% certos | teste {100 * modelo.score(X_te, y_te):.1f}%")
+modelo.fit(X_tr[y_atual != -1], y_atual[y_atual != -1])
+print("Self-training final   : %.1f%%" % (100 * modelo.score(X_te, y_te)))
+```
+@@NOTE A referência já é alta (96,3%) e o self-training chega a 98,1%, com 4 rodadas úteis (48, 26, 14 e 4 pseudo-rótulos, quase todos corretos). Na rodada 5, ninguém atinge o limiar e o laço termina. Quando poucos exemplos atingem o limiar, o laço acaba cedo e o método se aproxima da referência.
+@@EX 2 | O limiar no Breast Cancer | básico
+No **Breast Cancer** (UCI), com 20 rótulos e atributos padronizados, rode o `SelfTrainingClassifier` (regressão logística) com limiares 0,7, 0,9 e 0,99, em 20 sorteios. Para cada limiar, reporte: quantos exemplos ganharam pseudo-rótulo, o acerto desses pseudo-rótulos e a acurácia no teste. Inclua a referência.
+
+*Pergunta:* o limiar muda muito o resultado final neste conjunto? Por quê?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import SelfTrainingClassifier
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+
+def sorteio(s):
+    r = np.random.RandomState(s)
+    idx = np.concatenate([r.choice(np.where(y_tr == c)[0], 10, replace=False) for c in (0, 1)])
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    return idx, yp
+
+ref = np.mean([LogisticRegression(max_iter=1000).fit(X_tr[i], y_tr[i]).score(X_te, y_te) for i, _ in (sorteio(s) for s in range(20))])
+print(f"Referência (20 rótulos): {100 * ref:.1f}%")
+print("limiar | pseudo-rotulados | acerto deles | acurácia no teste")
+for lim in [0.7, 0.9, 0.99]:
+    n, ac, te = [], [], []
+    for s in range(20):
+        idx, yp = sorteio(s)
+        st = SelfTrainingClassifier(LogisticRegression(max_iter=1000), threshold=lim).fit(X_tr, yp)
+        novos = st.labeled_iter_ > 0
+        n.append(novos.sum()); ac.append(np.mean(st.transduction_[novos] == y_tr[novos]) if novos.any() else np.nan); te.append(st.score(X_te, y_te))
+    print(f"{lim:6.2f} | {np.mean(n):16.0f} | {100 * np.nanmean(ac):11.1f}% | {100 * np.mean(te):16.1f}%")
+```
+@@NOTE As diferenças são pequenas: a referência é 91,8% e os três limiares dão de 91,6% a 92,8%. O limiar muda o número de pseudo-rótulos (de 371 para 227) e seu acerto (de 95,3% para 99,5%), mas pouco o resultado final, porque o problema é "fácil" para um modelo linear e os pseudo-rótulos acrescentam pouco ao que 20 rótulos já ensinam.
+@@EX 3 | Cinco classificadores-base no Wine | intermediário
+No **Wine**, com 12 rótulos e atributos padronizados, compare o self-training (limiar 0,9) com a referência para cinco classificadores-base: `LogisticRegression`, `GaussianNB`, `KNeighborsClassifier(5)`, `RandomForestClassifier(100)` e `SVC(probability=True)`. Use 20 sorteios e reporte média, ganho médio e quantas vezes o self-training foi melhor e pior.
+
+*Pergunta:* algum classificador-base piora com o self-training? Relacione com a calibração.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.semi_supervised import SelfTrainingClassifier
+
+X, y = load_wine(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+modelos = {"Regressão logística": lambda: LogisticRegression(max_iter=1000), "Naive Bayes": lambda: GaussianNB(),
+           "k vizinhos (5)": lambda: KNeighborsClassifier(5), "Floresta aleatória": lambda: RandomForestClassifier(100, random_state=0),
+           "SVM (probability)": lambda: SVC(probability=True, random_state=0)}
+print("modelo base          | só rotulados | self-training | ganho (p.p.) | melhor/pior em 20")
+for nome, fab in modelos.items():
+    a, b = [], []
+    for s in range(20):
+        r = np.random.RandomState(s)
+        idx = np.concatenate([r.choice(np.where(y_tr == c)[0], 4, replace=False) for c in range(3)])
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        a.append(fab().fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        b.append(SelfTrainingClassifier(fab(), threshold=0.9).fit(X_tr, yp).score(X_te, y_te))
+    d = np.array(b) - np.array(a)
+    print(f"{nome:20s} | {100 * np.mean(a):11.1f}% | {100 * np.mean(b):12.1f}% | {100 * d.mean():+11.1f} | {(d > 0).sum()}/{(d < 0).sum()}")
+```
+@@NOTE O Naive Bayes ganhou 5,3 p.p. (melhor em 17 de 20) e a regressão logística, 1,9 p.p. A floresta aleatória **piorou** 5,5 p.p. (pior em 16 de 20). O k vizinhos ficou exatamente igual à referência: com 4 rótulos por classe e k = 5, a confiança máxima possível é 0,8, abaixo do limiar de 0,9, então nenhum pseudo-rótulo entrou. A lição é que o efeito do mesmo limiar depende do modelo e dos dados.
+@@EX 4 | Quão confiável é a confiança? | intermediário
+No **Breast Cancer**, com 20 rótulos e atributos padronizados, treine `LogisticRegression` e `GaussianNB` só com os rotulados. Para cada um, nos exemplos **sem rótulo do treino**, calcule:
+
+- que fração tem confiança de pelo menos 0,9;
+- entre esses, qual fração está de fato certa.
+
+Repita para 20 sorteios e reporte as médias.
+
+*Pergunta:* qual modelo é mais "exagerado" na confiança? O que isso significa para o limiar do self-training?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr = esc.transform(X_tr)
+
+print("modelo               | confiança >= 0,9 | acerto entre eles")
+for nome, fab in [("Regressão logística", lambda: LogisticRegression(max_iter=1000)), ("Naive Bayes gaussiano", lambda: GaussianNB())]:
+    fr, ac = [], []
+    for s in range(20):
+        r = np.random.RandomState(s)
+        idx = np.concatenate([r.choice(np.where(y_tr == c)[0], 10, replace=False) for c in (0, 1)])
+        sem = np.setdiff1d(np.arange(len(y_tr)), idx)
+        m = fab().fit(X_tr[idx], y_tr[idx])
+        p = m.predict_proba(X_tr[sem]); conf = p.max(axis=1); certo = m.classes_[p.argmax(axis=1)] == y_tr[sem]
+        fr.append(np.mean(conf >= 0.9)); ac.append(certo[conf >= 0.9].mean())
+    print(f"{nome:20s} | {100 * np.mean(fr):15.1f}% | {100 * np.mean(ac):16.1f}%")
+```
+@@NOTE A regressão logística passa de 0,9 em 73,2% dos exemplos e acerta 99,2% entre eles: é **conservadora** (mais confiável do que parece). O Naive Bayes passa de 0,9 em 98,6% dos exemplos, mas acerta só 92,3% entre eles: é **excessivamente confiante**, e o limiar de 0,9 deixa passar mais erros do que o nome sugere.
+@@EX 5 | Limiar decrescente (currículo) | avançado
+No **Digits**, com 50 rótulos e 10 sorteios, compare três versões do self-training com regressão logística, escrevendo o laço você mesmo:
+
+- **fixo:** limiar 0,9 em todas as rodadas;
+- **decrescente:** limiares 0,99, 0,95, 0,9 e 0,8 nas quatro primeiras rodadas (depois, 0,8);
+- **crescente:** limiares 0,8, 0,9, 0,95 e 0,99 (depois, 0,99).
+
+Use no máximo 8 rodadas e reporte a acurácia média no teste, junto da referência.
+
+*Pergunta:* a ordem dos limiares importa?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_digits(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+def auto_treino(yp, limiares, max_iter=8):
+    y_atual = yp.copy(); m = LogisticRegression(max_iter=2000)
+    for rodada in range(max_iter):
+        lim = limiares[min(rodada, len(limiares) - 1)]
+        com = y_atual != -1
+        m.fit(X_tr[com], y_atual[com])
+        sem = np.where(~com)[0]
+        if len(sem) == 0: break
+        prob = m.predict_proba(X_tr[sem]); conf = prob.max(axis=1)
+        aceitos = sem[conf >= lim]
+        y_atual[aceitos] = m.classes_[prob[conf >= lim].argmax(axis=1)]
+    m.fit(X_tr[y_atual != -1], y_atual[y_atual != -1])
+    return m
+
+versoes = {"fixo (0,9)": [0.9], "decrescente": [0.99, 0.95, 0.9, 0.8], "crescente": [0.8, 0.9, 0.95, 0.99]}
+res = {k: [] for k in versoes}; ref = []
+for s in range(10):
+    r = np.random.RandomState(s)
+    idx = np.concatenate([r.choice(np.where(y_tr == d)[0], 5, replace=False) for d in range(10)])
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    ref.append(LogisticRegression(max_iter=2000).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+    for nome, lims in versoes.items():
+        res[nome].append(auto_treino(yp, lims).score(X_te, y_te))
+print(f"referência (50 rótulos): {100 * np.mean(ref):.1f}%")
+for nome, v in res.items():
+    print(f"{nome:14s}: {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE As três versões ficam muito próximas (89,8% a 90,5%, com desvio de cerca de 2 p.p.) e perto do resultado de limiar fixo. Nenhuma diferença é clara diante da variação entre sorteios: neste problema, a ordem dos limiares não faz diferença visível.
+@@PROJ Auditoria de um self-training e seleção balanceada por classe | Cap04
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits*, do repositório **UCI Machine Learning**, incluído no scikit-learn.
+
+**Contexto.** Seu colega usou self-training com k vizinhos para reconhecer dígitos com poucos rótulos (30 no total) e viu que **nada mudou** em relação ao modelo de referência. Você deve **auditar** o processo, diagnosticar o problema e testar uma correção: a **seleção balanceada por classe**, que aceita, a cada rodada, no máximo *m* pseudo-rótulos de cada classe (os mais confiantes) acima de um piso de confiança, evitando que uma classe domine.
+
+**Tarefas.**
+1. Com 30 rótulos (3 por dígito) e 10 sorteios, treine a referência (k vizinhos, k = 5, só rotulados).
+2. Rode o self-training **padrão** (limiar 0,9) com k vizinhos e registre o **número de pseudo-rótulos por classe**.
+3. Implemente o self-training **balanceado**: a cada rodada, entre os exemplos previstos como classe *c* com confiança de pelo menos 0,6, aceite no máximo *m* = 15 (os mais confiantes) para cada classe; até 8 rodadas.
+4. Compare, em tabela: referência, padrão e balanceado (acurácia no teste, média e desvio, e pseudo-rótulos por classe).
+5. Repita tudo com **regressão logística** como classificador-base.
+6. Escreva uma conclusão (8 a 10 linhas): o diagnóstico foi confirmado? A correção ajudou em ambos os modelos? Quais limites você vê?
+
+**Entregáveis.** O código, a tabela e a conclusão.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.semi_supervised import SelfTrainingClassifier
+
+X, y = load_digits(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+def balanceado(modelo, yp, m=15, conf_min=0.6, max_iter=8):
+    y_atual = yp.copy()
+    for _ in range(max_iter):
+        com = y_atual != -1
+        modelo.fit(X_tr[com], y_atual[com])
+        sem = np.where(~com)[0]
+        if len(sem) == 0: break
+        prob = modelo.predict_proba(X_tr[sem]); conf = prob.max(axis=1); classe = modelo.classes_[prob.argmax(axis=1)]
+        novos = 0
+        for c in modelo.classes_:
+            cand = np.where((classe == c) & (conf >= conf_min))[0]
+            top = cand[np.argsort(-conf[cand])[:m]]
+            y_atual[sem[top]] = c; novos += len(top)
+        if novos == 0: break
+    modelo.fit(X_tr[y_atual != -1], y_atual[y_atual != -1])
+    return modelo, y_atual
+
+def rodar(nome, fab):
+    ref, pad, bal = [], [], []; c_pad = np.zeros(10); c_bal = np.zeros(10)
+    for s in range(10):
+        r = np.random.RandomState(s)
+        idx = np.concatenate([r.choice(np.where(y_tr == d)[0], 3, replace=False) for d in range(10)])
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        ref.append(fab().fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        st = SelfTrainingClassifier(fab(), threshold=0.9).fit(X_tr, yp); pad.append(st.score(X_te, y_te))
+        c_pad += np.bincount(st.transduction_[st.labeled_iter_ > 0], minlength=10)
+        m, ya = balanceado(fab(), yp); bal.append(m.score(X_te, y_te))
+        nov = (ya != -1) & (yp == -1); c_bal += np.bincount(ya[nov], minlength=10)
+    print(f"{nome}")
+    print(f"  referência        : {100 * np.mean(ref):5.1f}% ± {100 * np.std(ref):.1f}")
+    print(f"  self-training     : {100 * np.mean(pad):5.1f}% ± {100 * np.std(pad):.1f} | pseudo-rótulos por dígito: {(c_pad / 10).round(0).astype(int).tolist()}")
+    print(f"  balanceado (m=15) : {100 * np.mean(bal):5.1f}% ± {100 * np.std(bal):.1f} | pseudo-rótulos por dígito: {(c_bal / 10).round(0).astype(int).tolist()}")
+
+rodar("k vizinhos (k=5)", lambda: KNeighborsClassifier(5))
+rodar("Regressão logística", lambda: LogisticRegression(max_iter=2000))
+```
+@@RUBRICA
+- A referência foi treinada só com os 30 rotulados e comparada nos mesmos sorteios.
+- O número de pseudo-rótulos por classe foi registrado e interpretado como evidência do desequilíbrio.
+- A seleção balanceada limita os pseudo-rótulos por classe a cada rodada e usa um piso de confiança.
+- A tabela traz média e desvio padrão de vários sorteios, para os dois classificadores-base.
+- A conclusão é honesta: diz se a correção funcionou, em qual modelo, e discute limites (por exemplo, supor classes equilibradas).
+@@NOTE Diagnóstico do k vizinhos: o self-training padrão não adicionou **nenhum** pseudo-rótulo (acurácia 68,4%, igual à referência de 68,3%). Com apenas 3 rótulos por dígito e k = 5, no máximo 3 dos 5 vizinhos podem ser da mesma classe, então a confiança máxima é 0,6, abaixo do limiar de 0,9. A seleção balanceada, com piso de 0,6, fez a acurácia subir para 85,8% e distribuiu os pseudo-rótulos de forma equilibrada. Atenção: a correção muda **duas coisas ao mesmo tempo** (o balanceamento e o piso de confiança mais baixo), então não sabemos quanto do ganho vem de cada uma. Com a regressão logística, o balanceamento levou de 87,3% para 89,7% e reduziu o desvio padrão. Um limite geral: forçar o balanceamento supõe classes equilibradas nos dados sem rótulo.
+@@ALEM
+- **UCI:** Wine, Iris, Pima Indians Diabetes, Sonar, Ionosphere e Optical Recognition of Handwritten Digits.
+- **Kaggle:** Digit Recognizer e SMS Spam Collection.

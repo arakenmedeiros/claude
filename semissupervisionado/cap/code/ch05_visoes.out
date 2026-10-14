@@ -1,0 +1,9 @@
+método                          | acurácia no teste (média ± desvio, 10 sorteios, 50 rótulos)
+visão 1 (cima)                  |  69.0% ± 2.3
+visão 2 (baixo)                 |  69.4% ± 3.7
+duas visões, um só modelo       |  86.3% ± 2.0
+duas visões, só rotulados       |  78.8% ± 3.3
+self-training (um só modelo)    |  90.6% ± 2.1
+co-training (cima/baixo)        |  75.5% ± 1.9
+visões aleatórias, só rotulados |  83.0% ± 2.7
+co-training (visões aleatórias) |  83.6% ± 2.9

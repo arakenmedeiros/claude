@@ -1,0 +1,269 @@
+MC: No self-training, um pseudo-rótulo é:
+a) um rótulo fornecido por um especialista.
+b) o palpite do próprio modelo, tratado como se fosse o rótulo.
+c) o valor -1 do scikit-learn.
+d) uma classe criada por agrupamento.
+R: b | Pseudo-rótulo é a previsão do modelo usada como rótulo no treino seguinte.
+
+MC: Qual é a ordem correta dos passos de uma rodada do self-training?
+a) Selecionar, treinar, incorporar, prever.
+b) Treinar, prever, selecionar os confiantes, incorporar.
+c) Prever, incorporar, treinar, selecionar.
+d) Incorporar, selecionar, prever, treinar.
+R: b | Treina-se com os rotulados, prevê-se nos sem rótulo, seleciona-se os confiantes e incorpora-se ao treino.
+
+MC: Para ser usado no SelfTrainingClassifier, o classificador-base precisa ter:
+a) o método predict_proba.
+b) apenas dois atributos.
+c) uma rede neural.
+d) o método transduction_.
+R: a | A confiança vem das probabilidades; sem predict_proba não há como selecionar.
+
+MC: O self-training é classificado como método:
+a) envoltório (wrapper).
+b) baseado em grafos.
+c) generativo.
+d) de aprendizado por reforço.
+R: a | Ele envolve um classificador qualquer em um laço de pseudo-rótulos.
+
+MC: Segundo o capítulo, o self-training foi formulado inicialmente por:
+a) Scudder, em 1965.
+b) Sohn e colegas, em 2020.
+c) Chen e colegas, em 2020.
+d) Cortes e Vapnik, em 1995.
+R: a | As primeiras formulações datam de Scudder (1965); Yarowsky (1995) o aplicou a linguagem natural.
+
+MC: O que Yarowsky (1995) fez com o princípio do self-training?
+a) Aplicou-o à desambiguação do sentido de palavras.
+b) Criou redes neurais convolucionais.
+c) Propôs o aprendizado por reforço.
+d) Inventou a validação cruzada.
+R: a | O trabalho usou regras-semente e o laço de pseudo-rótulos para decidir o sentido de palavras ambíguas.
+
+MC: No experimento do Digits com 50 rótulos, na rodada 1 do self-training foram adicionados 831 pseudo-rótulos, dos quais cerca de quantos por cento estavam certos?
+a) 50,0%.
+b) 75,0%.
+c) 95,7%.
+d) 100%.
+R: c | A saída mostra acerto de 95,7% nos pseudo-rótulos da primeira rodada.
+
+MC: Nas últimas rodadas do experimento, o acerto dos pseudo-rótulos:
+a) cai, porque os exemplos restantes são os mais difíceis.
+b) sobe para 100%.
+c) permanece sempre igual.
+d) não pode ser medido em nenhuma situação.
+R: a | Os poucos exemplos restantes são os mais difíceis, e o acerto cai (60% a 66%, em média).
+
+MC: Por que só conseguimos medir o acerto dos pseudo-rótulos no experimento?
+a) Porque guardamos os rótulos verdadeiros escondidos, o que não ocorre em projetos reais.
+b) Porque o scikit-learn mostra isso automaticamente.
+c) Porque os pseudo-rótulos são sempre corretos.
+d) Porque o teste participa do treino.
+R: a | No experimento, os rótulos verdadeiros existem e foram escondidos; em um projeto real, não estão disponíveis.
+
+MC: O parâmetro threshold do SelfTrainingClassifier representa:
+a) o número de rodadas.
+b) a confiança mínima para aceitar um pseudo-rótulo.
+c) o número de vizinhos.
+d) a proporção de dados de teste.
+R: b | Pseudo-rótulos só são aceitos se a confiança for no mínimo igual ao limiar.
+
+MC: O valor padrão do threshold no SelfTrainingClassifier (versão usada no livro) é:
+a) 0,50.
+b) 0,75.
+c) 0,90.
+d) 0,99.
+R: b | O padrão é 0,75, enquanto o livro costuma usar 0,9, mais exigente.
+
+MC: No critério "k_best", em cada rodada são aceitos:
+a) todos os exemplos acima do limiar.
+b) os k exemplos mais confiantes, não importando o nível de confiança.
+c) apenas os exemplos de teste.
+d) nenhum exemplo.
+R: b | O k_best seleciona sempre os k mais confiantes de cada rodada.
+
+MC: No experimento, aumentar o limiar de 0,5 para 0,99 fez, na primeira rodada:
+a) aumentar o número de pseudo-rótulos e diminuir seu acerto.
+b) diminuir o número de pseudo-rótulos e aumentar seu acerto.
+c) manter ambos iguais.
+d) zerar a acurácia.
+R: b | De 1.144 pseudo-rótulos (89,0% de acerto) para 421 (99,5% de acerto).
+
+MC: Se o limiar for exigente demais, o que tende a acontecer?
+a) Quase nenhum exemplo entra e o método se aproxima do modelo supervisionado.
+b) O modelo passa a ter acurácia perfeita.
+c) Todos os exemplos entram.
+d) O método passa a exigir menos dados.
+R: a | Sem pseudo-rótulos novos, o self-training equivale ao modelo treinado só com os rotulados.
+
+MC: Um modelo é bem calibrado quando:
+a) acerta sempre.
+b) sua confiança corresponde à frequência real de acerto.
+c) tem poucos parâmetros.
+d) usa apenas dados rotulados.
+R: b | Dos casos com confiança de 90%, um modelo bem calibrado acerta cerca de 90%.
+
+MC: No experimento de calibração, a floresta aleatória treinada com 50 rótulos:
+a) nunca atingiu confiança de 0,9 nos exemplos sem rótulo.
+b) foi sempre perfeitamente calibrada.
+c) deu confiança 1 para todos os exemplos.
+d) não pôde ser treinada.
+R: a | Com poucos dados, as árvores discordam e a confiança máxima fica abaixo de 0,9.
+
+MC: Em consequência, o self-training com floresta aleatória e limiar 0,9 praticamente:
+a) rotula todos os exemplos.
+b) não faz nada, pois quase nenhum exemplo atinge o limiar.
+c) piora o modelo em 20 pontos.
+d) triplica a acurácia.
+R: b | Sem exemplos que atinjam o limiar, não há pseudo-rótulos para incorporar.
+
+MC: No experimento com cinco classificadores-base, qual sofreu a maior perda com o self-training?
+a) Regressão logística.
+b) k vizinhos (k = 5).
+c) Naive Bayes gaussiano.
+d) SVM com probability=True.
+R: b | O k vizinhos perdeu 13,3 pontos percentuais e foi pior nos 10 sorteios.
+
+MC: Qual classificador-base teve o melhor ganho (e melhor em todos os 10 sorteios) no experimento?
+a) Regressão logística (+4,3 p.p.).
+b) k vizinhos.
+c) Floresta aleatória.
+d) Naive Bayes gaussiano (+1,9 p.p.).
+R: a | A regressão logística ganhou 4,3 p.p., sendo melhor em 10 de 10.
+
+MC: O que se observou na distribuição dos pseudo-rótulos por classe com k vizinhos?
+a) O dígito 9 não recebeu nenhum pseudo-rótulo e os dígitos 1 e 8 receberam poucos.
+b) Todas as classes receberam o mesmo número.
+c) Só o dígito 0 recebeu pseudo-rótulos.
+d) Os pseudo-rótulos foram todos corretos.
+R: a | O desequilíbrio entre classes foi um sinal do viés de confirmação.
+
+MC: O viés de confirmação, no self-training, é:
+a) o reforço dos erros e desequilíbrios que o modelo já tinha.
+b) a escolha do melhor limiar.
+c) um tipo de validação cruzada.
+d) a ausência de rótulos.
+R: a | Pseudo-rótulos errados entram no treino e levam o modelo a confiar ainda mais nos erros.
+
+MC: Nas três bases da UCI testadas (Pima, Sonar, Ionosphere) com 20 rótulos, o self-training:
+a) não trouxe ganho claro.
+b) ganhou mais de 10 pontos em todas.
+c) piorou mais de 20 pontos em todas.
+d) não pôde ser executado.
+R: a | Os ganhos foram +0,5, -1,2 e -0,7 p.p., menores que a variação entre sorteios.
+
+MC: No experimento com ruído nos rótulos iniciais, a acurácia da referência com 30% de rótulos errados foi de aproximadamente:
+a) 91%.
+b) 80%.
+c) 59%.
+d) 10%.
+R: c | Caiu de 91,0% (sem ruído) para 58,9% com 30% de rótulos errados.
+
+MC: Qual lição o experimento com ruído nos rótulos reforça?
+a) Os dados sem rótulo não substituem rótulos corretos.
+b) Rótulos errados não afetam o aprendizado.
+c) O self-training elimina qualquer erro.
+d) É melhor não rotular nada.
+R: a | Mesmo com algum ganho do self-training, o resultado ficou muito abaixo do caso sem ruído.
+
+MC: Qual das ações abaixo é uma boa prática do self-training?
+a) Acompanhar o número de pseudo-rótulos por classe.
+b) Usar o conjunto de teste para escolher o limiar.
+c) Rodar centenas de rodadas sem olhar os resultados.
+d) Não comparar com o modelo de referência.
+R: a | Desequilíbrios entre classes são um alerta, e a escolha de parâmetros não deve usar o teste.
+
+MC: Por que o capítulo diz que "o ganho vem principalmente das primeiras rodadas"?
+a) Porque, nas rodadas seguintes, entram poucos exemplos e menos confiáveis.
+b) Porque o scikit-learn só faz duas rodadas.
+c) Porque o limiar sobe sozinho.
+d) Porque o teste é consumido.
+R: a | Na saída, 831 e 223 exemplos entram nas duas primeiras rodadas, e depois poucos.
+
+DISC: Descreva o ciclo do self-training em quatro passos e explique o que é um pseudo-rótulo.
+R: Treinar com os exemplos rotulados; prever os sem rótulo, obtendo classe e confiança; selecionar os palpites com confiança acima do limiar; incorporá-los ao treino como pseudo-rótulos e repetir. Pseudo-rótulo é o palpite do próprio modelo, tratado como se fosse o rótulo.
+
+DISC: Por que o self-training é chamado de método "envoltório"?
+R: Porque ele envolve qualquer classificador que forneça probabilidades em um laço de geração de pseudo-rótulos, sem depender de um modelo específico.
+
+DISC: Explique, com a analogia do estagiário de radiologia, quando o self-training funciona e quando pode falhar.
+R: O estagiário aprende com seus palpites seguros e melhora, desde que acerte. Se estiver errado em alguns casos que julgou seguros, reforça o erro. O método funciona quando os palpites confiantes são em geral corretos e falha quando a confiança é enganosa.
+
+DISC: Descreva o que mostrou o experimento de implementação do zero, rodada a rodada, e o que se aprende dele.
+R: Na rodada 1 entraram 831 pseudo-rótulos com 95,7% de acerto; na 2, 223 com 84,3%; depois entram poucos e com acerto menor (cerca de 60% a 66%). A acurácia no teste sobe de 85,6% para cerca de 89%, e a implementação própria coincide com a do scikit-learn. Aprende-se que a maior parte do ganho vem das primeiras rodadas.
+
+DISC: Explique o papel do parâmetro threshold e o equilíbrio entre quantidade e qualidade dos pseudo-rótulos.
+R: O limiar define a confiança mínima. Limiar baixo aceita mais exemplos, mas com mais erros; limiar alto aceita menos, porém mais corretos. No Digits, de 0,5 a 0,99 o número na primeira rodada caiu de 1.144 para 421, e o acerto subiu de 89,0% para 99,5%.
+
+DISC: Compare os critérios threshold e k_best do SelfTrainingClassifier.
+R: No threshold, aceitam-se todos os exemplos acima da confiança mínima, e o número por rodada varia. No k_best, aceitam-se sempre os k mais confiantes, sem exigir um nível mínimo. O k_best pode precisar de muitas rodadas se k for pequeno (100 rodadas com k = 10).
+
+DISC: O que é calibração e por que ela afeta o self-training?
+R: Calibração é a correspondência entre a confiança do modelo e a frequência real de acerto. Se o modelo é mal calibrado, o limiar não significa o que se pensa: pode deixar entrar erros ou não deixar entrar nada, prejudicando o self-training.
+
+DISC: Interprete as curvas de calibração da regressão logística, do k vizinhos e da floresta aleatória do capítulo.
+R: A regressão logística é bem calibrada, e 831 exemplos passam de 0,9 com 96% de acerto. O k vizinhos tem confiança em degraus e fica acima da linha perfeita nas faixas médias. A floresta aleatória nunca chega a 0,9, pois as árvores discordam com poucos dados.
+
+DISC: Por que um limiar de 0,9 pode ser "exigente" para um modelo e "inalcançável" para outro?
+R: Porque a escala da confiança depende do tipo de modelo. A regressão logística produz probabilidades altas com facilidade; uma floresta com poucos dados raramente passa de 0,7. Por isso é preciso olhar a distribuição das confianças de cada modelo.
+
+DISC: Apresente os resultados do experimento com cinco classificadores-base e explique por que o self-training não é "bom" ou "ruim" em si.
+R: Regressão logística +4,3 p.p.; Naive Bayes +1,9; floresta e SVM praticamente sem efeito; k vizinhos -13,3. O resultado depende do classificador-base e da qualidade de suas probabilidades, que o self-training apenas amplifica.
+
+DISC: Por que o k vizinhos piorou tanto? Cite o que se observou nos pseudo-rótulos.
+R: Os pseudo-rótulos ficaram desbalanceados e menos precisos (82,0%): o dígito 9 não recebeu nenhum, os dígitos 1 e 8 receberam cerca de 31 e 32, e o 6 recebeu 158. O modelo reforçou esse desequilíbrio nas rodadas seguintes.
+
+DISC: O que é viés de confirmação e como ele se manifesta no self-training? Cite uma forma de monitorá-lo.
+R: É o reforço de erros ou desequilíbrios que o modelo já tem, pois ele aprende com os próprios palpites. Pode-se monitorar o número de pseudo-rótulos por classe e conferir uma amostra de pseudo-rótulos com um especialista.
+
+DISC: Interprete os resultados do self-training nas bases Pima, Sonar e Ionosphere e proponha uma possível explicação.
+R: Os ganhos foram +0,5, -1,2 e -0,7 p.p., sem efeito claro. Uma explicação provável é que as classes não formam grupos bem separados, sem estrutura que o método explore, e os pseudo-rótulos são em boa parte incertos.
+
+DISC: Descreva o efeito do ruído nos rótulos iniciais observado no Digits e o que ele ensina.
+R: A acurácia da referência caiu de 91,0% (0% de ruído) para 58,9% (30%). O self-training deu ganhos de 3,5 a 4,6 p.p., mas o resultado ficou muito abaixo do caso limpo. Ensina que os dados sem rótulo não substituem rótulos corretos.
+
+DISC: Cite e explique duas variantes ou extensões do self-training.
+R: Limiar crescente ou decrescente (currículo do fácil ao difícil) e pesos para pseudo-rótulos (peso menor ou proporcional à confiança). Também há pseudo-rótulos suaves, limpeza dos pseudo-rótulos e uso transdutivo.
+
+DISC: Explique a ideia de Yarowsky (1995) para desambiguar sentidos de palavras.
+R: Parte-se de poucas regras-semente que rotulam algumas frases; nelas o método descobre novas pistas de contexto, que rotulam mais frases, e o processo se repete. É o laço do self-training aplicado a texto.
+
+DISC: Liste cinco boas práticas para usar o self-training e justifique duas delas.
+R: Começar pelo modelo de referência; usar classificador com boas probabilidades e checar a calibração; olhar a distribuição das confianças antes de fixar o limiar; monitorar pseudo-rótulos por classe; usar poucas rodadas; conferir amostra com especialista; comparar com a referência em vários sorteios. Justificativas coerentes: o limiar depende do modelo, e a maior parte do ganho vem das primeiras rodadas.
+
+DISC: Em quais situações você evitaria o self-training? Justifique.
+R: Quando as probabilidades são pouco confiáveis e não podem ser calibradas; quando as classes se sobrepõem muito, sem estrutura a explorar; quando o conjunto sem rótulo tem classes desconhecidas pelo modelo. Em todos os casos os pseudo-rótulos tendem a conter muitos erros que serão reforçados.
+
+MC: Com 10 sorteios do Digits (50 rótulos), a regressão logística no self-training foi melhor que a referência em:
+a) 0 sorteios.
+b) 5 sorteios.
+c) 10 sorteios.
+d) 20 sorteios.
+R: c | A tabela mostra "10/0": melhor em todos os 10 sorteios e pior em nenhum.
+
+MC: Qual afirmação sobre pseudo-rótulos "suaves" está correta?
+a) Usam a distribuição de probabilidades inteira como alvo, em vez de uma única classe.
+b) São rótulos digitados por humanos.
+c) Só existem no aprendizado por reforço.
+d) Dispensam o classificador-base.
+R: a | O pseudo-rótulo suave mantém as probabilidades de todas as classes, e reaparece nas redes neurais do Capítulo 11.
+
+MC: Quando as classes dos dados se sobrepõem muito, o self-training tende a:
+a) gerar muitos pseudo-rótulos incertos e ganhar pouco ou nada.
+b) ter sempre ganho de mais de 10 pontos.
+c) deixar de usar o classificador.
+d) rotular tudo corretamente.
+R: a | Sem estrutura de grupos a explorar, os palpites confiantes são menos confiáveis.
+
+MC: Uma maneira de verificar a qualidade dos pseudo-rótulos em um projeto real é:
+a) pedir que um especialista confira uma amostra deles.
+b) usar o conjunto de teste para treinar.
+c) aumentar o número de rodadas até acabar.
+d) ignorar as classes minoritárias.
+R: a | Amostrar e conferir alguns pseudo-rótulos dá uma estimativa de sua qualidade sem exigir todos os rótulos.
+
+DISC: Explique por que, no experimento do capítulo, o limiar mais exigente (0,99) teve a maior acurácia final, e por que isso não é uma regra geral.
+R: Porque os poucos pseudo-rótulos aceitos eram quase todos corretos (99,5%), e isso evitou reforçar erros. Não é regra geral: com limiar exigente demais quase nada entra e o método vira o modelo supervisionado; o melhor limiar depende dos dados e do modelo.
+
+DISC: Descreva como você aplicaria o self-training a um problema novo, do primeiro passo à avaliação, usando as boas práticas do capítulo.
+R: Treinar o modelo de referência com os rotulados; escolher um classificador com boas probabilidades e checar a calibração; observar as confianças e fixar um limiar exigente; rodar poucas rodadas monitorando pseudo-rótulos por classe; conferir uma amostra com especialista; avaliar em teste separado, com vários sorteios, comparação pareada com a referência e relato dos casos sem ganho.

@@ -1,0 +1,7 @@
+treino: (10000, 784) | teste: (10000, 784) | rótulos usados: 100 (10 por dígito)
+
+dimensões | regressão logística | 1-vizinho (só rotulados) | LS nos sem rótulo (transdutivo) | LS no teste (indutivo) | tempo (s)
+784 (pixels) |               76.8% |                    73.2% |                           80.1% |                  86.6% | 2.5
+PCA 50       |               76.7% |                    75.2% |                           81.8% |                  88.7% | 0.6
+PCA 20       |               75.9% |                    76.2% |                           80.5% |                  87.7% | 0.5
+PCA 10       |               70.6% |                    71.2% |                           72.2% |                  78.7% | 1.0

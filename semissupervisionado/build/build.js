@@ -69,6 +69,8 @@ function parseMd(text) {
   while (i < lines.length) {
     const ln = lines[i];
     if (ln.startsWith("@part:")) { meta.part = ln.slice(6).trim(); i++; continue; }
+    if (ln.startsWith("@final")) { meta.final = true; i++; continue; }
+    if (ln.startsWith("@@code ")) { flush(); blocks.push({ t: "codefile", name: ln.slice(7).trim() }); i++; continue; }
     if (ln.startsWith("@banner:")) { meta.banner = parseInt(ln.slice(8)); i++; continue; }
     if (ln.startsWith("@obj:")) { meta.obj.push(ln.slice(5).trim()); i++; continue; }
     if (/^# /.test(ln)) { flush(); meta.title = ln.slice(2).trim(); i++; continue; }
@@ -209,6 +211,16 @@ function renderBlocks(blocks) {
       case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: ref, level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
       case "callout": out.push(callout(b)); out.push(spacer(140)); break;
       case "code": out.push(...codeBlock(b)); break;
+      case "codefile": {
+        const base = path.join(CAP, "code", b.name);
+        const code = fs.readFileSync(base + ".py", "utf8").replace(/\r/g, "").replace(/\n+$/, "").split("\n");
+        out.push(...codeBlock({ lang: "python", code }));
+        if (fs.existsSync(base + ".out")) {
+          const o = fs.readFileSync(base + ".out", "utf8").replace(/\r/g, "").replace(/\s+$/, "");
+          if (o) out.push(...codeBlock({ lang: "saída", code: o.split("\n").map((l) => (l.length > 112 ? l.slice(0, 111) + "…" : l)) }));
+        }
+        break;
+      }
       case "formula": out.push(formula(b)); break;
       case "table": out.push(...table(b)); break;
       case "fig": out.push(...figure(b)); break;
@@ -296,7 +308,7 @@ function praticos(c) {
     out.push(spacer(140));
   }
   if (proj) {
-    out.push(heading(3, "Projeto integrador do capítulo", { pageBreak: true }));
+    out.push(heading(3, c.meta.final ? "Projeto integrador final" : "Projeto integrador do capítulo", { pageBreak: true }));
     out.push(heading(4, proj.title));
     out.push(...renderBlocks(parseMd(proj.stmt.join("\n")).blocks));
     out.push(P(`A solução de referência está no Apêndice E.`, { run: { color: C.gry, italics: true } }));

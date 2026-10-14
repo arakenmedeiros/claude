@@ -1,0 +1,301 @@
+@@EX 1 | Visões naturais no Breast Cancer: elas bastam? | básico
+O conjunto **Breast Cancer Wisconsin** tem 30 medidas em três grupos de 10: valores **médios** (colunas 0 a 9), **erros-padrão** (10 a 19) e **piores valores** (20 a 29). Vamos tratar os valores médios e os piores valores como **duas visões**.
+
+Com **20 rótulos** (10 por classe), atributos padronizados e 20 sorteios, treine uma regressão logística em cada visão, outra nas duas visões juntas, e reporte a acurácia média no teste de cada uma.
+
+*Pergunta:* cada visão, sozinha, parece suficiente? O que isso sugere para o co-training?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+media, pior = np.arange(0, 10), np.arange(20, 30)
+
+res = {"visão média": [], "visão pior": [], "as duas juntas": []}
+for s in range(20):
+    r = np.random.RandomState(s)
+    idx = np.concatenate([r.choice(np.where(y_tr == c)[0], 10, replace=False) for c in (0, 1)])
+    for nome, cols in [("visão média", media), ("visão pior", pior), ("as duas juntas", np.r_[media, pior])]:
+        res[nome].append(LogisticRegression(max_iter=1000).fit(X_tr[idx][:, cols], y_tr[idx]).score(X_te[:, cols], y_te))
+for nome, v in res.items():
+    print(f"{nome:15s}: {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE As duas visões sozinhas já chegam a 89,2% (média) e 92,8% (pior), e juntas, a 92,0%. A condição de **suficiência** parece satisfeita com 20 rótulos. A pergunta seguinte é se elas são **pouco dependentes**, tema do Exercício 3.
+@@EX 2 | Co-training no Breast Cancer | intermediário
+Implemente o co-training (com a função `co_treino` do capítulo, que escolhe um número fixo de exemplos por classe a cada rodada) com as visões "média" e "pior". Use 20 rótulos, 20 sorteios, 5 rodadas e 15 exemplos por classe e por rodada. Compare a acurácia no teste de:
+
+- a referência justa (as duas regressões logísticas, uma por visão, só com os rotulados, probabilidades somadas);
+- o co-training;
+- o `SelfTrainingClassifier` com um modelo único e limiar 0,9.
+
+*Pergunta:* o co-training ajudou? E o self-training?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import SelfTrainingClassifier
+
+def co_treino(X1, X2, y_parcial, rodadas=5, por_classe=15):
+    y = y_parcial.copy()
+    for _ in range(rodadas):
+        com = y != -1
+        h1 = LogisticRegression(max_iter=1000).fit(X1[com], y[com]); h2 = LogisticRegression(max_iter=1000).fit(X2[com], y[com])
+        sem = np.where(~com)[0]
+        if len(sem) == 0: break
+        novos = {}
+        for h, X in ((h1, X1), (h2, X2)):
+            prob = h.predict_proba(X[sem]); conf = prob.max(axis=1); classe = h.classes_[prob.argmax(axis=1)]
+            for c in h.classes_:
+                cand = np.where(classe == c)[0]
+                for i in cand[np.argsort(-conf[cand])[:por_classe]]: novos.setdefault(sem[i], c)
+        for i, c in novos.items(): y[i] = c
+    com = y != -1
+    return LogisticRegression(max_iter=1000).fit(X1[com], y[com]), LogisticRegression(max_iter=1000).fit(X2[com], y[com])
+
+def acc(h1, h2, X1, X2, y): return np.mean(h1.classes_[(h1.predict_proba(X1) + h2.predict_proba(X2)).argmax(axis=1)] == y)
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+A, B = np.arange(0, 10), np.arange(20, 30)
+
+ref, co, st = [], [], []
+for s in range(20):
+    r = np.random.RandomState(s)
+    idx = np.concatenate([r.choice(np.where(y_tr == c)[0], 10, replace=False) for c in (0, 1)])
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    g1 = LogisticRegression(max_iter=1000).fit(X_tr[idx][:, A], y_tr[idx]); g2 = LogisticRegression(max_iter=1000).fit(X_tr[idx][:, B], y_tr[idx])
+    ref.append(acc(g1, g2, X_te[:, A], X_te[:, B], y_te))
+    h1, h2 = co_treino(X_tr[:, A], X_tr[:, B], yp); co.append(acc(h1, h2, X_te[:, A], X_te[:, B], y_te))
+    st.append(SelfTrainingClassifier(LogisticRegression(max_iter=1000), threshold=0.9).fit(X_tr[:, np.r_[A, B]], yp).score(X_te[:, np.r_[A, B]], y_te))
+dco, dst = np.array(co) - np.array(ref), np.array(st) - np.array(ref)
+print(f"referência (2 visões, só rotulados): {100 * np.mean(ref):.1f}%")
+print(f"co-training                        : {100 * np.mean(co):.1f}%  (ganho {100 * dco.mean():+.1f} p.p.; melhor/pior {(dco > 0).sum()}/{(dco < 0).sum()})")
+print(f"self-training (um modelo)          : {100 * np.mean(st):.1f}%  (ganho {100 * dst.mean():+.1f} p.p.; melhor/pior {(dst > 0).sum()}/{(dst < 0).sum()})")
+```
+@@NOTE O co-training ficou praticamente igual à referência (-0,2 p.p.; melhor em 3 e pior em 14 dos 20 sorteios), enquanto o self-training com um modelo único ganhou 1,1 p.p. (melhor em 14 e pior em 4). Mesmo com visões naturais e suficientes, o co-training não é garantia de ganho: a condição de independência também importa, e é o que o próximo exercício mede.
+@@EX 3 | Medindo a dependência entre visões | intermediário
+Uma forma prática de medir a dependência entre duas visões é a **correlação entre os erros** dos dois classificadores. Para cada par de visões abaixo, treine um classificador por visão com **todos** os rótulos do treino, calcule o vetor de erros no teste (1 = errou, 0 = acertou) e a correlação entre os dois vetores (`np.corrcoef`):
+
+- Breast Cancer: visão média × visão pior;
+- Digits: metade de cima × metade de baixo;
+- Digits: pixels sorteados (duas metades aleatórias).
+
+*Pergunta:* correlação alta de erros significa dependência alta? Qual par parece mais favorável ao co-training?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer, load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+def correlacao_de_erros(X, y, A, B):
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+    esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+    e = []
+    for cols in (A, B):
+        m = LogisticRegression(max_iter=2000).fit(X_tr[:, cols], y_tr)
+        e.append((m.predict(X_te[:, cols]) != y_te).astype(float))
+    return [float(round(100 * (1 - v.mean()), 1)) for v in e], round(float(np.corrcoef(e[0], e[1])[0, 1]), 2)
+
+Xc, yc = load_breast_cancer(return_X_y=True)
+Xd, yd = load_digits(return_X_y=True)
+topo, base = np.arange(64).reshape(8, 8)[:4].ravel(), np.arange(64).reshape(8, 8)[4:].ravel()
+perm = np.random.RandomState(0).permutation(64)
+for nome, X, y, A, B in [("Breast Cancer: média x pior", Xc, yc, np.arange(0, 10), np.arange(20, 30)),
+                         ("Digits: cima x baixo", Xd, yd, topo, base),
+                         ("Digits: pixels sorteados", Xd, yd, perm[:32], perm[32:])]:
+    acs, corr = correlacao_de_erros(X, y, A, B)
+    print(f"{nome:28s} | acerto de cada visão (todos os rótulos): {acs} | correlação dos erros: {corr}")
+```
+@@NOTE A correlação dos erros é 0,52 no Breast Cancer (média × pior), 0,15 no Digits cima × baixo e 0,12 no Digits com pixels sorteados. Ou seja, as visões do Breast Cancer erram em boa parte dos mesmos casos, enquanto as do Digits são pouco correlacionadas. Mas atenção: com todos os rótulos, cada metade do Digits chega a 86%, enquanto com 50 rótulos o capítulo mostrou cerca de 69%. A suficiência depende do número de rótulos, e uma baixa correlação de erros não basta se as visões são fracas. A medida é aproximada e não equivale à independência condicional da teoria.
+@@EX 4 | Tri-training com classificadores diferentes | avançado
+Em vez de bootstrap, use **três classificadores de tipos diferentes** treinados nos mesmos rótulos: `LogisticRegression`, `GaussianNB` e `KNeighborsClassifier(3)`. Implemente o tri-training simplificado (5 rodadas): um exemplo sem rótulo ganha pseudo-rótulo para um classificador quando os outros dois concordam. A decisão final é a votação dos três.
+
+No **Breast Cancer** (atributos padronizados, 20 rótulos, 20 sorteios), compare com a referência (regressão logística só com os rotulados) e com o self-training.
+
+*Pergunta:* usar classificadores de tipos diferentes ajuda a criar "diversidade"? O resultado melhorou?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.semi_supervised import SelfTrainingClassifier
+
+fabricas = [lambda: LogisticRegression(max_iter=1000), lambda: GaussianNB(), lambda: KNeighborsClassifier(3)]
+
+def tri_diverso(X, y_parcial, rodadas=5):
+    com = np.where(y_parcial != -1)[0]; sem = np.where(y_parcial == -1)[0]
+    H = [f().fit(X[com], y_parcial[com]) for f in fabricas]
+    for _ in range(rodadas):
+        pred = [h.predict(X[sem]) for h in H]; novos = []
+        for i in range(3):
+            j, k = [m for m in range(3) if m != i]
+            conc = pred[j] == pred[k]
+            novos.append((np.vstack([X[com], X[sem][conc]]), np.r_[y_parcial[com], pred[j][conc]]))
+        H = [f().fit(Xi, yi) for f, (Xi, yi) in zip(fabricas, novos)]
+    return H
+
+def votar(H, X): return (np.sum([h.predict(X) for h in H], axis=0) >= 2).astype(int)
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+res = {"referência (regressão logística)": [], "voto dos 3, só rotulados": [], "tri-training diverso": [], "self-training": []}
+for s in range(20):
+    r = np.random.RandomState(s)
+    idx = np.concatenate([r.choice(np.where(y_tr == c)[0], 10, replace=False) for c in (0, 1)])
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    res["referência (regressão logística)"].append(LogisticRegression(max_iter=1000).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+    H0 = [f().fit(X_tr[idx], y_tr[idx]) for f in fabricas]; res["voto dos 3, só rotulados"].append(np.mean(votar(H0, X_te) == y_te))
+    res["tri-training diverso"].append(np.mean(votar(tri_diverso(X_tr, yp), X_te) == y_te))
+    res["self-training"].append(SelfTrainingClassifier(LogisticRegression(max_iter=1000), threshold=0.9).fit(X_tr, yp).score(X_te, y_te))
+for k, v in res.items(): print(f"{k:33s}: {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE O voto dos três classificadores só com os rotulados chegou a 92,0%, e o tri-training diverso, a 90,8% (com desvio padrão bem menor, 0,7). Ou seja, os dados sem rótulo **não ajudaram** neste problema, e o self-training com um modelo único (92,8%) foi o melhor. Diversidade entre classificadores não garante ganho.
+@@EX 5 | Uma visão de metadados no SMS | avançado
+No **SMS Spam**, crie uma visão "de metadados" com 6 atributos numéricos por mensagem: número de caracteres, número de palavras, número de dígitos, número de letras maiúsculas, número de "!" e número de "£" ou "$". Use essa visão com a visão de **palavras** (TF-IDF) em um co-training, com 40 rótulos (20 por classe), 5 sorteios e F1 da classe spam. Compare com a referência justa (dois classificadores só com os rotulados).
+
+*Pergunta:* metadados e palavras são visões mais independentes do que palavras e caracteres? Isso se refletiu no resultado?
+@@SOL
+```python
+import os, re, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/justmarkham/DAT8/master/data/sms.tsv", "dados/sms.tsv"), sep="\t", header=None, names=["rotulo", "texto"])
+y = (df["rotulo"] == "spam").astype(int).values
+t_tr, t_te, y_tr, y_te = train_test_split(df["texto"].values, y, test_size=0.3, stratify=y, random_state=0)
+
+def meta(t):
+    return [len(t), len(t.split()), sum(c.isdigit() for c in t), sum(c.isupper() for c in t), t.count("!"), t.count("£") + t.count("$")]
+M_tr = np.array([meta(t) for t in t_tr], float); M_te = np.array([meta(t) for t in t_te], float)
+esc = StandardScaler().fit(M_tr); M_tr, M_te = esc.transform(M_tr), esc.transform(M_te)
+v1 = TfidfVectorizer().fit(t_tr); W_tr, W_te = v1.transform(t_tr), v1.transform(t_te)
+
+def lr(): return LogisticRegression(max_iter=2000, class_weight="balanced")
+def co_treino(X1, X2, yp, rodadas=10, por_classe=(20, 3)):
+    y_ = yp.copy()
+    for _ in range(rodadas):
+        com = y_ != -1; h1 = lr().fit(X1[com], y_[com]); h2 = lr().fit(X2[com], y_[com]); sem = np.where(~com)[0]; novos = {}
+        for h, X in ((h1, X1), (h2, X2)):
+            p = h.predict_proba(X[sem]); conf = p.max(1); cl = h.classes_[p.argmax(1)]
+            for c in h.classes_:
+                cand = np.where(cl == c)[0]
+                for i in cand[np.argsort(-conf[cand])[:por_classe[c]]]: novos.setdefault(sem[i], c)
+        for i, c in novos.items(): y_[i] = c
+    com = y_ != -1
+    return lr().fit(X1[com], y_[com]), lr().fit(X2[com], y_[com])
+
+def f1_soma(h1, h2, X1, X2): return f1_score(y_te, (h1.predict_proba(X1) + h2.predict_proba(X2)).argmax(1))
+
+res = {"metadados (só rotulados)": [], "palavras (só rotulados)": [], "duas visões (só rotulados)": [], "co-training": []}
+for s in range(5):
+    r = np.random.RandomState(s)
+    idx = np.r_[r.choice(np.where(y_tr == 0)[0], 20, replace=False), r.choice(np.where(y_tr == 1)[0], 20, replace=False)]
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    g1 = lr().fit(W_tr[idx], y_tr[idx]); g2 = lr().fit(M_tr[idx], y_tr[idx])
+    res["palavras (só rotulados)"].append(f1_score(y_te, g1.predict(W_te))); res["metadados (só rotulados)"].append(f1_score(y_te, g2.predict(M_te)))
+    res["duas visões (só rotulados)"].append(f1_soma(g1, g2, W_te, M_te))
+    h1, h2 = co_treino(W_tr, M_tr, yp); res["co-training"].append(f1_soma(h1, h2, W_te, M_te))
+for k, v in res.items(): print(f"{k:27s}: F1 spam = {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE Aqui o co-training **ajudou**: de 75,2% (referência justa, duas visões só com rotulados) para 80,3% de F1 da classe spam, um ganho de 5,1 p.p. (média de 5 sorteios). As visões são bem diferentes (conteúdo das palavras e formato da mensagem) e ambas são informativas: os metadados sozinhos chegam a 74,2% e as palavras, a 69,0%. Compare com o experimento do capítulo, em que palavras e caracteres, muito redundantes, não deram ganho. Como são só 5 sorteios, o resultado merece mais repetições antes de ser tomado como conclusivo.
+@@PROJ Diagnóstico de viabilidade do co-training | Cap05
+**Fontes dos dados.** *Breast Cancer Wisconsin (Diagnostic)* e *Optical Recognition of Handwritten Digits* (UCI, incluídos no scikit-learn).
+
+**Contexto.** Sua equipe vai decidir em quais problemas vale testar co-training. Você deve construir um **diagnóstico de viabilidade** que, dados dois grupos de atributos, estime se o co-training é promissor, antes de um estudo longo.
+
+**Tarefas.**
+1. Escreva `diagnostico_cotraining(X, y, A, B, n_rot, sementes)` que devolva: (a) o acerto de cada visão sozinha com todos os rótulos do treino; (b) a **correlação de erros** entre as visões; (c) o acerto da referência justa (os dois classificadores só com os `n_rot` rotulados); (d) o do co-training; (e) o **ganho pareado** e quantas vezes o co-training venceu e perdeu.
+2. Aplique-o a três pares de visões: Breast Cancer (média × pior, 20 rótulos), Digits (cima × baixo, 50 rótulos) e Digits (pixels sorteados, 50 rótulos). Use 10 sorteios.
+3. Apresente os resultados em uma **tabela** e escreva uma recomendação (8 a 10 linhas) dizendo em quais casos você recomendaria o co-training e por quê.
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_breast_cancer, load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+def co_treino(X1, X2, y_parcial, rodadas=5, por_classe=15):
+    y = y_parcial.copy()
+    for _ in range(rodadas):
+        com = y != -1
+        h1 = LogisticRegression(max_iter=2000).fit(X1[com], y[com]); h2 = LogisticRegression(max_iter=2000).fit(X2[com], y[com])
+        sem = np.where(~com)[0]
+        if len(sem) == 0: break
+        novos = {}
+        for h, X in ((h1, X1), (h2, X2)):
+            prob = h.predict_proba(X[sem]); conf = prob.max(axis=1); classe = h.classes_[prob.argmax(axis=1)]
+            for c in h.classes_:
+                cand = np.where(classe == c)[0]
+                for i in cand[np.argsort(-conf[cand])[:por_classe]]: novos.setdefault(sem[i], c)
+        for i, c in novos.items(): y[i] = c
+    com = y != -1
+    return LogisticRegression(max_iter=2000).fit(X1[com], y[com]), LogisticRegression(max_iter=2000).fit(X2[com], y[com])
+
+def acc(h1, h2, X1, X2, y): return np.mean(h1.classes_[(h1.predict_proba(X1) + h2.predict_proba(X2)).argmax(axis=1)] == y)
+
+def diagnostico_cotraining(X, y, A, B, n_rot, sementes=10):
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+    esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+    classes = np.unique(y)
+    erros = []; acertos = []
+    for cols in (A, B):
+        m = LogisticRegression(max_iter=2000).fit(X_tr[:, cols], y_tr)
+        erros.append((m.predict(X_te[:, cols]) != y_te).astype(float)); acertos.append(100 * (1 - erros[-1].mean()))
+    ref, co = [], []
+    for s in range(sementes):
+        r = np.random.RandomState(s)
+        idx = np.concatenate([r.choice(np.where(y_tr == c)[0], n_rot // len(classes), replace=False) for c in classes])
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        g1 = LogisticRegression(max_iter=2000).fit(X_tr[idx][:, A], y_tr[idx]); g2 = LogisticRegression(max_iter=2000).fit(X_tr[idx][:, B], y_tr[idx])
+        ref.append(acc(g1, g2, X_te[:, A], X_te[:, B], y_te))
+        h1, h2 = co_treino(X_tr[:, A], X_tr[:, B], yp); co.append(acc(h1, h2, X_te[:, A], X_te[:, B], y_te))
+    d = np.array(co) - np.array(ref)
+    return {"visão A (%)": round(acertos[0], 1), "visão B (%)": round(acertos[1], 1), "corr. erros": round(float(np.corrcoef(erros[0], erros[1])[0, 1]), 2),
+            "referência (%)": round(100 * np.mean(ref), 1), "co-training (%)": round(100 * np.mean(co), 1), "ganho (p.p.)": round(100 * d.mean(), 1), "melhor/pior": f"{(d > 0).sum()}/{(d < 0).sum()}"}
+
+Xc, yc = load_breast_cancer(return_X_y=True); Xd, yd = load_digits(return_X_y=True)
+topo, base = np.arange(64).reshape(8, 8)[:4].ravel(), np.arange(64).reshape(8, 8)[4:].ravel(); perm = np.random.RandomState(0).permutation(64)
+casos = [("Breast Cancer: média x pior", Xc, yc, np.arange(0, 10), np.arange(20, 30), 20), ("Digits: cima x baixo", Xd, yd, topo, base, 50), ("Digits: pixels sorteados", Xd, yd, perm[:32], perm[32:], 50)]
+tabela = pd.DataFrame([{"caso": n, **diagnostico_cotraining(X, y, A, B, n_rot)} for n, X, y, A, B, n_rot in casos])
+print(tabela.to_string(index=False))
+```
+@@RUBRICA
+- O teste foi separado uma vez, os dados foram padronizados com o treino e a referência é a justa (dois classificadores só com os rotulados).
+- A correlação de erros é calculada nos exemplos de teste, com classificadores treinados com todos os rótulos do treino.
+- O ganho é pareado, com contagem de vitórias e derrotas, em vários sorteios.
+- A tabela é clara e a recomendação é coerente com os números, citando suficiência e dependência das visões.
+- O texto discute limites do diagnóstico (a correlação de erros é uma medida aproximada).
+@@NOTE No Breast Cancer, o ganho é nulo (0,1 p.p.; melhor em 1 e pior em 8 sorteios), e a correlação de erros é a mais alta (0,52). No Digits cima × baixo, o co-training perde 1,1 p.p., mesmo com correlação baixa (0,15), porque cada metade é fraca com 50 rótulos. No Digits com pixels sorteados, o ganho é de 2,6 p.p. (melhor em 8 e pior em 2). Repare que os valores diferem um pouco dos do capítulo, porque aqui usamos atributos padronizados, 5 rodadas de 15 exemplos por classe e 10 sorteios. O diagnóstico é uma **triagem**: correlação baixa e visões fortes sugerem que vale tentar, mas a decisão final vem da comparação com a referência justa.
+@@ALEM
+- **UCI:** Breast Cancer Wisconsin, Optical Recognition of Handwritten Digits, Spambase (atributos de e-mail em grupos) e Statlog (Landsat Satellite, com bandas espectrais).
+- **Kaggle:** SMS Spam Collection e Digit Recognizer.

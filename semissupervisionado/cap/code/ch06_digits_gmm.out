@@ -1,0 +1,4 @@
+método                                      | acurácia no teste (10 sorteios, 50 rótulos)
+regressão logística (só rotulados)          |  84.5% ± 2.5
+LDA (só rotulados)                          |  81.3% ± 3.4
+GMM semissupervisionado (cluster-e-rotula)  |  85.0% ± 1.5

@@ -1,0 +1,6 @@
+log-verossimilhança a cada iteração do EM (deve crescer):
+  -5382  -2257  -2246  -2243  -2242  -2240  -2239  -2238  ...  -2231
+
+Gaussianas com 6 rótulos: só rotulados x EM com dados sem rótulo (30 conjuntos de dados)
+  só rotulados : 80.6%
+  EM semissup. : 91.8%  (ganho +11.2 p.p.; melhor/pior em 30: 26/4)

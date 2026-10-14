@@ -4,8 +4,8 @@ from sklearn.datasets import make_moons
 from sklearn.semi_supervised import LabelSpreading
 
 PART = {}
-for n in range(1, 18):
-    PART[n] = (IND, CYA) if n <= 3 else (CYA, GRN) if n <= 8 else (GRN, AMB) if n <= 13 else (AMB, RED)
+for n in range(1, 19):
+    PART[n] = (IND, CYA) if n <= 3 else (CYA, GRN) if n <= 8 else (GRN, AMB) if n <= 13 else (AMB, RED) if n <= 17 else (VIO, PNK)
 
 def banner(n):
     c1, c2 = PART[n]; rng = np.random.default_rng(100 + n)
@@ -72,4 +72,4 @@ def cover():
 
 if __name__ == "__main__":
     cover()
-    for n in range(1, 4): banner(n)
+    for n in range(1, 19): banner(n)

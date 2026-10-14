@@ -1,0 +1,6 @@
+critério                         | rodadas | exemplos que ganharam rótulo | acurácia no teste
+limiar 0,9 (padrão do livro)     |     9.6 |                         1152 |             90.6%
+limiar 0,75 (padrão do sklearn)  |     7.5 |                         1193 |             89.0%
+k_best = 10 por rodada           |   100.0 |                         1000 |             90.4%
+k_best = 50 por rodada           |    25.0 |                         1207 |             90.0%
+k_best = 200 por rodada          |     7.0 |                         1207 |             90.6%

@@ -1,0 +1,12 @@
+Label Propagation do zero: acurácia a cada passo
+  passo   1:  58.0%
+  passo   3:  69.3%
+  passo   5:  82.0%
+  passo  10:  91.7%
+  passo  20: 100.0%
+  passo  50: 100.0%
+  passo 200: 100.0%
+Label Spreading do zero (alpha = 0,8): 100.0%
+sklearn LabelPropagation              : 100.0%
+sklearn LabelSpreading (alpha = 0,8)  : 100.0%
+concordância dos rótulos, minha versão x sklearn:  propagation 100.0% | spreading 100.0%

@@ -1,0 +1,9 @@
+cenário   | peso dos sem rótulo | acurácia | ganho sobre 'só rotulados' (p.p.)
+alinhado |                 0.0 |    88.7% | +0.0
+alinhado |                 0.1 |    93.5% | +4.8
+alinhado |                 0.5 |    94.4% | +5.7
+alinhado |                 1.0 |    94.6% | +5.9
+cruzado  |                 0.0 |    83.8% | +0.0
+cruzado  |                 0.1 |    75.2% | -8.6
+cruzado  |                 0.5 |    70.6% | -13.3
+cruzado  |                 1.0 |    68.7% | -15.1

@@ -1,0 +1,6 @@
+duas luas, 6 rótulos, 30 sorteios (C = 10, Cu = 1): SVM só com rotulados x TSVM, conforme gamma
+gamma | SVM só rotulados | TSVM | ganho (p.p.) | melhor/pior
+  0.5 |            80.7% | 81.8% |        +1.1 | 14/14
+  1.0 |            83.6% | 86.3% |        +2.7 | 19/10
+  2.0 |            84.8% | 91.5% |        +6.7 | 24/4
+  5.0 |            81.1% | 92.8% |       +11.7 | 27/1

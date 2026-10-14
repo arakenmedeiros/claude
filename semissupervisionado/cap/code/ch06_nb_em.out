@@ -1,0 +1,7 @@
+40 rótulos (20 por classe), F1 da classe spam, 10 sorteios
+  só rotulados             :  44.5% ± 4.6
+  só rotulados, prior real :  69.2% ± 6.3
+  NB + EM (peso 0.05)      :  24.8% ± 9.3
+  NB + EM (peso 0.2)       :  73.8% ± 16.7
+  NB + EM (peso 0.5)       :  88.5% ± 0.4
+  NB + EM (peso 1.0)       :  90.3% ± 0.4

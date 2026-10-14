@@ -1,0 +1,254 @@
+@@EX 1 | GMM não supervisionado no Iris e o BIC | básico
+O **Iris** (UCI, 150 flores, 3 espécies, 4 medidas) vem no scikit-learn. Ajuste `GaussianMixture` com 3 componentes **sem usar os rótulos** e compare os grupos com as espécies reais pelo índice de Rand ajustado (`adjusted_rand_score`), para os quatro valores de `covariance_type`. Mostre também o **BIC** de cada um.
+
+*Pergunta:* qual tipo de covariância tem o melhor BIC? O melhor BIC coincide com o melhor ARI?
+@@SOL
+```python
+from sklearn.datasets import load_iris
+from sklearn.mixture import GaussianMixture
+from sklearn.metrics import adjusted_rand_score
+
+X, y = load_iris(return_X_y=True)
+print("covariância | BIC     | ARI contra as espécies")
+for ct in ["spherical", "diag", "tied", "full"]:
+    g = GaussianMixture(3, covariance_type=ct, n_init=5, random_state=0).fit(X)
+    print(f"{ct:11s} | {g.bic(X):7.1f} | {adjusted_rand_score(y, g.predict(X)):.3f}")
+```
+@@NOTE O melhor BIC (580,9, covariância `full`) coincide aqui com o melhor ARI (0,904). Isso não é uma regra: o BIC é uma medida **sem rótulos**, que não conhece as espécies, e a coincidência depende dos dados. Repare também que a covariância mais flexível (`full`) vence mesmo com 150 exemplos, porque as espécies do Iris têm formas diferentes.
+@@EX 2 | EM semissupervisionado no Wine | intermediário
+No **Wine** (UCI), padronize os atributos e reduza a 4 componentes principais (`PCA`). Com **9 rótulos** (3 por classe) e 20 sorteios, compare a acurácia no teste de: (a) gaussianas estimadas só com os rotulados (`iters=0`); (b) o EM semissupervisionado do capítulo, com 30 iterações; (c) a regressão logística só com os rotulados. Use `reg=0,05`.
+
+*Pergunta:* os dados sem rótulo ajudaram o modelo generativo? Ele superou a regressão logística?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import multivariate_normal as mvn
+from sklearn.datasets import load_wine
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+def em_semi(X, y_parcial, n_classes, iters=30, reg=1e-3, peso_u=1.0, duro=False):
+    """EM semissupervisionado com uma gaussiana por classe. duro=True usa o EM "duro" (cada exemplo vai para a classe mais provável)."""
+    n, d = X.shape; rot = y_parcial != -1
+    R = np.zeros((n, n_classes)); R[rot, y_parcial[rot]] = 1.0
+    cov = np.array([np.eye(d)] * n_classes)
+    for _ in range(iters + 1):
+        w = R.copy(); w[~rot] *= peso_u
+        Nk = w.sum(axis=0); pi = Nk / Nk.sum(); mu = (w.T @ X) / Nk[:, None]
+        for k in range(n_classes):
+            Xc = X - mu[k]; cov[k] = (w[:, k, None] * Xc).T @ Xc / Nk[k] + reg * np.eye(d)
+        logp = np.column_stack([np.log(pi[k]) + mvn.logpdf(X, mu[k], cov[k]) for k in range(n_classes)])
+        post = np.exp(logp - logp.max(axis=1, keepdims=True)); post /= post.sum(axis=1, keepdims=True)
+        if duro: post = np.eye(n_classes)[post.argmax(axis=1)]
+        R[~rot] = post[~rot]
+    return {"pi": pi, "mu": mu, "cov": cov.copy()}
+
+def prever(m, X):
+    return np.column_stack([np.log(m["pi"][k]) + mvn.logpdf(X, m["mu"][k], m["cov"][k]) for k in range(len(m["pi"]))]).argmax(axis=1)
+
+X, y = load_wine(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); pca = PCA(4).fit(esc.transform(X_tr))
+Z_tr, Z_te = pca.transform(esc.transform(X_tr)), pca.transform(esc.transform(X_te))
+
+a, b, c = [], [], []
+for s in range(20):
+    r = np.random.RandomState(s)
+    idx = np.concatenate([r.choice(np.where(y_tr == k)[0], 3, replace=False) for k in range(3)])
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    a.append(np.mean(prever(em_semi(Z_tr, yp, 3, iters=0, reg=0.05), Z_te) == y_te))
+    b.append(np.mean(prever(em_semi(Z_tr, yp, 3, iters=30, reg=0.05), Z_te) == y_te))
+    c.append(LogisticRegression(max_iter=1000).fit(Z_tr[idx], y_tr[idx]).score(Z_te, y_te))
+d = np.array(b) - np.array(a)
+print(f"gaussianas só com rotulados : {100 * np.mean(a):.1f}% ± {100 * np.std(a):.1f}")
+print(f"EM semissupervisionado      : {100 * np.mean(b):.1f}% ± {100 * np.std(b):.1f}  (ganho {100 * d.mean():+.1f} p.p.; melhor/pior {(d > 0).sum()}/{(d < 0).sum()})")
+print(f"regressão logística         : {100 * np.mean(c):.1f}% ± {100 * np.std(c):.1f}")
+```
+@@NOTE Os dados sem rótulo **ajudaram** o modelo generativo: de 82,2% para 90,3% (+8,1 p.p., melhor em 17 de 20 sorteios), e a variação entre sorteios caiu de 7,4 para 2,1. Mas o EM não superou a regressão logística (91,0%) com o mesmo número de rótulos: ele apenas fechou a distância.
+@@EX 3 | NB + EM com mais rótulos | intermediário
+No **SMS Spam**, reproduza o experimento do Naive Bayes com EM (peso 1, 10 iterações), mas varie o número de rótulos: 20, 40, 100 e 400 (metade de cada classe). Use 5 sorteios e reporte o F1 da classe spam do Naive Bayes só com os rotulados (com `class_prior` real) e do NB + EM.
+
+*Pergunta:* o que acontece com o ganho quando há mais rótulos?
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd, scipy.sparse as sp
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import f1_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/justmarkham/DAT8/master/data/sms.tsv", "dados/sms.tsv"), sep="\t", header=None, names=["rotulo", "texto"])
+y = (df["rotulo"] == "spam").astype(int).values
+t_tr, t_te, y_tr, y_te = train_test_split(df["texto"].values, y, test_size=0.3, stratify=y, random_state=0)
+vec = CountVectorizer().fit(t_tr); A, B = vec.transform(t_tr), vec.transform(t_te)
+prior = [1 - y_tr.mean(), y_tr.mean()]
+
+def nb_em(Xl, yl, Xu, lam=1.0, iters=10):
+    nb = MultinomialNB(alpha=1.0).fit(Xl, yl)
+    for _ in range(iters):
+        P = nb.predict_proba(Xu)
+        nb = MultinomialNB(alpha=1.0).fit(sp.vstack([Xl, Xu, Xu]), np.r_[yl, np.zeros(Xu.shape[0], int), np.ones(Xu.shape[0], int)],
+                                         sample_weight=np.r_[np.ones(len(yl)), lam * P[:, 0], lam * P[:, 1]])
+    return nb
+
+print("rótulos | NB só rotulados (prior real) | NB + EM")
+for n_rot in [20, 40, 100, 400]:
+    a, b = [], []
+    for s in range(5):
+        r = np.random.RandomState(s)
+        idx = np.r_[r.choice(np.where(y_tr == 0)[0], n_rot // 2, replace=False), r.choice(np.where(y_tr == 1)[0], n_rot // 2, replace=False)]
+        resto = np.setdiff1d(np.arange(len(y_tr)), idx)
+        a.append(f1_score(y_te, MultinomialNB(alpha=1.0, class_prior=prior).fit(A[idx], y_tr[idx]).predict(B)))
+        b.append(f1_score(y_te, nb_em(A[idx], y_tr[idx], A[resto]).predict(B)))
+    print(f"{n_rot:7d} | {100 * np.mean(a):27.1f}% | {100 * np.mean(b):6.1f}%")
+```
+@@NOTE O NB + EM fica em torno de 90% em todas as linhas, enquanto a referência (com prior real) sobe de 63,0% (20 rótulos) para 88,5% (400). O ganho **encolhe** com mais rótulos: de cerca de 27 p.p. (20 rótulos) para 3 p.p. (400), mas não some.
+@@EX 4 | Quantas componentes? O BIC no Digits | intermediário
+No **Digits**, reduza a 15 componentes principais e ajuste GMMs **sem rótulos**, com `covariance_type="tied"` e de 4 a 16 componentes. Mostre o BIC de cada número de componentes e diga qual o menor.
+
+*Pergunta:* o BIC encontra as 10 classes? O que isso diz sobre a relação entre "grupos" e "classes"?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+from sklearn.mixture import GaussianMixture
+
+X, y = load_digits(return_X_y=True)
+Z = PCA(15, random_state=0).fit_transform(X)
+print("componentes | BIC")
+bic = {}
+for k in range(4, 17, 2):
+    bic[k] = GaussianMixture(k, covariance_type="tied", n_init=2, random_state=0).fit(Z).bic(Z)
+    print(f"{k:11d} | {bic[k]:10.0f}")
+print("menor BIC com", min(bic, key=bic.get), "componentes")
+```
+@@NOTE O BIC continuou **caindo** até 16 componentes, o limite do intervalo testado, e portanto não encontrou as 10 classes: sugere mais grupos que dígitos, o que é natural, pois um mesmo dígito pode ser escrito de vários estilos. Como o mínimo está na borda, seria preciso testar mais componentes. A lição: grupos descobertos sem rótulos nem sempre coincidem com as classes, e o BIC é uma pista, e não uma resposta.
+@@EX 5 | EM mole e EM duro | avançado
+Compare o EM semissupervisionado "mole" (probabilidades) com o EM "duro" (cada exemplo vai para a classe mais provável, como no self-training), nos dados de duas gaussianas alongadas do capítulo, com 6 rótulos e 30 sorteios. Use a função com o argumento `duro`.
+
+*Pergunta:* qual é melhor neste problema? O que a diferença sugere sobre o self-training?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import multivariate_normal as mvn
+from sklearn.model_selection import train_test_split
+
+def em_semi(X, y_parcial, n_classes, iters=30, reg=1e-3, peso_u=1.0, duro=False):
+    """EM semissupervisionado com uma gaussiana por classe. duro=True usa o EM "duro" (cada exemplo vai para a classe mais provável)."""
+    n, d = X.shape; rot = y_parcial != -1
+    R = np.zeros((n, n_classes)); R[rot, y_parcial[rot]] = 1.0
+    cov = np.array([np.eye(d)] * n_classes)
+    for _ in range(iters + 1):
+        w = R.copy(); w[~rot] *= peso_u
+        Nk = w.sum(axis=0); pi = Nk / Nk.sum(); mu = (w.T @ X) / Nk[:, None]
+        for k in range(n_classes):
+            Xc = X - mu[k]; cov[k] = (w[:, k, None] * Xc).T @ Xc / Nk[k] + reg * np.eye(d)
+        logp = np.column_stack([np.log(pi[k]) + mvn.logpdf(X, mu[k], cov[k]) for k in range(n_classes)])
+        post = np.exp(logp - logp.max(axis=1, keepdims=True)); post /= post.sum(axis=1, keepdims=True)
+        if duro: post = np.eye(n_classes)[post.argmax(axis=1)]
+        R[~rot] = post[~rot]
+    return {"pi": pi, "mu": mu, "cov": cov.copy()}
+
+def prever(m, X):
+    return np.column_stack([np.log(m["pi"][k]) + mvn.logpdf(X, m["mu"][k], m["cov"][k]) for k in range(len(m["pi"]))]).argmax(axis=1)
+
+def gerar(semente, n=600):
+    r = np.random.RandomState(semente); y = r.randint(0, 2, n)
+    X = r.normal(0, 1, (n, 2)) * np.array([2.0, 0.7]) + np.where(y[:, None] == 0, [-1.5, -1.0], [1.5, 1.0])
+    return X, y
+
+res = {"só rotulados": [], "EM mole": [], "EM duro": []}
+for s in range(30):
+    X, y = gerar(s); X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.4, random_state=s)
+    r = np.random.RandomState(s); idx = np.r_[r.choice(np.where(y_tr == 0)[0], 3, replace=False), r.choice(np.where(y_tr == 1)[0], 3, replace=False)]
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    res["só rotulados"].append(np.mean(prever(em_semi(X_tr, yp, 2, iters=0, reg=0.05), X_te) == y_te))
+    res["EM mole"].append(np.mean(prever(em_semi(X_tr, yp, 2, iters=30, reg=0.05), X_te) == y_te))
+    res["EM duro"].append(np.mean(prever(em_semi(X_tr, yp, 2, iters=30, reg=0.05, duro=True), X_te) == y_te))
+for k, v in res.items(): print(f"{k:13s}: {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE O EM mole (91,8%) superou o duro (84,6%) e a referência (80,6%). O EM duro foi também o **mais instável** (desvio de 17,5 p.p., contra 9,0 do mole): ao fixar uma classe por exemplo, erros iniciais se consolidam em alguns sorteios. Isso sugere que a versão "dura" (a do self-training) é mais sujeita a reforçar erros do que a versão que mantém as probabilidades.
+@@PROJ Generativo ou discriminativo? A curva de aprendizado com poucos rótulos | Cap06
+**Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)* (UCI, incluído no scikit-learn).
+
+**Contexto.** Ng e Jordan (2001) sugerem que modelos generativos podem ter vantagem com poucos rótulos. Sua equipe quer saber se isso vale no Breast Cancer e se os dados sem rótulo aumentam a vantagem.
+
+**Tarefas.**
+1. Padronize e reduza a 3 componentes principais (ajustando o PCA no treino, com **todos** os exemplos de treino, rotulados ou não).
+2. Para `n_rot` em 6, 12, 24, 48 e 96 (metade de cada classe), com 20 sorteios, compare no teste: (a) regressão logística (só rotulados); (b) gaussianas só com os rotulados (generativo); (c) EM semissupervisionado.
+3. Faça uma **tabela** com média e desvio de cada método e um **gráfico** de acurácia contra `n_rot` (eixo x em escala logarítmica).
+4. Escreva uma conclusão (8 a 10 linhas): o generativo ganhou da regressão logística com poucos rótulos? O EM ajudou? A diferença some quando os rótulos aumentam?
+
+**Entregáveis.** Código, tabela, gráfico e conclusão.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import multivariate_normal as mvn
+from sklearn.datasets import load_breast_cancer
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+def em_semi(X, y_parcial, n_classes, iters=30, reg=1e-3, peso_u=1.0, duro=False):
+    """EM semissupervisionado com uma gaussiana por classe. duro=True usa o EM "duro" (cada exemplo vai para a classe mais provável)."""
+    n, d = X.shape; rot = y_parcial != -1
+    R = np.zeros((n, n_classes)); R[rot, y_parcial[rot]] = 1.0
+    cov = np.array([np.eye(d)] * n_classes)
+    for _ in range(iters + 1):
+        w = R.copy(); w[~rot] *= peso_u
+        Nk = w.sum(axis=0); pi = Nk / Nk.sum(); mu = (w.T @ X) / Nk[:, None]
+        for k in range(n_classes):
+            Xc = X - mu[k]; cov[k] = (w[:, k, None] * Xc).T @ Xc / Nk[k] + reg * np.eye(d)
+        logp = np.column_stack([np.log(pi[k]) + mvn.logpdf(X, mu[k], cov[k]) for k in range(n_classes)])
+        post = np.exp(logp - logp.max(axis=1, keepdims=True)); post /= post.sum(axis=1, keepdims=True)
+        if duro: post = np.eye(n_classes)[post.argmax(axis=1)]
+        R[~rot] = post[~rot]
+    return {"pi": pi, "mu": mu, "cov": cov.copy()}
+
+def prever(m, X):
+    return np.column_stack([np.log(m["pi"][k]) + mvn.logpdf(X, m["mu"][k], m["cov"][k]) for k in range(len(m["pi"]))]).argmax(axis=1)
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); pca = PCA(3).fit(esc.transform(X_tr))
+Z_tr, Z_te = pca.transform(esc.transform(X_tr)), pca.transform(esc.transform(X_te))
+
+linhas = []
+for n_rot in [6, 12, 24, 48, 96]:
+    res = {"regressão logística": [], "generativo (só rotulados)": [], "generativo + EM": []}
+    for s in range(20):
+        r = np.random.RandomState(s)
+        idx = np.concatenate([r.choice(np.where(y_tr == c)[0], n_rot // 2, replace=False) for c in (0, 1)])
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        res["regressão logística"].append(LogisticRegression(max_iter=1000).fit(Z_tr[idx], y_tr[idx]).score(Z_te, y_te))
+        res["generativo (só rotulados)"].append(np.mean(prever(em_semi(Z_tr, yp, 2, iters=0, reg=0.05), Z_te) == y_te))
+        res["generativo + EM"].append(np.mean(prever(em_semi(Z_tr, yp, 2, iters=30, reg=0.05), Z_te) == y_te))
+    for nome, v in res.items(): linhas.append({"n_rot": n_rot, "método": nome, "média (%)": round(100 * np.mean(v), 1), "desvio (p.p.)": round(100 * np.std(v), 1)})
+tabela = pd.DataFrame(linhas)
+print(tabela.pivot(index="n_rot", columns="método", values="média (%)").to_string())
+fig, ax = plt.subplots(figsize=(6, 3.5))
+for nome, g in tabela.groupby("método"): ax.plot(g["n_rot"], g["média (%)"], "-o", label=nome)
+ax.set_xscale("log"); ax.set_xlabel("exemplos rotulados"); ax.set_ylabel("acurácia no teste (%)"); ax.legend(); ax.grid(alpha=0.3); plt.tight_layout(); plt.show()
+```
+@@RUBRICA
+- O PCA e a padronização foram ajustados no treino, sem o teste; o teste ficou separado.
+- Os três métodos usam os mesmos exemplos rotulados em cada sorteio, com 20 repetições.
+- A tabela traz média e desvio, e o gráfico usa escala logarítmica no eixo dos rótulos.
+- A conclusão responde às três perguntas com base nos números, inclusive se o EM não ajudou.
+- O texto discute limites (por exemplo, a hipótese gaussiana após o PCA e o número reduzido de componentes).
+@@NOTE Os resultados **não confirmam** a vantagem do generativo com poucos rótulos neste conjunto: com 6 rótulos, a regressão logística (88,5%) supera o generativo só com rotulados (79,1%). O EM ajuda quando há muito poucos rótulos (+5,0 p.p. com 6; +4,1 com 12) e **piora** o resultado quando há 24 ou mais (de -0,8 a -1,4 p.p.), em que as gaussianas só com rotulados já estimam bem. A regressão logística é a melhor ou está empatada em todos os tamanhos. Uma conclusão honesta diz isso, e lembra que a hipótese gaussiana (após PCA) é só aproximada.
+@@ALEM
+- **UCI:** Iris, Wine, Breast Cancer Wisconsin, Optical Recognition of Handwritten Digits, Spambase e Ionosphere.
+- **Kaggle:** SMS Spam Collection.

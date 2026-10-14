@@ -1,0 +1,269 @@
+MC: Nos métodos baseados em grafos, cada exemplo (com ou sem rótulo) é:
+a) um nó do grafo.
+b) uma aresta.
+c) um peso.
+d) uma classe.
+R: a | Os exemplos são os nós; as arestas ligam exemplos parecidos.
+
+MC: Uma aresta do grafo liga:
+a) dois exemplos parecidos.
+b) dois rótulos.
+c) dois atributos.
+d) treino e teste.
+R: a | O peso da aresta diz o quão parecidos são os exemplos.
+
+MC: No grafo de k vizinhos (kernel "knn"), cada exemplo se liga:
+a) aos seus k vizinhos mais próximos.
+b) a todos os outros exemplos.
+c) apenas aos rotulados.
+d) a nenhum exemplo.
+R: a | O grafo é esparso, com poucas arestas por nó.
+
+MC: No kernel RBF, o peso da aresta entre dois exemplos é:
+a) exp(-gamma vezes a distância ao quadrado).
+b) sempre 1.
+c) o número de vizinhos.
+d) a diferença de rótulos.
+R: a | O peso decai com a distância, e gamma controla a velocidade.
+
+MC: Qual grafo é denso (n² arestas)?
+a) O do kernel RBF.
+b) O de k vizinhos.
+c) Nenhum dos dois.
+d) O que não tem pesos.
+R: a | No RBF todos se ligam a todos, com pesos pequenos para pontos distantes.
+
+MC: Um problema de usar poucos vizinhos é:
+a) o grafo poder se desconectar em pedaços.
+b) o grafo ficar denso demais.
+c) os rótulos serem sempre errados.
+d) o tempo de cálculo explodir.
+R: a | Um pedaço sem nó rotulado não recebe rótulos.
+
+MC: Um problema de usar muitos vizinhos é:
+a) criar pontes entre classes diferentes.
+b) desconectar o grafo.
+c) impedir o uso de rótulos.
+d) alterar os rótulos verdadeiros.
+R: a | As pontes transportam rótulos errados.
+
+MC: No Label Propagation, a cada passo cada nó:
+a) recebe a média dos rótulos dos vizinhos.
+b) escolhe um rótulo aleatório.
+c) apaga seu rótulo.
+d) copia o rótulo do nó mais distante.
+R: a | Depois, os nós rotulados voltam ao valor original.
+
+MC: O "clamping" no Label Propagation significa:
+a) os rótulos conhecidos nunca mudam durante a propagação.
+b) todos os rótulos são apagados.
+c) o grafo é normalizado.
+d) os vizinhos são trocados.
+R: a | Os nós rotulados são recolocados no valor original a cada passo.
+
+MC: A matriz de transição P é obtida:
+a) normalizando as linhas da matriz de pesos para somarem 1.
+b) somando todos os pesos.
+c) apagando as arestas.
+d) multiplicando os rótulos.
+R: a | P = D⁻¹W, de modo que cada linha some 1.
+
+MC: Segundo Zhu, Ghahramani e Lafferty (2003), a solução da propagação é:
+a) uma função harmônica: o valor de cada nó é a média dos valores dos vizinhos.
+b) sempre aleatória.
+c) a média global dos rótulos.
+d) igual ao rótulo do nó mais próximo.
+R: a | A solução satisfaz a propriedade de média dos vizinhos.
+
+MC: No experimento das duas luas com 4 rótulos, a propagação do zero chegou a:
+a) 100% de acurácia em cerca de 20 passos.
+b) 50%.
+c) 70% e parou.
+d) 0%.
+R: a | Os rótulos chegaram a todos os pontos.
+
+MC: A implementação própria da propagação, comparada com a do scikit-learn:
+a) coincidiu em 100% dos rótulos.
+b) discordou em metade.
+c) foi muito pior.
+d) não pôde ser comparada.
+R: a | A saída mostrou concordância de 100% nos dois métodos.
+
+MC: O Label Spreading difere do Propagation porque:
+a) normaliza a matriz e deixa os rótulos conhecidos mudarem, controlados pelo alpha.
+b) não usa grafos.
+c) só aceita dois rótulos.
+d) elimina o parâmetro de vizinhos.
+R: a | A atualização é F = alpha S F + (1 - alpha) Y.
+
+MC: Na atualização do Label Spreading, o parâmetro alpha controla:
+a) o equilíbrio entre a opinião dos vizinhos e o rótulo original.
+b) o número de classes.
+c) a quantidade de rótulos.
+d) o número de iterações obrigatoriamente.
+R: a | Alpha pequeno confia no rótulo original; alpha grande, nos vizinhos.
+
+MC: A matriz S do Label Spreading é:
+a) a matriz de pesos normalizada, D^(-1/2) W D^(-1/2).
+b) a matriz de rótulos.
+c) a matriz de distâncias brutas.
+d) a matriz identidade.
+R: a | A normalização evita que nós muito conectados dominem.
+
+MC: No Digits com 50 rótulos, com k = 3, o grafo tinha:
+a) 3 componentes conexos, e a acurácia foi de 53,3%.
+b) apenas 1 componente e acurácia de 94%.
+c) nenhuma aresta.
+d) 100 componentes.
+R: a | Os rótulos não chegavam a todas as partes do grafo.
+
+MC: Com k = 50 no Digits, a pureza das arestas foi de:
+a) 78,9%, e a acurácia caiu para 90,9%.
+b) 100%.
+c) 50%.
+d) 99%.
+R: a | Muitas pontes aparecem com k grande.
+
+MC: O melhor valor de k no experimento do Digits (50 rótulos) foi:
+a) 10, com 94,0%.
+b) 3, com 53,3%.
+c) 50, com 90,9%.
+d) 25, com 92,9%.
+R: a | Ele equilibra conectividade e pureza.
+
+MC: O que é a pureza das arestas?
+a) A fração das arestas que ligam exemplos da mesma classe.
+b) O número de arestas.
+c) O peso médio das arestas.
+d) A fração de nós rotulados.
+R: a | Quanto maior, menos pontes entre classes.
+
+MC: Na tabela de alpha e k, o pior resultado (86,9%) ocorreu com:
+a) k = 5 e alpha = 0,05.
+b) k = 10 e alpha = 0,5.
+c) k = 15 e alpha = 0,8.
+d) k = 7 e alpha = 0,2.
+R: a | Grafo quase desconexo e alpha muito baixo impedem a propagação.
+
+MC: O valor padrão do kernel no LabelSpreading do scikit-learn é:
+a) rbf, com gamma = 20.
+b) knn, com k = 7.
+c) linear.
+d) polinomial.
+R: a | Esse padrão pode falhar em dados com distâncias grandes.
+
+MC: No Digits, o kernel RBF com gamma = 20 obteve acurácia de:
+a) 10,0%, o acaso em dez classes.
+b) 94%.
+c) 50%.
+d) 100%.
+R: a | Todos os pesos das arestas viram praticamente zero.
+
+MC: Por que o RBF com gamma = 20 falhou no Digits?
+a) A distância quadrada média (cerca de 2.392) torna exp(-20 x d²) praticamente zero.
+b) O Digits tem poucos exemplos.
+c) O RBF não funciona com imagens.
+d) Faltavam rótulos.
+R: a | Sem arestas efetivas, nenhum rótulo se propaga.
+
+MC: Qual dos kernels é invariante à escala das distâncias?
+a) O knn, que só usa a ordem dos vizinhos.
+b) O RBF.
+c) Nenhum.
+d) Ambos, sempre.
+R: a | O knn depende de quem está mais perto, e não do tamanho absoluto das distâncias.
+
+MC: No experimento de rótulos errados, com 20% de erro, qual método teve a melhor acurácia?
+a) Label Propagation (85,9%).
+b) Label Spreading com alpha 0,2 (81,8%).
+c) Label Spreading com alpha 0,8 (84,5%).
+d) Os três empataram.
+R: a | Contra a expectativa, o Propagation resistiu um pouco melhor.
+
+MC: No MNIST (100 rótulos entre 10.000), com PCA de 50 componentes, o Label Spreading no teste obteve:
+a) 88,7%, contra 76,7% da regressão logística.
+b) 50%.
+c) 99%.
+d) o mesmo da regressão logística.
+R: a | O ganho foi de cerca de 12 pontos percentuais.
+
+MC: A acurácia do Label Spreading nos exemplos sem rótulo do treino (81,8%) foi menor que no teste (88,7%) porque:
+a) o predict suaviza o resultado ao consultar vários vizinhos do grafo de treino.
+b) o teste é sempre mais fácil.
+c) os rótulos estavam errados.
+d) o grafo é diferente.
+R: a | As duas medidas respondem a perguntas distintas (transdutiva e indutiva).
+
+MC: As redes neurais de grafos (GNN) se parecem com o Label Propagation porque:
+a) a informação escorre pelas arestas, mas a GNN usa atributos e pesos aprendidos.
+b) não usam grafos.
+c) dispensam os rótulos.
+d) são iguais ao k vizinhos.
+R: a | A GNN combina os atributos dos vizinhos com pesos aprendidos.
+
+MC: O que acontece com um pedaço do grafo que não contém nenhum exemplo rotulado?
+a) Ele não recebe informação de rótulos e fica sem classificação confiável.
+b) Ele recebe o rótulo mais comum do grafo.
+c) Ele é eliminado automaticamente.
+d) Ele passa a ser rotulado pelo teste.
+R: a | Sem caminho até um nó rotulado, nenhum rótulo se propaga para ele.
+
+DISC: Explique, com a analogia do boato, como os rótulos se propagam em um grafo.
+R: Cada pessoa ouve os vizinhos e adota a mistura do que ouve. Dois nós conhecem seu rótulo e os demais vão sendo influenciados pelos vizinhos: quem está perto do nó azul fica azul, e quem está perto do laranja fica laranja.
+
+DISC: Descreva duas formas de construir o grafo (k vizinhos e RBF) e compare-as.
+R: Grafo de k vizinhos: cada exemplo liga-se aos k mais próximos; é esparso e rápido. RBF: todos se ligam a todos, com peso exp(-gamma d²); é denso (n² arestas) e sensível à escala das distâncias.
+
+DISC: Explique as armadilhas de usar poucos e muitos vizinhos no grafo.
+R: Poucos vizinhos podem desconectar o grafo em pedaços sem nenhum rotulado, que não recebem informação. Muitos vizinhos criam pontes entre classes diferentes, que transportam rótulos errados.
+
+DISC: Descreva o algoritmo do Label Propagation, incluindo o clamping.
+R: Cada nó guarda um vetor com quanto de cada classe tem; a cada passo recebe a média dos vizinhos (F = P F) e os nós rotulados voltam ao valor original (clamping), até estabilizar.
+
+DISC: Descreva o Label Spreading e explique o papel do alpha.
+R: Usa a matriz normalizada S e a atualização F = alpha S F + (1 - alpha) Y. Os rótulos conhecidos podem mudar. Com alpha pequeno, confia-se mais no rótulo original; com alpha grande, nos vizinhos.
+
+DISC: Qual a diferença entre a matriz de transição P e a matriz normalizada S?
+R: P = D⁻¹W normaliza cada linha para somar 1 (média dos vizinhos). S = D^(-1/2) W D^(-1/2) é simétrica e evita que nós de grau alto dominem; é usada no Label Spreading.
+
+DISC: Interprete a evolução da acurácia da propagação nas duas luas (58%, 69%, 82%, 92%, 100%).
+R: A cada passo os rótulos avançam um pouco mais pelo grafo. Nos primeiros passos só vizinhos dos rotulados são afetados; em cerca de 20 passos a informação chega a todos os pontos e a acurácia é de 100%.
+
+DISC: Explique o resultado com k = 3 no Digits e o que ele ensina sobre conectividade.
+R: Com k = 3 o grafo tem 3 componentes conexos, e a acurácia é de 53,3%, apesar de as arestas serem puras (97,2%). Os componentes sem rotulados não recebem informação. Conectividade é condição necessária.
+
+DISC: Por que um grafo precisa ser conexo e puro ao mesmo tempo, e como k equilibra isso?
+R: Conexo, para que todos os nós recebam rótulos; puro, para que os rótulos sejam corretos. Aumentar k melhora a conectividade e piora a pureza, então há um valor intermediário ideal (k = 10 no Digits).
+
+DISC: Interprete a tabela de alpha e k (região boa e pontos fracos).
+R: Para k de 7 a 15 e alpha de 0,2 a 0,8, a acurácia fica entre 93,4% e 94,1%. O pior ponto é k = 5 com alpha = 0,05 (86,9%), por grafo quase desconexo e propagação curta. Alpha muito alto reduz o resultado quando há muitas pontes (k = 25).
+
+DISC: Explique por que o kernel RBF com gamma padrão deu 10% no Digits e como corrigir.
+R: Os pixels têm escala grande e a distância quadrada média é cerca de 2.392; com gamma = 20, exp(-20 d²) é praticamente zero e o grafo fica sem arestas úteis. Corrige-se padronizando os dados, ajustando gamma (por exemplo, 0,1) ou usando o kernel knn.
+
+DISC: Por que o kernel knn é mais seguro que o RBF em relação à escala dos dados?
+R: O knn usa só a ordem de proximidade dos vizinhos, e não o tamanho absoluto das distâncias; já o peso do RBF depende de gamma e da escala.
+
+DISC: Interprete o experimento de rótulos errados e discuta a expectativa sobre o Label Spreading.
+R: Esperava-se que o Spreading, por poder mudar os rótulos, fosse mais robusto. Com 20% de erro, o Propagation teve 85,9%, o Spreading com alpha 0,2, 81,8%, e com 0,8, 84,5%. Com alpha pequeno, o Spreading dá peso ao rótulo original, inclusive ao errado. Deve-se testar com o ruído real.
+
+DISC: Descreva o experimento com o MNIST e seus principais resultados.
+R: 10.000 imagens de treino, 100 rótulos, avaliação em 10.000 de teste. Com PCA de 50 componentes, o Label Spreading chegou a 88,7%, contra 76,7% da regressão logística e 75,2% do 1-vizinho, um ganho de cerca de 12 p.p.
+
+DISC: Por que a representação (PCA) afetou o resultado do Label Spreading no MNIST?
+R: O grafo é construído com distâncias; uma boa representação aproxima exemplos da mesma classe. Com PCA de 10 componentes, a informação se perdeu e todos os métodos pioraram (78,7% no teste).
+
+DISC: Diferencie a acurácia transdutiva e a indutiva do Label Spreading e relate o que se viu no MNIST.
+R: A transdutiva mede o acerto nos exemplos sem rótulo do treino (81,8% com PCA 50); a indutiva, no teste via predict (88,7%). O predict suaviza ao consultar vários vizinhos. Deve-se informar qual se usa.
+
+DISC: Liste boas práticas para usar o Label Spreading.
+R: Padronizar ou usar PCA; preferir knn com k entre 7 e 15 e checar a conectividade; alpha entre 0,2 e 0,8; observar a pureza das arestas; considerar o custo do RBF; comparar com a referência supervisionada em vários sorteios.
+
+DISC: Qual a relação entre o Label Propagation e as redes neurais de grafos?
+R: Ambos fazem a informação escorrer pelas arestas. O Label Propagation não tem parâmetros a aprender; a GNN combina os atributos dos vizinhos com pesos aprendidos e é treinada com os nós rotulados (Kipf e Welling, 2017).
+
+DISC: Em que situações os métodos de grafos são uma boa escolha e quando devem ser evitados?
+R: São boa escolha quando exemplos parecidos tendem a ter o mesmo rótulo (suavidade), os dados formam estruturas conectadas e há uma boa representação. Devem ser evitados quando o grafo não captura a semelhança relevante, há muitas pontes ou o volume é grande demais para o grafo escolhido.
+
+DISC: Planeje um experimento para escolher k e alpha em um problema seu com poucos rótulos.
+R: Padronizar, construir grafos com vários k e verificar conectividade, usar rótulos escondidos ou validação cruzada nos rotulados para comparar combinações de k e alpha, preferir valores padrão razoáveis (k entre 7 e 15, alpha entre 0,2 e 0,8), repetir sorteios e comparar com a referência supervisionada.

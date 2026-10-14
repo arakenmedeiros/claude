@@ -1,0 +1,317 @@
+@@EX 1 | O efeito de C e gamma com poucos rótulos | básico
+Nas **duas luas** (`make_moons`, 300 pontos, `noise=0,1`), treine uma `SVC` com núcleo RBF **só com 6 rótulos** (3 por classe) e avalie em 20 sorteios no restante dos dados. Varie `gamma` em 0,5, 1, 2 e 5 e `C` em 1, 10 e 100. Mostre a acurácia média de cada combinação em uma tabela.
+
+*Pergunta:* a escolha de C e de gamma importa com tão poucos rótulos?
+@@SOL
+```python
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.datasets import make_moons
+from sklearn.model_selection import train_test_split
+
+print("gamma |   C=1  |  C=10  | C=100")
+for gamma in [0.5, 1, 2, 5]:
+    linha = []
+    for C in [1, 10, 100]:
+        acc = []
+        for s in range(20):
+            X, y = make_moons(300, noise=0.1, random_state=s); X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.4, random_state=s)
+            r = np.random.RandomState(s); idx = np.r_[r.choice(np.where(y_tr == 0)[0], 3, replace=False), r.choice(np.where(y_tr == 1)[0], 3, replace=False)]
+            acc.append(SVC(C=C, gamma=gamma).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        linha.append(100 * np.mean(acc))
+    print(f"{gamma:5.1f} | " + " | ".join(f"{v:5.1f}%" for v in linha))
+```
+@@NOTE A melhor região da tabela fica em gamma = 2 com C = 10 ou 100 (cerca de 86%), e as piores células ficam em torno de 81%. A variação entre células é de aproximadamente 5 p.p. Mas, como mostrou o Capítulo 7, o TSVM com gamma adequado traz um ganho maior (de 11,7 p.p. com gamma = 5) do que a escolha dos parâmetros da SVM comum. Com 6 rótulos, escolher C e gamma também é difícil, pois não há dados para validar.
+@@EX 2 | TSVM no Breast Cancer | intermediário
+No **Breast Cancer** (UCI), com atributos padronizados, 10 rótulos (5 por classe) e 20 sorteios, compare a `SVC` (RBF, `gamma="scale"`, C = 10) só com os rotulados e o TSVM simplificado do capítulo (mesmos parâmetros, Cu final = 1). Para o TSVM, use `gamma` igual ao que o modo "scale" calcularia: `1 / (n_atributos * variância dos dados)`. Rode o TSVM de duas formas: com a proporção de positivos estimada nos **rotulados** (a padrão) e com a proporção **real** do treino (`prop_pos=y_tr.mean()`).
+
+*Pergunta:* o TSVM ajudou neste conjunto? O que a comparação das duas proporções revela?
+@@SOL
+```python
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+def tsvm(X, y_parcial, C=10.0, gamma=1.0, Cu_final=1.0, passos=5, max_trocas=40, prop_pos=None, balancear=True):
+    """TSVM simplificado, inspirado em Joachims (1999). Rótulos 0/1; -1 = sem rótulo.
+    1) treina uma SVM só com os rotulados e dá rótulos provisórios aos demais, respeitando a proporção de positivos;
+    2) aumenta aos poucos o peso Cu dos exemplos sem rótulo e, a cada passo, troca o rótulo de pares que violam a margem."""
+    rot = np.where(y_parcial != -1)[0]; sem = np.where(y_parcial == -1)[0]
+    Xl, yl = X[rot], 2 * y_parcial[rot] - 1; Xu = X[sem]
+    if prop_pos is None: prop_pos = np.mean(yl == 1)
+    m = SVC(C=C, kernel="rbf", gamma=gamma).fit(Xl, yl)
+    f = m.decision_function(Xu)
+    if balancear:
+        yu = -np.ones(len(sem)); yu[np.argsort(-f)[:int(round(prop_pos * len(sem)))]] = 1      # proporção fixa de positivos
+    else:
+        yu = np.where(f > 0, 1.0, -1.0)
+    Xa = np.vstack([Xl, Xu])
+    for Cu in np.geomspace(Cu_final / 100, Cu_final, passos):                                   # peso crescente dos sem rótulo
+        for _ in range(max_trocas):
+            sw = np.r_[np.ones(len(rot)), np.full(len(sem), Cu)]
+            m = SVC(C=C, kernel="rbf", gamma=gamma).fit(Xa, np.r_[yl, yu], sample_weight=sw)
+            folga = np.maximum(0, 1 - yu * m.decision_function(Xu))                              # quanto cada exemplo viola a margem
+            pos = np.where((yu == 1) & (folga > 0))[0]; neg = np.where((yu == -1) & (folga > 0))[0]
+            if len(pos) == 0 or len(neg) == 0: break
+            i, j = pos[np.argmax(folga[pos])], neg[np.argmax(folga[neg])]
+            if folga[i] + folga[j] <= 2: break                                                   # trocar não compensa
+            yu[i], yu[j] = -1, 1                                                                 # troca os rótulos do par
+    return m
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+gamma = 1 / (X_tr.shape[1] * X_tr.var())
+a, b, c = [], [], []
+for s in range(20):
+    r = np.random.RandomState(s); idx = np.r_[r.choice(np.where(y_tr == 0)[0], 5, replace=False), r.choice(np.where(y_tr == 1)[0], 5, replace=False)]
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    a.append(SVC(C=10, gamma=gamma).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+    b.append(np.mean(tsvm(X_tr, yp, C=10, gamma=gamma, Cu_final=1.0).predict(X_te) == 2 * y_te - 1))
+    c.append(np.mean(tsvm(X_tr, yp, C=10, gamma=gamma, Cu_final=1.0, prop_pos=y_tr.mean()).predict(X_te) == 2 * y_te - 1))
+print(f"gamma usado: {gamma:.4f} | proporção real de benignos no treino: {y_tr.mean():.2f} | proporção dos rotulados: 0.50")
+print(f"SVM só rotulados          : {100 * np.mean(a):.1f}% ± {100 * np.std(a):.1f}")
+for nome, v in [("TSVM (proporção dos rotulados)", b), ("TSVM (proporção real)", c)]:
+    d = np.array(v) - np.array(a)
+    print(f"{nome:26s}: {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}  (ganho {100 * d.mean():+.1f} p.p.; melhor/pior {(d > 0).sum()}/{(d < 0).sum()})")
+```
+@@NOTE Com a proporção estimada nos rotulados (50% de benignos), o TSVM **piorou** 6,3 p.p. (melhor em 1 e pior em 19 dos 20 sorteios). Mas a proporção real de benignos no treino é de 63%. Com a proporção real, o TSVM **ganhou** 1,2 p.p. (melhor em 15 e pior em 5). A causa do prejuízo foi a proporção errada, e o resultado ilustra o risco do TSVM discutido no capítulo. Mesmo com a proporção correta, o ganho é pequeno: uma SVM com 10 rótulos já separa bem as classes neste conjunto.
+@@EX 3 | Minimização de entropia no Breast Cancer | intermediário
+No **Breast Cancer** (padronizado), com 10 rótulos (5 por classe) e 30 sorteios, use a regressão logística com minimização de entropia do capítulo e varie lambda em 0, 0,1, 0,3, 1 e 3 (com `l2 = 1`). Mostre a acurácia no teste e o ganho sobre lambda = 0.
+
+*Pergunta:* qual lambda é melhor? Mudou o padrão visto nos dígitos 3 e 8?
+@@SOL
+```python
+import numpy as np
+from scipy.optimize import minimize
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+def sigmoide(z): return 1 / (1 + np.exp(-np.clip(z, -30, 30)))
+
+def logistica_entropia(X, y_parcial, lam=1.0, l2=1.0, w0=None):
+    """Regressão logística binária que minimiza: perda logística nos rotulados + lam * entropia das previsões nos sem rótulo + l2 * ||w||^2 (Grandvalet e Bengio, 2004)."""
+    rot = y_parcial != -1; Xa = np.c_[X, np.ones(len(X))]
+    def objetivo(w):
+        z = Xa @ w; p = sigmoide(z)
+        perda = -np.sum(y_parcial[rot] * np.log(p[rot] + 1e-12) + (1 - y_parcial[rot]) * np.log(1 - p[rot] + 1e-12))
+        ent = -np.sum(p[~rot] * np.log(p[~rot] + 1e-12) + (1 - p[~rot]) * np.log(1 - p[~rot] + 1e-12))
+        g = Xa[rot].T @ (p[rot] - y_parcial[rot]) + lam * Xa[~rot].T @ (-z[~rot] * p[~rot] * (1 - p[~rot])) + 2 * l2 * np.r_[w[:-1], 0]
+        return perda + lam * ent + l2 * np.sum(w[:-1] ** 2), g
+    w0 = np.zeros(Xa.shape[1]) if w0 is None else w0
+    return minimize(objetivo, w0, jac=True, method="L-BFGS-B").x
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+res = {}
+print("lambda | acurácia | ganho sobre lambda=0 (p.p.) | melhor/pior")
+for lam in [0.0, 0.1, 0.3, 1.0, 3.0]:
+    acc = []
+    for s in range(30):
+        r = np.random.RandomState(s); idx = np.r_[r.choice(np.where(y_tr == 0)[0], 5, replace=False), r.choice(np.where(y_tr == 1)[0], 5, replace=False)]
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        w = logistica_entropia(X_tr, yp, lam=lam, l2=1.0)
+        acc.append(np.mean((np.c_[X_te, np.ones(len(X_te))] @ w > 0) == y_te))
+    res[lam] = np.array(acc); d = res[lam] - res[0.0]
+    print(f"{lam:6.1f} | {100 * res[lam].mean():7.1f}% | {100 * d.mean():+26.1f} | {(d > 0).sum()}/{(d < 0).sum()}")
+```
+@@NOTE O melhor valor é lambda = 0,3 (91,6%, ganho de 1,3 p.p., melhor em 20 e pior em 8 dos 30 sorteios). Com lambda de 1 ou 3, o ganho some (0,0 e -0,2). O ganho é bem menor que nos dígitos 3 e 8 (de 87,6% para 95,7%), porque a regressão logística com 10 rótulos já alcança 90,3% no Breast Cancer, e há menos espaço para melhorar.
+@@EX 4 | O peso C* do TSVM | avançado
+Nas duas luas, com 6 rótulos, `gamma = 5`, `C = 10` e 30 sorteios, varie o peso final dos exemplos sem rótulo `Cu_final` em 0,01, 0,1, 1 e 10. Reporte a acurácia média do TSVM, o ganho sobre a SVM só com rotulados e as vitórias e derrotas.
+
+*Pergunta:* qual o efeito de dar peso demais ou de menos aos exemplos sem rótulo?
+@@SOL
+```python
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.datasets import make_moons
+from sklearn.model_selection import train_test_split
+
+def tsvm(X, y_parcial, C=10.0, gamma=1.0, Cu_final=1.0, passos=5, max_trocas=40, prop_pos=None, balancear=True):
+    """TSVM simplificado, inspirado em Joachims (1999). Rótulos 0/1; -1 = sem rótulo.
+    1) treina uma SVM só com os rotulados e dá rótulos provisórios aos demais, respeitando a proporção de positivos;
+    2) aumenta aos poucos o peso Cu dos exemplos sem rótulo e, a cada passo, troca o rótulo de pares que violam a margem."""
+    rot = np.where(y_parcial != -1)[0]; sem = np.where(y_parcial == -1)[0]
+    Xl, yl = X[rot], 2 * y_parcial[rot] - 1; Xu = X[sem]
+    if prop_pos is None: prop_pos = np.mean(yl == 1)
+    m = SVC(C=C, kernel="rbf", gamma=gamma).fit(Xl, yl)
+    f = m.decision_function(Xu)
+    if balancear:
+        yu = -np.ones(len(sem)); yu[np.argsort(-f)[:int(round(prop_pos * len(sem)))]] = 1      # proporção fixa de positivos
+    else:
+        yu = np.where(f > 0, 1.0, -1.0)
+    Xa = np.vstack([Xl, Xu])
+    for Cu in np.geomspace(Cu_final / 100, Cu_final, passos):                                   # peso crescente dos sem rótulo
+        for _ in range(max_trocas):
+            sw = np.r_[np.ones(len(rot)), np.full(len(sem), Cu)]
+            m = SVC(C=C, kernel="rbf", gamma=gamma).fit(Xa, np.r_[yl, yu], sample_weight=sw)
+            folga = np.maximum(0, 1 - yu * m.decision_function(Xu))                              # quanto cada exemplo viola a margem
+            pos = np.where((yu == 1) & (folga > 0))[0]; neg = np.where((yu == -1) & (folga > 0))[0]
+            if len(pos) == 0 or len(neg) == 0: break
+            i, j = pos[np.argmax(folga[pos])], neg[np.argmax(folga[neg])]
+            if folga[i] + folga[j] <= 2: break                                                   # trocar não compensa
+            yu[i], yu[j] = -1, 1                                                                 # troca os rótulos do par
+    return m
+
+print("Cu final | TSVM | ganho (p.p.) | melhor/pior em 30")
+base = []
+for cu in [0.01, 0.1, 1.0, 10.0]:
+    a, b = [], []
+    for s in range(30):
+        X, y = make_moons(300, noise=0.1, random_state=s); X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.4, random_state=s)
+        r = np.random.RandomState(s); idx = np.r_[r.choice(np.where(y_tr == 0)[0], 3, replace=False), r.choice(np.where(y_tr == 1)[0], 3, replace=False)]
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        a.append(SVC(C=10, gamma=5).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        b.append(np.mean(tsvm(X_tr, yp, C=10, gamma=5, Cu_final=cu).predict(X_te) == 2 * y_te - 1))
+    d = np.array(b) - np.array(a)
+    print(f"{cu:8.2f} | {100 * np.mean(b):4.1f}% | {100 * d.mean():+11.1f} | {(d > 0).sum()}/{(d < 0).sum()}")
+```
+@@NOTE O ganho foi o maior com o peso mais baixo (+13,7 p.p. com Cu = 0,01 e +13,6 com 0,1) e diminuiu para +11,7 com 1 e +9,2 com 10. Aqui, um peso alto para os exemplos sem rótulo deixou os rótulos provisórios (que podem estar errados) dominarem. Mesmo assim, em todos os pesos houve ganho. Os valores do capítulo (Cu = 1) não são os melhores nesta base, e o melhor peso depende dos dados.
+@@EX 5 | Proporção de classes errada | avançado
+Nas duas luas (classes 50% e 50%), 6 rótulos, `gamma = 5`, rode o TSVM informando uma proporção de positivos de 0,2, 0,35, 0,5, 0,65 e 0,8 (argumento `prop_pos`). Use 30 sorteios.
+
+*Pergunta:* o TSVM é robusto a uma proporção de classes errada?
+@@SOL
+```python
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.datasets import make_moons
+from sklearn.model_selection import train_test_split
+
+def tsvm(X, y_parcial, C=10.0, gamma=1.0, Cu_final=1.0, passos=5, max_trocas=40, prop_pos=None, balancear=True):
+    """TSVM simplificado, inspirado em Joachims (1999). Rótulos 0/1; -1 = sem rótulo.
+    1) treina uma SVM só com os rotulados e dá rótulos provisórios aos demais, respeitando a proporção de positivos;
+    2) aumenta aos poucos o peso Cu dos exemplos sem rótulo e, a cada passo, troca o rótulo de pares que violam a margem."""
+    rot = np.where(y_parcial != -1)[0]; sem = np.where(y_parcial == -1)[0]
+    Xl, yl = X[rot], 2 * y_parcial[rot] - 1; Xu = X[sem]
+    if prop_pos is None: prop_pos = np.mean(yl == 1)
+    m = SVC(C=C, kernel="rbf", gamma=gamma).fit(Xl, yl)
+    f = m.decision_function(Xu)
+    if balancear:
+        yu = -np.ones(len(sem)); yu[np.argsort(-f)[:int(round(prop_pos * len(sem)))]] = 1      # proporção fixa de positivos
+    else:
+        yu = np.where(f > 0, 1.0, -1.0)
+    Xa = np.vstack([Xl, Xu])
+    for Cu in np.geomspace(Cu_final / 100, Cu_final, passos):                                   # peso crescente dos sem rótulo
+        for _ in range(max_trocas):
+            sw = np.r_[np.ones(len(rot)), np.full(len(sem), Cu)]
+            m = SVC(C=C, kernel="rbf", gamma=gamma).fit(Xa, np.r_[yl, yu], sample_weight=sw)
+            folga = np.maximum(0, 1 - yu * m.decision_function(Xu))                              # quanto cada exemplo viola a margem
+            pos = np.where((yu == 1) & (folga > 0))[0]; neg = np.where((yu == -1) & (folga > 0))[0]
+            if len(pos) == 0 or len(neg) == 0: break
+            i, j = pos[np.argmax(folga[pos])], neg[np.argmax(folga[neg])]
+            if folga[i] + folga[j] <= 2: break                                                   # trocar não compensa
+            yu[i], yu[j] = -1, 1                                                                 # troca os rótulos do par
+    return m
+
+print("proporção informada | TSVM | ganho sobre a SVM só rotulados (p.p.)")
+for prop in [0.2, 0.35, 0.5, 0.65, 0.8]:
+    a, b = [], []
+    for s in range(30):
+        X, y = make_moons(300, noise=0.1, random_state=s); X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.4, random_state=s)
+        r = np.random.RandomState(s); idx = np.r_[r.choice(np.where(y_tr == 0)[0], 3, replace=False), r.choice(np.where(y_tr == 1)[0], 3, replace=False)]
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        a.append(SVC(C=10, gamma=5).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        b.append(np.mean(tsvm(X_tr, yp, C=10, gamma=5, Cu_final=1.0, prop_pos=prop).predict(X_te) == 2 * y_te - 1))
+    print(f"{prop:19.2f} | {100 * np.mean(b):4.1f}% | {100 * (np.mean(b) - np.mean(a)):+.1f}")
+```
+@@NOTE O ganho é máximo com a proporção verdadeira (0,5): +11,7 p.p. Com 0,35 e 0,65, cai para +1,7 e +3,7. Com 0,2 ou 0,8, o TSVM **piora**: -10,5 e -9,9 p.p. O TSVM é, portanto, **sensível** à proporção informada. Em problemas reais, a proporção de classes raramente é conhecida com exatidão, e esse é um risco que precisa ser avaliado.
+@@PROJ Painel de baixa densidade: SVM, TSVM e entropia em três bases | Cap07
+**Fontes dos dados.** Duas luas (simuladas), *Breast Cancer Wisconsin (Diagnostic)* e *Optical Recognition of Handwritten Digits*, dígitos 3 e 8 (UCI, incluídos no scikit-learn).
+
+**Contexto.** Sua equipe quer um **painel** que compare, nas mesmas bases, a SVM só com rotulados, o TSVM e a regressão logística com minimização de entropia, e que meça também **quantos exemplos sem rótulo ficam dentro da margem** da SVM inicial (|f| < 1), um indício de que há "dúvida" a ser resolvida.
+
+**Tarefas.**
+1. Para cada base (luas com 6 rótulos; Breast Cancer com 10; dígitos 3 e 8 com 6), padronize (exceto as luas), use `gamma` = 1 / (n_atributos × variância) nas bases reais (e 5 nas luas), C = 10, `Cu_final` = 1, lambda = 0,3 e 20 sorteios.
+2. Calcule a acurácia de cada método, o ganho do TSVM e da entropia sobre a SVM e a fração média de exemplos sem rótulo dentro da margem da SVM inicial.
+3. Faça uma tabela e escreva uma recomendação (8 a 10 linhas): em qual base a baixa densidade parece promissora? A fração de exemplos dentro da margem previu onde houve ganho?
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from scipy.optimize import minimize
+from sklearn.svm import SVC
+from sklearn.datasets import make_moons, load_breast_cancer, load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+def tsvm(X, y_parcial, C=10.0, gamma=1.0, Cu_final=1.0, passos=5, max_trocas=40, prop_pos=None, balancear=True):
+    """TSVM simplificado, inspirado em Joachims (1999). Rótulos 0/1; -1 = sem rótulo.
+    1) treina uma SVM só com os rotulados e dá rótulos provisórios aos demais, respeitando a proporção de positivos;
+    2) aumenta aos poucos o peso Cu dos exemplos sem rótulo e, a cada passo, troca o rótulo de pares que violam a margem."""
+    rot = np.where(y_parcial != -1)[0]; sem = np.where(y_parcial == -1)[0]
+    Xl, yl = X[rot], 2 * y_parcial[rot] - 1; Xu = X[sem]
+    if prop_pos is None: prop_pos = np.mean(yl == 1)
+    m = SVC(C=C, kernel="rbf", gamma=gamma).fit(Xl, yl)
+    f = m.decision_function(Xu)
+    if balancear:
+        yu = -np.ones(len(sem)); yu[np.argsort(-f)[:int(round(prop_pos * len(sem)))]] = 1      # proporção fixa de positivos
+    else:
+        yu = np.where(f > 0, 1.0, -1.0)
+    Xa = np.vstack([Xl, Xu])
+    for Cu in np.geomspace(Cu_final / 100, Cu_final, passos):                                   # peso crescente dos sem rótulo
+        for _ in range(max_trocas):
+            sw = np.r_[np.ones(len(rot)), np.full(len(sem), Cu)]
+            m = SVC(C=C, kernel="rbf", gamma=gamma).fit(Xa, np.r_[yl, yu], sample_weight=sw)
+            folga = np.maximum(0, 1 - yu * m.decision_function(Xu))                              # quanto cada exemplo viola a margem
+            pos = np.where((yu == 1) & (folga > 0))[0]; neg = np.where((yu == -1) & (folga > 0))[0]
+            if len(pos) == 0 or len(neg) == 0: break
+            i, j = pos[np.argmax(folga[pos])], neg[np.argmax(folga[neg])]
+            if folga[i] + folga[j] <= 2: break                                                   # trocar não compensa
+            yu[i], yu[j] = -1, 1                                                                 # troca os rótulos do par
+    return m
+
+def sigmoide(z): return 1 / (1 + np.exp(-np.clip(z, -30, 30)))
+
+def logistica_entropia(X, y_parcial, lam=1.0, l2=1.0, w0=None):
+    """Regressão logística binária que minimiza: perda logística nos rotulados + lam * entropia das previsões nos sem rótulo + l2 * ||w||^2 (Grandvalet e Bengio, 2004)."""
+    rot = y_parcial != -1; Xa = np.c_[X, np.ones(len(X))]
+    def objetivo(w):
+        z = Xa @ w; p = sigmoide(z)
+        perda = -np.sum(y_parcial[rot] * np.log(p[rot] + 1e-12) + (1 - y_parcial[rot]) * np.log(1 - p[rot] + 1e-12))
+        ent = -np.sum(p[~rot] * np.log(p[~rot] + 1e-12) + (1 - p[~rot]) * np.log(1 - p[~rot] + 1e-12))
+        g = Xa[rot].T @ (p[rot] - y_parcial[rot]) + lam * Xa[~rot].T @ (-z[~rot] * p[~rot] * (1 - p[~rot])) + 2 * l2 * np.r_[w[:-1], 0]
+        return perda + lam * ent + l2 * np.sum(w[:-1] ** 2), g
+    w0 = np.zeros(Xa.shape[1]) if w0 is None else w0
+    return minimize(objetivo, w0, jac=True, method="L-BFGS-B").x
+
+def painel(nome, X, y, n_rot, gamma=None, padronizar=True, sementes=20):
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.4, stratify=y, random_state=0)
+    if padronizar:
+        esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+    g = gamma if gamma is not None else 1 / (X_tr.shape[1] * X_tr.var())
+    base, ts, en, dentro = [], [], [], []
+    for s in range(sementes):
+        r = np.random.RandomState(s)
+        idx = np.concatenate([r.choice(np.where(y_tr == c)[0], n_rot // 2, replace=False) for c in (0, 1)])
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        m = SVC(C=10, gamma=g).fit(X_tr[idx], y_tr[idx]); base.append(m.score(X_te, y_te))
+        sem = yp == -1; dentro.append(np.mean(np.abs(m.decision_function(X_tr[sem])) < 1))
+        ts.append(np.mean(tsvm(X_tr, yp, C=10, gamma=g, Cu_final=1.0).predict(X_te) == 2 * y_te - 1))
+        w = logistica_entropia(X_tr, yp, lam=0.3, l2=1.0); en.append(np.mean((np.c_[X_te, np.ones(len(X_te))] @ w > 0) == y_te))
+    base, ts, en = map(np.array, (base, ts, en))
+    return {"base": nome, "SVM (%)": round(100 * base.mean(), 1), "TSVM (%)": round(100 * ts.mean(), 1), "ganho TSVM": round(100 * (ts - base).mean(), 1),
+            "entropia (%)": round(100 * en.mean(), 1), "ganho entropia": round(100 * (en - base).mean(), 1), "sem rótulo na margem (%)": round(100 * np.mean(dentro), 0)}
+
+Xl, yl = make_moons(400, noise=0.1, random_state=0)
+Xc, yc = load_breast_cancer(return_X_y=True)
+Xd, yd = load_digits(return_X_y=True); par = np.isin(yd, [3, 8]); Xd, yd = Xd[par], (yd[par] == 8).astype(int)
+linhas = [painel("duas luas", Xl, yl, 6, gamma=5.0, padronizar=False), painel("Breast Cancer", Xc, yc, 10), painel("dígitos 3 e 8", Xd, yd, 6)]
+print(pd.DataFrame(linhas).to_string(index=False))
+```
+@@RUBRICA
+- O teste foi separado antes; a padronização foi ajustada no treino; os sorteios de rótulos são repetidos.
+- A SVM, o TSVM e a entropia são comparados nos mesmos sorteios, com ganhos sobre a SVM.
+- A fração de exemplos sem rótulo dentro da margem é calculada com a SVM inicial, só com os rotulados.
+- A tabela é clara e a recomendação é coerente com os números, inclusive onde os métodos não ajudaram.
+- O texto discute limites (a regressão logística é linear, por isso falha nas duas luas; a proporção de classes é suposta conhecida).
+@@NOTE Nas duas luas, o TSVM ganha 8,3 p.p. e a regressão logística com entropia colapsa para 50% (-29,3 p.p.), pois um modelo linear não separa as duas luas. No Breast Cancer, o TSVM piora (-4,6 p.p., pela proporção de classes dos rotulados, 50%, diferente da real, 63%) e a entropia ganha 2,4 p.p. Nos dígitos 3 e 8, ambos ganham muito (+7,3 e +7,7 p.p.). A fração de exemplos sem rótulo dentro da margem (94%, 81% e 100%) **não previu** os ganhos: o Breast Cancer tem 81% dentro da margem e o TSVM piorou. Conclusão: essa fração indica que existe dúvida a resolver, mas não garante que o método a resolva bem.
+@@ALEM
+- **UCI:** Breast Cancer Wisconsin, Optical Recognition of Handwritten Digits, Ionosphere, Sonar e Spambase.
+- **Kaggle:** Digit Recognizer.

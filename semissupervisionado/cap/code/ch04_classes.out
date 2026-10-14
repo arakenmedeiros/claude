@@ -1,0 +1,6 @@
+pseudo-rótulos por classe (média de 10 sorteios; o ideal seria ~120 por dígito; zeros = nenhum atingiu o limiar)
+modelo base             |    0    1    2    3    4    5    6    7    8    9 | acerto dos pseudo-rótulos
+Regressão logística     |  118  129  112  115  115  115  121  120   86  122 |  92.4%
+k vizinhos (k=5)        |  125   31  103  111   90   91  158  111   32    0 |  82.0%
+Floresta aleatória      |    0    0    0    0    0    0    0    0    0    0 |    —
+SVM (probability=True)  |    0    0    0    0    0    0    0    0    0    0 |    —

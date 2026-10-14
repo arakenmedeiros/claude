@@ -66,3 +66,42 @@ Verdadeiro negativo (VN): exemplo negativo previsto como negativo.
 Verdadeiro positivo (VP): exemplo positivo previsto como positivo.
 Viés de confirmação: reforço dos próprios erros por um modelo que aprende com seus pseudo-rótulos.
 Vizinho mais próximo: o exemplo com menor distância a um ponto de referência.
+Calibração: propriedade de um modelo cuja confiança corresponde à frequência real de acerto.
+Confiança: maior probabilidade que o modelo atribui entre as classes para um exemplo.
+Envoltório (wrapper): método que usa qualquer classificador dentro de um laço, como o self-training.
+Limiar de confiança: confiança mínima exigida para aceitar um pseudo-rótulo.
+Rodada: uma passagem completa do laço de self-training.
+Co-training (co-treinamento): método com dois classificadores treinados em visões diferentes que se ensinam mutuamente.
+Independência condicional: duas informações são independentes quando já se conhece a classe; saber uma não ajuda a prever a outra.
+Suficiência (de uma visão): propriedade de uma visão que, sozinha, basta para classificar bem.
+Tri-training: método de três classificadores em que um exemplo ganha pseudo-rótulo quando dois deles concordam.
+Visão (view): um dos conjuntos de atributos, distintos e complementares, que descrevem o mesmo exemplo.
+Bootstrap: amostra sorteada com reposição do conjunto de treino.
+Algoritmo EM (Expectation-Maximization): procedimento iterativo que alterna estimar probabilidades de classe (passo E) e reestimar parâmetros do modelo (passo M).
+BIC (critério de informação bayesiano): medida que equilibra ajuste e complexidade de um modelo; menor é melhor.
+Classificador generativo: modelo que descreve como cada classe gera os dados, com p(x | y) e p(y), e classifica pela regra de Bayes.
+Classificador discriminativo: modelo que estima diretamente p(y | x) ou a fronteira entre classes.
+Cluster-e-rotula: estratégia que agrupa todos os dados e dá a cada grupo a classe mais votada entre os rotulados dele.
+Covariância: medida de como dois atributos variam juntos; uma matriz de covariância descreve a forma de uma gaussiana.
+Log-verossimilhança: logaritmo da probabilidade que o modelo atribui aos dados; quanto maior, melhor o ajuste.
+Mistura de gaussianas (GMM): modelo em que os dados vêm de várias curvas normais combinadas.
+Naive Bayes: classificador generativo que supõe os atributos independentes dada a classe.
+Responsabilidade: probabilidade de um exemplo pertencer a cada componente, calculada no passo E.
+Entropia (de uma previsão): medida de incerteza; é máxima quando as classes são igualmente prováveis e zero quando há certeza.
+Margem: distância entre a fronteira de decisão e os exemplos mais próximos de cada classe.
+Minimização de entropia: técnica que penaliza previsões incertas nos exemplos sem rótulo, empurrando a fronteira para regiões de baixa densidade.
+Perda hinge: perda das SVM, max(0, 1 - y f(x)), que penaliza exemplos dentro da margem ou do lado errado.
+S3VM (SVM semissupervisionada): SVM que também exige que a margem evite os exemplos sem rótulo.
+SVM (máquina de vetores de suporte): classificador que busca a fronteira de maior margem.
+TSVM (SVM transdutiva): S3VM de Joachims, que atribui rótulos provisórios aos exemplos sem rótulo e os revisa por trocas.
+Vetores de suporte: exemplos que estão sobre a margem ou a violam e que determinam a fronteira da SVM.
+Aresta: ligação entre dois nós de um grafo; nos métodos de grafos, liga exemplos parecidos.
+Clamping (fixação): manter os rótulos conhecidos inalterados durante a propagação.
+Componente conexo: conjunto de nós de um grafo ligados entre si, sem ligação com os demais.
+GNN (rede neural de grafos): rede que combina, em cada nó, os atributos dos vizinhos com pesos aprendidos.
+Label Propagation: método em grafos em que cada nó recebe a média dos rótulos dos vizinhos, com os rótulos conhecidos fixos.
+Label Spreading: variante da propagação com matriz normalizada e parâmetro alpha, em que os rótulos conhecidos podem mudar.
+Matriz de transição: matriz que dá a probabilidade de "passar" de um nó a outro, obtida normalizando os pesos das arestas.
+Nó (vértice): ponto de um grafo; nos métodos semissupervisionados, cada exemplo é um nó.
+Pureza das arestas: fração das arestas de um grafo que ligam exemplos da mesma classe.
+Ponte: aresta que liga exemplos de classes diferentes e propaga rótulos errados.

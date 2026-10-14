@@ -591,222 +591,1087 @@
  },
  {
   "level": 1,
-  "text": "Apêndice A — Gabarito dos exercícios",
+  "text": "Parte II — Métodos Clássicos",
   "id": "h119"
  },
  {
   "level": 2,
-  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "text": "Capítulo 4 — Self-training: Aprendendo com os Próprios Palpites",
   "id": "h120"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "4.1 Uma história para começar",
   "id": "h121"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "4.2 A ideia em uma figura",
   "id": "h122"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "level": 3,
+  "text": "4.3 Implementando do zero",
   "id": "h123"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "4.3.1 Um exemplo visual",
   "id": "h124"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "4.4 O SelfTrainingClassifier do scikit-learn",
   "id": "h125"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "level": 3,
+  "text": "4.5 A confiança é tudo",
   "id": "h126"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "4.5.1 O limiar",
   "id": "h127"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "4.5.2 A calibração",
   "id": "h128"
  },
  {
-  "level": 1,
-  "text": "Apêndice B — Glossário",
+  "level": 3,
+  "text": "4.6 O classificador-base faz toda a diferença",
   "id": "h129"
  },
  {
-  "level": 1,
-  "text": "Apêndice C — Guia rápido de classes, convenções e protocolo",
+  "level": 3,
+  "text": "4.7 Em bases reais da UCI",
   "id": "h130"
  },
  {
-  "level": 3,
-  "text": "C.1 Convenções do scikit-learn para dados sem rótulo",
+  "level": 4,
+  "text": "4.7.1 E se os rótulos iniciais tiverem erros?",
   "id": "h131"
  },
  {
   "level": 3,
-  "text": "C.2 Classes semissupervisionadas e parâmetros principais",
+  "text": "4.8 Variantes e extensões",
   "id": "h132"
  },
  {
-  "level": 3,
-  "text": "C.3 Receita: comparar com o modelo de referência",
+  "level": 4,
+  "text": "4.8.1 Um exemplo clássico: Yarowsky",
   "id": "h133"
  },
  {
   "level": 3,
-  "text": "C.4 Lista de verificação de uma avaliação honesta",
+  "text": "4.9 Boas práticas",
   "id": "h134"
  },
  {
   "level": 3,
-  "text": "C.5 Escolhendo as primeiras ações",
+  "text": "4.10 Resumo do capítulo",
   "id": "h135"
  },
  {
-  "level": 1,
-  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "level": 3,
+  "text": "4.11 Para ler mais",
   "id": "h136"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h137"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Escondendo rótulos no Breast Cancer Wisconsin",
+  "text": "Exercícios discursivos",
   "id": "h138"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — O modelo de referência supervisionado",
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h139"
  },
  {
-  "level": 3,
-  "text": "Exercício 3 — Primeiro método semissupervisionado",
+  "level": 4,
+  "text": "Exercício 1 — Self-training manual no Wine",
   "id": "h140"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Quantas vezes o método semissupervisionado vence?",
+  "level": 4,
+  "text": "Exercício 2 — O limiar no Breast Cancer",
   "id": "h141"
  },
  {
-  "level": 3,
-  "text": "Exercício 5 — Sensibilidade aos parâmetros no Digits",
+  "level": 4,
+  "text": "Exercício 3 — Cinco classificadores-base no Wine",
   "id": "h142"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "level": 4,
+  "text": "Exercício 4 — Quão confiável é a confiança?",
   "id": "h143"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — NumPy e pandas com o conjunto Wine",
+  "level": 4,
+  "text": "Exercício 5 — Limiar decrescente (currículo)",
   "id": "h144"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Quem é o vizinho mais próximo? O efeito da escala",
+  "text": "Projeto integrador do capítulo",
   "id": "h145"
  },
  {
-  "level": 3,
-  "text": "Exercício 3 — Uma curva normal por classe",
+  "level": 4,
+  "text": "Auditoria de um self-training e seleção balanceada por classe",
   "id": "h146"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Escolhendo k com validação cruzada",
+  "level": 2,
+  "text": "Capítulo 5 — Co-training: Dois Olhares Valem Mais que Um",
   "id": "h147"
  },
  {
   "level": 3,
-  "text": "Exercício 5 — Caçando o vazamento",
+  "text": "5.1 Uma história para começar",
   "id": "h148"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "level": 3,
+  "text": "5.2 O que é uma visão?",
   "id": "h149"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — O termômetro da suavidade: vizinhos de mesma classe",
+  "text": "5.3 As duas condições",
   "id": "h150"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Quanto ruído a suposição de agrupamento aguenta?",
+  "text": "5.4 O algoritmo",
   "id": "h151"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Quantos exemplos sem rótulo, com 20 rótulos?",
+  "text": "5.5 Um experimento com o Digits",
   "id": "h152"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Uma \"dose\" de intrusos",
+  "text": "5.6 O que a independência muda",
   "id": "h153"
  },
  {
   "level": 3,
-  "text": "Exercício 5 — Transdutivo ou indutivo: transduction_ versus predict",
+  "text": "5.7 Texto: duas formas de ler uma mensagem",
   "id": "h154"
  },
  {
-  "level": 1,
-  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "level": 3,
+  "text": "5.8 Tri-training: sem visões",
   "id": "h155"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "level": 3,
+  "text": "5.9 Quando usar co-training?",
   "id": "h156"
  },
  {
   "level": 3,
-  "text": "Vale a pena usar os dados sem rótulo? Um relatório com evidências",
+  "text": "5.10 Para além do co-training clássico",
   "id": "h157"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "level": 3,
+  "text": "5.11 Resumo do capítulo",
   "id": "h158"
  },
  {
   "level": 3,
-  "text": "Montando a bancada de testes semissupervisionados",
+  "text": "5.12 Para ler mais",
   "id": "h159"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h160"
  },
  {
   "level": 3,
-  "text": "Diagnóstico de viabilidade: vale a pena semissupervisionar este conjunto?",
+  "text": "Exercícios discursivos",
   "id": "h161"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h162"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Visões naturais no Breast Cancer: elas bastam?",
+  "id": "h163"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Co-training no Breast Cancer",
+  "id": "h164"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Medindo a dependência entre visões",
+  "id": "h165"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Tri-training com classificadores diferentes",
+  "id": "h166"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 5 — Uma visão de metadados no SMS",
+  "id": "h167"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h168"
+ },
+ {
+  "level": 4,
+  "text": "Diagnóstico de viabilidade do co-training",
+  "id": "h169"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Modelos Generativos e o Algoritmo EM",
+  "id": "h170"
+ },
+ {
+  "level": 3,
+  "text": "6.1 Uma história para começar",
+  "id": "h171"
+ },
+ {
+  "level": 3,
+  "text": "6.2 Generativo ou discriminativo?",
+  "id": "h172"
+ },
+ {
+  "level": 3,
+  "text": "6.3 A mistura de gaussianas",
+  "id": "h173"
+ },
+ {
+  "level": 3,
+  "text": "6.4 O algoritmo EM",
+  "id": "h174"
+ },
+ {
+  "level": 4,
+  "text": "6.4.1 Implementando do zero",
+  "id": "h175"
+ },
+ {
+  "level": 3,
+  "text": "6.5 Quando a suposição falha",
+  "id": "h176"
+ },
+ {
+  "level": 3,
+  "text": "6.6 Texto: Naive Bayes com EM",
+  "id": "h177"
+ },
+ {
+  "level": 3,
+  "text": "6.7 O GMM do scikit-learn e o \"cluster-e-rotula\"",
+  "id": "h178"
+ },
+ {
+  "level": 3,
+  "text": "6.8 Escolhas práticas",
+  "id": "h179"
+ },
+ {
+  "level": 3,
+  "text": "6.9 Resumo do capítulo",
+  "id": "h180"
+ },
+ {
+  "level": 3,
+  "text": "6.10 Para ler mais",
+  "id": "h181"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h182"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h183"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h184"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — GMM não supervisionado no Iris e o BIC",
+  "id": "h185"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — EM semissupervisionado no Wine",
+  "id": "h186"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — NB + EM com mais rótulos",
+  "id": "h187"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Quantas componentes? O BIC no Digits",
+  "id": "h188"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 5 — EM mole e EM duro",
+  "id": "h189"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h190"
+ },
+ {
+  "level": 4,
+  "text": "Generativo ou discriminativo? A curva de aprendizado com poucos rótulos",
+  "id": "h191"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Separação por Baixa Densidade: S3VM, TSVM e Entropia",
+  "id": "h192"
+ },
+ {
+  "level": 3,
+  "text": "7.1 Uma história para começar",
+  "id": "h193"
+ },
+ {
+  "level": 3,
+  "text": "7.2 A SVM em cinco minutos",
+  "id": "h194"
+ },
+ {
+  "level": 3,
+  "text": "7.3 A SVM semissupervisionada (S3VM)",
+  "id": "h195"
+ },
+ {
+  "level": 3,
+  "text": "7.4 O TSVM e uma implementação simplificada",
+  "id": "h196"
+ },
+ {
+  "level": 3,
+  "text": "7.5 A proporção de classes e a suposição",
+  "id": "h197"
+ },
+ {
+  "level": 3,
+  "text": "7.6 Minimização de entropia",
+  "id": "h198"
+ },
+ {
+  "level": 3,
+  "text": "7.7 Boas práticas",
+  "id": "h199"
+ },
+ {
+  "level": 3,
+  "text": "7.8 Resumo do capítulo",
+  "id": "h200"
+ },
+ {
+  "level": 3,
+  "text": "7.9 Para ler mais",
+  "id": "h201"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h202"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h203"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h204"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — O efeito de C e gamma com poucos rótulos",
+  "id": "h205"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — TSVM no Breast Cancer",
+  "id": "h206"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Minimização de entropia no Breast Cancer",
+  "id": "h207"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — O peso C do TSVM",
+  "id": "h208"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 5 — Proporção de classes errada",
+  "id": "h209"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h210"
+ },
+ {
+  "level": 4,
+  "text": "Painel de baixa densidade: SVM, TSVM e entropia em três bases",
+  "id": "h211"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Métodos em Grafos: Label Propagation e Label Spreading",
+  "id": "h212"
+ },
+ {
+  "level": 3,
+  "text": "8.1 Uma história para começar",
+  "id": "h213"
+ },
+ {
+  "level": 3,
+  "text": "8.2 Dados como um grafo",
+  "id": "h214"
+ },
+ {
+  "level": 3,
+  "text": "8.3 Label Propagation",
+  "id": "h215"
+ },
+ {
+  "level": 4,
+  "text": "8.3.1 Implementando do zero",
+  "id": "h216"
+ },
+ {
+  "level": 3,
+  "text": "8.4 Label Spreading",
+  "id": "h217"
+ },
+ {
+  "level": 3,
+  "text": "8.5 O grafo decide tudo",
+  "id": "h218"
+ },
+ {
+  "level": 4,
+  "text": "8.5.1 O parâmetro alpha",
+  "id": "h219"
+ },
+ {
+  "level": 4,
+  "text": "8.5.2 O kernel RBF e o perigo do valor padrão",
+  "id": "h220"
+ },
+ {
+  "level": 3,
+  "text": "8.6 Rótulos errados: surpresa",
+  "id": "h221"
+ },
+ {
+  "level": 3,
+  "text": "8.7 Um conjunto maior: MNIST",
+  "id": "h222"
+ },
+ {
+  "level": 3,
+  "text": "8.8 Como usar bem",
+  "id": "h223"
+ },
+ {
+  "level": 3,
+  "text": "8.9 Das propagações às redes neurais de grafos",
+  "id": "h224"
+ },
+ {
+  "level": 3,
+  "text": "8.10 Resumo do capítulo",
+  "id": "h225"
+ },
+ {
+  "level": 3,
+  "text": "8.11 Para ler mais",
+  "id": "h226"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h227"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h228"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h229"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Construindo o grafo: componentes e pureza no Iris e no Wine",
+  "id": "h230"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Propagation e Spreading no Wine",
+  "id": "h231"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Pureza, conectividade e acurácia no Breast Cancer",
+  "id": "h232"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — O gamma do kernel RBF depois de padronizar",
+  "id": "h233"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 5 — Abster-se quando a confiança é baixa",
+  "id": "h234"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h235"
+ },
+ {
+  "level": 4,
+  "text": "Rotulando roupas com 100 rótulos: um painel no Fashion-MNIST",
+  "id": "h236"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito dos exercícios",
+  "id": "h237"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "id": "h238"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h239"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h240"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "id": "h241"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h242"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h243"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "id": "h244"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h245"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h246"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Self-training",
+  "id": "h247"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h248"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h249"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Co-training",
+  "id": "h250"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h251"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h252"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Modelos Generativos e o Algoritmo EM",
+  "id": "h253"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h254"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h255"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Separação por Baixa Densidade",
+  "id": "h256"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h257"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h258"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Métodos em Grafos",
+  "id": "h259"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h260"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h261"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice B — Glossário",
+  "id": "h262"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice C — Guia rápido de classes, convenções e protocolo",
+  "id": "h263"
+ },
+ {
+  "level": 3,
+  "text": "C.1 Convenções do scikit-learn para dados sem rótulo",
+  "id": "h264"
+ },
+ {
+  "level": 3,
+  "text": "C.2 Classes semissupervisionadas e parâmetros principais",
+  "id": "h265"
+ },
+ {
+  "level": 3,
+  "text": "C.3 Receita: comparar com o modelo de referência",
+  "id": "h266"
+ },
+ {
+  "level": 3,
+  "text": "C.4 Lista de verificação de uma avaliação honesta",
+  "id": "h267"
+ },
+ {
+  "level": 3,
+  "text": "C.5 Escolhendo as primeiras ações",
+  "id": "h268"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h269"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "id": "h270"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Escondendo rótulos no Breast Cancer Wisconsin",
+  "id": "h271"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — O modelo de referência supervisionado",
+  "id": "h272"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Primeiro método semissupervisionado",
+  "id": "h273"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quantas vezes o método semissupervisionado vence?",
+  "id": "h274"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Sensibilidade aos parâmetros no Digits",
+  "id": "h275"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "id": "h276"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — NumPy e pandas com o conjunto Wine",
+  "id": "h277"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quem é o vizinho mais próximo? O efeito da escala",
+  "id": "h278"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Uma curva normal por classe",
+  "id": "h279"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Escolhendo k com validação cruzada",
+  "id": "h280"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Caçando o vazamento",
+  "id": "h281"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "id": "h282"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — O termômetro da suavidade: vizinhos de mesma classe",
+  "id": "h283"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quanto ruído a suposição de agrupamento aguenta?",
+  "id": "h284"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Quantos exemplos sem rótulo, com 20 rótulos?",
+  "id": "h285"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Uma \"dose\" de intrusos",
+  "id": "h286"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Transdutivo ou indutivo: transduction_ versus predict",
+  "id": "h287"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Self-training",
+  "id": "h288"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Self-training manual no Wine",
+  "id": "h289"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — O limiar no Breast Cancer",
+  "id": "h290"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Cinco classificadores-base no Wine",
+  "id": "h291"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quão confiável é a confiança?",
+  "id": "h292"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Limiar decrescente (currículo)",
+  "id": "h293"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Co-training",
+  "id": "h294"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Visões naturais no Breast Cancer: elas bastam?",
+  "id": "h295"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Co-training no Breast Cancer",
+  "id": "h296"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Medindo a dependência entre visões",
+  "id": "h297"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Tri-training com classificadores diferentes",
+  "id": "h298"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Uma visão de metadados no SMS",
+  "id": "h299"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Modelos Generativos e o Algoritmo EM",
+  "id": "h300"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — GMM não supervisionado no Iris e o BIC",
+  "id": "h301"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — EM semissupervisionado no Wine",
+  "id": "h302"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — NB + EM com mais rótulos",
+  "id": "h303"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quantas componentes? O BIC no Digits",
+  "id": "h304"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — EM mole e EM duro",
+  "id": "h305"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Separação por Baixa Densidade",
+  "id": "h306"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — O efeito de C e gamma com poucos rótulos",
+  "id": "h307"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — TSVM no Breast Cancer",
+  "id": "h308"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Minimização de entropia no Breast Cancer",
+  "id": "h309"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — O peso C do TSVM",
+  "id": "h310"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Proporção de classes errada",
+  "id": "h311"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Métodos em Grafos",
+  "id": "h312"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Construindo o grafo: componentes e pureza no Iris e no Wine",
+  "id": "h313"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Propagation e Spreading no Wine",
+  "id": "h314"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Pureza, conectividade e acurácia no Breast Cancer",
+  "id": "h315"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — O gamma do kernel RBF depois de padronizar",
+  "id": "h316"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Abster-se quando a confiança é baixa",
+  "id": "h317"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "id": "h318"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "id": "h319"
+ },
+ {
+  "level": 3,
+  "text": "Vale a pena usar os dados sem rótulo? Um relatório com evidências",
+  "id": "h320"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "id": "h321"
+ },
+ {
+  "level": 3,
+  "text": "Montando a bancada de testes semissupervisionados",
+  "id": "h322"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "id": "h323"
+ },
+ {
+  "level": 3,
+  "text": "Diagnóstico de viabilidade: vale a pena semissupervisionar este conjunto?",
+  "id": "h324"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Self-training",
+  "id": "h325"
+ },
+ {
+  "level": 3,
+  "text": "Auditoria de um self-training e seleção balanceada por classe",
+  "id": "h326"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Co-training",
+  "id": "h327"
+ },
+ {
+  "level": 3,
+  "text": "Diagnóstico de viabilidade do co-training",
+  "id": "h328"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Modelos Generativos e o Algoritmo EM",
+  "id": "h329"
+ },
+ {
+  "level": 3,
+  "text": "Generativo ou discriminativo? A curva de aprendizado com poucos rótulos",
+  "id": "h330"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Separação por Baixa Densidade",
+  "id": "h331"
+ },
+ {
+  "level": 3,
+  "text": "Painel de baixa densidade: SVM, TSVM e entropia em três bases",
+  "id": "h332"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Métodos em Grafos",
+  "id": "h333"
+ },
+ {
+  "level": 3,
+  "text": "Rotulando roupas com 100 rótulos: um painel no Fashion-MNIST",
+  "id": "h334"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h162"
+  "id": "h335"
  }
 ]
