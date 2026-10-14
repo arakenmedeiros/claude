@@ -1,0 +1,812 @@
+[
+ {
+  "level": 1,
+  "text": "Apresentação",
+  "id": "h1"
+ },
+ {
+  "level": 3,
+  "text": "Para quem é este livro",
+  "id": "h2"
+ },
+ {
+  "level": 3,
+  "text": "Por que este tema?",
+  "id": "h3"
+ },
+ {
+  "level": 3,
+  "text": "Como o livro está organizado",
+  "id": "h4"
+ },
+ {
+  "level": 3,
+  "text": "Como cada capítulo é construído",
+  "id": "h5"
+ },
+ {
+  "level": 3,
+  "text": "Os quadros coloridos",
+  "id": "h6"
+ },
+ {
+  "level": 3,
+  "text": "Sobre os códigos e as bases de dados",
+  "id": "h7"
+ },
+ {
+  "level": 3,
+  "text": "Sobre as referências",
+  "id": "h8"
+ },
+ {
+  "level": 3,
+  "text": "Uma sugestão de estudo",
+  "id": "h9"
+ },
+ {
+  "level": 1,
+  "text": "Parte I — Fundamentos",
+  "id": "h10"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados: Bem-vindo ao Aprendizado Semissupervisionado",
+  "id": "h11"
+ },
+ {
+  "level": 3,
+  "text": "1.1 Uma história para começar",
+  "id": "h12"
+ },
+ {
+  "level": 3,
+  "text": "1.2 O que é aprender com dados?",
+  "id": "h13"
+ },
+ {
+  "level": 4,
+  "text": "1.2.1 Dois tipos de tarefa supervisionada",
+  "id": "h14"
+ },
+ {
+  "level": 4,
+  "text": "1.2.2 Treino e teste: a honestidade do aprendizado",
+  "id": "h15"
+ },
+ {
+  "level": 3,
+  "text": "1.3 Os grandes paradigmas de aprendizado",
+  "id": "h16"
+ },
+ {
+  "level": 4,
+  "text": "1.3.1 Aprendizado supervisionado",
+  "id": "h17"
+ },
+ {
+  "level": 4,
+  "text": "1.3.2 Aprendizado não supervisionado",
+  "id": "h18"
+ },
+ {
+  "level": 4,
+  "text": "1.3.3 Aprendizado semissupervisionado",
+  "id": "h19"
+ },
+ {
+  "level": 4,
+  "text": "1.3.4 Aprendizado auto-supervisionado",
+  "id": "h20"
+ },
+ {
+  "level": 4,
+  "text": "1.3.5 Aprendizado por reforço",
+  "id": "h21"
+ },
+ {
+  "level": 3,
+  "text": "1.4 O problema: rótulos são caros",
+  "id": "h22"
+ },
+ {
+  "level": 3,
+  "text": "1.5 Definindo o problema com precisão",
+  "id": "h23"
+ },
+ {
+  "level": 4,
+  "text": "1.5.1 Duas versões do problema",
+  "id": "h24"
+ },
+ {
+  "level": 4,
+  "text": "1.5.2 O que significa \"ajudar\"?",
+  "id": "h25"
+ },
+ {
+  "level": 3,
+  "text": "1.6 Seu primeiro experimento: as duas luas",
+  "id": "h26"
+ },
+ {
+  "level": 3,
+  "text": "1.7 Um experimento mais realista: dígitos manuscritos",
+  "id": "h27"
+ },
+ {
+  "level": 3,
+  "text": "1.8 Onde o aprendizado semissupervisionado é usado",
+  "id": "h28"
+ },
+ {
+  "level": 3,
+  "text": "1.9 Os vizinhos do aprendizado semissupervisionado",
+  "id": "h29"
+ },
+ {
+  "level": 3,
+  "text": "1.10 Um pouco de história",
+  "id": "h30"
+ },
+ {
+  "level": 3,
+  "text": "1.11 Como é um projeto semissupervisionado",
+  "id": "h31"
+ },
+ {
+  "level": 3,
+  "text": "1.12 Preparando o ambiente",
+  "id": "h32"
+ },
+ {
+  "level": 4,
+  "text": "1.12.1 A convenção do -1",
+  "id": "h33"
+ },
+ {
+  "level": 3,
+  "text": "1.13 Uma palavra sobre ética e responsabilidade",
+  "id": "h34"
+ },
+ {
+  "level": 3,
+  "text": "1.14 Resumo do capítulo",
+  "id": "h35"
+ },
+ {
+  "level": 3,
+  "text": "1.15 Para ler mais",
+  "id": "h36"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h37"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h38"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h39"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Escondendo rótulos no Breast Cancer Wisconsin",
+  "id": "h40"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — O modelo de referência supervisionado",
+  "id": "h41"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Primeiro método semissupervisionado",
+  "id": "h42"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Quantas vezes o método semissupervisionado vence?",
+  "id": "h43"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 5 — Sensibilidade aos parâmetros no Digits",
+  "id": "h44"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h45"
+ },
+ {
+  "level": 4,
+  "text": "Vale a pena usar os dados sem rótulo? Um relatório com evidências",
+  "id": "h46"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — A Caixa de Ferramentas: Python, Dados, Probabilidade e Avaliação",
+  "id": "h47"
+ },
+ {
+  "level": 3,
+  "text": "2.1 Por que um capítulo de ferramentas?",
+  "id": "h48"
+ },
+ {
+  "level": 3,
+  "text": "2.2 Python em dez minutos",
+  "id": "h49"
+ },
+ {
+  "level": 4,
+  "text": "2.2.1 Variáveis, listas e funções",
+  "id": "h50"
+ },
+ {
+  "level": 4,
+  "text": "2.2.2 Importando bibliotecas",
+  "id": "h51"
+ },
+ {
+  "level": 3,
+  "text": "2.3 NumPy: o cálculo com vetores e matrizes",
+  "id": "h52"
+ },
+ {
+  "level": 3,
+  "text": "2.4 pandas: tabelas com nomes",
+  "id": "h53"
+ },
+ {
+  "level": 3,
+  "text": "2.5 Dados são pontos no espaço",
+  "id": "h54"
+ },
+ {
+  "level": 4,
+  "text": "2.5.1 Medindo a distância entre dois pontos",
+  "id": "h55"
+ },
+ {
+  "level": 4,
+  "text": "2.5.2 A armadilha da escala",
+  "id": "h56"
+ },
+ {
+  "level": 3,
+  "text": "2.6 Probabilidade essencial",
+  "id": "h57"
+ },
+ {
+  "level": 4,
+  "text": "2.6.1 O que é uma probabilidade",
+  "id": "h58"
+ },
+ {
+  "level": 4,
+  "text": "2.6.2 Probabilidade condicional",
+  "id": "h59"
+ },
+ {
+  "level": 4,
+  "text": "2.6.3 O teorema de Bayes",
+  "id": "h60"
+ },
+ {
+  "level": 4,
+  "text": "2.6.4 A curva normal",
+  "id": "h61"
+ },
+ {
+  "level": 3,
+  "text": "2.7 A interface do scikit-learn",
+  "id": "h62"
+ },
+ {
+  "level": 4,
+  "text": "2.7.1 Pipeline: encadeando passos",
+  "id": "h63"
+ },
+ {
+  "level": 3,
+  "text": "2.8 Treino, validação e teste",
+  "id": "h64"
+ },
+ {
+  "level": 4,
+  "text": "2.8.1 Validação cruzada",
+  "id": "h65"
+ },
+ {
+  "level": 4,
+  "text": "2.8.2 Subajuste e sobreajuste",
+  "id": "h66"
+ },
+ {
+  "level": 3,
+  "text": "2.9 Métricas: como medir o acerto",
+  "id": "h67"
+ },
+ {
+  "level": 4,
+  "text": "2.9.1 A matriz de confusão",
+  "id": "h68"
+ },
+ {
+  "level": 4,
+  "text": "2.9.2 Precisão, revocação e F1",
+  "id": "h69"
+ },
+ {
+  "level": 3,
+  "text": "2.10 Cuidados especiais do aprendizado semissupervisionado",
+  "id": "h70"
+ },
+ {
+  "level": 4,
+  "text": "2.10.1 Como \"esconder\" rótulos em um experimento",
+  "id": "h71"
+ },
+ {
+  "level": 4,
+  "text": "2.10.2 Regra de ouro: o teste fica de fora",
+  "id": "h72"
+ },
+ {
+  "level": 4,
+  "text": "2.10.3 Vazamento de informação",
+  "id": "h73"
+ },
+ {
+  "level": 4,
+  "text": "2.10.4 Reprodutibilidade",
+  "id": "h74"
+ },
+ {
+  "level": 3,
+  "text": "2.11 Resumo do capítulo",
+  "id": "h75"
+ },
+ {
+  "level": 3,
+  "text": "2.12 Para ler mais",
+  "id": "h76"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h77"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h78"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h79"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — NumPy e pandas com o conjunto Wine",
+  "id": "h80"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Quem é o vizinho mais próximo? O efeito da escala",
+  "id": "h81"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Uma curva normal por classe",
+  "id": "h82"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Escolhendo k com validação cruzada",
+  "id": "h83"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 5 — Caçando o vazamento",
+  "id": "h84"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h85"
+ },
+ {
+  "level": 4,
+  "text": "Montando a bancada de testes semissupervisionados",
+  "id": "h86"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Quando e Por Que Funciona: Suposições, Taxonomia e Avaliação",
+  "id": "h87"
+ },
+ {
+  "level": 3,
+  "text": "3.1 Uma pergunta honesta",
+  "id": "h88"
+ },
+ {
+  "level": 3,
+  "text": "3.2 Duas versões do problema",
+  "id": "h89"
+ },
+ {
+  "level": 4,
+  "text": "3.2.1 Aprendizado indutivo",
+  "id": "h90"
+ },
+ {
+  "level": 4,
+  "text": "3.2.2 Aprendizado transdutivo",
+  "id": "h91"
+ },
+ {
+  "level": 3,
+  "text": "3.3 Por que dados sem rótulo podem ajudar",
+  "id": "h92"
+ },
+ {
+  "level": 3,
+  "text": "3.4 As suposições do aprendizado semissupervisionado",
+  "id": "h93"
+ },
+ {
+  "level": 4,
+  "text": "3.4.1 Suposição de suavidade",
+  "id": "h94"
+ },
+ {
+  "level": 4,
+  "text": "3.4.2 Suposição de agrupamento",
+  "id": "h95"
+ },
+ {
+  "level": 4,
+  "text": "3.4.3 Suposição de variedade",
+  "id": "h96"
+ },
+ {
+  "level": 4,
+  "text": "3.4.4 Resumo das suposições",
+  "id": "h97"
+ },
+ {
+  "level": 3,
+  "text": "3.5 Quando ajuda e quando prejudica",
+  "id": "h98"
+ },
+ {
+  "level": 3,
+  "text": "3.6 A quantidade de dados sem rótulo importa",
+  "id": "h99"
+ },
+ {
+  "level": 3,
+  "text": "3.7 A qualidade dos dados sem rótulo importa",
+  "id": "h100"
+ },
+ {
+  "level": 3,
+  "text": "3.8 Uma taxonomia dos métodos",
+  "id": "h101"
+ },
+ {
+  "level": 3,
+  "text": "3.9 Como avaliar com honestidade",
+  "id": "h102"
+ },
+ {
+  "level": 4,
+  "text": "3.9.1 O modelo de referência precisa ser forte",
+  "id": "h103"
+ },
+ {
+  "level": 4,
+  "text": "3.9.2 O dilema da validação",
+  "id": "h104"
+ },
+ {
+  "level": 4,
+  "text": "3.9.3 Um protocolo recomendado",
+  "id": "h105"
+ },
+ {
+  "level": 3,
+  "text": "3.10 Por onde começar? Um guia rápido",
+  "id": "h106"
+ },
+ {
+  "level": 3,
+  "text": "3.11 Resumo do capítulo",
+  "id": "h107"
+ },
+ {
+  "level": 3,
+  "text": "3.12 Para ler mais",
+  "id": "h108"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h109"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h110"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h111"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — O termômetro da suavidade: vizinhos de mesma classe",
+  "id": "h112"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Quanto ruído a suposição de agrupamento aguenta?",
+  "id": "h113"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Quantos exemplos sem rótulo, com 20 rótulos?",
+  "id": "h114"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Uma \"dose\" de intrusos",
+  "id": "h115"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 5 — Transdutivo ou indutivo: transduction_ versus predict",
+  "id": "h116"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h117"
+ },
+ {
+  "level": 4,
+  "text": "Diagnóstico de viabilidade: vale a pena semissupervisionar este conjunto?",
+  "id": "h118"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito dos exercícios",
+  "id": "h119"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "id": "h120"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h121"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h122"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "id": "h123"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h124"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h125"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "id": "h126"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h127"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h128"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice B — Glossário",
+  "id": "h129"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice C — Guia rápido de classes, convenções e protocolo",
+  "id": "h130"
+ },
+ {
+  "level": 3,
+  "text": "C.1 Convenções do scikit-learn para dados sem rótulo",
+  "id": "h131"
+ },
+ {
+  "level": 3,
+  "text": "C.2 Classes semissupervisionadas e parâmetros principais",
+  "id": "h132"
+ },
+ {
+  "level": 3,
+  "text": "C.3 Receita: comparar com o modelo de referência",
+  "id": "h133"
+ },
+ {
+  "level": 3,
+  "text": "C.4 Lista de verificação de uma avaliação honesta",
+  "id": "h134"
+ },
+ {
+  "level": 3,
+  "text": "C.5 Escolhendo as primeiras ações",
+  "id": "h135"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h136"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "id": "h137"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Escondendo rótulos no Breast Cancer Wisconsin",
+  "id": "h138"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — O modelo de referência supervisionado",
+  "id": "h139"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Primeiro método semissupervisionado",
+  "id": "h140"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quantas vezes o método semissupervisionado vence?",
+  "id": "h141"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Sensibilidade aos parâmetros no Digits",
+  "id": "h142"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "id": "h143"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — NumPy e pandas com o conjunto Wine",
+  "id": "h144"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quem é o vizinho mais próximo? O efeito da escala",
+  "id": "h145"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Uma curva normal por classe",
+  "id": "h146"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Escolhendo k com validação cruzada",
+  "id": "h147"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Caçando o vazamento",
+  "id": "h148"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "id": "h149"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — O termômetro da suavidade: vizinhos de mesma classe",
+  "id": "h150"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quanto ruído a suposição de agrupamento aguenta?",
+  "id": "h151"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Quantos exemplos sem rótulo, com 20 rótulos?",
+  "id": "h152"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Uma \"dose\" de intrusos",
+  "id": "h153"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Transdutivo ou indutivo: transduction_ versus predict",
+  "id": "h154"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "id": "h155"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Poucos Rótulos, Muitos Dados",
+  "id": "h156"
+ },
+ {
+  "level": 3,
+  "text": "Vale a pena usar os dados sem rótulo? Um relatório com evidências",
+  "id": "h157"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — A Caixa de Ferramentas",
+  "id": "h158"
+ },
+ {
+  "level": 3,
+  "text": "Montando a bancada de testes semissupervisionados",
+  "id": "h159"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Quando e Por Que Funciona",
+  "id": "h160"
+ },
+ {
+  "level": 3,
+  "text": "Diagnóstico de viabilidade: vale a pena semissupervisionar este conjunto?",
+  "id": "h161"
+ },
+ {
+  "level": 1,
+  "text": "Referências",
+  "id": "h162"
+ }
+]

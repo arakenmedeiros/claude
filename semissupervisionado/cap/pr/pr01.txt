@@ -1,0 +1,242 @@
+@@EX 1 | Escondendo rótulos no Breast Cancer Wisconsin | básico
+O conjunto **Breast Cancer Wisconsin (Diagnostic)**, do repositório UCI, vem no scikit-learn (`load_breast_cancer`). Ele tem 569 exames com 30 medidas cada e dois rótulos: *maligno* ou *benigno* (Wolberg; Mangasarian, 1990).
+
+Faça o seguinte:
+
+1. Carregue os dados e mostre o formato de X e quantos exemplos há em cada classe.
+2. Separe 70% para treino e 30% para teste, de forma **estratificada** (`stratify=y`).
+3. Escreva uma função `esconder_rotulos(y, n_rot, semente)` que sorteie `n_rot` exemplos rotulados (metade de cada classe) e devolva um vetor `y_parcial`, com **-1** nos demais.
+4. Use a função para manter apenas **20 rótulos** no treino e confirme quantos exemplos ficaram sem rótulo.
+
+*Pergunta:* por que o conjunto de teste **não** deve ter rótulos escondidos?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+
+dados = load_breast_cancer()
+X, y = dados.data, dados.target
+print("Formato de X:", X.shape)
+print("Classes:", {str(n): int(c) for n, c in zip(dados.target_names, np.bincount(y))})
+
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+def esconder_rotulos(y, n_rot, semente):
+    rng = np.random.RandomState(semente)
+    classes = np.unique(y)
+    idx = np.concatenate([rng.choice(np.where(y == c)[0], n_rot // len(classes), replace=False) for c in classes])
+    y_parcial = np.full(len(y), -1)
+    y_parcial[idx] = y[idx]
+    return y_parcial, idx
+
+y_parcial, idx = esconder_rotulos(y_tr, n_rot=20, semente=0)
+print("Treino:", len(y_tr), "| com rótulo:", int((y_parcial != -1).sum()), "| sem rótulo:", int((y_parcial == -1).sum()))
+print("Teste :", len(y_te), "(todos com rótulo, usados só para avaliar)")
+```
+@@NOTE O conjunto de teste precisa dos rótulos verdadeiros para que possamos medir a acurácia. Esconder rótulos é uma simulação feita **apenas no treino**, para imitar a situação real em que quase nada foi rotulado.
+@@EX 2 | O modelo de referência supervisionado | básico
+Treine um modelo **apenas com os exemplos rotulados** e meça a acurácia no teste. Use um `Pipeline` com `StandardScaler` (padronização) seguido de `LogisticRegression`.
+
+Repita para `n_rot` igual a 10, 20, 40 e 80, e, para cada valor, faça **20 sorteios** diferentes dos exemplos rotulados. Mostre a média e o desvio padrão da acurácia.
+
+*Pergunta:* o que acontece com a acurácia e com a variabilidade quando `n_rot` aumenta?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+def sortear(y, n_rot, semente):
+    rng = np.random.RandomState(semente)
+    return np.concatenate([rng.choice(np.where(y == c)[0], n_rot // 2, replace=False) for c in (0, 1)])
+
+print("n_rot | acurácia média ± desvio (20 sorteios)")
+for n_rot in [10, 20, 40, 80]:
+    accs = []
+    for semente in range(20):
+        idx = sortear(y_tr, n_rot, semente)
+        modelo = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)).fit(X_tr[idx], y_tr[idx])
+        accs.append(modelo.score(X_te, y_te))
+    print(f"{n_rot:5d} | {100 * np.mean(accs):.1f}% ± {100 * np.std(accs):.1f}")
+```
+@@NOTE A acurácia média sobe e o desvio padrão cai conforme `n_rot` cresce. Com poucos rótulos, **quais** exemplos foram sorteados faz muita diferença. Esta tabela é o seu modelo de referência para os próximos exercícios.
+@@EX 3 | Primeiro método semissupervisionado | intermediário
+Com `n_rot = 20`, compare três modelos no conjunto de teste, em 20 sorteios:
+
+- o modelo de referência do exercício anterior;
+- `SelfTrainingClassifier` com `LogisticRegression` (limiar 0,9);
+- `LabelSpreading` com kernel `knn` e 7 vizinhos.
+
+**Padronize** os atributos antes de qualquer método (use `StandardScaler` ajustado no treino). Mostre média e desvio padrão de cada um.
+
+*Pergunta:* os dados sem rótulo ajudaram neste conjunto? Qual a sua conclusão?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import SelfTrainingClassifier, LabelSpreading
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr)
+Xtr, Xte = esc.transform(X_tr), esc.transform(X_te)
+
+res = {"referência": [], "self-training": [], "label spreading": []}
+for semente in range(20):
+    rng = np.random.RandomState(semente)
+    idx = np.concatenate([rng.choice(np.where(y_tr == c)[0], 10, replace=False) for c in (0, 1)])
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    res["referência"].append(LogisticRegression(max_iter=1000).fit(Xtr[idx], y_tr[idx]).score(Xte, y_te))
+    res["self-training"].append(SelfTrainingClassifier(LogisticRegression(max_iter=1000), threshold=0.9).fit(Xtr, yp).score(Xte, y_te))
+    res["label spreading"].append(LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2).fit(Xtr, yp).score(Xte, y_te))
+
+for nome, v in res.items():
+    print(f"{nome:16s}: {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE Compare as médias com o desvio padrão. Se a diferença for menor que a variação entre sorteios, não há evidência clara de ganho. Neste conjunto, o problema já é "fácil" para um modelo linear, e o espaço para melhorar é pequeno.
+@@EX 4 | Quantas vezes o método semissupervisionado vence? | intermediário
+Para decidir se um ganho é real, compare os métodos **no mesmo sorteio**. Com `n_rot = 20` e 30 sorteios, calcule a **diferença pareada** de acurácia entre `LabelSpreading` e o modelo de referência. Mostre:
+
+- a média e o desvio padrão da diferença;
+- em quantos sorteios o semissupervisionado foi melhor, igual ou pior;
+- um intervalo aproximado de 95%: média ± 1,96 × (desvio / √30).
+
+*Pergunta:* o intervalo inclui o zero? O que isso significa?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); Xtr, Xte = esc.transform(X_tr), esc.transform(X_te)
+
+dif = []
+for semente in range(30):
+    rng = np.random.RandomState(semente)
+    idx = np.concatenate([rng.choice(np.where(y_tr == c)[0], 10, replace=False) for c in (0, 1)])
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    a = LogisticRegression(max_iter=1000).fit(Xtr[idx], y_tr[idx]).score(Xte, y_te)
+    b = LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2).fit(Xtr, yp).score(Xte, y_te)
+    dif.append(b - a)
+dif = np.array(dif)
+m, s = dif.mean(), dif.std(ddof=1)
+print(f"Diferença média (LS - referência): {100 * m:+.2f} pontos percentuais; desvio {100 * s:.2f}")
+print("Melhor:", int((dif > 0).sum()), "| igual:", int((dif == 0).sum()), "| pior:", int((dif < 0).sum()))
+print(f"IC95% aproximado: [{100 * (m - 1.96 * s / np.sqrt(30)):+.2f}, {100 * (m + 1.96 * s / np.sqrt(30)):+.2f}] p.p.")
+```
+@@NOTE Se o intervalo contém o zero, não podemos afirmar que há ganho. Se está inteiro acima de zero, há evidência de ganho médio. Comparar no mesmo sorteio (diferença pareada) remove parte da variação causada pela escolha dos exemplos.
+@@EX 5 | Sensibilidade aos parâmetros no Digits | avançado
+No conjunto **Digits**, com `n_rot = 50` e 10 sorteios, avalie o `LabelSpreading` (kernel `knn`) variando:
+
+- o número de vizinhos: 3, 5, 7, 10, 15 e 20;
+- o parâmetro `alpha`: 0,2 e 0,8.
+
+Mostre a acurácia média no teste de cada combinação e compare com o modelo de referência (regressão logística só com os 50 rotulados).
+
+*Pergunta:* a escolha dos parâmetros importa? Como você escolheria em um projeto real, em que há tão poucos rótulos?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading
+
+X, y = load_digits(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+def sorteio(semente, n_rot=50):
+    rng = np.random.RandomState(semente)
+    idx = np.concatenate([rng.choice(np.where(y_tr == d)[0], n_rot // 10, replace=False) for d in range(10)])
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    return idx, yp
+
+ref = [LogisticRegression(max_iter=2000).fit(X_tr[i], y_tr[i]).score(X_te, y_te) for i, _ in (sorteio(s) for s in range(10))]
+print(f"Referência (50 rótulos): {100 * np.mean(ref):.1f}%")
+print("vizinhos | alpha=0.2 | alpha=0.8")
+for k in [3, 5, 7, 10, 15, 20]:
+    linha = []
+    for alpha in [0.2, 0.8]:
+        accs = []
+        for s in range(10):
+            idx, yp = sorteio(s)
+            accs.append(LabelSpreading(kernel="knn", n_neighbors=k, alpha=alpha, max_iter=200).fit(X_tr, yp).score(X_te, y_te))
+        linha.append(100 * np.mean(accs))
+    print(f"{k:8d} | {linha[0]:8.1f}% | {linha[1]:8.1f}%")
+```
+@@NOTE Compare cada célula com a referência. Com 3 vizinhos a acurácia despenca (cerca de 54%). Uma explicação plausível: com tão poucas ligações, o grafo se quebra em pedaços desconectados (aqui, 3 componentes) e os rótulos não conseguem se espalhar por todos. De 5 vizinhos em diante, todas as combinações superam a referência. Em um projeto real, você não pode usar o conjunto de teste para escolher parâmetros. Use **validação cruzada nos poucos rotulados** (com cuidado, pois são poucos) ou reserve um pequeno conjunto de validação rotulado. Voltaremos a esse problema difícil no Capítulo 3.
+@@PROJ Vale a pena usar os dados sem rótulo? Um relatório com evidências | Cap01
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits*, do repositório **UCI Machine Learning**, incluído no scikit-learn (`load_digits`).
+
+**Contexto.** Uma empresa de digitalização de formulários quer reconhecer dígitos manuscritos, mas só pode pagar para rotular poucas imagens. O diretor de dados pergunta: *"Vale a pena usar as imagens sem rótulo?"* Você deve responder com **evidências**.
+
+**Tarefas.**
+1. Separe 70% para treino e 30% para teste (estratificado, `random_state=0`).
+2. Para `n_rot` em 10, 20, 50 e 100, faça **10 sorteios** de exemplos rotulados (balanceados por dígito).
+3. Em cada sorteio, avalie no teste: (a) o modelo de referência (regressão logística só com os rotulados); (b) `SelfTrainingClassifier`; (c) `LabelSpreading`.
+4. Monte uma **tabela** (`pandas.DataFrame`) com a média e o desvio padrão de cada método, para cada `n_rot`, e calcule o **ganho médio** sobre a referência.
+5. Faça um **gráfico** de linhas (acurácia × número de rótulos).
+6. Escreva uma **recomendação** de 8 a 10 linhas: em que faixa de rótulos os dados sem rótulo compensam? Quais são os riscos? O que você testaria a seguir?
+
+**Entregáveis.** Um notebook ou script comentado, a tabela, o gráfico e o texto da recomendação.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import SelfTrainingClassifier, LabelSpreading
+
+X, y = load_digits(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+linhas = []
+for n_rot in [10, 20, 50, 100]:
+    acc = {"referência": [], "self-training": [], "label spreading": []}
+    for s in range(10):
+        rng = np.random.RandomState(s)
+        idx = np.concatenate([rng.choice(np.where(y_tr == d)[0], n_rot // 10, replace=False) for d in range(10)])
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        acc["referência"].append(LogisticRegression(max_iter=2000).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        acc["self-training"].append(SelfTrainingClassifier(LogisticRegression(max_iter=2000), threshold=0.9).fit(X_tr, yp).score(X_te, y_te))
+        acc["label spreading"].append(LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2, max_iter=100).fit(X_tr, yp).score(X_te, y_te))
+    ref = np.mean(acc["referência"])
+    for nome, v in acc.items():
+        linhas.append({"n_rot": n_rot, "método": nome, "média (%)": round(100 * np.mean(v), 1),
+                       "desvio (p.p.)": round(100 * np.std(v), 1), "ganho (p.p.)": round(100 * (np.mean(v) - ref), 1)})
+tabela = pd.DataFrame(linhas)
+print(tabela.to_string(index=False))
+
+fig, ax = plt.subplots(figsize=(6, 3.5))
+for nome, g in tabela.groupby("método"):
+    ax.plot(g["n_rot"], g["média (%)"], "-o", label=nome)
+ax.set_xscale("log"); ax.set_xlabel("exemplos rotulados"); ax.set_ylabel("acurácia no teste (%)"); ax.legend(); ax.grid(alpha=0.3)
+plt.tight_layout(); plt.show()
+```
+@@RUBRICA
+- A separação treino/teste foi feita antes de esconder rótulos e o teste nunca foi usado no treino.
+- O modelo de referência supervisionado foi treinado com **os mesmos** exemplos rotulados de cada método.
+- Houve repetição com vários sorteios e relato de média **e** variabilidade.
+- A tabela e o gráfico estão claros e legíveis.
+- A recomendação é baseada nos números, cita riscos (suposições do método, sensibilidade a parâmetros, poucos rótulos para validar) e propõe próximos passos.
+@@NOTE O ganho é maior com poucos rótulos (10 a 20) e encolhe com 100. O Label Spreading superou o self-training em todas as faixas deste experimento, mas essa ordem **não** é uma lei: depende dos dados e dos parâmetros. Uma boa recomendação diria: "vale a pena com poucos rótulos, desde que se valide com cuidado".
+@@ALEM
+- **UCI:** Iris, Wine, Optical Recognition of Handwritten Digits, Breast Cancer Wisconsin (Diagnostic), Spambase e Statlog (Landsat Satellite).
+- **Kaggle:** Digit Recognizer (dígitos manuscritos), SMS Spam Collection e Credit Card Fraud Detection.

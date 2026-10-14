@@ -1,0 +1,231 @@
+@@EX 1 | O termômetro da suavidade: vizinhos de mesma classe | básico
+A suposição de suavidade diz que vizinhos tendem a ter o mesmo rótulo. Podemos **medir** isso nos dados (que, nos experimentos, vêm todos rotulados).
+
+Para os conjuntos **Iris**, **Wine**, **Breast Cancer** e **Digits** (todos da UCI e incluídos no scikit-learn):
+
+1. Padronize os atributos com `StandardScaler`.
+2. Para cada exemplo, encontre os 5 vizinhos mais próximos (`NearestNeighbors`, sem contar o próprio exemplo).
+3. Calcule a **homofilia**: a fração média de vizinhos que têm a mesma classe do exemplo.
+
+*Pergunta:* uma homofilia alta garante que os dados sem rótulo vão ajudar? Por quê?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_iris, load_wine, load_breast_cancer, load_digits
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import NearestNeighbors
+
+for nome, carregar in [("Iris", load_iris), ("Wine", load_wine), ("Breast Cancer", load_breast_cancer), ("Digits", load_digits)]:
+    X, y = carregar(return_X_y=True)
+    Xp = StandardScaler().fit_transform(X)
+    _, viz = NearestNeighbors(n_neighbors=6).fit(Xp).kneighbors(Xp)   # a 1ª coluna é o próprio ponto
+    homofilia = np.mean(y[viz[:, 1:]] == y[:, None])
+    print(f"{nome:14s}: homofilia (5 vizinhos) = {100 * homofilia:.1f}%")
+```
+@@NOTE Os quatro conjuntos têm homofilia alta (acima de 90%), mas, como você viu, o ganho do semissupervisionado foi grande no Digits e pequeno ou nulo nos outros. A homofilia é uma condição **necessária**, e não **suficiente**: se um modelo supervisionado simples já separa bem as classes, há pouco o que ganhar. O que importa é a combinação de suposição válida **e** referência fraca (por falta de rótulos).
+@@EX 2 | Quanto ruído a suposição de agrupamento aguenta? | intermediário
+No Cenário 1 do capítulo, as duas luas tinham `noise=0,1`. Vamos variar o ruído. Para `noise` em 0,05, 0,1, 0,2, 0,3, 0,4 e 0,6:
+
+- gere 600 pontos (`make_moons`) com 50 sementes diferentes;
+- sorteie 3 rótulos por classe (6 no total);
+- compare `SVC(gamma=1)` (referência, só rotulados) com `LabelSpreading` (kernel `knn`, 7 vizinhos, `alpha=0,8`);
+- reporte a acurácia média de cada um, o ganho médio e em quantas sementes o `LabelSpreading` foi melhor e pior.
+
+*Pergunta:* o que acontece com o ganho quando as luas se sobrepõem? Relacione com a suposição de agrupamento.
+@@SOL
+```python
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.datasets import make_moons
+from sklearn.semi_supervised import LabelSpreading
+from sklearn.model_selection import train_test_split
+
+print("ruído | referência | label spreading | ganho (p.p.) | melhor/pior")
+for ruido in [0.05, 0.1, 0.2, 0.3, 0.4, 0.6]:
+    ref, ls = [], []
+    for s in range(50):
+        X, y = make_moons(600, noise=ruido, random_state=s)
+        X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.4, random_state=s)
+        r = np.random.RandomState(s)
+        idx = np.r_[r.choice(np.where(y_tr == 0)[0], 3, replace=False), r.choice(np.where(y_tr == 1)[0], 3, replace=False)]
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        ref.append(SVC(gamma=1.0).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        ls.append(LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.8, max_iter=2000).fit(X_tr, yp).score(X_te, y_te))
+    d = np.array(ls) - np.array(ref)
+    print(f"{ruido:5.2f} | {100 * np.mean(ref):9.1f}% | {100 * np.mean(ls):14.1f}% | {100 * d.mean():+11.1f} | {(d > 0).sum()}/{(d < 0).sum()}")
+```
+@@NOTE Com pouco ruído, as luas são grupos bem separados e o ganho é grande (cerca de 13 p.p.). Conforme o ruído cresce, os grupos se sobrepõem, a "região de baixa densidade" entre eles desaparece e o ganho some (em torno de zero, com tantas vitórias quanto derrotas). A suposição de agrupamento deixa de valer, e o método não tem mais no que se apoiar.
+@@EX 3 | Quantos exemplos sem rótulo, com 20 rótulos? | intermediário
+No **Digits**, fixe **20 rótulos** (2 por dígito) e varie o número *u* de exemplos sem rótulo: 0, 100, 300, 600 e 1.237 (todos os restantes do treino). Compare, em 10 sorteios:
+
+- a referência: `LogisticRegression` só com os 20 rotulados;
+- `LabelSpreading` (kernel `knn`, 7 vizinhos, `alpha=0,2`);
+- `SelfTrainingClassifier` com `LogisticRegression` (limiar 0,9).
+
+*Pergunta:* os dois métodos reagem igualmente ao aumento de *u*? Compare com o que o capítulo mostrou para 50 rótulos.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading, SelfTrainingClassifier
+
+X, y = load_digits(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+def sortear(semente, por_classe=2):
+    r = np.random.RandomState(semente)
+    return np.concatenate([r.choice(np.where(y_tr == c)[0], por_classe, replace=False) for c in range(10)])
+
+ref = np.mean([LogisticRegression(max_iter=2000).fit(X_tr[i], y_tr[i]).score(X_te, y_te) for i in (sortear(s) for s in range(10))])
+print(f"Referência (20 rótulos): {100 * ref:.1f}%")
+print("      u | label spreading | self-training")
+for u in [0, 100, 300, 600, 1237]:
+    a_ls, a_st = [], []
+    for s in range(10):
+        idx = sortear(s)
+        resto = np.setdiff1d(np.arange(len(y_tr)), idx)
+        sem = np.random.RandomState(s).choice(resto, u, replace=False)
+        usar = np.r_[idx, sem]
+        yy = np.full(len(usar), -1); yy[:len(idx)] = y_tr[idx]
+        a_ls.append(LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2).fit(X_tr[usar], yy).score(X_te, y_te))
+        a_st.append(SelfTrainingClassifier(LogisticRegression(max_iter=2000), threshold=0.9).fit(X_tr[usar], yy).score(X_te, y_te))
+    print(f"{u:7d} | {100 * np.mean(a_ls):14.1f}% | {100 * np.mean(a_st):12.1f}%")
+```
+@@NOTE Observe a primeira linha (u = 0): o self-training equivale à referência (74,0%), pois não há nada a pseudo-rotular. Já o Label Spreading cai a 37,3%: com apenas 20 pontos no grafo e 7 vizinhos, quase todo ponto se liga a pontos de outras classes. A partir de u = 100, os dois superam a referência. O Label Spreading chega a cerca de 85% (ganho de mais de 10 p.p.) e o self-training, a cerca de 82% (ganho de uns 8 p.p.), e ambos se acomodam depois de 300 a 600 exemplos. Cada método responde de um jeito, e o ponto de cruzamento com a referência depende do método e do número de rótulos.
+@@EX 4 | Uma "dose" de intrusos | avançado
+Reproduza o problema de descasamento de classes com uma **dose variável**. No Digits, rotule apenas os dígitos de 0 a 4 (5 por dígito). O conjunto sem rótulo terá todos os exemplos de 0 a 4 do treino mais **m intrusos** sorteados entre os dígitos de 5 a 9, com *m* igual a 0, 150, 300 e 600. Avalie só nos dígitos 0 a 4 do teste, com `LabelSpreading` (kernel `knn`, 7 vizinhos, `alpha=0,2`) e `SelfTrainingClassifier`, em 10 sorteios, e compare com a referência.
+
+*Pergunta:* o prejuízo cresce com a "dose" de intrusos? O que isso sugere sobre a limpeza do conjunto sem rótulo?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading, SelfTrainingClassifier
+
+X, y = load_digits(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+cls = [0, 1, 2, 3, 4]
+teste = np.isin(y_te, cls)
+dentro = np.where(np.isin(y_tr, cls))[0]
+fora = np.where(~np.isin(y_tr, cls))[0]
+
+ref = []
+print("intrusos | label spreading | self-training")
+res = {m: ([], []) for m in [0, 150, 300, 600]}
+for s in range(10):
+    r = np.random.RandomState(s)
+    rot = np.concatenate([r.choice(np.where(y_tr == c)[0], 5, replace=False) for c in cls])
+    ref.append(LogisticRegression(max_iter=2000).fit(X_tr[rot], y_tr[rot]).score(X_te[teste], y_te[teste]))
+    for m in res:
+        intrusos = r.choice(fora, m, replace=False)
+        usar = np.unique(np.r_[dentro, intrusos])
+        yy = np.full(len(usar), -1)
+        pos = {i: j for j, i in enumerate(usar)}
+        for i in rot: yy[pos[i]] = y_tr[i]
+        res[m][0].append(LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2).fit(X_tr[usar], yy).score(X_te[teste], y_te[teste]))
+        res[m][1].append(SelfTrainingClassifier(LogisticRegression(max_iter=2000), threshold=0.9).fit(X_tr[usar], yy).score(X_te[teste], y_te[teste]))
+print(f"referência (só rotulados): {100 * np.mean(ref):.1f}%")
+for m, (a, b) in res.items():
+    print(f"{m:8d} | {100 * np.mean(a):14.1f}% | {100 * np.mean(b):12.1f}%")
+```
+@@NOTE A referência é 92,2%. O Label Spreading continua acima dela, mas cai de 97,9% (sem intrusos) para 96,3% (600 intrusos). O self-training cai de 93,9% para 92,2%, perdendo todo o ganho com 600 intrusos. O prejuízo cresce com a "dose", e o self-training é mais sensível. Isso reforça a recomendação de **conhecer e, se possível, filtrar** o conjunto sem rótulo (por exemplo, com um detector de exemplos fora da distribuição) antes de usá-lo.
+@@EX 5 | Transdutivo ou indutivo: transduction_ versus predict | avançado
+Em `LabelSpreading`, o atributo `transduction_` guarda o rótulo atribuído a cada exemplo **do treino**. O método `predict(X_tr)` também dá um rótulo para cada exemplo do treino. Eles são iguais?
+
+No Digits, para `n_rot` em 20, 50 e 100 (10 sorteios), calcule:
+
+- a **concordância** entre `transduction_[sem_rotulo]` e `predict(X_tr[sem_rotulo])`;
+- a acurácia de cada um contra os rótulos verdadeiros dos exemplos sem rótulo;
+- a acurácia de `predict` no teste.
+
+*Pergunta:* o que isso diz sobre a diferença entre uma visão transdutiva e uma indutiva do mesmo método?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.semi_supervised import LabelSpreading
+
+X, y = load_digits(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+print("n_rot | concordância | acerto transduction_ | acerto predict (treino) | acerto predict (teste)")
+for n_rot in [20, 50, 100]:
+    conc, a_tr, a_pr, a_te = [], [], [], []
+    for s in range(10):
+        r = np.random.RandomState(s)
+        idx = np.concatenate([r.choice(np.where(y_tr == c)[0], n_rot // 10, replace=False) for c in range(10)])
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        sem = (yp == -1)
+        m = LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2).fit(X_tr, yp)
+        t = m.transduction_[sem]; p = m.predict(X_tr[sem])
+        conc.append(np.mean(t == p)); a_tr.append(np.mean(t == y_tr[sem])); a_pr.append(np.mean(p == y_tr[sem])); a_te.append(m.score(X_te, y_te))
+    print(f"{n_rot:5d} | {100 * np.mean(conc):11.1f}% | {100 * np.mean(a_tr):19.1f}% | {100 * np.mean(a_pr):22.1f}% | {100 * np.mean(a_te):21.1f}%")
+```
+@@NOTE Os dois rótulos não são idênticos: a concordância vai de cerca de 94% (20 rótulos) a 97% (100 rótulos). O `predict` recalcula o rótulo a partir das ligações do exemplo com o grafo de treino, enquanto `transduction_` é o resultado direto da propagação. Aqui o `predict` acertou um pouco mais que o `transduction_` (por exemplo, 84,0% contra 80,8% com 20 rótulos). Para exemplos **novos** (teste), só existe `predict`. Ao reportar resultados, diga qual das visões você está usando.
+@@PROJ Diagnóstico de viabilidade: vale a pena semissupervisionar este conjunto? | Cap03
+**Fonte dos dados.** *Iris*, *Wine*, *Breast Cancer Wisconsin (Diagnostic)* e *Optical Recognition of Handwritten Digits*, todos do repositório **UCI Machine Learning**, incluídos no scikit-learn.
+
+**Contexto.** Antes de investir em um método semissupervisionado, sua equipe quer um **diagnóstico de viabilidade** automático. Você deve construir uma função que, para um conjunto de dados e um número de rótulos, estime (1) se a suposição de suavidade parece valer e (2) se há ganho real sobre o modelo de referência.
+
+**Tarefas.**
+1. Escreva `diagnostico(X, y, n_rot, sementes=20)` que:
+   - padronize os dados (dentro de um `Pipeline` com os modelos);
+   - separe treino e teste uma vez (70/30, estratificado, `random_state=0`);
+   - calcule a **homofilia** com 5 vizinhos (nos dados padronizados);
+   - treine, em cada sorteio, a referência (regressão logística só com os rotulados) e o `LabelSpreading` (kernel `knn`, 7 vizinhos, `alpha=0,2`);
+   - devolva: homofilia, acurácia média de cada modelo, **ganho médio pareado** e quantas vezes o método foi melhor e pior.
+2. Aplique a função a Iris (`n_rot=6`), Wine (`n_rot=12`), Breast Cancer (`n_rot=20`) e Digits (`n_rot=50`) e monte uma **tabela**.
+3. Escreva uma **recomendação** (8 a 10 linhas) para cada conjunto: vale a pena? Em que condições? O que você faria a seguir? Use o protocolo da seção 3.9.3.
+
+**Entregáveis.** O código, a tabela e as recomendações.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_iris, load_wine, load_breast_cancer, load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import NearestNeighbors
+from sklearn.semi_supervised import LabelSpreading
+
+def diagnostico(X, y, n_rot, sementes=20):
+    Xp = StandardScaler().fit_transform(X)
+    _, viz = NearestNeighbors(n_neighbors=6).fit(Xp).kneighbors(Xp)
+    homofilia = np.mean(y[viz[:, 1:]] == y[:, None])
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+    classes = np.unique(y_tr)
+    ref, ls = [], []
+    for s in range(sementes):
+        r = np.random.RandomState(s)
+        idx = np.concatenate([r.choice(np.where(y_tr == c)[0], n_rot // len(classes), replace=False) for c in classes])
+        yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+        ref.append(make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        ls.append(make_pipeline(StandardScaler(), LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2, max_iter=100)).fit(X_tr, yp).score(X_te, y_te))
+    d = np.array(ls) - np.array(ref)
+    return {"homofilia (%)": round(100 * homofilia, 1), "referência (%)": round(100 * np.mean(ref), 1), "label spreading (%)": round(100 * np.mean(ls), 1),
+            "ganho (p.p.)": round(100 * d.mean(), 1), "melhor": int((d > 0).sum()), "pior": int((d < 0).sum())}
+
+casos = [("Iris", load_iris, 6), ("Wine", load_wine, 12), ("Breast Cancer", load_breast_cancer, 20), ("Digits", load_digits, 50)]
+linhas = []
+for nome, carregar, n_rot in casos:
+    X, y = carregar(return_X_y=True)
+    linhas.append({"conjunto": nome, "n_rot": n_rot, **diagnostico(X, y, n_rot)})
+print(pd.DataFrame(linhas).to_string(index=False))
+```
+@@RUBRICA
+- A função separa o teste uma única vez, usa pipeline com padronização e compara referência e método no mesmo sorteio.
+- A homofilia é calculada corretamente (sem contar o próprio exemplo) e interpretada como condição necessária, não suficiente.
+- A tabela traz médias, ganho pareado e contagem de vitórias e derrotas.
+- Cada recomendação é coerente com os números, cita riscos (poucos rótulos para validar, sensibilidade a parâmetros, origem dos dados sem rótulo) e propõe próximos passos.
+- O texto diz com franqueza onde os dados sem rótulo não ajudaram.
+@@NOTE O resultado é heterogêneo. No Digits, o ganho é claro (+8,5 p.p., melhor em todos os 20 sorteios). No Iris, o ganho é pequeno (+2,6 p.p., melhor em 14 de 20). No Breast Cancer, é praticamente nulo (+0,1 p.p.). No Wine, o método **piora** (-3,8 p.p.). A homofilia é alta em todos, mas só o Digits combina **suposição válida e referência fraca**. Observação: como aqui os dados são padronizados dentro do pipeline, os valores absolutos do Digits diferem dos do Capítulo 1 (referência de 81,8% em vez de 86,3%), pois o pré-processamento muda o desempenho do modelo de referência. Uma boa recomendação diria: "no Digits, vale a pena; nos demais, o modelo supervisionado já basta, e o esforço deve ir para rotular mais exemplos ou melhorar o modelo".
+@@ALEM
+- **UCI:** Iris, Wine, Breast Cancer Wisconsin (Diagnostic), Optical Recognition of Handwritten Digits, Statlog (Landsat Satellite) e Letter Recognition.
+- **Kaggle:** Digit Recognizer e Fashion-MNIST.

@@ -1,0 +1,269 @@
+MC: Dados sem rótulo informam diretamente sobre qual das distribuições abaixo?
+a) p(y | x), a probabilidade do rótulo dado o atributo.
+b) p(x), a distribuição dos atributos.
+c) A acurácia no teste.
+d) O número de classes.
+R: b | Sem rótulos, só observamos como os atributos x estão distribuídos.
+
+MC: Na história da pesquisa eleitoral, os dados sem rótulo ajudam quando:
+a) o endereço dos eleitores tem relação com o voto.
+b) o voto é independente do endereço.
+c) há menos de 20 entrevistados.
+d) todos moram no mesmo prédio.
+R: a | Os dados sem rótulo (endereços) só ajudam se sua estrutura se relaciona com o rótulo (voto).
+
+MC: O aprendizado indutivo tem como resultado:
+a) apenas rótulos para o conjunto sem rótulo.
+b) um modelo que pode prever o rótulo de exemplos novos.
+c) um grafo de vizinhos sem previsão.
+d) um agrupamento sem rótulos.
+R: b | A indução produz um modelo geral, aplicável a exemplos futuros.
+
+MC: O aprendizado transdutivo tem como foco:
+a) rotular os exemplos sem rótulo que já temos.
+b) prever exemplos futuros desconhecidos.
+c) escolher quais exemplos rotular.
+d) reduzir o número de atributos.
+R: a | A transdução rotula o próprio conjunto sem rótulo disponível.
+
+MC: Um professor que quer apenas dar notas às 980 redações que já estão na mesa está em um problema:
+a) indutivo.
+b) transdutivo.
+c) por reforço.
+d) de regressão.
+R: b | O objetivo é rotular exemplos que já existem, sem pretensão de generalizar para novos.
+
+MC: Pseudo-rótulo é:
+a) o rótulo verdadeiro fornecido por um especialista.
+b) o palpite do modelo tratado como se fosse o rótulo.
+c) um erro de digitação.
+d) o -1 do scikit-learn.
+R: b | O pseudo-rótulo é a previsão do próprio modelo, usada como se fosse a resposta correta.
+
+MC: O viés de confirmação, no self-training, ocorre quando:
+a) o modelo aprende com seus próprios erros e os reforça.
+b) o conjunto de teste é muito grande.
+c) todos os rótulos são verdadeiros.
+d) o modelo não usa dados sem rótulo.
+R: a | Pseudo-rótulos errados entram no treino e reforçam o erro.
+
+MC: A suposição de suavidade afirma que:
+a) pontos próximos em região densa tendem a ter o mesmo rótulo.
+b) todos os pontos têm rótulos diferentes.
+c) os dados formam sempre uma reta.
+d) as classes são sempre balanceadas.
+R: a | Em regiões densas, pontos vizinhos tendem a compartilhar o rótulo.
+
+MC: A suposição de agrupamento afirma que:
+a) pontos do mesmo grupo tendem a ter a mesma classe.
+b) cada ponto forma o seu próprio grupo.
+c) os grupos nunca se relacionam com as classes.
+d) existe sempre um grupo por atributo.
+R: a | Se os pontos formam grupos, cada grupo tende a corresponder a uma classe.
+
+MC: A suposição de baixa densidade afirma que a fronteira de decisão deve passar por:
+a) uma região com muitos pontos.
+b) uma região com poucos pontos.
+c) o centro de cada classe.
+d) o ponto de maior densidade.
+R: b | A fronteira deve atravessar o "campo vazio" entre os grupos.
+
+MC: A suposição de variedade (manifold) afirma que dados de alta dimensão:
+a) estão aproximadamente sobre uma superfície de baixa dimensão.
+b) preenchem todo o espaço de maneira uniforme.
+c) são sempre lineares.
+d) não têm estrutura.
+R: a | Os dados vivem perto de uma variedade de poucas dimensões.
+
+MC: Na espiral do capítulo, o "atalho em linha reta" entre dois pontos engana porque:
+a) a distância relevante é a medida ao longo da curva (variedade).
+b) as espirais não têm distância.
+c) a distância euclidiana é sempre maior que a real.
+d) os pontos não têm rótulo.
+R: a | Os pontos parecem próximos em linha reta, mas estão distantes ao longo da variedade.
+
+MC: No Cenário 2 do capítulo (grupos cruzados), os métodos semissupervisionados pioraram porque:
+a) a classe era perpendicular à estrutura de grupos, que enganava os métodos.
+b) havia exemplos demais.
+c) o modelo de referência era muito fraco.
+d) os dados tinham rótulos errados.
+R: a | A estrutura de grupos não correspondia às classes, e a propagação de rótulos seguiu o caminho errado.
+
+MC: Segundo o experimento do capítulo, no Cenário 1 (duas luas), o Label Spreading ganhou em média:
+a) 3,2 pontos percentuais.
+b) 8,8 pontos percentuais.
+c) 13,7 pontos percentuais.
+d) Nenhum ganho.
+R: c | O ganho médio foi de +13,7 p.p. sobre a referência, melhor em 46 dos 50 sorteios.
+
+MC: No Cenário 2, o self-training foi pior que a referência em quantos dos 50 sorteios?
+a) 1.
+b) 15.
+c) 35.
+d) 49.
+R: d | O self-training foi pior em 49 sorteios, com queda média de 8,8 p.p.
+
+MC: A sigla p.p., usada nos resultados, significa:
+a) probabilidade posterior.
+b) pontos percentuais.
+c) pixels por polegada.
+d) parâmetros padrão.
+R: b | É a diferença absoluta entre duas porcentagens.
+
+MC: A expressão "aprendizado seguro" (safe), citada no capítulo, refere-se a métodos que:
+a) tentam garantir que os dados sem rótulo não piorem o resultado em relação ao modelo supervisionado.
+b) criptografam os rótulos.
+c) removem os exemplos sem rótulo.
+d) eliminam a necessidade de teste.
+R: a | Li e Zhou (2015) propuseram abordagens que buscam evitar a piora causada por dados sem rótulo.
+
+MC: No experimento com 50 rótulos fixos e u variável, quando u = 0 o Label Spreading:
+a) supera a referência supervisionada.
+b) perde da referência (74,0% contra 86,3%).
+c) tem acurácia 100%.
+d) não pode ser executado.
+R: b | Sem dados sem rótulo, o método de vizinhança com 50 rótulos fica abaixo da regressão logística.
+
+MC: Com 50 rótulos, o Label Spreading só superou a referência quando recebeu cerca de quantos exemplos sem rótulo?
+a) 10.
+b) 100.
+c) 1.000.
+d) Nunca superou.
+R: b | O cruzamento ocorreu perto de 100 (86,4% contra 86,3%).
+
+MC: A expressão "retornos decrescentes", ao falar de dados sem rótulo, quer dizer que:
+a) cada novo exemplo sem rótulo traz um ganho menor que o anterior.
+b) o ganho aumenta cada vez mais rápido.
+c) os dados sem rótulo nunca ajudam.
+d) o custo de rotulagem cai a zero.
+R: a | O ganho cresce, mas vai se acomodando conforme u aumenta.
+
+MC: O descasamento de classes (class mismatch) ocorre quando:
+a) o conjunto sem rótulo contém classes que não existem no conjunto rotulado.
+b) o conjunto de teste é maior que o de treino.
+c) as classes estão perfeitamente balanceadas.
+d) os atributos têm escalas diferentes.
+R: a | Exemplos de classes desconhecidas recebem rótulos forçados e errados.
+
+MC: No experimento com dígitos 0 a 4, o self-training com dados sem rótulo "mistos" (0 a 9) chegou a:
+a) 97,3%.
+b) 95,6%.
+c) 92,7%.
+d) 90,6%, igual à referência.
+R: d | O ganho do self-training desapareceu com dados de fora.
+
+MC: Os métodos envoltórios (wrapper methods) são:
+a) métodos que usam qualquer classificador supervisionado dentro de um laço que gera pseudo-rótulos.
+b) métodos que só funcionam com redes neurais.
+c) métodos baseados exclusivamente em grafos.
+d) métodos que dispensam rótulos.
+R: a | Self-training e co-training são exemplos clássicos.
+
+MC: Qual das famílias abaixo é, por natureza, baseada em grafos?
+a) Label Spreading.
+b) Self-training.
+c) Co-training.
+d) TSVM.
+R: a | O Label Spreading propaga rótulos pelas arestas de um grafo de vizinhos.
+
+MC: A primeira pergunta do protocolo de avaliação realista é se:
+a) o modelo de referência supervisionado foi bem ajustado.
+b) o teste foi usado para treinar.
+c) o número de classes é par.
+d) o computador tem GPU.
+R: a | Uma referência fraca exagera o ganho dos métodos semissupervisionados.
+
+MC: Qual das práticas abaixo é recomendada em uma avaliação honesta?
+a) Escolher os parâmetros olhando para o conjunto de teste.
+b) Comparar com um modelo de referência forte, em vários sorteios, no mesmo sorteio (pareado).
+c) Reportar apenas o melhor resultado entre várias execuções.
+d) Usar apenas um sorteio de exemplos rotulados.
+R: b | Referência forte, repetição e comparação pareada tornam a avaliação confiável.
+
+MC: O "dilema da validação" no aprendizado semissupervisionado consiste em:
+a) precisar de rótulos para validar, quando os rótulos são justamente escassos.
+b) não haver nenhum parâmetro para ajustar.
+c) o teste ser sempre melhor que o treino.
+d) a validação ser proibida.
+R: a | Reservar rótulos para validação reduz os rótulos de treino, e validar com poucos é instável.
+
+MC: No experimento da validação interna, o k escolhido ficou próximo do k fixo em 7 porque:
+a) com poucos rótulos de validação, a escolha é instável e pouco discrimina entre valores de k.
+b) o k não afeta o resultado.
+c) o teste foi usado na escolha.
+d) todos os k são idênticos.
+R: a | Com 50 rótulos, a validação interna não distingue bem os valores de k; a escolha variou entre sorteios.
+
+MC: Segundo o capítulo, qual é o primeiro passo diante de um problema novo?
+a) Treinar um método generativo complexo.
+b) Treinar um modelo de referência supervisionado só com os rotulados.
+c) Descartar os dados sem rótulo.
+d) Rotular todos os exemplos.
+R: b | O modelo de referência é o ponto de partida e a régua para medir o ganho.
+
+MC: Na taxonomia do capítulo, o pré-treino auto-supervisionado e contrastivo pertence à família de:
+a) métodos envoltórios.
+b) pré-processamento não supervisionado.
+c) métodos transdutivos em grafos.
+d) modelos de referência.
+R: b | Esses métodos usam os dados sem rótulo antes do treino supervisionado, para aprender representações.
+
+DISC: Explique com suas palavras por que dados sem rótulo podem ajudar na classificação, usando a ideia de p(x) e p(y | x).
+R: Os rótulos informam sobre p(y | x). Os dados sem rótulo informam sobre p(x), a forma como os exemplos se distribuem. Se essa forma está ligada às classes (grupos, curvas, regiões densas), conhecer p(x) ajuda a estimar melhor p(y | x), principalmente quando os rótulos são poucos.
+
+DISC: Na história da pesquisa eleitoral, em que situação os dados sem rótulo ajudam e em que situação atrapalham? Qual a relação com o aprendizado semissupervisionado?
+R: Ajudam quando vizinhos votam de modo parecido, pois o endereço é pista do voto. Atrapalham quando o voto não tem relação com o endereço. Em aprendizado semissupervisionado, os dados sem rótulo só ajudam se a sua estrutura se relaciona com os rótulos.
+
+DISC: Diferencie aprendizado indutivo e transdutivo quanto ao resultado, à promessa e à avaliação.
+R: No indutivo, o resultado é um modelo geral que promete bom desempenho em exemplos futuros e se avalia em um teste separado. No transdutivo, o resultado são os rótulos do conjunto sem rótulo existente, sem promessa para exemplos futuros, e pode ser avaliado nos próprios exemplos sem rótulo, se houver rótulos verdadeiros reservados.
+
+DISC: No experimento com Digits e 50 rótulos, o Label Spreading acertou 91,8% nos exemplos sem rótulo do treino e 94,1% no teste. Por que esses números não devem ser tratados como a mesma medida?
+R: O primeiro mede a qualidade dos rótulos atribuídos ao conjunto sem rótulo (visão transdutiva). O segundo mede a generalização a exemplos novos (visão indutiva). Respondem a perguntas diferentes e vêm de conjuntos de exemplos diferentes.
+
+DISC: Descreva as rodadas do self-training no experimento do capítulo e explique o que significa o limiar de 0,9.
+R: O modelo aprende com os 50 rótulos, rotula os exemplos sem rótulo para os quais tem probabilidade de pelo menos 0,9, incorpora esses pseudo-rótulos e repete. Na primeira rodada, 831 exemplos foram rotulados e nas seguintes cada vez menos, até restarem 54 sem rótulo. O limiar 0,9 é a confiança mínima exigida para aceitar um pseudo-rótulo.
+
+DISC: O que é viés de confirmação em métodos que usam pseudo-rótulos? Como ele pode prejudicar o desempenho?
+R: É o reforço de erros: o modelo rotula incorretamente um exemplo, aprende com esse rótulo errado e fica mais confiante no erro. Com isso, o erro se espalha para outros exemplos e o desempenho pode ficar abaixo do modelo supervisionado.
+
+DISC: Enuncie a suposição de suavidade e dê um exemplo do cotidiano.
+R: Se dois pontos estão próximos em uma região densa, seus rótulos tendem a ser iguais. Exemplo: moradores do mesmo quarteirão tendem a ter preferências parecidas; casas vizinhas tendem a ter preços parecidos.
+
+DISC: Enuncie as suposições de agrupamento e de baixa densidade e explique como se relacionam.
+R: Agrupamento: pontos do mesmo grupo tendem a ter a mesma classe. Baixa densidade: a fronteira de decisão deve passar por região com poucos pontos. São duas faces da mesma ideia: se os grupos correspondem às classes, a fronteira natural fica no espaço vazio entre eles.
+
+DISC: Explique a suposição de variedade com a analogia da folha de papel enrolada.
+R: Os dados de alta dimensão ficam perto de uma superfície de poucas dimensões, como uma folha enrolada em uma sala. Dois pontos podem estar perto em linha reta, atravessando o ar, mas longe pelo papel. A distância relevante é a medida ao longo da variedade.
+
+DISC: Por que a distância em linha reta pode enganar em dados que seguem uma espiral? Como os métodos de grafos lidam com isso?
+R: Pontos de pontas opostas da espiral podem estar próximos em linha reta, mas distantes ao longo da curva. Os métodos de grafos ligam cada ponto a seus vizinhos e propagam rótulos por essas ligações, medindo a distância seguindo a forma dos dados.
+
+DISC: Descreva os dois cenários do experimento "quando ajuda e quando prejudica" e interprete os resultados.
+R: No Cenário 1 (duas luas), a classe coincide com o grupo e o Label Spreading ganhou 13,7 p.p., vencendo em 46 de 50 sorteios. No Cenário 2 (grupos cruzados), a estrutura de grupos é perpendicular à classe; Label Spreading perdeu 3,2 p.p. e o self-training perdeu 8,8 p.p. A diferença está em a suposição valer ou não.
+
+DISC: Por que se comparam os métodos "no mesmo sorteio" (diferença pareada) nos experimentos? Que vantagem isso traz?
+R: Porque a escolha dos exemplos rotulados causa grande variação nos resultados. Comparar referência e método no mesmo sorteio remove essa variação comum e mostra o efeito do método. Permite também contar em quantos sorteios o método vence ou perde.
+
+DISC: Descreva o efeito da quantidade de dados sem rótulo no experimento com 50 rótulos fixos. Há um mínimo necessário? Há retornos decrescentes?
+R: Com u = 0, o Label Spreading (74,0%) perde da referência (86,3%). A acurácia cresce com u e cruza a referência perto de 100 exemplos. Depois o ganho continua, mas diminui: de 800 para 1.207 exemplos varia pouco (92,6% para 93,4%).
+
+DISC: O que é o descasamento de classes (class mismatch) e por que ele prejudica os métodos semissupervisionados?
+R: Ocorre quando o conjunto sem rótulo contém classes ausentes do conjunto rotulado. Como os métodos só podem atribuir as classes conhecidas, esses exemplos recebem rótulos forçados e errados, que se propagam e reduzem ou eliminam o ganho.
+
+DISC: Que perguntas você faria sobre a origem dos dados sem rótulo antes de usá-los em um projeto?
+R: De onde vieram; se são da mesma população dos rotulados; se há classes novas ou condições diferentes (outro hospital, outra câmera, outra época); se a distribuição dos atributos é parecida; e se há dados duplicados ou do próprio conjunto de teste.
+
+DISC: Descreva as famílias da taxonomia (envoltórios, pré-processamento não supervisionado, intrinsecamente semissupervisionados e grafos) e dê um exemplo de cada.
+R: Envoltórios usam qualquer classificador em um laço de pseudo-rótulos (self-training). Pré-processamento não supervisionado usa dados sem rótulo antes do treino supervisionado (pré-treino contrastivo). Intrinsecamente semissupervisionados incluem o termo dos dados sem rótulo no objetivo (modelos generativos, S3VM, consistência). Grafos propagam rótulos entre vizinhos (Label Spreading).
+
+DISC: Explique o dilema da validação no aprendizado semissupervisionado e descreva a técnica de "rótulos escondidos" usada no capítulo.
+R: Para escolher parâmetros precisamos de rótulos de validação, mas os rótulos são escassos; reservar muitos reduz o treino e validar com poucos dá escolhas instáveis. Na técnica de rótulos escondidos, em cada rodada esconde-se parte dos rótulos conhecidos (1 por classe) e mede-se quantos o método recupera pelo atributo transduction_; repete-se e escolhe-se o parâmetro de melhor média.
+
+DISC: Interprete o resultado do experimento de escolha de k: 93,1% (validação interna), 92,9% (k fixo em 7) e 94,2% (oráculo). O que isso ensina?
+R: A validação interna quase não superou o k fixo, o que mostra que com poucos rótulos ela discrimina mal entre valores de k, e a escolha variou entre sorteios. O oráculo é um teto inalcançável, pois usa o teste. Lição: usar valores padrão razoáveis, reportar sensibilidade e desconfiar de ganhos que dependam de uma escolha muito específica.
+
+DISC: Descreva, em passos, um protocolo recomendado de avaliação de um método semissupervisionado.
+R: Separar o teste primeiro; definir e variar l e u; treinar um modelo de referência supervisionado forte; escolher parâmetros sem olhar o teste; repetir com vários sorteios reportando média e desvio; comparar no mesmo sorteio e contar vitórias e derrotas; verificar se os dados sem rótulo são da mesma população; reportar também os casos em que o método não ajudou.
+
+DISC: Um hospital tem 200 mil tomografias e só 300 laudadas. Descreva por onde você começaria, que suposições verificaria e como avaliaria o ganho de usar as imagens sem laudo.
+R: Começar com um modelo supervisionado de referência (de preferência com pré-treino) usando os 300 laudos. Verificar suposições: se imagens parecidas têm o mesmo diagnóstico e se as imagens sem laudo vêm da mesma população (mesmos equipamentos e classes). Considerar métodos de consistência e contrastivos (Parte III) ou self-training. Avaliar em teste rotulado separado, com vários sorteios e comparação pareada com a referência.

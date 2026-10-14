@@ -1,0 +1,233 @@
+@@EX 1 | NumPy e pandas com o conjunto Wine | básico
+O conjunto **Wine** (UCI) traz 178 vinhos italianos de 3 cultivares, descritos por 13 medidas químicas. Ele vem no scikit-learn (`load_wine`).
+
+1. Carregue-o como DataFrame (`as_frame=True`) e mostre o formato e as 3 primeiras linhas das colunas `alcohol`, `malic_acid` e `proline`.
+2. Calcule a média e o desvio padrão dessas 3 colunas.
+3. Use a função `esconder_rotulos` do Capítulo 2 para manter 9 rótulos (3 por cultivar) e mostre quantos exemplos ficaram com e sem rótulo.
+4. Entre os exemplos **rotulados**, calcule a média de `alcohol` por cultivar.
+
+*Pergunta:* qual atributo tem a maior escala? Por que isso importará para métodos baseados em distância?
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_wine
+
+def esconder_rotulos(y, n_rot, semente):
+    rng = np.random.RandomState(semente)
+    classes = np.unique(y)
+    idx = np.concatenate([rng.choice(np.where(y == c)[0], n_rot // len(classes), replace=False) for c in classes])
+    y_parcial = np.full(len(y), -1)
+    y_parcial[idx] = y[idx]
+    return y_parcial, idx
+
+dados = load_wine(as_frame=True)
+X, y = dados.data, dados.target.values
+print("Formato:", X.shape)
+cols = ["alcohol", "malic_acid", "proline"]
+print(X[cols].head(3))
+print()
+print(X[cols].agg(["mean", "std"]).round(2))
+
+y_parcial, idx = esconder_rotulos(y, n_rot=9, semente=0)
+print()
+print("Com rótulo:", int((y_parcial != -1).sum()), "| sem rótulo:", int((y_parcial == -1).sum()))
+rot = X.iloc[idx].copy(); rot["cultivar"] = y[idx]
+print(rot.groupby("cultivar")["alcohol"].mean().round(2))
+```
+@@NOTE `proline` tem média acima de 700 e desvio acima de 300, contra menos de 3 do `alcohol`. Em uma distância euclidiana, `proline` dominaria o cálculo. Por isso padronizamos os atributos antes de usar métodos baseados em vizinhança.
+@@EX 2 | Quem é o vizinho mais próximo? O efeito da escala | básico
+No Wine, encontre o **vizinho mais próximo** do vinho de índice 0 (excluindo ele mesmo), com distância euclidiana, em dois casos: com os atributos **originais** e com os atributos **padronizados**. Mostre o índice, a distância e a classe do vizinho em cada caso.
+
+Depois, calcule **para todos os vinhos** em que proporção o vizinho mais próximo tem a mesma classe, nos dois casos (use `NearestNeighbors` com `n_neighbors=2`).
+
+*Pergunta:* a padronização mudou o vizinho? E a proporção de vizinhos "da mesma classe"?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import NearestNeighbors
+
+X, y = load_wine(return_X_y=True)
+Xp = StandardScaler().fit_transform(X)
+
+for nome, M in [("original", X), ("padronizado", Xp)]:
+    nn = NearestNeighbors(n_neighbors=2).fit(M)
+    dist, ind = nn.kneighbors(M)          # a 1ª coluna é o próprio ponto
+    viz = ind[:, 1]
+    print(f"{nome:12s}| vizinho do vinho 0: {viz[0]:3d} (dist {dist[0, 1]:.2f}, classe {y[viz[0]]}; classe do vinho 0: {y[0]})",
+          f"| mesma classe: {100 * np.mean(y[viz] == y):.1f}%")
+```
+@@NOTE Sem padronizar, os vizinhos são determinados quase só pela `proline`, e a proporção de vizinhos da mesma classe é de 77,0%. Com a padronização, todos os atributos contribuem e a proporção sobe para 95,5%. Essa proporção é um termômetro útil: **se os vizinhos costumam ter a mesma classe, a ideia de propagar rótulos pelos vizinhos faz sentido**.
+@@EX 3 | Uma curva normal por classe | intermediário
+Use o atributo `mean radius` do Breast Cancer. Faça um classificador simples: para cada classe, estime a **média** e o **desvio padrão** e classifique cada exemplo de teste na classe cuja **densidade normal** (`scipy.stats.norm.pdf`) for maior (considere as classes igualmente prováveis).
+
+Compare a acurácia no teste de dois classificadores:
+
+- **A:** as médias e os desvios estimados com **apenas 10 exemplos rotulados** (5 por classe);
+- **B:** as médias e os desvios estimados com **todos** os rotulados do treino (398 exemplos).
+
+Faça 20 sorteios para o caso A e reporte média e desvio padrão.
+
+*Pergunta:* o que este exercício antecipa sobre o valor dos dados sem rótulo, no Capítulo 6?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import norm
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+
+X, y = load_breast_cancer(return_X_y=True)
+x = X[:, 0]                                   # mean radius
+x_tr, x_te, y_tr, y_te = train_test_split(x, y, test_size=0.3, stratify=y, random_state=0)
+
+def acuracia(mu, sd):
+    d0 = norm.pdf(x_te, mu[0], sd[0]); d1 = norm.pdf(x_te, mu[1], sd[1])
+    return np.mean((d1 > d0).astype(int) == y_te)
+
+# B: todos os rótulos do treino
+muB = [x_tr[y_tr == c].mean() for c in (0, 1)]; sdB = [x_tr[y_tr == c].std() for c in (0, 1)]
+print("B (todos os rótulos): %.1f%%" % (100 * acuracia(muB, sdB)))
+
+# A: 10 rótulos
+accA = []
+for semente in range(20):
+    rng = np.random.RandomState(semente)
+    idx = {c: rng.choice(np.where(y_tr == c)[0], 5, replace=False) for c in (0, 1)}
+    mu = [x_tr[idx[c]].mean() for c in (0, 1)]; sd = [x_tr[idx[c]].std() + 1e-6 for c in (0, 1)]
+    accA.append(acuracia(mu, sd))
+print("A (10 rótulos)     : %.1f%% ± %.1f" % (100 * np.mean(accA), 100 * np.std(accA)))
+```
+@@NOTE Com poucos rótulos, as médias e os desvios estimados são instáveis, e o resultado varia muito entre sorteios. Os **exemplos sem rótulo** poderiam ajudar a estimar melhor essas curvas, porque mostram como os dados se distribuem. Essa é a ideia dos modelos generativos semissupervisionados (Capítulo 6).
+@@EX 4 | Escolhendo k com validação cruzada | intermediário
+No Wine, treine um classificador de **k vizinhos mais próximos** (`KNeighborsClassifier`) dentro de um `Pipeline` com `StandardScaler`. Para `k` em 1, 3, 5, 9, 15, 25 e 51:
+
+- calcule a acurácia média de uma **validação cruzada com 5 dobras** feita **apenas no treino** (70% dos dados);
+- calcule a acurácia no **treino** e no **teste** para o mesmo k.
+
+Escolha o `k` pela validação cruzada e só então reporte o resultado no teste.
+
+*Pergunta:* o que acontece com a acurácia de treino quando k = 1? Por quê?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+
+X, y = load_wine(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+
+print("  k | validação cruzada | treino | teste")
+melhor, nota = None, -1
+for k in [1, 3, 5, 9, 15, 25, 51]:
+    modelo = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=k))
+    vc = cross_val_score(modelo, X_tr, y_tr, cv=cv).mean()
+    modelo.fit(X_tr, y_tr)
+    print(f"{k:3d} | {100 * vc:16.1f}% | {100 * modelo.score(X_tr, y_tr):5.1f}% | {100 * modelo.score(X_te, y_te):5.1f}%")
+    if vc > nota: melhor, nota = k, vc
+print("k escolhido pela validação cruzada:", melhor)
+```
+@@NOTE Com k = 1, cada exemplo de treino é o seu próprio vizinho mais próximo, então a acurácia de treino é 100% (sobreajuste potencial). A **validação cruzada**, feita só no treino, é quem deve guiar a escolha de k. O teste fica para o relato final.
+@@EX 5 | Caçando o vazamento | avançado
+Reproduza o experimento de vazamento do capítulo, variando o número de atributos de ruído: 20, 200 e 2.000. Em cada caso, use 60 exemplos, rótulos aleatórios, `SelectKBest` com `k=10` e validação cruzada de 5 dobras, e meça a acurácia:
+
+- com a seleção feita **antes** da validação cruzada (vazamento);
+- com a seleção **dentro** do pipeline.
+
+Faça **10 repetições** (sementes diferentes) e reporte a média.
+
+*Pergunta:* como o tamanho do vazamento muda com o número de atributos? Por quê?
+@@SOL
+```python
+import numpy as np
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.pipeline import make_pipeline
+
+print("atributos | com vazamento | sem vazamento")
+for d in [20, 200, 2000]:
+    errado, certo = [], []
+    for semente in range(10):
+        rng = np.random.RandomState(semente)
+        X = rng.normal(size=(60, d)); y = rng.randint(0, 2, size=60)
+        cv = StratifiedKFold(5, shuffle=True, random_state=semente)
+        Xv = SelectKBest(f_classif, k=10).fit_transform(X, y)
+        errado.append(cross_val_score(LogisticRegression(max_iter=1000), Xv, y, cv=cv).mean())
+        pipe = make_pipeline(SelectKBest(f_classif, k=10), LogisticRegression(max_iter=1000))
+        certo.append(cross_val_score(pipe, X, y, cv=cv).mean())
+    print(f"{d:9d} | {100 * np.mean(errado):12.1f}% | {100 * np.mean(certo):12.1f}%")
+```
+@@NOTE Quanto mais atributos de ruído, mais fácil é "achar" por acaso atributos que parecem informativos quando se olha para todos os rótulos, e maior o vazamento. Sem vazamento, a acurácia fica em torno de 50%, como deveria em dados sem padrão.
+@@PROJ Montando a bancada de testes semissupervisionados | Cap02
+**Fonte dos dados.** *Wine* e *Breast Cancer Wisconsin (Diagnostic)*, do repositório **UCI Machine Learning**, incluídos no scikit-learn.
+
+**Contexto.** Sua equipe vai comparar vários métodos semissupervisionados ao longo do projeto. Antes disso, você deve construir uma **bancada de testes reutilizável**: uma função que compara um modelo de referência com métodos semissupervisionados, de forma honesta e reprodutível.
+
+**Tarefas.**
+1. Escreva uma função `avaliar(X, y, n_rots, sementes)` que:
+   - separe treino e teste uma única vez (70/30, estratificado, `random_state=0`);
+   - para cada `n_rot` e cada semente, esconda rótulos com `esconder_rotulos`;
+   - treine **três modelos dentro de pipelines com `StandardScaler`**: (a) referência, só com os rotulados; (b) `SelfTrainingClassifier`; (c) `LabelSpreading`;
+   - devolva um `DataFrame` com média e desvio padrão da acurácia no teste.
+2. Execute a função no **Wine** (`n_rots = [6, 12, 30]`) e no **Breast Cancer** (`n_rots = [10, 20, 40]`), com 20 sementes.
+3. Escreva um parágrafo (6 a 8 linhas) que descreva o **protocolo** de avaliação que sua função segue e explique por que ele evita o vazamento de informação.
+4. Escreva outro parágrafo, de 4 a 6 linhas, com **o que os resultados mostram**: os dados sem rótulo ajudaram? Em que casos? Compare com o que você viu no Digits, no Capítulo 1, e levante uma hipótese para a diferença.
+
+**Entregáveis.** O código da função, as duas tabelas e os dois parágrafos.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_wine, load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import SelfTrainingClassifier, LabelSpreading
+
+def esconder_rotulos(y, n_rot, semente):
+    rng = np.random.RandomState(semente)
+    classes = np.unique(y)
+    idx = np.concatenate([rng.choice(np.where(y == c)[0], n_rot // len(classes), replace=False) for c in classes])
+    y_parcial = np.full(len(y), -1)
+    y_parcial[idx] = y[idx]
+    return y_parcial, idx
+
+def avaliar(X, y, n_rots, sementes=20):
+    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+    linhas = []
+    for n_rot in n_rots:
+        acc = {"referência": [], "self-training": [], "label spreading": []}
+        for s in range(sementes):
+            yp, idx = esconder_rotulos(y_tr, n_rot, s)
+            ref = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)).fit(X_tr[idx], y_tr[idx])
+            st = make_pipeline(StandardScaler(), SelfTrainingClassifier(LogisticRegression(max_iter=1000), threshold=0.9)).fit(X_tr, yp)
+            ls = make_pipeline(StandardScaler(), LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2)).fit(X_tr, yp)
+            acc["referência"].append(ref.score(X_te, y_te))
+            acc["self-training"].append(st.score(X_te, y_te))
+            acc["label spreading"].append(ls.score(X_te, y_te))
+        for nome, v in acc.items():
+            linhas.append({"n_rot": n_rot, "método": nome, "média (%)": round(100 * np.mean(v), 1), "desvio (p.p.)": round(100 * np.std(v), 1)})
+    return pd.DataFrame(linhas)
+
+Xw, yw = load_wine(return_X_y=True)
+Xc, yc = load_breast_cancer(return_X_y=True)
+print("WINE"); print(avaliar(Xw, yw, [6, 12, 30]).to_string(index=False))
+print(); print("BREAST CANCER"); print(avaliar(Xc, yc, [10, 20, 40]).to_string(index=False))
+```
+@@RUBRICA
+- O teste foi separado uma única vez e nunca usado no treino nem nas escolhas.
+- A padronização está dentro do pipeline, ajustada apenas com os dados de treino.
+- O modelo de referência usa apenas os exemplos rotulados; os métodos semissupervisionados usam todos os exemplos de treino.
+- Há repetição com 20 sementes, e o relato traz média e desvio padrão.
+- O parágrafo do protocolo explica o vazamento e como o pipeline o evita; a análise dos resultados é coerente com os números.
+@@NOTE Nestes dois conjuntos, o ganho é pequeno ou inexistente. O Label Spreading ficou abaixo da referência na maioria dos casos. O self-training teve ganhos de 0,4 a 2,2 pontos percentuais com 12 ou mais rótulos, menores ou comparáveis ao desvio padrão (e com 6 rótulos no Wine foi pior que a referência). Uma hipótese: Wine e Breast Cancer têm poucos atributos e classes que um modelo linear já separa bem, e o espaço para melhorar é pequeno; no Digits, com 64 atributos e 10 classes, os rótulos escassos pesam muito mais. Reportar que os dados sem rótulo **não** ajudaram é um resultado legítimo. A bancada que você construiu será reutilizada nos próximos capítulos.
+@@ALEM
+- **UCI:** Wine, Iris, Breast Cancer Wisconsin (Diagnostic), Banknote Authentication e Spambase.
+- **Kaggle:** Wine Quality, Heart Disease e SMS Spam Collection.

@@ -1,0 +1,269 @@
+MC: No aprendizado semissupervisionado, os dados de treinamento contêm:
+a) atributos e rótulos para todos os exemplos.
+b) atributos para todos os exemplos e rótulos para apenas alguns.
+c) apenas rótulos, sem atributos.
+d) recompensas e punições de um ambiente.
+R: b | O semissupervisionado combina X em todos os exemplos com y em poucos.
+
+MC: Na história das 1.000 redações, corrigir 20 e usar as outras 980 para perceber semelhanças corresponde a:
+a) aprendizado por reforço.
+b) aprendizado semissupervisionado.
+c) aprendizado supervisionado puro.
+d) detecção de anomalias.
+R: b | Há poucos exemplos rotulados (as 20 corrigidas) e muitos sem rótulo (as 980).
+
+MC: Em uma tabela de dados, cada coluna representa normalmente:
+a) um exemplo.
+b) um modelo.
+c) um atributo.
+d) uma recompensa.
+R: c | Colunas são atributos; linhas são exemplos.
+
+MC: A letra y, em aprendizado de máquina, designa em geral:
+a) a tabela de atributos.
+b) o rótulo ou resposta correta.
+c) o número de exemplos.
+d) a distância entre dois pontos.
+R: b | y guarda os rótulos (as respostas corretas), quando existem.
+
+MC: Prever se um e-mail é spam ou não spam é uma tarefa de:
+a) regressão.
+b) classificação.
+c) agrupamento.
+d) reforço.
+R: b | O rótulo é uma categoria, logo a tarefa é de classificação.
+
+MC: Prever o preço de uma casa a partir de suas características é uma tarefa de:
+a) classificação.
+b) regressão.
+c) aprendizado por reforço.
+d) agrupamento.
+R: b | O rótulo é um número, logo a tarefa é de regressão.
+
+MC: O conjunto de teste serve para:
+a) treinar o modelo com mais dados.
+b) medir o desempenho do modelo em exemplos que ele nunca viu.
+c) escolher os atributos mais bonitos.
+d) criar rótulos novos.
+R: b | A avaliação honesta exige exemplos que não participaram do treino.
+
+MC: A acurácia é definida como:
+a) a fração de previsões corretas.
+b) a média dos atributos.
+c) o número de classes.
+d) a distância média entre os exemplos.
+R: a | Acurácia = previsões corretas dividido pelo total de previsões.
+
+MC: Um modelo acerta 45 de 50 exemplos de teste. Sua acurácia é:
+a) 45%.
+b) 50%.
+c) 90%.
+d) 95%.
+R: c | 45/50 = 0,90, ou seja, 90%.
+
+MC: Qual paradigma usa apenas X, sem nenhum rótulo?
+a) Supervisionado.
+b) Não supervisionado.
+c) Semissupervisionado.
+d) Classificação binária.
+R: b | O não supervisionado trabalha só com os atributos.
+
+MC: No aprendizado auto-supervisionado, os rótulos:
+a) são digitados por especialistas.
+b) são criados automaticamente a partir dos próprios dados.
+c) não existem e não são usados em nenhum momento.
+d) são recompensas do ambiente.
+R: b | A tarefa-pretexto gera os rótulos a partir dos dados, sem anotação humana.
+
+MC: Qual paradigma é caracterizado por agente, ambiente e recompensa?
+a) Supervisionado.
+b) Semissupervisionado.
+c) Por reforço.
+d) Auto-supervisionado.
+R: c | No reforço, o agente age e recebe recompensas ou punições.
+
+MC: Qual destas NÃO é uma razão pela qual rotular dados é caro?
+a) Exige especialistas.
+b) Consome muito tempo.
+c) Os rótulos humanos nunca contêm erros.
+d) Em alguns casos o rótulo só é conhecido muito tempo depois.
+R: c | Rótulos humanos contêm erros; a afirmação é falsa e, portanto, não é razão de custo.
+
+MC: Dados sem rótulo, em geral, são:
+a) escassos e caros.
+b) abundantes e baratos.
+c) impossíveis de coletar.
+d) inúteis para qualquer aprendizado.
+R: b | Coletar dados brutos costuma ser barato; o difícil é rotulá-los.
+
+MC: Na notação do capítulo, o conjunto L representa:
+a) os exemplos sem rótulo.
+b) os exemplos rotulados.
+c) os exemplos de teste.
+d) os atributos.
+R: b | L é o conjunto rotulado, com l exemplos.
+
+MC: Na notação do capítulo, o conjunto U representa:
+a) os exemplos sem rótulo.
+b) os exemplos rotulados.
+c) o conjunto de validação.
+d) os parâmetros do modelo.
+R: a | U é o conjunto sem rótulo (unlabeled), com u exemplos.
+
+MC: Se há 100 exemplos rotulados e 900 sem rótulo, o valor de n = l + u é:
+a) 100.
+b) 900.
+c) 1.000.
+d) 9.000.
+R: c | n = 100 + 900 = 1.000.
+
+MC: No aprendizado semissupervisionado típico, a relação entre u e l é:
+a) u é muito menor que l.
+b) u é igual a zero.
+c) u é muito maior que l.
+d) l é igual a zero.
+R: c | Em geral há muito mais exemplos sem rótulo do que com rótulo.
+
+MC: No aprendizado transdutivo, o objetivo é:
+a) construir um modelo para qualquer exemplo futuro.
+b) rotular os exemplos sem rótulo que já temos.
+c) apagar os rótulos existentes.
+d) agrupar sem usar rótulos.
+R: b | Transdução foca nos exemplos sem rótulo do próprio conjunto de treino.
+
+MC: No aprendizado indutivo, o objetivo é:
+a) rotular apenas o conjunto U.
+b) obter um modelo capaz de prever o rótulo de exemplos novos.
+c) descobrir grupos nos dados.
+d) maximizar recompensas.
+R: b | Indução produz um modelo geral, aplicável a exemplos que não estavam no treino.
+
+MC: Segundo o capítulo, os dados sem rótulo "ajudam" quando:
+a) o modelo semissupervisionado supera o supervisionado treinado só com os rotulados.
+b) o modelo usa mais exemplos do que o supervisionado, seja qual for o resultado.
+c) o tempo de treino diminui.
+d) o conjunto de teste é maior.
+R: a | O critério é a comparação do desempenho com o modelo de referência supervisionado.
+
+MC: No scikit-learn, o rótulo que indica "desconhecido" nos métodos semissupervisionados é:
+a) 0.
+b) 1.
+c) -1.
+d) None.
+R: c | Por convenção, -1 marca exemplos sem rótulo.
+
+MC: No experimento das duas luas do capítulo, quantos exemplos tinham rótulo?
+a) 4.
+b) 50.
+c) 150.
+d) 300.
+R: a | Apenas 4 dos 300 pontos foram rotulados.
+
+MC: No experimento Digits do capítulo, o conjunto de treino tinha 1.257 exemplos, dos quais 50 rotulados. Quantos estavam sem rótulo?
+a) 50.
+b) 540.
+c) 1.207.
+d) 1.257.
+R: c | 1.257 - 50 = 1.207.
+
+MC: O conjunto Digits, usado no capítulo, tem imagens de quantos pixels cada uma?
+a) 8 por 8 (64 atributos).
+b) 28 por 28 (784 atributos).
+c) 32 por 32 (1.024 atributos).
+d) 2 por 2 (4 atributos).
+R: a | O Digits do scikit-learn tem imagens 8x8, ou seja, 64 atributos.
+
+MC: A curva da acurácia do capítulo mostra que o ganho dos métodos semissupervisionados:
+a) é maior quando há poucos rótulos e diminui quando os rótulos aumentam.
+b) é sempre o mesmo, qualquer que seja o número de rótulos.
+c) só aparece com mais de 1.000 rótulos.
+d) é negativo em todos os casos.
+R: a | O ganho foi maior à esquerda do gráfico e encolheu com 200 ou 300 rótulos.
+
+MC: Por que o capítulo repete o experimento com 10 sorteios diferentes de exemplos rotulados?
+a) Porque um único sorteio pode dar uma conclusão enganosa, já que a escolha dos rotulados influencia muito o resultado.
+b) Porque o scikit-learn exige 10 execuções.
+c) Para aumentar artificialmente a acurácia.
+d) Porque o computador comete erros aleatórios.
+R: a | Com poucos rótulos, a variabilidade é grande; repetir dá uma estimativa mais confiável.
+
+MC: Qual das ideias abaixo escolhe quais exemplos pedir para um humano rotular?
+a) Aprendizado ativo.
+b) Aprendizado por reforço.
+c) Aprendizado por transferência.
+d) Regressão linear.
+R: a | No aprendizado ativo, o modelo seleciona os exemplos mais informativos para rotulação.
+
+MC: Quem propôs o co-training, com dois classificadores que se ensinam mutuamente?
+a) Blum e Mitchell, em 1998.
+b) Scudder, em 1965.
+c) Sohn e colegas, em 2020.
+d) Cortes e Vapnik, em 1995.
+R: a | O co-training foi proposto por Blum e Mitchell em 1998.
+
+MC: Qual conjunto de práticas é recomendado no início de qualquer projeto semissupervisionado?
+a) Treinar um modelo supervisionado de referência só com os exemplos rotulados.
+b) Apagar todos os rótulos.
+c) Usar o conjunto de teste para escolher parâmetros.
+d) Ignorar a avaliação.
+R: a | O modelo de referência é a régua para medir o ganho de qualquer método semissupervisionado.
+
+DISC: Explique, com suas palavras, o que é aprendizado semissupervisionado e dê um exemplo do seu cotidiano.
+R: É o aprendizado em que há atributos para todos os exemplos, mas rótulos apenas para alguns. O modelo usa o gabarito parcial e a estrutura dos dados sem rótulo. Exemplo: marcar poucas fotos com o nome de um amigo e o aplicativo sugerir o nome em outras fotos parecidas.
+
+DISC: Descreva, com suas palavras, a diferença entre atributo, exemplo e rótulo.
+R: Exemplo é uma linha dos dados (um e-mail, uma foto). Atributo é uma coluna que descreve o exemplo (número de links, brilho de um pixel). Rótulo é a resposta correta daquele exemplo (spam ou não spam), quando existe.
+
+DISC: Qual é a diferença entre classificação e regressão? Dê um exemplo de cada.
+R: Na classificação o rótulo é uma categoria (spam ou não spam). Na regressão o rótulo é um número (preço de um imóvel). Ambas são tarefas supervisionadas.
+
+DISC: Por que não devemos avaliar um modelo nos mesmos exemplos usados no treino?
+R: Porque o modelo pode simplesmente memorizar os exemplos e a nota ficaria artificialmente alta. A avaliação honesta exige exemplos que ele nunca viu, para medir a capacidade de generalizar.
+
+DISC: Compare os paradigmas supervisionado, não supervisionado e semissupervisionado quanto ao tipo de dado disponível.
+R: No supervisionado, todos os exemplos têm rótulo. No não supervisionado, nenhum tem. No semissupervisionado, todos têm atributos e apenas alguns têm rótulo; o modelo usa os dois tipos de exemplo.
+
+DISC: Explique a diferença entre aprendizado semissupervisionado e auto-supervisionado.
+R: No semissupervisionado há rótulos humanos, embora poucos. No auto-supervisionado, os rótulos são fabricados automaticamente a partir dos próprios dados (por exemplo, prever uma palavra escondida), sem anotação humana.
+
+DISC: Cite e explique quatro razões pelas quais rotular dados é caro.
+R: Exige especialistas (radiologistas, biólogos); consome tempo (transcrever áudio); pode ser impossível ou arriscado (fraude confirmada só meses depois); e os rótulos contêm erros, o que exige revisão e repetição.
+
+DISC: O que significa dizer que os dados sem rótulo "ajudam"? Como verificar isso em um projeto?
+R: Significa que o modelo semissupervisionado supera, no mesmo conjunto de teste, o modelo supervisionado treinado apenas com os exemplos rotulados. Verifica-se treinando os dois modelos e comparando a acurácia (ou outra métrica) em dados de teste separados.
+
+DISC: Defina com símbolos o conjunto rotulado L e o conjunto sem rótulo U, e explique o que são l, u e n.
+R: L = {(x1,y1), ..., (xl,yl)} contém l exemplos com rótulo; U = {x(l+1), ..., x(l+u)} contém u exemplos sem rótulo; n = l + u é o total de exemplos. Em geral, u é muito maior que l.
+
+DISC: Explique a diferença entre aprendizado indutivo e transdutivo usando a analogia das redações.
+R: Se o objetivo é dar nota às 980 redações que já estão na mesa, é transdutivo. Se o objetivo é criar um critério que possa ser aplicado também às redações do próximo ano, é indutivo.
+
+DISC: No experimento das duas luas, por que o modelo supervisionado treinado com 4 pontos errou tanto e o semissupervisionado não?
+R: Com apenas 4 pontos o modelo supervisionado traçou uma fronteira que ignora o formato dos dados. O semissupervisionado usou os 296 pontos sem rótulo para perceber que os pontos encadeados formam cada lua e traçou a fronteira entre elas.
+
+DISC: Por que o capítulo diz que o exemplo das duas luas é "de vitrine"? O que acontece ao reduzir n_neighbors de 7 para 5?
+R: Porque os dados obedecem perfeitamente à suposição do método e os parâmetros foram escolhidos para mostrar o melhor caso. Com 5 vizinhos, a acurácia do mesmo experimento cai para cerca de 70%, o que mostra a sensibilidade a escolhas.
+
+DISC: Descreva as três lições da curva de acurácia em função do número de rótulos no conjunto Digits.
+R: Com poucos rótulos o ganho é grande; o ganho diminui quando os rótulos aumentam; e a variabilidade entre sorteios é grande quando há poucos rótulos, o que torna frágeis as conclusões tiradas de um único sorteio.
+
+DISC: Explique o que significa o valor -1 no vetor de rótulos do scikit-learn e por que as classes verdadeiras nunca podem ser -1.
+R: O valor -1 sinaliza que o exemplo não tem rótulo. Se uma classe verdadeira fosse -1, o método a trataria como exemplo sem rótulo, e o aprendizado ficaria incorreto.
+
+DISC: Compare aprendizado ativo e aprendizado semissupervisionado quanto à interação com humanos.
+R: No ativo, o modelo escolhe exemplos e pede que um humano os rotule, ou seja, há consulta humana. No semissupervisionado, o modelo aproveita os exemplos sem rótulo sem pedir nada novo a ninguém.
+
+DISC: Cite duas áreas de aplicação do aprendizado semissupervisionado e explique por que elas têm "muitos dados e poucos rótulos".
+R: Imagens médicas, em que os exames são abundantes mas os laudos especializados são escassos; e sensoriamento remoto, em que satélites fotografam tudo mas mapear o solo exige visita a campo. Em ambos, o rótulo depende de trabalho especializado e caro.
+
+DISC: Descreva as sete etapas de um projeto semissupervisionado.
+R: Entender o problema; reunir dados; rotular um pouco; escolher o método; treinar; avaliar com rigor, comparando com o modelo supervisionado de referência; decidir e monitorar, voltando ao início se necessário.
+
+DISC: Explique por que é importante treinar um modelo supervisionado de referência antes de usar um método semissupervisionado.
+R: Porque ele é a régua para medir se os dados sem rótulo ajudaram. Se o modelo de referência já atende à necessidade, talvez nem seja preciso um método mais complexo.
+
+DISC: Apresente dois riscos éticos de espalhar rótulos de poucos exemplos para muitos e uma medida de mitigação para cada.
+R: Viés nos poucos rótulos que se propaga para milhares de exemplos (auditar quem rotula e diversificar os rotuladores); e rotular só casos fáceis, o que faz o modelo errar os difíceis (escolher os exemplos a rotular com critério, cobrindo casos variados). Também há a privacidade, mitigada por anonimização e conformidade com a LGPD.
+
+DISC: Descreva um problema da sua área de interesse em que o aprendizado semissupervisionado poderia ajudar, indicando por que há poucos rótulos.
+R: Resposta pessoal coerente. Deve indicar a tarefa de classificação, os dados disponíveis em abundância, o motivo pelo qual o rótulo é escasso (custo, tempo, especialista) e como seria avaliado o ganho em relação ao modelo supervisionado de referência.

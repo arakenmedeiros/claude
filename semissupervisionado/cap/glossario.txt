@@ -1,0 +1,68 @@
+Acurácia: fração de previsões corretas de um modelo.
+Agente: no aprendizado por reforço, quem age em um ambiente e recebe recompensas.
+Aprendizado ativo: abordagem em que o modelo escolhe quais exemplos pedir para um humano rotular.
+Aprendizado auto-supervisionado: aprendizado em que os rótulos são criados automaticamente a partir dos próprios dados.
+Aprendizado de máquina: área da inteligência artificial em que programas melhoram seu desempenho a partir de dados.
+Aprendizado indutivo: objetivo de produzir um modelo geral, capaz de prever o rótulo de exemplos novos.
+Aprendizado não supervisionado: aprendizado que usa apenas os atributos (X), sem rótulos.
+Aprendizado por reforço: aprendizado em que um agente aprende por recompensas e punições.
+Aprendizado semissupervisionado: aprendizado que usa poucos exemplos rotulados e muitos exemplos sem rótulo.
+Aprendizado supervisionado: aprendizado que usa exemplos com rótulo para todos os dados de treino.
+Aprendizado transdutivo: objetivo de rotular os exemplos sem rótulo que já temos, sem modelo para exemplos futuros.
+Atributo (feature): característica que descreve um exemplo; uma coluna da tabela de dados.
+Baixa densidade (suposição): ideia de que a fronteira de decisão deve passar por região com poucos pontos.
+Bayes (teorema de): regra que relaciona P(A | B) com P(B | A), P(A) e P(B).
+Classificação: tarefa supervisionada em que o rótulo é uma categoria.
+Cluster (grupo): conjunto de exemplos parecidos entre si e diferentes dos demais.
+Co-training: método em que dois classificadores, com visões diferentes dos dados, ensinam um ao outro.
+Conjunto de teste: dados reservados para medir o desempenho final do modelo.
+Conjunto de treino: dados usados para o modelo aprender.
+Conjunto de validação: dados usados para escolher parâmetros e comparar modelos.
+Consistência (regularização por): exigir que o modelo dê previsões parecidas para versões perturbadas do mesmo exemplo.
+Cosseno (similaridade do): medida do ângulo entre dois vetores, entre -1 e 1.
+DataFrame: tabela de dados com colunas nomeadas, da biblioteca pandas.
+Descasamento de classes (class mismatch): situação em que o conjunto sem rótulo contém classes ausentes do conjunto rotulado.
+Desvio padrão: medida de quanto os valores se espalham em torno da média.
+Distância euclidiana: distância em linha reta entre dois pontos.
+Distância de Manhattan: soma das diferenças absolutas entre os atributos de dois pontos.
+Distribuição normal (gaussiana): distribuição em forma de sino, descrita por média e desvio padrão.
+Exemplo (instância, amostra): uma linha dos dados.
+F1: média harmônica entre precisão e revocação.
+Falso negativo (FN): exemplo positivo que o modelo previu como negativo.
+Falso positivo (FP): exemplo negativo que o modelo previu como positivo.
+fit: método do scikit-learn que ajusta o modelo ou a transformação aos dados de treino.
+Fronteira de decisão: linha ou superfície que separa as regiões de cada classe.
+Grafo: conjunto de nós ligados por arestas; nos métodos semissupervisionados, cada exemplo é um nó.
+Homofilia: fração de vizinhos de um exemplo que têm a mesma classe dele.
+Label Spreading: método em grafos que espalha os rótulos pelos vizinhos, com suavização.
+Matriz: tabela de números com linhas e colunas.
+Matriz de confusão: tabela que cruza as classes reais com as classes previstas.
+Média: soma dos valores dividida pelo número de valores.
+Modelo: programa que aprendeu com dados e faz previsões.
+Modelo de referência (baseline): modelo supervisionado treinado só com os exemplos rotulados, usado para medir o ganho de outros métodos.
+NumPy: biblioteca de Python para cálculo com vetores e matrizes.
+p.p. (pontos percentuais): diferença absoluta entre duas porcentagens.
+pandas: biblioteca de Python para tabelas de dados.
+Padronização: transformação que deixa um atributo com média 0 e desvio padrão 1.
+Pipeline: objeto que encadeia passos de processamento e um modelo.
+Precisão: entre as previsões positivas, a fração que está correta.
+predict: método do scikit-learn que devolve as classes previstas.
+Pseudo-rótulo: rótulo atribuído pelo próprio modelo, tratado como se fosse verdadeiro.
+random_state: semente que torna sorteios reprodutíveis.
+Regressão: tarefa supervisionada em que o rótulo é um número.
+Revocação (recall): entre os exemplos realmente positivos, a fração que o modelo encontrou.
+Rótulo (label): resposta correta de um exemplo.
+Self-training (autotreinamento): método em que o modelo rotula os exemplos de que tem mais confiança e aprende com eles.
+scikit-learn: biblioteca de Python para aprendizado de máquina.
+Sobreajuste (overfitting): quando o modelo decora o treino e generaliza mal.
+Subajuste (underfitting): quando o modelo é simples demais para capturar o padrão.
+Suavidade (suposição de): ideia de que pontos próximos em região densa têm rótulos iguais.
+Suposição de agrupamento: ideia de que pontos do mesmo grupo tendem a ter a mesma classe.
+Suposição de variedade (manifold): ideia de que dados de alta dimensão vivem perto de uma superfície de baixa dimensão.
+Validação cruzada: técnica que divide os dados em k partes e alterna qual delas é teste.
+Variedade (manifold): superfície de baixa dimensão sobre a qual os dados se distribuem aproximadamente.
+Vazamento (leakage): quando informação do teste ou da validação escapa para o treino e infla o resultado.
+Verdadeiro negativo (VN): exemplo negativo previsto como negativo.
+Verdadeiro positivo (VP): exemplo positivo previsto como positivo.
+Viés de confirmação: reforço dos próprios erros por um modelo que aprende com seus pseudo-rótulos.
+Vizinho mais próximo: o exemplo com menor distância a um ponto de referência.

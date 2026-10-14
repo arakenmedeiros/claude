@@ -1,0 +1,269 @@
+MC: Em Python, uma variável é:
+a) um nome que guarda um valor.
+b) um erro de sintaxe.
+c) um tipo de gráfico.
+d) uma biblioteca de aprendizado de máquina.
+R: a | Uma variável associa um nome a um valor guardado na memória.
+
+MC: O comando for, em Python, serve para:
+a) importar bibliotecas.
+b) repetir um bloco de código para cada item de uma coleção.
+c) comentar o código.
+d) calcular a média de um vetor.
+R: b | O laço for repete o bloco recuado para cada item.
+
+MC: Em Python, o índice do primeiro elemento de uma lista ou vetor é:
+a) 0.
+b) 1.
+c) -1.
+d) depende do tamanho do vetor.
+R: a | A numeração começa em zero.
+
+MC: O valor de np.array([2, 4, 6]).mean() é:
+a) 2.
+b) 4.
+c) 6.
+d) 12.
+R: b | (2 + 4 + 6) / 3 = 4.
+
+MC: Uma matriz NumPy com formato (4, 3) tem:
+a) 4 colunas e 3 linhas.
+b) 4 linhas e 3 colunas.
+c) 4 exemplos e 4 atributos.
+d) 12 linhas.
+R: b | O primeiro número é o de linhas e o segundo, o de colunas.
+
+MC: Em NumPy, a expressão X[:, 1] seleciona:
+a) a primeira linha.
+b) todas as linhas da coluna de índice 1.
+c) a coluna de índice 0.
+d) a linha de índice 1 e todas as colunas.
+R: b | O símbolo : significa todas as linhas; 1 indica a coluna.
+
+MC: Se y é um vetor NumPy com rótulos e -1 marca os exemplos sem rótulo, a expressão (y != -1).sum() conta:
+a) os exemplos sem rótulo.
+b) os exemplos com rótulo.
+c) as classes diferentes.
+d) o valor máximo de y.
+R: b | A máscara é verdadeira onde há rótulo; a soma conta os verdadeiros.
+
+MC: Em pandas, um DataFrame é:
+a) um tipo de modelo de classificação.
+b) uma tabela com linhas e colunas nomeadas.
+c) um gráfico de dispersão.
+d) uma distância entre vetores.
+R: b | O DataFrame é a estrutura tabular da biblioteca pandas.
+
+MC: O método describe() de um DataFrame devolve:
+a) um resumo estatístico das colunas numéricas.
+b) o modelo treinado.
+c) a matriz de confusão.
+d) a lista de rótulos faltantes.
+R: a | Mostra contagem, média, desvio padrão, mínimo, quartis e máximo.
+
+MC: Uma imagem de 8 por 8 pixels, tratada como um exemplo, é um ponto em um espaço com quantas dimensões?
+a) 8.
+b) 16.
+c) 64.
+d) 2.
+R: c | 8 × 8 = 64 atributos (pixels), logo 64 dimensões.
+
+MC: A distância euclidiana entre os pontos (0, 0) e (3, 4) vale:
+a) 3.
+b) 5.
+c) 7.
+d) 12.
+R: b | Raiz de (9 + 16) = raiz de 25 = 5.
+
+MC: A distância de Manhattan entre (1, 2) e (4, 6) vale:
+a) 3.
+b) 4.
+c) 5.
+d) 7.
+R: d | |1 − 4| + |2 − 6| = 3 + 4 = 7.
+
+MC: Uma similaridade do cosseno igual a 1 entre dois vetores indica que eles:
+a) são perpendiculares.
+b) apontam na mesma direção.
+c) apontam em direções opostas.
+d) têm o mesmo comprimento obrigatoriamente.
+R: b | Cosseno 1 significa ângulo zero, ou seja, mesma direção, independentemente do comprimento.
+
+MC: Por que padronizamos os atributos antes de usar métodos baseados em distância?
+a) Para que o atributo de maior escala não domine a distância.
+b) Para aumentar o número de exemplos.
+c) Para transformar rótulos em números.
+d) Para eliminar a necessidade de teste.
+R: a | Sem padronização, atributos com valores grandes dominam o cálculo da distância.
+
+MC: Um valor x = 70, em um atributo com média 50 e desvio padrão 10, tem z-score igual a:
+a) 0.
+b) 1.
+c) 2.
+d) 20.
+R: c | z = (70 − 50) / 10 = 2.
+
+MC: Depois de padronizar um atributo com StandardScaler, ele passa a ter:
+a) média 0 e desvio padrão 1.
+b) média 1 e desvio padrão 0.
+c) média 0 e desvio padrão 0.
+d) valores entre 0 e 1 obrigatoriamente.
+R: a | A padronização centraliza em zero e escala o desvio padrão para 1.
+
+MC: A notação P(A | B) é lida como:
+a) probabilidade de A ou B.
+b) probabilidade de A dado B.
+c) probabilidade de A e de B ao mesmo tempo, necessariamente.
+d) probabilidade de B dado A.
+R: b | O traço vertical significa "dado que".
+
+MC: Uma doença atinge 1% da população. Um teste dá positivo em 90% dos doentes e em 10% dos sadios. Dado um resultado positivo, a probabilidade de a pessoa estar doente é aproximadamente:
+a) 90%.
+b) 50%.
+c) 8%.
+d) 1%.
+R: c | P(+) = 0,009 + 0,099 = 0,108 e P(doente | +) = 0,009 / 0,108, cerca de 8,3%.
+
+MC: Uma distribuição normal (gaussiana) é descrita por:
+a) a média e o desvio padrão.
+b) o número de exemplos e o número de classes.
+c) a precisão e a revocação.
+d) o treino e o teste.
+R: a | Média (centro) e desvio padrão (largura) definem a curva normal.
+
+MC: Se o desvio padrão de uma distribuição normal aumenta, a curva:
+a) fica mais estreita e alta.
+b) fica mais larga e baixa.
+c) muda de média.
+d) deixa de ser normal.
+R: b | Um desvio maior espalha os valores, deixando o sino mais largo e mais baixo.
+
+MC: No scikit-learn, o método fit(X, y):
+a) aprende com os dados de treino.
+b) calcula a acurácia final.
+c) apaga os rótulos.
+d) desenha o gráfico dos dados.
+R: a | fit ajusta (treina) o modelo ou a transformação com os dados fornecidos.
+
+MC: Qual é a principal vantagem de usar um Pipeline?
+a) Garantir que os passos de pré-processamento sejam ajustados apenas com o treino de cada rodada, evitando vazamento.
+b) Aumentar automaticamente o número de rótulos.
+c) Eliminar a necessidade de separar treino e teste.
+d) Tornar o modelo sempre mais preciso.
+R: a | O pipeline aplica os passos de forma consistente e evita vazamento de informação.
+
+MC: O argumento stratify=y em train_test_split serve para:
+a) embaralhar os atributos.
+b) manter a mesma proporção de cada classe nos conjuntos de treino e teste.
+c) remover os exemplos sem rótulo.
+d) padronizar os dados.
+R: b | A estratificação preserva a distribuição das classes nas duas partes.
+
+MC: Fixar o random_state em uma divisão ou em um sorteio garante:
+a) maior acurácia.
+b) reprodutibilidade dos resultados.
+c) ausência de sobreajuste.
+d) mais rótulos.
+R: b | Com a mesma semente, o sorteio se repete e os resultados podem ser reproduzidos.
+
+MC: O conjunto de validação é usado para:
+a) o treino final.
+b) escolher parâmetros e comparar modelos.
+c) dar a nota final do modelo, uma única vez.
+d) criar novos rótulos.
+R: b | A validação orienta as escolhas; o teste fica reservado para a nota final.
+
+MC: Em uma validação cruzada com 5 dobras sobre 100 exemplos, cada rodada usa quantos exemplos para teste?
+a) 5.
+b) 20.
+c) 50.
+d) 80.
+R: b | 100 / 5 = 20 exemplos em cada dobra de teste (e 80 no treino).
+
+MC: Qual combinação indica sobreajuste?
+a) Acurácia alta no treino e acurácia muito menor no teste.
+b) Acurácia baixa no treino e no teste.
+c) Acurácia igual no treino e no teste.
+d) Acurácia nula no treino.
+R: a | O modelo decorou o treino e não generaliza.
+
+MC: Um classificador teve VP = 40, FP = 10, FN = 20 e VN = 130. Sua precisão é:
+a) 0,67.
+b) 0,80.
+c) 0,85.
+d) 0,73.
+R: b | Precisão = VP / (VP + FP) = 40 / 50 = 0,80.
+
+MC: Qual dos procedimentos abaixo é um caso de vazamento de informação?
+a) Calcular a média e o desvio de padronização usando todo o conjunto, incluindo o teste, antes da divisão.
+b) Ajustar a padronização apenas com o conjunto de treino.
+c) Usar um pipeline com validação cruzada.
+d) Fixar a semente aleatória.
+R: a | Usar o conjunto de teste para calcular parâmetros do pré-processamento faz informação do teste escapar para o treino.
+
+DISC: Explique, com suas palavras, a diferença entre um vetor, uma matriz e um DataFrame.
+R: Vetor é uma lista de números; matriz é uma tabela de números com linhas e colunas; DataFrame é uma tabela do pandas com colunas nomeadas, que pode misturar tipos de dados, como uma planilha.
+
+DISC: Descreva três usos da máscara lógica (y != -1) em um projeto semissupervisionado.
+R: Contar quantos exemplos têm rótulo; selecionar apenas os exemplos rotulados (por exemplo, para treinar o modelo supervisionado de referência); obter os índices dos exemplos sem rótulo.
+
+DISC: Por que dizemos que cada exemplo é um ponto no espaço e por que isso é importante para o aprendizado semissupervisionado?
+R: Porque os atributos de um exemplo funcionam como coordenadas. Exemplos parecidos ficam próximos, e métodos semissupervisionados usam essa proximidade para propagar rótulos dos poucos exemplos rotulados para os vizinhos sem rótulo.
+
+DISC: Compare as distâncias euclidiana, de Manhattan e a similaridade do cosseno, dizendo quando cada uma pode ser preferível.
+R: A euclidiana mede a linha reta e é o padrão para atributos contínuos padronizados; a de Manhattan soma diferenças absolutas e é menos sensível a grandes desvios isolados; o cosseno mede o ângulo, ignorando o comprimento, e é útil para texto e vetores esparsos.
+
+DISC: Por que um atributo com valores muito grandes pode "dominar" a distância euclidiana? Como resolver?
+R: Porque as diferenças do atributo de maior escala somam muito mais ao cálculo do que as dos atributos pequenos. A solução é padronizar (média 0, desvio 1) ou normalizar os atributos antes.
+
+DISC: Calcule a distância euclidiana entre A = (2, 3, 4) e B = (5, 7, 16) e a distância de Manhattan entre os mesmos pontos.
+R: Euclidiana: raiz de (9 + 16 + 144) = raiz de 169 = 13. Manhattan: 3 + 4 + 12 = 19.
+
+DISC: Explique o teorema de Bayes com o exemplo do spam e da palavra "prêmio".
+R: Bayes permite passar de P(prêmio | spam) para P(spam | prêmio). Com 20% de spam, 80% dos spams e 5% dos não spams contendo "prêmio", a chance de um e-mail com a palavra ser spam é 0,16 / (0,16 + 0,04) = 80%, bem maior que os 20% iniciais.
+
+DISC: Uma doença atinge 2% de uma população. Um teste detecta 95% dos doentes e dá falso positivo em 10% dos sadios. Calcule P(doente | positivo) e comente o resultado.
+R: P(+) = 0,95 × 0,02 + 0,10 × 0,98 = 0,019 + 0,098 = 0,117. P(doente | +) = 0,019 / 0,117, cerca de 16%. Mesmo com um teste bom, como a doença é rara, a maioria dos positivos são falsos.
+
+DISC: O que representam a média e o desvio padrão de uma distribuição normal? Como essa ideia se relaciona com classificar exemplos?
+R: A média é o centro e o desvio padrão é a largura da curva. Podemos descrever cada classe por uma curva normal e classificar um exemplo na classe cuja curva torna a observação mais provável.
+
+DISC: Explique as quatro etapas do padrão criar, ajustar, prever e avaliar no scikit-learn, com um exemplo de código.
+R: Cria-se o objeto (modelo = LogisticRegression()); ajusta-se com os dados de treino (modelo.fit(X_tr, y_tr)); preveem-se as classes de exemplos novos (modelo.predict(X_novo)); avalia-se no teste (modelo.score(X_te, y_te)).
+
+DISC: O que muda no uso do fit quando o método é semissupervisionado?
+R: O fit recebe X com todos os exemplos, rotulados e sem rótulo, e um vetor y em que os exemplos sem rótulo têm o valor -1.
+
+DISC: Explique o que é um Pipeline e por que ele ajuda a evitar vazamento de informação.
+R: É um objeto que encadeia passos (como padronização e classificador). Em cada ajuste, todos os passos aprendem somente com o treino da rodada, e os dados de teste são apenas transformados, o que evita que informação do teste influencie o pré-processamento.
+
+DISC: Descreva a função de treino, validação e teste e explique por que o teste deve ser usado uma única vez.
+R: O treino ensina o modelo; a validação orienta escolhas de parâmetros e modelos; o teste dá a nota final. Se o teste for usado repetidamente para escolher, deixa de ser independente e a nota fica otimista.
+
+DISC: Explique a validação cruzada com k dobras e uma vantagem dela quando há poucos dados.
+R: Os dados são divididos em k partes; em cada rodada uma parte é teste e as demais são treino; a nota final é a média. Todo exemplo é usado para treino e para teste, o que aproveita melhor poucos dados e dá uma estimativa mais estável.
+
+DISC: Diferencie subajuste e sobreajuste, indicando um sinal de cada um nos resultados de treino e teste.
+R: Subajuste: modelo simples demais, com acurácia baixa no treino e no teste. Sobreajuste: modelo complexo demais, com acurácia muito alta no treino e bem menor no teste.
+
+DISC: Em um conjunto com 99% de exemplos negativos, por que a acurácia pode enganar? Que métricas ajudam?
+R: Um modelo que sempre responde "negativo" teria 99% de acurácia sem encontrar nenhum positivo. Precisão, revocação, F1 e a matriz de confusão mostram o desempenho na classe de interesse.
+
+DISC: Calcule acurácia, precisão, revocação e F1 para VP = 40, FP = 10, FN = 20 e VN = 130.
+R: Acurácia = 170/200 = 0,85; precisão = 40/50 = 0,80; revocação = 40/60, cerca de 0,67; F1 = 2 × 0,80 × 0,667 / (0,80 + 0,667), cerca de 0,73.
+
+DISC: Explique, com o experimento dos 2.000 atributos de ruído, o que é vazamento de informação e como evitá-lo.
+R: Escolher os atributos olhando para todos os rótulos antes da validação cruzada fez a acurácia chegar a cerca de 88% em dados sem padrão algum. Colocando a seleção dentro do pipeline, aplicada só ao treino de cada dobra, o resultado voltou ao nível do acaso. Evita-se ajustando tudo só com o treino.
+
+DISC: Por que, em um experimento semissupervisionado, é importante repetir o sorteio dos exemplos rotulados várias vezes e reportar média e desvio padrão?
+R: Porque com poucos rótulos o resultado depende muito de quais exemplos foram sorteados. Um único sorteio pode superestimar ou subestimar o método; a média e o desvio de várias repetições dão uma visão confiável e mostram a variabilidade.
+
+MC: Ao padronizar os dados em um projeto com conjunto de teste, a média e o desvio padrão devem ser calculados com:
+a) todos os dados, incluindo o teste.
+b) apenas o conjunto de treino, aplicando depois a mesma transformação ao teste.
+c) apenas o conjunto de teste.
+d) os rótulos.
+R: b | Calcular os parâmetros só com o treino evita vazamento; o teste é apenas transformado com eles.
+
+DISC: Explique como a função esconder_rotulos simula a escassez de rótulos e por que o resultado desses experimentos tende a ser otimista em relação a um projeto real.
+R: Ela sorteia n_rot exemplos para manter o rótulo (equilibrados entre as classes) e coloca -1 nos demais. Em projetos reais, os rotulados raramente são uma amostra aleatória e balanceada: tendem a ser os mais fáceis ou mais baratos de rotular, o que pode distorcer o aprendizado e piorar o resultado.
