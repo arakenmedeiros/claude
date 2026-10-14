@@ -1,0 +1,269 @@
+MC: A principal razão para usar aproximação de funções em AR é:
+a) tornar o ambiente determinístico.
+b) permitir generalizar entre estados e lidar com espaços enormes ou contínuos.
+c) eliminar a recompensa.
+d) evitar o uso de políticas.
+R: b | Tabelas não escalam; funções parametrizadas generalizam para estados não vistos.
+
+MC: Em v̂(s, w), o vetor w representa:
+a) os estados.
+b) os parâmetros (pesos) ajustáveis da função.
+c) as ações.
+d) as recompensas.
+R: b | Os pesos são aprendidos para aproximar a função valor.
+
+MC: Uma consequência de ter menos pesos do que estados é que:
+a) cada estado tem seu próprio peso exclusivo.
+b) mudar um peso pode alterar o valor de muitos estados.
+c) o aprendizado fica impossível.
+d) o desconto deixa de existir.
+R: b | Isso gera generalização, mas também interferência entre estados.
+
+MC: O erro quadrático médio ponderado VE(w) usa a distribuição μ(s) para:
+a) ignorar estados raros.
+b) dar mais importância a estados visitados com mais frequência.
+c) normalizar as recompensas.
+d) escolher a política.
+R: b | Erra-se menos nos estados que o agente visita mais.
+
+MC: O gradiente de uma função aponta para:
+a) a direção de descida mais íngreme.
+b) a direção de subida mais íngreme.
+c) o mínimo da função.
+d) uma direção aleatória.
+R: b | Por isso a descida do gradiente anda no sentido oposto.
+
+MC: A regra de atualização da descida do gradiente é:
+a) w ← w + α[U − v̂(S,w)]∇v̂(S,w).
+b) w ← U.
+c) w ← w × α.
+d) w ← −w.
+R: a | Ajusta os pesos na direção que aproxima v̂ do alvo U.
+
+MC: Se o alvo é o retorno real G_t, o método é:
+a) semi-gradiente TD.
+b) gradiente Monte Carlo, com alvo sem viés.
+c) iteração de valor.
+d) off-policy.
+R: b | O alvo G_t não depende de w, logo temos um gradiente verdadeiro.
+
+MC: Por que o TD com aproximação é chamado de método de semi-gradiente?
+a) Porque usa metade dos dados.
+b) Porque trata o alvo, que depende de w, como constante ao derivar.
+c) Porque tem metade dos pesos.
+d) Porque só funciona em metade dos estados.
+R: b | O gradiente é calculado só em relação à estimativa atual, ignorando o efeito de w no alvo.
+
+MC: Num modelo linear v̂(s, w) = w·x(s), o gradiente em relação a w é:
+a) w.
+b) o vetor de características x(s).
+c) zero.
+d) a recompensa.
+R: b | A derivada de w·x em relação a w é x.
+
+MC: Em um aproximador linear, a qualidade depende sobretudo de:
+a) escolher boas características do estado.
+b) usar γ = 1.
+c) nunca usar bootstrapping.
+d) ter poucos estados.
+R: a | O modelo é limitado ao que as características conseguem representar.
+
+MC: A agregação de estados:
+a) agrupa estados vizinhos e dá um mesmo valor a todos de um grupo.
+b) aumenta o número de estados.
+c) usa redes neurais.
+d) usa o modelo do ambiente.
+R: a | É a forma mais simples de generalização.
+
+MC: O tile coding usa:
+a) uma só grade grossa.
+b) várias grades deslocadas, com um quadrado aceso por grade.
+c) árvores de decisão.
+d) uma rede convolucional.
+R: b | As grades deslocadas dão resolução fina e generalização local.
+
+MC: Num tile coding com 8 grades, o número de características ativas (com valor 1) para um estado é:
+a) 1.
+b) 8.
+c) 64.
+d) 81.
+R: b | Cada grade acende exatamente um quadrado.
+
+MC: Uma vantagem do tile coding é que:
+a) a atualização é esparsa e eficiente, mexendo só nos quadrados acesos.
+b) dispensa recompensas.
+c) é totalmente não paramétrico.
+d) funciona sem escolher grades.
+R: a | Poucos pesos são atualizados por passo.
+
+MC: As funções de base radial (RBF) são:
+a) funções em forma de sino centradas em pontos do espaço.
+b) tabelas.
+c) árvores.
+d) políticas determinísticas.
+R: a | Cada RBF responde mais perto do seu centro.
+
+MC: O RBFSampler do scikit-learn:
+a) treina redes neurais profundas.
+b) gera características que aproximam um kernel gaussiano (random Fourier features).
+c) discretiza o estado em faixas.
+d) calcula o retorno.
+R: b | Ele mapeia os dados para um espaço onde modelos lineares aproximam o kernel RBF.
+
+MC: No Mountain Car, a dificuldade é que:
+a) a recompensa é sempre positiva.
+b) o carro precisa se afastar da meta para ganhar embalo.
+c) o ambiente é discreto.
+d) não há ações.
+R: b | O motor é fraco; é preciso balançar para subir.
+
+MC: A recompensa no Mountain Car é:
+a) +1 por passo.
+b) −1 por passo até chegar à meta.
+c) 0 sempre.
+d) +100 ao chegar.
+R: b | Isso incentiva chegar o mais rápido possível.
+
+MC: No Mountain Car, inicializar os pesos em zero (com recompensas negativas) funciona como:
+a) valores iniciais pessimistas.
+b) valores iniciais otimistas, que induzem exploração.
+c) política aleatória.
+d) um erro de programação.
+R: b | Estados pouco visitados parecem melhores (0) que os visitados (negativos).
+
+MC: O triângulo mortal reúne:
+a) aproximação de funções, bootstrapping e aprendizado off-policy.
+b) Monte Carlo, DP e TD.
+c) política, valor e modelo.
+d) SARSA, Q-learning e Expected SARSA.
+R: a | A combinação dos três pode gerar divergência.
+
+MC: Qual combinação costuma ser estável (na prática ou na teoria)?
+a) Aproximação linear + TD on-policy.
+b) Aproximação + bootstrapping + off-policy, sem cuidados.
+c) Nenhuma combinação.
+d) Apenas tabelas.
+R: a | Com on-policy, o TD linear converge perto do ótimo (Tsitsiklis e Van Roy, 1997).
+
+MC: O contraexemplo de Baird mostra que:
+a) todo método de AR diverge.
+b) o semi-gradiente off-policy pode ter pesos crescendo sem limite mesmo com v verdadeiro igual a zero.
+c) tabelas divergem.
+d) o MC é instável.
+R: b | Ele ilustra a instabilidade do triângulo mortal.
+
+MC: No contraexemplo de Baird, o valor verdadeiro de todos os estados é:
+a) 0.
+b) 10.
+c) 1.
+d) infinito.
+R: a | A recompensa é zero em todo lugar.
+
+MC: O Fitted Q-Iteration (FQI) é:
+a) um método em lote que repete regressões supervisionadas sobre alvos r + γ max q.
+b) um método on-policy de Monte Carlo.
+c) uma técnica de agrupamento.
+d) um método sem aproximação.
+R: a | Alterna cálculo de alvos e ajuste de um regressor.
+
+MC: Em FQI, qualquer regressor pode ser usado, por exemplo:
+a) árvores, florestas, regressão linear ou redes.
+b) só redes neurais.
+c) só K-Means.
+d) só tabelas.
+R: a | O método é agnóstico ao regressor.
+
+MC: No FQI, os alvos da iteração k são calculados com:
+a) o modelo da iteração anterior, q̂_k, aplicado aos próximos estados.
+b) o retorno completo do episódio.
+c) o gabarito rotulado.
+d) a política ótima conhecida.
+R: a | y = r + γ max_a′ q̂_k(s′, a′).
+
+MC: Por que o FQI pode oscilar entre iterações?
+a) Porque o bootstrapping e a aproximação com dados fixos podem amplificar erros.
+b) Porque o CartPole é contínuo.
+c) Porque usa γ = 0.
+d) Porque não usa dados.
+R: a | A estimativa alimenta o próprio alvo, e erros de aproximação se propagam.
+
+MC: Na prática do Q-learning online com RBF + SGD no CartPole, o agente:
+a) aprendeu a política ótima rapidamente.
+b) não aprendeu, ficando com retorno baixo (da ordem de 10).
+c) sempre alcança 500.
+d) nunca falha.
+R: b | A combinação instável do triângulo mortal, sem estabilizadores, prejudicou o aprendizado.
+
+MC: Se o passo α da descida do gradiente for grande demais, é provável que:
+a) o aprendizado fique mais rápido sempre.
+b) haja oscilação ou até divergência dos pesos.
+c) o erro seja zero.
+d) o modelo vire tabular.
+R: b | Passos grandes ultrapassam o mínimo e podem fazer os pesos oscilar ou crescer.
+
+MC: Num aproximador não linear, como uma rede neural, o gradiente em relação aos pesos:
+a) é sempre o vetor de características.
+b) é calculado por retropropagação e depende dos pesos atuais.
+c) é sempre zero.
+d) não existe.
+R: b | Em modelos não lineares, ∇v̂ varia com w e é obtido por retropropagação.
+
+DISC: Explique por que tabelas não funcionam em problemas como Go ou Atari e como a generalização ajuda.
+R: O número de estados é astronômico ou contínuo, então não cabe em memória nem pode ser visitado por completo. Com funções parametrizadas, aprender sobre alguns estados melhora a estimativa para estados semelhantes.
+
+DISC: Descreva a descida do gradiente com uma analogia e escreva a regra de atualização para estimar v̂.
+R: Como descer um morro com neblina sentindo a inclinação e dando um passo no sentido oposto à subida. Regra: w ← w + α[U − v̂(S,w)]∇v̂(S,w).
+
+DISC: Diferencie gradiente Monte Carlo e semi-gradiente TD quanto ao alvo, ao viés e à velocidade.
+R: O gradiente MC usa G_t (sem viés, mas ruidoso, aprende devagar). O semi-gradiente TD usa R + γv̂(S′, w), com viés e dependência de w, mas aprende mais rápido e online.
+
+DISC: Mostre a atualização do TD(0) linear e explique o papel do vetor de características.
+R: w ← w + αδx(S), com δ = R + γ w·x(S′) − w·x(S). O vetor x(S) indica quais pesos influenciam o valor e em que medida, definindo como o aprendizado generaliza.
+
+DISC: Compare agregação de estados, polinômios, RBF e tile coding quanto a vantagens e limitações.
+R: Agregação: simples, mas grossa. Polinômios: suaves, mas explodem em dimensões altas. RBF: suaves e locais, exigem centros e larguras. Tile coding: esparso e rápido, exige projetar as grades.
+
+DISC: Explique o tile coding e por que usar várias grades deslocadas.
+R: Cada grade divide o espaço em quadrados; para um estado, um quadrado de cada grade acende. As grades deslocadas permitem generalização local e resolução fina, pois estados próximos compartilham alguns quadrados, mas não todos.
+
+DISC: Descreva o SARSA semi-gradiente e como ele foi aplicado ao Mountain Car.
+R: Atualiza w ← w + α[R + γq̂(S′,A′) − q̂(S,A)]∇q̂. No Mountain Car, q̂ é a soma dos pesos dos quadrados acesos de cada ação, com recompensa −1 por passo; o agente aprende a balançar para ganhar embalo.
+
+DISC: Por que valores iniciais zero funcionam como otimismo no Mountain Car?
+R: Como as recompensas são negativas, os valores aprendidos ficam abaixo de zero. Pares ainda não visitados têm valor zero e parecem melhores, o que leva o agente a testá-los sem precisar de exploração aleatória.
+
+DISC: Explique o triângulo mortal e dê exemplo de como cada ingrediente contribui para a instabilidade.
+R: Aproximação faz atualizações afetarem muitos estados; bootstrapping usa alvos que dependem do próprio modelo; off-policy distorce a distribuição dos dados. Juntos, os erros se reforçam e os pesos podem divergir.
+
+DISC: Descreva o contraexemplo de Baird e a lição que ele traz.
+R: MDP com 7 estados e características lineares em que o semi-gradiente off-policy faz os pesos crescerem sem limite, mesmo com valor verdadeiro zero. A lição é que não há garantia geral de convergência nessa combinação.
+
+DISC: Por que o aprendizado em lote (FQI) é considerado mais estável que o online, e que cuidados ainda são necessários?
+R: Trabalha com um conjunto fixo de dados e ajusta um regressor completo a cada iteração, sem atualizações incrementais instáveis. Ainda pode oscilar; convém avaliar com dados separados e guardar o melhor modelo.
+
+DISC: Explique o algoritmo FQI passo a passo e o papel do scikit-learn.
+R: (1) Reunir transições; (2) calcular alvos y = r + γ max q̂_k(s′, a′); (3) ajustar um regressor de (s, a) para y, obtendo q̂_(k+1); (4) repetir. O scikit-learn fornece os regressores (árvores, Ridge, etc.).
+
+DISC: Por que os dados aleatórios foram suficientes para o FQI no CartPole obter retornos altos?
+R: As 20.000 transições cobrem uma variedade de estados e ações, e o off-policy permite aprender o valor da política gulosa a partir delas. O regressor generaliza entre estados parecidos.
+
+DISC: Compare, no CartPole, o Q-learning online com RBF + SGD e o FQI com árvores. O que explica a diferença?
+R: O online atualiza passo a passo com alvos instáveis (triângulo mortal), enquanto o FQI ajusta um regressor sobre todo o lote a cada iteração, com árvores que são estáveis e locais. Isso torna o FQI mais robusto.
+
+DISC: Discuta o dilema entre aproximadores simples (retas) e flexíveis (polinômios de alto grau, árvores profundas).
+R: Simples tendem a subajustar (viés alto); flexíveis podem sobreajustar e oscilar (variância alta). Em AR, a instabilidade do bootstrapping agrava o problema, então é preciso equilibrar flexibilidade e regularização.
+
+DISC: Qual a diferença entre generalização e interferência entre estados?
+R: Generalização é transferir aprendizado para estados semelhantes (bom). Interferência é atualizar um estado e piorar a estimativa de outros, pois os pesos são compartilhados (ruim).
+
+DISC: No projeto de valor de clientes, qual a vantagem de usar regressores contínuos em vez de discretizar com K-Means?
+R: Preserva informação das características contínuas, evita fronteiras arbitrárias dos grupos e permite estimar valor diferenciado para cada cliente. Em contrapartida, exige cuidado com estabilidade e validação.
+
+DISC: Por que validar com GroupKFold por cliente no projeto e não com divisão aleatória das linhas?
+R: Linhas do mesmo cliente são correlacionadas; dividir aleatoriamente deixaria dados do mesmo cliente em treino e teste, inflando o desempenho. Agrupar por cliente avalia a generalização a clientes novos.
+
+DISC: Cite dois sinais de que um aproximador de valores está divergindo e duas ações para mitigar.
+R: Sinais: valores que crescem sem limite entre iterações e erro TD que aumenta. Ações: reduzir o passo ou γ, usar regularização, alvos mais estáveis (como redes-alvo) ou trocar o regressor.
+
+DISC: No tile coding com 8 grades, por que se usa α = 0,5/8 em vez de 0,5?
+R: Cada atualização modifica os 8 pesos acesos, e o valor é a soma deles. Sem dividir por 8, o passo efetivo no valor seria 8 vezes maior, causando oscilação; dividindo, o passo efetivo fica em 0,5.

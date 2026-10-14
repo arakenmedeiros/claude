@@ -85,3 +85,18 @@ Traço de elegibilidade: memória que marca estados recentes para receberem part
 Viés de maximização: superestimação causada por usar o máximo de estimativas ruidosas.
 Hiperparâmetro: parâmetro definido pelo usuário (como α e ε) que não é aprendido pelo algoritmo.
 Semente aleatória: valor que inicializa o gerador de números aleatórios, permitindo reproduzir ou repetir experimentos.
+Aproximação de funções: uso de uma função parametrizada para estimar valores ou políticas, em vez de uma tabela.
+Aproximador linear: modelo cujo valor é uma soma ponderada de características do estado.
+Características (features): números calculados a partir do estado que alimentam o aproximador.
+Descida do gradiente: método que ajusta pesos andando no sentido oposto ao gradiente do erro.
+Fitted Q-Iteration (FQI): método em lote que repete regressões para aproximar q a partir de transições fixas.
+Generalização: capacidade de transferir o aprendizado de estados vistos para estados semelhantes.
+Gradiente: vetor que indica a direção de maior crescimento de uma função.
+Mountain Car: problema clássico em que um carro fraco precisa balançar para subir uma encosta.
+Parâmetros (pesos): números ajustáveis de um modelo.
+Random Fourier features / RBFSampler: transformação que aproxima um kernel gaussiano para uso com modelos lineares.
+RBF (função de base radial): função em forma de sino centrada em um ponto.
+Semi-gradiente: atualização que trata o alvo como constante, mesmo quando ele depende dos pesos.
+Tile coding: representação com várias grades deslocadas, cada uma acendendo um quadrado.
+Triângulo mortal (deadly triad): aproximação de funções, bootstrapping e off-policy juntos, com risco de divergência.
+Erro quadrático médio ponderado (VE): erro da aproximação ponderado pela frequência de visita dos estados.
