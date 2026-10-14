@@ -100,3 +100,46 @@ Semi-gradiente: atualização que trata o alvo como constante, mesmo quando ele 
 Tile coding: representação com várias grades deslocadas, cada uma acendendo um quadrado.
 Triângulo mortal (deadly triad): aproximação de funções, bootstrapping e off-policy juntos, com risco de divergência.
 Erro quadrático médio ponderado (VE): erro da aproximação ponderado pela frequência de visita dos estados.
+Ativação (função de): função aplicada à saída de um neurônio para introduzir não linearidade (ex.: ReLU).
+Backpropagation (retropropagação): algoritmo que calcula os gradientes da perda em relação aos pesos de uma rede.
+Camada convolucional: camada que aplica filtros pequenos deslizando sobre uma imagem.
+Deep Q-Network (DQN): agente que usa uma rede neural para aproximar Q, com memória de experiências e rede-alvo.
+Double DQN: variante do DQN que reduz o viés de maximização separando escolha e avaliação da ação.
+Dueling: arquitetura que separa valor do estado e vantagem das ações.
+Memória de experiências (replay buffer): armazenamento de transições do qual se sorteiam lotes para treinar.
+Neurônio artificial: unidade que soma entradas ponderadas, adiciona um viés e aplica uma ativação.
+Perda de Huber: perda quadrática para erros pequenos e linear para grandes.
+Rainbow: agente que combina o DQN com seis extensões.
+Rede-alvo: cópia congelada da rede online usada para calcular o alvo.
+Rede neural: conjunto de neurônios organizados em camadas.
+Recorte de gradiente: limitação do tamanho do gradiente para estabilizar o treino.
+Repetição priorizada: amostragem da memória proporcional ao erro TD.
+A2C / A3C: algoritmos ator-crítico com vantagem; o A3C usa trabalhadores assíncronos.
+Ator: componente que representa a política e escolhe as ações.
+Ator-crítico: arquitetura com uma política (ator) e uma função valor (crítico).
+Ascensão do gradiente: atualização de parâmetros no sentido do gradiente para aumentar uma função.
+Bônus de entropia: termo que incentiva políticas mais aleatórias e a exploração.
+Crítico: componente que estima a função valor e fornece o erro TD.
+GAE (vantagem generalizada): estimador de vantagem que mistura erros TD de vários passos com o parâmetro λ.
+Gradiente de política: método que ajusta diretamente os parâmetros da política na direção que aumenta o retorno esperado.
+Gradiente natural: gradiente que mede distâncias entre políticas pela divergência KL.
+Divergência KL: medida de diferença entre duas distribuições de probabilidade.
+Linha de base (baseline): valor subtraído do retorno para reduzir a variância do gradiente.
+Política gaussiana: política que sorteia ações contínuas de uma distribuição normal.
+Política softmax: política que converte preferências em probabilidades.
+REINFORCE: algoritmo de gradiente de política baseado em retornos de Monte Carlo.
+TRPO: método de política com restrição de região de confiança baseada na divergência KL.
+Vantagem: quanto uma ação supera o valor esperado do estado.
+Vazamento de informação (data leakage): uso, na decisão, de informação indisponível no momento de decidir.
+Atualização suave (soft update): atualização lenta da rede-alvo, θ⁻ ← τθ + (1 − τ)θ⁻.
+DDPG: algoritmo ator-crítico off-policy com ator determinístico para ações contínuas.
+Entropia máxima: princípio de maximizar recompensa mais a entropia da política.
+Gradiente de política determinística (DPG): gradiente para atores determinísticos que usa o gradiente do crítico em relação à ação.
+Objetivo recortado (clipped): objetivo do PPO que limita a razão de probabilidades à faixa [1 − ε, 1 + ε].
+PPO: algoritmo de política on-policy com objetivo recortado, simples e robusto.
+Razão de probabilidades: razão entre a probabilidade da ação sob a política nova e a antiga.
+SAC: algoritmo ator-crítico off-policy de máxima entropia com política estocástica.
+TD3: variante do DDPG com dois críticos, ator atrasado e suavização da ação-alvo.
+Temperatura (α): peso da entropia no objetivo do SAC.
+Hackeamento de recompensa (reward hacking): comportamento do agente que explora falhas da recompensa ou do simulador para obter retorno alto sem cumprir o objetivo real.
+Ação contínua: ação representada por números reais, como um torque.

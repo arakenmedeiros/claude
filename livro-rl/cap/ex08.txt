@@ -1,0 +1,269 @@
+MC: Em um DQN, a entrada e a saída da rede neural são, respectivamente:
+a) a ação e o estado.
+b) o estado e um valor Q para cada ação.
+c) a recompensa e a política.
+d) o episódio e o retorno.
+R: b | A rede recebe o estado e devolve Q(s, a) para todas as ações.
+
+MC: Em um neurônio artificial, a operação principal é:
+a) somar as entradas ponderadas por pesos, acrescentar um viés e aplicar uma função de ativação.
+b) apenas copiar a entrada.
+c) sortear um número.
+d) agrupar entradas.
+R: a | saída = f(Σ w x + b).
+
+MC: A função de ativação ReLU é definida como:
+a) max(0, x).
+b) 1/(1 + e^(−x)).
+c) x².
+d) tanh(x).
+R: a | Devolve x se positivo e zero caso contrário.
+
+MC: A retropropagação (backpropagation) serve para:
+a) escolher ações.
+b) calcular eficientemente os gradientes da perda em relação aos pesos.
+c) sortear lotes.
+d) discretizar o estado.
+R: b | Aplica a regra da cadeia das camadas finais até as iniciais.
+
+MC: A descida do gradiente ajusta os pesos:
+a) no sentido do gradiente da perda.
+b) no sentido oposto ao gradiente da perda.
+c) aleatoriamente.
+d) sempre para zero.
+R: b | Isso reduz a perda.
+
+MC: O otimizador Adam é:
+a) um método que adapta o passo de cada parâmetro e é muito usado em redes neurais.
+b) uma política de exploração.
+c) uma função de ativação.
+d) um tipo de ambiente.
+R: a | Kingma e Ba (2015).
+
+MC: O primeiro problema de combinar redes neurais com Q-learning ingênuo é:
+a) amostras consecutivas altamente correlacionadas.
+b) falta de recompensas.
+c) excesso de memória.
+d) o desconto ser zero.
+R: a | Estados seguidos são parecidos, e treinar com eles em sequência desestabiliza a rede.
+
+MC: O segundo problema é o "alvo móvel", que significa:
+a) o ambiente mudar de lugar.
+b) o alvo y depender dos próprios pesos da rede, que mudam a cada atualização.
+c) a recompensa ser aleatória.
+d) o agente se mover.
+R: b | O alvo r + γ max Q(s′, a′; θ) usa a rede que está sendo treinada.
+
+MC: A memória de experiências (replay buffer) guarda:
+a) as transições (s, a, r, s′, fim) para amostragem posterior.
+b) apenas as recompensas.
+c) os pesos da rede.
+d) as políticas.
+R: a | Cada interação é armazenada para ser reutilizada.
+
+MC: Um benefício da memória de experiências é:
+a) quebrar a correlação entre amostras e reaproveitar dados.
+b) eliminar a necessidade de exploração.
+c) tornar o método on-policy.
+d) reduzir o número de ações.
+R: a | O lote sorteado é quase independente e cada experiência é usada várias vezes.
+
+MC: A repetição de experiência exige que o método seja:
+a) on-policy.
+b) off-policy.
+c) baseado em modelo.
+d) de Monte Carlo.
+R: b | Dados antigos vêm de políticas anteriores.
+
+MC: A rede-alvo é:
+a) uma rede com arquitetura diferente.
+b) uma cópia congelada da rede online, atualizada periodicamente.
+c) a política ótima.
+d) um tipo de memória.
+R: b | É usada só para calcular o alvo y.
+
+MC: O alvo do DQN para uma transição não terminal é:
+a) y = r.
+b) y = r + γ max_a′ Q(s′, a′; θ⁻).
+c) y = max Q(s, a; θ).
+d) y = γ r.
+R: b | A rede-alvo avalia o próximo estado.
+
+MC: Quando a transição é terminal, o alvo do DQN é:
+a) r + γ max Q(s′).
+b) r.
+c) 0.
+d) −r.
+R: b | Não há valor futuro depois do fim do episódio.
+
+MC: Aumentar o intervalo de troca da rede-alvo (C) tende a:
+a) deixar o treino mais estável, porém mais lento.
+b) deixar o treino mais instável e rápido.
+c) eliminar a perda.
+d) não ter efeito.
+R: a | O alvo muda menos, mas a informação nova demora a chegar.
+
+MC: A perda de Huber (smooth L1) é:
+a) quadrática para erros pequenos e linear para grandes.
+b) sempre quadrática.
+c) sempre linear.
+d) igual à entropia cruzada.
+R: a | Reduz a influência de erros muito grandes.
+
+MC: O recorte do gradiente (gradient clipping) serve para:
+a) limitar o tamanho do passo de atualização e evitar instabilidade.
+b) aumentar o gradiente.
+c) eliminar a memória.
+d) escolher ações.
+R: a | Impede passos gigantes.
+
+MC: O DQN de Mnih et al. (2015) aprendeu a jogar Atari usando como entrada:
+a) apenas a pontuação.
+b) os pixels da tela (imagens).
+c) o código do jogo.
+d) o estado interno da memória do console.
+R: b | Usou imagens empilhadas e a pontuação como recompensa.
+
+MC: No pré-processamento do DQN para Atari, empilham-se 4 quadros para:
+a) reduzir o tamanho da imagem.
+b) inserir informação de movimento (velocidade e direção) no estado.
+c) aumentar a recompensa.
+d) colorir a imagem.
+R: b | Uma única imagem não mostra o movimento.
+
+MC: Recortar recompensas para −1, 0 e +1 no DQN serve para:
+a) padronizar a escala entre diferentes jogos.
+b) eliminar o desconto.
+c) tornar o ambiente determinístico.
+d) reduzir o número de ações.
+R: a | Permitiu usar os mesmos hiperparâmetros em todos os jogos.
+
+MC: As camadas convolucionais são especialmente adequadas a:
+a) imagens, pois filtros pequenos compartilham pesos ao longo da imagem.
+b) texto sem estrutura.
+c) tabelas de poucas colunas.
+d) políticas determinísticas.
+R: a | Detectam padrões locais com menos parâmetros.
+
+MC: O Double DQN modifica o alvo para:
+a) usar a rede online para escolher a ação e a rede-alvo para avaliá-la.
+b) usar duas redes online idênticas.
+c) eliminar a rede-alvo.
+d) usar o retorno de Monte Carlo.
+R: a | Isso reduz o viés de maximização.
+
+MC: A repetição de experiência priorizada sorteia com maior probabilidade as transições com:
+a) menor erro TD.
+b) maior erro TD.
+c) menor recompensa.
+d) maior idade.
+R: b | As transições surpreendentes ensinam mais.
+
+MC: A arquitetura dueling separa a rede em:
+a) valor do estado V(s) e vantagem A(s, a).
+b) política e modelo.
+c) entrada e saída.
+d) memória e rede-alvo.
+R: a | Os dois ramos se combinam para formar Q.
+
+MC: No DQN com alvo de n passos, o alvo usa:
+a) n recompensas reais antes de estimar com a rede-alvo.
+b) apenas a primeira recompensa.
+c) o retorno infinito.
+d) uma recompensa aleatória.
+R: a | Propaga a informação das recompensas mais depressa.
+
+MC: O DQN distribucional aprende:
+a) a distribuição completa do retorno, e não só sua média.
+b) apenas a média do retorno.
+c) apenas o máximo do retorno.
+d) a política ótima.
+R: a | Bellemare, Dabney e Munos (2017).
+
+MC: Nas Noisy Nets, a exploração é feita por:
+a) ε-gulosa.
+b) ruído aprendido nos pesos da rede.
+c) uma tabela.
+d) um modelo do ambiente.
+R: b | A rede aprende quanto explorar.
+
+MC: O Rainbow é:
+a) um novo ambiente.
+b) um agente que combina o DQN com seis extensões.
+c) uma função de ativação.
+d) uma técnica de visualização.
+R: b | Hessel et al. (2018) combinaram várias melhorias.
+
+MC: Na ablação do CartPole, a configuração sem memória de experiências, nos testes do livro:
+a) obteve o melhor desempenho.
+b) quase não aprendeu.
+c) foi idêntica à completa.
+d) teve retorno infinito.
+R: b | Sem quebrar a correlação, o treino fica instável e o agente não decola.
+
+MC: Valores Q que crescem sem limite durante o treino indicam, provavelmente:
+a) instabilidade ou divergência.
+b) bom desempenho.
+c) falta de exploração.
+d) um bug no gerador aleatório.
+R: a | É um sinal clássico de problemas no triângulo mortal.
+
+DISC: Explique, em linguagem simples, como uma rede neural aprende. Use o conceito de gradiente.
+R: A rede faz uma previsão, mede o erro (perda) e calcula, por retropropagação, o gradiente do erro em relação a cada peso. Em seguida, ajusta os pesos um pouco no sentido contrário ao gradiente, repetindo o processo muitas vezes até o erro diminuir.
+
+DISC: Descreva a estrutura de um neurônio artificial e dê um exemplo numérico com a ativação ReLU.
+R: O neurônio calcula f(Σ w x + b). Ex.: x = (1, 2), w = (0,5; −1), b = 0,5: soma = 0,5 − 2 + 0,5 = −1; com ReLU, a saída é max(0, −1) = 0.
+
+DISC: Por que as amostras consecutivas de um episódio atrapalham o treino de uma rede neural?
+R: São muito parecidas entre si (correlacionadas), violando a suposição de dados independentes; a rede se ajusta ao trecho recente e esquece o resto, tornando o treino instável.
+
+DISC: Como a memória de experiências ajuda a estabilizar o DQN, e que restrição ela impõe ao algoritmo?
+R: Ela embaralha experiências antigas e novas, reduzindo correlação e reaproveitando dados. Impõe que o método seja off-policy, pois os dados vêm de políticas passadas.
+
+DISC: Explique o problema do alvo móvel e como a rede-alvo o mitiga.
+R: O alvo depende dos pesos que estão sendo atualizados, o que o faz mudar a cada passo. A rede-alvo é uma cópia congelada usada para calcular o alvo e atualizada só de tempos em tempos, tornando o alvo quase estável entre atualizações.
+
+DISC: Escreva o alvo do DQN e explique cada termo.
+R: y = r + γ max_a′ Q(s′, a′; θ⁻) se não terminal, e y = r se terminal. r é a recompensa, γ o desconto, max Q o valor da melhor ação no próximo estado avaliado pela rede-alvo (θ⁻).
+
+DISC: Descreva os oito passos do algoritmo DQN.
+R: Inicializar redes e memória; observar s; escolher a por ε-gulosa; executar a e observar r, s′, fim; guardar a transição; sortear um lote; calcular o alvo com a rede-alvo e atualizar a rede online; copiar a rede online para a alvo a cada C passos.
+
+DISC: Qual o papel da perda de Huber e do recorte de gradiente no DQN?
+R: Ambos protegem contra instabilidade. A perda de Huber evita que erros enormes dominem o gradiente (é linear para erros grandes), e o recorte limita a norma do gradiente e, assim, o tamanho do passo.
+
+DISC: Explique o pré-processamento do DQN para Atari e a razão de cada etapa.
+R: Escala de cinza e redução para 84×84 diminuem a dimensão; empilhar 4 quadros dá informação de movimento; repetir ações por 4 quadros acelera e simplifica; recortar recompensas padroniza a escala entre jogos.
+
+DISC: Explique o Double DQN e por que ele reduz o viés de maximização.
+R: Usa a rede online para escolher a melhor ação em s′ e a rede-alvo para avaliar o valor dessa ação. Separar escolha e avaliação evita que o ruído que favoreceu a escolha infle a estimativa do valor.
+
+DISC: O que faz a repetição de experiência priorizada e por que precisa de pesos de importância?
+R: Sorteia com mais frequência as transições de maior erro TD para aprender mais rápido. Como altera a distribuição de amostragem, os pesos de importância corrigem o viés introduzido.
+
+DISC: Descreva a arquitetura dueling e em que situações ela ajuda.
+R: Separa a rede em ramos para V(s) e A(s, a), combinados em Q. Ajuda quando, em muitos estados, a escolha da ação pouco importa, pois a rede aprende o valor do estado sem precisar avaliar cada ação.
+
+DISC: O que é o Rainbow e qual sua lição para o desenvolvimento de algoritmos?
+R: Combina DQN com Double, repetição priorizada, dueling, multi-step, distribucional e Noisy Nets, superando cada componente isolado. A lição é que melhorias complementares podem se somar.
+
+DISC: Cite quatro hiperparâmetros do DQN, o efeito de cada um e valores típicos.
+R: Taxa de aprendizado (10⁻⁴ a 10⁻³; alta instabiliza), tamanho do lote (32 a 256; estabilidade), intervalo de troca da rede-alvo (250 a 10.000; maior é mais estável e lento) e ε final (0,01 a 0,1; exploração).
+
+DISC: Por que o desempenho do DQN costuma oscilar durante o treino, e que cuidados tomar ao avaliá-lo?
+R: Pelo bootstrapping, a aproximação e a mudança da política, o desempenho pode melhorar e piorar. Convém avaliar com política gulosa em episódios separados, usar várias sementes, médias móveis e guardar o melhor modelo.
+
+DISC: Interprete o resultado da ablação: o que mostra sobre a importância da memória e da rede-alvo?
+R: As versões sem memória ou sem rede-alvo ficaram muito abaixo da completa no CartPole, indicando que os dois truques são cruciais para estabilizar o treino com redes neurais e bootstrapping.
+
+DISC: Explique por que o Stable-Baselines3 é útil e quais cuidados ainda são necessários ao usá-lo.
+R: Oferece implementações testadas e prontas, economizando tempo. Ainda é preciso ajustar hiperparâmetros, avaliar em ambiente separado, usar várias sementes e verificar se o ambiente segue a interface do Gymnasium.
+
+DISC: No projeto do estoque, quais simplificações o simulador faz e como elas podem afetar as conclusões?
+R: Assume que o pedido chega na hora, que a demanda histórica não depende da decisão e que há um único produto. Um agente que se saia bem no simulador pode falhar no mundo real se essas hipóteses forem violadas.
+
+DISC: Compare o DQN e o Fitted Q-Iteration quanto a estabilidade, uso de dados e custo computacional.
+R: O FQI ajusta um regressor ao lote inteiro a cada iteração, com dados fixos, e tende a ser mais estável, mas é caro com muitos dados. O DQN atualiza incrementalmente com lotes da memória, escalando melhor a dados grandes, mas exige truques de estabilização.
+
+DISC: Dê um exemplo de problema em que o DQN seria apropriado e outro em que não, justificando.
+R: Adequado: jogo com ações discretas e muitos dados simulados. Inadequado: controle robótico com ações contínuas finas, pois a ação ótima exigiria maximizar Q sobre um espaço contínuo; nesse caso, usa-se DDPG, TD3 ou SAC.

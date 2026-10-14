@@ -168,7 +168,7 @@ function codeRuns(line) {
 function codeBlock(b) {
   const nb = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
   const kids = b.code.map((ln) => new Paragraph({ spacing: { after: 0, line: 240 }, children: b.lang === "bash" ? [new TextRun({ text: ln || " ", font: MONO, size: 16, color: C.ink })] : codeRuns(ln) }));
-  const label = b.lang ? b.lang.toUpperCase() : "CÓDIGO";
+  const label = b.lang ? b.lang.replace("-nr", "").toUpperCase() : "CÓDIGO";
   return [new Table({ width: { size: CW, type: WidthType.DXA }, columnWidths: [CW], rows: [new TableRow({ children: [new TableCell({ width: { size: CW, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, fill: "F8FAFC", color: "auto" }, margins: { top: 100, bottom: 100, left: 200, right: 120 }, borders: { top: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, bottom: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, right: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, left: { style: BorderStyle.SINGLE, size: 24, color: C.ind } }, children: [new Paragraph({ spacing: { after: 60 }, children: [new TextRun({ text: label, bold: true, size: 14, color: C.ind, characterSpacing: 30 })] }), ...kids] })] })] }), spacer(140)];
 }
 function formulaRuns(text) {

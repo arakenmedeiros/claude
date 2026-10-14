@@ -1,0 +1,269 @@
+MC: Uma vantagem dos métodos de gradiente de política sobre os de valor é que eles:
+a) lidam naturalmente com ações contínuas e políticas estocásticas.
+b) dispensam recompensas.
+c) são sempre mais eficientes em dados.
+d) nunca têm variância.
+R: a | A política é uma função suave que pode produzir ações contínuas e probabilidades.
+
+MC: Em um método de gradiente de política, o que é parametrizado e aprendido é:
+a) a função valor apenas.
+b) a política π(a | s; θ).
+c) o modelo do ambiente.
+d) a tabela de transições.
+R: b | Os parâmetros θ definem diretamente o comportamento do agente.
+
+MC: Para ações discretas, uma política parametrizada típica usa:
+a) a função softmax sobre preferências h(s, a).
+b) a função ReLU como saída.
+c) uma distribuição gaussiana.
+d) uma tabela fixa.
+R: a | A softmax transforma preferências em probabilidades.
+
+MC: Para ações contínuas, uma política usual é:
+a) softmax.
+b) gaussiana com média μ(s) e desvio σ(s).
+c) uniforme fixa.
+d) determinística sem parâmetros.
+R: b | A rede aprende a média e o desvio da distribuição das ações.
+
+MC: Numa política gaussiana, um desvio-padrão maior significa:
+a) mais exploração.
+b) menos exploração.
+c) política determinística.
+d) recompensa maior.
+R: a | Ações mais dispersas em torno da média.
+
+MC: A ascensão do gradiente atualiza os parâmetros por:
+a) θ ← θ − α∇J.
+b) θ ← θ + α∇J.
+c) θ ← 0.
+d) θ ← α.
+R: b | Queremos maximizar o retorno esperado J.
+
+MC: O teorema do gradiente de política permite estimar ∇J(θ):
+a) usando amostras de episódios, sem derivar o modelo do ambiente.
+b) apenas conhecendo p(s′ | s, a).
+c) apenas com tabelas.
+d) apenas com dados rotulados.
+R: a | A estimativa usa G_t ∇ ln π(A_t | S_t).
+
+MC: Na expressão G_t ∇ ln π(A_t | S_t; θ), o termo ∇ ln π indica:
+a) como mudar θ para tornar a ação A_t mais provável.
+b) o desconto.
+c) o valor do estado.
+d) a recompensa imediata.
+R: a | O retorno G_t funciona como nota que escala essa direção.
+
+MC: Se o retorno G_t é alto, a atualização do REINFORCE:
+a) aumenta a probabilidade da ação tomada.
+b) diminui a probabilidade da ação tomada.
+c) não muda a política.
+d) zera θ.
+R: a | Ações que levaram a bons retornos são reforçadas.
+
+MC: Para uma política softmax, a derivada de ln π(a) em relação à preferência h(a′) é:
+a) 1[a′ = a] − π(a′).
+b) π(a′).
+c) 1 − G.
+d) 0.
+R: a | O gradiente da log-softmax tem essa forma simples.
+
+MC: O REINFORCE pode ser descrito como:
+a) um método de Monte Carlo para políticas.
+b) um método de programação dinâmica.
+c) um método baseado em modelo.
+d) um método tabular.
+R: a | Usa retornos completos de episódios.
+
+MC: Uma desvantagem do REINFORCE é:
+a) variância alta nas estimativas do gradiente.
+b) exigir o modelo.
+c) não funcionar com redes neurais.
+d) ser determinístico.
+R: a | Retornos completos são ruidosos.
+
+MC: A linha de base b(s) subtraída do retorno:
+a) não introduz viés e reduz a variância.
+b) introduz viés e reduz a variância.
+c) elimina a necessidade de episódios.
+d) aumenta a variância.
+R: a | Como b não depende da ação, a esperança do gradiente permanece a mesma.
+
+MC: Uma escolha prática para a linha de base é:
+a) b(s) = v̂(s), uma estimativa do valor do estado.
+b) b(s) = 0 sempre.
+c) b(s) = γ.
+d) b(s) = o número de ações.
+R: a | G − v̂(s) mede a vantagem da ação.
+
+MC: A vantagem de uma ação representa:
+a) o quanto ela foi melhor ou pior que o esperado no estado.
+b) a probabilidade da ação.
+c) o desconto.
+d) o número de visitas.
+R: a | A = q(s, a) − v(s) (ou sua estimativa).
+
+MC: Num ator-crítico, o crítico:
+a) avalia os estados (estima v) e fornece o erro TD.
+b) escolhe as ações.
+c) é o ambiente.
+d) é a memória.
+R: a | O ator escolhe; o crítico avalia.
+
+MC: O ator, num ator-crítico:
+a) é a política, que decide as ações.
+b) é o modelo do ambiente.
+c) calcula a função valor.
+d) calcula o desconto.
+R: a | Seus parâmetros são ajustados pela vantagem fornecida pelo crítico.
+
+MC: No ator-crítico de um passo, o erro TD usado como vantagem é:
+a) δ = r + γ v̂(s′) − v̂(s).
+b) δ = G.
+c) δ = r.
+d) δ = γ.
+R: a | É o erro TD do crítico.
+
+MC: Em comparação com o REINFORCE, o ator-crítico tem:
+a) menor variância, mas algum viés.
+b) variância maior.
+c) nenhum viés e nenhuma variância.
+d) necessidade de episódios completos.
+R: a | Bootstrapping reduz a variância e introduz viés.
+
+MC: A origem do ator-crítico remonta ao trabalho de:
+a) Barto, Sutton e Anderson (1983), no problema do poste no carrinho.
+b) Mnih et al. (2015) apenas.
+c) Silver et al. (2016) apenas.
+d) Ouyang et al. (2022).
+R: a | Esse trabalho já usava elementos adaptativos de crítica.
+
+MC: O A3C se diferencia do A2C por:
+a) usar trabalhadores assíncronos, cada um com sua cópia, enviando gradientes a uma rede central.
+b) usar memória de experiências.
+c) não usar redes neurais.
+d) usar modelo do ambiente.
+R: a | A3C é assíncrono (Mnih et al., 2016).
+
+MC: O GAE (estimativa de vantagem generalizada) tem como parâmetro:
+a) λ, que equilibra viés e variância.
+b) ε.
+c) o tamanho da memória.
+d) o número de ações.
+R: a | λ = 0 dá o erro TD; λ = 1 dá o retorno menos a linha de base.
+
+MC: No GAE, com λ = 0, a vantagem é:
+a) o erro TD de um passo.
+b) o retorno completo menos a linha de base.
+c) zero.
+d) a recompensa.
+R: a | Â_t = δ_t.
+
+MC: O bônus de entropia na função objetivo serve para:
+a) manter a política com algum nível de aleatoriedade e incentivar a exploração.
+b) eliminar a exploração.
+c) aumentar o desconto.
+d) reduzir a memória.
+R: a | Evita que a política se torne determinística cedo demais.
+
+MC: O principal perigo de passos grandes numa atualização de política é:
+a) a política pode piorar muito e passar a coletar dados ruins.
+b) a memória acabar.
+c) o ambiente mudar.
+d) o desconto tornar-se negativo.
+R: a | Como os dados vêm da própria política, a recuperação pode ser difícil.
+
+MC: O TRPO restringe a atualização limitando:
+a) a divergência KL entre a política nova e a antiga.
+b) o número de episódios.
+c) o valor de γ.
+d) o tamanho da rede.
+R: a | Isso define uma região de confiança.
+
+MC: A divergência KL mede:
+a) o quanto uma distribuição difere de outra.
+b) o retorno esperado.
+c) a variância do gradiente.
+d) o número de parâmetros.
+R: a | É zero para distribuições idênticas e positiva caso contrário.
+
+MC: Em um problema com feedback completo (como ligar ou não para todos os clientes de uma base em que todos foram contatados), é correto dizer que:
+a) um classificador supervisionado costuma ser suficiente.
+b) só o AR funciona.
+c) não é possível avaliar políticas.
+d) a recompensa é desconhecida.
+R: a | Com a recompensa de cada ação conhecida, o problema é essencialmente supervisionado.
+
+MC: No projeto do Bank Marketing, a coluna "duration" deve ser removida porque:
+a) só é conhecida depois da ligação (vazamento de informação).
+b) é categórica.
+c) tem valores ausentes.
+d) é constante.
+R: a | A decisão de ligar é tomada antes de saber a duração.
+
+MC: Numa política softmax em que todas as preferências h(s, a) são iguais, a política:
+a) escolhe sempre a primeira ação.
+b) atribui a mesma probabilidade a todas as ações.
+c) é determinística.
+d) é inválida.
+R: b | A softmax de valores iguais é uniforme.
+
+DISC: Dê três motivos para aprender a política diretamente em vez de derivá-la de valores Q.
+R: Lidar com ações contínuas, representar políticas estocásticas (úteis em jogos com informação oculta) e obter mudanças suaves de comportamento, evitando que pequenas alterações de Q troquem a ação de forma brusca.
+
+DISC: Explique o teorema do gradiente de política com suas palavras.
+R: O gradiente do retorno esperado pode ser estimado como a média de (retorno) × (direção que aumenta a probabilidade da ação tomada). Assim, ações seguidas de bons retornos têm sua probabilidade aumentada, sem precisar conhecer a dinâmica do ambiente.
+
+DISC: Descreva o algoritmo REINFORCE em quatro passos.
+R: (1) Jogar um episódio com a política atual; (2) calcular o retorno G_t de cada passo; (3) atualizar θ ← θ + α G_t ∇ln π(A_t|S_t); (4) repetir.
+
+DISC: Por que, quando todas as recompensas são positivas, o REINFORCE sem linha de base é muito ruidoso?
+R: Todos os retornos são positivos, então toda ação tomada é reforçada, inclusive as ruins; só varia o quanto. Isso gera gradientes de grande variância e aprendizado lento.
+
+DISC: Mostre por que subtrair uma linha de base que não depende da ação não introduz viés.
+R: E[b(s) ∇ln π(a|s)] = b(s) Σ_a π(a|s) ∇ln π(a|s) = b(s) ∇ Σ_a π(a|s) = b(s) ∇1 = 0. Logo o termo extra tem esperança zero.
+
+DISC: Interprete G_t − v̂(S_t) e explique por que é uma vantagem.
+R: É a diferença entre o retorno realmente obtido e o esperado no estado. Valores positivos indicam que a ação foi melhor que a média daquele estado, e negativos, pior.
+
+DISC: Explique o funcionamento de um ator-crítico de um passo, indicando os papéis do ator, do crítico e do erro TD.
+R: O ator escolhe a ação; o ambiente devolve r e s′; o crítico calcula δ = r + γv̂(s′) − v̂(s). O crítico se atualiza para reduzir δ², e o ator é atualizado na direção δ∇ln π, reforçando ações com δ positivo.
+
+DISC: Compare REINFORCE e ator-crítico quanto a viés, variância e momento da atualização.
+R: O REINFORCE usa retornos completos (sem viés, variância alta, atualiza ao fim do episódio). O ator-crítico usa o erro TD (menor variância, algum viés pelo crítico imperfeito, atualiza a cada passo).
+
+DISC: O que é a vantagem generalizada (GAE) e como λ controla o compromisso viés-variância?
+R: É uma média ponderada de erros TD de vários passos: Â_t = Σ (γλ)^k δ_(t+k). λ próximo de 0 usa pouco do futuro (menos variância, mais viés); λ próximo de 1 usa retornos longos (mais variância, menos viés).
+
+DISC: Qual a função do bônus de entropia e que risco ele combate?
+R: Mantém a política estocástica por mais tempo, incentivando a exploração e evitando convergir cedo a uma política determinística subótima.
+
+DISC: Por que atualizações muito grandes de política são perigosas em métodos on-policy?
+R: Se a política piora muito, os próximos dados são coletados por essa política ruim, e o agente pode não conseguir se recuperar. Por isso são usados passos pequenos ou regiões de confiança.
+
+DISC: Explique a ideia de TRPO e sua relação com a divergência KL.
+R: Maximiza a melhoria esperada da política sob a restrição de que a divergência KL entre a política nova e a antiga seja menor que um limite, garantindo passos seguros.
+
+DISC: Compare métodos de valor (como DQN) e métodos de gradiente de política quanto a ações contínuas, estabilidade e eficiência de dados.
+R: DQN lida mal com ações contínuas, é off-policy e eficiente em dados, porém frágil; gradientes de política lidam bem com ações contínuas e dão mudanças suaves, mas são on-policy e menos eficientes.
+
+DISC: Por que o A3C dispensa a memória de experiências?
+R: Vários trabalhadores jogam em paralelo em ambientes diferentes, gerando experiências diversas e pouco correlacionadas, o que cumpre o papel de quebrar correlações.
+
+DISC: No experimento de variância, por que as médias dos gradientes com e sem linha de base são iguais, mas os desvios-padrão diferem?
+R: A linha de base não altera a esperança do estimador, mas remove do retorno um valor constante grande, reduzindo a dispersão das amostras.
+
+DISC: Explique por que o problema "ligar ou não ligar" do Bank Marketing é, na essência, supervisionado.
+R: Todos os clientes foram contatados, então a recompensa de ligar é conhecida para todos e a de não ligar é zero. Basta prever P(y=1|x) e ligar se for maior que custo/valor, sem precisar de exploração.
+
+DISC: Por que o limiar ótimo de ligação no projeto é custo/valor = 0,08?
+R: A recompensa esperada de ligar é 100·p − 8, positiva apenas se p > 0,08. Abaixo disso, não ligar (recompensa 0) é melhor.
+
+DISC: O que é vazamento de informação (data leakage) e como se manifesta na coluna duration?
+R: É usar na decisão uma informação que só estaria disponível depois dela. A duração da ligação só é conhecida após ligar, então usá-la para decidir se liga produziria resultados irrealistas.
+
+DISC: Discuta quando preferir gradiente de política, quando preferir DQN e quando preferir ator-crítico.
+R: Gradiente de política/ator-crítico para ações contínuas ou estocásticas; DQN para ações discretas, com grande reaproveitamento de dados; ator-crítico quando se deseja mais eficiência e menor variância que o REINFORCE.
+
+DISC: Como você usaria um gradiente de política para controlar o ângulo de um braço robótico (ação contínua)? Descreva política, recompensa e atualização.
+R: A política seria gaussiana, com rede que calcula média e desvio do torque a partir do estado (ângulos e velocidades). A recompensa seria, por exemplo, menos o erro de posição e menos um custo de energia. A atualização sobe o gradiente de E[(G − b) ∇ln π(a|s)], de preferência com um crítico para a linha de base.

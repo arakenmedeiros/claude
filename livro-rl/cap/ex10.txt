@@ -1,0 +1,269 @@
+MC: O PPO (Proximal Policy Optimization) busca principalmente:
+a) atualizar a política sem se afastar demais da anterior, de forma simples.
+b) aprender um modelo do ambiente.
+c) usar apenas ações discretas.
+d) eliminar a vantagem.
+R: a | Usa um objetivo recortado para limitar o tamanho da atualização.
+
+MC: No PPO, a razão r(θ) é:
+a) π_nova(a|s) / π_antiga(a|s).
+b) a recompensa dividida pelo desconto.
+c) o valor Q dividido pelo valor V.
+d) o número de episódios.
+R: a | Mede quanto a probabilidade da ação mudou.
+
+MC: Se r(θ) = 1, então:
+a) a política não mudou para aquela ação.
+b) a ação ficou duas vezes mais provável.
+c) a ação tornou-se impossível.
+d) o episódio terminou.
+R: a | A probabilidade nova é igual à antiga.
+
+MC: O recorte (clip) do PPO restringe r(θ) à faixa:
+a) [1 − ε, 1 + ε].
+b) [0, 1].
+c) [−1, 1].
+d) [0, ∞).
+R: a | Tipicamente ε = 0,2.
+
+MC: No objetivo recortado, com vantagem positiva e r > 1 + ε, o objetivo:
+a) fica constante, sem incentivo para aumentar mais r.
+b) continua crescendo indefinidamente.
+c) vira negativo.
+d) é zero.
+R: a | O mínimo escolhe o valor recortado, que é plano.
+
+MC: O objetivo recortado do PPO usa min(rA, clip(r)A) para:
+a) ser pessimista e evitar passos grandes demais.
+b) ser otimista.
+c) eliminar a vantagem.
+d) aumentar a variância.
+R: a | Escolher o menor dos dois impede ganhos por mover r além da zona de confiança.
+
+MC: O PPO é um método:
+a) on-policy.
+b) off-policy.
+c) baseado em modelo.
+d) tabular.
+R: a | Usa dados coletados pela política atual e depois os descarta.
+
+MC: Uma característica do PPO que o torna popular é:
+a) ser simples, robusto e paralelizável.
+b) não precisar de dados.
+c) funcionar apenas em jogos.
+d) ser determinístico.
+R: a | Funciona com ações discretas e contínuas e escala bem.
+
+MC: A vantagem usada no PPO costuma ser estimada com:
+a) GAE.
+b) K-Means.
+c) amostragem aleatória pura.
+d) um modelo do ambiente.
+R: a | A estimativa de vantagem generalizada equilibra viés e variância.
+
+MC: Engstrom et al. (2020) mostraram que, no PPO:
+a) detalhes de implementação influenciam muito o desempenho.
+b) a implementação não importa.
+c) o algoritmo nunca funciona.
+d) só o ε importa.
+R: a | Normalizações e outros detalhes explicam boa parte dos ganhos.
+
+MC: O gradiente de política determinística (DPG) usa:
+a) ∇_a Q(s, a) ∇_θ μ(s).
+b) apenas G_t.
+c) apenas a entropia.
+d) apenas V(s).
+R: a | O crítico indica em que direção mudar a ação para aumentar Q.
+
+MC: No DDPG, o ator é:
+a) determinístico, μ(s).
+b) estocástico gaussiano.
+c) uma tabela.
+d) o crítico.
+R: a | Devolve diretamente a ação.
+
+MC: No DDPG, a exploração é feita:
+a) acrescentando ruído às ações.
+b) com ε-gulosa sobre Q.
+c) por entropia máxima.
+d) não há exploração.
+R: a | A política é determinística; o ruído gera variação.
+
+MC: A atualização suave das redes-alvo no DDPG é:
+a) θ⁻ ← τθ + (1 − τ)θ⁻, com τ pequeno.
+b) θ⁻ ← θ a cada passo.
+c) θ⁻ ← 0.
+d) θ⁻ ← θ − θ.
+R: a | A rede-alvo acompanha lentamente a rede principal.
+
+MC: Os três truques do TD3 são:
+a) dois críticos, atualização atrasada do ator e suavização da ação-alvo.
+b) memória, entropia e ε-gulosa.
+c) Monte Carlo, TD e DP.
+d) dueling, Double e Rainbow.
+R: a | Eles reduzem a superestimação e estabilizam o treino.
+
+MC: No TD3, o alvo usa dos dois críticos:
+a) o menor valor.
+b) o maior valor.
+c) a soma.
+d) um sorteio.
+R: a | O mínimo combate a superestimação do crítico.
+
+MC: A atualização atrasada do ator no TD3 serve para:
+a) deixar o crítico se estabilizar antes de atualizar o ator.
+b) acelerar o ator.
+c) eliminar a memória.
+d) aumentar a exploração.
+R: a | O ator é atualizado menos vezes que o crítico.
+
+MC: A suavização da ação-alvo no TD3 consiste em:
+a) acrescentar um pequeno ruído à ação usada no cálculo do alvo.
+b) remover a ação.
+c) usar ações discretas.
+d) multiplicar a ação por zero.
+R: a | Evita que o crítico explore picos estreitos e falsos.
+
+MC: O SAC maximiza:
+a) recompensa mais um bônus de entropia da política.
+b) apenas a recompensa.
+c) apenas a entropia.
+d) a vantagem.
+R: a | O princípio de máxima entropia incentiva política mais aleatória.
+
+MC: A temperatura α do SAC controla:
+a) o peso da entropia no objetivo.
+b) o desconto.
+c) o tamanho do lote.
+d) a taxa de aprendizado.
+R: a | α grande: mais exploração; α pequeno: mais aproveitamento.
+
+MC: Uma vantagem do SAC é:
+a) boa eficiência de dados e exploração embutida na política.
+b) ser on-policy.
+c) exigir o modelo.
+d) não usar redes neurais.
+R: a | É off-policy e estocástico.
+
+MC: O SAC usa política:
+a) estocástica, geralmente gaussiana.
+b) determinística.
+c) tabular.
+d) aleatória uniforme fixa.
+R: a | Aprende média e desvio da distribuição da ação.
+
+MC: Entre PPO, TD3 e SAC, o PPO se destaca por:
+a) funcionar bem com muitos ambientes paralelos e simulação barata.
+b) ser o mais eficiente em dados.
+c) só funcionar com ações contínuas.
+d) ser off-policy.
+R: a | É on-policy e paralelizável, mas usa mais amostras.
+
+MC: Para um problema com ações discretas e simulador caro, é mais indicado:
+a) um método off-policy como DQN/Rainbow.
+b) apenas PPO sempre.
+c) SAC com ações contínuas.
+d) TD3.
+R: a | Reaproveitar dados reduz o custo de simulação.
+
+MC: No Pendulum, a recompensa é:
+a) sempre negativa; mais perto de zero é melhor.
+b) sempre positiva.
+c) igual a +1 por passo.
+d) zero.
+R: a | É uma penalidade por ângulo, velocidade e esforço.
+
+MC: Os testes do capítulo mostram que, no Pendulum, SAC e TD3 aprendem:
+a) com poucos passos, enquanto o PPO precisa de mais.
+b) com mais passos que o PPO.
+c) nunca.
+d) apenas com 1 milhão de passos.
+R: a | Os off-policy reaproveitam dados.
+
+MC: Henderson et al. (2018) mostraram que o AR profundo é:
+a) muito sensível a sementes, código e pequenos detalhes.
+b) insensível a hiperparâmetros.
+c) sempre reprodutível.
+d) idêntico em todas as bibliotecas.
+R: a | Por isso se recomenda reportar várias sementes.
+
+MC: No projeto do vinho, o principal risco de otimizar o simulador é:
+a) o agente explorar regiões onde o modelo extrapola mal (hackeamento de recompensa).
+b) o simulador ser rápido demais.
+c) faltarem ações.
+d) o desconto ser alto.
+R: a | O agente busca previsões altas onde não há dados.
+
+MC: Para verificar se a solução do agente está em região bem coberta pelos dados, usamos:
+a) a distância ao vizinho mais próximo (NearestNeighbors).
+b) a média das notas.
+c) o número de episódios.
+d) o desconto.
+R: a | Distâncias grandes indicam extrapolação.
+
+MC: Para treinar assistentes conversacionais com feedback humano (RLHF), o algoritmo de AR mais comumente usado é:
+a) o PPO.
+b) o Q-learning tabular.
+c) o Monte Carlo de primeira visita.
+d) o SARSA tabular.
+R: a | O PPO é a base do RLHF descrito por Ouyang et al. (2022), tema do Capítulo 13.
+
+DISC: Explique em palavras como o objetivo recortado do PPO evita atualizações grandes demais.
+R: O objetivo usa o mínimo entre r·A e clip(r)·A. Quando r sai da faixa [1−ε, 1+ε] no sentido que melhoraria o objetivo, ele fica constante, e não há ganho em empurrar a política além. Isso limita o tamanho efetivo do passo.
+
+DISC: Descreva os passos do algoritmo PPO.
+R: Coletar passos com a política atual em vários ambientes; calcular vantagens (GAE); otimizar o objetivo recortado por algumas épocas em minilotes, junto com a perda do valor e o bônus de entropia; descartar os dados e repetir.
+
+DISC: Por que o PPO pode reutilizar os mesmos dados por várias épocas, ao contrário do REINFORCE?
+R: A razão de probabilidades corrige a diferença entre a política antiga e a nova, e o recorte impede que ela se afaste muito, mantendo a estimativa válida por algumas atualizações.
+
+DISC: Explique o gradiente de política determinística e o papel do crítico no DDPG.
+R: O ator μ(s) devolve a ação; o crítico Q(s, a) informa o gradiente de Q em relação à ação, indicando para onde mover a ação para aumentar o valor; o ator é atualizado seguindo ∇_a Q ∇_θ μ.
+
+DISC: Descreva os componentes do DDPG e explique por que ele é sensível a hiperparâmetros.
+R: Ator e crítico, memória de experiências, redes-alvo com atualização suave e ruído na ação. A combinação de aproximação, bootstrapping e off-policy com um só crítico leva à superestimação e à instabilidade.
+
+DISC: Explique os três truques do TD3 e o problema que cada um resolve.
+R: Dois críticos (usa o menor) combatem a superestimação; atualização atrasada do ator estabiliza o crítico antes da mudança da política; suavização da ação-alvo evita que o crítico explore picos falsos de Q.
+
+DISC: Explique a ideia de máxima entropia do SAC e seus benefícios.
+R: O agente maximiza recompensa mais entropia da política, ficando o mais aleatório possível sem perder desempenho. Isso incentiva exploração, evita convergência prematura e produz políticas mais robustas.
+
+DISC: Qual o papel da temperatura α no SAC e como ela pode ser ajustada?
+R: α pondera a entropia contra a recompensa. Pode ser ajustada automaticamente para manter a entropia próxima de um alvo (em geral, menos a dimensão da ação), tornando o SAC menos sensível a esse hiperparâmetro.
+
+DISC: Compare PPO e SAC quanto a política, eficiência de dados e paralelização.
+R: PPO é on-policy, tem eficiência de dados menor e paraleliza muito bem; SAC é off-policy, com política estocástica e alta eficiência de dados, com paralelização mais limitada.
+
+DISC: Em que situações você escolheria PPO em vez de SAC e vice-versa?
+R: PPO quando a simulação é barata e paralela, ou com ações discretas; SAC quando as ações são contínuas e os dados são caros ou escassos.
+
+DISC: Por que um algoritmo como o DQN é inadequado para ações contínuas?
+R: Escolher a ação exige maximizar Q sobre um espaço contínuo a cada passo, o que é custoso e difícil; métodos de ator-crítico representam a ação diretamente.
+
+DISC: Liste cinco boas práticas de reprodutibilidade em AR profundo.
+R: Várias sementes e intervalos de confiança; normalizar observações e recompensas; avaliar em ambiente separado e determinístico; registrar versões e hiperparâmetros; comparar com baselines simples.
+
+DISC: Por que o desempenho "bom demais" de um agente deve ser tratado com desconfiança? Dê um exemplo.
+R: Pode vir de falhas do simulador, vazamento de informação ou explorações de bugs. Exemplo: um agente de otimização de processo atinge a "qualidade" máxima prevista em regiões fora dos dados, onde o modelo não é confiável.
+
+DISC: No projeto do vinho, explique como a distância ao vizinho mais próximo ajuda a detectar hackeamento do simulador.
+R: Mede o quanto o estado final do agente está longe de qualquer exemplo real. Se a distância é grande, a previsão é uma extrapolação e a nota alta é pouco confiável.
+
+DISC: Calcule o objetivo do PPO (ε = 0,2) para r = 1,5 e A = +2, e para r = 0,6 e A = −2.
+R: Caso 1: r·A = 3; clip(1,5) = 1,2, logo 1,2·2 = 2,4; min = 2,4. Caso 2: r·A = −1,2; clip(0,6) = 0,8, logo 0,8·(−2) = −1,6; min = −1,6.
+
+DISC: Discuta por que a eficiência de dados é crucial em robótica real e como isso afeta a escolha do algoritmo.
+R: Coletar dados em robôs é lento e pode danificar o equipamento; por isso, algoritmos off-policy eficientes (SAC, TD3) ou treinamento em simulador seguido de transferência são preferidos.
+
+DISC: Explique o que são "detalhes de implementação" que afetam o PPO e por que importam para a ciência.
+R: Normalização de observações e vantagens, inicialização, recorte do valor e decaimento da taxa. Importam porque comparações entre algoritmos podem atribuir ao método o que vem desses detalhes, comprometendo conclusões.
+
+DISC: Descreva um experimento para comparar SAC e TD3 de modo justo.
+R: Usar o mesmo ambiente, as mesmas sementes (várias), o mesmo número de passos, hiperparâmetros ajustados para cada um com orçamento igual, avaliação determinística separada e relatar médias com intervalos de confiança.
+
+DISC: Dê um exemplo de aplicação de AR contínuo fora de robótica, definindo estado, ação e recompensa.
+R: Controle de temperatura de um prédio: estado = temperaturas, ocupação e hora; ação = potência do ar-condicionado (contínua); recompensa = menos o consumo de energia menos penalidade por desconforto.
+
+DISC: Compare DDPG e SAC quanto ao tipo de política, à exploração e à estabilidade.
+R: O DDPG tem política determinística e explora com ruído externo, sendo sensível a hiperparâmetros e propenso a superestimar Q. O SAC tem política estocástica com bônus de entropia (exploração embutida), dois críticos e temperatura automática, sendo mais estável.
