@@ -1,0 +1,9 @@
+VAE treinado com 10.000 imagens sem rótulo (4.000 passos, lotes de 128)
+  z =  2: no teste, reconstrução = 154.3 nats, KL = 5.8 nats, perda total = 160.2
+  z = 20: no teste, reconstrução = 83.5 nats, KL = 24.7 nats, perda total = 108.2
+
+O VAE aprendeu algo útil para classificar? Atributos = média do codificador (z = 20), 100 rótulos, 3 sorteios
+  regressão logística sobre os pixels    | 76.5% ± 1.0
+  regressão logística sobre z (VAE)      | 72.6% ± 2.1
+  1-vizinho sobre os pixels              | 72.8% ± 1.8
+  1-vizinho sobre z (VAE)                | 75.6% ± 1.7

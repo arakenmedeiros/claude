@@ -1,0 +1,269 @@
+MC: O saco de palavras (bag of words) representa um texto por:
+a) a sequência exata das palavras.
+b) o número de letras.
+c) o significado de cada frase.
+d) a contagem das palavras, ignorando a ordem.
+R: d | Por isso 'o jantar não foi bom' e 'o jantar foi bom, não?' ficam parecidos.
+
+MC: No TF-IDF, uma palavra recebe mais peso quando:
+a) é frequente no documento e rara na coleção.
+b) é frequente em todos os documentos.
+c) tem muitas letras.
+d) é rara no documento.
+R: a | Palavras comuns pesam pouco.
+
+MC: Stopwords são:
+a) palavras raras.
+b) palavras muito comuns, que costumam ser removidas.
+c) palavras em outros idiomas.
+d) erros de digitação.
+R: b | Como 'de' e 'the'.
+
+MC: Matrizes de texto (saco de palavras ou TF-IDF) costumam ser:
+a) esparsas, com quase todos os valores zero.
+b) quadradas.
+c) densas e pequenas.
+d) sempre binárias.
+R: a | Cada texto usa só uma pequena parte do vocabulário.
+
+MC: Um bom classificador de partida para texto com poucos dados é:
+a) um k-vizinhos sobre letras.
+b) a regressão logística sobre TF-IDF.
+c) uma rede com milhões de pesos treinada do zero.
+d) uma regressão linear sobre o tamanho do texto.
+R: b | Modelos lineares funcionam bem em espaços esparsos.
+
+MC: A LSA (análise semântica latente) é obtida por:
+a) uma árvore de decisão.
+b) contagem de letras.
+c) uma decomposição em valores singulares da matriz TF-IDF, mantendo as primeiras dimensões.
+d) um classificador supervisionado.
+R: c | Reduz a dimensão e agrupa palavras que aparecem em contextos parecidos.
+
+MC: A LSA pode ser considerada uma forma de usar dados sem rótulo porque:
+a) é aprendida sem usar nenhum rótulo, a partir de todos os textos.
+b) só funciona com textos rotulados.
+c) usa rótulos verdadeiros.
+d) precisa de pseudo-rótulos.
+R: a | Aproveita a estrutura do texto sem rótulo.
+
+MC: Em um problema com 82% de exemplos positivos, um classificador que sempre diz 'positivo' tem:
+a) F1 macro de 100%.
+b) acurácia de 0%.
+c) acurácia de cerca de 82% e F1 macro baixa.
+d) acurácia de 50%.
+R: c | Por isso a acurácia engana em classes desbalanceadas.
+
+MC: A F1 macro é:
+a) o produto das F1.
+b) a acurácia.
+c) a média da F1 de cada classe, com o mesmo peso.
+d) a F1 apenas da classe majoritária.
+R: c | Pune classificadores que ignoram uma classe.
+
+MC: Prevalência de uma classe é:
+a) o limiar de decisão.
+b) o número de rótulos da classe.
+c) a confiança do modelo.
+d) a proporção dessa classe na população.
+R: d | Por exemplo, 81,7% de avaliações positivas.
+
+MC: Quando os rótulos são balanceados mas a população não é, o modelo tende a:
+a) ignorar os rótulos.
+b) aprender a proporção correta.
+c) melhorar sempre.
+d) aprender uma proporção de classes diferente da real.
+R: d | No Yelp, todos os métodos previram menos positivos do que o real.
+
+MC: Se você rotula 40 avaliações ao acaso em uma população com 82% de positivas, espera-se que:
+a) apenas cerca de 7 sejam negativas.
+b) nenhuma seja positiva.
+c) todas sejam negativas.
+d) metade seja negativa.
+R: a | A amostra ao acaso reflete a prevalência.
+
+MC: Com poucos exemplos da classe rara nos rótulos, a regressão logística tende a:
+a) prever sempre a classe rara.
+b) prever quase sempre a classe majoritária.
+c) funcionar perfeitamente.
+d) ignorar o texto.
+R: b | No experimento do Yelp, previu 100% positivo.
+
+MC: O self-training do scikit-learn (SelfTrainingClassifier) adiciona um pseudo-rótulo quando:
+a) o rótulo verdadeiro é conhecido.
+b) a classe é a minoritária.
+c) o exemplo é longo.
+d) a confiança da previsão é maior ou igual ao limiar.
+R: d | Se nenhum exemplo atinge o limiar, nada é adicionado.
+
+MC: Quando o self-training não adiciona nenhum pseudo-rótulo, o resultado é:
+a) pior que o supervisionado.
+b) impossível de calcular.
+c) idêntico ao do modelo treinado só com os rotulados.
+d) melhor que o supervisionado.
+R: c | Foi o que ocorreu com limiar 0,8 no Yelp.
+
+MC: O limiar do self-training não é 'portátil' porque:
+a) a escala das probabilidades depende do modelo e da representação.
+b) depende do número de letras.
+c) depende da cor do gráfico.
+d) é sempre igual a 0,5.
+R: a | Um valor que funciona em um problema pode não funcionar em outro.
+
+MC: Probabilidades mal calibradas atrapalham o self-training porque:
+a) o limiar de confiança deixa de refletir a probabilidade real de acerto.
+b) os rótulos mudam.
+c) o vocabulário aumenta.
+d) o modelo fica mais lento.
+R: a | A confiança deixa de ser um bom filtro.
+
+MC: Um limiar um pouco menor pode causar uma 'avalanche' porque:
+a) os rótulos são apagados.
+b) o grafo é desconectado.
+c) muitos exemplos passam a atingir a confiança ao mesmo tempo.
+d) o modelo é substituído.
+R: c | Foi o caso do limiar 0,7 com a LSA.
+
+MC: Para decidir um limiar de confiança, convém olhar:
+a) o tamanho do vocabulário.
+b) apenas a acurácia no treino.
+c) apenas o valor usado em outro artigo.
+d) a distribuição das confianças e a precisão dos pseudo-rótulos em validação.
+R: d | O limiar deve ser escolhido sem usar o teste.
+
+MC: No Yelp, com 40 rótulos balanceados, a LSA + regressão logística superou o TF-IDF + regressão logística em cerca de:
+a) 50 pontos.
+b) 0 ponto.
+c) 30 pontos.
+d) 5 pontos percentuais de F1 macro.
+R: d | 71,1% contra 66,3%.
+
+MC: Com 1.000 rótulos, a vantagem da LSA sobre o TF-IDF:
+a) dobra.
+b) triplica.
+c) praticamente desaparece.
+d) fica negativa em 20 pontos.
+R: c | Com rótulos suficientes, o TF-IDF já basta.
+
+MC: Uma LSA com poucas dimensões (por exemplo, 10):
+a) não depende do número de rótulos.
+b) perde informação e prejudica quando há muitos rótulos.
+c) é sempre a melhor.
+d) equivale ao TF-IDF.
+R: b | Com 1.000 rótulos, ficou em 77,7%.
+
+MC: O Label Spreading sobre a LSA teve o pior resultado com rótulos balanceados e o melhor com rótulos ao acaso. A lição é:
+a) a comparação entre métodos depende de como os rótulos foram escolhidos.
+b) o Label Spreading é sempre bom.
+c) o Label Spreading é sempre ruim.
+d) a LSA não importa.
+R: a | A prevalência e a métrica fazem parte do projeto.
+
+MC: O Naive Bayes + EM não ajudou no Yelp, ao contrário do SMS. Uma explicação possível é que:
+a) os grupos naturais do texto não correspondem às classes de sentimento.
+b) o EM não funciona em Python.
+c) o Yelp não tem texto.
+d) há rótulos demais.
+R: a | É a lição do Capítulo 6 sobre modelos mal especificados.
+
+MC: A tradução de ida e volta (back-translation) é usada em texto para:
+a) trocar o rótulo.
+b) gerar paráfrases que preservam a classe.
+c) apagar o texto.
+d) reduzir o vocabulário.
+R: b | Foi usada na UDA original.
+
+MC: Uma perturbação inadequada em análise de sentimento seria:
+a) trocar 'bom' por 'ruim'.
+b) mudar a ordem de palavras sem importância.
+c) trocar 'ótimo' por 'excelente'.
+d) inserir uma palavra neutra.
+R: a | Muda a polaridade e, portanto, a classe.
+
+MC: Modelos de linguagem como o BERT são pré-treinados com:
+a) grandes volumes de texto sem rótulo.
+b) apenas imagens.
+c) somente avaliações do Yelp.
+d) apenas textos rotulados à mão.
+R: a | Depois, ajustam-se com poucos rótulos.
+
+MC: A recomendação inicial para texto com poucos rótulos é:
+a) começar com o método mais complexo.
+b) usar apenas a acurácia.
+c) ignorar a prevalência.
+d) começar com uma referência forte (TF-IDF + regressão logística) e a métrica certa.
+R: d | Sem referência forte, não se mede o ganho.
+
+MC: Quando a classe de interesse é rara, a referência supervisionada deve:
+a) ser ajustada à raridade, por exemplo com pesos de classe ou outro limiar.
+b) ser ignorada.
+c) usar só a acurácia.
+d) usar rótulos balanceados sempre.
+R: a | Antes de concluir algo sobre o método semissupervisionado.
+
+MC: Em um painel de satisfação com poucos rótulos, a decisão de usar um método semissupervisionado deve se basear em:
+a) a acurácia no treino.
+b) o método mais recente.
+c) comparação com a referência supervisionada forte, com vários sorteios e a métrica adequada.
+d) a opinião de um único sorteio.
+R: c | Sem isso, o ganho observado pode ser ruído.
+
+DISC: Explique como transformar texto em números usando saco de palavras e TF-IDF.
+R: O saco de palavras conta as ocorrências de cada palavra do vocabulário em cada texto. O TF-IDF pondera a contagem pela frequência no documento (TF) e pela raridade na coleção (IDF), dando mais peso a palavras características.
+
+DISC: Por que as representações de texto são esparsas e por que modelos lineares funcionam bem com elas?
+R: Cada texto usa poucas palavras do vocabulário, então quase todos os valores são zero. Em espaços de alta dimensão e esparsos, os modelos lineares costumam separar bem as classes e evitam sobreajuste com poucos dados.
+
+DISC: Explique a LSA e por que ela é uma forma de aproveitar texto sem rótulo.
+R: Aplica uma decomposição em valores singulares à matriz TF-IDF e mantém as primeiras dimensões, agrupando palavras que ocorrem em contextos parecidos. É aprendida sem rótulos, a partir de todos os textos, e fornece uma representação compacta.
+
+DISC: Por que a F1 macro é mais adequada do que a acurácia no experimento do Yelp?
+R: As classes são desbalanceadas (81,7% positivas). Um classificador que sempre diz positivo teria alta acurácia, mas F1 macro baixa. A F1 macro dá o mesmo peso às duas classes.
+
+DISC: Explique por que os rótulos balanceados distorceram as previsões no Yelp.
+R: Com 50% de cada classe nos rótulos, os modelos aprenderam uma proporção diferente da real (82/18) e previram menos positivos do que o real.
+
+DISC: Explique o que ocorreu quando os 40 rótulos foram sorteados ao acaso e discuta a lição.
+R: Só cerca de 6 rótulos eram negativos; a regressão logística passou a prever quase tudo positivo (F1 macro de 45%), e o Label Spreading passou a ser o melhor. A comparação entre métodos depende de como se escolhem os rótulos e da métrica.
+
+DISC: Por que o self-training não adicionou nenhum pseudo-rótulo com limiar 0,8, e o que isso significa para o resultado?
+R: Nenhum exemplo atingiu confiança 0,8, pois as probabilidades do modelo, com 40 rótulos, são baixas. O resultado é idêntico ao do modelo supervisionado.
+
+DISC: Explique a 'avalanche' do limiar com a LSA (0,7 contra 0,8 e 0,6).
+R: Com 0,8 não passa nenhum exemplo; com 0,7 passam quase todos, com precisão de 63,9% e F1 macro de 40%; com 0,6 passam praticamente os mesmos, mas com 86,9% de acerto e F1 de 74,7%. Pequenas mudanças do limiar alteram muito a quantidade e a qualidade.
+
+DISC: Por que o limiar do self-training não é portátil entre problemas e representações?
+R: A escala das probabilidades depende do modelo, da regularização e da representação. Um valor que funciona em um caso pode não deixar passar nada, ou deixar passar tudo, em outro.
+
+DISC: Como escolher um limiar de confiança de forma honesta?
+R: Medindo, em um conjunto de validação rotulado, a distribuição das confianças, a fração aceita e a precisão dos pseudo-rótulos, e escolhendo sem usar o teste.
+
+DISC: Compare a LSA com o TF-IDF quanto ao número de rótulos, citando os números.
+R: Com 40 rótulos, a LSA com 30 dimensões obteve 73,0% contra 66,2% do TF-IDF; com 1.000 rótulos, 86,1% (LSA de 100 dimensões) contra 85,8%. A vantagem some com muitos rótulos.
+
+DISC: Qual o risco de usar uma LSA com poucas dimensões?
+R: Perde informação. Com 10 dimensões e 1.000 rótulos, o resultado foi de 77,7%, bem abaixo do TF-IDF (85,8%).
+
+DISC: Por que o Naive Bayes + EM funcionou no SMS e não no Yelp?
+R: Uma explicação possível: no SMS, os grupos naturais do texto (spam e não spam) coincidem com as classes. No Yelp, os grupos naturais (tipo de comida, de serviço) não coincidem com o sentimento, e o EM reforça outros grupos.
+
+DISC: Explique a relação entre a calibração das probabilidades e o self-training.
+R: O limiar assume que a confiança reflete a probabilidade real de acerto. Se o modelo é mal calibrado, o filtro deixa passar erros ou bloqueia acertos, e o self-training perde confiabilidade.
+
+DISC: Descreva duas formas de aumento de dados para texto e um cuidado necessário.
+R: Tradução de ida e volta e trocas simples (sinônimos, inserção, remoção, troca de palavras). Cuidado: a perturbação deve preservar a classe, e trocar 'bom' por 'ruim' muda a polaridade.
+
+DISC: Por que os modelos de linguagem pré-treinados são um exemplo do ganho de aprender com texto sem rótulo?
+R: São treinados em enormes volumes de texto sem rótulo em uma tarefa-pretexto (como prever palavras escondidas) e depois ajustados com poucos rótulos, o que traz muito ganho.
+
+DISC: Quando a classe de interesse é rara, como ajustar a referência supervisionada?
+R: Usando pesos de classe, ajustando o limiar de decisão ou escolhendo métricas adequadas (F1 da classe rara, F1 macro), antes de comparar com métodos semissupervisionados.
+
+DISC: Descreva uma receita para texto com poucos rótulos.
+R: Começar com TF-IDF + regressão logística como referência, aprender uma representação com o texto sem rótulo (LSA ou modelo pré-treinado), sortear rótulos conforme a realidade, cuidar dos pseudo-rótulos e repetir com vários sorteios.
+
+DISC: Por que os resultados negativos deste capítulo (self-training, EM) são relevantes?
+R: Mostram que métodos semissupervisionados não funcionam sempre e que dependem de calibração, prevalência e adequação das suposições. Reportá-los evita expectativas irreais.
+
+DISC: Explique por que a escolha de como rotular faz parte do projeto.
+R: Define a proporção das classes nos rótulos e, portanto, o que o modelo aprende e como os métodos se comparam. Uma escolha inadequada distorce as conclusões.

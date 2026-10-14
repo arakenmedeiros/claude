@@ -1,0 +1,156 @@
+@@EX 1 | A perda NT-Xent à mão | básico
+Com NumPy, considere 3 exemplos, cada um com duas versões, cujos vetores de representação (2 dimensões) são `z1 = [(1, 0), (0, 1), (-1, 0)]` e `z2 = [(0,9; 0,2), (0,1; 0,9), (-0,8; -0,3)]`. Calcule a perda NT-Xent (τ = 0,5) usando como positivo de cada vetor a sua versão par. Compare com a perda quando `z2` é **embaralhado** (as versões trocadas entre exemplos: ordem 1, 2, 0).
+
+*Pergunta:* qual perda é menor? O que isso mostra?
+@@SOL
+```python
+import numpy as np
+
+def ntxent(z1, z2, tau=0.5):
+    z = np.vstack([z1, z2]); z = z / np.linalg.norm(z, axis=1, keepdims=True); sim = z @ z.T / tau; np.fill_diagonal(sim, -np.inf)
+    n = len(z1); alvo = np.r_[np.arange(n, 2 * n), np.arange(0, n)]
+    logp = sim - np.log(np.exp(sim).sum(1, keepdims=True))
+    return -logp[np.arange(2 * n), alvo].mean()
+
+z1 = np.array([[1.0, 0], [0, 1.0], [-1.0, 0]]); z2 = np.array([[0.9, 0.2], [0.1, 0.9], [-0.8, -0.3]])
+print(f"perda com os pares corretos     : {ntxent(z1, z2):.3f}")
+print(f"perda com os pares embaralhados : {ntxent(z1, z2[[1, 2, 0]]):.3f}")
+print(f"perda com os pares corretos e tau = 0,1: {ntxent(z1, z2, 0.1):.3f}")
+```
+@@NOTE PREENCHER
+@@EX 2 | Rotação como tarefa-pretexto no Digits | intermediário
+No **Digits** (imagens 8×8; 30% reservados para teste), construa uma tarefa-pretexto: para cada imagem de treino, gere as 4 rotações (0°, 90°, 180°, 270°; `np.rot90`) e treine um `MLPClassifier` (uma camada escondida de 64 neurônios) a prever a rotação. Use as **ativações da camada escondida** (ReLU) como atributos e treine uma regressão logística com 50 rótulos (5 por dígito; 10 sorteios) sobre eles. Compare com a regressão logística sobre os 64 pixels e sobre as ativações de uma MLP **sem treino** (pesos aleatórios com a mesma arquitetura).
+
+*Pergunta:* o pré-treino por rotação ajudou?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+# tarefa-pretexto: prever a rotação (sem usar y)
+R = np.vstack([np.rot90(X_tr.reshape(-1, 8, 8), k, (1, 2)).reshape(-1, 64) for k in range(4)]); rk = np.repeat(np.arange(4), len(X_tr))
+pre = MLPClassifier((64,), max_iter=300, random_state=0).fit(R, rk)
+alea = MLPClassifier((64,), max_iter=1, random_state=0).fit(R[:50], rk[:50]); alea.coefs_[0] = np.random.RandomState(0).randn(64, 64) * 0.3; alea.intercepts_[0] = np.zeros(64)
+ativ = lambda m, A: np.maximum(0, A @ m.coefs_[0] + m.intercepts_[0])
+conjuntos = {"64 pixels": (X_tr, X_te), "MLP sem treino": (ativ(alea, X_tr), ativ(alea, X_te)), "MLP pré-treinada (rotação)": (ativ(pre, X_tr), ativ(pre, X_te))}
+print(f"acurácia da tarefa-pretexto (rotação) nas imagens de treino: {100 * pre.score(R, rk):.1f}%")
+print("atributos                  | acerto no teste (50 rótulos, 10 sorteios)")
+for nome, (A, B) in conjuntos.items():
+    v = []
+    for s in range(10):
+        r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == d)[0], 5, replace=False) for d in range(10)])
+        esc = StandardScaler().fit(A[idx]); v.append(LogisticRegression(max_iter=3000).fit(esc.transform(A[idx]), y_tr[idx]).score(esc.transform(B), y_te))
+    print(f"{nome:26s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE PREENCHER
+@@EX 3 | A temperatura do SimCLR | intermediário
+No **MNIST**, pré-treine o SimCLR com 10.000 imagens sem rótulo, 600 passos (lote 128) e temperaturas τ = 0,1; 0,5 e 1,0. Para cada uma, faça a sonda linear com 100 rótulos (3 sorteios).
+
+*Pergunta:* qual temperatura funcionou melhor? Lembre-se de que o pré-treino foi curto (600 passos).
+@@SOL
+```python
+import numpy as np, torch
+from contrastivo import *
+
+X, y, X_te, y_te = carregar_mnist(); Xu = X[np.random.RandomState(100).choice(len(X), 10000, replace=False)]
+print("temperatura | sonda linear com 100 rótulos (3 sorteios; pré-treino de 600 passos)")
+for tau in [0.1, 0.5, 1.0]:
+    enc = pre_treinar(Xu, "simclr", passos=600, lote=128, tau=tau)
+    v = [sonda_linear(enc, X[sortear_rotulados(y, 10, s)], y[sortear_rotulados(y, 10, s)], X_te, y_te) for s in range(3)]
+    print(f"{tau:11.1f} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE PREENCHER
+@@EX 4 | Vizinho mais próximo, regressão logística e sonda linear | intermediário
+Reaproveite o codificador SimCLR do capítulo (`carregar_ou_treinar("simclr_forte", ...)`, que usa o mesmo pré-treino de 1.500 passos). Com 100 rótulos (3 sorteios), compare três classificadores sobre os **atributos do codificador**: a regressão logística (sonda linear), o **1-vizinho mais próximo** e o **5-vizinhos**. Compare também com o 1-vizinho sobre os pixels.
+
+*Pergunta:* a representação aprendida torna o problema "fácil" também para classificadores simples?
+@@SOL
+```python
+import numpy as np, torch
+from sklearn.neighbors import KNeighborsClassifier
+from contrastivo import *
+
+X, y, X_te, y_te = carregar_mnist(); Xu = X[np.random.RandomState(100).choice(len(X), 10000, replace=False)]
+enc = carregar_ou_treinar("simclr_forte", lambda: pre_treinar(Xu, "simclr", passos=1500, lote=128))
+Ft = atributos(enc, X_te); pix_te = X_te.flatten(1).numpy()
+print("classificador sobre...                 | acerto no teste (100 rótulos, 3 sorteios)")
+res = {}
+for s in range(3):
+    idx = sortear_rotulados(y, 10, s); Fl = atributos(enc, X[idx]); pix = X[idx].flatten(1).numpy(); yl = y[idx].numpy(); yt = y_te.numpy()
+    res.setdefault("1-vizinho, pixels", []).append(KNeighborsClassifier(1).fit(pix, yl).score(pix_te, yt))
+    res.setdefault("1-vizinho, atributos do codificador", []).append(KNeighborsClassifier(1).fit(Fl, yl).score(Ft, yt))
+    res.setdefault("5-vizinhos, atributos do codificador", []).append(KNeighborsClassifier(5).fit(Fl, yl).score(Ft, yt))
+    res.setdefault("sonda linear (reg. logística), atributos", []).append(sonda_linear(enc, X[idx], y[idx], X_te, y_te))
+for k, v in res.items(): print(f"{k:38s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE PREENCHER
+@@EX 5 | SimCLR no Fashion-MNIST | avançado
+No **Fashion-MNIST**, pré-treine o SimCLR com 10.000 imagens sem rótulo, 1.500 passos (lote 128), com o aumento moderado (`aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)`) nas duas visões. Compare a sonda linear (100 rótulos, 3 sorteios) com a regressão logística sobre os pixels e com um codificador sem treino. Guarde o codificador como `simclr_fashion`, que será reaproveitado no Capítulo 15.
+
+*Pergunta:* o pré-treino ajudou? Compare com o ganho no MNIST.
+@@SOL
+```python
+import numpy as np, torch
+from contrastivo import *
+
+X, y, X_te, y_te = carregar_fashion(); Xu = X[np.random.RandomState(100).choice(len(X), 10000, replace=False)]
+moderado = lambda x: aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)
+enc = carregar_ou_treinar("simclr_fashion", lambda: pre_treinar(Xu, "simclr", passos=1500, lote=128, aug=moderado))
+torch.manual_seed(0); aleat = CNN()
+res = {}
+for s in range(3):
+    idx = sortear_rotulados(y, 10, s)
+    res.setdefault("regressão logística, pixels", []).append(LogisticRegression(max_iter=3000).fit(X[idx].flatten(1).numpy(), y[idx].numpy()).score(X_te.flatten(1).numpy(), y_te.numpy()))
+    res.setdefault("sonda linear, codificador sem treino", []).append(sonda_linear(aleat, X[idx], y[idx], X_te, y_te))
+    res.setdefault("sonda linear, SimCLR", []).append(sonda_linear(enc, X[idx], y[idx], X_te, y_te))
+print("Fashion-MNIST, 100 rótulos, 3 sorteios: acerto no teste")
+for k, v in res.items(): print(f"{k:38s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE PREENCHER
+@@PROJ Quanto vale cada rótulo depois do pré-treino? A curva rótulos × acurácia no MNIST | Cap12
+**Fonte dos dados.** *MNIST* (LeCun et al.; espelho público), 70.000 imagens 28×28 de dígitos; no Kaggle, *Digit Recognizer*.
+
+**Contexto.** Uma empresa de digitalização de formulários quer decidir **quantos dígitos precisa rotular à mão**. Ela já tem milhares de imagens sem rótulo. Você deve mostrar, em uma curva, como a acurácia cresce com o número de rótulos para **diferentes formas de representação**.
+
+**Tarefas.**
+1. Use os codificadores do capítulo (`simclr_forte` e `rotacao`, guardados em `dados/`) e um codificador sem treino.
+2. Para 10, 30, 100, 300 e 1.000 rótulos (1, 3, 10, 30 e 100 por dígito) e 3 sorteios, calcule o acerto no teste da sonda linear sobre cada codificador e da regressão logística sobre os pixels.
+3. Mostre o resultado em uma tabela e responda: a partir de quantos rótulos o pré-treino deixa de compensar? Qual representação você recomendaria, e por quê?
+4. Escreva uma recomendação (8 a 10 linhas) com as limitações (poucos sorteios, MNIST fácil, pré-treino curto).
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import numpy as np, torch
+from contrastivo import *
+
+X, y, X_te, y_te = carregar_mnist(); Xu = X[np.random.RandomState(100).choice(len(X), 10000, replace=False)]
+enc_sim = carregar_ou_treinar("simclr_forte", lambda: pre_treinar(Xu, "simclr", passos=1500, lote=128))
+enc_rot = carregar_ou_treinar("rotacao", lambda: pre_treinar(Xu, "rotacao", passos=1500, lote=128))
+torch.manual_seed(0); aleat = CNN()
+print("rótulos (por dígito) | pixels (RL) | codificador sem treino | rotação | SimCLR   (acerto no teste, 3 sorteios)")
+for por in [1, 3, 10, 30, 100]:
+    r = {k: [] for k in ["pix", "ale", "rot", "sim"]}
+    for s in range(3):
+        idx = sortear_rotulados(y, por, s)
+        r["pix"].append(LogisticRegression(max_iter=3000).fit(X[idx].flatten(1).numpy(), y[idx].numpy()).score(X_te.flatten(1).numpy(), y_te.numpy()))
+        for k, e in [("ale", aleat), ("rot", enc_rot), ("sim", enc_sim)]: r[k].append(sonda_linear(e, X[idx], y[idx], X_te, y_te))
+    print(f"{10 * por:5d} ({por:3d})        | {100 * np.mean(r['pix']):10.1f}% | {100 * np.mean(r['ale']):21.1f}% | {100 * np.mean(r['rot']):6.1f}% | {100 * np.mean(r['sim']):.1f}%")
+```
+@@RUBRICA
+- O pré-treino usa só imagens sem rótulo, e o teste é separado e usado só para avaliar.
+- Os mesmos rótulos são usados para todas as representações em cada sorteio.
+- A tabela cobre cinco tamanhos de conjunto rotulado, com três sorteios.
+- A resposta discute onde o ganho do pré-treino diminui, com base nos números.
+- A recomendação admite as limitações do experimento.
+@@NOTE PREENCHER
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits.
+- **Kaggle:** Digit Recognizer e Fashion-MNIST.
+- **Artigos:** Chen et al. (2020), Gidaris, Singh e Komodakis (2018) e Bengio, Courville e Vincent (2013).

@@ -1,0 +1,10 @@
+5 rótulos por classe, 20 sorteios. Acurácia no teste (30%); ganho = método semissupervisionado menos a regressão logística só com os rotulados
+base            | exemplos | classes | reg. logística | self-training (limiar 0,9) | Label Spreading (knn, k = 7)
+Iris            |      150 |       3 |  85.3% ±  7.0 |  83.0% ( -2.3 ±  3.3) |  89.4% ( +4.1 ± 10.5)
+Wine            |      178 |       3 |  94.5% ±  3.2 |  95.8% ( +1.3 ±  2.2) |  89.3% ( -5.3 ±  9.9)
+Breast Cancer   |      569 |       2 |  91.0% ±  2.6 |  92.1% ( +1.1 ±  1.4) |  88.1% ( -2.9 ±  6.7)
+Digits          |     1797 |      10 |  83.2% ±  2.3 |  88.3% ( +5.1 ±  2.1) |  90.3% ( +7.1 ±  2.4)
+Sonar           |      208 |       2 |  68.1% ±  8.8 |  64.3% ( -3.8 ±  5.3) |  62.9% ( -5.2 ±  8.1)
+Ionosphere      |      351 |       2 |  78.1% ±  5.7 |  75.0% ( -3.1 ±  5.2) |  69.7% ( -8.4 ±  9.4)
+Pima (diabetes) |      768 |       2 |  67.6% ±  5.9 |  64.4% ( -3.2 ±  7.8) |  63.2% ( -4.4 ±  6.3)
+Glass           |      214 |       6 |  45.0% ±  7.9 |  45.2% ( +0.2 ±  2.0) |  51.8% ( +6.8 ± 10.1)

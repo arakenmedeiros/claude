@@ -1,0 +1,146 @@
+@@EX 1 | A divergência KL do VAE à mão | básico
+Para um VAE com z de uma dimensão, a divergência KL entre a distribuição do codificador N(μ, σ²) e a normal padrão é `0,5 · (μ² + σ² − 1 − ln σ²)`. Calcule-a para os pares (μ, σ) = (0; 1), (1; 1), (0; 0,5), (0; 2) e (2; 0,3). Depois, sorteie 5 valores de z = μ + σ·ε, com ε da normal padrão (`RandomState(0)`), para (μ, σ) = (1; 0,5).
+
+*Pergunta:* quando a KL é zero? O que a KL "pune"?
+@@SOL
+```python
+import numpy as np
+
+def kl(mu, sigma): return 0.5 * (mu ** 2 + sigma ** 2 - 1 - np.log(sigma ** 2))
+print("mu    | sigma | KL")
+for mu, s in [(0, 1), (1, 1), (0, 0.5), (0, 2), (2, 0.3)]: print(f"{mu:5.1f} | {s:5.1f} | {kl(mu, s):.3f}")
+eps = np.random.RandomState(0).randn(5); print("\nz = mu + sigma * eps (mu = 1, sigma = 0,5):", np.round(1 + 0.5 * eps, 3))
+```
+@@NOTE A KL é **zero** apenas para (μ = 0, σ = 1), isto é, quando a distribuição do codificador é exatamente a normal padrão. Ela cresce quando a média se afasta de 0 (0,500 para μ = 1), quando o desvio é menor que 1 (0,318 para σ = 0,5) ou maior (0,807 para σ = 2), e é grande quando a média é distante e o desvio pequeno (2,749 para μ = 2, σ = 0,3). Ou seja, a KL **pune** distribuições que fogem da normal padrão, em especial as que "se amarram" a um ponto específico do espaço latente (σ pequeno e μ distante). Os cinco valores de z sorteados (1,882; 1,200; 1,489; 2,120 e 1,934) ficam em torno de μ = 1, com dispersão σ = 0,5.
+@@EX 2 | Autocodificador, PCA e pixels no Digits | intermediário
+No **Digits** (pixels/16; 30% para teste), treine um autocodificador com o `MLPRegressor` (entrada 64, camada escondida de **8 neurônios** com ReLU, saída 64; alvo = a própria imagem; `max_iter=500`, `random_state=0`) sem usar rótulos. Use as 8 ativações da camada escondida como atributos e compare, com 50 rótulos (10 sorteios), a regressão logística sobre: os 64 pixels, as 8 componentes do PCA e os 8 atributos do autocodificador.
+
+*Pergunta:* o autocodificador superou o PCA? Que relação há entre os dois?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+ae = MLPRegressor(hidden_layer_sizes=(8,), activation="relu", max_iter=500, random_state=0).fit(X_tr, X_tr)        # sem usar y
+cod = lambda A: np.maximum(0, A @ ae.coefs_[0] + ae.intercepts_[0])
+pca = PCA(8, random_state=0).fit(X_tr)
+print(f"erro quadrático médio de reconstrução no teste: autocodificador {np.mean((ae.predict(X_te) - X_te) ** 2):.4f} | PCA(8) {np.mean((pca.inverse_transform(pca.transform(X_te)) - X_te) ** 2):.4f}")
+conj = {"64 pixels": (X_tr, X_te), "PCA (8)": (pca.transform(X_tr), pca.transform(X_te)), "autocodificador (8)": (cod(X_tr), cod(X_te))}
+print("atributos           | acerto no teste (50 rótulos, 10 sorteios)")
+for nome, (A, B) in conj.items():
+    v = []
+    for s in range(10):
+        r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == d)[0], 5, replace=False) for d in range(10)]); esc = StandardScaler().fit(A[idx])
+        v.append(LogisticRegression(max_iter=3000).fit(esc.transform(A[idx]), y_tr[idx]).score(esc.transform(B), y_te))
+    print(f"{nome:19s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE O autocodificador de 8 neurônios teve erro de reconstrução **maior** que o do PCA com 8 componentes (0,0429 contra 0,0245), e seus atributos foram **piores** para classificar: 65,3% contra 79,1% do PCA e 82,4% dos 64 pixels. O PCA é a solução ótima **linear** para reconstruir com 8 dimensões; um autocodificador com ativação ReLU poderia, em tese, igualá-lo ou superá-lo, mas, com pouco treino (500 iterações) e uma camada pequena, ficou abaixo. Isso mostra que a representação de um autocodificador **não é automaticamente melhor** do que as técnicas clássicas, e que reduzir a dimensão para 8 perde informação para classificar com os 64 pixels (82,4%).
+@@EX 3 | A dimensão do espaço latente do VAE | intermediário
+No **MNIST**, treine VAEs com z de 2, 5, 10, 20 e 40 dimensões (10.000 imagens sem rótulo, 2.000 passos, `treinar_vae`). Mostre o erro de reconstrução e a KL no teste e a acurácia do **1-vizinho** sobre a média do codificador, com 100 rótulos (3 sorteios).
+
+*Pergunta:* uma dimensão maior reconstrói melhor? E classifica melhor?
+@@SOL
+```python
+import numpy as np, torch
+from sklearn.neighbors import KNeighborsClassifier
+from generativos import *
+
+X, y, X_te, y_te = carregar_mnist(); Xu = X[np.random.RandomState(100).choice(len(X), 10000, replace=False)]
+print("z  | reconstrução (nats) | KL (nats) | 1-vizinho sobre z, 100 rótulos")
+for z in [2, 5, 10, 20, 40]:
+    m = treinar_vae(Xu, z=z, passos=2000); m.eval()
+    with torch.no_grad(): s, mu, lv = m(X_te); _, rec, kl = perda_vae(s, X_te, mu, lv); Ft = m.codificar(X_te)[0].numpy()
+    v = []
+    for sd in range(3):
+        idx = sortear_rotulados(y, 10, sd)
+        with torch.no_grad(): Fl = m.codificar(X[idx])[0].numpy()
+        v.append(KNeighborsClassifier(1).fit(Fl, y[idx].numpy()).score(Ft, y_te.numpy()))
+    print(f"{z:2d} | {rec:19.1f} | {kl:9.1f} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE A reconstrução melhora com z maior, mas **satura**: 155,9 nats (z = 2), 120,2 (5), 98,3 (10), 86,5 (20) e 85,7 (40). A acurácia do 1-vizinho acompanha até certo ponto: 53,5% (2), 70,0% (5), 75,5% (10), 75,6% (20) e 75,0% (40). Dimensões muito pequenas perdem informação para reconstruir e para classificar; a partir de 10, não há ganho. Note que, mesmo no melhor caso, a acurácia (75,6%) é semelhante à do 1-vizinho sobre os pixels (72,8% no Capítulo 13): reconstruir melhor não significa classificar melhor.
+@@EX 4 | O peso da classificação no M2 | avançado
+Treine o M2 simplificado no **MNIST** (100 rótulos, um sorteio, 10.000 imagens sem rótulo, 1.000 passos) com α = 10, 100 e 1.000. Mostre a acurácia no teste e compare com o classificador treinado só com os rotulados (`treinar_mlp`, 1.000 passos).
+
+*Pergunta:* α ajuda o M2 a superar a referência?
+@@SOL
+```python
+import numpy as np, torch
+from generativos import *
+
+X, y, X_te, y_te = carregar_mnist(); Xu = X[np.random.RandomState(100).choice(len(X), 10000, replace=False)]; idx = sortear_rotulados(y, 10, 0)
+print(f"referência (só rotulados, mesma rede): {100 * treinar_mlp(X[idx], y[idx], passos=1000, X_teste=X_te, y_teste=y_te):.1f}%")
+print("alfa | M2 (1.000 passos)")
+for alfa in [10.0, 100.0, 1000.0]:
+    _, h = treinar_m2(X[idx], y[idx], Xu, passos=1000, alfa=alfa, X_teste=X_te, y_teste=y_te, relatar=(1000,)); print(f"{alfa:4.0f} | {100 * h[0][1]:.1f}%")
+```
+@@NOTE A referência (só rotulados) obteve 77,4%. O M2 obteve 69,6% (α = 10), 75,5% (α = 100) e **79,4%** (α = 1.000). Com α grande, o classificador recebe mais peso e o M2 chegou a **superar a referência em 2,0 pontos**, mas com um único sorteio, o que fica dentro do ruído, e **escolher α pelo teste seria otimista** (vazamento). Com α pequeno, o sinal generativo domina e o classificador piora. Uma leitura prudente: o equilíbrio entre a perda generativa e a de classificação é decisivo, e sem uma validação separada não podemos recomendar um valor.
+@@EX 5 | Mais passos para a GAN semissupervisionada | avançado
+No **MNIST** (100 rótulos, um sorteio, 10.000 sem rótulo), treine a GAN semissupervisionada por 5.000 passos, medindo o acerto no teste a cada 1.000 passos. Compare com o discriminador treinado só com os rotulados por 5.000 passos.
+
+*Pergunta:* a vantagem da GAN cresce com o treino? Há instabilidade?
+@@SOL
+```python
+import numpy as np, torch
+from generativos import *
+
+X, y, X_te, y_te = carregar_mnist(); Xu = X[np.random.RandomState(100).choice(len(X), 10000, replace=False)]; idx = sortear_rotulados(y, 10, 0)
+marcas = (1000, 2000, 3000, 4000, 5000)
+_, _, h = treinar_sgan(X[idx], y[idx], Xu, passos=5000, semente=0, X_teste=X_te, y_teste=y_te, relatar=marcas)
+torch.manual_seed(0); rng = np.random.RandomState(0); Db = Discriminador(); opt = torch.optim.Adam(Db.parameters(), lr=3e-4, betas=(0.5, 0.999)); ref = []
+for passo in range(1, 5001):
+    Db.train(); il = torch.tensor(rng.choice(len(idx), 100)); l, _ = Db(X[idx][il]); opt.zero_grad(); F.cross_entropy(l, y[idx][il]).backward(); opt.step()
+    if passo in marcas:
+        Db.eval()
+        with torch.no_grad(): ref.append((Db(X_te)[0].argmax(1) == y_te).float().mean().item())
+print("passos | GAN semissupervisionada | só rotulados")
+for (p, a), r in zip(h, ref): print(f"{p:6d} | {100 * a:22.1f}% | {100 * r:.1f}%")
+```
+@@NOTE A GAN semissupervisionada, com um sorteio: 72,9% (1.000 passos), 76,0% (2.000), 78,7% (3.000), 80,0% (4.000) e **82,6% (5.000)**, contra 76,3%, 77,6%, 76,5%, 76,4% e 77,3% do discriminador treinado só com os rotulados. A vantagem **cresce com o treino** (de −3,4 pontos para +5,3), e a curva da GAN sobe de modo quase contínuo, sem instabilidade grave nesta execução. Isso indica que o ganho depende de um treino mais longo do que o orçamento do experimento principal. Com um único sorteio, o tamanho exato da vantagem é incerto, mas a tendência crescente é clara.
+@@PROJ Detectando exemplos "de fora" com um VAE | Cap13
+**Fonte dos dados.** *MNIST* (LeCun et al.; espelho público); no Kaggle, *Digit Recognizer*.
+
+**Contexto.** No Capítulo 3, vimos o **descasamento de classes**: se os dados sem rótulo incluem classes que não existem nos rotulados, os métodos semissupervisionados podem piorar. Uma empresa quer classificar os dígitos 0 a 4, mas seu acervo sem rótulo está "contaminado" com outros dígitos (5 a 9). Você deve usar um **VAE** para **detectar** quais imagens parecem "de fora".
+
+**Tarefas.**
+1. Treine um VAE (z = 10; 2.000 passos) com 5.000 imagens dos dígitos **0 a 4**, **sem usar rótulos** além de selecionar o conjunto.
+2. No teste, calcule o **erro de reconstrução** (e a perda total) de cada imagem. Use-o como "pontuação de anomalia" e calcule a **AUC** (`roc_auc_score`) para separar imagens de 0 a 4 (normais) das de 5 a 9 ("de fora").
+3. Mostre a pontuação média por dígito e a AUC **por dígito "de fora"** contra os normais.
+4. Escreva uma recomendação (8 a 10 linhas): o VAE detecta bem os exemplos "de fora"? Quais dígitos escapam? Como você usaria isso antes de um método semissupervisionado?
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import numpy as np, torch
+from sklearn.metrics import roc_auc_score
+from generativos import *
+
+X, y, X_te, y_te = carregar_mnist()
+normais = np.where(y.numpy() <= 4)[0][:5000]
+m = treinar_vae(X[normais], z=10, passos=2000); m.eval()
+with torch.no_grad():
+    s, mu, lv = m(X_te); rec = F.binary_cross_entropy_with_logits(s, X_te.flatten(1), reduction="none").sum(1).numpy()
+    kl = (-0.5 * (1 + lv - mu ** 2 - lv.exp()).sum(1)).numpy()
+yt = y_te.numpy(); fora = (yt >= 5).astype(int)
+print(f"AUC (5 a 9 contra 0 a 4) com o erro de reconstrução: {roc_auc_score(fora, rec):.3f} | com reconstrução + KL: {roc_auc_score(fora, rec + kl):.3f}")
+print("dígito | erro de reconstrução médio | AUC contra os dígitos 0 a 4")
+for d in range(10):
+    auc = "--" if d <= 4 else f"{roc_auc_score(np.r_[np.zeros((yt <= 4).sum()), np.ones((yt == d).sum())], np.r_[rec[yt <= 4], rec[yt == d]]):.3f}"
+    print(f"{d:6d} | {rec[yt == d].mean():26.1f} | {auc}")
+```
+@@RUBRICA
+- O VAE é treinado só com imagens dos dígitos 0 a 4, sem rótulos no treino, e o teste é separado.
+- A AUC é calculada no teste, total e por dígito "de fora".
+- A recomendação discute os dígitos que escapam e como usar a detecção antes de um método semissupervisionado.
+- São apontadas limitações (um só VAE, poucas imagens, MNIST fácil, erro de reconstrução como pontuação).
+@@NOTE O VAE treinado só com os dígitos 0 a 4 teve AUC de **0,823** (erro de reconstrução) e 0,816 (reconstrução + KL) para separar os "de fora" (5 a 9). Por dígito, os mais bem detectados foram o **5** (0,931), o **6** (0,921) e o **8** (0,920); os que **escapam** foram o **9** (0,661) e o **7** (0,705), que se parecem com o 4 e o 1 (dígitos normais). Atenção: o erro de reconstrução depende também da **quantidade de tinta**: o dígito 1 tem erro médio de 42,9 e o 6, 161,3, mesmo sendo o 1 "normal" e o 6 "de fora", e isso confunde a pontuação. Recomendação: o VAE é um filtro **útil, mas imperfeito** (AUC de 0,82): serve para sinalizar candidatos a revisão antes de um método semissupervisionado, não para eliminar exemplos automaticamente. Convém normalizar a pontuação por tipo de imagem, combiná-la com outros sinais (confiança do classificador) e revisar uma amostra dos sinalizados. Limitações: um VAE pequeno, 5.000 imagens, 2.000 passos e o MNIST (fácil).
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits.
+- **Kaggle:** Digit Recognizer e Fashion-MNIST.
+- **Artigos:** Kingma e Welling (2014); Kingma et al. (2014); Goodfellow et al. (2014); Salimans et al. (2016).

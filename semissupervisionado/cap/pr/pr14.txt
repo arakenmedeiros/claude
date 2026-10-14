@@ -1,0 +1,225 @@
+@@EX 1 | Saco de palavras e TF-IDF à mão | básico
+Para os quatro textos `"o jantar foi ótimo"`, `"o jantar foi péssimo"`, `"serviço ótimo e comida ótima"` e `"comida péssima"`, construa com o scikit-learn a matriz de **contagens** (`CountVectorizer`) e a matriz **TF-IDF** (`TfidfVectorizer`, sem normalização: `norm=None`, `smooth_idf=False`). Mostre o vocabulário e as duas matrizes.
+
+*Pergunta:* que palavras têm o maior e o menor peso no TF-IDF? Por quê?
+@@SOL
+```python
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
+textos = ["o jantar foi ótimo", "o jantar foi péssimo", "serviço ótimo e comida ótima", "comida péssima"]
+cv = CountVectorizer().fit(textos); tf = TfidfVectorizer(norm=None, smooth_idf=False).fit(textos)
+print("vocabulário:", list(cv.get_feature_names_out()))
+print("\ncontagens:"); print(cv.transform(textos).toarray())
+print("\nTF-IDF (sem normalização):"); print(np.round(tf.transform(textos).toarray(), 2))
+print("\nIDF de cada palavra:", {p: round(float(v), 2) for p, v in zip(tf.get_feature_names_out(), tf.idf_)})
+```
+@@NOTE O vocabulário tem 8 palavras (a palavra "e" some, porque o `CountVectorizer` ignora palavras de uma letra). As palavras que aparecem em **dois** dos quatro textos ("jantar", "foi", "comida", "ótimo") têm IDF de 1,69, e as que aparecem em **um** só texto ("péssimo", "péssima", "serviço", "ótima") têm IDF de 2,39. Portanto, as palavras **raras** têm o maior peso (2,39) e as mais comuns, o menor (1,69). Observe também que "ótimo" e "ótima" (e "péssimo" e "péssima") são tratadas como palavras **diferentes**: sem lematização, as variações de gênero fragmentam o vocabulário, e isso é uma das razões para o uso de representações como a LSA.
+@@EX 2 | Prevalência e métricas no SMS | intermediário
+No **SMS Spam** (5.574 mensagens, cerca de 13% spam; 70% treino e 30% teste, `random_state=0`), treine a regressão logística sobre TF-IDF com **40 rótulos**: (a) balanceados (20 spam e 20 não spam) e (b) sorteados ao acaso (com pelo menos 2 de cada classe). Use 10 sorteios. Mostre a acurácia, a F1 da classe spam e a fração das mensagens que o modelo classifica como spam (a real é cerca de 13%).
+
+*Pergunta:* qual forma de rotular parece melhor? Que métrica você usaria para decidir?
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score, accuracy_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/justmarkham/DAT8/master/data/sms.tsv", "dados/sms.tsv"), sep="\t", header=None, names=["rotulo", "texto"])
+y = (df["rotulo"] == "spam").astype(int).values
+t_tr, t_te, y_tr, y_te = train_test_split(df["texto"].values, y, test_size=0.3, stratify=y, random_state=0)
+vec = TfidfVectorizer().fit(t_tr); A, B = vec.transform(t_tr), vec.transform(t_te)
+print(f"spam no teste: {100 * y_te.mean():.1f}%")
+print("rótulos        | acurácia | F1 do spam | % previsto como spam")
+for nome in ["balanceados", "ao acaso"]:
+    ac, f1, ps = [], [], []
+    for s in range(10):
+        r = np.random.RandomState(s)
+        if nome == "balanceados": idx = np.r_[r.choice(np.where(y_tr == 0)[0], 20, replace=False), r.choice(np.where(y_tr == 1)[0], 20, replace=False)]
+        else:
+            while True:
+                idx = r.choice(len(y_tr), 40, replace=False)
+                if y_tr[idx].sum() >= 2 and (1 - y_tr[idx]).sum() >= 2: break
+        p = LogisticRegression(max_iter=3000).fit(A[idx], y_tr[idx]).predict(B)
+        ac.append(accuracy_score(y_te, p)); f1.append(f1_score(y_te, p)); ps.append(p.mean())
+    print(f"{nome:14s} | {100 * np.mean(ac):7.1f}% | {100 * np.mean(f1):9.1f}% | {100 * np.mean(ps):.1f}%")
+```
+@@NOTE Com rótulos balanceados, a regressão logística obteve 90,8% de acurácia e 70,8% de F1 do spam, e classificou 17,7% das mensagens como spam (o real é 13,4%). Com rótulos sorteados **ao acaso**, a acurácia foi de 86,6% (que é exatamente a proporção de não spam), mas a **F1 do spam foi 0,0%**: o modelo não classificou nenhuma mensagem como spam. Com 40 rótulos ao acaso, espera-se que apenas cerca de 5 sejam spam, e o modelo aprendeu a dizer "não spam" sempre. Repare que a acurácia de 86,6% parece razoável, mas é apenas a proporção de mensagens que não são spam: o modelo é inútil para o objetivo, e a F1 do spam mostra isso. Moral: com classes raras, nunca decida pela acurácia: use a F1 da classe de interesse (ou o recall/precisão) e considere pesos de classe.
+@@EX 3 | Pesos de classe com rótulos ao acaso | intermediário
+No **Yelp** (1 e 5 estrelas; mesma preparação da Seção 14.3), com 40 rótulos sorteados ao acaso (mínimo de 3 de cada classe) e 10 sorteios, compare a regressão logística sobre TF-IDF **sem** pesos de classe e **com** `class_weight="balanced"`. Mostre a F1 macro e a fração prevista como positiva.
+
+*Pergunta:* o peso de classe corrigiu o problema dos 100% positivos? O que isso sugere sobre a referência supervisionada?
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/justmarkham/DAT7/master/data/yelp.csv", "dados/yelp.csv"))
+df = df[df["stars"].isin([1, 5])]; y = (df["stars"] == 5).astype(int).values
+t_tr, t_te, y_tr, y_te = train_test_split(df["text"].values, y, test_size=0.3, stratify=y, random_state=0)
+tf = TfidfVectorizer(min_df=2, stop_words="english", sublinear_tf=True).fit(t_tr); A, B = tf.transform(t_tr), tf.transform(t_te)
+print(f"regressão logística            | F1 macro       | % previsto como positivo (real: {100 * y_te.mean():.1f}%)")
+for nome, cw in [("sem peso de classe", None), ("class_weight='balanced'", "balanced")]:
+    f1, ps = [], []
+    for s in range(10):
+        r = np.random.RandomState(s)
+        while True:
+            idx = r.choice(len(y_tr), 40, replace=False)
+            if 3 <= y_tr[idx].sum() <= 37: break
+        p = LogisticRegression(max_iter=3000, class_weight=cw).fit(A[idx], y_tr[idx]).predict(B)
+        f1.append(f1_score(y_te, p, average="macro")); ps.append(p.mean())
+    print(f"{nome:30s} | {100 * np.mean(f1):5.1f}% ± {100 * np.std(f1):.1f} | {100 * np.mean(ps):.1f}%")
+```
+@@NOTE Sem peso de classe, a F1 macro foi de 44,9% (100,0% previstos como positivos). Com `class_weight="balanced"`, ficou em 45,3% (99,9%): o peso de classe **não corrigiu** o problema. Com cerca de 6 exemplos negativos de 40 e atributos TF-IDF esparsos, a regressão logística regularizada continua preferindo "positivo" para quase todos, mesmo com os pesos. Isso mostra que, com rótulos tão raros, ajustes simples da referência não bastam: a **representação** também importa (veja a LSA no projeto, em que a mesma ideia de peso de classe, aplicada à LSA, funciona). Sugere ainda que a referência supervisionada precisa ser **testada** e ajustada, e não só "configurada" com o peso de classe.
+@@EX 4 | LSA no SMS | intermediário
+No **SMS Spam**, com 40 rótulos balanceados (10 sorteios), compare a regressão logística (`C = 10`) sobre o TF-IDF com a regressão logística sobre a LSA de 10, 30 e 100 dimensões (aprendida com **todos** os textos de treino, sem rótulos, e normalizada). Mostre a F1 da classe spam.
+
+*Pergunta:* a LSA ajuda no SMS como ajudou no Yelp?
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.preprocessing import Normalizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/justmarkham/DAT8/master/data/sms.tsv", "dados/sms.tsv"), sep="\t", header=None, names=["rotulo", "texto"])
+y = (df["rotulo"] == "spam").astype(int).values
+t_tr, t_te, y_tr, y_te = train_test_split(df["texto"].values, y, test_size=0.3, stratify=y, random_state=0)
+vec = TfidfVectorizer().fit(t_tr); A, B = vec.transform(t_tr), vec.transform(t_te)
+svd = TruncatedSVD(100, random_state=0).fit(A); Fa, Fb = svd.transform(A), svd.transform(B)
+opcoes = [("TF-IDF", A, B)] + [(f"LSA {d}", Normalizer().fit_transform(Fa[:, :d]), Normalizer().fit_transform(Fb[:, :d])) for d in [10, 30, 100]]
+print("atributos | F1 do spam (40 rótulos balanceados, 10 sorteios)")
+for nome, Xtr, Xte in opcoes:
+    v = []
+    for s in range(10):
+        r = np.random.RandomState(s); idx = np.r_[r.choice(np.where(y_tr == 0)[0], 20, replace=False), r.choice(np.where(y_tr == 1)[0], 20, replace=False)]
+        v.append(f1_score(y_te, LogisticRegression(max_iter=3000, C=10.0).fit(Xtr[idx], y_tr[idx]).predict(Xte)))
+    print(f"{nome:9s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE A F1 do spam com 40 rótulos balanceados foi de 70,0% ± 4,9 com o TF-IDF e de 71,7%, 73,6% e 72,5% com a LSA de 10, 30 e 100 dimensões. Os ganhos (de 1,7 a 3,6 pontos) são menores que o desvio entre sorteios (3,5 a 5,8), de modo que **não** podemos afirmar que a LSA ajuda no SMS, diferentemente do Yelp (+4,8 a +6,8 pontos, com desvios menores). A tendência vai no mesmo sentido, mas é inconclusiva.
+@@EX 5 | O grafo para texto: k e alpha no Label Spreading | avançado
+No **Yelp**, com a LSA de 100 dimensões (normalizada) e 40 rótulos sorteados ao acaso (mínimo de 3 de cada classe; 10 sorteios), varie `n_neighbors` em 5, 10 e 30 e `alpha` em 0,2 e 0,8 no Label Spreading (kernel knn). Mostre a F1 macro.
+
+*Pergunta:* o ajuste do grafo mudou muito o resultado? Qual foi a melhor combinação?
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.preprocessing import Normalizer
+from sklearn.semi_supervised import LabelSpreading
+from sklearn.metrics import f1_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/justmarkham/DAT7/master/data/yelp.csv", "dados/yelp.csv"))
+df = df[df["stars"].isin([1, 5])]; y = (df["stars"] == 5).astype(int).values
+t_tr, t_te, y_tr, y_te = train_test_split(df["text"].values, y, test_size=0.3, stratify=y, random_state=0)
+tf = TfidfVectorizer(min_df=2, stop_words="english", sublinear_tf=True).fit(t_tr); A, B = tf.transform(t_tr), tf.transform(t_te)
+svd = TruncatedSVD(100, random_state=0).fit(A); nor = Normalizer(); Z, Zt = nor.fit_transform(svd.transform(A)), nor.transform(svd.transform(B))
+def sorteio(s):
+    r = np.random.RandomState(s)
+    while True:
+        idx = r.choice(len(y_tr), 40, replace=False)
+        if 3 <= y_tr[idx].sum() <= 37: return idx
+print("k  | alpha | F1 macro (40 rótulos ao acaso, 10 sorteios)")
+for k in [5, 10, 30]:
+    for alpha in [0.2, 0.8]:
+        v = []
+        for s in range(10):
+            idx = sorteio(s); yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+            v.append(f1_score(y_te, LabelSpreading(kernel="knn", n_neighbors=k, alpha=alpha, max_iter=200).fit(Z, yp).predict(Zt), average="macro"))
+        print(f"{k:2d} | {alpha:5.1f} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE A F1 macro variou de 54,2% a 60,1% entre as combinações, sempre com desvio entre sorteios de 6,6 a 10,5 pontos. A melhor foi k = 10 e alpha = 0,2 (60,1%), a mesma configuração da Seção 14.5; a pior, k = 30 e alpha = 0,8 (54,2%). Com um desvio dessa ordem, as diferenças entre configurações vizinhas **não são distinguíveis**: o resultado do Label Spreading com 40 rótulos ao acaso é muito instável (depende de quais poucos exemplos negativos foram rotulados). Escolher a "melhor" configuração pelo teste seria enganoso.
+@@PROJ Painel de satisfação com 100 rótulos: escolhendo o método no Yelp | Cap14
+**Fonte dos dados.** *Yelp reviews* (amostra de 10.000 avaliações em espelho público, também no Kaggle); use as avaliações de 1 e 5 estrelas, como na Seção 14.3.
+
+**Contexto.** A rede de restaurantes conseguiu rotular **100 avaliações ao acaso**. A gerente quer um classificador de satisfação confiável para o painel e precisa saber **qual abordagem usar** e **qual métrica reportar**.
+
+**Tarefas.**
+1. Divida em 70% treino e 30% teste (`random_state=0`). Sorteie 100 rótulos ao acaso (mínimo de 5 de cada classe), com 10 sorteios. Os demais textos de treino são "sem rótulo".
+2. Compare, na F1 macro e na recall da classe negativa: (a) TF-IDF + regressão logística; (b) o mesmo com `class_weight="balanced"`; (c) LSA de 100 dimensões + regressão logística com `class_weight="balanced"`; (d) LSA + Label Spreading (knn, k = 10, alpha = 0,2).
+3. Responda: a LSA (texto sem rótulo) ajuda? O Label Spreading compensa? Qual combinação você recomendaria para o painel?
+4. Escreva uma recomendação (8 a 10 linhas), incluindo as métricas e as limitações.
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.preprocessing import Normalizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading
+from sklearn.metrics import f1_score, recall_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/justmarkham/DAT7/master/data/yelp.csv", "dados/yelp.csv"))
+df = df[df["stars"].isin([1, 5])]; y = (df["stars"] == 5).astype(int).values
+t_tr, t_te, y_tr, y_te = train_test_split(df["text"].values, y, test_size=0.3, stratify=y, random_state=0)
+tf = TfidfVectorizer(min_df=2, stop_words="english", sublinear_tf=True).fit(t_tr); A, B = tf.transform(t_tr), tf.transform(t_te)
+svd = TruncatedSVD(100, random_state=0).fit(A); nor = Normalizer(); Z, Zt = nor.fit_transform(svd.transform(A)), nor.transform(svd.transform(B))
+metodos = ["TF-IDF + RL", "TF-IDF + RL balanceada", "LSA + RL balanceada", "LSA + Label Spreading"]
+res = {m: ([], []) for m in metodos}
+for s in range(10):
+    r = np.random.RandomState(s)
+    while True:
+        idx = r.choice(len(y_tr), 100, replace=False)
+        if 5 <= y_tr[idx].sum() <= 95: break
+    yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    preds = {metodos[0]: LogisticRegression(max_iter=3000).fit(A[idx], y_tr[idx]).predict(B),
+             metodos[1]: LogisticRegression(max_iter=3000, class_weight="balanced").fit(A[idx], y_tr[idx]).predict(B),
+             metodos[2]: LogisticRegression(max_iter=3000, class_weight="balanced", C=10.0).fit(Z[idx], y_tr[idx]).predict(Zt),
+             metodos[3]: LabelSpreading(kernel="knn", n_neighbors=10, alpha=0.2, max_iter=200).fit(Z, yp).predict(Zt)}
+    for m, p in preds.items(): res[m][0].append(f1_score(y_te, p, average="macro")); res[m][1].append(recall_score(y_te, p, pos_label=0))
+print("método                  | F1 macro       | recall da classe negativa")
+for m, (f, rc) in res.items(): print(f"{m:23s} | {100 * np.mean(f):5.1f}% ± {100 * np.std(f):.1f} | {100 * np.mean(rc):5.1f}% ± {100 * np.std(rc):.1f}")
+```
+@@RUBRICA
+- Os rótulos são sorteados ao acaso, com 10 sorteios, e o teste é separado e usado só para avaliar.
+- A LSA é aprendida sem rótulos, a partir dos textos de treino.
+- São reportadas F1 macro e recall da classe negativa para os quatro métodos.
+- A recomendação é coerente com os números, discute a prevalência e o uso de pesos de classe e admite limitações.
+@@NOTE Com 100 rótulos ao acaso, a regressão logística sobre TF-IDF obteve F1 macro de 44,9% e **0,0%** de recall dos negativos (não detecta nenhuma avaliação negativa); com `class_weight="balanced"`, 48,8% e 3,9%. A **LSA + regressão logística balanceada** chegou a **78,3%** de F1 macro e **63,2%** de recall dos negativos, um ganho enorme (+29,5 pontos de F1 macro sobre a versão balanceada sobre TF-IDF), vindo de um **texto sem rótulo** usado apenas para a representação. O **Label Spreading** sobre a LSA ficou em 67,0% e 39,2%, com muito mais variação (±6,2 e ±13,3). Recomendação: usar LSA + regressão logística balanceada; reportar a F1 macro e o recall da classe negativa (a que interessa para o painel); o Label Spreading não compensou. Limitações: dez sorteios de 100 rótulos, uma única amostra de avaliações (1 e 5 estrelas, que são mais fáceis que as de 2 a 4 estrelas), e o resultado em uma outra coleção pode mudar. Ainda assim, o recall de 63,2% dos negativos mostra que, com 100 rótulos, o painel perderia cerca de um terço das avaliações negativas e deve ser usado com cautela.
+@@ALEM
+- **UCI:** SMS Spam Collection e Sentiment Labelled Sentences.
+- **Kaggle:** Yelp Reviews, SMS Spam Collection e IMDB Movie Reviews.
+- **Documentação:** guia de extração de atributos de texto do scikit-learn.

@@ -1,0 +1,269 @@
+MC: Um modelo generativo aprende:
+a) somente a média dos dados.
+b) a distribuição dos dados, p(x), e pode gerar exemplos novos.
+c) apenas a fronteira entre classes.
+d) apenas os rótulos.
+R: b | Os dados sem rótulo contribuem para esse aprendizado.
+
+MC: A diferença entre modelos generativos e discriminativos é que os generativos:
+a) só funcionam com texto.
+b) modelam a distribuição dos dados, e os discriminativos modelam diretamente p(y|x).
+c) não usam redes neurais.
+d) não usam dados.
+R: b | Os generativos podem usar exemplos sem rótulo.
+
+MC: Um autocodificador (autoencoder) é composto por:
+a) um professor e um aluno.
+b) um codificador, que comprime a entrada, e um decodificador, que a reconstrói.
+c) um classificador e um regressor.
+d) um gerador e um discriminador.
+R: b | O código intermediário é o vetor latente.
+
+MC: O vetor latente z é:
+a) o lote.
+b) a perda.
+c) uma representação comprimida da entrada.
+d) o rótulo verdadeiro.
+R: c | Guarda o essencial para reconstruir a imagem.
+
+MC: Em um VAE, o codificador devolve:
+a) a imagem reconstruída.
+b) apenas um vetor fixo.
+c) a média e o desvio de uma distribuição sobre z.
+d) a classe do exemplo.
+R: c | Dela sorteia-se z.
+
+MC: O truque da reparametrização no VAE serve para:
+a) trocar o decodificador.
+b) permitir treinar por gradiente, mesmo com um sorteio no meio.
+c) aumentar a imagem.
+d) reduzir o número de classes.
+R: b | z = mu + sigma * epsilon.
+
+MC: A perda do VAE soma:
+a) a perda supervisionada e a de consistência.
+b) a entropia e o rótulo.
+c) o erro de reconstrução e a divergência KL.
+d) as perdas de gerador e discriminador.
+R: c | A KL aproxima q(z|x) de uma normal padrão.
+
+MC: A divergência KL, no VAE, serve para:
+a) manter o espaço latente organizado, próximo de uma normal padrão.
+b) classificar os dígitos.
+c) aumentar o erro de reconstrução.
+d) apagar o decodificador.
+R: a | Permite gerar sorteando z.
+
+MC: Para gerar uma imagem nova com um VAE treinado, faz-se:
+a) sortear z de uma normal padrão e passar pelo decodificador.
+b) treinar de novo.
+c) usar o discriminador.
+d) passar um rótulo pelo codificador.
+R: a | O decodificador transforma z em imagem.
+
+MC: O espaço latente com 2 dimensões é útil porque:
+a) permite visualizar como o VAE organiza os exemplos.
+b) elimina a perda.
+c) dispensa o decodificador.
+d) melhora sempre a classificação.
+R: a | Mas costuma perder informação.
+
+MC: No experimento do capítulo, a regressão logística sobre os atributos do VAE (z) obteve:
+a) um resultado abaixo da regressão logística sobre os pixels.
+b) um resultado igual ao FixMatch.
+c) 100% de acurácia.
+d) um resultado muito acima da UDA.
+R: a | 72,6% contra 76,5%.
+
+MC: Uma explicação possível para os atributos do VAE não ajudarem a classificar é que:
+a) o espaço latente é pequeno demais sempre.
+b) o VAE usa rótulos demais.
+c) o VAE não usa imagens.
+d) o VAE guarda o que serve para reconstruir (traço, inclinação), que não coincide com o que distingue as classes.
+R: d | A reconstrução e a classificação têm objetivos diferentes.
+
+MC: No M2 (Kingma et al., 2014), o classificador q(y|x) recebe sinal dos exemplos sem rótulo porque:
+a) usa pseudo-rótulos duros.
+b) a perda dos exemplos sem rótulo soma as perdas do VAE sobre as classes possíveis, ponderadas por q(y|x).
+c) copia os rótulos do teste.
+d) usa um professor EMA.
+R: b | A classe que melhor explica a imagem ganha peso.
+
+MC: No M2, para um exemplo rotulado, minimiza-se:
+a) a perda do VAE com a classe conhecida e uma perda de classificação.
+b) somente a perda de reconstrução.
+c) somente a KL.
+d) a perda do gerador.
+R: a | O fator alfa pondera a classificação.
+
+MC: O resultado do M2 simplificado no capítulo foi:
+a) impossível de calcular.
+b) não superior ao classificador treinado só com os rotulados.
+c) igual a 100%.
+d) muito melhor que todos os métodos.
+R: b | 74,8% a 75,5% contra 76,1% a 76,4%.
+
+MC: Uma GAN é formada por:
+a) um gerador e um discriminador que disputam.
+b) dois classificadores independentes.
+c) um professor e um aluno.
+d) um codificador e um decodificador.
+R: a | O gerador tenta enganar o discriminador.
+
+MC: O papel do gerador em uma GAN é:
+a) produzir imagens falsas a partir de ruído.
+b) dividir os dados.
+c) classificar os dígitos.
+d) medir a perda.
+R: a | Quer enganar o discriminador.
+
+MC: O papel do discriminador em uma GAN é:
+a) distinguir imagens reais de falsas.
+b) gerar o ruído.
+c) escolher o lote.
+d) aumentar os dados.
+R: a | Na GAN semissupervisionada, ele também classifica.
+
+MC: Na GAN semissupervisionada de Salimans et al., o discriminador:
+a) não usa os rótulos.
+b) só distingue real de falso.
+c) classifica as imagens em K classes e também distingue real de falso.
+d) gera imagens.
+R: c | Usa os rótulos nos exemplos rotulados.
+
+MC: O feature matching consiste em:
+a) usar aumento de dados.
+b) treinar o gerador para que a média dos atributos do discriminador nas imagens falsas se aproxime da das reais.
+c) apagar atributos.
+d) trocar os rótulos.
+R: b | Estabiliza o treino do gerador.
+
+MC: O colapso de modos (mode collapse) em GANs é quando:
+a) o gerador produz sempre as mesmas poucas imagens.
+b) o conjunto de dados é pequeno.
+c) o treino termina cedo demais.
+d) o discriminador classifica demais.
+R: a | Foi o que vimos na primeira versão do gerador.
+
+MC: No experimento, a GAN semissupervisionada com 2.000 passos obteve:
+a) cerca de 10 pontos a menos.
+b) exatamente o mesmo resultado.
+c) cerca de 2 pontos a mais que o discriminador treinado só com os rotulados.
+d) 20 pontos a mais.
+R: c | 77,8% contra 75,8%.
+
+MC: Com poucos passos de treino (500), a GAN semissupervisionada:
+a) atingiu 100%.
+b) ficou abaixo da referência treinada só com os rotulados.
+c) superou todos os métodos.
+d) não pôde ser avaliada.
+R: b | 71,5% contra 75,7%.
+
+MC: A normalização por lotes no gerador (BatchNorm) foi acrescentada para:
+a) reduzir os rótulos.
+b) apagar o discriminador.
+c) evitar o colapso de modos e gerar imagens diversas.
+d) aumentar o conjunto de teste.
+R: c | Resolveu o problema nesta configuração.
+
+MC: Uma razão pela qual os métodos generativos perderam espaço para classificação semissupervisionada é:
+a) gerar é mais difícil que classificar e o treino é delicado.
+b) eles não usam dados.
+c) eles exigem rótulos demais.
+d) eles não usam GPUs.
+R: a | Os métodos de consistência são mais simples e fortes.
+
+MC: Os modelos de difusão são hoje:
+a) um tipo de rótulo.
+b) métodos de regressão linear.
+c) os geradores de imagens mais usados.
+d) apenas para texto.
+R: c | Podem sintetizar exemplos de treino.
+
+MC: Um uso importante de modelos generativos, além de classificar, é:
+a) reduzir rótulos a zero.
+b) gerar dados sintéticos e detectar anomalias.
+c) ordenar listas.
+d) calcular médias.
+R: b | São aplicações muito difundidas.
+
+MC: Em nosso experimento, o método mais forte para 100 rótulos no MNIST entre os vistos foi:
+a) o VAE (72,6%).
+b) a UDA (96,0%), seguida do FixMatch (95,2%).
+c) a GAN (77,8%).
+d) o M2 (75,5%).
+R: b | Os métodos generativos ficaram bem abaixo.
+
+MC: Uma responsabilidade associada aos modelos generativos é:
+a) o risco de uso para criar conteúdo falso (deepfakes).
+b) o excesso de acurácia.
+c) a perda de rótulos.
+d) o aumento do tamanho do lote.
+R: a | Exige cuidado ético.
+
+MC: Ao avaliar um método generativo semissupervisionado, deve-se:
+a) ignorar os desvios entre sorteios.
+b) comparar com o mesmo classificador treinado só com os rotulados e com o mesmo orçamento.
+c) usar o teste para ajustar a rede.
+d) comparar com um classificador sem treino.
+R: b | Para saber se os dados sem rótulo ajudaram.
+
+DISC: Explique a ideia de usar a distribuição dos dados, p(x), para classificar, e relacione com o Capítulo 6.
+R: Modelar p(x) com todos os exemplos revela a estrutura dos dados, e os poucos rótulos dão nome a essa estrutura. É a mesma ideia do modelo de mistura e do EM, agora com redes neurais.
+
+DISC: Descreva um autocodificador e diga por que ele não precisa de rótulos.
+R: Tem um codificador que comprime a imagem em um vetor e um decodificador que a reconstrói. O alvo é a própria imagem, então basta ter imagens.
+
+DISC: Explique o VAE: o que o codificador devolve e como se obtém z.
+R: O codificador devolve média e desvio de uma distribuição sobre z; sorteia-se z = mu + sigma * epsilon, com epsilon normal padrão (reparametrização).
+
+DISC: Explique as duas partes da perda do VAE.
+R: O erro de reconstrução mede a diferença entre a imagem original e a reconstruída; a KL aproxima a distribuição de z de uma normal padrão, organizando o espaço latente e permitindo gerar imagens novas.
+
+DISC: Como se gera uma imagem nova com um VAE e por que isso funciona?
+R: Sorteia-se z de uma normal padrão e aplica-se o decodificador. Funciona porque a KL fez o espaço latente se parecer com a normal padrão.
+
+DISC: Interprete os resultados do VAE (reconstrução, geração e classificação) no capítulo.
+R: As reconstruções e as imagens geradas são reconhecíveis, mas borradas; a regressão logística sobre z teve 72,6% (abaixo dos 76,5% dos pixels), porque z guarda o que serve para reconstruir, e não o que separa as classes.
+
+DISC: Explique o modelo M2 e como os exemplos sem rótulo contribuem para o classificador.
+R: Inclui um classificador q(y|x), um codificador q(z|x,y) e um decodificador p(x|y,z). Para exemplos sem rótulo, somam-se as perdas do VAE sobre as classes, ponderadas por q(y|x), e subtrai-se a entropia; assim, o classificador recebe sinal.
+
+DISC: Por que o M2 simplificado não superou a referência e o que isso mostra?
+R: Provavelmente porque a perda de reconstrução domina o sinal de classificação, e as redes pequenas e o treino curto não bastam. Mostra que métodos generativos exigem muito ajuste e orçamento.
+
+DISC: Descreva a disputa entre gerador e discriminador em uma GAN.
+R: O gerador cria imagens falsas a partir de ruído, tentando enganar o discriminador; o discriminador tenta distinguir reais de falsas. Ambos melhoram na disputa.
+
+DISC: Explique como a GAN semissupervisionada usa os rótulos e os dados sem rótulo.
+R: O discriminador classifica em K classes; nos exemplos rotulados, usa entropia cruzada; nos sem rótulo e nos falsos, é treinado a dizer 'real' ou 'falso'. O gerador usa feature matching.
+
+DISC: O que é o feature matching e por que é usado?
+R: Treinar o gerador para que a média dos atributos intermediários do discriminador nas imagens falsas coincida com a das reais, o que estabiliza o treino.
+
+DISC: Descreva o colapso de modos e como ele foi observado no capítulo.
+R: O gerador produz sempre as mesmas poucas imagens. Ocorreu na primeira versão do gerador, em que todas as imagens eram iguais; a normalização por lotes resolveu.
+
+DISC: Interprete o resultado da GAN semissupervisionada em função do número de passos.
+R: Com 500 e 1.000 passos ficou abaixo da referência (71,5% e 73,0% contra 75,7% e 75,4%); com 2.000 passos, 77,8% contra 75,8%. O ganho aparece só com treino mais longo e é pequeno diante do desvio.
+
+DISC: Por que os métodos generativos deste capítulo ficaram atrás dos dos Capítulos 10 a 12?
+R: Gerar é mais difícil que classificar, o treino é delicado e o orçamento era limitado; métodos de consistência, pseudo-rótulos e contraste são mais simples e se mostraram mais fortes na mesma configuração.
+
+DISC: Cite usos dos modelos generativos além da classificação semissupervisionada.
+R: Geração de dados sintéticos, detecção de anomalias, completar imagens e criação de conteúdo, por exemplo com modelos de difusão.
+
+DISC: Quais cuidados éticos envolvem os modelos generativos?
+R: Risco de conteúdo falso (deepfakes), violação de privacidade e direitos autorais, e viés reproduzido dos dados de treino. Exigem transparência e uso responsável.
+
+DISC: Compare o VAE e a GAN quanto ao treino e aos resultados do capítulo.
+R: O VAE é mais estável de treinar, com reconstruções borradas; a GAN pode gerar imagens mais nítidas, mas é instável (colapso de modos). Em classificação, nenhum superou muito a referência.
+
+DISC: Descreva o papel do aumento de dados na comparação justa com métodos generativos.
+R: A referência supervisionada deve ser forte (inclusive com aumento, quando aplicável), pois os métodos generativos aqui não usaram aumento e mesmo assim ficaram abaixo de métodos com aumento.
+
+DISC: Explique por que a comparação com o mesmo classificador treinado só com os rotulados é necessária.
+R: Isola o efeito dos dados sem rótulo. Sem ela, não se sabe se o ganho vem do modelo generativo ou apenas da arquitetura ou do treino.
+
+DISC: Resuma, em poucas linhas, as lições do Capítulo 13.
+R: Modelos generativos aprendem p(x) e geram dados, mas, nas condições do experimento, ajudaram pouco ou nada na classificação com 100 rótulos; resultados negativos devem ser relatados, e os métodos de consistência e contraste são preferíveis.

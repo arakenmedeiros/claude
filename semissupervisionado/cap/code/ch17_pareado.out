@@ -1,0 +1,5 @@
+Digits, 50 rótulos, 30 sorteios pareados (mesmos rotulados para todos os métodos). Diferença em relação à regressão logística
+referência (reg. logística): 85.8% ± 2.1
+método                | média da diferença | IC 95% (bootstrap) | vitórias/derrotas | p (Wilcoxon) | p (teste t pareado)
+self-training (0,7)   |    -0.5 p.p.       | [ -2.0;  +0.9]   | 13 / 16         | 0.7538       | 0.5254
+Label Spreading (k=10) |    +7.9 p.p.       | [ +7.2;  +8.5]   | 30 /  0         | 0.0000       | 0.0000

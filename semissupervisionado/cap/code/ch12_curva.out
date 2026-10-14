@@ -1,0 +1,7 @@
+MNIST: sonda linear sobre o codificador SimCLR x regressão logística sobre pixels, conforme o número de rótulos (3 sorteios)
+rótulos (por dígito) | pixels | sonda linear SimCLR
+   10 (  1)        |  49.4% |  56.4%
+   30 (  3)        |  61.4% |  75.1%
+  100 ( 10)        |  76.5% |  91.8%
+  300 ( 30)        |  83.1% |  94.5%
+ 1000 (100)        |  87.5% |  96.3%

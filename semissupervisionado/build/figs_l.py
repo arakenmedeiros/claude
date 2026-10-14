@@ -41,5 +41,30 @@ def f12_contraste():
         ax.set_title(["Antes do treino:\npares (círculo e triângulo) distantes", "Depois do treino:\npares juntos e exemplos diferentes separados"][k], fontsize=9)
     save(fig, "f12_contraste")
 
+def f12_aumento():
+    L = [l for l in out("ch12_aumento").splitlines()[2:] if "|" in l]; nomes = ["nenhum", "fraco", "forte"]; v = [pct(l.split("|")[1].split("±")[0]) for l in L]; d = [float(l.split("±")[1]) for l in L]
+    fig, ax = plt.subplots(figsize=(6.6, 3.8)); ax.bar(range(3), v, yerr=d, color=[GRY, AMB, RED], width=0.55, capsize=4, ecolor=INK)
+    for i, val in enumerate(v): ax.text(i, val + d[i] + 1, f"{val:.1f}%".replace(".", ","), ha="center", fontsize=10, fontweight="bold")
+    ax.set_xticks(range(3)); ax.set_xticklabels(["sem aumento\n(cópias idênticas)", "aumento fraco", "aumento forte"]); ax.set_ylim(60, 100); ax.set_ylabel("sonda linear, 100 rótulos (%)"); ax.set_title("O aumento define o que a representação aprende"); ax.grid(axis="y", alpha=0.25)
+    save(fig, "f12_aumento")
+
+def f12_pretreino():
+    L = [l for l in out("ch12_pretreino").splitlines()[2:] if "|" in l]; nomes = ["reg. logística\nsobre pixels", "CNN do zero\n(só rotulados)", "sonda linear\nsem treino", "sonda linear\nrotação", "sonda linear\nSimCLR", "ajuste fino\nSimCLR"]
+    v = [pct(l.split("|")[1].split("±")[0]) for l in L]; d = [float(l.split("±")[1]) for l in L]
+    fig, ax = plt.subplots(figsize=(8.6, 4.0)); ax.bar(range(len(v)), v, yerr=d, color=[GRY, "#6B7280", MID, AMB, RED, IND], width=0.6, capsize=4, ecolor=INK)
+    for i, val in enumerate(v): ax.text(i, val + d[i] + 0.8, f"{val:.1f}%".replace(".", ","), ha="center", fontsize=9, fontweight="bold")
+    ax.set_xticks(range(len(v))); ax.set_xticklabels(nomes, fontsize=8); ax.set_ylim(40, 100); ax.set_ylabel("acurácia no teste (%)"); ax.set_title("MNIST com 100 rótulos: o valor do pré-treino sem rótulo"); ax.grid(axis="y", alpha=0.25)
+    save(fig, "f12_pretreino")
+
+def f12_curva():
+    L = [l for l in out("ch12_curva").splitlines()[2:] if "|" in l]; n = [int(l.split("|")[0].split()[0]) for l in L]; a = [pct(l.split("|")[1]) for l in L]; b = [pct(l.split("|")[2]) for l in L]
+    fig, ax = plt.subplots(figsize=(7.2, 3.9)); ax.plot(n, a, "-o", c=GRY, lw=2.4, label="regressão logística sobre pixels"); ax.plot(n, b, "-s", c=RED, lw=2.6, label="sonda linear sobre o SimCLR")
+    for x, y1, y2 in zip(n, a, b): ax.text(x, y2 + 2.2, f"{y2:.1f}".replace(".", ","), ha="center", fontsize=8.5, color=RED, fontweight="bold"); ax.text(x, y1 - 5.5, f"{y1:.1f}".replace(".", ","), ha="center", fontsize=8.5, color="#4B5563")
+    ax.set_xscale("log"); ax.set_xticks(n); ax.set_xticklabels([str(v) for v in n]); ax.set_xlabel("número de rótulos (escala logarítmica)"); ax.set_ylabel("acurácia no teste (%)"); ax.set_ylim(0, 105); ax.legend(frameon=False, fontsize=8.5, loc="lower right"); ax.grid(alpha=0.25); ax.set_title("A curva dos rótulos com e sem pré-treino")
+    save(fig, "f12_curva")
+
 if __name__ == "__main__":
-    for f in [f12_ideia, f12_contraste, f14_lsa]: f()
+    fs = [f12_ideia, f12_contraste, f14_lsa]
+    for nome, f in [("ch12_aumento", f12_aumento), ("ch12_pretreino", f12_pretreino), ("ch12_curva", f12_curva)]:
+        if os.path.exists(f"cap/code/{nome}.out"): fs.append(f)
+    for f in fs: f()

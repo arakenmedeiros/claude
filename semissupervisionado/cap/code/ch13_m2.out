@@ -1,0 +1,5 @@
+VAE semissupervisionado (M2 simplificado) x o mesmo classificador treinado só com os 100 rótulos (MNIST, 3 sorteios)
+passos | M2: acerto do classificador q(y|x) | só rotulados (mesma rede, sem aumento)
+   500 |               75.5% ± 1.1        | 76.4% ± 0.9
+  1000 |               75.0% ± 0.4        | 76.2% ± 0.9
+  1500 |               74.8% ± 0.6        | 76.1% ± 0.9

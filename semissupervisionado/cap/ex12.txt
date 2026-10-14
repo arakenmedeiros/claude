@@ -1,0 +1,269 @@
+MC: O aprendizado auto-supervisionado:
+a) aprende uma representação com dados sem rótulo, usando uma tarefa inventada cujo 'rótulo' vem dos próprios dados.
+b) não usa redes neurais.
+c) usa apenas rótulos humanos.
+d) exige que todos os exemplos tenham rótulo.
+R: a | Depois, poucos rótulos são usados para a tarefa final.
+
+MC: Uma tarefa-pretexto (pretext task) é:
+a) um tipo de rótulo humano.
+b) uma tarefa criada só para forçar o modelo a aprender uma representação útil.
+c) um conjunto de teste.
+d) a tarefa final do projeto.
+R: b | Como prever a rotação de uma imagem.
+
+MC: Na tarefa de prever a rotação, o 'rótulo' é:
+a) o ângulo aplicado à imagem, gerado automaticamente.
+b) a cor da imagem.
+c) a classe do objeto.
+d) o nome do arquivo.
+R: a | Não custa nenhum trabalho humano.
+
+MC: Para acertar a rotação de um dígito, a rede precisa:
+a) decorar os rótulos.
+b) reconhecer o que é 'cima' no objeto.
+c) usar o conjunto de teste.
+d) ignorar a imagem.
+R: b | Isso exige alguma noção da forma do objeto.
+
+MC: No aprendizado contrastivo, os pares positivos são:
+a) dois exemplos de classes diferentes.
+b) dois exemplos aleatórios.
+c) um exemplo e seu rótulo.
+d) duas versões aumentadas do mesmo exemplo.
+R: d | Eles devem ficar próximos na representação.
+
+MC: No aprendizado contrastivo, os negativos são:
+a) os rótulos verdadeiros.
+b) os outros exemplos do lote.
+c) as versões aumentadas do mesmo exemplo.
+d) os exemplos de teste.
+R: b | Devem ser afastados do exemplo.
+
+MC: A perda NT-Xent faz cada versão:
+a) prever a classe correta.
+b) prever a rotação.
+c) reconhecer seu par entre todas as outras versões do lote.
+d) reconstruir a imagem.
+R: c | É uma entropia cruzada sobre as semelhanças.
+
+MC: A temperatura na perda NT-Xent controla:
+a) o tamanho do lote.
+b) a taxa de aprendizado.
+c) o quanto a perda penaliza negativos parecidos.
+d) o número de camadas.
+R: c | Temperaturas baixas dão mais peso aos negativos difíceis.
+
+MC: O SimCLR obtém duas visões de uma imagem:
+a) usando dois rótulos.
+b) dividindo a imagem ao meio.
+c) aplicando duas vezes um aumento de dados aleatório.
+d) pedindo a duas pessoas.
+R: c | O aumento é a fonte do 'gêmeo com a roupa trocada'.
+
+MC: O aumento de dados é fundamental no SimCLR porque:
+a) reduz o número de exemplos.
+b) elimina a perda.
+c) substitui o codificador.
+d) define o que a representação deve ignorar (as mudanças) e o que deve manter.
+R: d | Sem mudanças, o par fica trivial.
+
+MC: Se as duas visões forem idênticas (sem aumento), a tarefa contrastiva:
+a) exige rótulos.
+b) melhora sempre.
+c) fica impossível.
+d) fica trivial e a representação aprendida tende a ser pior.
+R: d | O par é identificado sem esforço.
+
+MC: O MoCo mantém uma fila de negativos para:
+a) reduzir o aumento de dados.
+b) dispensar o codificador.
+c) usar rótulos.
+d) não precisar de lotes enormes.
+R: d | Os negativos vêm de lotes anteriores.
+
+MC: O BYOL e o SimSiam se distinguem do SimCLR porque:
+a) funcionam sem exemplos negativos.
+b) não usam redes.
+c) não usam aumento.
+d) exigem muitos rótulos.
+R: a | Usam um alvo estável, parecido com o professor do Mean Teacher.
+
+MC: A cabeça de projeção, no SimCLR, é usada:
+a) para o ajuste fino.
+b) apenas no pré-treino, e descartada depois.
+c) para gerar rótulos.
+d) apenas no teste.
+R: b | A representação usada depois vem do codificador.
+
+MC: A sonda linear (linear probe) consiste em:
+a) usar um classificador não linear profundo.
+b) congelar o codificador e treinar só um classificador linear sobre os atributos.
+c) pré-treinar com rótulos.
+d) treinar toda a rede com rótulos.
+R: b | Mede a qualidade da representação.
+
+MC: O ajuste fino (fine-tuning) consiste em:
+a) continuar treinando toda a rede, a partir do codificador pré-treinado, com os rótulos.
+b) congelar toda a rede.
+c) apagar o codificador.
+d) usar só dados sem rótulo.
+R: a | Usa os poucos rótulos para adaptar os pesos.
+
+MC: Um codificador com pesos aleatórios, sem treino, serve como referência porque:
+a) mostra o que a própria arquitetura já entrega sem nenhum aprendizado.
+b) usa rótulos.
+c) é o melhor possível.
+d) dispensa a sonda linear.
+R: a | O ganho do pré-treino deve ser medido contra ele.
+
+MC: No pré-treino auto-supervisionado, os rótulos das imagens:
+a) são usados como pseudo-rótulos.
+b) são o único dado.
+c) são usados na perda contrastiva.
+d) não são usados.
+R: d | Os rótulos só entram na etapa final.
+
+MC: Uma vantagem do pré-treino auto-supervisionado é:
+a) poder usar muitos dados sem rótulo, que são baratos.
+b) funcionar sem aumento de dados.
+c) não precisar de computação.
+d) dispensar os rótulos para sempre.
+R: a | Os poucos rótulos são usados só no final.
+
+MC: Para comparar a sonda linear com a referência supervisionada, é justo:
+a) usar os mesmos rótulos e relatar a variação entre sorteios.
+b) usar rótulos só na referência.
+c) usar mais rótulos na sonda.
+d) usar o teste para escolher a sonda.
+R: a | Os mesmos 100 rótulos para todas as abordagens.
+
+MC: Se o pré-treino e a avaliação usam imagens do mesmo conjunto de treino, o cuidado necessário é:
+a) nenhum cuidado.
+b) usar o teste no pré-treino.
+c) não usar os rótulos dessas imagens no pré-treino e nunca usar o teste.
+d) usar todos os rótulos no pré-treino.
+R: c | Evita vazamento.
+
+MC: A diferença entre o pré-treino por rotação e o contrastivo é que:
+a) o primeiro prevê a rotação aplicada, e o segundo aproxima versões do mesmo exemplo.
+b) o segundo não usa aumento.
+c) o primeiro usa o teste.
+d) o primeiro usa rótulos humanos.
+R: a | São tarefas-pretexto diferentes.
+
+MC: A representação aprendida é útil quando:
+a) todos os exemplos ficam iguais.
+b) exemplos da mesma classe ficam próximos e de classes diferentes ficam separados.
+c) os exemplos ficam aleatórios.
+d) a dimensão é grande.
+R: b | Isso facilita o classificador linear.
+
+MC: O colapso da representação é quando:
+a) a taxa de aprendizado é pequena.
+b) o lote é grande.
+c) o codificador aprende rótulos.
+d) o codificador devolve (quase) o mesmo vetor para todos os exemplos.
+R: d | Os negativos do SimCLR ajudam a evitá-lo.
+
+MC: No MNIST com 100 rótulos, a regressão logística sobre pixels é uma referência fraca porque:
+a) é impossível de treinar.
+b) não usa rótulos.
+c) usa o teste.
+d) a rede treinada com aumento e a representação aprendida costumam fazer muito melhor.
+R: d | Compare com referências fortes.
+
+MC: A principal ideia que une os capítulos 10, 11 e 12 é:
+a) usar os dados sem rótulo de forma que o modelo seja estável diante de perturbações.
+b) evitar redes neurais.
+c) usar só rótulos.
+d) descartar os dados sem rótulo.
+R: a | Seja por consistência, pseudo-rótulos ou contraste.
+
+MC: Em texto, a tarefa de preencher palavras escondidas é uma tarefa-pretexto usada por:
+a) o PCA.
+b) o k-means.
+c) a regressão logística.
+d) modelos como o BERT.
+R: d | É auto-supervisão para linguagem.
+
+MC: O aumento de dados inadequado em aprendizado contrastivo é aquele que:
+a) gira ligeiramente a imagem.
+b) desloca poucos pixels.
+c) adiciona pouco ruído.
+d) destrói a informação que identifica o exemplo ou muda a classe.
+R: d | A representação aprenderia a ignorar o que importa.
+
+MC: Um resultado em que o pré-treino não supera a referência supervisionada deve ser:
+a) ajustado até superar.
+b) atribuído ao teste.
+c) relatado, junto com as condições do experimento.
+d) omitido.
+R: c | A honestidade exige reportar o que se mede.
+
+MC: Em um experimento justo de pré-treino, o número de rótulos usados na sonda linear e na referência supervisionada deve ser:
+a) irrelevante.
+b) maior na referência.
+c) maior na sonda.
+d) o mesmo.
+R: d | Para que a comparação seja justa.
+
+DISC: Explique a ideia do aprendizado auto-supervisionado com a analogia da criança que olha fotos sem nomes.
+R: A criança aprende a agrupar e reconhecer padrões sem rótulos. Depois, com poucos nomes, generaliza facilmente. A rede, igualmente, aprende uma representação sem rótulos e só depois usa poucos rótulos.
+
+DISC: O que é uma tarefa-pretexto? Dê dois exemplos.
+R: É uma tarefa inventada, cujo rótulo vem dos próprios dados, para forçar a aprendizagem de uma representação. Exemplos: prever a rotação de uma imagem; preencher palavras escondidas em um texto.
+
+DISC: Descreva o pré-treino por predição de rotação e explique por que ele ensina algo útil.
+R: Gira-se cada imagem de 0, 90, 180 ou 270 graus e treina-se a rede a prever o giro. Para acertar, ela precisa reconhecer a forma e a orientação dos objetos, aprendendo atributos úteis.
+
+DISC: Explique o aprendizado contrastivo com a analogia da festa dos gêmeos.
+R: Cada convidado chega com um gêmeo de roupa trocada. Para encontrá-lo, é preciso ignorar a roupa (o aumento) e prestar atenção no que a pessoa é. A rede aprende a aproximar versões do mesmo exemplo e afastar exemplos diferentes.
+
+DISC: Descreva os passos do SimCLR.
+R: Cada imagem do lote gera duas versões aumentadas; um codificador as transforma em vetores; a perda NT-Xent faz cada versão reconhecer seu par entre todas as versões do lote (positivo), com as demais como negativos.
+
+DISC: Qual o papel dos exemplos negativos e da temperatura na perda NT-Xent?
+R: Os negativos evitam o colapso, forçando exemplos diferentes a ficarem separados. A temperatura controla o quanto negativos parecidos são penalizados.
+
+DISC: Por que o aumento de dados é crucial no SimCLR?
+R: Define as transformações que a representação deve ignorar. Sem aumento, o par é trivial e a representação fica pobre. Aumentos fortes e realistas criam tarefas mais úteis.
+
+DISC: Compare SimCLR, MoCo e BYOL em linhas gerais.
+R: O SimCLR usa negativos do lote; o MoCo usa uma fila de negativos para evitar lotes enormes; o BYOL dispensa negativos, usando um alvo estável (professor com média móvel).
+
+DISC: Diferencie a sonda linear do ajuste fino e diga quando usar cada uma.
+R: A sonda congela o codificador e treina só um classificador linear, medindo a qualidade da representação. O ajuste fino treina toda a rede com os rótulos, em geral dando mais acurácia, com mais risco de sobreajuste quando há poucos rótulos.
+
+DISC: Por que se usa um codificador sem treino como referência?
+R: Para medir o que a arquitetura já entrega sem aprendizado. O ganho do pré-treino só é real se superar essa referência.
+
+DISC: Por que se deve garantir que o pré-treino não use os rótulos?
+R: Porque o objetivo é aproveitar dados sem rótulo; usar rótulos no pré-treino invalidaria a comparação e a avaliação do método.
+
+DISC: Cite as referências supervisionadas que devem acompanhar uma avaliação de pré-treino e justifique.
+R: A regressão logística sobre pixels (simples), a rede treinada do zero com os mesmos rótulos, aumento e passos (forte) e o codificador sem treino. Permitem localizar de onde vem o ganho.
+
+DISC: Explique o colapso da representação e como o contraste ajuda a evitá-lo.
+R: É quando o codificador devolve o mesmo vetor para todos os exemplos, o que satisfaz a aproximação dos pares. Os negativos obrigam exemplos diferentes a ficarem afastados.
+
+DISC: Descreva a cabeça de projeção e por que ela é descartada depois do pré-treino.
+R: É uma pequena rede após o codificador, usada só para calcular a perda contrastiva. A representação para as tarefas finais é a do codificador, que costuma ser mais útil.
+
+DISC: Por que o número de rótulos importa na comparação entre o pré-treino e a referência supervisionada?
+R: Com poucos rótulos, a representação pré-treinada costuma trazer mais ganho; com muitos, a referência supervisionada se aproxima, e a vantagem diminui.
+
+DISC: Como a auto-supervisão se relaciona com os métodos de consistência e pseudo-rótulos dos capítulos anteriores?
+R: Todos exploram a estabilidade do modelo diante de perturbações que preservam a identidade ou a classe do exemplo, mas a auto-supervisão não usa rótulos nem pseudo-rótulos no pré-treino.
+
+DISC: Discuta o papel do aprendizado auto-supervisionado em texto e imagens.
+R: Em texto, modelos como o BERT preveem palavras escondidas em enormes volumes de texto; em imagens, usam-se tarefas como contraste e rotação. Em ambos, o pré-treino permite usar poucos rótulos depois.
+
+DISC: Quais são as limitações do experimento deste capítulo (dados, computação, sorteios)?
+R: MNIST é fácil; foram usadas 10.000 imagens, 1.500 passos em CPU e poucos sorteios dos rotulados. O pré-treino foi feito uma vez, e os resultados não representam o desempenho em escala.
+
+DISC: Quando o aprendizado contrastivo pode falhar?
+R: Quando os aumentos destroem informação relevante ou mudam a classe, quando o pré-treino é curto, ou quando os dados sem rótulo são muito diferentes dos dados da tarefa final.
+
+DISC: Descreva uma receita prática para usar auto-supervisão com poucos rótulos.
+R: Pré-treinar um codificador com os dados sem rótulo, avaliar com sonda linear contra referências, fazer ajuste fino com os rótulos se compensar, e comparar sempre com a referência supervisionada forte.

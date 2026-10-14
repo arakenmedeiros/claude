@@ -1,0 +1,6 @@
+Digits, 50 rótulos, 20 sorteios. Escolha de 1 entre 12 configurações do Label Spreading (k e alpha)
+Acurácia no teste da configuração escolhida: (a) olhando o próprio teste (errado); (b) por validação cruzada apenas nos 50 rotulados (honesto); (c) a média das 12 configurações
+(a) escolhida no teste       : 94.5%
+(b) escolhida por validação  : 93.1%
+(c) média das 12 configurações: 86.5%
+excesso de otimismo de (a) sobre (b): 1.4 pontos percentuais

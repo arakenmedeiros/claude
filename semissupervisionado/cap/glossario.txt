@@ -149,3 +149,9 @@ NT-Xent: perda contrastiva em que cada exemplo deve reconhecer sua versão par e
 Sonda linear (linear probe): classificador linear treinado sobre um codificador congelado, para medir a qualidade da representação.
 Ajuste fino (fine-tuning): continuar o treino de toda a rede, a partir de um codificador pré-treinado, com os exemplos rotulados.
 Codificador (encoder): parte da rede que transforma a entrada em uma representação (vetor de atributos).
+Autocodificador (autoencoder): rede com um codificador, que comprime a entrada em um vetor, e um decodificador, que tenta reconstruí-la.
+VAE (autocodificador variacional): autocodificador que aprende uma distribuição sobre o espaço latente e permite gerar novos exemplos.
+Espaço latente: espaço (em geral de baixa dimensão) onde o codificador representa os exemplos.
+ELBO: limite inferior da verossimilhança, que o VAE maximiza; soma a qualidade da reconstrução e uma penalidade KL.
+GAN (rede adversária generativa): par de redes, um gerador que cria exemplos falsos e um discriminador que tenta distingui-los dos reais.
+Feature matching: treinar o gerador para que a média dos atributos intermediários do discriminador nos exemplos falsos coincida com a dos reais.

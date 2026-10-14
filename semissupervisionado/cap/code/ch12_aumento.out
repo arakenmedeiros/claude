@@ -1,0 +1,5 @@
+SimCLR no MNIST (1.500 passos): o aumento de dados usado para criar as duas visões. Sonda linear com 100 rótulos, 3 sorteios
+aumento nas visões                       | acerto no teste
+nenhum (duas cópias idênticas)           | 77.1% ± 1.2
+fraco (deslocar até 8%)                  | 82.6% ± 0.1
+forte (gira, escala, apaga, ruído)       | 91.8% ± 0.3
