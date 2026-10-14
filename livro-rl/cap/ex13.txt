@@ -1,0 +1,269 @@
+MC: Um jogo de Markov (jogo estocástico) é:
+a) uma generalização do MDP para vários agentes que agem ao mesmo tempo.
+b) um MDP com uma só ação.
+c) um tipo de rede neural.
+d) um algoritmo de planejamento.
+R: a | Littman (1994) o usou como base para o AR multiagente.
+
+MC: Num problema multiagente cooperativo, as recompensas dos agentes são:
+a) as mesmas (ou fortemente alinhadas).
+b) opostas.
+c) sempre nulas.
+d) independentes do que fazem.
+R: a | Todos buscam um objetivo comum.
+
+MC: Em um jogo de soma zero entre dois jogadores:
+a) o ganho de um é a perda do outro.
+b) ambos ganham sempre.
+c) ambos perdem sempre.
+d) não há ações.
+R: a | A soma dos pagamentos é zero.
+
+MC: O equilíbrio de Nash é uma situação em que:
+a) nenhum jogador ganha ao mudar sozinho de estratégia.
+b) todos ganham o máximo possível.
+c) alguém é obrigado a perder.
+d) as estratégias são aleatórias.
+R: a | Cada estratégia é melhor resposta às dos outros.
+
+MC: No dilema do prisioneiro, o equilíbrio de Nash do jogo de uma rodada é:
+a) ambos traírem.
+b) ambos cooperarem.
+c) um coopera e outro trai.
+d) nenhum.
+R: a | Trair é a melhor resposta a qualquer ação do outro.
+
+MC: Por que o dilema do prisioneiro é considerado um dilema?
+a) O resultado de equilíbrio (trair, trair) é pior para ambos do que (cooperar, cooperar).
+b) Não há equilíbrio.
+c) Não existem ações.
+d) Os pagamentos são aleatórios.
+R: a | A racionalidade individual leva a um resultado coletivo pior.
+
+MC: No jogo de cara ou coroa (matching pennies), o equilíbrio de Nash é:
+a) cada jogador escolher cada lado com probabilidade 1/2.
+b) ambos escolherem sempre cara.
+c) ambos escolherem sempre coroa.
+d) não existe.
+R: a | Só existe em estratégias mistas.
+
+MC: Uma estratégia mista é aquela em que o jogador:
+a) escolhe ações aleatoriamente segundo certas probabilidades.
+b) sempre escolhe a mesma ação.
+c) não joga.
+d) copia o outro.
+R: a | Evita ser previsível.
+
+MC: Uma dificuldade central do AR multiagente é:
+a) a não estacionariedade: os outros agentes também aprendem e mudam o ambiente.
+b) a ausência de recompensas.
+c) o excesso de dados.
+d) a impossibilidade de usar redes neurais.
+R: a | Do ponto de vista de cada agente, o ambiente muda.
+
+MC: A atribuição de crédito multiagente refere-se a:
+a) descobrir quanto cada agente contribuiu para o resultado comum.
+b) escolher a taxa de aprendizado.
+c) calcular o desconto.
+d) discretizar estados.
+R: a | Numa equipe, é difícil saber quem merece o crédito.
+
+MC: Em aprendizes independentes (independent learners), cada agente:
+a) trata os outros como parte do ambiente e aprende por conta própria.
+b) usa um crítico central.
+c) conhece as políticas dos outros.
+d) não aprende.
+R: a | É simples, mas sem garantias de convergência.
+
+MC: A sigla CTDE significa:
+a) treinamento centralizado, execução descentralizada.
+b) treinamento descentralizado, execução centralizada.
+c) controle total de dados explícitos.
+d) crítico temporal de diferenças extremas.
+R: a | O crítico central só é usado no treino.
+
+MC: Na CTDE, durante a execução, cada agente usa:
+a) apenas sua política local e suas observações.
+b) o crítico centralizado.
+c) as observações de todos.
+d) um modelo do ambiente.
+R: a | O crítico central é descartado após o treino.
+
+MC: O MADDPG é um algoritmo que:
+a) usa atores e críticos centralizados para ambientes multiagente.
+b) só funciona com um agente.
+c) é um método tabular.
+d) só serve para jogos de tabuleiro.
+R: a | Lowe et al. (2017).
+
+MC: O QMIX decompõe o valor da equipe como:
+a) uma combinação monotônica dos valores individuais dos agentes.
+b) a soma das recompensas.
+c) um sorteio.
+d) o máximo dos valores.
+R: a | Isso permite escolher ações descentralizadas coerentes com o valor global.
+
+MC: No autojogo (self-play), o agente:
+a) joga contra si mesmo ou contra versões anteriores de si.
+b) joga apenas contra humanos.
+c) não joga.
+d) joga contra um programa fixo.
+R: a | Cria um currículo automático de oponentes.
+
+MC: O AlphaStar alcançou desempenho de grande mestre no jogo:
+a) StarCraft II.
+b) Xadrez.
+c) Pac-Man.
+d) Damas.
+R: a | Vinyals et al. (2019).
+
+MC: O RLHF (aprendizado por reforço a partir de feedback humano) aprende a recompensa a partir de:
+a) comparações ou preferências humanas.
+b) uma fórmula escrita à mão apenas.
+c) dados não rotulados.
+d) um simulador físico.
+R: a | Comparar é mais fácil do que escrever uma recompensa.
+
+MC: A primeira etapa do pipeline do RLHF em modelos de linguagem é:
+a) o ajuste supervisionado com demonstrações humanas.
+b) a otimização com PPO.
+c) o cálculo da divergência KL.
+d) a coleta de recompensas do ambiente.
+R: a | O modelo é treinado a imitar boas respostas.
+
+MC: O modelo de Bradley–Terry afirma que P(A preferido a B) é:
+a) a sigmoide da diferença de recompensas r(A) − r(B).
+b) o produto das recompensas.
+c) sempre 0,5.
+d) a soma das recompensas.
+R: a | Isso permite treinar o modelo de recompensa por regressão logística.
+
+MC: Na terceira etapa do RLHF, a penalidade KL serve para:
+a) impedir que a política se afaste demais do modelo de referência.
+b) aumentar a recompensa.
+c) eliminar o modelo de recompensa.
+d) acelerar a coleta.
+R: a | Reduz o risco de explorar falhas do modelo de recompensa.
+
+MC: O DPO (Direct Preference Optimization):
+a) treina a política diretamente com preferências, sem modelo de recompensa separado nem laço de AR.
+b) usa o Q-learning tabular.
+c) exige um simulador.
+d) é um algoritmo multiagente.
+R: a | Rafailov et al. (2023).
+
+MC: Na perda do DPO, sem mudança em relação ao modelo de referência, a perda vale:
+a) ln 2 ≈ 0,693.
+b) 0.
+c) 1.
+d) infinito.
+R: a | A margem é zero e −ln σ(0) = ln 2.
+
+MC: A lei de Goodhart afirma, em essência, que:
+a) quando uma medida vira meta, deixa de ser uma boa medida.
+b) toda medida é perfeita.
+c) otimizar sempre melhora o objetivo real.
+d) as recompensas devem ser aleatórias.
+R: a | Otimizar demais um proxy imperfeito pode piorar o objetivo real.
+
+MC: Em experimentos de sobre-otimização de recompensa, ao aumentar a pressão de otimização:
+a) a recompensa proxy sobe, mas a verdadeira sobe e depois pode cair.
+b) ambas sobem sempre.
+c) ambas caem sempre.
+d) nenhuma muda.
+R: a | Gao, Schulman e Hilton (2023).
+
+MC: Uma forma de mitigar a sobre-otimização é:
+a) usar conjuntos de modelos de recompensa penalizando a incerteza.
+b) aumentar a pressão de otimização sem limite.
+c) ignorar a avaliação independente.
+d) usar um único modelo com poucos dados.
+R: a | A incerteza sinaliza regiões em que o proxy é pouco confiável.
+
+MC: O hackeamento de recompensa ocorre quando:
+a) o agente obtém recompensa alta explorando falhas, sem cumprir o objetivo real.
+b) o agente é programado em Python.
+c) a recompensa é negativa.
+d) o ambiente é determinístico.
+R: a | É consequência de especificar mal a recompensa.
+
+MC: Na prática do dilema do prisioneiro com Q-learners, o resultado ao longo de várias sementes mostrou que:
+a) a cooperação pode surgir, mas é frágil e varia entre sementes.
+b) sempre há cooperação.
+c) nunca há cooperação.
+d) a recompensa é sempre a mesma.
+R: a | Algumas execuções cooperam; outras terminam em traição mútua.
+
+MC: O trânsito de uma cidade, em que motoristas têm objetivos parcialmente conflitantes e parcialmente comuns, é um exemplo de problema:
+a) misto.
+b) puramente cooperativo.
+c) de soma zero estrito.
+d) sem agentes.
+R: a | Cada um quer chegar rápido, mas todos se beneficiam de um fluxo organizado.
+
+MC: Na perda do DPO, o parâmetro β controla:
+a) o quanto a política pode se afastar do modelo de referência (intensidade da regularização).
+b) o número de episódios.
+c) o desconto.
+d) a taxa de exploração.
+R: a | β maior mantém a política mais próxima da referência na interpretação de KL.
+
+DISC: Explique o que é um jogo de Markov e como ele generaliza o MDP.
+R: É um modelo com vários agentes que escolhem ações simultaneamente; as transições e as recompensas de cada agente dependem da combinação de ações. Com um só agente, reduz-se a um MDP.
+
+DISC: Defina equilíbrio de Nash e dê um exemplo.
+R: É um conjunto de estratégias em que nenhum jogador melhora mudando sozinho. No dilema do prisioneiro, (trair, trair) é equilíbrio, embora (cooperar, cooperar) pague mais.
+
+DISC: Explique por que o dilema do prisioneiro modela situações reais, como a competição de preços entre postos.
+R: Cada empresa tem incentivo a baixar o preço independentemente do que a outra faz, mas, se ambas baixam, o lucro de ambas cai. O resultado individualmente racional é coletivamente pior.
+
+DISC: Por que o jogo de cara ou coroa não tem equilíbrio em estratégias puras?
+R: Se um jogador fosse previsível, o outro o exploraria. A única situação estável é cada um escolher 50%–50%, em estratégia mista.
+
+DISC: Liste e explique três desafios do aprendizado por reforço multiagente.
+R: Não estacionariedade (os outros mudam o ambiente), atribuição de crédito entre agentes e escalabilidade (o número de combinações de ações cresce exponencialmente). Também há observação parcial e comunicação.
+
+DISC: Compare aprendizes independentes e CTDE.
+R: Aprendizes independentes tratam os outros como ambiente, são simples e sem garantias. No CTDE, um crítico centralizado usa informação de todos no treino, estabilizando o aprendizado, e cada agente executa com sua política local.
+
+DISC: Explique o papel do autojogo e das populações de agentes no treino de agentes competitivos.
+R: Jogar contra si ou contra versões anteriores gera oponentes cada vez mais fortes, criando um currículo automático. Populações aumentam diversidade e robustez, como no AlphaStar.
+
+DISC: Descreva o pipeline do RLHF em três etapas.
+R: Ajuste supervisionado com demonstrações; treino de um modelo de recompensa a partir de comparações humanas; otimização da política por AR (PPO) para maximizar a recompensa aprendida, com penalidade KL em relação ao modelo de referência.
+
+DISC: Explique como o modelo de Bradley–Terry transforma preferências em um modelo de recompensa.
+R: Supõe que P(A ≻ B) = σ(r(A) − r(B)). Com pares preferidos/rejeitados, treina-se r para maximizar a verossimilhança, o que equivale a uma regressão logística sobre as diferenças.
+
+DISC: Qual a função da penalidade KL no RLHF?
+R: Mantém a política próxima do modelo de referência, evitando que explore falhas do modelo de recompensa e gere respostas degeneradas.
+
+DISC: Explique o DPO e como ele simplifica o RLHF.
+R: Mostra que a solução da otimização com penalidade KL pode ser expressa em função das razões de probabilidade entre política e referência, permitindo treinar diretamente com pares de preferência, sem modelo de recompensa separado e sem laço de AR.
+
+DISC: Calcule a perda do DPO com β = 0,5 se a política aumentou o log da preferida em 2 e reduziu o da rejeitada em 4 em relação à referência. (ln σ(3) ≈ −0,0486)
+R: Margem = 0,5 × (2 − (−4)) = 3. Perda = −ln σ(3) ≈ 0,0486.
+
+DISC: Descreva a lei de Goodhart no contexto do RLHF e três mitigações.
+R: Quanto mais se otimiza o modelo de recompensa (proxy), mais se exploram seus erros, e o objetivo real pode piorar. Mitigações: penalidade KL, parada antecipada, conjuntos de modelos de recompensa com penalização de incerteza, mais dados e avaliação independente.
+
+DISC: No experimento dos vinhos, por que o viés dos anotadores prejudica a seleção do melhor de N?
+R: O modelo de recompensa aprende a premiar também o álcool, que os anotadores preferiam independentemente da qualidade. A seleção em N grande favorece vinhos com muito álcool, sem melhorar a qualidade real.
+
+DISC: Dê quatro riscos de segurança do AR descritos por Amodei et al. (2016) e um exemplo de cada.
+R: Especificação ruim da recompensa (robô derruba o vaso), efeitos colaterais não penalizados, exploração insegura (testar ações perigosas) e deslocamento de distribuição (mundo diferente do treino).
+
+DISC: Cite quatro questões éticas associadas a sistemas treinados por AR e proponha uma medida para cada.
+R: Quem define a recompensa (processo participativo); vieses (auditoria de dados e avaliadores); transparência (documentação e interpretabilidade); supervisão humana (possibilidade de contestar e desligar).
+
+DISC: Explique a ideia de randomização de domínio e por que ajuda a passar do simulador ao mundo real.
+R: Variam-se aleatoriamente parâmetros do simulador (atrito, massa, texturas) durante o treino; a política aprende a ser robusta a essa variação e tende a funcionar no mundo real, que passa a ser "mais uma variação".
+
+DISC: Descreva duas fronteiras de pesquisa em AR e por que elas importam.
+R: Exploração com curiosidade, que permite aprender sem recompensas externas densas; generalização e transferência, para agentes que funcionem em ambientes novos. Ambos são necessários para aplicações fora de benchmarks.
+
+DISC: Elabore um plano de estudos de três meses para continuar após este livro, indicando leituras, práticas e um projeto.
+R: Mês 1: ler capítulos selecionados de Sutton e Barto (2018) e reimplementar algoritmos tabulares; mês 2: estudar artigos de AR profundo (DQN, PPO, SAC) e usar o Stable-Baselines3; mês 3: projeto próprio com várias sementes, comparação com baselines e relatório crítico.
+
+DISC: Por que aprendizes independentes tendem a oscilar em jogos de soma zero, como cara ou coroa?
+R: Cada agente se adapta ao comportamento atual do outro; quando um se torna previsível, o outro o explora e muda, o que muda a melhor resposta do primeiro. Sem convergência a estratégias fixas, as probabilidades giram em torno do equilíbrio de Nash.

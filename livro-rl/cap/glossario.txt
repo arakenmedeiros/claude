@@ -143,3 +143,46 @@ TD3: variante do DDPG com dois críticos, ator atrasado e suavização da ação
 Temperatura (α): peso da entropia no objetivo do SAC.
 Hackeamento de recompensa (reward hacking): comportamento do agente que explora falhas da recompensa ou do simulador para obter retorno alto sem cumprir o objetivo real.
 Ação contínua: ação representada por números reais, como um torque.
+AlphaZero: sistema que aprende jogos de tabuleiro por autojogo, combinando MCTS e redes neurais, sem dados humanos.
+Autojogo (self-play): treinar jogando contra si mesmo (ou versões anteriores de si).
+Conjunto de modelos (ensemble): vários modelos treinados em dados diferentes, cujo desacordo estima a incerteza.
+Dyna: arquitetura que combina aprendizado direto, aprendizado do modelo e planejamento.
+Dyna-Q: Dyna com o Q-learning tabular.
+Baseado em modelo (model-based): métodos que aprendem ou usam um modelo do ambiente para planejar.
+MCTS (busca em árvore de Monte Carlo): método de planejamento que constrói uma árvore de jogadas com simulações aleatórias.
+Modelo de mundo (world model): modelo aprendido da dinâmica do ambiente, muitas vezes em espaço latente.
+MPC (controle preditivo por modelo): planejamento que simula sequências de ações no modelo e executa só a primeira.
+MuZero: sistema que aprende um modelo latente e planeja com MCTS sem receber as regras.
+Planejamento em tempo de decisão: usar o modelo para escolher a ação do momento.
+Rollout: simulação de uma trajetória (aleatória ou por uma política) a partir de um estado.
+UCT: regra de seleção da MCTS baseada no UCB.
+Aprendizado por reforço inverso (IRL): inferir a recompensa que um especialista parece otimizar.
+BC (clonagem de comportamento): imitação por aprendizado supervisionado de ações do especialista.
+BCQ / CQL / IQL: algoritmos de AR offline que restringem a política ou penalizam o valor de ações fora dos dados.
+Confundidor: variável que influencia a ação e o resultado, podendo gerar associações enganosas.
+DAgger: algoritmo de imitação que rotula, com o especialista, os estados visitados pelo aprendiz.
+Deslocamento de distribuição: diferença entre os dados de treino e os estados e ações que a política aprendida produzirá.
+DR (duplamente robusto): estimador off-policy que combina um modelo de resultado e pesos de importância.
+GAIL: método de imitação que usa um discriminador adversarial como recompensa.
+IPS: estimador off-policy que pondera os exemplos pelo inverso da propensão.
+OPE (avaliação off-policy): estimar o valor de uma política com dados gerados por outra.
+Política de registro (comportamento): política que gerou os dados registrados.
+Propensão: probabilidade de a política de registro escolher a ação observada no contexto.
+Sobreposição (positividade): condição de que toda ação da política-alvo tenha probabilidade positiva na política de registro.
+SNIPS: versão normalizada do IPS.
+Aprendizado offline (batch RL): aprendizado a partir de um conjunto fixo de dados, sem interação.
+Autojogo (self-play) em populações: treino contra um conjunto de versões de si mesmo.
+Bradley–Terry (modelo de): modelo em que a probabilidade de preferir A a B é a sigmoide da diferença de recompensas.
+CTDE: treinamento centralizado com execução descentralizada em sistemas multiagente.
+DPO: método que otimiza a política diretamente a partir de preferências, sem modelo de recompensa separado.
+Equilíbrio de Nash: situação em que nenhum jogador ganha ao mudar sozinho de estratégia.
+Estratégia mista: estratégia que escolhe ações segundo probabilidades.
+Jogo de Markov: generalização do MDP para vários agentes.
+Lei de Goodhart: quando uma medida vira meta, deixa de ser uma boa medida.
+Modelo de recompensa: modelo aprendido de preferências humanas que atribui uma nota a respostas.
+Motivação intrínseca (curiosidade): recompensa interna que incentiva a explorar o novo.
+Não estacionariedade: mudança do ambiente do ponto de vista de um agente porque outros agentes também aprendem.
+Randomização de domínio: variar aleatoriamente o simulador para tornar a política robusta ao mundo real.
+RLHF: aprendizado por reforço a partir de feedback humano.
+Sim-to-real: transferência de uma política aprendida em simulador para o mundo real.
+Sobre-otimização: otimizar demais um proxy imperfeito, piorando o objetivo real.

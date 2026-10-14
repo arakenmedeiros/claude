@@ -31,192 +31,2167 @@
  },
  {
   "level": 3,
-  "text": "Sugestão de percursos",
+  "text": "Apêndices",
   "id": "h7"
+ },
+ {
+  "level": 3,
+  "text": "Sugestão de percursos",
+  "id": "h8"
  },
  {
   "level": 1,
   "text": "Parte I — Fundamentos",
-  "id": "h8"
+  "id": "h9"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Introdução ao Aprendizado por Reforço",
-  "id": "h9"
- },
- {
-  "level": 3,
-  "text": "1.1 Aprendendo tentando",
   "id": "h10"
  },
  {
   "level": 3,
-  "text": "1.2 O que é aprendizado por reforço?",
+  "text": "1.1 Aprendendo tentando",
   "id": "h11"
  },
  {
   "level": 3,
-  "text": "1.3 Os três paradigmas do aprendizado de máquina",
+  "text": "1.2 O que é aprendizado por reforço?",
   "id": "h12"
  },
  {
   "level": 3,
-  "text": "1.4 Os personagens da história",
+  "text": "1.3 Os três paradigmas do aprendizado de máquina",
   "id": "h13"
  },
  {
-  "level": 4,
-  "text": "1.4.1 Um exemplo completo: o robô aspirador",
+  "level": 3,
+  "text": "1.4 Os personagens da história",
   "id": "h14"
  },
  {
   "level": 4,
-  "text": "1.4.2 Episódios e tarefas contínuas",
+  "text": "1.4.1 Um exemplo completo: o robô aspirador",
   "id": "h15"
+ },
+ {
+  "level": 4,
+  "text": "1.4.2 Episódios e tarefas contínuas",
+  "id": "h16"
  },
  {
   "level": 3,
   "text": "1.5 O objetivo: maximizar o retorno",
-  "id": "h16"
- },
- {
-  "level": 4,
-  "text": "1.5.1 Por que dar menos peso ao futuro?",
   "id": "h17"
  },
  {
   "level": 4,
-  "text": "1.5.2 A hipótese da recompensa",
+  "text": "1.5.1 Por que dar menos peso ao futuro?",
   "id": "h18"
  },
  {
-  "level": 3,
-  "text": "1.6 Os três componentes de um agente",
+  "level": 4,
+  "text": "1.5.2 A hipótese da recompensa",
   "id": "h19"
  },
  {
   "level": 3,
-  "text": "1.7 Os grandes desafios do AR",
+  "text": "1.6 Os três componentes de um agente",
   "id": "h20"
  },
  {
-  "level": 4,
-  "text": "1.7.1 Explorar ou aproveitar?",
+  "level": 3,
+  "text": "1.7 Os grandes desafios do AR",
   "id": "h21"
  },
  {
   "level": 4,
-  "text": "1.7.2 Atribuição de crédito",
+  "text": "1.7.1 Explorar ou aproveitar?",
   "id": "h22"
  },
  {
   "level": 4,
-  "text": "1.7.3 Outros desafios",
+  "text": "1.7.2 Atribuição de crédito",
   "id": "h23"
  },
  {
-  "level": 3,
-  "text": "1.8 Uma breve história",
+  "level": 4,
+  "text": "1.7.3 Outros desafios",
   "id": "h24"
  },
  {
   "level": 3,
-  "text": "1.9 Onde o AR é usado",
+  "text": "1.8 Uma breve história",
   "id": "h25"
  },
  {
   "level": 3,
-  "text": "1.10 As ferramentas deste livro",
+  "text": "1.9 Onde o AR é usado",
   "id": "h26"
  },
  {
   "level": 3,
-  "text": "1.11 Mão na massa",
+  "text": "1.10 As ferramentas deste livro",
   "id": "h27"
  },
  {
-  "level": 4,
-  "text": "1.11.1 Seu primeiro ambiente",
+  "level": 3,
+  "text": "1.11 Mão na massa",
   "id": "h28"
  },
  {
   "level": 4,
-  "text": "1.11.2 Um agente aleatório",
+  "text": "1.11.1 Seu primeiro ambiente",
   "id": "h29"
  },
  {
   "level": 4,
-  "text": "1.11.3 Aprendendo com o método da entropia cruzada",
+  "text": "1.11.2 Um agente aleatório",
   "id": "h30"
  },
  {
   "level": 4,
-  "text": "1.11.4 Avaliando com honestidade",
+  "text": "1.11.3 Aprendendo com o método da entropia cruzada",
   "id": "h31"
  },
  {
   "level": 4,
-  "text": "1.11.5 Do classificador à decisão: o caso dos cogumelos",
+  "text": "1.11.4 Avaliando com honestidade",
   "id": "h32"
  },
  {
-  "level": 3,
-  "text": "1.12 Projeto do capítulo: ajustando o seu primeiro agente",
+  "level": 4,
+  "text": "1.11.5 Do classificador à decisão: o caso dos cogumelos",
   "id": "h33"
  },
  {
   "level": 3,
-  "text": "1.13 Resumo do capítulo",
+  "text": "1.12 Projeto do capítulo: ajustando o seu primeiro agente",
   "id": "h34"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "1.13 Resumo do capítulo",
   "id": "h35"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "Exercícios de múltipla escolha",
   "id": "h36"
  },
  {
-  "level": 1,
-  "text": "Parte V — Projeto Integrador",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h37"
  },
  {
   "level": 2,
-  "text": "Projeto Integrador — Projeto de teste",
+  "text": "Capítulo 2 — Bandits Multi-Armados: Explorar ou Aproveitar?",
   "id": "h38"
  },
  {
-  "level": 1,
-  "text": "Apêndice A — Gabarito dos exercícios",
+  "level": 3,
+  "text": "2.1 O cassino com muitos braços",
   "id": "h39"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Introdução ao Aprendizado por Reforço",
+  "level": 4,
+  "text": "2.1.1 Por que começar por aqui?",
   "id": "h40"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "2.2 Formulação",
   "id": "h41"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "2.3 Estimando valores: a média e sua versão incremental",
   "id": "h42"
+ },
+ {
+  "level": 4,
+  "text": "2.3.1 Ambientes que mudam: passo constante",
+  "id": "h43"
+ },
+ {
+  "level": 3,
+  "text": "2.4 Estratégias de decisão",
+  "id": "h44"
+ },
+ {
+  "level": 4,
+  "text": "2.4.1 Gulosa: só aproveitar",
+  "id": "h45"
+ },
+ {
+  "level": 4,
+  "text": "2.4.2 ε-gulosa: aproveitar quase sempre, explorar às vezes",
+  "id": "h46"
+ },
+ {
+  "level": 4,
+  "text": "2.4.3 Valores iniciais otimistas",
+  "id": "h47"
+ },
+ {
+  "level": 4,
+  "text": "2.4.4 UCB: otimismo diante da incerteza",
+  "id": "h48"
+ },
+ {
+  "level": 4,
+  "text": "2.4.5 Thompson Sampling: sorteie uma crença e aja nela",
+  "id": "h49"
+ },
+ {
+  "level": 4,
+  "text": "2.4.6 Gradiente de preferências (opcional)",
+  "id": "h50"
+ },
+ {
+  "level": 3,
+  "text": "2.5 Como medir o sucesso",
+  "id": "h51"
+ },
+ {
+  "level": 3,
+  "text": "2.6 Bandits contextuais",
+  "id": "h52"
+ },
+ {
+  "level": 3,
+  "text": "2.7 Bandits na prática: testes A/B × bandits",
+  "id": "h53"
+ },
+ {
+  "level": 3,
+  "text": "2.8 Resumo teórico",
+  "id": "h54"
+ },
+ {
+  "level": 3,
+  "text": "2.9 Mão na massa",
+  "id": "h55"
+ },
+ {
+  "level": 4,
+  "text": "2.9.1 O banco de testes de 10 braços",
+  "id": "h56"
+ },
+ {
+  "level": 4,
+  "text": "2.9.2 Arrependimento com recompensas de sucesso/fracasso",
+  "id": "h57"
+ },
+ {
+  "level": 4,
+  "text": "2.9.3 Bandit contextual com scikit-learn: o caso dos cogumelos",
+  "id": "h58"
+ },
+ {
+  "level": 3,
+  "text": "2.10 Projeto do capítulo: qual mês é melhor para a campanha?",
+  "id": "h59"
+ },
+ {
+  "level": 3,
+  "text": "2.11 Resumo do capítulo",
+  "id": "h60"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h61"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h62"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Processos de Decisão de Markov",
+  "id": "h63"
+ },
+ {
+  "level": 3,
+  "text": "3.1 Das máquinas ao mundo que muda",
+  "id": "h64"
+ },
+ {
+  "level": 3,
+  "text": "3.2 A propriedade de Markov: o presente basta",
+  "id": "h65"
+ },
+ {
+  "level": 3,
+  "text": "3.3 Cadeias de Markov e processos de recompensa",
+  "id": "h66"
+ },
+ {
+  "level": 3,
+  "text": "3.4 O MDP: a definição formal",
+  "id": "h67"
+ },
+ {
+  "level": 4,
+  "text": "3.4.1 Quando o MDP é \"conhecido\" ou \"desconhecido\"",
+  "id": "h68"
+ },
+ {
+  "level": 3,
+  "text": "3.5 Um exemplo completo: o robô de entrega",
+  "id": "h69"
+ },
+ {
+  "level": 3,
+  "text": "3.6 Políticas",
+  "id": "h70"
+ },
+ {
+  "level": 3,
+  "text": "3.7 Funções valor: quão bom é estar aqui?",
+  "id": "h71"
+ },
+ {
+  "level": 3,
+  "text": "3.8 A equação de Bellman",
+  "id": "h72"
+ },
+ {
+  "level": 4,
+  "text": "3.8.1 A forma matricial",
+  "id": "h73"
+ },
+ {
+  "level": 3,
+  "text": "3.9 Otimalidade",
+  "id": "h74"
+ },
+ {
+  "level": 3,
+  "text": "3.10 Quando as equações não bastam",
+  "id": "h75"
+ },
+ {
+  "level": 4,
+  "text": "3.10.1 Observação parcial",
+  "id": "h76"
+ },
+ {
+  "level": 3,
+  "text": "3.11 Projetando estados e recompensas",
+  "id": "h77"
+ },
+ {
+  "level": 3,
+  "text": "3.12 Mão na massa",
+  "id": "h78"
+ },
+ {
+  "level": 4,
+  "text": "3.12.1 O robô de entrega em NumPy",
+  "id": "h79"
+ },
+ {
+  "level": 4,
+  "text": "3.12.2 Um MDP do Gymnasium: o lago congelado",
+  "id": "h80"
+ },
+ {
+  "level": 4,
+  "text": "3.12.3 Estimando uma cadeia de Markov com dados reais",
+  "id": "h81"
+ },
+ {
+  "level": 3,
+  "text": "3.13 Projeto do capítulo: o valor de um cliente",
+  "id": "h82"
+ },
+ {
+  "level": 3,
+  "text": "3.14 Resumo do capítulo",
+  "id": "h83"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h84"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h85"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Programação Dinâmica",
+  "id": "h86"
+ },
+ {
+  "level": 3,
+  "text": "4.1 Planejando com o mapa na mão",
+  "id": "h87"
+ },
+ {
+  "level": 4,
+  "text": "4.1.1 Para que serve se quase nunca temos o MDP?",
+  "id": "h88"
+ },
+ {
+  "level": 3,
+  "text": "4.2 Avaliação de política (predição)",
+  "id": "h89"
+ },
+ {
+  "level": 4,
+  "text": "4.2.1 O exemplo do gridworld",
+  "id": "h90"
+ },
+ {
+  "level": 3,
+  "text": "4.3 Melhoria de política",
+  "id": "h91"
+ },
+ {
+  "level": 3,
+  "text": "4.4 Iteração de política",
+  "id": "h92"
+ },
+ {
+  "level": 3,
+  "text": "4.5 Iteração de valor",
+  "id": "h93"
+ },
+ {
+  "level": 3,
+  "text": "4.6 Iteração de política generalizada",
+  "id": "h94"
+ },
+ {
+  "level": 3,
+  "text": "4.7 Bootstrapping e convergência",
+  "id": "h95"
+ },
+ {
+  "level": 4,
+  "text": "4.7.1 Variantes",
+  "id": "h96"
+ },
+ {
+  "level": 3,
+  "text": "4.8 Limites da programação dinâmica",
+  "id": "h97"
+ },
+ {
+  "level": 3,
+  "text": "4.9 Mão na massa",
+  "id": "h98"
+ },
+ {
+  "level": 4,
+  "text": "4.9.1 Gridworld: avaliação, iteração de política e de valor",
+  "id": "h99"
+ },
+ {
+  "level": 4,
+  "text": "4.9.2 FrozenLake: o plano ótimo no gelo escorregadio",
+  "id": "h100"
+ },
+ {
+  "level": 4,
+  "text": "4.9.3 CartPole: discretizar, estimar um modelo e planejar",
+  "id": "h101"
+ },
+ {
+  "level": 3,
+  "text": "4.10 Projeto do capítulo: a melhor ação para reter clientes",
+  "id": "h102"
+ },
+ {
+  "level": 3,
+  "text": "4.11 Resumo do capítulo",
+  "id": "h103"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h104"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h105"
+ },
+ {
+  "level": 1,
+  "text": "Parte II — Métodos Tabulares",
+  "id": "h106"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Métodos de Monte Carlo",
+  "id": "h107"
+ },
+ {
+  "level": 3,
+  "text": "5.1 Aprendendo jogando",
+  "id": "h108"
+ },
+ {
+  "level": 3,
+  "text": "5.2 A ideia básica",
+  "id": "h109"
+ },
+ {
+  "level": 4,
+  "text": "5.2.1 MC versus programação dinâmica",
+  "id": "h110"
+ },
+ {
+  "level": 3,
+  "text": "5.3 Predição: estimando v_π",
+  "id": "h111"
+ },
+ {
+  "level": 4,
+  "text": "5.3.1 O caso do Blackjack",
+  "id": "h112"
+ },
+ {
+  "level": 3,
+  "text": "5.4 Controle: aprendendo a jogar bem",
+  "id": "h113"
+ },
+ {
+  "level": 4,
+  "text": "5.4.1 O problema do início exploratório",
+  "id": "h114"
+ },
+ {
+  "level": 4,
+  "text": "5.4.2 Política ε-gulosa (on-policy)",
+  "id": "h115"
+ },
+ {
+  "level": 3,
+  "text": "5.5 Implementação incremental",
+  "id": "h116"
+ },
+ {
+  "level": 3,
+  "text": "5.6 Aprendizado off-policy e amostragem por importância",
+  "id": "h117"
+ },
+ {
+  "level": 3,
+  "text": "5.7 Vantagens e limitações",
+  "id": "h118"
+ },
+ {
+  "level": 3,
+  "text": "5.8 Mão na massa",
+  "id": "h119"
+ },
+ {
+  "level": 4,
+  "text": "5.8.1 Predição no Blackjack",
+  "id": "h120"
+ },
+ {
+  "level": 4,
+  "text": "5.8.2 Controle por Monte Carlo com ε-gulosa",
+  "id": "h121"
+ },
+ {
+  "level": 4,
+  "text": "5.8.3 Entendendo a política aprendida com uma árvore (scikit-learn)",
+  "id": "h122"
+ },
+ {
+  "level": 4,
+  "text": "5.8.4 Amostragem por importância",
+  "id": "h123"
+ },
+ {
+  "level": 3,
+  "text": "5.9 Projeto do capítulo: simulando o valor de vida do cliente",
+  "id": "h124"
+ },
+ {
+  "level": 3,
+  "text": "5.10 Resumo do capítulo",
+  "id": "h125"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h126"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h127"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Diferença Temporal: SARSA e Q-learning",
+  "id": "h128"
+ },
+ {
+  "level": 3,
+  "text": "6.1 Aprender a cada passo",
+  "id": "h129"
+ },
+ {
+  "level": 3,
+  "text": "6.2 A predição TD(0)",
+  "id": "h130"
+ },
+ {
+  "level": 4,
+  "text": "6.2.1 Interpretação neurocientífica",
+  "id": "h131"
+ },
+ {
+  "level": 4,
+  "text": "6.2.2 TD, MC e DP lado a lado",
+  "id": "h132"
+ },
+ {
+  "level": 3,
+  "text": "6.3 SARSA: controle TD on-policy",
+  "id": "h133"
+ },
+ {
+  "level": 3,
+  "text": "6.4 Q-learning: controle TD off-policy",
+  "id": "h134"
+ },
+ {
+  "level": 4,
+  "text": "6.4.1 Expected SARSA",
+  "id": "h135"
+ },
+ {
+  "level": 3,
+  "text": "6.5 O caminho do penhasco",
+  "id": "h136"
+ },
+ {
+  "level": 3,
+  "text": "6.6 O viés de maximização e o Double Q-learning",
+  "id": "h137"
+ },
+ {
+  "level": 3,
+  "text": "6.7 Entre TD e Monte Carlo: n-step e traços de elegibilidade",
+  "id": "h138"
+ },
+ {
+  "level": 3,
+  "text": "6.8 Explorando: ε e passos",
+  "id": "h139"
+ },
+ {
+  "level": 3,
+  "text": "6.9 Mão na massa",
+  "id": "h140"
+ },
+ {
+  "level": 4,
+  "text": "6.9.1 TD(0) × MC no passeio aleatório",
+  "id": "h141"
+ },
+ {
+  "level": 4,
+  "text": "6.9.2 SARSA, Q-learning e Expected SARSA no penhasco",
+  "id": "h142"
+ },
+ {
+  "level": 4,
+  "text": "6.9.3 Viés de maximização e Double Q-learning",
+  "id": "h143"
+ },
+ {
+  "level": 4,
+  "text": "6.9.4 Taxi: Q-learning com busca de hiperparâmetros",
+  "id": "h144"
+ },
+ {
+  "level": 4,
+  "text": "6.9.5 CartPole tabular com faixas aprendidas pelo scikit-learn",
+  "id": "h145"
+ },
+ {
+  "level": 3,
+  "text": "6.10 Projeto do capítulo: preços dinâmicos de uma loja",
+  "id": "h146"
+ },
+ {
+  "level": 3,
+  "text": "6.11 Resumo do capítulo",
+  "id": "h147"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h148"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h149"
+ },
+ {
+  "level": 1,
+  "text": "Parte III — Aproximação de Funções e Aprendizado por Reforço Profundo",
+  "id": "h150"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Aproximação de Funções",
+  "id": "h151"
+ },
+ {
+  "level": 3,
+  "text": "7.1 Quando a tabela não cabe",
+  "id": "h152"
+ },
+ {
+  "level": 3,
+  "text": "7.2 A ideia: substituir a tabela por uma função",
+  "id": "h153"
+ },
+ {
+  "level": 4,
+  "text": "7.2.1 O que significa \"boa\" aproximação?",
+  "id": "h154"
+ },
+ {
+  "level": 3,
+  "text": "7.3 Descida do gradiente",
+  "id": "h155"
+ },
+ {
+  "level": 4,
+  "text": "7.3.1 Qual é o alvo U?",
+  "id": "h156"
+ },
+ {
+  "level": 3,
+  "text": "7.4 Aproximação linear",
+  "id": "h157"
+ },
+ {
+  "level": 3,
+  "text": "7.5 Construindo características",
+  "id": "h158"
+ },
+ {
+  "level": 4,
+  "text": "7.5.1 Tile coding",
+  "id": "h159"
+ },
+ {
+  "level": 3,
+  "text": "7.6 Controle com aproximação",
+  "id": "h160"
+ },
+ {
+  "level": 4,
+  "text": "7.6.1 O Mountain Car",
+  "id": "h161"
+ },
+ {
+  "level": 3,
+  "text": "7.7 O triângulo mortal",
+  "id": "h162"
+ },
+ {
+  "level": 4,
+  "text": "7.7.1 O contraexemplo de Baird",
+  "id": "h163"
+ },
+ {
+  "level": 3,
+  "text": "7.8 Métodos em lote: Fitted Q-Iteration",
+  "id": "h164"
+ },
+ {
+  "level": 3,
+  "text": "7.9 Mão na massa",
+  "id": "h165"
+ },
+ {
+  "level": 4,
+  "text": "7.9.1 A divergência de Baird",
+  "id": "h166"
+ },
+ {
+  "level": 4,
+  "text": "7.9.2 Tile coding e SARSA semi-gradiente no Mountain Car",
+  "id": "h167"
+ },
+ {
+  "level": 4,
+  "text": "7.9.3 Quatro aproximadores para uma mesma função",
+  "id": "h168"
+ },
+ {
+  "level": 4,
+  "text": "7.9.4 Q-learning online com RBF: quando a aproximação falha",
+  "id": "h169"
+ },
+ {
+  "level": 4,
+  "text": "7.9.5 Fitted Q-Iteration com regressores do scikit-learn",
+  "id": "h170"
+ },
+ {
+  "level": 3,
+  "text": "7.10 Projeto do capítulo: valor de clientes sem discretizar",
+  "id": "h171"
+ },
+ {
+  "level": 3,
+  "text": "7.11 Resumo do capítulo",
+  "id": "h172"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h173"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h174"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Deep Q-Networks e suas Extensões",
+  "id": "h175"
+ },
+ {
+  "level": 3,
+  "text": "8.1 Do Q-learning à rede Q",
+  "id": "h176"
+ },
+ {
+  "level": 3,
+  "text": "8.2 Redes neurais em dez minutos",
+  "id": "h177"
+ },
+ {
+  "level": 4,
+  "text": "8.2.1 O neurônio artificial",
+  "id": "h178"
+ },
+ {
+  "level": 4,
+  "text": "8.2.2 Camadas e profundidade",
+  "id": "h179"
+ },
+ {
+  "level": 4,
+  "text": "8.2.3 Como a rede aprende",
+  "id": "h180"
+ },
+ {
+  "level": 3,
+  "text": "8.3 Por que redes + Q-learning dão problema",
+  "id": "h181"
+ },
+ {
+  "level": 3,
+  "text": "8.4 Truque 1: repetição de experiência",
+  "id": "h182"
+ },
+ {
+  "level": 3,
+  "text": "8.5 Truque 2: a rede-alvo",
+  "id": "h183"
+ },
+ {
+  "level": 3,
+  "text": "8.6 O algoritmo DQN, passo a passo",
+  "id": "h184"
+ },
+ {
+  "level": 3,
+  "text": "8.7 O DQN que jogou Atari",
+  "id": "h185"
+ },
+ {
+  "level": 3,
+  "text": "8.8 Extensões do DQN",
+  "id": "h186"
+ },
+ {
+  "level": 4,
+  "text": "8.8.1 Double DQN",
+  "id": "h187"
+ },
+ {
+  "level": 4,
+  "text": "8.8.2 Repetição de experiência priorizada",
+  "id": "h188"
+ },
+ {
+  "level": 4,
+  "text": "8.8.3 Dueling",
+  "id": "h189"
+ },
+ {
+  "level": 4,
+  "text": "8.8.4 Alvos de múltiplos passos",
+  "id": "h190"
+ },
+ {
+  "level": 4,
+  "text": "8.8.5 DQN distribucional",
+  "id": "h191"
+ },
+ {
+  "level": 4,
+  "text": "8.8.6 Redes com ruído (Noisy Nets)",
+  "id": "h192"
+ },
+ {
+  "level": 4,
+  "text": "8.8.7 Rainbow",
+  "id": "h193"
+ },
+ {
+  "level": 3,
+  "text": "8.9 Hiperparâmetros e depuração",
+  "id": "h194"
+ },
+ {
+  "level": 3,
+  "text": "8.10 Mão na massa",
+  "id": "h195"
+ },
+ {
+  "level": 4,
+  "text": "8.10.1 DQN em PyTorch",
+  "id": "h196"
+ },
+ {
+  "level": 4,
+  "text": "8.10.2 Avaliando a política treinada",
+  "id": "h197"
+ },
+ {
+  "level": 4,
+  "text": "8.10.3 Ablação: o que acontece sem memória e sem rede-alvo?",
+  "id": "h198"
+ },
+ {
+  "level": 4,
+  "text": "8.10.4 Double DQN",
+  "id": "h199"
+ },
+ {
+  "level": 4,
+  "text": "8.10.5 DQN com o Stable-Baselines3",
+  "id": "h200"
+ },
+ {
+  "level": 3,
+  "text": "8.11 Projeto do capítulo: um DQN para o estoque de uma loja",
+  "id": "h201"
+ },
+ {
+  "level": 3,
+  "text": "8.12 Resumo do capítulo",
+  "id": "h202"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h203"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h204"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Gradientes de Política e Atores-Críticos",
+  "id": "h205"
+ },
+ {
+  "level": 3,
+  "text": "9.1 Aprender a política diretamente",
+  "id": "h206"
+ },
+ {
+  "level": 3,
+  "text": "9.2 Políticas parametrizadas",
+  "id": "h207"
+ },
+ {
+  "level": 3,
+  "text": "9.3 O objetivo e a ascensão do gradiente",
+  "id": "h208"
+ },
+ {
+  "level": 3,
+  "text": "9.4 O teorema do gradiente de política",
+  "id": "h209"
+ },
+ {
+  "level": 3,
+  "text": "9.5 REINFORCE",
+  "id": "h210"
+ },
+ {
+  "level": 3,
+  "text": "9.6 A linha de base (baseline)",
+  "id": "h211"
+ },
+ {
+  "level": 3,
+  "text": "9.7 Atores-críticos",
+  "id": "h212"
+ },
+ {
+  "level": 4,
+  "text": "9.7.1 A2C e A3C",
+  "id": "h213"
+ },
+ {
+  "level": 4,
+  "text": "9.7.2 Vantagem generalizada (GAE)",
+  "id": "h214"
+ },
+ {
+  "level": 3,
+  "text": "9.8 Entropia: incentivando a exploração",
+  "id": "h215"
+ },
+ {
+  "level": 3,
+  "text": "9.9 Passos de confiança: política natural e TRPO",
+  "id": "h216"
+ },
+ {
+  "level": 3,
+  "text": "9.10 Valor × política × ator-crítico",
+  "id": "h217"
+ },
+ {
+  "level": 3,
+  "text": "9.11 Mão na massa",
+  "id": "h218"
+ },
+ {
+  "level": 4,
+  "text": "9.11.1 O efeito da linha de base na variância",
+  "id": "h219"
+ },
+ {
+  "level": 4,
+  "text": "9.11.2 REINFORCE e ator-crítico em PyTorch",
+  "id": "h220"
+ },
+ {
+  "level": 4,
+  "text": "9.11.3 Avaliando a política com intervalo de confiança",
+  "id": "h221"
+ },
+ {
+  "level": 3,
+  "text": "9.12 Projeto do capítulo: quem vale a pena ligar?",
+  "id": "h222"
+ },
+ {
+  "level": 3,
+  "text": "9.13 Resumo do capítulo",
+  "id": "h223"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h224"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h225"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Algoritmos Modernos: PPO, DDPG, TD3 e SAC",
+  "id": "h226"
+ },
+ {
+  "level": 3,
+  "text": "10.1 O que usar na prática?",
+  "id": "h227"
+ },
+ {
+  "level": 3,
+  "text": "10.2 PPO: otimização de política proximal",
+  "id": "h228"
+ },
+ {
+  "level": 4,
+  "text": "10.2.1 A razão de probabilidades",
+  "id": "h229"
+ },
+ {
+  "level": 4,
+  "text": "10.2.2 O objetivo recortado",
+  "id": "h230"
+ },
+ {
+  "level": 4,
+  "text": "10.2.3 O algoritmo",
+  "id": "h231"
+ },
+ {
+  "level": 4,
+  "text": "10.2.4 Detalhes que fazem diferença",
+  "id": "h232"
+ },
+ {
+  "level": 3,
+  "text": "10.3 Ações contínuas e política determinística",
+  "id": "h233"
+ },
+ {
+  "level": 3,
+  "text": "10.4 DDPG",
+  "id": "h234"
+ },
+ {
+  "level": 3,
+  "text": "10.5 TD3",
+  "id": "h235"
+ },
+ {
+  "level": 3,
+  "text": "10.6 SAC",
+  "id": "h236"
+ },
+ {
+  "level": 3,
+  "text": "10.7 Comparação",
+  "id": "h237"
+ },
+ {
+  "level": 3,
+  "text": "10.8 Reprodutibilidade e armadilhas",
+  "id": "h238"
+ },
+ {
+  "level": 3,
+  "text": "10.9 Mão na massa",
+  "id": "h239"
+ },
+ {
+  "level": 4,
+  "text": "10.9.1 PPO no CartPole",
+  "id": "h240"
+ },
+ {
+  "level": 4,
+  "text": "10.9.2 O objetivo recortado, na mão",
+  "id": "h241"
+ },
+ {
+  "level": 4,
+  "text": "10.9.3 Pendulum: PPO × TD3 × SAC",
+  "id": "h242"
+ },
+ {
+  "level": 4,
+  "text": "10.9.4 Sensibilidade a hiperparâmetros",
+  "id": "h243"
+ },
+ {
+  "level": 3,
+  "text": "10.10 Projeto do capítulo: otimizando um processo com um simulador estatístico",
+  "id": "h244"
+ },
+ {
+  "level": 3,
+  "text": "10.11 Resumo do capítulo",
+  "id": "h245"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h246"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h247"
+ },
+ {
+  "level": 1,
+  "text": "Parte IV — Tópicos Avançados",
+  "id": "h248"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Aprendizado Baseado em Modelo e Planejamento",
+  "id": "h249"
+ },
+ {
+  "level": 3,
+  "text": "11.1 Pensar antes de agir",
+  "id": "h250"
+ },
+ {
+  "level": 3,
+  "text": "11.2 O que é um modelo?",
+  "id": "h251"
+ },
+ {
+  "level": 4,
+  "text": "11.2.1 O perigo: erros que se acumulam",
+  "id": "h252"
+ },
+ {
+  "level": 3,
+  "text": "11.3 Dyna: aprender, planejar e agir juntos",
+  "id": "h253"
+ },
+ {
+  "level": 3,
+  "text": "11.4 Planejamento em tempo de decisão",
+  "id": "h254"
+ },
+ {
+  "level": 4,
+  "text": "11.4.1 Controle preditivo por modelo (MPC)",
+  "id": "h255"
+ },
+ {
+  "level": 3,
+  "text": "11.5 Busca em árvore de Monte Carlo (MCTS)",
+  "id": "h256"
+ },
+ {
+  "level": 3,
+  "text": "11.6 De AlphaGo a MuZero",
+  "id": "h257"
+ },
+ {
+  "level": 3,
+  "text": "11.7 Modelos de mundo profundos",
+  "id": "h258"
+ },
+ {
+  "level": 4,
+  "text": "11.7.1 Incerteza e exploração do modelo",
+  "id": "h259"
+ },
+ {
+  "level": 3,
+  "text": "11.8 Quando usar métodos baseados em modelo?",
+  "id": "h260"
+ },
+ {
+  "level": 3,
+  "text": "11.9 Mão na massa",
+  "id": "h261"
+ },
+ {
+  "level": 4,
+  "text": "11.9.1 Dyna-Q no labirinto",
+  "id": "h262"
+ },
+ {
+  "level": 4,
+  "text": "11.9.2 Aprendendo o modelo do CartPole e medindo o acúmulo de erros",
+  "id": "h263"
+ },
+ {
+  "level": 4,
+  "text": "11.9.3 MPC com o modelo aprendido",
+  "id": "h264"
+ },
+ {
+  "level": 4,
+  "text": "11.9.4 MCTS na velha",
+  "id": "h265"
+ },
+ {
+  "level": 3,
+  "text": "11.10 Projeto do capítulo: um \"mundo imaginado\" de clientes",
+  "id": "h266"
+ },
+ {
+  "level": 3,
+  "text": "11.11 Resumo do capítulo",
+  "id": "h267"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h268"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h269"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Aprendizado Offline, por Imitação e Avaliação de Políticas",
+  "id": "h270"
+ },
+ {
+  "level": 3,
+  "text": "12.1 Aprender sem interagir",
+  "id": "h271"
+ },
+ {
+  "level": 3,
+  "text": "12.2 Aprendizado por imitação",
+  "id": "h272"
+ },
+ {
+  "level": 4,
+  "text": "12.2.1 Clonagem de comportamento",
+  "id": "h273"
+ },
+ {
+  "level": 4,
+  "text": "12.2.2 O acúmulo de erros",
+  "id": "h274"
+ },
+ {
+  "level": 4,
+  "text": "12.2.3 DAgger",
+  "id": "h275"
+ },
+ {
+  "level": 3,
+  "text": "12.3 Aprendizado por reforço inverso",
+  "id": "h276"
+ },
+ {
+  "level": 3,
+  "text": "12.4 Aprendizado por reforço offline",
+  "id": "h277"
+ },
+ {
+  "level": 4,
+  "text": "12.4.1 O problema do deslocamento de distribuição",
+  "id": "h278"
+ },
+ {
+  "level": 4,
+  "text": "12.4.2 A ideia comum: confiar apenas no que os dados mostram",
+  "id": "h279"
+ },
+ {
+  "level": 3,
+  "text": "12.5 Avaliação de políticas a partir de dados registrados",
+  "id": "h280"
+ },
+ {
+  "level": 4,
+  "text": "12.5.1 Os estimadores",
+  "id": "h281"
+ },
+ {
+  "level": 4,
+  "text": "12.5.2 Condições necessárias",
+  "id": "h282"
+ },
+ {
+  "level": 3,
+  "text": "12.6 Associação e causalidade",
+  "id": "h283"
+ },
+ {
+  "level": 3,
+  "text": "12.7 Mão na massa",
+  "id": "h284"
+ },
+ {
+  "level": 4,
+  "text": "12.7.1 Um especialista para o CartPole",
+  "id": "h285"
+ },
+ {
+  "level": 4,
+  "text": "12.7.2 Clonagem de comportamento e acúmulo de erros",
+  "id": "h286"
+ },
+ {
+  "level": 4,
+  "text": "12.7.3 DAgger",
+  "id": "h287"
+ },
+ {
+  "level": 4,
+  "text": "12.7.4 AR offline com o Fitted Q-Iteration",
+  "id": "h288"
+ },
+ {
+  "level": 4,
+  "text": "12.7.5 Avaliação off-policy com dados do Bank Marketing",
+  "id": "h289"
+ },
+ {
+  "level": 4,
+  "text": "12.7.6 Qual estimador é melhor? Um experimento controlado",
+  "id": "h290"
+ },
+ {
+  "level": 3,
+  "text": "12.8 Projeto do capítulo: auditando a escolha do canal de contato",
+  "id": "h291"
+ },
+ {
+  "level": 3,
+  "text": "12.9 Resumo do capítulo",
+  "id": "h292"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h293"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h294"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Sistemas Multiagente, RLHF e Fronteiras",
+  "id": "h295"
+ },
+ {
+  "level": 3,
+  "text": "13.1 Quando há mais de um agente",
+  "id": "h296"
+ },
+ {
+  "level": 3,
+  "text": "13.2 Teoria dos jogos em poucas linhas",
+  "id": "h297"
+ },
+ {
+  "level": 3,
+  "text": "13.3 Por que o AR multiagente é difícil",
+  "id": "h298"
+ },
+ {
+  "level": 3,
+  "text": "13.4 Abordagens",
+  "id": "h299"
+ },
+ {
+  "level": 4,
+  "text": "13.4.1 Aprendizes independentes",
+  "id": "h300"
+ },
+ {
+  "level": 4,
+  "text": "13.4.2 Treinamento centralizado, execução descentralizada (CTDE)",
+  "id": "h301"
+ },
+ {
+  "level": 4,
+  "text": "13.4.3 Autojogo e populações",
+  "id": "h302"
+ },
+ {
+  "level": 3,
+  "text": "13.5 RLHF: aprender a partir de preferências humanas",
+  "id": "h303"
+ },
+ {
+  "level": 4,
+  "text": "13.5.1 Por que RLHF?",
+  "id": "h304"
+ },
+ {
+  "level": 4,
+  "text": "13.5.2 O pipeline em três etapas",
+  "id": "h305"
+ },
+ {
+  "level": 4,
+  "text": "13.5.3 O modelo de Bradley–Terry",
+  "id": "h306"
+ },
+ {
+  "level": 4,
+  "text": "13.5.4 DPO: preferências sem aprendizado por reforço explícito",
+  "id": "h307"
+ },
+ {
+  "level": 4,
+  "text": "13.5.5 Sobre-otimização e a lei de Goodhart",
+  "id": "h308"
+ },
+ {
+  "level": 3,
+  "text": "13.6 Segurança, alinhamento e ética",
+  "id": "h309"
+ },
+ {
+  "level": 3,
+  "text": "13.7 Fronteiras da pesquisa",
+  "id": "h310"
+ },
+ {
+  "level": 3,
+  "text": "13.8 Para continuar estudando",
+  "id": "h311"
+ },
+ {
+  "level": 3,
+  "text": "13.9 Mão na massa",
+  "id": "h312"
+ },
+ {
+  "level": 4,
+  "text": "13.9.1 Dilema do prisioneiro com aprendizes independentes",
+  "id": "h313"
+ },
+ {
+  "level": 4,
+  "text": "13.9.2 Cara ou coroa: aprendizes que giram",
+  "id": "h314"
+ },
+ {
+  "level": 4,
+  "text": "13.9.3 Modelo de recompensa por preferências (Bradley–Terry)",
+  "id": "h315"
+ },
+ {
+  "level": 4,
+  "text": "13.9.4 A perda do DPO, número a número",
+  "id": "h316"
+ },
+ {
+  "level": 3,
+  "text": "13.10 Projeto do capítulo: um modelo de recompensa mais robusto",
+  "id": "h317"
+ },
+ {
+  "level": 3,
+  "text": "13.11 Resumo do capítulo",
+  "id": "h318"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h319"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h320"
+ },
+ {
+  "level": 1,
+  "text": "Parte V — Projeto Integrador",
+  "id": "h321"
+ },
+ {
+  "level": 2,
+  "text": "Projeto Integrador — Uma plataforma de ofertas para reter clientes",
+  "id": "h322"
+ },
+ {
+  "level": 3,
+  "text": "1. O desafio",
+  "id": "h323"
+ },
+ {
+  "level": 3,
+  "text": "2. Preparação dos dados",
+  "id": "h324"
+ },
+ {
+  "level": 3,
+  "text": "3. O modelo de mundo",
+  "id": "h325"
+ },
+ {
+  "level": 3,
+  "text": "4. O ambiente de decisão",
+  "id": "h326"
+ },
+ {
+  "level": 3,
+  "text": "5. Código de partida",
+  "id": "h327"
+ },
+ {
+  "level": 3,
+  "text": "6. Baselines e agentes",
+  "id": "h328"
+ },
+ {
+  "level": 3,
+  "text": "7. Robustez e sensibilidade",
+  "id": "h329"
+ },
+ {
+  "level": 3,
+  "text": "8. Do simulador ao mundo real",
+  "id": "h330"
+ },
+ {
+  "level": 3,
+  "text": "9. Segurança, ética e comunicação",
+  "id": "h331"
+ },
+ {
+  "level": 3,
+  "text": "10. Entrega e avaliação",
+  "id": "h332"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito dos exercícios",
+  "id": "h333"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução ao Aprendizado por Reforço",
+  "id": "h334"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h335"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h336"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Bandits Multi-Armados",
+  "id": "h337"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h338"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h339"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Processos de Decisão de Markov",
+  "id": "h340"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h341"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h342"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Programação Dinâmica",
+  "id": "h343"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h344"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h345"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Métodos de Monte Carlo",
+  "id": "h346"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h347"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h348"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Diferença Temporal",
+  "id": "h349"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h350"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h351"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Aproximação de Funções",
+  "id": "h352"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h353"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h354"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Deep Q-Networks e suas Extensões",
+  "id": "h355"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h356"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h357"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Gradientes de Política e Atores-Críticos",
+  "id": "h358"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h359"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h360"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Algoritmos Modernos",
+  "id": "h361"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h362"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h363"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Aprendizado Baseado em Modelo e Planejamento",
+  "id": "h364"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h365"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h366"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Aprendizado Offline, por Imitação e Avaliação de Políticas",
+  "id": "h367"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h368"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h369"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Sistemas Multiagente, RLHF e Fronteiras",
+  "id": "h370"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h371"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h372"
  },
  {
   "level": 1,
   "text": "Apêndice B — Glossário",
-  "id": "h43"
+  "id": "h373"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice C — Introdução ao Python e ao ambiente de trabalho",
+  "id": "h374"
+ },
+ {
+  "level": 3,
+  "text": "C.1 Por que Python?",
+  "id": "h375"
+ },
+ {
+  "level": 3,
+  "text": "C.2 Como começar sem instalar nada: Google Colab",
+  "id": "h376"
+ },
+ {
+  "level": 3,
+  "text": "C.3 Instalação no seu computador",
+  "id": "h377"
+ },
+ {
+  "level": 3,
+  "text": "C.4 Variáveis e tipos de dados",
+  "id": "h378"
+ },
+ {
+  "level": 3,
+  "text": "C.5 Listas, tuplas e dicionários",
+  "id": "h379"
+ },
+ {
+  "level": 3,
+  "text": "C.6 Condições e laços",
+  "id": "h380"
+ },
+ {
+  "level": 3,
+  "text": "C.7 Funções",
+  "id": "h381"
+ },
+ {
+  "level": 4,
+  "text": "C.7.1 Funções anônimas (lambda) e compreensão de listas",
+  "id": "h382"
+ },
+ {
+  "level": 3,
+  "text": "C.8 Importando bibliotecas",
+  "id": "h383"
+ },
+ {
+  "level": 3,
+  "text": "C.9 Classes (o essencial)",
+  "id": "h384"
+ },
+ {
+  "level": 3,
+  "text": "C.10 Lendo mensagens de erro",
+  "id": "h385"
+ },
+ {
+  "level": 3,
+  "text": "C.11 Boas práticas em experimentos de AR",
+  "id": "h386"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice D — NumPy, pandas e Matplotlib",
+  "id": "h387"
+ },
+ {
+  "level": 3,
+  "text": "D.1 NumPy: arrays e contas rápidas",
+  "id": "h388"
+ },
+ {
+  "level": 4,
+  "text": "D.1.1 Criando arrays",
+  "id": "h389"
+ },
+ {
+  "level": 4,
+  "text": "D.1.2 Indexação e máscaras",
+  "id": "h390"
+ },
+ {
+  "level": 4,
+  "text": "D.1.3 Números aleatórios",
+  "id": "h391"
+ },
+ {
+  "level": 4,
+  "text": "D.1.4 Broadcasting e einsum",
+  "id": "h392"
+ },
+ {
+  "level": 3,
+  "text": "D.2 pandas: tabelas",
+  "id": "h393"
+ },
+ {
+  "level": 3,
+  "text": "D.3 Matplotlib: gráficos",
+  "id": "h394"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Introdução ao scikit-learn",
+  "id": "h395"
+ },
+ {
+  "level": 3,
+  "text": "E.1 A API: fit, predict, transform",
+  "id": "h396"
+ },
+ {
+  "level": 3,
+  "text": "E.2 Pré-processamento",
+  "id": "h397"
+ },
+ {
+  "level": 3,
+  "text": "E.3 Pipelines",
+  "id": "h398"
+ },
+ {
+  "level": 3,
+  "text": "E.4 Modelos que usamos no livro",
+  "id": "h399"
+ },
+ {
+  "level": 3,
+  "text": "E.5 Avaliação e incerteza",
+  "id": "h400"
+ },
+ {
+  "level": 3,
+  "text": "E.6 O que o scikit-learn não faz",
+  "id": "h401"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice F — Introdução ao Gymnasium",
+  "id": "h402"
+ },
+ {
+  "level": 3,
+  "text": "F.1 O ciclo reset → step",
+  "id": "h403"
+ },
+ {
+  "level": 3,
+  "text": "F.2 Espaços de ações e observações",
+  "id": "h404"
+ },
+ {
+  "level": 3,
+  "text": "F.3 Ambientes usados neste livro",
+  "id": "h405"
+ },
+ {
+  "level": 3,
+  "text": "F.4 Criando seu próprio ambiente",
+  "id": "h406"
+ },
+ {
+  "level": 3,
+  "text": "F.5 Wrappers",
+  "id": "h407"
+ },
+ {
+  "level": 3,
+  "text": "F.6 Renderização",
+  "id": "h408"
+ },
+ {
+  "level": 3,
+  "text": "F.7 Ambientes vetorizados",
+  "id": "h409"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice G — Introdução ao PyTorch",
+  "id": "h410"
+ },
+ {
+  "level": 3,
+  "text": "G.1 Tensores",
+  "id": "h411"
+ },
+ {
+  "level": 3,
+  "text": "G.2 Gradientes automáticos",
+  "id": "h412"
+ },
+ {
+  "level": 3,
+  "text": "G.3 Treinando um modelo",
+  "id": "h413"
+ },
+ {
+  "level": 3,
+  "text": "G.4 Redes como classes (nn.Module)",
+  "id": "h414"
+ },
+ {
+  "level": 3,
+  "text": "G.5 Ações importantes",
+  "id": "h415"
+ },
+ {
+  "level": 3,
+  "text": "G.6 Funções de perda e otimizadores frequentes",
+  "id": "h416"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice H — Introdução ao Stable-Baselines3",
+  "id": "h417"
+ },
+ {
+  "level": 3,
+  "text": "H.1 O primeiro treino em quatro linhas",
+  "id": "h418"
+ },
+ {
+  "level": 3,
+  "text": "H.2 Escolhendo o algoritmo",
+  "id": "h419"
+ },
+ {
+  "level": 3,
+  "text": "H.3 Salvar, carregar e usar o modelo",
+  "id": "h420"
+ },
+ {
+  "level": 3,
+  "text": "H.4 Hiperparâmetros importantes",
+  "id": "h421"
+ },
+ {
+  "level": 3,
+  "text": "H.5 Ambientes personalizados e vetorizados",
+  "id": "h422"
+ },
+ {
+  "level": 3,
+  "text": "H.6 Curvas de aprendizado e callbacks",
+  "id": "h423"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice I — Matemática essencial, sem medo",
+  "id": "h424"
+ },
+ {
+  "level": 3,
+  "text": "I.1 Somatório e média",
+  "id": "h425"
+ },
+ {
+  "level": 3,
+  "text": "I.2 Potências, raízes, exponencial e logaritmo",
+  "id": "h426"
+ },
+ {
+  "level": 3,
+  "text": "I.3 Probabilidade",
+  "id": "h427"
+ },
+ {
+  "level": 3,
+  "text": "I.4 Esperança e variância",
+  "id": "h428"
+ },
+ {
+  "level": 3,
+  "text": "I.5 Distribuições usadas no livro",
+  "id": "h429"
+ },
+ {
+  "level": 3,
+  "text": "I.6 Vetores e matrizes",
+  "id": "h430"
+ },
+ {
+  "level": 3,
+  "text": "I.7 Derivadas e gradiente",
+  "id": "h431"
+ },
+ {
+  "level": 3,
+  "text": "I.8 Softmax e entropia",
+  "id": "h432"
+ },
+ {
+  "level": 3,
+  "text": "I.9 Divergência KL",
+  "id": "h433"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice J — Bases de dados: UCI e Kaggle",
+  "id": "h434"
+ },
+ {
+  "level": 3,
+  "text": "J.1 UCI Machine Learning Repository",
+  "id": "h435"
+ },
+ {
+  "level": 3,
+  "text": "J.2 Kaggle",
+  "id": "h436"
+ },
+ {
+  "level": 3,
+  "text": "J.3 Boas práticas com dados",
+  "id": "h437"
+ },
+ {
+  "level": 3,
+  "text": "J.4 Quando os dados não são suficientes",
+  "id": "h438"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h44"
+  "id": "h439"
  }
 ]

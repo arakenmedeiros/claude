@@ -29,7 +29,16 @@ def f10_mapa():
     arrow(ax,(14,50),(8.5,29.5),c=GRY); arrow(ax,(20,50),(25.5,29.5),c=GRY); arrow(ax,(76,50),(58,29.5),c=GRY); arrow(ax,(83,50),(74,29.5),c=GRY); arrow(ax,(90,50),(90,29.5),c=GRY)
     ax.text(50,98,"Um guia rápido para escolher o algoritmo",ha="center",fontsize=11.5,fontweight="bold")
     save(fig,"f10_mapa")
+def f10_curvas():
+    import glob
+    fig,ax=plt.subplots(figsize=(8.6,3.8)); cfg=[("SAC",AMB),("TD3",GRN),("PPO",IND)]
+    for nome,c in cfg:
+        R=[np.load(p) for p in sorted(glob.glob(f"/tmp/w/pend_{nome}_*.npy"))]
+        if not R: continue
+        n=min(len(r) for r in R); M=np.array([np.convolve(r[:n],np.ones(5)/5,mode="valid") for r in R]); x=(np.arange(M.shape[1])+5)*200
+        ax.fill_between(x,M.min(0),M.max(0),color=c,alpha=0.15); ax.plot(x,M.mean(0),c=c,lw=2.4,label=f"{nome} ({len(R)} sementes)")
+    ax.set_xscale("log"); ax.set_xlabel("passos de interação (escala log)"); ax.set_ylabel("retorno por episódio (média móvel de 5)"); ax.set_title("Pendulum: eficiência de dados de PPO, TD3 e SAC"); ax.legend(frameon=False,loc="lower right"); save(fig,"f10_curvas")
 if __name__=="__main__":
     import sys
-    fs={f.__name__[4:]:f for f in [f10_ppo_clip,f10_arquiteturas,f10_mapa]}
+    fs={f.__name__[4:]:f for f in [f10_ppo_clip,f10_arquiteturas,f10_mapa,f10_curvas]}
     for k in (sys.argv[1:] or fs): fs[k]()

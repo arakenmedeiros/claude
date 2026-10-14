@@ -60,3 +60,30 @@ def treinar_ator_critico(semente=0, n_ep=600, lr_p=2e-3, lr_v=5e-3, gamma=0.99, 
         historico.append(total)
         if verbose and (ep + 1) % 100 == 0: print(f"episódio {ep+1:4d} | retorno médio (últimos 100) = {np.mean(historico[-100:]):6.1f}", flush=True)
     return ator, np.array(historico)
+
+def treinar_a2c(semente=0, n_ep=600, n_passos=20, lr_p=1e-3, lr_v=2e-3, gamma=0.99, entropia=0.01, env_id="CartPole-v1", verbose=False):
+    random.seed(semente); np.random.seed(semente); torch.manual_seed(semente)
+    env = gym.make(env_id); n_obs, n_acoes = env.observation_space.shape[0], env.action_space.n
+    ator = rede(n_obs, n_acoes); critico = rede(n_obs, 1)
+    opt_a = torch.optim.Adam(ator.parameters(), lr=lr_p); opt_c = torch.optim.Adam(critico.parameters(), lr=lr_v)
+    historico = []
+    for ep in range(n_ep):
+        obs, _ = env.reset(seed=semente * 10_000 + ep); fim, total = False, 0.0
+        buf_s, buf_logp, buf_ent, buf_r, buf_term = [], [], [], [], []
+        while not fim:
+            s = torch.as_tensor(obs, dtype=torch.float32); dist = Categorical(logits=ator(s)); a = dist.sample()
+            obs, r, term, trunc, _ = env.step(int(a)); fim = term or trunc; total += r
+            buf_s.append(s); buf_logp.append(dist.log_prob(a)); buf_ent.append(dist.entropy()); buf_r.append(r); buf_term.append(term)
+            if len(buf_r) == n_passos or fim:
+                with torch.no_grad(): R = 0.0 if buf_term[-1] else critico(torch.as_tensor(obs, dtype=torch.float32)).item()
+                alvos = []
+                for rr in reversed(buf_r): R = rr + gamma * R; alvos.append(R)
+                alvos = torch.as_tensor(alvos[::-1], dtype=torch.float32)
+                v = critico(torch.stack(buf_s)).squeeze(1); vantagem = (alvos - v).detach()
+                perda_c = nn.functional.mse_loss(v, alvos); opt_c.zero_grad(); perda_c.backward(); opt_c.step()
+                perda_a = -(torch.stack(buf_logp) * vantagem).mean() - entropia * torch.stack(buf_ent).mean()
+                opt_a.zero_grad(); perda_a.backward(); opt_a.step()
+                buf_s, buf_logp, buf_ent, buf_r, buf_term = [], [], [], [], []
+        historico.append(total)
+        if verbose and (ep + 1) % 100 == 0: print(f"episódio {ep+1:4d} | retorno médio (últimos 100) = {np.mean(historico[-100:]):6.1f}", flush=True)
+    return ator, np.array(historico)

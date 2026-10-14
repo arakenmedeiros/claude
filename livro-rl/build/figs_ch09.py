@@ -54,7 +54,16 @@ def f9_regiao():
     ax.text(0.2,2.75,"passo grande demais:\npode piorar a política",color=RED,fontsize=8.5,ha="center",fontweight="bold")
     ax.set_xlabel("parâmetros da política (θ₁)"); ax.set_ylabel("parâmetros da política (θ₂)"); ax.set_title("TRPO/PPO: passos seguros na direção que melhora o retorno",fontsize=10)
     save(fig,"f9_regiao")
+def f9_curvas():
+    import glob
+    fig,ax=plt.subplots(figsize=(8.6,3.8))
+    for nome,lab,c in [("reinforce","REINFORCE",RED),("baseline","REINFORCE + linha de base",IND),("a2c","Ator-crítico (20 passos)",GRN)]:
+        R=[np.load(p) for p in sorted(glob.glob(f"/tmp/w/pg_{nome}_*.npy"))]
+        if not R: continue
+        n=min(len(r) for r in R); M=np.array([np.convolve(r[:n],np.ones(30)/30,mode="valid") for r in R]); x=np.arange(M.shape[1])+30
+        ax.fill_between(x,M.min(0),M.max(0),color=c,alpha=0.15); ax.plot(x,M.mean(0),c=c,lw=2.3,label=f"{lab} ({len(R)} sementes)")
+    ax.set_xlabel("episódio"); ax.set_ylabel("retorno (média móvel de 30)"); ax.set_title("Gradientes de política no CartPole"); ax.legend(frameon=False,fontsize=8.5,loc="center right"); save(fig,"f9_curvas")
 if __name__=="__main__":
     import sys
-    fs={f.__name__[3:]:f for f in [f9_politicas,f9_ideia,f9_baseline,f9_ator_critico,f9_regiao]}
+    fs={f.__name__[3:]:f for f in [f9_politicas,f9_ideia,f9_baseline,f9_ator_critico,f9_regiao,f9_curvas]}
     for k in (sys.argv[1:] or fs): fs[k]()

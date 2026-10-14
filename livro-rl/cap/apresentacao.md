@@ -64,6 +64,18 @@ Algumas observações importantes:
 - As bases de dados vêm de repositórios públicos, como o **UCI Machine Learning Repository** e o **Kaggle**. O Apêndice J explica como obtê-las.
 - **Os resultados numéricos variam** de uma execução para outra, pois o aprendizado por reforço envolve sorteios. Compare tendências, não casas decimais.
 
+:::atencao Nota sobre a verificação dos códigos
+Os blocos de código foram executados de ponta a ponta com Python 3.13, NumPy 2, pandas 3, scikit-learn 1.9, Gymnasium 1.4, PyTorch 2.14 e Stable-Baselines3 2.9. Os resultados numéricos exibidos no texto e as figuras de curvas de aprendizado vêm dessas execuções com os ambientes do Gymnasium. Já os trechos que baixam bases do **UCI** (`ucimlrepo`) e do **Kaggle** foram validados quanto à lógica com dados sintéticos de mesma estrutura, pois o ambiente de verificação não tinha acesso a esses repositórios. Por isso, **não citamos números obtidos com as bases reais**: ao executá-las, você verá os seus próprios resultados, que podem diferir dos de nossos testes. Nomes de colunas e identificadores podem mudar com o tempo (Apêndice J).
+:::
+
+## Apêndices
+
+- **Apêndice A:** gabarito de todas as questões (múltipla escolha e discursivas).
+- **Apêndice B:** glossário de termos.
+- **Apêndices C a H:** introdução a Python, NumPy/pandas/Matplotlib, scikit-learn, Gymnasium, PyTorch e Stable-Baselines3.
+- **Apêndice I:** matemática essencial, sem medo.
+- **Apêndice J:** bases de dados do UCI e do Kaggle.
+
 ## Sugestão de percursos
 
 - **Leitura completa (um semestre):** Capítulos 1 a 13 em ordem, com os projetos.

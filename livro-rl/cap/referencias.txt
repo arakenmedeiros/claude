@@ -1,80 +1,129 @@
-BARTO, A. G.; SUTTON, R. S.; ANDERSON, C. W. Neuronlike adaptive elements that can solve difficult learning control problems. IEEE Transactions on Systems, Man, and Cybernetics, v. SMC-13, n. 5, p. 834-846, 1983.
-BELLMAN, R. Dynamic Programming. Princeton: Princeton University Press, 1957.
-BROCKMAN, G. et al. OpenAI Gym. arXiv preprint arXiv:1606.01540, 2016.
-HENDERSON, P. et al. Deep reinforcement learning that matters. In: AAAI Conference on Artificial Intelligence, 32., 2018. Proceedings [...]. p. 3207-3214.
-KOBER, J.; BAGNELL, J. A.; PETERS, J. Reinforcement learning in robotics: a survey. The International Journal of Robotics Research, v. 32, n. 11, p. 1238-1274, 2013.
-LI, L. et al. A contextual-bandit approach to personalized news article recommendation. In: International Conference on World Wide Web, 19., 2010. Proceedings [...]. p. 661-670.
-MNIH, V. et al. Human-level control through deep reinforcement learning. Nature, v. 518, p. 529-533, 2015.
-NG, A. Y.; HARADA, D.; RUSSELL, S. Policy invariance under reward transformations: theory and application to reward shaping. In: International Conference on Machine Learning, 16., 1999. Proceedings [...]. p. 278-287.
-OUYANG, L. et al. Training language models to follow instructions with human feedback. In: Advances in Neural Information Processing Systems, 35., 2022. Proceedings [...].
-PASZKE, A. et al. PyTorch: an imperative style, high-performance deep learning library. In: Advances in Neural Information Processing Systems, 32., 2019. Proceedings [...].
-PEDREGOSA, F. et al. Scikit-learn: machine learning in Python. Journal of Machine Learning Research, v. 12, p. 2825-2830, 2011.
-RAFFIN, A. et al. Stable-Baselines3: reliable reinforcement learning implementations. Journal of Machine Learning Research, v. 22, n. 268, p. 1-8, 2021.
-SAMUEL, A. L. Some studies in machine learning using the game of checkers. IBM Journal of Research and Development, v. 3, n. 3, p. 210-229, 1959.
-SCHULMAN, J. et al. Proximal policy optimization algorithms. arXiv preprint arXiv:1707.06347, 2017.
-SILVER, D. et al. Mastering the game of Go with deep neural networks and tree search. Nature, v. 529, p. 484-489, 2016.
-SUTTON, R. S. Temporal credit assignment in reinforcement learning. 1984. Tese (Doutorado) - University of Massachusetts Amherst, Amherst, 1984.
-SUTTON, R. S. Learning to predict by the methods of temporal differences. Machine Learning, v. 3, p. 9-44, 1988.
-SUTTON, R. S.; BARTO, A. G. Reinforcement Learning: An Introduction. 2. ed. Cambridge: MIT Press, 2018.
-TESAURO, G. Temporal difference learning and TD-Gammon. Communications of the ACM, v. 38, n. 3, p. 58-68, 1995.
-THORNDIKE, E. L. Animal Intelligence: Experimental Studies. New York: Macmillan, 1911.
-WATKINS, C. J. C. H.; DAYAN, P. Q-learning. Machine Learning, v. 8, n. 3-4, p. 279-292, 1992.
+ABBEEL, P.; NG, A. Y. Apprenticeship learning via inverse reinforcement learning. In: International Conference on Machine Learning, 21., 2004. Proceedings [...].
 AGRAWAL, S.; GOYAL, N. Analysis of Thompson sampling for the multi-armed bandit problem. In: Conference on Learning Theory (COLT), 25., 2012. Proceedings of Machine Learning Research, v. 23, p. 39.1-39.26.
-AUER, P.; CESA-BIANCHI, N.; FISCHER, P. Finite-time analysis of the multiarmed bandit problem. Machine Learning, v. 47, p. 235-256, 2002.
-CHAPELLE, O.; LI, L. An empirical evaluation of Thompson sampling. In: Advances in Neural Information Processing Systems, 24., 2011. Proceedings [...]. p. 2249-2257.
-DUA, D.; GRAFF, C. UCI Machine Learning Repository. Irvine: University of California, School of Information and Computer Science, 2019. Disponível em: https://archive.ics.uci.edu.
-LAI, T. L.; ROBBINS, H. Asymptotically efficient adaptive allocation rules. Advances in Applied Mathematics, v. 6, n. 1, p. 4-22, 1985.
-MORO, S.; CORTEZ, P.; RITA, P. A data-driven approach to predict the success of bank telemarketing. Decision Support Systems, v. 62, p. 22-31, 2014.
-ROBBINS, H. Some aspects of the sequential design of experiments. Bulletin of the American Mathematical Society, v. 58, n. 5, p. 527-535, 1952.
-THOMPSON, W. R. On the likelihood that one unknown probability exceeds another in view of the evidence of two samples. Biometrika, v. 25, n. 3-4, p. 285-294, 1933.
-BERTSEKAS, D. P. Dynamic Programming and Optimal Control. 4. ed. Belmont: Athena Scientific, 2017. v. 1.
-CHEN, D.; SAIN, S. L.; GUO, K. Data mining for the online retail industry: a case study of RFM model-based customer segmentation using data mining. Journal of Database Marketing & Customer Strategy Management, v. 19, p. 197-208, 2012.
-KAELBLING, L. P.; LITTMAN, M. L.; CASSANDRA, A. R. Planning and acting in partially observable stochastic domains. Artificial Intelligence, v. 101, n. 1-2, p. 99-134, 1998.
-PUTERMAN, M. L. Markov Decision Processes: Discrete Stochastic Dynamic Programming. New York: Wiley, 1994.
-BERTSEKAS, D. P.; TSITSIKLIS, J. N. Neuro-Dynamic Programming. Belmont: Athena Scientific, 1996.
-HOWARD, R. A. Dynamic Programming and Markov Processes. Cambridge: MIT Press, 1960.
-METROPOLIS, N.; ULAM, S. The Monte Carlo method. Journal of the American Statistical Association, v. 44, n. 247, p. 335-341, 1949.
-PRECUP, D.; SUTTON, R. S.; SINGH, S. Eligibility traces for off-policy policy evaluation. In: International Conference on Machine Learning, 17., 2000. Proceedings [...]. p. 759-766.
-SINGH, S. P.; SUTTON, R. S. Reinforcement learning with replacing eligibility traces. Machine Learning, v. 22, p. 123-158, 1996.
-JAAKKOLA, T.; JORDAN, M. I.; SINGH, S. P. On the convergence of stochastic iterative dynamic programming algorithms. Neural Computation, v. 6, n. 6, p. 1185-1201, 1994.
-RUMMERY, G. A.; NIRANJAN, M. On-line Q-learning using connectionist systems. Cambridge: Cambridge University Engineering Department, 1994. Technical Report CUED/F-INFENG/TR 166.
-SCHULTZ, W.; DAYAN, P.; MONTAGUE, P. R. A neural substrate of prediction and reward. Science, v. 275, n. 5306, p. 1593-1599, 1997.
-SINGH, S. et al. Convergence results for single-step on-policy reinforcement-learning algorithms. Machine Learning, v. 38, p. 287-308, 2000.
-TSITSIKLIS, J. N. Asynchronous stochastic approximation and Q-learning. Machine Learning, v. 16, p. 185-202, 1994.
-VAN HASSELT, H. Double Q-learning. In: Advances in Neural Information Processing Systems, 23., 2010. Proceedings [...]. p. 2613-2621.
-VAN SEIJEN, H. et al. A theoretical and empirical analysis of Expected Sarsa. In: IEEE Symposium on Adaptive Dynamic Programming and Reinforcement Learning, 2009. Proceedings [...]. p. 177-184.
-WATKINS, C. J. C. H. Learning from delayed rewards. 1989. Tese (Doutorado) - University of Cambridge, Cambridge, 1989.
 ALBUS, J. S. A theory of cerebellar function. Mathematical Biosciences, v. 10, n. 1-2, p. 25-61, 1971.
+AMODEI, D. et al. Concrete problems in AI safety. arXiv preprint arXiv:1606.06565, 2016.
+AUER, P.; CESA-BIANCHI, N.; FISCHER, P. Finite-time analysis of the multiarmed bandit problem. Machine Learning, v. 47, p. 235-256, 2002.
+BAI, Y. et al. Constitutional AI: harmlessness from AI feedback. arXiv preprint arXiv:2212.08073, 2022.
 BAIRD, L. Residual algorithms: reinforcement learning with function approximation. In: International Conference on Machine Learning, 12., 1995. Proceedings [...]. p. 30-37.
-ERNST, D.; GEURTS, P.; WEHENKEL, L. Tree-based batch mode reinforcement learning. Journal of Machine Learning Research, v. 6, p. 503-556, 2005.
-KONIDARIS, G.; OSENTOSKI, S.; THOMAS, P. Value function approximation in reinforcement learning using the Fourier basis. In: AAAI Conference on Artificial Intelligence, 25., 2011. Proceedings [...]. p. 380-385.
-RIEDMILLER, M. Neural fitted Q iteration: first experiences with a data efficient neural reinforcement learning method. In: European Conference on Machine Learning, 2005. Lecture Notes in Computer Science, v. 3720, p. 317-328.
-TSITSIKLIS, J. N.; VAN ROY, B. An analysis of temporal-difference learning with function approximation. IEEE Transactions on Automatic Control, v. 42, n. 5, p. 674-690, 1997.
-VAN HASSELT, H. et al. Deep reinforcement learning and the deadly triad. arXiv preprint arXiv:1812.02648, 2018.
+BARTO, A. G.; SUTTON, R. S.; ANDERSON, C. W. Neuronlike adaptive elements that can solve difficult learning control problems. IEEE Transactions on Systems, Man, and Cybernetics, v. SMC-13, n. 5, p. 834-846, 1983.
 BELLEMARE, M. G. et al. The Arcade Learning Environment: an evaluation platform for general agents. Journal of Artificial Intelligence Research, v. 47, p. 253-279, 2013.
 BELLEMARE, M. G.; DABNEY, W.; MUNOS, R. A distributional perspective on reinforcement learning. In: International Conference on Machine Learning, 34., 2017. Proceedings [...]. p. 449-458.
+BELLMAN, R. Dynamic Programming. Princeton: Princeton University Press, 1957.
+BERTSEKAS, D. P. Dynamic Programming and Optimal Control. 4. ed. Belmont: Athena Scientific, 2017. v. 1.
+BERTSEKAS, D. P.; TSITSIKLIS, J. N. Neuro-Dynamic Programming. Belmont: Athena Scientific, 1996.
+BOTTOU, L. et al. Counterfactual reasoning and learning systems: the example of computational advertising. Journal of Machine Learning Research, v. 14, p. 3207-3260, 2013.
+BRADLEY, R. A.; TERRY, M. E. Rank analysis of incomplete block designs: I. The method of paired comparisons. Biometrika, v. 39, n. 3-4, p. 324-345, 1952.
+BROCKMAN, G. et al. OpenAI Gym. arXiv preprint arXiv:1606.01540, 2016.
+BROWN, N.; SANDHOLM, T. Superhuman AI for multiplayer poker. Science, v. 365, n. 6456, p. 885-890, 2019.
+BROWNE, C. B. et al. A survey of Monte Carlo tree search methods. IEEE Transactions on Computational Intelligence and AI in Games, v. 4, n. 1, p. 1-43, 2012.
+BURDA, Y. et al. Exploration by random network distillation. In: International Conference on Learning Representations, 7., 2019. Proceedings [...].
+CHAPELLE, O.; LI, L. An empirical evaluation of Thompson sampling. In: Advances in Neural Information Processing Systems, 24., 2011. Proceedings [...]. p. 2249-2257.
+CHEN, D.; SAIN, S. L.; GUO, K. Data mining for the online retail industry: a case study of RFM model-based customer segmentation using data mining. Journal of Database Marketing & Customer Strategy Management, v. 19, p. 197-208, 2012.
+CHEN, L. et al. Decision Transformer: reinforcement learning via sequence modeling. In: Advances in Neural Information Processing Systems, 34., 2021. Proceedings [...].
+CHRISTIANO, P. F. et al. Deep reinforcement learning from human preferences. In: Advances in Neural Information Processing Systems, 30., 2017. Proceedings [...].
+CHUA, K. et al. Deep reinforcement learning in a handful of trials using probabilistic dynamics models. In: Advances in Neural Information Processing Systems, 31., 2018. Proceedings [...].
+COBBE, K. et al. Quantifying generalization in reinforcement learning. In: International Conference on Machine Learning, 36., 2019. Proceedings [...]. p. 1282-1289.
 CORTEZ, P. et al. Modeling wine preferences by data mining from physicochemical properties. Decision Support Systems, v. 47, n. 4, p. 547-553, 2009.
+COULOM, R. Efficient selectivity and backup operators in Monte-Carlo tree search. In: International Conference on Computers and Games, 2006. Lecture Notes in Computer Science, v. 4630, p. 72-83.
+DEISENROTH, M. P.; RASMUSSEN, C. E. PILCO: a model-based and data-efficient approach to policy search. In: International Conference on Machine Learning, 28., 2011. Proceedings [...]. p. 465-472.
+DUA, D.; GRAFF, C. UCI Machine Learning Repository. Irvine: University of California, School of Information and Computer Science, 2019. Disponível em: https://archive.ics.uci.edu.
+DUDÍK, M.; LANGFORD, J.; LI, L. Doubly robust policy evaluation and learning. In: International Conference on Machine Learning, 28., 2011. Proceedings [...]. p. 1097-1104.
+ENGSTROM, L. et al. Implementation matters in deep policy gradients: a case study on PPO and TRPO. In: International Conference on Learning Representations, 8., 2020. Proceedings [...].
+ERNST, D.; GEURTS, P.; WEHENKEL, L. Tree-based batch mode reinforcement learning. Journal of Machine Learning Research, v. 6, p. 503-556, 2005.
 FORTUNATO, M. et al. Noisy networks for exploration. In: International Conference on Learning Representations, 6., 2018. Proceedings [...].
+FU, J. et al. D4RL: datasets for deep data-driven reinforcement learning. arXiv preprint arXiv:2004.07219, 2020.
+FUJIMOTO, S.; MEGER, D.; PRECUP, D. Off-policy deep reinforcement learning without exploration. In: International Conference on Machine Learning, 36., 2019. Proceedings [...]. p. 2052-2062.
+FUJIMOTO, S.; VAN HOOF, H.; MEGER, D. Addressing function approximation error in actor-critic methods. In: International Conference on Machine Learning, 35., 2018. Proceedings [...]. p. 1587-1596.
+GAO, L.; SCHULMAN, J.; HILTON, J. Scaling laws for reward model overoptimization. In: International Conference on Machine Learning, 40., 2023. Proceedings [...]. p. 10835-10866.
+GARCÍA, J.; FERNÁNDEZ, F. A comprehensive survey on safe reinforcement learning. Journal of Machine Learning Research, v. 16, p. 1437-1480, 2015.
 GOODFELLOW, I.; BENGIO, Y.; COURVILLE, A. Deep Learning. Cambridge: MIT Press, 2016.
+HA, D.; SCHMIDHUBER, J. Recurrent world models facilitate policy evolution. In: Advances in Neural Information Processing Systems, 31., 2018. Proceedings [...].
+HAARNOJA, T. et al. Soft actor-critic: off-policy maximum entropy deep reinforcement learning with a stochastic actor. In: International Conference on Machine Learning, 35., 2018. Proceedings [...]. p. 1861-1870.
+HAFNER, D. et al. Dream to control: learning behaviors by latent imagination. In: International Conference on Learning Representations, 8., 2020. Proceedings [...].
+HENDERSON, P. et al. Deep reinforcement learning that matters. In: AAAI Conference on Artificial Intelligence, 32., 2018. Proceedings [...]. p. 3207-3214.
 HESSEL, M. et al. Rainbow: combining improvements in deep reinforcement learning. In: AAAI Conference on Artificial Intelligence, 32., 2018. Proceedings [...]. p. 3215-3222.
-KINGMA, D. P.; BA, J. Adam: a method for stochastic optimization. In: International Conference on Learning Representations, 3., 2015. Proceedings [...].
-LECUN, Y.; BENGIO, Y.; HINTON, G. Deep learning. Nature, v. 521, p. 436-444, 2015.
-LIN, L.-J. Self-improving reactive agents based on reinforcement learning, planning and teaching. Machine Learning, v. 8, p. 293-321, 1992.
-RUMELHART, D. E.; HINTON, G. E.; WILLIAMS, R. J. Learning representations by back-propagating errors. Nature, v. 323, p. 533-536, 1986.
-SCHAUL, T. et al. Prioritized experience replay. In: International Conference on Learning Representations, 4., 2016. Proceedings [...].
-VAN HASSELT, H.; GUEZ, A.; SILVER, D. Deep reinforcement learning with Double Q-learning. In: AAAI Conference on Artificial Intelligence, 30., 2016. Proceedings [...]. p. 2094-2100.
-WANG, Z. et al. Dueling network architectures for deep reinforcement learning. In: International Conference on Machine Learning, 33., 2016. Proceedings [...]. p. 1995-2003.
+HO, J.; ERMON, S. Generative adversarial imitation learning. In: Advances in Neural Information Processing Systems, 29., 2016. Proceedings [...].
+HOWARD, R. A. Dynamic Programming and Markov Processes. Cambridge: MIT Press, 1960.
+JAAKKOLA, T.; JORDAN, M. I.; SINGH, S. P. On the convergence of stochastic iterative dynamic programming algorithms. Neural Computation, v. 6, n. 6, p. 1185-1201, 1994.
+JANNER, M. et al. When to trust your model: model-based policy optimization. In: Advances in Neural Information Processing Systems, 32., 2019. Proceedings [...].
+KAELBLING, L. P.; LITTMAN, M. L.; CASSANDRA, A. R. Planning and acting in partially observable stochastic domains. Artificial Intelligence, v. 101, n. 1-2, p. 99-134, 1998.
 KAKADE, S. A natural policy gradient. In: Advances in Neural Information Processing Systems, 14., 2002. Proceedings [...]. p. 1531-1538.
+KINGMA, D. P.; BA, J. Adam: a method for stochastic optimization. In: International Conference on Learning Representations, 3., 2015. Proceedings [...].
+KOBER, J.; BAGNELL, J. A.; PETERS, J. Reinforcement learning in robotics: a survey. The International Journal of Robotics Research, v. 32, n. 11, p. 1238-1274, 2013.
+KOCSIS, L.; SZEPESVÁRI, C. Bandit based Monte-Carlo planning. In: European Conference on Machine Learning, 2006. Lecture Notes in Computer Science, v. 4212, p. 282-293.
 KONDA, V. R.; TSITSIKLIS, J. N. Actor-critic algorithms. In: Advances in Neural Information Processing Systems, 12., 2000. Proceedings [...]. p. 1008-1014.
+KONIDARIS, G.; OSENTOSKI, S.; THOMAS, P. Value function approximation in reinforcement learning using the Fourier basis. In: AAAI Conference on Artificial Intelligence, 25., 2011. Proceedings [...]. p. 380-385.
+KOSTRIKOV, I.; NAIR, A.; LEVINE, S. Offline reinforcement learning with implicit Q-learning. In: International Conference on Learning Representations, 10., 2022. Proceedings [...].
+KUMAR, A. et al. Conservative Q-learning for offline reinforcement learning. In: Advances in Neural Information Processing Systems, 33., 2020. Proceedings [...].
+LAI, T. L.; ROBBINS, H. Asymptotically efficient adaptive allocation rules. Advances in Applied Mathematics, v. 6, n. 1, p. 4-22, 1985.
+LATTIMORE, T.; SZEPESVÁRI, C. Bandit Algorithms. Cambridge: Cambridge University Press, 2020.
+LECUN, Y.; BENGIO, Y.; HINTON, G. Deep learning. Nature, v. 521, p. 436-444, 2015.
+LEVINE, S. et al. Offline reinforcement learning: tutorial, review, and perspectives on open problems. arXiv preprint arXiv:2005.01643, 2020.
+LI, L. et al. A contextual-bandit approach to personalized news article recommendation. In: International Conference on World Wide Web, 19., 2010. Proceedings [...]. p. 661-670.
+LILLICRAP, T. P. et al. Continuous control with deep reinforcement learning. In: International Conference on Learning Representations, 4., 2016. Proceedings [...].
+LIN, L.-J. Self-improving reactive agents based on reinforcement learning, planning and teaching. Machine Learning, v. 8, p. 293-321, 1992.
+LITTMAN, M. L. Markov games as a framework for multi-agent reinforcement learning. In: International Conference on Machine Learning, 11., 1994. Proceedings [...]. p. 157-163.
+LOWE, R. et al. Multi-agent actor-critic for mixed cooperative-competitive environments. In: Advances in Neural Information Processing Systems, 30., 2017. Proceedings [...].
+METROPOLIS, N.; ULAM, S. The Monte Carlo method. Journal of the American Statistical Association, v. 44, n. 247, p. 335-341, 1949.
 MNIH, V. et al. Asynchronous methods for deep reinforcement learning. In: International Conference on Machine Learning, 33., 2016. Proceedings [...]. p. 1928-1937.
+MNIH, V. et al. Human-level control through deep reinforcement learning. Nature, v. 518, p. 529-533, 2015.
+MORO, S.; CORTEZ, P.; RITA, P. A data-driven approach to predict the success of bank telemarketing. Decision Support Systems, v. 62, p. 22-31, 2014.
+NG, A. Y.; HARADA, D.; RUSSELL, S. Policy invariance under reward transformations: theory and application to reward shaping. In: International Conference on Machine Learning, 16., 1999. Proceedings [...]. p. 278-287.
+NG, A. Y.; RUSSELL, S. Algorithms for inverse reinforcement learning. In: International Conference on Machine Learning, 17., 2000. Proceedings [...]. p. 663-670.
+OUYANG, L. et al. Training language models to follow instructions with human feedback. In: Advances in Neural Information Processing Systems, 35., 2022. Proceedings [...].
+PASZKE, A. et al. PyTorch: an imperative style, high-performance deep learning library. In: Advances in Neural Information Processing Systems, 32., 2019. Proceedings [...].
+PATHAK, D. et al. Curiosity-driven exploration by self-supervised prediction. In: International Conference on Machine Learning, 34., 2017. Proceedings [...]. p. 2778-2787.
+PEDREGOSA, F. et al. Scikit-learn: machine learning in Python. Journal of Machine Learning Research, v. 12, p. 2825-2830, 2011.
 PETERS, J.; SCHAAL, S. Reinforcement learning of motor skills with policy gradients. Neural Networks, v. 21, n. 4, p. 682-697, 2008.
-SCHULMAN, J. et al. Trust region policy optimization. In: International Conference on Machine Learning, 32., 2015. Proceedings [...]. p. 1889-1897.
+POMERLEAU, D. A. Efficient training of artificial neural networks for autonomous navigation. Neural Computation, v. 3, n. 1, p. 88-97, 1991.
+PRECUP, D.; SUTTON, R. S.; SINGH, S. Eligibility traces for off-policy policy evaluation. In: International Conference on Machine Learning, 17., 2000. Proceedings [...]. p. 759-766.
+PUTERMAN, M. L. Markov Decision Processes: Discrete Stochastic Dynamic Programming. New York: Wiley, 1994.
+RAFAILOV, R. et al. Direct preference optimization: your language model is secretly a reward model. In: Advances in Neural Information Processing Systems, 36., 2023. Proceedings [...].
+RAFFIN, A. et al. Stable-Baselines3: reliable reinforcement learning implementations. Journal of Machine Learning Research, v. 22, n. 268, p. 1-8, 2021.
+RASHID, T. et al. QMIX: monotonic value function factorisation for deep multi-agent reinforcement learning. In: International Conference on Machine Learning, 35., 2018. Proceedings [...]. p. 4295-4304.
+RIEDMILLER, M. Neural fitted Q iteration: first experiences with a data efficient neural reinforcement learning method. In: European Conference on Machine Learning, 2005. Lecture Notes in Computer Science, v. 3720, p. 317-328.
+ROBBINS, H. Some aspects of the sequential design of experiments. Bulletin of the American Mathematical Society, v. 58, n. 5, p. 527-535, 1952.
+ROSS, S.; GORDON, G. J.; BAGNELL, J. A. A reduction of imitation learning and structured prediction to no-regret online learning. In: International Conference on Artificial Intelligence and Statistics, 14., 2011. Proceedings of Machine Learning Research, v. 15, p. 627-635.
+RUMELHART, D. E.; HINTON, G. E.; WILLIAMS, R. J. Learning representations by back-propagating errors. Nature, v. 323, p. 533-536, 1986.
+RUMMERY, G. A.; NIRANJAN, M. On-line Q-learning using connectionist systems. Cambridge: Cambridge University Engineering Department, 1994. Technical Report CUED/F-INFENG/TR 166.
+SAMUEL, A. L. Some studies in machine learning using the game of checkers. IBM Journal of Research and Development, v. 3, n. 3, p. 210-229, 1959.
+SCHAUL, T. et al. Prioritized experience replay. In: International Conference on Learning Representations, 4., 2016. Proceedings [...].
+SCHRITTWIESER, J. et al. Mastering Atari, Go, chess and shogi by planning with a learned model. Nature, v. 588, p. 604-609, 2020.
 SCHULMAN, J. et al. High-dimensional continuous control using generalized advantage estimation. In: International Conference on Learning Representations, 4., 2016. Proceedings [...].
+SCHULMAN, J. et al. Proximal policy optimization algorithms. arXiv preprint arXiv:1707.06347, 2017.
+SCHULMAN, J. et al. Trust region policy optimization. In: International Conference on Machine Learning, 32., 2015. Proceedings [...]. p. 1889-1897.
+SCHULTZ, W.; DAYAN, P.; MONTAGUE, P. R. A neural substrate of prediction and reward. Science, v. 275, n. 5306, p. 1593-1599, 1997.
+SILVER, D. et al. A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play. Science, v. 362, n. 6419, p. 1140-1144, 2018.
+SILVER, D. et al. Deterministic policy gradient algorithms. In: International Conference on Machine Learning, 31., 2014. Proceedings [...]. p. 387-395.
+SILVER, D. et al. Mastering the game of Go with deep neural networks and tree search. Nature, v. 529, p. 484-489, 2016.
+SILVER, D. et al. Mastering the game of Go without human knowledge. Nature, v. 550, p. 354-359, 2017.
+SINGH, S. P.; SUTTON, R. S. Reinforcement learning with replacing eligibility traces. Machine Learning, v. 22, p. 123-158, 1996.
+SINGH, S. et al. Convergence results for single-step on-policy reinforcement-learning algorithms. Machine Learning, v. 38, p. 287-308, 2000.
+STIENNON, N. et al. Learning to summarize with human feedback. In: Advances in Neural Information Processing Systems, 33., 2020. Proceedings [...].
+SUTTON, R. S. Dyna, an integrated architecture for learning, planning, and reacting. ACM SIGART Bulletin, v. 2, n. 4, p. 160-163, 1991.
+SUTTON, R. S. Learning to predict by the methods of temporal differences. Machine Learning, v. 3, p. 9-44, 1988.
+SUTTON, R. S. Temporal credit assignment in reinforcement learning. 1984. Tese (Doutorado) - University of Massachusetts Amherst, Amherst, 1984.
 SUTTON, R. S. et al. Policy gradient methods for reinforcement learning with function approximation. In: Advances in Neural Information Processing Systems, 12., 2000. Proceedings [...]. p. 1057-1063.
+SUTTON, R. S.; BARTO, A. G. Reinforcement Learning: An Introduction. 2. ed. Cambridge: MIT Press, 2018.
+SUTTON, R. S.; PRECUP, D.; SINGH, S. Between MDPs and semi-MDPs: a framework for temporal abstraction in reinforcement learning. Artificial Intelligence, v. 112, n. 1-2, p. 181-211, 1999.
+SWAMINATHAN, A.; JOACHIMS, T. Batch learning from logged bandit feedback through counterfactual risk minimization. Journal of Machine Learning Research, v. 16, p. 1731-1755, 2015.
+SZEPESVÁRI, C. Algorithms for Reinforcement Learning. San Rafael: Morgan & Claypool, 2010.
+TESAURO, G. Temporal difference learning and TD-Gammon. Communications of the ACM, v. 38, n. 3, p. 58-68, 1995.
+THOMAS, P. S.; BRUNSKILL, E. Data-efficient off-policy policy evaluation for reinforcement learning. In: International Conference on Machine Learning, 33., 2016. Proceedings [...]. p. 2139-2148.
+THOMAS, P. S.; THEOCHAROUS, G.; GHAVAMZADEH, M. High-confidence off-policy evaluation. In: AAAI Conference on Artificial Intelligence, 29., 2015. Proceedings [...]. p. 3000-3006.
+THOMPSON, W. R. On the likelihood that one unknown probability exceeds another in view of the evidence of two samples. Biometrika, v. 25, n. 3-4, p. 285-294, 1933.
+THORNDIKE, E. L. Animal Intelligence: Experimental Studies. New York: Macmillan, 1911.
+TOBIN, J. et al. Domain randomization for transferring deep neural networks from simulated to real world. In: IEEE/RSJ International Conference on Intelligent Robots and Systems, 2017. Proceedings [...]. p. 23-30.
+TSITSIKLIS, J. N. Asynchronous stochastic approximation and Q-learning. Machine Learning, v. 16, p. 185-202, 1994.
+TSITSIKLIS, J. N.; VAN ROY, B. An analysis of temporal-difference learning with function approximation. IEEE Transactions on Automatic Control, v. 42, n. 5, p. 674-690, 1997.
+VAN HASSELT, H. Double Q-learning. In: Advances in Neural Information Processing Systems, 23., 2010. Proceedings [...]. p. 2613-2621.
+VAN HASSELT, H. et al. Deep reinforcement learning and the deadly triad. arXiv preprint arXiv:1812.02648, 2018.
+VAN HASSELT, H.; GUEZ, A.; SILVER, D. Deep reinforcement learning with Double Q-learning. In: AAAI Conference on Artificial Intelligence, 30., 2016. Proceedings [...]. p. 2094-2100.
+VAN SEIJEN, H. et al. A theoretical and empirical analysis of Expected Sarsa. In: IEEE Symposium on Adaptive Dynamic Programming and Reinforcement Learning, 2009. Proceedings [...]. p. 177-184.
+VINYALS, O. et al. Grandmaster level in StarCraft II using multi-agent reinforcement learning. Nature, v. 575, p. 350-354, 2019.
+WANG, Z. et al. Dueling network architectures for deep reinforcement learning. In: International Conference on Machine Learning, 33., 2016. Proceedings [...]. p. 1995-2003.
+WATKINS, C. J. C. H. Learning from delayed rewards. 1989. Tese (Doutorado) - University of Cambridge, Cambridge, 1989.
+WATKINS, C. J. C. H.; DAYAN, P. Q-learning. Machine Learning, v. 8, n. 3-4, p. 279-292, 1992.
 WILLIAMS, R. J. Simple statistical gradient-following algorithms for connectionist reinforcement learning. Machine Learning, v. 8, p. 229-256, 1992.
 WILLIAMS, R. J.; PENG, J. Function optimization using connectionist reinforcement learning algorithms. Connection Science, v. 3, n. 3, p. 241-268, 1991.
-ENGSTROM, L. et al. Implementation matters in deep policy gradients: a case study on PPO and TRPO. In: International Conference on Learning Representations, 8., 2020. Proceedings [...].
-FUJIMOTO, S.; VAN HOOF, H.; MEGER, D. Addressing function approximation error in actor-critic methods. In: International Conference on Machine Learning, 35., 2018. Proceedings [...]. p. 1587-1596.
-HAARNOJA, T. et al. Soft actor-critic: off-policy maximum entropy deep reinforcement learning with a stochastic actor. In: International Conference on Machine Learning, 35., 2018. Proceedings [...]. p. 1861-1870.
-LILLICRAP, T. P. et al. Continuous control with deep reinforcement learning. In: International Conference on Learning Representations, 4., 2016. Proceedings [...].
-SILVER, D. et al. Deterministic policy gradient algorithms. In: International Conference on Machine Learning, 31., 2014. Proceedings [...]. p. 387-395.
+ZIEBART, B. D. et al. Maximum entropy inverse reinforcement learning. In: AAAI Conference on Artificial Intelligence, 23., 2008. Proceedings [...]. p. 1433-1438.

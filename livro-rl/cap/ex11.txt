@@ -1,0 +1,269 @@
+MC: Um método baseado em modelo é aquele que:
+a) aprende ou usa um modelo do ambiente para planejar.
+b) nunca usa recompensas.
+c) só funciona em jogos.
+d) não usa política.
+R: a | Prevê o próximo estado e a recompensa e usa isso para simular.
+
+MC: A principal vantagem do aprendizado baseado em modelo é:
+a) maior eficiência de dados.
+b) ausência de erros.
+c) não precisar de computação.
+d) dispensar a política.
+R: a | Experiências simuladas multiplicam o aprendizado a partir de cada interação real.
+
+MC: O principal risco do aprendizado baseado em modelo é:
+a) erros do modelo, que o agente pode explorar.
+b) falta de recompensas.
+c) excesso de dados.
+d) impossibilidade de usar redes neurais.
+R: a | Um modelo imperfeito leva a decisões ruins no mundo real.
+
+MC: Um modelo de amostras (sample model) é aquele que:
+a) dado (s, a), sorteia um próximo estado e uma recompensa.
+b) dá todas as probabilidades de transição.
+c) devolve só a política.
+d) devolve só valores.
+R: a | Basta para simular experiências.
+
+MC: Um modelo de distribuição fornece:
+a) todas as probabilidades p(s′, r | s, a).
+b) apenas um exemplo de resultado.
+c) apenas a política.
+d) o desconto.
+R: a | Descreve a dinâmica completa.
+
+MC: Num modelo de dinâmica aprendido por aprendizado supervisionado, a entrada e a saída são, tipicamente:
+a) (s, a) e o próximo estado (ou sua variação) e a recompensa.
+b) a política e o valor.
+c) as recompensas e as ações.
+d) os episódios e o desconto.
+R: a | Trata-se de um problema de regressão.
+
+MC: O acúmulo de erros do modelo significa que:
+a) previsões encadeadas ficam cada vez menos confiáveis com o horizonte.
+b) o modelo melhora a cada passo previsto.
+c) o erro é sempre constante.
+d) o modelo deixa de ser necessário.
+R: a | Cada previsão usa a anterior, propagando e ampliando erros.
+
+MC: Uma boa prática para reduzir o impacto dos erros do modelo é:
+a) planejar com horizontes curtos e replanejar com frequência.
+b) planejar sempre com horizontes enormes.
+c) nunca validar no ambiente real.
+d) usar um único modelo sem incerteza.
+R: a | Replanejar corrige desvios do modelo.
+
+MC: No Dyna, a cada passo real o agente:
+a) aprende direto, atualiza o modelo e executa passos de planejamento simulados.
+b) apenas executa a ação.
+c) descarta a experiência.
+d) só planeja, sem agir.
+R: a | Combina aprendizado, modelagem e planejamento.
+
+MC: O Dyna-Q com n = 0 passos de planejamento equivale a:
+a) Q-learning puro.
+b) Monte Carlo.
+c) programação dinâmica.
+d) SARSA(λ).
+R: a | Sem planejamento, só há aprendizado direto.
+
+MC: No labirinto do Dyna, aumentar o número de passos de planejamento:
+a) acelera muito o aprendizado em termos de episódios.
+b) torna o agente pior.
+c) não muda nada.
+d) elimina a necessidade de explorar.
+R: a | Cada passo real vira muitas atualizações imaginadas.
+
+MC: O Dyna-Q+ acrescenta:
+a) um bônus de curiosidade a pares não visitados há muito tempo.
+b) uma segunda rede.
+c) um desconto maior.
+d) uma memória de experiências.
+R: a | Ajuda a detectar mudanças no ambiente.
+
+MC: O planejamento em tempo de decisão:
+a) usa o modelo para escolher a ação do momento, a partir do estado atual.
+b) constrói uma política global antes de agir.
+c) dispensa o modelo.
+d) só funciona offline.
+R: a | O planejamento ocorre na hora da decisão.
+
+MC: No MPC com amostragem aleatória (random shooting), o agente:
+a) sorteia sequências de ações, simula no modelo e executa a primeira da melhor.
+b) executa a sequência inteira sem replanejar.
+c) treina uma política em lote.
+d) usa só o valor do estado.
+R: a | Replaneja a cada passo.
+
+MC: Replanejar a cada passo no MPC serve para:
+a) corrigir os erros do modelo com a observação do estado real.
+b) aumentar o custo sem benefício.
+c) eliminar a aleatoriedade.
+d) reduzir o horizonte.
+R: a | Cada novo estado real reancora o plano.
+
+MC: A MCTS (busca em árvore de Monte Carlo) constrói:
+a) uma árvore de jogadas futuras, concentrando esforço nos ramos promissores.
+b) uma tabela de valores.
+c) uma rede neural.
+d) uma política determinística global.
+R: a | A árvore cresce aos poucos.
+
+MC: As quatro fases da MCTS são:
+a) seleção, expansão, simulação e retropropagação.
+b) coleta, treino, avaliação e teste.
+c) amostragem, normalização, predição e perda.
+d) exploração, aproveitamento, desconto e recompensa.
+R: a | São repetidas a cada iteração.
+
+MC: A regra UCT usada na seleção é:
+a) o UCB aplicado à árvore: w/n + c√(ln N / n).
+b) a regra ε-gulosa.
+c) o softmax.
+d) a regra de Bellman.
+R: a | Equilibra explorar nós pouco visitados e aproveitar os promissores.
+
+MC: Na fase de simulação (rollout) da MCTS básica, a partida é jogada:
+a) aleatoriamente até o fim.
+b) com a política ótima.
+c) por um humano.
+d) apenas uma jogada.
+R: a | O resultado final alimenta a retropropagação.
+
+MC: Ao final da MCTS, a jogada escolhida na raiz é:
+a) a mais visitada.
+b) a menos visitada.
+c) a primeira expandida.
+d) a de menor taxa de vitórias.
+R: a | O número de visitas é um critério robusto.
+
+MC: A MCTS é chamada "anytime" porque:
+a) pode ser interrompida a qualquer momento, e quanto mais tempo, melhor a decisão.
+b) só funciona às vezes.
+c) é executada uma só vez.
+d) não depende de tempo.
+R: a | Mais simulações melhoram a estimativa.
+
+MC: O AlphaGo combinou a MCTS com:
+a) redes de política e de valor.
+b) apenas regras escritas à mão.
+c) tabelas de aberturas apenas.
+d) o Q-learning tabular.
+R: a | As redes guiaram a busca (Silver et al., 2016).
+
+MC: O AlphaZero se diferencia do AlphaGo por:
+a) aprender só por autojogo, sem dados de partidas humanas.
+b) usar partidas humanas.
+c) não usar MCTS.
+d) não usar redes.
+R: a | Aprendeu Go, xadrez e shogi a partir das regras.
+
+MC: No AlphaZero, a rede é treinada para prever:
+a) as probabilidades de visita da MCTS e o resultado da partida.
+b) apenas o resultado.
+c) apenas a jogada humana.
+d) o próximo quadro da imagem.
+R: a | A MCTS serve como professor mais forte que a rede.
+
+MC: O MuZero se destaca por:
+a) aprender um modelo latente, sem receber as regras do ambiente, e planejar com MCTS.
+b) receber as regras prontas.
+c) não usar planejamento.
+d) funcionar só em xadrez.
+R: a | Aprende apenas o que importa para o planejamento.
+
+MC: O Dreamer aprende a política:
+a) a partir de trajetórias imaginadas em um modelo latente.
+b) apenas da experiência real.
+c) sem modelo.
+d) sem recompensa.
+R: a | O modelo de mundo gera os dados de treino.
+
+MC: Para estimar a incerteza do modelo, uma técnica comum é:
+a) usar um conjunto de modelos e observar o desacordo entre eles.
+b) usar um único modelo.
+c) aumentar γ.
+d) ignorar o erro.
+R: a | Onde os modelos discordam, a previsão é menos confiável.
+
+MC: No CartPole, o MPC com modelo aprendido de poucos milhares de transições aleatórias:
+a) consegue desempenho muito acima do aleatório.
+b) nunca funciona.
+c) iguala sempre o máximo de 500.
+d) precisa de milhões de dados.
+R: a | Os testes do capítulo mostram retornos bem acima de ≈ 22.
+
+MC: Qual dos seguintes é um exemplo de modelo do ambiente que já é dado (conhecido)?
+a) As regras do xadrez.
+b) Um regressor treinado com dados de sensores.
+c) Uma rede neural que prevê imagens.
+d) Uma tabela de transições estimada de contagens.
+R: a | As regras definem exatamente a dinâmica; os demais são modelos aprendidos.
+
+MC: O PILCO se destaca por modelar a dinâmica com:
+a) processos gaussianos, que quantificam a incerteza.
+b) tabelas.
+c) árvores de decisão.
+d) regras escritas à mão.
+R: a | Isso o torna muito eficiente em dados em controle simples (Deisenroth e Rasmussen, 2011).
+
+DISC: Compare aprendizado livre de modelo e baseado em modelo quanto a eficiência de dados, custo computacional e riscos.
+R: O livre de modelo é mais simples e barato por passo, mas exige muitos dados. O baseado em modelo é mais eficiente em dados, mas gasta mais computação (planejamento) e sofre de erros do modelo.
+
+DISC: Explique o acúmulo de erros em modelos aprendidos e três formas de mitigá-lo.
+R: Previsões encadeadas propagam erros e o futuro fica irreal. Mitigações: horizontes curtos, replanejamento, conjuntos de modelos com incerteza, misturar dados reais e validação no ambiente real.
+
+DISC: Descreva o algoritmo Dyna-Q e a função de cada uma de suas três etapas.
+R: Atualiza Q com o passo real (aprendizado direto), guarda a transição no modelo (aprendizagem do modelo) e faz n atualizações com transições sorteadas do modelo (planejamento), acelerando a propagação de valores.
+
+DISC: Por que o Dyna-Q aprende o labirinto em muito menos episódios que o Q-learning?
+R: Cada passo real gera muitas atualizações simuladas, propagando o valor da meta rapidamente para estados distantes, enquanto o Q-learning propaga um passo por vez.
+
+DISC: O que acontece com o Dyna-Q se o ambiente mudar depois de aprendido e como o Dyna-Q+ ajuda?
+R: O modelo fica desatualizado e o agente persiste num caminho obsoleto. O Dyna-Q+ dá bônus a pares não visitados há muito tempo, incentivando o teste e a descoberta de novos atalhos.
+
+DISC: Explique o funcionamento do MPC por amostragem aleatória e por que replanejar é importante.
+R: Sorteia sequências de ações, simula no modelo, escolhe a melhor e executa só a primeira. Replanejar a cada passo corrige os erros do modelo e se adapta a perturbações.
+
+DISC: Descreva as quatro fases da MCTS e o papel do UCT.
+R: Seleção (descer com UCT), expansão (novo nó), simulação (jogo aleatório até o fim) e retropropagação (atualiza vitórias e visitas). O UCT equilibra aproveitar nós com boa taxa de vitória e explorar os pouco visitados.
+
+DISC: Calcule o valor UCT, com c = 1,4, de um filho com w = 6 vitórias, n = 10 visitas e pai com N = 50 visitas. (ln 50 ≈ 3,912)
+R: UCT = 6/10 + 1,4 × √(3,912/10) = 0,6 + 1,4 × 0,6254 = 0,6 + 0,8756 ≈ 1,476.
+
+DISC: Explique como o AlphaZero melhora a si mesmo por autojogo.
+R: A MCTS guiada pela rede gera partidas; para cada posição guardam-se as probabilidades de visita e o resultado; a rede é treinada para prevê-los; a rede melhorada guia a MCTS seguinte, formando um ciclo.
+
+DISC: Qual a diferença essencial entre AlphaZero e MuZero?
+R: O AlphaZero conhece as regras (o modelo é dado) e as usa na MCTS; o MuZero não recebe as regras e aprende um modelo latente de recompensa, valor e política para planejar.
+
+DISC: Por que um agente pode "explorar" as falhas do modelo aprendido? Dê um exemplo.
+R: O agente busca ações que o modelo prevê como muito boas; se o modelo extrapola mal fora dos dados, ele indica ganhos falsos. Ex.: prever que um robô voa ao sair do espaço de dados.
+
+DISC: Como um conjunto (ensemble) de modelos ajuda a estimar a incerteza e a evitar a exploração de falhas?
+R: Vários modelos treinados em amostras diferentes tendem a concordar onde há dados e a discordar onde não há. O desacordo indica incerteza e pode ser usado para penalizar planos em regiões duvidosas.
+
+DISC: Em que situações o aprendizado baseado em modelo é mais vantajoso? Dê dois exemplos.
+R: Quando os dados reais são caros ou perigosos (robôs, processos industriais) ou quando as regras são conhecidas (jogos de tabuleiro). Nesses casos, simular economiza interações reais.
+
+DISC: No experimento do CartPole, por que o MPC com modelo aprendido de dados aleatórios consegue bons resultados?
+R: A dinâmica do CartPole é aprendida com poucos dados e o planejamento com horizonte curto e replanejamento usa o modelo para escolher ações boas mesmo sem ter visto trajetórias boas.
+
+DISC: Explique por que o modelo de dinâmica do CartPole prevê a variação do estado (Δs) em vez do próximo estado.
+R: A variação tem escala menor e é mais fácil de aprender; o próximo estado é quase igual ao atual, e prever diretamente exigiria que o modelo reproduzisse a identidade com precisão.
+
+DISC: Interprete o gráfico de erro do modelo por horizonte: o que ele mostra e o que implica para o planejamento?
+R: O erro cresce com o horizonte, mostrando que previsões distantes não são confiáveis. Para o planejamento, convém usar horizontes curtos e replanejar.
+
+DISC: No projeto do mundo de clientes, por que dividir os dados por clientes e não por linhas?
+R: Linhas do mesmo cliente são correlacionadas; misturá-las entre treino e teste inflaria o desempenho. A divisão por clientes avalia a generalização a clientes novos.
+
+DISC: Para que decisões de negócio um simulador de clientes aprendido seria adequado e para quais não seria?
+R: Adequado para comparar políticas em horizontes curtos e identificar incerteza; inadequado para prever efeitos causais de ações nunca registradas (como cupons) ou horizontes longos, em que os erros se acumulam.
+
+DISC: Compare Dyna e MPC quanto ao momento do planejamento e ao resultado produzido.
+R: O Dyna planeja em segundo plano para melhorar a política/valor global; o MPC planeja na hora da decisão, para escolher a próxima ação, sem produzir uma política global armazenada.
+
+DISC: Descreva como você usaria um conjunto de modelos (PETS) para controlar um robô com poucos dados.
+R: Treinar vários modelos probabilísticos com dados reamostrados, usar MPC que simula sequências propagando amostras por diferentes modelos, e escolher ações cujo retorno médio seja alto e consistente, penalizando regiões de desacordo.

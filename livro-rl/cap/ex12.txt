@@ -1,0 +1,269 @@
+MC: O aprendizado offline refere-se a aprender:
+a) a partir de um conjunto fixo de dados, sem interagir com o ambiente durante o treino.
+b) sempre sem recompensas.
+c) apenas em simuladores.
+d) apenas com modelos.
+R: a | Os dados já foram coletados por alguma política de comportamento.
+
+MC: Um motivo para usar aprendizado offline é:
+a) interagir ser caro, perigoso ou impossível (saúde, direção autônoma).
+b) querer mais exploração.
+c) eliminar dados.
+d) evitar aprender.
+R: a | Nessas áreas, a exploração direta não é aceitável.
+
+MC: A clonagem de comportamento (BC) trata o problema como:
+a) aprendizado supervisionado de ações do especialista a partir de estados.
+b) aprendizado por reforço com recompensas.
+c) agrupamento.
+d) planejamento.
+R: a | Prevê a ação do especialista dado o estado.
+
+MC: O sistema ALVINN (Pomerleau, 1991) aprendeu a:
+a) dirigir um veículo observando um motorista humano.
+b) jogar Go.
+c) jogar Atari.
+d) controlar um braço robótico.
+R: a | Foi um dos primeiros exemplos de clonagem de comportamento.
+
+MC: O principal problema da BC é:
+a) o acúmulo de erros ao sair da distribuição do especialista.
+b) exigir um modelo do ambiente.
+c) ser instável como o Q-learning.
+d) não usar dados.
+R: a | O aprendiz erra, chega a estados não vistos e erra mais.
+
+MC: Na BC, os erros se acumulam de forma aproximadamente:
+a) quadrática no horizonte T (ordem T²).
+b) constante.
+c) logarítmica.
+d) nula.
+R: a | Ross, Gordon e Bagnell (2011).
+
+MC: O DAgger (Dataset Aggregation) corrige o problema pedindo ao especialista que:
+a) rotule os estados visitados pelo aprendiz.
+b) execute o aprendiz.
+c) elimine dados.
+d) mude a recompensa.
+R: a | Os dados passam a cobrir os estados em que o aprendiz erra.
+
+MC: Uma exigência do DAgger é:
+a) ter o especialista disponível durante o treino para rotular.
+b) um modelo do ambiente.
+c) recompensas densas.
+d) ações contínuas.
+R: a | O custo é o acesso interativo ao especialista.
+
+MC: O aprendizado por reforço inverso (IRL) busca:
+a) inferir a recompensa que o especialista parece otimizar.
+b) inverter a política.
+c) minimizar a recompensa.
+d) copiar as ações diretamente.
+R: a | Depois, otimiza-se a recompensa inferida.
+
+MC: O GAIL (imitação adversarial generativa) usa:
+a) um discriminador que distingue trajetórias do especialista e do aprendiz.
+b) apenas regras escritas.
+c) uma árvore de decisão.
+d) o Q-learning tabular.
+R: a | O discriminador fornece a recompensa para o aprendiz.
+
+MC: Uma vantagem do IRL sobre a BC é:
+a) a recompensa inferida pode generalizar melhor e revelar o que o especialista valoriza.
+b) ser sempre mais simples.
+c) não precisar de dados.
+d) dispensar o especialista.
+R: a | A recompensa explica as preferências, não só as ações.
+
+MC: No AR offline, o objetivo é obter uma política:
+a) melhor que a dos dados, usando apenas o conjunto fixo.
+b) idêntica à dos dados.
+c) aleatória.
+d) pior que a dos dados.
+R: a | Diferencia-se da imitação, que busca igualar o comportamento.
+
+MC: O deslocamento de distribuição no AR offline significa que:
+a) a política aprendida pode escolher ações que não aparecem nos dados.
+b) os dados mudam de tamanho.
+c) o ambiente muda.
+d) o desconto muda.
+R: a | O valor dessas ações é extrapolado sem verificação.
+
+MC: Por que o Q-learning ingênuo falha no AR offline?
+a) Superestima o valor de ações não vistas, e ninguém corrige o erro sem interação.
+b) É lento demais.
+c) Não usa recompensas.
+d) Usa memória demais.
+R: a | O máximo sobre ações fora dos dados explora erros de extrapolação.
+
+MC: O BCQ propõe:
+a) restringir a política a ações próximas das presentes nos dados.
+b) aumentar a exploração.
+c) usar dados sintéticos.
+d) eliminar a rede-alvo.
+R: a | Evita escolher ações fora do suporte dos dados.
+
+MC: O CQL (Conservative Q-Learning) adiciona à perda:
+a) um termo que reduz o valor das ações não vistas.
+b) um termo de entropia.
+c) um bônus de exploração.
+d) um desconto maior.
+R: a | O conservadorismo evita escolhas baseadas em extrapolação.
+
+MC: O IQL aprende valores:
+a) sem avaliar ações fora do conjunto de dados.
+b) apenas com ações aleatórias.
+c) com um modelo do ambiente.
+d) com Monte Carlo.
+R: a | Usa regressão por expectis sobre ações dos dados.
+
+MC: O Decision Transformer trata o AR como:
+a) um problema de modelagem de sequências condicionado ao retorno desejado.
+b) uma tabela de valores.
+c) um problema de clustering.
+d) um bandit.
+R: a | Prevê ações a partir de trajetórias e do retorno alvo.
+
+MC: O D4RL é:
+a) um conjunto de benchmarks para AR offline.
+b) um algoritmo.
+c) um ambiente de jogo.
+d) uma biblioteca de gráficos.
+R: a | Fu et al. (2020).
+
+MC: A avaliação off-policy (OPE) tem como objetivo:
+a) estimar o valor de uma política-alvo usando dados gerados por outra.
+b) treinar uma política nova.
+c) coletar mais dados.
+d) calcular o desconto.
+R: a | Permite testar políticas antes de implantá-las.
+
+MC: Num bandit com dados registrados, a propensão e(x, a) é:
+a) a probabilidade de a política de registro ter escolhido a ação a no contexto x.
+b) o valor da ação.
+c) o desconto.
+d) a recompensa.
+R: a | É usada para ponderar exemplos.
+
+MC: O estimador IPS usa:
+a) pesos 1/e para exemplos em que a ação coincide com a da política-alvo.
+b) apenas um modelo de resultado.
+c) apenas médias.
+d) árvores de decisão.
+R: a | Corrige a diferença entre as políticas.
+
+MC: Uma desvantagem do IPS é:
+a) variância alta, sobretudo com propensões pequenas.
+b) ter viés sempre grande.
+c) exigir redes neurais.
+d) não usar recompensas.
+R: a | Pesos grandes tornam o estimador instável.
+
+MC: O método direto (DM) estima o valor da política:
+a) usando um modelo do resultado esperado, com baixa variância mas possível viés.
+b) usando apenas pesos de importância.
+c) por simulação do ambiente real.
+d) sem dados.
+R: a | O viés vem de erros de especificação do modelo.
+
+MC: O estimador duplamente robusto (DR) é consistente se:
+a) o modelo de resultado OU as propensões estiverem corretos.
+b) ambos estiverem errados.
+c) a política for determinística.
+d) γ = 1.
+R: a | Daí o nome "duplamente robusto".
+
+MC: A condição de sobreposição (positividade) exige que:
+a) toda ação da política-alvo tenha probabilidade positiva na política de registro.
+b) a política-alvo seja igual à de registro.
+c) as recompensas sejam positivas.
+d) os dados sejam rotulados.
+R: a | Sem isso, não há dados sobre a ação.
+
+MC: Confundidores ocultos são variáveis que:
+a) influenciam tanto a escolha da ação quanto o resultado, mas não estão nos dados.
+b) são irrelevantes.
+c) são sempre aleatórias.
+d) só afetam o desconto.
+R: a | Podem invalidar a avaliação off-policy.
+
+MC: O exemplo da UTI mostra que:
+a) associações em dados observacionais podem refletir confusão, não causa.
+b) a UTI aumenta sempre a mortalidade.
+c) a UTI é desnecessária.
+d) dados observacionais são sempre confiáveis.
+R: a | A gravidade influencia a ida à UTI e a morte.
+
+MC: Na base Bank Marketing, a coluna duration é removida da avaliação porque:
+a) só é conhecida depois do contato, vazando informação.
+b) é categórica.
+c) tem muitos ausentes.
+d) é constante.
+R: a | Não pode ser usada para decidir o canal antes do contato.
+
+MC: O SNIPS (IPS auto-normalizado) difere do IPS por:
+a) dividir pela soma dos pesos de importância, reduzindo muito a variância.
+b) não usar pesos.
+c) usar apenas o modelo.
+d) exigir ações contínuas.
+R: a | Troca um pequeno viés por menor variância.
+
+DISC: Dê três situações reais em que o AR offline é preferível ao online e explique por quê.
+R: Saúde (testar tratamentos aleatórios é antiético), direção autônoma (explorar é perigoso) e sistemas de recomendação (já existem logs extensos e experimentar custa receita). Em todas, a interação livre é cara ou arriscada.
+
+DISC: Explique a clonagem de comportamento e por que ela sofre com o acúmulo de erros.
+R: Treina-se um classificador para prever a ação do especialista no estado. Na execução, pequenos erros levam a estados não vistos no treino, onde o modelo erra mais, o que afasta o aprendiz da trajetória do especialista e acumula erros.
+
+DISC: Descreva o DAgger e explique por que ele reduz o acúmulo de erros.
+R: Executa o aprendiz, coleta os estados que ele visita, pede ao especialista os rótulos desses estados e agrega ao conjunto de treino. Assim o aprendiz é treinado exatamente nos estados em que erra, cobrindo a distribuição que ele própria gera.
+
+DISC: Compare BC, IRL e GAIL quanto ao que aprendem e a vantagens e limitações.
+R: BC aprende ações diretamente (simples, mas frágil fora da distribuição). IRL aprende uma recompensa e depois otimiza (generaliza e explica, porém é custoso). GAIL treina um discriminador como recompensa (imitação poderosa, mas instável como as GANs).
+
+DISC: Explique o problema do deslocamento de distribuição no AR offline.
+R: A política aprendida pode escolher ações pouco ou nunca vistas nos dados; o valor delas é extrapolado e muitas vezes superestimado. Como não há interação para corrigir, a política passa a preferir ações ilusórias e o desempenho colapsa.
+
+DISC: Descreva as ideias de BCQ, CQL e IQL para lidar com o deslocamento de distribuição.
+R: BCQ restringe a política a ações próximas das dos dados; CQL penaliza o valor de ações fora dos dados (conservadorismo); IQL aprende valores usando apenas ações do conjunto, sem maximizar sobre ações novas.
+
+DISC: Em que casos a BC é suficiente e quando o AR offline pode superá-la?
+R: A BC basta quando os dados vêm de um especialista de boa qualidade. O AR offline supera quando os dados têm qualidade mista e as recompensas permitem combinar os melhores trechos de cada trajetória.
+
+DISC: Defina avaliação off-policy e explique por que ela é importante antes de implantar uma política.
+R: É estimar o valor de uma política-alvo com dados de outra política. É importante para evitar implantar políticas piores ou arriscadas, testando-as com dados históricos.
+
+DISC: Escreva e explique os estimadores IPS, SNIPS, DM e DR.
+R: DM: média de μ̂(x, π(x)). IPS: média de 1[a=π(x)] y/e. SNIPS: soma dos pesos × y dividida pela soma dos pesos. DR: média de μ̂(x, π(x)) + 1[a=π(x)] (y − μ̂(x, a))/e. O DR combina modelo e correção por pesos.
+
+DISC: Compare viés e variância de DM, IPS e DR.
+R: DM tem baixa variância, mas é enviesado se o modelo é ruim. IPS é não viesado (propensão correta), com variância alta. DR tem baixo viés se o modelo ou a propensão estiver correto e variância menor que a do IPS quando o modelo é informativo.
+
+DISC: Por que propensões muito pequenas são problemáticas para o IPS e o que se pode fazer?
+R: Geram pesos 1/e enormes, que fazem poucas observações dominarem a estimativa e elevam a variância. Pode-se recortar propensões, usar SNIPS ou DR e verificar a sobreposição.
+
+DISC: Explique a condição de sobreposição e como verificá-la nos dados.
+R: A política-alvo só pode escolher ações com probabilidade positiva na política de registro. Verifica-se estimando propensões e examinando o histograma: muitos valores perto de 0 ou 1 indicam falta de sobreposição.
+
+DISC: O que são confundidores ocultos e como podem enganar uma avaliação off-policy? Dê um exemplo.
+R: Variáveis que afetam a escolha da ação e o resultado, mas não estão no contexto. Exemplo: se o banco ligava por celular para clientes mais receptivos (variável não observada), o canal parece melhor do que é.
+
+DISC: Explique por que "duration" é uma variável problemática na base Bank Marketing.
+R: Só é conhecida após a ligação e depende do interesse do cliente. Usá-la na decisão vaza informação do resultado, superestimando o desempenho e invalidando a avaliação.
+
+DISC: Descreva o experimento semissintético da Seção 12.7.6 e por que ele é útil.
+R: Usa-se um modelo flexível como "mundo verdadeiro", simulam-se dados registrados com a propensão estimada e comparam-se as estimativas de cada método com o valor verdadeiro, medindo viés e variância. É útil porque, com dados reais, o valor verdadeiro é desconhecido.
+
+DISC: Por que, no experimento, o DM tende a ter viés mesmo com baixa variância?
+R: O modelo usado pelo DM (regressão logística) é mal especificado em relação ao mundo verdadeiro, então seu erro sistemático não diminui com mais dados; já a variância é baixa porque o modelo é simples.
+
+DISC: Compare BC e FQI offline num conjunto de qualidade mista e explique o resultado esperado.
+R: A BC imita o comportamento misto, incluindo ações ruins. O FQI usa as recompensas para escolher as melhores ações por estado e pode superar o comportamento dos dados, desde que haja cobertura dos estados relevantes.
+
+DISC: Proponha uma análise de sensibilidade para o limite de recorte das propensões e explique o que esperar.
+R: Variar o limite (0,01; 0,05; 0,1), recalcular IPS e DR e comparar. Limites menores reduzem o viés, mas aumentam a variância; limites maiores reduzem a variância e aumentam o viés. Resultados estáveis indicam robustez.
+
+DISC: Discuta por que recomendar uma política a partir de dados observacionais exige cautela mesmo com DR.
+R: O DR corrige erros de modelo ou de propensão, mas não resolve confundidores não observados nem falta de sobreposição. Sem randomização, o efeito causal estimado depende de suposições não testáveis.
+
+DISC: Dê um exemplo de aplicação em saúde de avaliação off-policy e liste os cuidados éticos e estatísticos necessários.
+R: Avaliar uma nova regra de dosagem usando prontuários antigos. Cuidados: privacidade, confundimento (gravidade), sobreposição (ações raras), intervalos de confiança conservadores, validação clínica e supervisão humana antes de qualquer uso.
