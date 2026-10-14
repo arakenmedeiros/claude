@@ -72,7 +72,7 @@ from stable_baselines3.common.monitor import Monitor
 env_aval = Monitor(gym.make("CartPole-v1"))
 cb = EvalCallback(env_aval, eval_freq=2_000, n_eval_episodes=5, deterministic=True, verbose=0)
 PPO("MlpPolicy", gym.make("CartPole-v1"), verbose=0, seed=1).learn(total_timesteps=10_000, callback=cb)
-print("avaliações:", len(cb.evaluations_results), "| melhor retorno médio:", round(float(np.max(cb.evaluations_results.mean(axis=1))), 1) if hasattr(cb.evaluations_results, "mean") else "n/d")
+print("melhor retorno médio nas avaliações:", round(float(cb.best_mean_reward), 1), "| última:", round(float(cb.last_mean_reward), 1))
 ```
 
 :::atencao Boas práticas
