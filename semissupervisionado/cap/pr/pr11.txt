@@ -1,0 +1,140 @@
+@@EX 1 | Mixup à mão | básico
+Com NumPy, misture duas "imagens" de 4 pixels, `x1 = (1, 0, 0, 1)` com rótulo "classe 0" e `x2 = (0, 1, 1, 0)` com rótulo "classe 2", usando os pesos λ = 0,8, 0,5 e 0,2 (3 classes, rótulos em *one-hot*). Mostre a imagem e o rótulo misturados. Depois, sorteie 5 valores de λ da distribuição Beta(0,75; 0,75) (`RandomState(0)`) e mostre λ e max(λ, 1 − λ).
+
+*Pergunta:* para que serve tomar max(λ, 1 − λ), como faz o MixMatch?
+@@SOL
+```python
+import numpy as np
+
+x1, x2 = np.array([1.0, 0, 0, 1]), np.array([0, 1.0, 1, 0]); y1, y2 = np.array([1.0, 0, 0]), np.array([0, 0, 1.0])
+print("lambda | imagem misturada      | rótulo misturado")
+for lam in [0.8, 0.5, 0.2]:
+    print(f"{lam:6.1f} | {str(lam * x1 + (1 - lam) * x2):21s} | {lam * y1 + (1 - lam) * y2}")
+r = np.random.RandomState(0); lam = r.beta(0.75, 0.75, 5)
+print("\nlambda sorteado:", np.round(lam, 3)); print("max(lambda, 1 - lambda):", np.round(np.maximum(lam, 1 - lam), 3))
+```
+@@NOTE Com λ = 0,8, a imagem misturada é (0,8; 0,2; 0,2; 0,8) e o rótulo é (0,8; 0; 0,2): 80% da classe 0 e 20% da classe 2. Com λ = 0,5, a mistura é uma média simples, e com λ = 0,2 inverte-se a proporção. Os cinco valores sorteados da Beta(0,75; 0,75) foram 0,534; 0,363; 0,432; 0,007 e 0,095, e com max(λ, 1 − λ) viram 0,534; 0,637; 0,568; 0,993 e 0,905. Tomar o máximo garante λ ≥ 0,5, de modo que o exemplo misturado fique **mais perto do primeiro** do que do segundo. No MixMatch, isso mantém os exemplos misturados rotulados mais próximos dos rotulados, e os não rotulados, dos não rotulados. Note que a distribuição Beta(0,75; 0,75) tem muita massa perto de 0 e de 1, ou seja, muitas misturas são quase "não misturas".
+@@EX 2 | Quantos pseudo-rótulos passam pelo limiar? | básico
+No **Digits** (30% para teste), com 50 rótulos (5 por dígito, `RandomState(0)`), treine a regressão logística e calcule, para os exemplos de treino sem rótulo, quantos têm confiança (probabilidade máxima) maior ou igual a 0,5; 0,7; 0,9; 0,95 e 0,99, e a **precisão** dos pseudo-rótulos que passam (compare com os rótulos verdadeiros, só como diagnóstico).
+
+*Pergunta:* o limiar mais alto produz alvos mais corretos? Há um custo?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+r = np.random.RandomState(0); idx = np.concatenate([r.choice(np.where(y_tr == d)[0], 5, replace=False) for d in range(10)])
+resto = np.setdiff1d(np.arange(len(y_tr)), idx)
+m = LogisticRegression(max_iter=3000).fit(X_tr[idx], y_tr[idx]); P = m.predict_proba(X_tr[resto]); conf, rot = P.max(1), P.argmax(1)
+print(f"{len(resto)} exemplos sem rótulo | acurácia geral dos pseudo-rótulos: {100 * np.mean(rot == y_tr[resto]):.1f}%")
+print("limiar | passam   | precisão")
+for lim in [0.5, 0.7, 0.9, 0.95, 0.99]:
+    k = conf >= lim; print(f"{lim:6.2f} | {k.sum():4d} ({100 * k.mean():4.1f}%) | " + (f"{100 * np.mean(rot[k] == y_tr[resto][k]):5.1f}%" if k.any() else "   --"))
+```
+@@NOTE Dos 1.207 exemplos sem rótulo, os pseudo-rótulos da regressão logística estão corretos em 86,3%. Com limiar 0,5, passam 713 (59,1%) com precisão de 96,2%; com 0,7, passam 257 (21,3%), com 98,8%. Com 0,9 ou mais, **nenhum** exemplo passa: com 50 rótulos, a regressão logística nunca chega a 90% de confiança em um exemplo sem rótulo. A precisão sobe com o limiar, mas a quantidade de alvos cai, e o limiar "clássico" de 0,95 simplesmente **desligaria** o uso dos dados sem rótulo com este classificador. É a mesma lição do Capítulo 14: o limiar depende da escala das probabilidades do modelo.
+@@EX 3 | O viés de confirmação em ação | intermediário
+No **Digits**, faça um self-training com rodadas: a cada rodada, a regressão logística rotula os 100 exemplos sem rótulo de maior confiança e os adiciona ao treino (10 rodadas). Compare **1 rótulo por dígito** (10 rótulos) e **5 por dígito** (50). Em cada rodada, mostre a **precisão** dos pseudo-rótulos adicionados naquela rodada e a acurácia no teste. Use 5 sorteios e mostre as médias.
+
+*Pergunta:* a precisão dos pseudo-rótulos cai ao longo das rodadas? Isso é "viés de confirmação"? O que muda com mais rótulos iniciais?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+def rodar(por_classe, s, rodadas=10, k=100):
+    r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == d)[0], por_classe, replace=False) for d in range(10)])
+    Xl, yl = X_tr[idx], y_tr[idx]; livre = np.setdiff1d(np.arange(len(y_tr)), idx); hist = []
+    for _ in range(rodadas):
+        m = LogisticRegression(max_iter=3000).fit(Xl, yl); P = m.predict_proba(X_tr[livre]); top = np.argsort(-P.max(1))[:k]
+        novos = livre[top]; hist.append((np.mean(P.argmax(1)[top] == y_tr[novos]), m.score(X_te, y_te)))
+        Xl = np.vstack([Xl, X_tr[novos]]); yl = np.r_[yl, P.argmax(1)[top]]; livre = np.delete(livre, top)
+    return np.array(hist)
+for por in [1, 5]:
+    h = np.mean([rodar(por, s) for s in range(5)], axis=0)
+    print(f"\n{10 * por} rótulos iniciais | rodada | precisão dos pseudo-rótulos adicionados | acurácia no teste")
+    for i in [0, 1, 2, 4, 6, 9]: print(f"{'':20s} | {i + 1:6d} | {100 * h[i, 0]:38.1f}% | {100 * h[i, 1]:.1f}%")
+```
+@@NOTE Com **10 rótulos**, a primeira rodada adiciona pseudo-rótulos com 98,8% de precisão, mas a precisão cai a cada rodada (88,0% na terceira, 45,2% na quinta, 14,0% na décima) e a acurácia no teste desce de 62,3% para 44,0%: o self-training **piorou** o modelo. Com **50 rótulos**, a precisão fica em 94,6% ou mais até a quinta rodada e cai para 56,4% na décima, e a acurácia no teste vai de 86,0% para 81,0%: também piorou, mais devagar. Há dois efeitos misturados: (1) por construção, as rodadas finais adicionam os exemplos **menos confiantes** (que sobraram), e portanto menos precisos; (2) os erros das rodadas anteriores entram no treino e são reforçados (viés de confirmação). O experimento não separa os dois, mas a queda da acurácia no teste mostra que o efeito líquido foi negativo. Com mais rótulos iniciais, o processo é mais seguro, e a recomendação prática é **parar cedo** (poucas rodadas) ou usar um filtro de confiança, em vez de rotular quase tudo.
+@@EX 4 | A força do aumento no FixMatch | intermediário
+No **MNIST** (100 rótulos, 10.000 sem rótulo, um sorteio, 1.000 passos), treine o **FixMatch** com duas configurações do aumento "forte": (a) o aumento forte do livro e (b) o aumento fraco no lugar do forte (`forte=aumento_fraco`). Compare com a referência supervisionada com o mesmo aumento forte. Mostre acurácia no teste, fração aceita e precisão dos alvos.
+
+*Pergunta:* o aumento forte importa no FixMatch? Dê uma explicação.
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_mnist(); idx = sortear_rotulados(y, 10, 0)
+u = np.random.RandomState(100).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
+print("configuração                       | acurácia no teste | alvos que passam | precisão dos alvos  (1.000 passos)")
+for nome, metodo, forte in [("referência (só rotulados)", "sup", aumento_forte), ("FixMatch, aumento forte do livro", "fixmatch", aumento_forte), ("FixMatch, aumento fraco no lugar do forte", "fixmatch", aumento_fraco)]:
+    _, _, h = treinar_ssl(metodo, X[idx], y[idx], X[u], passos=1000, forte=forte, yu=y[u], semente=0, X_teste=X_te, y_teste=y_te, relatar=(1000,))
+    _, a, _, fr, pr = h[0]
+    print(f"{nome:42s} | {100 * a:16.1f}% | " + (f"{100 * fr:14.1f}% | {100 * pr:.1f}%" if metodo != "sup" else "            -- | --"))
+```
+@@NOTE A referência obteve 93,7%. O FixMatch com o aumento forte do livro chegou a 95,2% (70,3% dos alvos passaram, com 98,6% de precisão), e com o aumento **fraco** no lugar do forte, 95,4% (81,7% passaram, 97,6% de precisão). A diferença (0,2 ponto) está muito dentro do ruído. Portanto, **neste experimento, o aumento forte não foi decisivo** no MNIST, ao contrário do que se costuma dizer sobre o FixMatch. Possíveis explicações (não testadas aqui): o MNIST é um problema fácil, em que o ganho já vem da minimização da entropia e do próprio pseudo-rótulo; e com o aumento fraco passam mais alvos. Em dados mais difíceis (imagens naturais), a literatura reporta que a força do aumento é importante, e um sorteio e 1.000 passos não bastam para contradizê-la.
+@@EX 5 | A temperatura do afiamento no MixMatch | avançado
+No **MNIST** (mesmos dados, um sorteio, 1.000 passos), treine o MixMatch simplificado (peso 10) com a temperatura de afiamento `T_mix` = 0,2; 0,5 e 1,0 (1,0 = sem afiamento). Mostre a acurácia no teste.
+
+*Pergunta:* o afiamento ajuda? Qual a relação com a minimização da entropia do Capítulo 7?
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_mnist(); idx = sortear_rotulados(y, 10, 0)
+u = np.random.RandomState(100).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
+print("temperatura | acurácia no teste (MixMatch simplificado, peso 10, 1.000 passos)")
+for T in [0.2, 0.5, 1.0]:
+    _, _, h = treinar_ssl("mixmatch", X[idx], y[idx], X[u], passos=1000, peso=10.0, T_mix=T, semente=0, X_teste=X_te, y_teste=y_te, relatar=(1000,))
+    print(f"{T:11.1f} | {100 * h[0][1]:.1f}%")
+```
+@@NOTE A temperatura 0,2 deu 94,8%, a 0,5 deu 94,5% e a 1,0 (sem afiamento), 93,8%. A tendência vai no sentido esperado: alvos mais **afiados** (mais perto de rótulos duros) ajudam, de acordo com a ideia da **minimização da entropia** do Capítulo 7, que empurra o modelo a decisões confiantes. Mas as diferenças são de menos de um ponto, com um único sorteio, e portanto não conclusivas. Temperaturas muito baixas aproximam o alvo de um rótulo duro e aumentam o risco de reforçar erros.
+@@PROJ Pseudo-rótulos para roupas: FixMatch, Pseudo-Label e o limiar no Fashion-MNIST | Cap11
+**Fonte dos dados.** *Fashion-MNIST* (Zalando Research; também no Kaggle), 70.000 imagens 28×28 de 10 tipos de peças de roupa (`carregar_fashion()` de `utilidades.py`, espelho público).
+
+**Contexto.** No Capítulo 10, os métodos de consistência deram ganhos modestos no Fashion-MNIST, e a precisão dos alvos da UDA foi de só 75%. Agora a loja quer saber se os pseudo-rótulos do FixMatch, com um **limiar de confiança**, fazem melhor, e **o que acontece com um limiar baixo**.
+
+**Tarefas.**
+1. Use o aumento moderado do Capítulo 10 (rotação de até 10°, escala de 10%, deslocamento de até 10%) como `forte` e o deslocamento de até 8% como `fraco`.
+2. Com 100 rótulos (10 por classe), 10.000 imagens sem rótulo, 1.500 passos e dois sorteios, compare no teste: a referência (`sup`), o Pseudo-Label, o FixMatch com limiar 0,95 e o FixMatch com limiar 0,7.
+3. Reporte, para os métodos de pseudo-rótulos, a **fração aceita** e a **precisão** dos alvos.
+4. Escreva uma recomendação (8 a 10 linhas): algum método compensa? O que o limiar faz com a quantidade e a qualidade dos alvos?
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_fashion()
+moderado = lambda x: aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)
+print("método                    | acerto no teste | fração aceita | precisão dos alvos  (Fashion-MNIST, 100 rótulos, 1.500 passos, 2 sorteios)")
+for nome, metodo, lim in [("só rotulados (sup)", "sup", 0.95), ("Pseudo-Label", "pseudo", 0.95), ("FixMatch, limiar 0,95", "fixmatch", 0.95), ("FixMatch, limiar 0,70", "fixmatch", 0.7)]:
+    r = []
+    for s in range(2):
+        idx = sortear_rotulados(y, 10, s); u = np.random.RandomState(100 + s).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
+        _, _, h = treinar_ssl(metodo, X[idx], y[idx], X[u], passos=1500, limiar=lim, forte=moderado, fraco=aumento_fraco, yu=y[u], semente=s, X_teste=X_te, y_teste=y_te, relatar=(1500,))
+        r.append([h[0][1], h[0][3], h[0][4]])
+    r = np.array(r).mean(axis=0); f = lambda v: f"{100 * v:11.1f}%" if not np.isnan(v) else "         --"
+    print(f"{nome:25s} | {f(r[0])} | {f(r[1])} | {f(r[2])}")
+```
+@@RUBRICA
+- O aumento é adequado ao problema, e a referência usa o mesmo aumento e o mesmo número de passos.
+- Foram usados dois sorteios e a mesma partição de teste para todos os métodos.
+- A fração e a precisão dos alvos são calculadas com `yu` apenas como diagnóstico.
+- Os dois limiares do FixMatch são comparados quanto à quantidade e à qualidade dos alvos e à acurácia.
+- A recomendação é coerente com os números e admite os limites (dois sorteios, orçamento de passos).
+@@NOTE Com 100 rótulos e dois sorteios, a referência obteve 70,9%. O **Pseudo-Label** (sem filtro, 100% dos alvos, 71,9% de precisão) chegou a 73,5% (+2,6); o **FixMatch com limiar 0,95** (71,8% aceitos, precisão de 81,7%), a 72,9% (+2,0); e com limiar 0,70 (89,6% aceitos, precisão de 75,5%), a 72,7% (+1,8). Todos os métodos ficaram dentro de cerca de 1 ponto uns dos outros e dentro do ruído, e o melhor numericamente, o Pseudo-Label, é o que **não** tem filtro. O limiar fez o que se espera nos alvos (mais alto, menos alvos e mais precisão), mas não na acurácia. A **precisão dos alvos** (72% a 82%) é muito menor que no MNIST (96% a 99%): em roupas parecidas (camisa, camiseta, pulôver), até as previsões confiantes erram. Recomendação: os pseudo-rótulos dão um ganho **modesto** (cerca de 2 pontos), semelhante ao da consistência (Capítulo 10: 72,6% a 72,8%), e a diferença entre os métodos não é confiável com dois sorteios. Um ganho maior provavelmente exige uma **representação melhor**, tema do Capítulo 12. Limites: dois sorteios e 1.500 passos.
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits.
+- **Kaggle:** Fashion-MNIST e Digit Recognizer.
+- **Artigos:** Sohn et al. (2020) e Arazo et al. (2020), sobre o FixMatch e o viés de confirmação.

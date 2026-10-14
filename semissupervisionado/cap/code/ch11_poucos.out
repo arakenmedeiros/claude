@@ -1,0 +1,5 @@
+MNIST, 10.000 sem rótulo, 1500 passos, 1 sorteio: e com ainda menos rótulos?
+rótulos (por dígito) | só rotulados | Pseudo-Label | FixMatch (0,95) | precisão dos alvos do FixMatch
+  10 ( 1)           |        62.3% |        27.9% |           69.4% | 81.5%
+  30 ( 3)           |        78.8% |        90.5% |           90.7% | 95.6%
+ 100 (10)           |        93.0% |        94.9% |           95.5% | 98.9%

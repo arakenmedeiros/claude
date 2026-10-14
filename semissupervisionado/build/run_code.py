@@ -5,7 +5,7 @@ ROOT = "/home/user/claude/semissupervisionado"
 CODE = ROOT + "/cap/code"
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 force = "--force" in sys.argv
-files = sorted(glob.glob(CODE + "/*.py"))
+files = sorted(glob.glob(CODE + "/ch*.py"))
 if args: files = [f for f in files if any(os.path.basename(f).startswith(a) for a in args)]
 falhas = 0
 for f in files:

@@ -1,0 +1,7 @@
+UDA no MNIST (100 rótulos, 1500 passos, 1 sorteio): quantas imagens sem rótulo? (0 = só a referência supervisionada)
+sem rótulo | aluno (teste) | professor EMA (teste)
+         0 |         93.0% | 94.3%
+       100 |         94.5% | 94.6%
+      1000 |         96.1% | 96.4%
+     10000 |         96.1% | 96.6%
+     40000 |         95.7% | 96.1%

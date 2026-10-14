@@ -1,107 +1,107 @@
 MC: A suposição de baixa densidade afirma que a fronteira de decisão deve passar por:
-a) regiões com poucos pontos.
+a) o ponto de maior densidade.
 b) regiões com muitos pontos.
-c) o centro de cada classe.
-d) o ponto de maior densidade.
-R: a | A fronteira deve atravessar o "campo vazio" entre os grupos.
+c) regiões com poucos pontos.
+d) o centro de cada classe.
+R: c | A fronteira deve atravessar o "campo vazio" entre os grupos.
 
 MC: Na analogia das duas cidades, os pontos sem rótulo ajudam porque:
-a) mostram onde estão as regiões movimentadas e onde estão os campos vazios.
-b) dizem o nome de cada cidade.
-c) substituem os rótulos.
-d) aumentam o tamanho da margem.
-R: a | Mesmo sem rótulo, a distribuição dos pontos revela as regiões vazias.
+a) dizem o nome de cada cidade.
+b) substituem os rótulos.
+c) aumentam o tamanho da margem.
+d) mostram onde estão as regiões movimentadas e onde estão os campos vazios.
+R: d | Mesmo sem rótulo, a distribuição dos pontos revela as regiões vazias.
 
 MC: Na SVM, a margem é:
-a) a distância entre a fronteira e os exemplos mais próximos de cada classe.
-b) o número de exemplos.
-c) a acurácia no teste.
-d) o número de classes.
-R: a | Quanto maior a margem, mais folga há entre as classes.
+a) o número de exemplos.
+b) a distância entre a fronteira e os exemplos mais próximos de cada classe.
+c) o número de classes.
+d) a acurácia no teste.
+R: b | Quanto maior a margem, mais folga há entre as classes.
 
 MC: Os vetores de suporte são:
-a) os exemplos sobre a margem ou que a violam, que determinam a fronteira.
-b) todos os exemplos de teste.
-c) os exemplos sem rótulo.
-d) os atributos mais importantes.
-R: a | Só os vetores de suporte influenciam a fronteira da SVM.
+a) os atributos mais importantes.
+b) os exemplos sem rótulo.
+c) os exemplos sobre a margem ou que a violam, que determinam a fronteira.
+d) todos os exemplos de teste.
+R: c | Só os vetores de suporte influenciam a fronteira da SVM.
 
 MC: A perda hinge de um exemplo rotulado é:
-a) zero se ele está do lado certo e fora da margem; cresce linearmente se a viola.
-b) sempre igual a 1.
-c) o quadrado do erro.
+a) o quadrado do erro.
+b) zero se ele está do lado certo e fora da margem; cresce linearmente se a viola.
+c) sempre igual a 1.
 d) a probabilidade da classe.
-R: a | Perda hinge = max(0, 1 - y f(x)).
+R: b | Perda hinge = max(0, 1 - y f(x)).
 
 MC: O parâmetro C da SVM controla:
-a) o equilíbrio entre margem grande e violações da margem.
-b) o número de vizinhos.
-c) a proporção de classes.
-d) o número de componentes principais.
-R: a | C grande pune mais as violações; C pequeno tolera mais.
+a) a proporção de classes.
+b) o número de componentes principais.
+c) o equilíbrio entre margem grande e violações da margem.
+d) o número de vizinhos.
+R: c | C grande pune mais as violações; C pequeno tolera mais.
 
 MC: No núcleo RBF, um gamma maior produz:
-a) fronteiras mais sinuosas e locais.
-b) fronteiras sempre retas.
+a) fronteiras sempre retas.
+b) nenhuma mudança.
 c) margens maiores, obrigatoriamente.
-d) nenhuma mudança.
-R: a | Gamma controla a "largura de influência" de cada exemplo.
+d) fronteiras mais sinuosas e locais.
+R: d | Gamma controla a "largura de influência" de cada exemplo.
 
 MC: A perda da S3VM para um exemplo sem rótulo é:
-a) max(0, 1 - |f(x)|).
-b) max(0, 1 - f(x)).
+a) igual à perda hinge de um rotulado de classe +1.
+b) max(0, 1 - |f(x)|).
 c) sempre zero.
-d) igual à perda hinge de um rotulado de classe +1.
-R: a | Ela pune ficar perto da fronteira, de qualquer lado.
+d) max(0, 1 - f(x)).
+R: b | Ela pune ficar perto da fronteira, de qualquer lado.
 
 MC: Por que a perda dos exemplos sem rótulo é não convexa?
-a) Porque tem dois "vales", em f = -1 e f = +1, e um pico em f = 0.
-b) Porque é linear.
-c) Porque só depende de C.
+a) Porque é linear.
+b) Porque só depende de C.
+c) Porque tem dois "vales", em f = -1 e f = +1, e um pico em f = 0.
 d) Porque exige rótulos.
-R: a | A forma em "W invertido" produz vários mínimos locais.
+R: c | A forma em "W invertido" produz vários mínimos locais.
 
 MC: A não convexidade da S3VM implica que:
-a) há vários mínimos locais e a solução depende da inicialização.
-b) a solução é sempre única.
+a) a solução é sempre única.
+b) não é preciso escolher parâmetros.
 c) o método não pode ser usado.
-d) não é preciso escolher parâmetros.
-R: a | Não há garantia de encontrar o melhor mínimo.
+d) há vários mínimos locais e a solução depende da inicialização.
+R: d | Não há garantia de encontrar o melhor mínimo.
 
 MC: O que é "continuação" na S3VM?
-a) Começar com C* pequeno e aumentá-lo aos poucos.
-b) Repetir o treino sem mudar nada.
-c) Usar apenas rotulados.
-d) Eliminar os exemplos difíceis.
-R: a | Isso ajuda a evitar mínimos locais ruins.
+a) Eliminar os exemplos difíceis.
+b) Começar com C* pequeno e aumentá-lo aos poucos.
+c) Repetir o treino sem mudar nada.
+d) Usar apenas rotulados.
+R: b | Isso ajuda a evitar mínimos locais ruins.
 
 MC: Quem propôs o TSVM (SVM transdutiva), para classificação de texto, em 1999?
-a) Joachims.
+a) Dempster.
 b) Scudder.
 c) Blum e Mitchell.
-d) Dempster.
-R: a | Joachims (1999) propôs o TSVM.
+d) Joachims.
+R: d | Joachims (1999) propôs o TSVM.
 
 MC: O scikit-learn oferece uma S3VM pronta?
-a) Não; no capítulo, implementamos um TSVM simplificado com a SVC e sample_weight.
-b) Sim, a classe S3VM.
-c) Sim, a classe TSVM.
-d) Sim, dentro do SelfTrainingClassifier.
-R: a | A SVC aceita pesos por exemplo, o que permite a implementação.
+a) Sim, dentro do SelfTrainingClassifier.
+b) Sim, a classe TSVM.
+c) Não; no capítulo, implementamos um TSVM simplificado com a SVC e sample_weight.
+d) Sim, a classe S3VM.
+R: c | A SVC aceita pesos por exemplo, o que permite a implementação.
 
 MC: No TSVM simplificado, os rótulos provisórios dos exemplos sem rótulo são atribuídos:
-a) com proporção fixa de positivos, a partir da pontuação da SVM inicial.
-b) aleatoriamente, sem nenhum critério.
-c) todos como classe 0.
-d) pela média dos atributos.
-R: a | Os de maior pontuação recebem a classe positiva, na proporção definida.
+a) aleatoriamente, sem nenhum critério.
+b) pela média dos atributos.
+c) com proporção fixa de positivos, a partir da pontuação da SVM inicial.
+d) todos como classe 0.
+R: c | Os de maior pontuação recebem a classe positiva, na proporção definida.
 
 MC: Por que fixar a proporção de positivos é importante?
-a) Evita a solução trivial de rotular todos os sem rótulo com a mesma classe.
-b) Aumenta o número de atributos.
+a) Aumenta o número de atributos.
+b) Elimina a necessidade de C.
 c) Reduz o tempo de execução a zero.
-d) Elimina a necessidade de C.
-R: a | Sem a restrição, a margem fica grande e a perda pequena com tudo em uma só classe.
+d) Evita a solução trivial de rotular todos os sem rótulo com a mesma classe.
+R: d | Sem a restrição, a margem fica grande e a perda pequena com tudo em uma só classe.
 
 MC: No TSVM, "trocar pares de rótulos" significa:
 a) inverter os rótulos de um positivo e de um negativo que violam a margem, se isso reduz a perda.
@@ -112,79 +112,79 @@ R: a | A troca mantém a proporção de classes e reduz a violação total da ma
 
 MC: No experimento das duas luas com 6 rótulos, o ganho do TSVM com gamma = 5 foi de:
 a) +11,7 p.p., melhor em 27 dos 30 sorteios.
-b) +1,1 p.p.
-c) 0 p.p.
-d) -5 p.p.
+b) -5 p.p.
+c) +1,1 p.p.
+d) 0 p.p.
 R: a | O ganho foi de 81,1% para 92,8%.
 
 MC: Com gamma = 0,5, o ganho do TSVM nas duas luas foi:
-a) pequeno (+1,1 p.p., 14 vitórias e 14 derrotas).
-b) enorme (+20 p.p.).
-c) negativo de 10 p.p.
-d) igual a 100%.
-R: a | A fronteira suave demais não consegue acompanhar as luas.
+a) igual a 100%.
+b) pequeno (+1,1 p.p., 14 vitórias e 14 derrotas).
+c) enorme (+20 p.p.).
+d) negativo de 10 p.p.
+R: b | A fronteira suave demais não consegue acompanhar as luas.
 
 MC: Segundo o capítulo, o ganho do TSVM depende do gamma porque:
-a) o modelo precisa ser flexível o bastante para aproveitar a estrutura revelada pelos dados sem rótulo.
-b) o gamma altera o número de rótulos.
+a) o gamma define a proporção de classes.
+b) o modelo precisa ser flexível o bastante para aproveitar a estrutura revelada pelos dados sem rótulo.
 c) o gamma elimina o ruído.
-d) o gamma define a proporção de classes.
-R: a | Com gamma pequeno a fronteira é suave demais para contornar as luas.
+d) o gamma altera o número de rótulos.
+R: b | Com gamma pequeno a fronteira é suave demais para contornar as luas.
 
 MC: A Figura 7.5 do capítulo mostra um sorteio ilustrativo. Qual a medida honesta do ganho?
-a) A média dos 30 sorteios.
+a) Qualquer um deles.
 b) O melhor sorteio.
 c) O pior sorteio.
-d) Qualquer um deles.
-R: a | Um único sorteio pode ser favorável; a média dá o efeito típico.
+d) A média dos 30 sorteios.
+R: d | Um único sorteio pode ser favorável; a média dá o efeito típico.
 
 MC: No experimento, o TSVM sem fixar a proporção de classes, nas duas luas, teve:
 a) 82,0%, quase igual à referência (81,1%).
-b) 92,8%.
-c) 50%.
+b) 50%.
+c) 92,8%.
 d) 100%.
 R: a | Sem a restrição, o ganho praticamente desapareceu.
 
 MC: Nos grupos cruzados, o TSVM com proporção fixa:
-a) não piorou: ficou em 85,7% contra 82,4% da referência.
-b) perdeu mais de 15 p.p.
-c) obteve 100%.
-d) não pôde ser executado.
-R: a | O ganho foi de 3,3 p.p., melhor em 20 dos 30 sorteios e pior em 9.
+a) perdeu mais de 15 p.p.
+b) não piorou: ficou em 85,7% contra 82,4% da referência.
+c) não pôde ser executado.
+d) obteve 100%.
+R: b | O ganho foi de 3,3 p.p., melhor em 20 dos 30 sorteios e pior em 9.
 
 MC: Para duas classes, a entropia de uma previsão é máxima quando a probabilidade é:
-a) 0,5.
+a) 0,99.
 b) 0.
 c) 1.
-d) 0,99.
-R: a | A dúvida total (0,5) tem entropia máxima, de 1 bit.
+d) 0,5.
+R: d | A dúvida total (0,5) tem entropia máxima, de 1 bit.
 
 MC: A minimização de entropia, proposta por Grandvalet e Bengio (2004), faz com que o modelo:
-a) tenha previsões confiantes nos exemplos sem rótulo, empurrando a fronteira para regiões de baixa densidade.
-b) ignore os exemplos rotulados.
-c) rotule os exemplos sem rótulo com certeza.
-d) elimine a penalidade L2.
-R: a | Penaliza a incerteza das previsões nos sem rótulo.
+a) rotule os exemplos sem rótulo com certeza.
+b) tenha previsões confiantes nos exemplos sem rótulo, empurrando a fronteira para regiões de baixa densidade.
+c) elimine a penalidade L2.
+d) ignore os exemplos rotulados.
+R: b | Penaliza a incerteza das previsões nos sem rótulo.
 
 MC: No experimento dos dígitos 3 e 8, o melhor valor de lambda foi:
-a) 0,3 (95,7%).
-b) 0 (87,6%).
-c) 3,0 (91,8%).
+a) 3,0 (91,8%).
+b) 0,3 (95,7%).
+c) 0 (87,6%).
 d) Todos deram o mesmo resultado.
-R: a | Com λ = 0,3, a acurácia foi de 95,7%, ganho de 8,1 p.p. sobre λ = 0.
+R: b | Com λ = 0,3, a acurácia foi de 95,7%, ganho de 8,1 p.p. sobre λ = 0.
 
 MC: Com lambda muito grande (3,0), o ganho:
-a) diminuiu, pois o modelo se convence de previsões erradas.
+a) não mudou.
 b) aumentou.
 c) virou 100%.
-d) não mudou.
-R: a | Peso demais para a confiança nos sem rótulo reforça palpites errados (91,8% contra 95,7%).
+d) diminuiu, pois o modelo se convence de previsões erradas.
+R: d | Peso demais para a confiança nos sem rótulo reforça palpites errados (91,8% contra 95,7%).
 
 MC: O que mostra a Figura 7.7 sobre as probabilidades previstas?
 a) Com a entropia, quase todas ficam perto de 0 ou 1; sem ela, muitas ficam perto de 0,5.
 b) Todas ficam em 0,5.
-c) Não há diferença.
-d) A entropia as espalha uniformemente.
+c) A entropia as espalha uniformemente.
+d) Não há diferença.
 R: a | A penalidade empurra as previsões para a certeza.
 
 MC: Uma desvantagem prática do TSVM simples é:
@@ -252,18 +252,18 @@ DISC: Compare brevemente EM, TSVM e minimização de entropia quanto à forma de
 R: O EM modela como os dados são gerados e reestima o modelo com probabilidades de classe; o TSVM busca uma margem que evite os sem rótulo com rótulos provisórios e trocas; a minimização de entropia penaliza previsões incertas nos sem rótulo em um classificador probabilístico.
 
 MC: A regularização de variedade e os métodos de grafos, citados como alternativas, usam:
-a) a mesma intuição de baixa densidade, de outro modo.
+a) uma rede neural obrigatória.
 b) apenas dados rotulados.
-c) uma rede neural obrigatória.
-d) a proporção de classes como único critério.
-R: a | Eles favorecem fronteiras que respeitam a estrutura dos dados, evitando regiões densas.
+c) a proporção de classes como único critério.
+d) a mesma intuição de baixa densidade, de outro modo.
+R: d | Eles favorecem fronteiras que respeitam a estrutura dos dados, evitando regiões densas.
 
 MC: O que significa C* na S3VM?
-a) O peso da perda dos exemplos sem rótulo.
-b) O número de classes.
+a) O número de classes.
+b) O peso da perda dos exemplos sem rótulo.
 c) O número de vizinhos.
 d) A proporção de positivos.
-R: a | C* controla a influência dos exemplos sem rótulo, em geral menor ou igual a C.
+R: b | C* controla a influência dos exemplos sem rótulo, em geral menor ou igual a C.
 
 DISC: Por que a Figura 7.7 ajuda a entender o efeito da minimização de entropia?
 R: Ela mostra as probabilidades previstas para os exemplos sem rótulo: sem entropia ficam espalhadas, muitas perto de 0,5; com entropia, concentram-se perto de 0 ou 1. Mostra o mecanismo: a fronteira é empurrada para longe dos pontos.

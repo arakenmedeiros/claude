@@ -1,0 +1,15 @@
+MNIST, 100 rótulos (10 por dígito), CNN treinada só com os rotulados (100 épocas); teste com 10.000 imagens
+aumento de dados | acerto no treino | acerto no teste (média ± desvio, 3 sorteios)
+nenhum                               |            99.7% | 81.8% ± 1.7
+fraco (deslocar até 8%)              |            99.7% | 88.3% ± 1.0
+forte (gira, escala, apaga, ruído)   |            96.3% | 90.2% ± 0.5
+
+Curva de aprendizado sem aumento de dados (um sorteio): o que acontece ao longo das épocas
+época | acerto no treino | acerto no teste
+    1 |            34.0% | 26.1%
+    3 |            25.0% | 20.4%
+    5 |            57.0% | 44.1%
+   10 |            85.0% | 67.8%
+   20 |            97.0% | 78.1%
+   50 |           100.0% | 82.1%
+  100 |            99.0% | 80.4%

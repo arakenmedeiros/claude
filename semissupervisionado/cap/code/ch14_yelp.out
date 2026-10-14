@@ -1,0 +1,9 @@
+Avaliações do Yelp com 1 ou 5 estrelas: 4086 | positivas (5 estrelas): 81.7%
+40 rótulos (20 por classe), F1 macro no teste, 10 sorteios
+                                                           F1 macro        | % previsto como positivo (real: 81.6%)
+  TF-IDF + reg. logística (referência)                   :  66.3% ± 3.4 | 62.0%
+  TF-IDF + reg. logística + self-training (limiar 0,8)   :  66.3% ± 3.4 | 62.0%
+  LSA(100) + reg. logística                              :  71.1% ± 2.6 | 65.8%
+  LSA(100) + Label Spreading (knn, k = 10)               :  51.0% ± 3.9 | 41.6%
+  Naive Bayes só rotulados                               :  60.6% ± 7.9 | 52.0%
+  Naive Bayes + EM                                       :  60.1% ± 11.0 | 58.0%

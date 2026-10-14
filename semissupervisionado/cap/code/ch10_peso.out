@@ -1,0 +1,6 @@
+Mean Teacher no MNIST (100 rótulos + 10.000 sem rótulo, 1500 passos, 2 sorteios): peso máximo da perda de consistência
+peso | aluno (teste) | professor EMA (teste)
+   0 |         94.2% | 94.9%
+   1 |         94.2% | 95.0%
+  10 |         94.7% | 95.5%
+  30 |         95.1% | 95.5%

@@ -38,7 +38,7 @@ if __name__=="__main__":
             key=f"{ch}-{it['kind']}{it['num']}"
             p=f"/tmp/pr_{key}.py"; open(p,"w").write(m[0])
             try:
-                r=subprocess.run(["python3","-W","ignore",p],capture_output=True,text=True,timeout=600,cwd="/tmp")
+                r=subprocess.run(["python3","-W","ignore",p],capture_output=True,text=True,timeout=3000,cwd="/tmp")
             except subprocess.TimeoutExpired:
                 print("TIMEOUT",key); fails+=1; continue
             if r.returncode!=0:

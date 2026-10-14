@@ -105,3 +105,47 @@ Matriz de transição: matriz que dá a probabilidade de "passar" de um nó a ou
 Nó (vértice): ponto de um grafo; nos métodos semissupervisionados, cada exemplo é um nó.
 Pureza das arestas: fração das arestas de um grafo que ligam exemplos da mesma classe.
 Ponte: aresta que liga exemplos de classes diferentes e propaga rótulos errados.
+Aumento de dados (data augmentation): criação de variações de cada exemplo (deslocar, girar, apagar partes, adicionar ruído) que não mudam o rótulo.
+Camada convolucional: camada que aplica filtros pequenos deslizando pela imagem para detectar padrões locais.
+CNN (rede neural convolucional): rede com camadas convolucionais, apropriada para imagens.
+Dropout: técnica de regularização que desliga neurônios ao acaso durante o treino.
+Entropia cruzada: perda usada em classificação, que pune probabilidades baixas dadas à classe correta.
+Época: uma passagem completa por todos os exemplos de treino.
+Função de ativação: função não linear aplicada à saída de um neurônio (ReLU, sigmoide, tangente hiperbólica).
+Gradiente: direção de maior aumento da perda; o treino anda na direção oposta.
+Lote (batch): grupo de exemplos usado em cada atualização dos pesos.
+Max pooling: operação que resume uma região da imagem pelo seu maior valor, reduzindo o tamanho.
+MLP (perceptron multicamadas): rede com camadas densas totalmente conectadas.
+Neurônio artificial: unidade que soma entradas multiplicadas por pesos, soma um viés e aplica uma ativação.
+PyTorch: biblioteca de aprendizado profundo em Python.
+ReLU: função de ativação que devolve zero para valores negativos e o próprio valor para positivos.
+Retropropagação (backpropagation): algoritmo que calcula os gradientes da perda em relação a todos os pesos da rede.
+Taxa de aprendizado: tamanho do passo dado a cada atualização dos pesos.
+Consistência (regularização por): exigir que o modelo dê a mesma previsão para versões perturbadas do mesmo exemplo, rotulado ou não.
+Π-model: método de consistência em que duas versões perturbadas do mesmo exemplo passam pela mesma rede e suas previsões são aproximadas.
+Mean Teacher: método de consistência em que o alvo vem de um "professor", média móvel dos pesos do "aluno".
+Média móvel exponencial (EMA): média em que os valores mais recentes pesam mais; no Mean Teacher, é aplicada aos pesos da rede.
+Rampa de peso (ramp-up): aumento gradual do peso da perda não supervisionada no início do treino.
+UDA (Unsupervised Data Augmentation): consistência entre a previsão em uma versão fraca e em uma versão fortemente aumentada do exemplo.
+Afiamento (sharpening): tornar uma distribuição de probabilidades mais concentrada na classe mais provável, por meio de uma temperatura.
+Pseudo-rótulo: rótulo que o próprio modelo atribui a um exemplo sem rótulo, em geral a classe mais provável.
+Viés de confirmação (confirmation bias): reforço de erros do modelo quando seus pseudo-rótulos errados são usados no treino.
+Limiar de confiança: probabilidade mínima da classe mais provável para que uma previsão vire pseudo-rótulo.
+Aumento fraco e forte: transformações leves (para gerar o alvo) e intensas (para treinar a rede), como no FixMatch.
+Mixup: aumento de dados que mistura duas imagens e seus rótulos com pesos lambda e 1 - lambda.
+MixMatch: método que une média e afiamento de previsões, mixup e consistência.
+FixMatch: método que usa a previsão na versão fraca, se confiante, como pseudo-rótulo da versão forte.
+Bag of words (saco de palavras): representação de um texto pela contagem das palavras, ignorando a ordem.
+TF-IDF: ponderação que dá mais peso a palavras frequentes no documento e raras na coleção.
+LSA (análise semântica latente): redução de dimensionalidade de matrizes de texto por decomposição em valores singulares.
+Stopwords: palavras muito comuns (como "de", "the") que costumam ser removidas.
+F1 macro: média do F1 de cada classe, com o mesmo peso para todas, útil quando as classes são desbalanceadas.
+Prevalência: proporção de uma classe na população.
+Aprendizado auto-supervisionado: aprender representações a partir de dados sem rótulo, inventando uma tarefa cujo "rótulo" vem dos próprios dados.
+Tarefa-pretexto (pretext task): tarefa inventada, como prever a rotação aplicada a uma imagem, usada só para aprender uma representação.
+Aprendizado contrastivo: aproxima as representações de duas versões do mesmo exemplo (positivos) e afasta as de exemplos diferentes (negativos).
+SimCLR: método contrastivo que cria duas versões aumentadas de cada imagem e usa a perda NT-Xent.
+NT-Xent: perda contrastiva em que cada exemplo deve reconhecer sua versão par entre todas as demais do lote.
+Sonda linear (linear probe): classificador linear treinado sobre um codificador congelado, para medir a qualidade da representação.
+Ajuste fino (fine-tuning): continuar o treino de toda a rede, a partir de um codificador pré-treinado, com os exemplos rotulados.
+Codificador (encoder): parte da rede que transforma a entrada em uma representação (vetor de atributos).

@@ -1,0 +1,172 @@
+@@EX 1 | Uma rede pequena à mão, só com NumPy | básico
+Sem usar nenhuma biblioteca de redes, implemente com NumPy uma MLP com 3 entradas, 4 neurônios escondidos (ReLU) e 3 saídas (softmax), com **pesos sorteados** (`np.random.RandomState(0).randn`, multiplicados por 0,5; vieses zero). Aplique-a ao exemplo x = (1,0; −0,5; 2,0) e mostre: as pontuações da saída, as probabilidades (que devem somar 1) e o **número total de pesos e vieses**. Calcule também a perda de entropia cruzada, supondo que a classe correta seja a 0.
+
+*Pergunta:* a rede está certa ou errada? Faz sentido esperar uma boa previsão?
+@@SOL
+```python
+import numpy as np
+
+r = np.random.RandomState(0)
+W1, b1 = 0.5 * r.randn(3, 4), np.zeros(4)
+W2, b2 = 0.5 * r.randn(4, 3), np.zeros(3)
+x = np.array([1.0, -0.5, 2.0])
+
+h = np.maximum(0, x @ W1 + b1)          # camada escondida com ReLU
+z = h @ W2 + b2                         # pontuações da saída
+p = np.exp(z - z.max()); p /= p.sum()   # softmax
+print("escondida:", np.round(h, 3))
+print("pontuações:", np.round(z, 3))
+print("probabilidades:", np.round(p, 3), "soma =", round(p.sum(), 3))
+print("pesos e vieses:", W1.size + b1.size + W2.size + b2.size)
+print(f"entropia cruzada se a classe correta for a 0: {-np.log(p[0]):.3f}")
+print("classe prevista:", p.argmax())
+```
+@@NOTE As probabilidades são 38,1%, 59,2% e 2,6% (soma 1), a rede tem 31 pesos e vieses (3×4 + 4 + 4×3 + 3) e a perda de entropia cruzada para a classe 0 é 0,964. A rede prevê a classe 1, mas isso não é "erro" nem "acerto" de aprendizado: os pesos foram sorteados e **nunca foram treinados**. Uma rede sem treino não tem razão para acertar, e o treino é justamente o ajuste desses números para reduzir a perda.
+@@EX 2 | Quantos neurônios escondidos? | intermediário
+No **Digits** (pixels divididos por 16; 30% para teste), com 50 rótulos (5 por dígito) e 10 sorteios, compare a regressão logística com MLPs de **uma camada escondida** de 4, 16, 64 e 512 neurônios (`MLPClassifier(alpha=1e-4, max_iter=2000, random_state=0)`). Mostre a acurácia média no teste.
+
+*Pergunta:* mais neurônios melhoram a acurácia? O que isso sugere sobre o gargalo do problema?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+def sorteio(s):
+    r = np.random.RandomState(s); return np.concatenate([r.choice(np.where(y_tr == d)[0], 5, replace=False) for d in range(10)])
+
+modelos = [("regressão logística", lambda: LogisticRegression(max_iter=3000))] + \
+          [(f"MLP com {h} neurônios", (lambda h=h: MLPClassifier((h,), alpha=1e-4, max_iter=2000, random_state=0))) for h in [4, 16, 64, 512]]
+print("modelo               | acerto no teste (média ± desvio, 10 sorteios)")
+for nome, fab in modelos:
+    te = [fab().fit(X_tr[sorteio(s)], y_tr[sorteio(s)]).score(X_te, y_te) for s in range(10)]
+    print(f"{nome:20s} | {100 * np.mean(te):.1f}% ± {100 * np.std(te):.1f}")
+```
+@@NOTE Mais neurônios ajudaram até certo ponto: 63,2% (4 neurônios), 82,4% (16), 85,6% (64) e 86,2% (512), contra 86,5% da regressão logística. Com 4 neurônios, a rede é pequena demais para representar o problema (e varia muito entre sorteios, ±6,6). A partir de 64, o ganho é pequeno, e **nenhuma MLP superou** a regressão logística. Isso sugere que o gargalo não é a capacidade do modelo, e sim a **quantidade de rótulos** (50): aumentar a rede não substitui informação.
+@@EX 3 | Convolução à mão como extração de atributos | intermediário
+No **Digits** (imagens 8×8), construa atributos com **filtros de borda** de Sobel (vertical e horizontal, 3×3, sem preenchimento, resultado 6×6), tome o valor absoluto e aplique **max pooling 2×2** (resultado 3×3). Concatene os dois mapas (18 atributos) e treine a regressão logística com 50 rótulos (10 sorteios). Compare com a regressão logística sobre os 64 pixels e sobre pixels + atributos de borda.
+
+*Pergunta:* os atributos de borda ajudam quando há poucos rótulos?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+kv = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]); kh = kv.T
+def bordas(v):
+    im = v.reshape(8, 8); mapas = []
+    for k in (kv, kh):
+        c = np.array([[np.sum(im[i:i + 3, j:j + 3] * k) for j in range(6)] for i in range(6)])
+        mapas.append(np.abs(c).reshape(3, 2, 3, 2).max(axis=(1, 3)).ravel())
+    return np.concatenate(mapas)
+B = np.array([bordas(v) for v in X])
+conjuntos = {"64 pixels": X, "18 atributos de borda": B, "pixels + bordas": np.hstack([X, B])}
+idx_tr, idx_te = train_test_split(np.arange(len(y)), test_size=0.3, stratify=y, random_state=0)
+def sorteio(s):
+    r = np.random.RandomState(s); return np.concatenate([r.choice(idx_tr[y[idx_tr] == d], 5, replace=False) for d in range(10)])
+print("atributos              | acerto no teste (média ± desvio, 10 sorteios)")
+for nome, A in conjuntos.items():
+    te = []
+    for s in range(10):
+        i = sorteio(s); esc = StandardScaler().fit(A[i])
+        te.append(LogisticRegression(max_iter=3000).fit(esc.transform(A[i]), y[i]).score(esc.transform(A[idx_te]), y[idx_te]))
+    print(f"{nome:22s} | {100 * np.mean(te):.1f}% ± {100 * np.std(te):.1f}")
+```
+@@NOTE Os 18 atributos de borda sozinhos igualaram os 64 pixels (82,3% contra 82,4%), com bem menos atributos, e a combinação pixels + bordas subiu para **88,4%** (+6,0 p.p. sobre os pixels) com desvio menor (1,3 contra 2,5). Os filtros de borda acrescentam informação que a regressão logística não extrai sozinha (ela só combina linearmente os pixels). Em uma CNN, esses filtros seriam aprendidos, e não escolhidos à mão.
+@@EX 4 | A taxa de aprendizado da CNN | intermediário
+Com `utilidades.py`, treine a CNN no **MNIST** com 100 rótulos (`sortear_rotulados(y, 10, 0)`), aumento forte e 40 épocas, para as taxas de aprendizado 0,0001, 0,001 e 0,01 (um sorteio). Mostre o acerto no treino e no teste.
+
+*Pergunta:* qual taxa funcionou melhor? Que sinal indica uma taxa grande ou pequena demais?
+@@SOL
+```python
+import torch
+from utilidades import *
+
+X, y, X_te, y_te = carregar_mnist(); idx = sortear_rotulados(y, 10, 0)
+print("taxa de aprendizado | acerto no treino | acerto no teste (40 épocas, aumento forte)")
+for lr in [1e-4, 1e-3, 1e-2]:
+    torch.manual_seed(0); m = CNN()
+    (_, a_tr, a_te), = treinar_supervisionado(m, X[idx], y[idx], epocas=40, aug=aumento_forte, lr=lr, X_teste=X_te, y_teste=y_te, relatar=(40,))
+    print(f"{lr:19g} | {100 * a_tr:15.1f}% | {100 * a_te:.1f}%")
+```
+@@NOTE A taxa de 0,001 foi a melhor (95,0% no treino e 81,8% no teste). Com 0,0001, a rede ainda estava aprendendo (62,0% no treino e 51,8% no teste): o aprendizado é lento demais para 40 épocas (apenas 160 passos). Com 0,01, o treino **divergiu** e a rede ficou presa em 10% (equivalente a chutar uma classe), tanto no treino quanto no teste. O sinal de taxa pequena é a perda que cai devagar e os acertos ainda subindo no fim do treino; o de taxa grande é a perda que estoura ou oscila e a acurácia no nível do acaso.
+@@EX 5 | Aumento de dados no Fashion-MNIST | avançado
+Repita o experimento da Seção 9.7.3 no **Fashion-MNIST** (`carregar_fashion()`): 100 rótulos (10 por classe), CNN, 60 épocas, dois sorteios, sem aumento e com aumento forte. Mostre o acerto no teste (10.000 imagens).
+
+*Pergunta:* o aumento forte ajuda tanto quanto no MNIST? Dê uma explicação possível (por exemplo, o que acontece com uma camisa girada ou com um quadrado apagado).
+@@SOL
+```python
+import numpy as np, torch
+from utilidades import *
+
+X, y, X_te, y_te = carregar_fashion()
+print("Fashion-MNIST, 100 rótulos, CNN, 60 épocas, 2 sorteios")
+print("aumento de dados | acerto no treino | acerto no teste")
+for nome, aug in [("nenhum", None), ("forte", aumento_forte)]:
+    tr, te = [], []
+    for s in range(2):
+        idx = sortear_rotulados(y, 10, s); torch.manual_seed(s); m = CNN()
+        (_, a, b), = treinar_supervisionado(m, X[idx], y[idx], epocas=60, aug=aug, semente=s, X_teste=X_te, y_teste=y_te, relatar=(60,))
+        tr.append(a); te.append(b)
+    print(f"{nome:16s} | {100 * np.mean(tr):15.1f}% | {100 * np.mean(te):.1f}% ± {100 * np.std(te):.1f}")
+```
+@@NOTE Aqui o aumento forte **piorou** o resultado: 70,5% sem aumento contra 57,8% com aumento forte, e o acerto no treino caiu de 98,5% para 69,0%, sinal de **subajuste** (a rede com 60 épocas não conseguiu nem ajustar o treino). Uma explicação possível: em roupas, a orientação e o formato completo da peça carregam informação (uma camisa girada 20° ou com um quadrado de 10×10 apagado pode perder o detalhe que a distingue de um pulôver), e o ruído e o apagamento tornam a tarefa difícil demais para o orçamento de 60 épocas. O aumento depende do problema: o que é inofensivo para dígitos pode ser prejudicial para roupas.
+@@PROJ A referência supervisionada para roupas: quanto vale um rótulo no Fashion-MNIST | Cap09
+**Fonte dos dados.** *Fashion-MNIST* (Zalando Research; também no Kaggle), 70.000 imagens 28×28 de 10 tipos de peças de roupa. O código usa `carregar_fashion()` de `utilidades.py`, que baixa os arquivos de um espelho público.
+
+**Contexto.** No projeto do Capítulo 8, o Label Spreading sobre pixels não compensou no Fashion-MNIST. Antes de testar métodos novos nos próximos capítulos, a loja precisa conhecer a **referência supervisionada forte**: o que se consegue só com os rótulos, uma CNN e aumento de dados.
+
+**Tarefas.**
+1. Treine a CNN, com aumento fraco e com aumento forte, usando 100, 300 e 1.000 rótulos (10, 30 e 100 por classe; 100, 60 e 30 épocas; dois sorteios para 100 e 300 e um sorteio para 1.000). Avalie nas 10.000 imagens de teste.
+2. Compare, com 100 e 300 rótulos, com a regressão logística sobre os pixels.
+3. Calcule, para 100 rótulos com aumento forte, a **acurácia por categoria** (um sorteio).
+4. Escreva uma recomendação (8 a 10 linhas): que referência usaremos nos próximos capítulos, quanto custa chegar a ela e em que categorias a rede mais erra.
+
+**Entregáveis.** Código, tabelas e recomendação.
+@@SOL
+```python
+import numpy as np, torch
+from sklearn.linear_model import LogisticRegression
+from utilidades import *
+
+X, y, X_te, y_te = carregar_fashion()
+nomes = ["camiseta", "calça", "pulôver", "vestido", "casaco", "sandália", "camisa", "tênis", "bolsa", "bota"]
+print("rótulos | épocas | reg. logística | CNN aumento fraco | CNN aumento forte  (acerto no teste)")
+ultimo = None
+for por, ep, n_s in [(10, 100, 2), (30, 60, 2), (100, 30, 1)]:
+    res = {"lr": [], "fraco": [], "forte": []}
+    for s in range(n_s):
+        idx = sortear_rotulados(y, por, s)
+        if por <= 30: res["lr"].append(LogisticRegression(max_iter=2000).fit(X[idx].flatten(1).numpy(), y[idx].numpy()).score(X_te.flatten(1).numpy(), y_te.numpy()))
+        for nome, aug in [("fraco", aumento_fraco), ("forte", aumento_forte)]:
+            torch.manual_seed(s); m = CNN()
+            (_, _, a), = treinar_supervisionado(m, X[idx], y[idx], epocas=ep, aug=aug, semente=s, X_teste=X_te, y_teste=y_te, relatar=(ep,))
+            res[nome].append(a)
+            if por == 10 and s == 0 and nome == "forte": ultimo = m
+    lr = f"{100 * np.mean(res['lr']):13.1f}%" if res["lr"] else "            --"
+    print(f"{10 * por:7d} | {ep:6d} | {lr} | {100 * np.mean(res['fraco']):16.1f}% | {100 * np.mean(res['forte']):16.1f}%")
+
+ultimo.eval()
+with torch.no_grad(): pred = torch.cat([ultimo(X_te[i:i + 2000]).argmax(1) for i in range(0, len(X_te), 2000)])
+print("\nacurácia por categoria (100 rótulos, aumento forte, 1 sorteio)")
+for d in range(10): print(f"{nomes[d]:9s}: {100 * (pred[y_te == d] == d).float().mean():5.1f}%")
+```
+@@RUBRICA
+- Os rótulos são sorteados do treino; o teste é separado e usado só para avaliar.
+- Foram comparados aumento fraco e forte, em pelo menos três tamanhos de conjunto rotulado, com sorteios repetidos onde possível.
+- A regressão logística é usada como referência simples e comparada à CNN.
+- A acurácia por categoria é calculada no teste e interpretada.
+- A recomendação é coerente com os números, define a referência para os próximos capítulos e admite os limites (poucos sorteios, orçamento reduzido de épocas).
+@@NOTE Com 100 rótulos, a regressão logística obteve 68,9%, a CNN com aumento fraco 70,6% e com aumento forte 63,1%. Com 300 rótulos: 75,8%, 76,6% e 71,1%. Com 1.000 rótulos (um sorteio, 30 épocas): 81,5% com aumento fraco e 70,3% com forte (a rede nitidamente subajustada, por causa do orçamento de passos). Portanto, **para o Fashion-MNIST a referência é a CNN com aumento fraco**, que supera a regressão logística por pouco (1,7 e 0,8 p.p.), e ela será usada nos próximos capítulos. Por categoria (aumento forte, que não é a melhor receita, um sorteio): calça (96,6%) e bota (94,9%) são as mais fáceis; camisa (17,0%), camiseta (35,5%), vestido (39,6%) e pulôver (42,6%) são as mais difíceis, as peças visualmente parecidas. Limites: poucos sorteios, e o orçamento de épocas pode ter favorecido o aumento fraco. Um orçamento maior poderia mudar a conclusão sobre o aumento forte.
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits, Wine e Breast Cancer Wisconsin.
+- **Kaggle:** Digit Recognizer e Fashion-MNIST.
+- **Documentação:** tutoriais do PyTorch (`pytorch.org/tutorials`) e a seção de redes neurais do scikit-learn.

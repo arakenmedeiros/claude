@@ -1,0 +1,11 @@
+MNIST, 100 rótulos + 10.000 imagens sem rótulo, CNN, 1500 passos, 3 sorteios dos rotulados
+método                           | aluno (teste)  | alvos que passam | precisão dos alvos
+só rotulados (referência)        | 93.2% ± 0.8 |               -- |               --
+Pseudo-Label (sem limiar)        | 94.3% ± 0.8 |          100.0% |           92.3%
+FixMatch (limiar 0,95)           | 95.2% ± 0.3 |           72.9% |           98.8%
+MixMatch (versão simplificada)   | 94.9% ± 0.4 |               -- |               --
+
+ganho do aluno sobre a referência, por sorteio (pontos percentuais):
+Pseudo-Label (sem limiar)        | +1.9  +0.5  +0.8
+FixMatch (limiar 0,95)           | +2.5  +1.0  +2.4
+MixMatch (versão simplificada)   | +2.2  +0.9  +2.0

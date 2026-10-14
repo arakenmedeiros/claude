@@ -1,30 +1,30 @@
 MC: No co-training, uma "visão" é:
 a) um conjunto de atributos que descreve o exemplo de um modo próprio.
 b) um gráfico dos dados.
-c) um tipo de rótulo.
-d) um classificador.
+c) um classificador.
+d) um tipo de rótulo.
 R: a | Cada visão é um subconjunto de atributos distinto, que descreve o mesmo exemplo.
 
 MC: Quem propôs o co-training, em 1998?
-a) Blum e Mitchell.
-b) Scudder.
-c) Zhou e Li.
-d) Chapelle e Zien.
-R: a | Blum e Mitchell apresentaram o co-training em 1998.
+a) Zhou e Li.
+b) Chapelle e Zien.
+c) Scudder.
+d) Blum e Mitchell.
+R: d | Blum e Mitchell apresentaram o co-training em 1998.
 
 MC: Qual par de visões foi o exemplo clássico do artigo original?
-a) O texto da página web e o texto dos links que apontam para ela.
-b) A cor e o tamanho de um objeto.
-c) O treino e o teste.
-d) Média e desvio padrão.
-R: a | Eram o conteúdo da página e o texto dos links que a apontam.
+a) A cor e o tamanho de um objeto.
+b) O treino e o teste.
+c) Média e desvio padrão.
+d) O texto da página web e o texto dos links que apontam para ela.
+R: d | Eram o conteúdo da página e o texto dos links que a apontam.
 
 MC: A condição de suficiência do co-training exige que:
-a) cada visão, sozinha, baste para classificar bem.
-b) haja mais de dez visões.
-c) os dados não tenham ruído.
-d) todos os exemplos sejam rotulados.
-R: a | Se uma visão for pouco informativa, o classificador dessa visão ensina mal.
+a) todos os exemplos sejam rotulados.
+b) cada visão, sozinha, baste para classificar bem.
+c) haja mais de dez visões.
+d) os dados não tenham ruído.
+R: b | Se uma visão for pouco informativa, o classificador dessa visão ensina mal.
 
 MC: A condição de independência condicional diz que, dada a classe, as visões devem ser:
 a) idênticas.
@@ -34,158 +34,158 @@ d) de tamanhos diferentes.
 R: b | Conhecida a classe, uma visão não deve dar pistas sobre o ruído da outra.
 
 MC: Por que a independência condicional favorece o co-training?
-a) Porque o erro de uma visão tende a não coincidir com o erro da outra, e um pode corrigir o outro.
-b) Porque elimina a necessidade de rótulos.
+a) Porque elimina a necessidade de rótulos.
+b) Porque o erro de uma visão tende a não coincidir com o erro da outra, e um pode corrigir o outro.
 c) Porque deixa o modelo mais simples.
 d) Porque aumenta o número de classes.
-R: a | Erros não correlacionados permitem que o acerto de um classificador ensine o outro.
+R: b | Erros não correlacionados permitem que o acerto de um classificador ensine o outro.
 
 MC: Em cada rodada do co-training do capítulo, cada classificador escolhe:
-a) os exemplos mais confiantes de cada classe.
-b) apenas os exemplos de teste.
-c) os exemplos de menor confiança.
-d) exemplos aleatórios, sem olhar a confiança.
-R: a | Escolhe-se um número fixo dos mais confiantes por classe, para evitar desequilíbrio.
+a) exemplos aleatórios, sem olhar a confiança.
+b) os exemplos de menor confiança.
+c) os exemplos mais confiantes de cada classe.
+d) apenas os exemplos de teste.
+R: c | Escolhe-se um número fixo dos mais confiantes por classe, para evitar desequilíbrio.
 
 MC: Para prever um exemplo novo, o co-training do capítulo:
-a) soma as probabilidades dos dois classificadores.
-b) usa apenas o primeiro classificador.
-c) sorteia um dos dois.
+a) sorteia um dos dois.
+b) soma as probabilidades dos dois classificadores.
+c) usa apenas o primeiro classificador.
 d) ignora a visão 2.
-R: a | A decisão combina as probabilidades das duas visões.
+R: b | A decisão combina as probabilidades das duas visões.
 
 MC: No Digits, cada metade da imagem (cima ou baixo), isolada, deu uma acurácia de cerca de:
-a) 69%.
-b) 90%.
-c) 99%.
+a) 90%.
+b) 99%.
+c) 69%.
 d) 30%.
-R: a | As duas metades ficaram em 69,0% e 69,4%.
+R: c | As duas metades ficaram em 69,0% e 69,4%.
 
 MC: No Digits, o co-training com visões cima/baixo obteve:
 a) 75,5%, abaixo da referência de dois classificadores com as mesmas visões (78,8%).
-b) 95%, muito acima de tudo.
+b) o mesmo valor do self-training.
 c) 100%.
-d) o mesmo valor do self-training.
+d) 95%, muito acima de tudo.
 R: a | O co-training piorou 3,3 p.p. em relação à referência justa.
 
 MC: No Digits, com visões formadas por pixels sorteados, o co-training:
-a) ficou praticamente igual à referência (83,6% contra 83,0%).
-b) piorou 20 pontos.
-c) alcançou 100%.
-d) não pôde ser executado.
-R: a | O ganho de 0,6 p.p. é menor que o desvio entre sorteios.
+a) não pôde ser executado.
+b) alcançou 100%.
+c) ficou praticamente igual à referência (83,6% contra 83,0%).
+d) piorou 20 pontos.
+R: c | O ganho de 0,6 p.p. é menor que o desvio entre sorteios.
 
 MC: Qual método teve o melhor desempenho no Digits (50 rótulos) entre os testados na seção 5.5?
-a) Self-training com um único modelo (90,6%).
-b) Co-training cima/baixo.
-c) Visão de cima isolada.
-d) Visão de baixo isolada.
-R: a | O self-training com todos os atributos chegou a 90,6%.
+a) Co-training cima/baixo.
+b) Visão de cima isolada.
+c) Visão de baixo isolada.
+d) Self-training com um único modelo (90,6%).
+R: d | O self-training com todos os atributos chegou a 90,6%.
 
 MC: Qual é a principal razão de o co-training não ter ajudado no Digits?
-a) As metades da imagem não são independentes, e cada metade é pouco informativa.
-b) O Digits tem poucos exemplos.
-c) A regressão logística não funciona com imagens.
-d) O teste foi usado no treino.
-R: a | Falharam as condições de suficiência e de independência.
+a) A regressão logística não funciona com imagens.
+b) O teste foi usado no treino.
+c) As metades da imagem não são independentes, e cada metade é pouco informativa.
+d) O Digits tem poucos exemplos.
+R: c | Falharam as condições de suficiência e de independência.
 
 MC: Qual é a referência justa para o co-training com dois classificadores de visão?
-a) Os mesmos dois classificadores treinados só com os rotulados, com probabilidades somadas.
-b) Um modelo único com todos os atributos e todos os rótulos.
-c) Um classificador aleatório.
-d) O self-training.
-R: a | Compara-se o mesmo tipo de modelo com e sem os dados sem rótulo.
+a) Um modelo único com todos os atributos e todos os rótulos.
+b) O self-training.
+c) Os mesmos dois classificadores treinados só com os rotulados, com probabilidades somadas.
+d) Um classificador aleatório.
+R: c | Compara-se o mesmo tipo de modelo com e sem os dados sem rótulo.
 
 MC: No experimento com dados simulados, com visões independentes (rho = 0), o co-training ganhou em média:
-a) 6,9 pontos percentuais.
-b) 0,1 ponto percentual.
+a) Perdeu 5 pontos percentuais.
+b) 6,9 pontos percentuais.
 c) 20 pontos percentuais.
-d) Perdeu 5 pontos percentuais.
-R: a | O ganho foi de +6,9 p.p., melhor nos 40 sorteios.
+d) 0,1 ponto percentual.
+R: b | O ganho foi de +6,9 p.p., melhor nos 40 sorteios.
 
 MC: Quando a correlação entre as visões aumentou para 0,99, o ganho do co-training:
-a) diminuiu para 4,7 p.p., mas continuou positivo.
-b) virou perda de 10 p.p.
-c) subiu para 20 p.p.
+a) subiu para 20 p.p.
+b) diminuiu para 4,7 p.p., mas continuou positivo.
+c) virou perda de 10 p.p.
 d) tornou-se exatamente zero.
-R: a | Os ganhos foram 6,9; 5,8; 5,0 e 4,7 p.p. conforme rho aumentou.
+R: b | Os ganhos foram 6,9; 5,8; 5,0 e 4,7 p.p. conforme rho aumentou.
 
 MC: O que a queda da referência (de 86,8% para 79,3%) com o aumento da correlação indica?
-a) Visões dependentes trazem menos informação nova ao conjunto.
-b) Os dados tinham rótulos errados.
-c) O modelo estava superajustado.
-d) O teste foi alterado.
-R: a | Visões muito correlacionadas são redundantes, e o conjunto informa menos.
+a) O teste foi alterado.
+b) Visões dependentes trazem menos informação nova ao conjunto.
+c) Os dados tinham rótulos errados.
+d) O modelo estava superajustado.
+R: b | Visões muito correlacionadas são redundantes, e o conjunto informa menos.
 
 MC: A coleção SMS Spam usada no capítulo tem aproximadamente quantos por cento de mensagens spam?
-a) 13,4%.
-b) 50%.
-c) 1%.
-d) 90%.
-R: a | São 5.572 mensagens, com 13,4% de spam.
+a) 1%.
+b) 13,4%.
+c) 90%.
+d) 50%.
+R: b | São 5.572 mensagens, com 13,4% de spam.
 
 MC: Por que se usou o F1 da classe spam, em vez da acurácia, no experimento de texto?
-a) Porque as classes são desbalanceadas, e a acurácia pode enganar.
-b) Porque o F1 é sempre maior.
-c) Porque a acurácia não pode ser calculada.
-d) Porque só há uma classe.
-R: a | Com 13,4% de spam, um modelo que nunca acusa spam teria alta acurácia.
+a) Porque só há uma classe.
+b) Porque as classes são desbalanceadas, e a acurácia pode enganar.
+c) Porque o F1 é sempre maior.
+d) Porque a acurácia não pode ser calculada.
+R: b | Com 13,4% de spam, um modelo que nunca acusa spam teria alta acurácia.
 
 MC: No experimento SMS, quais foram as duas visões?
-a) Palavras e sequências de caracteres (de 2 a 4).
+a) Spam e legítima.
 b) Remetente e destinatário.
-c) Treino e teste.
-d) Spam e legítima.
-R: a | Foram duas representações do mesmo texto.
+c) Palavras e sequências de caracteres (de 2 a 4).
+d) Treino e teste.
+R: c | Foram duas representações do mesmo texto.
 
 MC: No experimento SMS, o co-training (80,7%) comparado à referência com as duas visões (83,3%):
 a) ficou abaixo dela.
-b) foi muito superior.
-c) foi idêntico.
-d) não pôde ser comparado.
+b) não pôde ser comparado.
+c) foi muito superior.
+d) foi idêntico.
 R: a | O co-training não trouxe ganho, porque as visões são muito redundantes.
 
 MC: Qual foi o resultado do erro de programação (ordem trocada das classes) no experimento SMS?
-a) O F1 caiu para 37,8%.
+a) O programa não executou.
 b) O F1 subiu para 99%.
-c) Nada mudou.
-d) O programa não executou.
-R: a | O método aceitou poucos exemplos legítimos e muitos spams, e o F1 despencou.
+c) O F1 caiu para 37,8%.
+d) Nada mudou.
+R: c | O método aceitou poucos exemplos legítimos e muitos spams, e o F1 despencou.
 
 MC: O tri-training usa:
-a) três classificadores treinados em amostras bootstrap e a concordância de dois deles como filtro.
-b) duas visões obrigatórias.
+a) duas visões obrigatórias.
+b) três classificadores treinados em amostras bootstrap e a concordância de dois deles como filtro.
 c) apenas um classificador.
 d) a distância euclidiana entre grupos.
-R: a | Um exemplo ganha pseudo-rótulo para um classificador quando os outros dois concordam.
+R: b | Um exemplo ganha pseudo-rótulo para um classificador quando os outros dois concordam.
 
 MC: O que é bootstrap?
-a) Amostra sorteada com reposição do conjunto de treino.
-b) Um tipo de rótulo.
-c) Uma métrica.
-d) A divisão em visões.
-R: a | Em um bootstrap, os exemplos são sorteados com reposição.
+a) Uma métrica.
+b) A divisão em visões.
+c) Um tipo de rótulo.
+d) Amostra sorteada com reposição do conjunto de treino.
+R: d | Em um bootstrap, os exemplos são sorteados com reposição.
 
 MC: No experimento do capítulo, o tri-training simplificado teve, no Digits, aproximadamente:
-a) o mesmo desempenho da referência (86,5% contra 86,3%).
-b) 99%.
-c) 40%.
-d) desempenho superior ao do self-training.
-R: a | O tri-training simplificado não trouxe ganho claro e ficou abaixo do self-training (90,6%).
+a) desempenho superior ao do self-training.
+b) o mesmo desempenho da referência (86,5% contra 86,3%).
+c) 99%.
+d) 40%.
+R: b | O tri-training simplificado não trouxe ganho claro e ficou abaixo do self-training (90,6%).
 
 MC: Qual das situações abaixo é favorável ao co-training?
 a) Duas visões naturais, cada uma informativa e pouco dependentes entre si.
-b) Uma visão informativa e outra aleatória.
-c) Um único conjunto de atributos sem divisão natural.
+b) Um único conjunto de atributos sem divisão natural.
+c) Uma visão informativa e outra aleatória.
 d) Duas visões que são cópias uma da outra.
 R: a | Visões suficientes e complementares sustentam o método.
 
 MC: Antes de usar o co-training, uma boa prática é:
-a) treinar um classificador para cada visão, só com os rótulos, e checar se cada uma é informativa.
-b) usar o teste para escolher as visões.
-c) apagar todos os rótulos.
-d) juntar as visões em uma só.
-R: a | Isso verifica a condição de suficiência.
+a) apagar todos os rótulos.
+b) juntar as visões em uma só.
+c) usar o teste para escolher as visões.
+d) treinar um classificador para cada visão, só com os rótulos, e checar se cada uma é informativa.
+R: d | Isso verifica a condição de suficiência.
 
 DISC: Explique a ideia do co-training com a analogia dos dois médicos.
 R: Um médico olha a radiografia e outro o exame de sangue. Quando um tem certeza de um caso, anota o diagnóstico e o outro aprende com ele, e vice-versa. Assim cada um melhora nos casos que antes eram difíceis para si.
@@ -242,24 +242,24 @@ DISC: Como você verificaria se um problema seu é adequado ao co-training?
 R: Dividiria os atributos em duas visões plausíveis, treinaria um classificador por visão só com os rótulos e checaria se cada um é informativo; avaliaria a dependência entre os erros das visões; compararia o co-training com a referência justa e com o self-training, em vários sorteios.
 
 MC: Na análise do capítulo, qual foi o principal efeito do aumento da correlação entre as visões sobre a referência (só rotulados)?
-a) Ela caiu de 86,8% para 79,3%.
-b) Ela subiu para 100%.
+a) Ela deixou de poder ser calculada.
+b) Ela caiu de 86,8% para 79,3%.
 c) Ela não mudou.
-d) Ela deixou de poder ser calculada.
-R: a | Visões mais redundantes trazem menos informação, e a referência piora.
+d) Ela subiu para 100%.
+R: b | Visões mais redundantes trazem menos informação, e a referência piora.
 
 MC: A expressão "métodos por discordância" (disagreement-based) agrupa:
-a) co-training, tri-training e outros em que vários classificadores guiam um ao outro.
+a) apenas redes neurais profundas.
 b) apenas métodos baseados em grafos.
-c) apenas redes neurais profundas.
-d) métodos que não usam dados sem rótulo.
-R: a | A concordância ou a discordância entre classificadores orienta a seleção de exemplos.
+c) métodos que não usam dados sem rótulo.
+d) co-training, tri-training e outros em que vários classificadores guiam um ao outro.
+R: d | A concordância ou a discordância entre classificadores orienta a seleção de exemplos.
 
 MC: Dividir artificialmente os atributos em duas visões aleatórias, segundo o capítulo:
 a) pode funcionar quando os atributos são redundantes, mas o efeito foi pequeno no Digits.
 b) sempre produz grande ganho.
-c) é proibido pela teoria.
-d) elimina a necessidade de rótulos.
+c) elimina a necessidade de rótulos.
+d) é proibido pela teoria.
 R: a | No Digits, o ganho de visões aleatórias foi de apenas 0,6 p.p.
 
 DISC: Por que o capítulo diz que o co-training não é um "self-training melhorado"?

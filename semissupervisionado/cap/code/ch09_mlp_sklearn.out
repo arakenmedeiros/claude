@@ -1,0 +1,6 @@
+Digits, 50 rótulos, 10 sorteios. MLP de 1 camada escondida (64 neurônios)
+modelo                          | acerto no treino | acerto no teste
+regressão logística             |           100.0% |          86.5%
+MLP, alpha = 0,0001 (quase sem L2) |           100.0% |          85.6%
+MLP, alpha = 0,1                |           100.0% |          86.3%
+MLP, alpha = 1                  |           100.0% |          86.4%

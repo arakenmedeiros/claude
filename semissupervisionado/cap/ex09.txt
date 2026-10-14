@@ -1,0 +1,269 @@
+MC: Uma rede neural pode ser vista como:
+a) uma linha de montagem de camadas, cada uma transformando o que recebe da anterior.
+b) uma tabela com todas as respostas prontas.
+c) um conjunto de regras escritas à mão.
+d) um cálculo sem nenhum parâmetro.
+R: a | Cada camada produz uma representação mais abstrata.
+
+MC: Um neurônio artificial calcula:
+a) somente a média das entradas.
+b) a diferença entre rótulo e previsão.
+c) uma soma ponderada das entradas, mais um viés, seguida de uma função de ativação.
+d) o maior valor das entradas, sem pesos.
+R: c | Pesos e viés são os números aprendidos.
+
+MC: Os pesos de um neurônio indicam:
+a) o tamanho do lote.
+b) a classe verdadeira do exemplo.
+c) o número de camadas da rede.
+d) o quanto cada entrada importa para a saída.
+R: d | Pesos maiores significam maior influência.
+
+MC: A função de ativação serve para:
+a) calcular o gradiente.
+b) escolher o lote.
+c) reduzir o número de exemplos.
+d) introduzir não linearidade, permitindo fronteiras curvas.
+R: d | Sem ela, a rede inteira equivaleria a uma única reta ou plano.
+
+MC: A ReLU devolve:
+a) sempre um valor entre -1 e 1.
+b) sempre um valor entre 0 e 1.
+c) zero para entradas negativas e a própria entrada para positivas.
+d) o quadrado da entrada.
+R: c | É simples e treina bem.
+
+MC: A função sigmoide comprime a entrada para valores entre:
+a) -1 e 1.
+b) 0 e infinito.
+c) 0 e 1.
+d) -infinito e 0.
+R: c | Por isso é útil para probabilidades.
+
+MC: A função softmax, na saída, converte as pontuações em:
+a) pesos da rede.
+b) índices de camadas.
+c) probabilidades que somam 1.
+d) valores sempre negativos.
+R: c | A classe de maior probabilidade é a prevista.
+
+MC: Uma MLP é uma rede:
+a) que só funciona com texto.
+b) com camadas totalmente conectadas.
+c) que não tem camada de saída.
+d) que usa apenas convoluções.
+R: b | Cada neurônio liga-se a todos da camada anterior.
+
+MC: Uma MLP para imagens 28x28 com 128 neurônios escondidos e 10 saídas tem aproximadamente:
+a) 1.000 pesos e vieses.
+b) 101 mil pesos e vieses.
+c) 10 pesos e vieses.
+d) 28 pesos e vieses.
+R: b | 784 x 128 + 128 + 128 x 10 + 10 = 101.770.
+
+MC: A perda (loss) de uma rede é:
+a) o número de camadas.
+b) a taxa de aprendizado.
+c) um número que mede o erro da rede.
+d) o número de épocas.
+R: c | Treinar é reduzir a perda.
+
+MC: A entropia cruzada é pequena quando:
+a) a rede tem poucas camadas.
+b) a rede dá baixa probabilidade à classe correta.
+c) a rede dá alta probabilidade à classe correta.
+d) o lote é pequeno.
+R: c | Ela penaliza fortemente as previsões confiantes e erradas.
+
+MC: O gradiente indica:
+a) em que direção cada peso faz a perda subir mais rápido.
+b) quantas épocas treinar.
+c) o tamanho da imagem.
+d) qual é a classe correta.
+R: a | Andamos no sentido oposto para reduzir a perda.
+
+MC: A retropropagação serve para:
+a) embaralhar os exemplos.
+b) escolher a arquitetura.
+c) calcular o gradiente da perda em relação a todos os pesos.
+d) gerar novos exemplos.
+R: c | Usa a regra da cadeia, da saída até a entrada.
+
+MC: Uma taxa de aprendizado grande demais provoca:
+a) menos pesos para ajustar.
+b) aumento do conjunto de treino.
+c) treino sempre mais preciso.
+d) oscilações, e a rede pode não chegar ao vale.
+R: d | Passos grandes ultrapassam o ponto de mínimo.
+
+MC: Uma taxa de aprendizado pequena demais provoca:
+a) perda sempre zero.
+b) treino muito lento.
+c) sobreajuste garantido.
+d) aumento do número de classes.
+R: b | Os passos são tão curtos que o progresso demora.
+
+MC: Uma época é:
+a) um único exemplo.
+b) um passo de atualização.
+c) um filtro da CNN.
+d) uma passada completa por todos os exemplos de treino.
+R: d | Com lotes, cada época tem vários passos.
+
+MC: Um lote (batch) é:
+a) o conjunto de teste.
+b) um tipo de ativação.
+c) uma camada da rede.
+d) o grupo de exemplos usado em cada passo de atualização.
+R: d | Por exemplo, 32 imagens por passo.
+
+MC: O Adam é:
+a) uma função de ativação.
+b) um tipo de camada convolucional.
+c) uma técnica de aumento de dados.
+d) uma variante do gradiente descendente que ajusta o passo de cada peso.
+R: d | Funciona bem com taxa de aprendizado em torno de 0,001.
+
+MC: O dropout consiste em:
+a) remover camadas depois do treino.
+b) desligar neurônios ao acaso durante o treino.
+c) duplicar o conjunto de treino.
+d) apagar exemplos de teste.
+R: b | Evita que a rede dependa demais de poucos neurônios.
+
+MC: No MLPClassifier do scikit-learn, o parâmetro alpha controla:
+a) o número de camadas.
+b) o tamanho do lote.
+c) o número de classes.
+d) a regularização L2.
+R: d | Penaliza pesos grandes.
+
+MC: A convolução em uma CNN é:
+a) um método de amostragem de exemplos.
+b) a soma de todos os pixels.
+c) um tipo de rótulo.
+d) um filtro pequeno que desliza pela imagem, gerando um mapa de atributos.
+R: d | O mesmo filtro é usado na imagem inteira.
+
+MC: Uma vantagem das camadas convolucionais sobre as totalmente conectadas é:
+a) dispensarem o treino.
+b) terem muito menos pesos, por reutilizar o mesmo filtro.
+c) funcionarem só com poucos pixels.
+d) não precisarem de dados.
+R: b | Aproveitam também a vizinhança dos pixels.
+
+MC: O max pooling:
+a) aumenta o tamanho da imagem.
+b) embaralha os pixels.
+c) resume cada janela pelo seu maior valor, reduzindo o mapa.
+d) calcula o gradiente.
+R: c | Torna a rede menos sensível a pequenos deslocamentos.
+
+MC: No PyTorch, um tensor com formato (N, 1, 28, 28) representa:
+a) N rótulos.
+b) uma única imagem 28x28.
+c) N imagens de 1 canal com 28 linhas e 28 colunas.
+d) 28 imagens de 28 canais.
+R: c | É o formato usado no livro para MNIST e Fashion-MNIST.
+
+MC: No laço de treino do PyTorch, backward() é usado para:
+a) carregar os dados.
+b) medir a acurácia.
+c) atualizar os pesos.
+d) calcular os gradientes.
+R: d | Depois dele, step() atualiza os pesos.
+
+MC: Sobreajuste (overfitting) significa que o modelo:
+a) tem desempenho ruim em ambos.
+b) tem ótimo desempenho no treino e pior em dados novos.
+c) usa dados sem rótulo demais.
+d) não consegue aprender.
+R: b | Decorou o treino em vez de generalizar.
+
+MC: No experimento do MNIST com 100 rótulos e sem aumento de dados, a CNN obteve cerca de:
+a) 100% em ambos.
+b) 81,8% no treino e 99,7% no teste.
+c) 50% em ambos.
+d) 99,7% no treino e 81,8% no teste.
+R: d | A diferença de quase 18 pontos mostra o sobreajuste.
+
+MC: O aumento de dados (data augmentation) consiste em:
+a) reduzir o conjunto de teste.
+b) apagar exemplos difíceis.
+c) criar versões modificadas dos exemplos rotulados, mantendo o rótulo.
+d) criar novos rótulos aleatórios.
+R: c | Ensina invariâncias, como pequenas rotações.
+
+MC: No MNIST com 100 rótulos, o aumento de dados forte elevou a acurácia da CNN de:
+a) 90,2% para 81,8%.
+b) 81,8% para 90,2%.
+c) 99% para 100%.
+d) 50% para 60%.
+R: b | Ganho de 8,4 pontos percentuais sem rótulo adicional.
+
+MC: A lição central da Seção 9.7.4 é que:
+a) o aumento de dados atrapalha a CNN.
+b) o Label Spreading é sempre o melhor método.
+c) um método semissupervisionado deve vencer a melhor referência supervisionada possível.
+d) redes neurais não funcionam com poucos rótulos.
+R: c | A CNN com aumento forte (90,2%) superou o Label Spreading (88,7%).
+
+DISC: Explique, com a analogia da linha de montagem, como uma rede neural processa uma imagem.
+R: Cada camada é um grupo de inspetores que usa o relatório da anterior: as primeiras acham bordas, as seguintes combinam bordas em partes, e as últimas reconhecem o objeto e dão a probabilidade de cada classe.
+
+DISC: Descreva o que faz um neurônio artificial e o papel dos pesos, do viés e da ativação.
+R: Multiplica cada entrada por um peso (importância), soma tudo e acrescenta o viés (deslocamento), e passa o total pela função de ativação, que introduz a não linearidade.
+
+DISC: Por que uma rede sem funções de ativação não-lineares seria inútil?
+R: Somas ponderadas de somas ponderadas continuam sendo uma soma ponderada. A rede inteira seria equivalente a um único modelo linear (uma reta ou plano), sem fronteiras curvas.
+
+DISC: Compare sigmoide, tangente hiperbólica e ReLU.
+R: A sigmoide comprime entre 0 e 1, a tangente hiperbólica entre -1 e 1, e a ReLU zera os negativos e mantém os positivos. A ReLU é simples e muito usada nas camadas escondidas.
+
+DISC: Explique a função softmax e dê um exemplo.
+R: Converte as pontuações da saída em probabilidades positivas que somam 1. Por exemplo, as pontuações (2, 1, 0) viram aproximadamente 66%, 24% e 10%.
+
+DISC: Calcule quantos pesos e vieses tem uma MLP com 784 entradas, uma camada escondida de 128 neurônios e 10 saídas. Comente o resultado diante de 100 rótulos.
+R: 784 x 128 + 128 + 128 x 10 + 10 = 101.770 números. É cerca de mil vezes mais do que os 100 exemplos, o que explica a facilidade de decorar os dados e o sobreajuste.
+
+DISC: Explique o que é a perda e por que a entropia cruzada é adequada à classificação.
+R: A perda mede o erro. A entropia cruzada é pequena quando a probabilidade dada à classe correta é alta e grande quando é baixa, penalizando previsões confiantes e erradas.
+
+DISC: Explique a ideia do gradiente com a analogia da montanha com neblina.
+R: Sentindo a inclinação sob os pés, damos um passo morro abaixo. O gradiente é a inclinação da perda em relação a cada peso, e andamos no sentido oposto para reduzir a perda.
+
+DISC: O que é a retropropagação e por que ela é necessária?
+R: É o algoritmo que usa a regra da cadeia para calcular o gradiente da perda em relação a todos os pesos, propagando o erro da saída para a entrada. Sem ele, calcular milhares de gradientes seria impraticável.
+
+DISC: Descreva o efeito da taxa de aprendizado, citando os casos pequena, adequada e grande.
+R: Pequena demais: treino lento. Adequada: chega ao vale em poucos passos. Grande demais: oscila e pode nem convergir.
+
+DISC: Defina lote, época e sobreajuste.
+R: Lote: grupo de exemplos de um passo. Época: passada completa pelos dados de treino. Sobreajuste: o modelo decora o treino e generaliza mal.
+
+DISC: Explique dropout e regularização L2 e diga por que ajudam.
+R: O dropout desliga neurônios ao acaso no treino, evitando dependência de poucos. A L2 penaliza pesos grandes. Ambos limitam a capacidade efetiva e reduzem o sobreajuste.
+
+DISC: Explique a convolução e o pooling e por que a CNN usa menos pesos que uma MLP.
+R: Um filtro pequeno desliza pela imagem e gera um mapa de atributos, e o pooling resume janelas. Como o mesmo filtro é reutilizado em toda a imagem, há muito menos pesos do que em camadas totalmente conectadas.
+
+DISC: Descreva os três conceitos básicos do PyTorch apresentados no capítulo.
+R: Tensor (arranjo multidimensional, como um lote de imagens), módulo (peça da rede com seus pesos) e laço de treino (saída, perda, backward para os gradientes e step para atualizar os pesos).
+
+DISC: Por que o capítulo diz que redes sofrem mais com poucos rótulos?
+R: Porque têm muitos pesos (centenas de milhares) para poucos exemplos, e decoram o treino. No MNIST com 100 rótulos, houve 99,7% no treino e 81,8% no teste.
+
+DISC: O que mostrou o experimento do Digits com a MLP e a regressão logística?
+R: Com 50 rótulos, a MLP (85,6% a 86,4%) não superou a regressão logística (86,5%), e a regularização quase não alterou o resultado. Ambos acertavam 100% do treino.
+
+DISC: O que é o aumento de dados e por que ele é considerado 'de graça'?
+R: É a criação de versões modificadas dos exemplos rotulados (giro, escala, deslocamento, apagamento, ruído) mantendo o rótulo. Não exige nenhum rótulo novo e ensina invariâncias.
+
+DISC: Interprete os resultados com aumento fraco e forte no MNIST com 100 rótulos.
+R: Sem aumento: 81,8%. Fraco: 88,3%. Forte: 90,2%, com menor desvio (0,5) e menor acerto no treino (96,3%), sinal de menos sobreajuste.
+
+DISC: Por que a comparação com a regressão logística no Capítulo 8 pode enganar? Explique com os números.
+R: Contra a regressão logística (76,7%), o Label Spreading (88,7%) parecia ganhar 12 pontos. Contra uma CNN supervisionada com aumento forte (90,2%), ele perde 1,5 ponto. A referência deve ser forte.
+
+DISC: Interprete a curva de 100, 300, 1.000 e 3.000 rótulos e explique como ela ajuda a medir o valor de um método semissupervisionado.
+R: Acurácias de 90,2%, 93,9%, 95,7% e 96,8%: ganhos decrescentes. Se um método fizer 100 rótulos renderem como 300, economiza-se a rotulagem de 200 exemplos, uma medida concreta de valor.

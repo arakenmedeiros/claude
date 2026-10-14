@@ -1,0 +1,151 @@
+@@EX 1 | A perda de consistência à mão | básico
+Uma rede devolve, para o mesmo exemplo sem rótulo e com duas perturbações diferentes, as pontuações (logits) `a = (2,0; 0,5; −1,0)` e `b = (1,5; 1,0; −0,5)`. Com NumPy, calcule as probabilidades (softmax) de cada versão, a **perda de consistência por erro quadrático médio** (média dos quadrados das diferenças entre as probabilidades) e a **divergência KL** do alvo `softmax(a)` para `softmax(b)`. Repita com `b' = a` (sem perturbação diferente) e com `b'' = (−1,0; 0,5; 2,0)` (previsão totalmente diferente).
+
+*Pergunta:* o que acontece com cada perda quando as duas versões concordam e quando discordam muito?
+@@SOL
+```python
+import numpy as np
+
+def softmax(z):
+    e = np.exp(z - z.max()); return e / e.sum()
+def mse(p, q): return np.mean((p - q) ** 2)
+def kl(p, q): return float(np.sum(p * np.log(p / q)))
+
+a = np.array([2.0, 0.5, -1.0])
+casos = {"b  (parecida)": np.array([1.5, 1.0, -0.5]), "b' (igual a a)": a.copy(), "b'' (muito diferente)": np.array([-1.0, 0.5, 2.0])}
+pa = softmax(a); print("probabilidades de a:", np.round(pa, 3))
+print("caso                   | probabilidades de b       | MSE      | KL(a || b)")
+for nome, b in casos.items():
+    pb = softmax(b); print(f"{nome:22s} | {str(np.round(pb, 3)):25s} | {mse(pa, pb):.5f} | {kl(pa, pb):.5f}")
+```
+@@NOTE Com a versão parecida, as probabilidades mudam pouco (0,786 → 0,574 na primeira classe) e as perdas são pequenas: MSE 0,025 e KL 0,099. Quando as versões **concordam** (b' = a), as duas perdas são **zero**. Quando **discordam totalmente** (b''), as perdas sobem muito: MSE 0,371 e KL 2,239. Repare que a KL cresce bem mais, porque penaliza fortemente a probabilidade pequena atribuída a uma classe que o alvo considera provável. Isso também explica por que, com o mesmo peso, a KL e o erro quadrático médio têm "forças" muito diferentes.
+@@EX 2 | A média móvel exponencial suaviza o ruído | básico
+Simule o "peso" de uma rede durante 300 passos como um sinal que sobe de 0 a 1 de forma suave, com ruído gaussiano (`RandomState(0)`, desvio 0,15): `w_t = 1 − exp(−t/60) + ruído`. Calcule o professor por EMA com fator 0,9, 0,99 e 0,999 (valor inicial = `w_0`) e mostre o erro médio (distância ao sinal sem ruído) do aluno e de cada professor.
+
+*Pergunta:* qual fator é o melhor? Por que um fator muito alto prejudica?
+@@SOL
+```python
+import numpy as np
+
+r = np.random.RandomState(0); t = np.arange(300)
+limpo = 1 - np.exp(-t / 60); w = limpo + r.randn(300) * 0.15
+print("modelo           | erro médio absoluto em relação ao sinal sem ruído")
+print(f"aluno (ruidoso)  | {np.mean(np.abs(w - limpo)):.3f}")
+for fator in [0.9, 0.99, 0.999]:
+    prof = np.zeros(300); prof[0] = w[0]
+    for i in range(1, 300): prof[i] = fator * prof[i - 1] + (1 - fator) * w[i]
+    print(f"professor {fator:5.3f} | {np.mean(np.abs(prof - limpo)):.3f}")
+```
+@@NOTE O aluno ruidoso tem erro médio de 0,122. O professor com fator 0,9 tem erro de 0,047 (o melhor), o de 0,99 tem 0,221 e o de 0,999 tem 0,493. A EMA suaviza o ruído, mas um fator muito alto **atrasa**: o professor demora a acompanhar um sinal que ainda está subindo, e acaba pior que o aluno ruidoso. Com 300 passos, o fator 0,999 tem memória de cerca de mil passos, bem mais que a duração do treino. É preciso casar o fator com o número de passos.
+@@EX 3 | Consistência nas duas luas, com uma MLP em PyTorch | intermediário
+Nas **duas luas** (`make_moons`, 400 pontos, ruído 0,15, `random_state=0`; 25% para teste), sorteie 10 rotulados (5 por classe) e use o restante do treino sem rótulo. Treine uma MLP (2 → 32 → 32 → 2, ReLU) por 300 passos com Adam (lr 0,01): (a) só a perda supervisionada e (b) supervisionada + consistência (Π-model) com a perturbação "ruído gaussiano de desvio 0,15" sobre os pontos sem rótulo, peso 5 com rampa nos primeiros 100 passos. Repita com 10 sorteios e mostre a acurácia média no teste.
+
+*Pergunta:* a consistência ajudou? Em quantos sorteios?
+@@SOL
+```python
+import numpy as np, torch, torch.nn as nn, torch.nn.functional as F
+from sklearn.datasets import make_moons
+from sklearn.model_selection import train_test_split
+
+X, y = make_moons(400, noise=0.15, random_state=0)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+X_te_t, y_te_t = torch.tensor(X_te, dtype=torch.float32), torch.tensor(y_te)
+def treinar(idx, consistencia, semente):
+    torch.manual_seed(semente)
+    m = nn.Sequential(nn.Linear(2, 32), nn.ReLU(), nn.Linear(32, 32), nn.ReLU(), nn.Linear(32, 2)); opt = torch.optim.Adam(m.parameters(), lr=0.01)
+    xl, yl = torch.tensor(X_tr[idx], dtype=torch.float32), torch.tensor(y_tr[idx]); xu = torch.tensor(np.delete(X_tr, idx, axis=0), dtype=torch.float32)
+    for passo in range(1, 301):
+        perda = F.cross_entropy(m(xl), yl)
+        if consistencia:
+            w = 5 * np.exp(-5 * (1 - min(1, passo / 100)) ** 2)
+            p1 = F.softmax(m(xu + 0.15 * torch.randn_like(xu)), 1); p2 = F.softmax(m(xu + 0.15 * torch.randn_like(xu)), 1)
+            perda = perda + w * F.mse_loss(p1, p2)
+        opt.zero_grad(); perda.backward(); opt.step()
+    return (m(X_te_t).argmax(1) == y_te_t).float().mean().item()
+
+res = {False: [], True: []}
+for s in range(10):
+    r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == c)[0], 5, replace=False) for c in (0, 1)])
+    for cons in (False, True): res[cons].append(treinar(idx, cons, s))
+for cons, nome in [(False, "só supervisionada"), (True, "com consistência (Π-model)")]:
+    print(f"{nome:28s}: {100 * np.mean(res[cons]):.1f}% ± {100 * np.std(res[cons]):.1f}")
+d = np.array(res[True]) - np.array(res[False])
+print("sorteios em que a consistência ajudou / empatou / piorou:", int((d > 0).sum()), "/", int((d == 0).sum()), "/", int((d < 0).sum()), "| ganho médio: %+.1f p.p." % (100 * d.mean()))
+```
+@@NOTE Sem consistência, a MLP obteve 87,1% ± 6,6; com consistência (Π-model, ruído gaussiano), 94,9% ± 3,6, um ganho médio de 7,8 pontos percentuais. A consistência ajudou em 9 dos 10 sorteios e piorou em 1. Nas duas luas, a perturbação por ruído é adequada (um pequeno deslocamento do ponto não muda a classe), e a rede é pequena e rápida. É um bom exemplo de que o método funciona quando a perturbação respeita a estrutura do problema. Atenção ao desvio de 6,6 pontos da referência, que mostra o quanto o resultado depende de quais 10 pontos foram rotulados.
+@@EX 4 | O limiar de confiança da UDA | avançado
+No **MNIST** (100 rótulos; `sortear_rotulados(y, 10, 0)`; 10.000 imagens sem rótulo sorteadas do restante), treine com `treinar_ssl("uda", ...)`, 1.000 passos, variando o **limiar de confiança** (`limiar` = 0, 0,8 e 0,95). Passe `yu=y[u]` apenas para medir a **fração** de exemplos que passam pelo filtro e a **precisão** dos alvos que passam (os rótulos verdadeiros não entram no treino). Mostre também a acurácia no teste.
+
+*Pergunta:* que efeito tem o limiar? A precisão dos alvos que passam aumenta com o limiar?
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_mnist(); idx = sortear_rotulados(y, 10, 0)
+u = np.random.RandomState(100).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
+print("limiar | fração que passa | precisão dos alvos | acerto do aluno | acerto do professor  (1.000 passos)")
+for lim in [0.0, 0.8, 0.95]:
+    _, _, h = treinar_ssl("uda", X[idx], y[idx], X[u], passos=1000, limiar=lim, yu=y[u], semente=0, X_teste=X_te, y_teste=y_te, relatar=(1000,))
+    _, a, p, frac, prec = h[0]
+    print(f"{lim:6.2f} | {100 * frac:15.1f}% | {100 * prec:17.1f}% | {100 * a:14.1f}% | {100 * p:.1f}%")
+```
+@@NOTE O limiar teve **pouco efeito** neste experimento: o acerto do aluno foi de 95,6% (sem filtro), 95,7% (0,8) e 95,8% (0,95), diferenças bem menores que o ruído entre execuções. A fração de alvos que passam cai de 100% para 95,3% e 91,2%, e a **precisão** dos que passam sobe de 93,1% para 95,0% e 96,4%, como esperado. Ou seja, o filtro de fato escolhe alvos mais confiáveis, mas no MNIST, em que o modelo já erra pouco, isso não mudou o resultado final. Em problemas mais difíceis, o filtro pode ser mais importante (veja o projeto).
+@@EX 5 | O fator da média móvel no Mean Teacher | avançado
+No **MNIST** (mesmos 100 rótulos e 10.000 sem rótulo do exercício anterior), treine o **Mean Teacher** com peso 10 por 1.000 passos e fator `ema` de 0,9, 0,99 e 0,999. Mostre aluno e professor.
+
+*Pergunta:* qual fator funcionou melhor para o professor? Por quê, considerando o número de passos?
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_mnist(); idx = sortear_rotulados(y, 10, 0)
+u = np.random.RandomState(100).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
+print("fator EMA | aluno | professor  (Mean Teacher, peso 10, 1.000 passos)")
+for f in [0.9, 0.99, 0.999]:
+    _, _, h = treinar_ssl("mt", X[idx], y[idx], X[u], passos=1000, peso=10.0, ema=f, semente=0, X_teste=X_te, y_teste=y_te, relatar=(1000,))
+    print(f"{f:9.3f} | {100 * h[0][1]:.1f}% | {100 * h[0][2]:.1f}%")
+```
+@@NOTE O fator 0,9 deu 94,9% (aluno) e 95,1% (professor); 0,99, 94,7% e 95,0%; e 0,999, 92,6% e 92,8%. Com 1.000 passos, o fator 0,999 faz o professor guardar cerca de 37% (0,999 elevado a 1.000) dos pesos **iniciais**, ainda quase aleatórios, e por isso ele fica defasado e o próprio aluno, que aprende com o alvo dele, piora. Fatores de 0,9 e 0,99 funcionaram de modo semelhante. A regra: o fator deve ser compatível com a duração do treino (mais passos permitem fatores mais altos).
+@@PROJ Rotulando roupas com consistência: UDA e Mean Teacher no Fashion-MNIST | Cap10
+**Fonte dos dados.** *Fashion-MNIST* (Zalando Research; também no Kaggle), 70.000 imagens 28×28 de 10 tipos de peças de roupa (`carregar_fashion()` de `utilidades.py`, espelho público).
+
+**Contexto.** No Capítulo 9, o aumento de dados forte **piorou** a CNN no Fashion-MNIST, e a melhor referência foi a CNN com aumento fraco. Antes de recomendar um método de consistência, a loja precisa saber se a UDA ou o Mean Teacher superam essa referência **com um aumento adequado a roupas**.
+
+**Tarefas.**
+1. Defina um aumento "moderado" para roupas: rotação de até 10°, escala de 10% e deslocamento de até 10% (função `aumentar` de `utilidades.py`, sem apagar e sem ruído). Use-o como `forte` em `treinar_ssl`, e deslocamento de até 8% como `fraco`.
+2. Com 100 rótulos (10 por classe), 10.000 imagens de treino sem rótulo, 1.500 passos e dois sorteios, compare no teste: a referência (`sup`), o Mean Teacher (peso 10) e a UDA.
+3. Para a UDA, reporte também a fração de alvos que passam pelo filtro de confiança e a precisão deles (`yu`).
+4. Escreva uma recomendação (8 a 10 linhas): algum método compensa? A confiança do modelo é um bom filtro neste problema?
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_fashion()
+moderado = lambda x: aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)
+print("método                 | acerto do aluno | acerto do professor | fração que passa | precisão dos alvos  (Fashion-MNIST, 100 rótulos, 1.500 passos)")
+for nome, metodo, peso in [("só rotulados (sup)", "sup", 1.0), ("Mean Teacher (w=10)", "mt", 10.0), ("UDA", "uda", 1.0)]:
+    r = []
+    for s in range(2):
+        idx = sortear_rotulados(y, 10, s); u = np.random.RandomState(100 + s).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
+        _, _, h = treinar_ssl(metodo, X[idx], y[idx], X[u], passos=1500, peso=peso, forte=moderado, fraco=aumento_fraco, yu=y[u], semente=s, X_teste=X_te, y_teste=y_te, relatar=(1500,))
+        r.append(h[0][1:])
+    r = np.array(r).mean(axis=0)
+    f = lambda v: f"{100 * v:14.1f}%" if not np.isnan(v) else "             --"
+    print(f"{nome:22s} | {f(r[0])} | {f(r[1])} | {f(r[2])} | {f(r[3])}")
+```
+@@RUBRICA
+- O aumento é adequado ao problema (moderado), e a referência supervisionada usa o mesmo aumento e o mesmo número de passos.
+- Foram usados dois sorteios dos rotulados e os mesmos não rotulados e o mesmo teste para todos os métodos.
+- A fração e a precisão dos alvos da UDA são calculadas com `yu` apenas como diagnóstico, sem entrar no treino.
+- A comparação distingue aluno de professor.
+- A recomendação é coerente com os números e discute o ruído entre sorteios.
+@@NOTE Com 100 rótulos, a referência obteve 70,9% (aluno) e 71,2% (professor). O Mean Teacher (peso 10) obteve 72,8% e 72,6%, e a UDA, 72,6% e 72,3%: ganhos de cerca de **1,7 a 1,9 ponto** no aluno, no limite do ruído entre sorteios (dois sorteios). Na UDA, passam pelo filtro 88,5% dos alvos, mas a **precisão** deles é de apenas **75,0%** (no MNIST, era de 96,4%): o modelo é confiante e erra com frequência em roupas parecidas (camisa, camiseta, pulôver), e portanto a confiança é um filtro **ruim** neste problema. Recomendação: o ganho é modesto e pouco seguro, não justifica, por si só, um sistema mais complexo; vale testar com mais sorteios, mais passos ou com uma representação melhor (Capítulo 12). Limites: dois sorteios, 1.500 passos e uma só configuração de aumento.
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits e as bases sintéticas das duas luas.
+- **Kaggle:** Fashion-MNIST e Digit Recognizer.
+- **Artigos:** Tarvainen e Valpola (2017) e Xie et al. (2020), com os desafios de medir o ganho contra referências fortes (Oliver et al., 2018).

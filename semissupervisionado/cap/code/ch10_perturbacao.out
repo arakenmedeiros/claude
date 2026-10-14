@@ -1,0 +1,5 @@
+Mean Teacher no MNIST (100 rótulos + 10.000 sem rótulo, 1500 passos, 2 sorteios): qual perturbação nos exemplos sem rótulo?
+perturbação (só nos sem rótulo)        | aluno (teste) | professor EMA (teste)
+nenhuma (só dropout)                   |         94.7% | 95.0%
+fraca (deslocar até 8%)                |         94.6% | 95.2%
+forte (gira, escala, apaga, ruído)     |         94.2% | 95.0%

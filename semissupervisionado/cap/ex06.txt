@@ -1,16 +1,16 @@
 MC: Um classificador generativo estima:
-a) p(x | y) e p(y), e classifica pela regra de Bayes.
-b) apenas a fronteira entre as classes.
-c) somente o número de classes.
-d) apenas a acurácia.
-R: a | O generativo modela como cada classe gera os dados e as proporções das classes.
+a) apenas a acurácia.
+b) somente o número de classes.
+c) apenas a fronteira entre as classes.
+d) p(x | y) e p(y), e classifica pela regra de Bayes.
+R: d | O generativo modela como cada classe gera os dados e as proporções das classes.
 
 MC: Um classificador discriminativo estima diretamente:
-a) p(y | x).
-b) p(x | y).
-c) p(x).
-d) a log-verossimilhança dos exemplos sem rótulo.
-R: a | O discriminativo aprende a probabilidade da classe dado o exemplo, ou a fronteira.
+a) p(x | y).
+b) p(x).
+c) a log-verossimilhança dos exemplos sem rótulo.
+d) p(y | x).
+R: d | O discriminativo aprende a probabilidade da classe dado o exemplo, ou a fronteira.
 
 MC: Qual dos modelos abaixo é generativo?
 a) Naive Bayes.
@@ -20,158 +20,158 @@ d) Árvore de decisão.
 R: a | O Naive Bayes modela p(x | y) e p(y).
 
 MC: A regra de Bayes escreve p(y | x) como proporcional a:
-a) p(x | y) multiplicado por p(y).
+a) apenas p(x).
 b) p(x) dividido por p(y).
-c) p(y) somado a p(x).
-d) apenas p(x).
-R: a | p(y | x) = p(x | y) p(y) / p(x).
+c) p(x | y) multiplicado por p(y).
+d) p(y) somado a p(x).
+R: c | p(y | x) = p(x | y) p(y) / p(x).
 
 MC: Por que modelos generativos têm uso natural para dados sem rótulo?
-a) Porque descrevem também a distribuição dos exemplos x, que pode ser estimada sem rótulos.
+a) Porque são sempre mais precisos.
 b) Porque não precisam de nenhum rótulo.
-c) Porque são sempre mais precisos.
+c) Porque descrevem também a distribuição dos exemplos x, que pode ser estimada sem rótulos.
 d) Porque ignoram os atributos.
-R: a | Estimar p(x | y) e p(y) pode usar os exemplos sem rótulo.
+R: c | Estimar p(x | y) e p(y) pode usar os exemplos sem rótulo.
 
 MC: Segundo Ng e Jordan (2001), comparados à regressão logística, os classificadores generativos como o Naive Bayes tendem a:
-a) atingir seu melhor desempenho com menos dados de treino.
+a) não funcionar com atributos numéricos.
 b) ser sempre piores.
-c) não funcionar com atributos numéricos.
-d) exigir mais rótulos.
-R: a | O generativo converge mais rápido com poucos dados, embora possa perder com muitos.
+c) exigir mais rótulos.
+d) atingir seu melhor desempenho com menos dados de treino.
+R: d | O generativo converge mais rápido com poucos dados, embora possa perder com muitos.
 
 MC: Em uma mistura de gaussianas (GMM), cada componente descreve:
-a) uma "nuvem" de dados com média e covariância.
-b) um rótulo digitado.
-c) um erro do modelo.
-d) uma métrica.
-R: a | Cada gaussiana tem um centro (média) e uma forma (covariância).
+a) uma métrica.
+b) um erro do modelo.
+c) um rótulo digitado.
+d) uma "nuvem" de dados com média e covariância.
+R: d | Cada gaussiana tem um centro (média) e uma forma (covariância).
 
 MC: O parâmetro covariance_type="spherical" no GaussianMixture faz cada gaussiana ser:
-a) um círculo, com um único número de dispersão.
-b) uma elipse totalmente livre.
-c) uma reta.
-d) idêntica para todos os dados.
-R: a | A covariância esférica tem um só parâmetro de dispersão por componente.
+a) idêntica para todos os dados.
+b) uma reta.
+c) uma elipse totalmente livre.
+d) um círculo, com um único número de dispersão.
+R: d | A covariância esférica tem um só parâmetro de dispersão por componente.
 
 MC: Com poucos dados, qual escolha de covariância tende a ser mais segura?
-a) Uma simples, como diag ou tied.
-b) A completa (full) para todas as classes.
-c) Nenhuma.
-d) Uma com mil parâmetros.
-R: a | Estimar matrizes completas com poucos exemplos é instável.
+a) Uma com mil parâmetros.
+b) Uma simples, como diag ou tied.
+c) A completa (full) para todas as classes.
+d) Nenhuma.
+R: b | Estimar matrizes completas com poucos exemplos é instável.
 
 MC: No passo E do EM semissupervisionado, calcula-se:
 a) a probabilidade de cada exemplo sem rótulo pertencer a cada classe (responsabilidades).
-b) a acurácia no teste.
+b) o rótulo verdadeiro dos exemplos.
 c) o número de atributos.
-d) o rótulo verdadeiro dos exemplos.
+d) a acurácia no teste.
 R: a | O passo E dá a cada exemplo sem rótulo uma probabilidade por classe.
 
 MC: No passo M do EM, o modelo é reestimado:
-a) contando cada exemplo proporcionalmente à sua responsabilidade.
-b) ignorando os exemplos sem rótulo.
-c) usando apenas o conjunto de teste.
-d) apagando os rótulos.
-R: a | Médias, covariâncias e proporções são recalculadas com pesos iguais às responsabilidades.
+a) ignorando os exemplos sem rótulo.
+b) usando apenas o conjunto de teste.
+c) apagando os rótulos.
+d) contando cada exemplo proporcionalmente à sua responsabilidade.
+R: d | Médias, covariâncias e proporções são recalculadas com pesos iguais às responsabilidades.
 
 MC: Para os exemplos rotulados, a responsabilidade no EM é:
-a) 1 para a classe verdadeira e 0 para as outras.
-b) 0,5 para todas as classes.
-c) sempre igual à do vizinho.
-d) calculada como a dos exemplos sem rótulo.
-R: a | O rótulo é conhecido, e por isso a responsabilidade é fixa.
+a) calculada como a dos exemplos sem rótulo.
+b) 1 para a classe verdadeira e 0 para as outras.
+c) 0,5 para todas as classes.
+d) sempre igual à do vizinho.
+R: b | O rótulo é conhecido, e por isso a responsabilidade é fixa.
 
 MC: A log-verossimilhança do EM, a cada iteração:
-a) não diminui.
+a) é sempre zero.
 b) sempre diminui.
 c) oscila livremente.
-d) é sempre zero.
-R: a | A garantia do EM é que a verossimilhança não decresce, embora possa parar em um máximo local.
+d) não diminui.
+R: d | A garantia do EM é que a verossimilhança não decresce, embora possa parar em um máximo local.
 
 MC: No experimento com 6 rótulos e duas gaussianas, a acurácia só com os rotulados foi 80,6%. Com o EM, foi:
 a) 91,8%.
-b) 80,6%.
+b) 100%.
 c) 50%.
-d) 100%.
+d) 80,6%.
 R: a | O ganho foi de 11,2 p.p., melhor em 26 dos 30 conjuntos de dados.
 
 MC: Por que 6 rótulos dão estimativas ruins das gaussianas?
-a) Porque poucos pontos estimam mal a média e a covariância de cada classe.
-b) Porque as gaussianas não existem.
-c) Porque o EM não funciona com 6 pontos.
-d) Porque os rótulos estão errados.
-R: a | A amostra pequena é instável para estimar a forma de cada nuvem.
+a) Porque os rótulos estão errados.
+b) Porque poucos pontos estimam mal a média e a covariância de cada classe.
+c) Porque as gaussianas não existem.
+d) Porque o EM não funciona com 6 pontos.
+R: b | A amostra pequena é instável para estimar a forma de cada nuvem.
 
 MC: O EM pode parar em:
-a) um máximo local da verossimilhança.
-b) apenas no máximo global, sempre.
+a) apenas no máximo global, sempre.
+b) o primeiro erro.
 c) o teste.
-d) o primeiro erro.
-R: a | A solução pode depender da inicialização, e por isso é bom repetir com vários inícios.
+d) um máximo local da verossimilhança.
+R: d | A solução pode depender da inicialização, e por isso é bom repetir com vários inícios.
 
 MC: O que o cenário "cruzado" do capítulo representa?
-a) Grupos em cima e embaixo, enquanto a classe é esquerda ou direita: a suposição do modelo não vale.
+a) Um conjunto de teste.
 b) Duas gaussianas perfeitamente separadas, uma por classe.
 c) Dados sem ruído.
-d) Um conjunto de teste.
-R: a | A estrutura de grupos é perpendicular às classes.
+d) Grupos em cima e embaixo, enquanto a classe é esquerda ou direita: a suposição do modelo não vale.
+R: d | A estrutura de grupos é perpendicular às classes.
 
 MC: No cenário cruzado, o EM com peso 1 para os dados sem rótulo mudou a acurácia em:
-a) -15,1 pontos percentuais.
-b) +15,1 pontos percentuais.
-c) +0,1 ponto percentual.
-d) 0 ponto percentual.
-R: a | O EM seguiu a estrutura de grupos, que não correspondia às classes.
+a) +15,1 pontos percentuais.
+b) -15,1 pontos percentuais.
+c) 0 ponto percentual.
+d) +0,1 ponto percentual.
+R: b | O EM seguiu a estrutura de grupos, que não correspondia às classes.
 
 MC: No cenário alinhado, com peso 0,1 para os dados sem rótulo, o ganho do EM foi de:
-a) 4,8 p.p., a maior parte do ganho total.
-b) 0 p.p.
-c) -8 p.p.
+a) -8 p.p.
+b) 4,8 p.p., a maior parte do ganho total.
+c) 0 p.p.
 d) 50 p.p.
-R: a | O ganho foi de +4,8 p.p., contra +5,9 com peso 1.
+R: b | O ganho foi de +4,8 p.p., contra +5,9 com peso 1.
 
 MC: Reduzir o peso dos exemplos sem rótulo no cenário cruzado:
-a) atenuou o dano, mas não o eliminou.
-b) eliminou totalmente o dano.
+a) não pôde ser testado.
+b) atenuou o dano, mas não o eliminou.
 c) fez o ganho subir para 20 p.p.
-d) não pôde ser testado.
-R: a | Os resultados foram -8,6 (peso 0,1), -13,3 (0,5) e -15,1 (1).
+d) eliminou totalmente o dano.
+R: b | Os resultados foram -8,6 (peso 0,1), -13,3 (0,5) e -15,1 (1).
 
 MC: Por que "o EM não sabe o que você quer"?
-a) Porque maximiza a verossimilhança dos dados e não a acurácia da classificação.
-b) Porque ignora os dados.
-c) Porque só funciona com rótulos.
-d) Porque não usa probabilidades.
-R: a | Ele segue a estrutura mais forte dos dados, que pode não coincidir com as classes.
+a) Porque ignora os dados.
+b) Porque só funciona com rótulos.
+c) Porque não usa probabilidades.
+d) Porque maximiza a verossimilhança dos dados e não a acurácia da classificação.
+R: d | Ele segue a estrutura mais forte dos dados, que pode não coincidir com as classes.
 
 MC: O Naive Bayes supõe que as palavras de uma mensagem são:
-a) independentes entre si, dada a classe.
+a) rótulos.
 b) todas iguais.
 c) ordenadas por tamanho.
-d) rótulos.
-R: a | É a suposição "ingênua" do método.
+d) independentes entre si, dada a classe.
+R: d | É a suposição "ingênua" do método.
 
 MC: No experimento SMS, por que o Naive Bayes só com os 40 rotulados (metade spam) foi tão ruim (F1 44,5%)?
 a) A amostra rotulada tem 50% de spam, mas na realidade são 13,4%, e o modelo superestima o spam.
-b) O Naive Bayes não funciona com texto.
-c) Não havia palavras.
-d) O teste estava errado.
+b) O teste estava errado.
+c) O Naive Bayes não funciona com texto.
+d) Não havia palavras.
 R: a | A proporção de classes da amostra rotulada distorce a prior.
 
 MC: Com a proporção real de spam informada ao Naive Bayes, o F1 só com rotulados subiu para:
-a) 69,2%.
-b) 44,5%.
-c) 90,3%.
+a) 90,3%.
+b) 69,2%.
+c) 44,5%.
 d) 99%.
-R: a | Esta é a referência mais forte do experimento.
+R: b | Esta é a referência mais forte do experimento.
 
 MC: Com EM e peso 1, o Naive Bayes chegou ao F1 de:
-a) 90,3%.
-b) 44,5%.
-c) 69,2%.
+a) 44,5%.
+b) 69,2%.
+c) 90,3%.
 d) 24,8%.
-R: a | O ganho foi de cerca de 21 p.p. sobre a referência forte.
+R: c | O ganho foi de cerca de 21 p.p. sobre a referência forte.
 
 MC: Com peso muito pequeno (0,05), o NB + EM teve F1 de:
 a) 24,8%, pior que a referência.
@@ -181,30 +181,30 @@ d) 69,2%.
 R: a | Pesos pequenos não foram suficientes e pioraram o resultado nesse experimento.
 
 MC: Na estratégia "cluster-e-rotula", o GMM é ajustado:
-a) com todos os exemplos, rotulados e sem rótulo.
-b) apenas com os exemplos de teste.
-c) sem nenhum exemplo.
-d) apenas com rótulos.
-R: a | Depois, cada componente recebe a classe mais votada entre os rotulados.
+a) sem nenhum exemplo.
+b) apenas com rótulos.
+c) apenas com os exemplos de teste.
+d) com todos os exemplos, rotulados e sem rótulo.
+R: d | Depois, cada componente recebe a classe mais votada entre os rotulados.
 
 MC: No Digits (50 rótulos), o GMM semissupervisionado teve acurácia:
-a) 85,0%, praticamente igual à regressão logística (84,5%).
+a) muito inferior ao LDA.
 b) 99%.
 c) 60%.
-d) muito inferior ao LDA.
-R: a | O ganho foi pequeno, porque o Digits não é gaussiano em 15 dimensões.
+d) 85,0%, praticamente igual à regressão logística (84,5%).
+R: d | O ganho foi pequeno, porque o Digits não é gaussiano em 15 dimensões.
 
 MC: O critério BIC é usado, no contexto do GMM, para:
-a) escolher o número de componentes equilibrando ajuste e complexidade.
-b) medir a acurácia no teste.
-c) criar rótulos.
+a) criar rótulos.
+b) escolher o número de componentes equilibrando ajuste e complexidade.
+c) medir a acurácia no teste.
 d) padronizar os atributos.
-R: a | O BIC penaliza modelos mais complexos.
+R: b | O BIC penaliza modelos mais complexos.
 
 MC: O self-training pode ser visto como:
 a) um EM "duro", em que o passo E escolhe uma única classe por exemplo.
-b) um método de grafos.
-c) uma rede neural.
+b) uma rede neural.
+c) um método de grafos.
 d) uma validação cruzada.
 R: a | Em vez de probabilidades, usa-se o rótulo mais provável.
 

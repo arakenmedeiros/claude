@@ -1,0 +1,269 @@
+MC: Um pseudo-rótulo é:
+a) um rótulo atribuído pelo próprio modelo a um exemplo sem rótulo.
+b) o rótulo verdadeiro escondido do modelo.
+c) um rótulo aleatório sorteado.
+d) um rótulo escrito por um especialista.
+R: a | A previsão do modelo é tratada como se fosse o rótulo.
+
+MC: O método Pseudo-Label (Lee, 2013) consiste em:
+a) usar apenas exemplos rotulados.
+b) treinar a rede também nos exemplos sem rótulo, usando a classe mais provável prevista como rótulo.
+c) apagar exemplos difíceis.
+d) trocar a rede por um classificador linear.
+R: b | É o self-training do Capítulo 4, aplicado a redes neurais.
+
+MC: O viés de confirmação (confirmation bias) ocorre quando:
+a) um erro do modelo vira pseudo-rótulo e é reforçado no treino.
+b) o conjunto de teste vaza para o treino.
+c) o aumento de dados é fraco.
+d) o modelo aprende só com rótulos verdadeiros.
+R: a | Erros confiantes se realimentam.
+
+MC: O limiar de confiança no FixMatch serve para:
+a) definir o tamanho do lote.
+b) dividir os dados em treino e teste.
+c) aceitar como pseudo-rótulo só as previsões com confiança alta.
+d) escolher a taxa de aprendizado.
+R: c | Tipicamente 0,95.
+
+MC: No FixMatch, o pseudo-rótulo é obtido:
+a) da versão fortemente aumentada.
+b) do conjunto de teste.
+c) da previsão na versão fracamente aumentada do exemplo.
+d) de um rótulo humano.
+R: c | A versão fraca produz um alvo mais confiável.
+
+MC: No FixMatch, a rede é treinada com o pseudo-rótulo:
+a) sem entropia cruzada.
+b) na versão fraca do mesmo exemplo.
+c) apenas no teste.
+d) na versão fortemente aumentada do mesmo exemplo.
+R: d | Combina pseudo-rótulo e consistência.
+
+MC: O FixMatch pode ser descrito como uma combinação de:
+a) grafos e modelos generativos.
+b) pseudo-rótulos e regularização por consistência.
+c) co-training e S3VM.
+d) PCA e k-means.
+R: b | Duas ideias simples, em um único método.
+
+MC: O aumento fraco costuma ser:
+a) uma transformação que muda completamente a imagem.
+b) um ruído enorme.
+c) a remoção do rótulo.
+d) um deslocamento ou espelhamento leve.
+R: d | Preserva a classe e mantém a imagem reconhecível.
+
+MC: O aumento forte costuma incluir:
+a) apenas deslocamentos de um pixel.
+b) nenhuma transformação.
+c) troca de rótulos.
+d) rotações, escala, cortes, apagamentos ou ruído.
+R: d | Deve ser forte mas ainda preservar a classe.
+
+MC: Uma razão para o aumento forte ajudar no FixMatch é:
+a) torna o gradiente zero.
+b) dificulta a tarefa, forçando a rede a reconhecer a classe apesar das distorções.
+c) elimina a necessidade de rótulos.
+d) reduz o número de exemplos.
+R: b | Um pseudo-rótulo fácil, na versão fraca, ensina algo útil na versão difícil.
+
+MC: O mixup consiste em:
+a) combinar duas imagens e seus rótulos com pesos lambda e 1 - lambda.
+b) apagar um pedaço da imagem.
+c) girar a imagem.
+d) duplicar o conjunto de dados.
+R: a | O rótulo da imagem misturada é a mistura dos rótulos.
+
+MC: No mixup, uma imagem composta por 80% de um 1 e 20% de um 3 tem como rótulo:
+a) 50% de cada classe.
+b) 80% da classe 1 e 20% da classe 3.
+c) 100% da classe 3.
+d) 100% da classe 1.
+R: b | A mistura é feita nas imagens e nos rótulos.
+
+MC: No MixMatch, a previsão para um exemplo sem rótulo é obtida:
+a) pela moda dos rótulos conhecidos.
+b) pela média das previsões em várias versões aumentadas, afiada por uma temperatura.
+c) pelo rótulo humano.
+d) por sorteio.
+R: b | A média de K versões é mais estável que uma só.
+
+MC: O afiamento (sharpening) no MixMatch:
+a) remove a classe mais provável.
+b) troca a classe.
+c) uniformiza a distribuição.
+d) concentra a distribuição na classe mais provável.
+R: d | Controla a temperatura da distribuição.
+
+MC: O MixMatch combina:
+a) apenas o mixup.
+b) aumento de dados, afiamento, pseudo-rótulos médios e mixup.
+c) apenas pseudo-rótulos duros.
+d) grafos e kernels.
+R: b | Une várias ideias em um só método.
+
+MC: O ReMixMatch acrescenta ao MixMatch:
+a) uso exclusivo de rótulos.
+b) ajuste da distribuição das classes previstas e aumento forte aprendido.
+c) apenas mais camadas.
+d) a remoção do mixup.
+R: b | É uma evolução do MixMatch.
+
+MC: Se a distribuição das classes previstas for muito desequilibrada, o risco é:
+a) o treino ficar mais rápido.
+b) o aumento de dados deixar de funcionar.
+c) o modelo reforçar as classes mais frequentes nos pseudo-rótulos.
+d) os rótulos ficarem corretos.
+R: c | Por isso há técnicas de alinhamento de distribuição.
+
+MC: Um limiar de confiança muito baixo tende a:
+a) eliminar o viés de confirmação.
+b) impedir o uso do aumento de dados.
+c) rejeitar quase todos os exemplos.
+d) aceitar muitos pseudo-rótulos, inclusive errados.
+R: d | Mais quantidade, menos qualidade dos alvos.
+
+MC: Um limiar de confiança muito alto tende a:
+a) eliminar o uso de redes.
+b) aceitar poucos pseudo-rótulos, aproveitando pouco os dados sem rótulo.
+c) aceitar todos os pseudo-rótulos.
+d) tornar os alvos pouco confiáveis.
+R: b | Mais qualidade, menos quantidade.
+
+MC: A precisão dos pseudo-rótulos é:
+a) o número de épocas.
+b) o tamanho do lote.
+c) a acurácia no treino.
+d) a fração dos pseudo-rótulos que coincide com o rótulo verdadeiro (medida apenas para diagnóstico).
+R: d | Só pode ser medida porque, no experimento, conhecemos os rótulos verdadeiros.
+
+MC: Medir a precisão dos pseudo-rótulos com os rótulos verdadeiros dos exemplos sem rótulo é aceitável quando:
+a) substitui o conjunto de teste.
+b) é usada para ajustar o modelo.
+c) serve apenas de diagnóstico e não entra no treino.
+d) entra no treino como rótulo.
+R: c | Em um projeto real, esses rótulos não existiriam.
+
+MC: Uma diferença entre o self-training clássico e o FixMatch é que o FixMatch:
+a) usa aumento forte e fraco e treina uma rede em todos os passos.
+b) não usa rótulos.
+c) nunca usa limiar.
+d) só funciona com árvores de decisão.
+R: a | O self-training clássico retreina o modelo em rodadas.
+
+MC: Com poucos rótulos por classe (por exemplo, 1), o risco dos pseudo-rótulos é:
+a) o modelo ficar bom demais.
+b) faltar memória.
+c) o modelo começar com previsões ruins e reforçar erros.
+d) o treino terminar mais rápido.
+R: c | A qualidade inicial do modelo define a qualidade dos alvos.
+
+MC: Um resultado em que o FixMatch não supera a referência supervisionada deve ser:
+a) atribuído ao teste.
+b) relatado, pois resultados negativos fazem parte da avaliação honesta.
+c) omitido.
+d) corrigido até superar.
+R: b | A honestidade exige reportar o que se mede.
+
+MC: A referência supervisionada justa para o FixMatch usa:
+a) o conjunto de teste no treino.
+b) o mesmo aumento forte, os mesmos passos e os mesmos rótulos.
+c) aumento fraco e menos passos.
+d) mais rótulos que o método semissupervisionado.
+R: b | Para o ganho vir apenas dos dados sem rótulo.
+
+MC: A principal diferença entre o pseudo-rótulo duro (FixMatch) e a consistência suave (Mean Teacher) é que o primeiro:
+a) compara probabilidades sem decidir uma classe.
+b) não usa dados sem rótulo.
+c) converte a previsão em uma classe e usa entropia cruzada.
+d) não usa aumento.
+R: c | O pseudo-rótulo duro decide uma classe.
+
+MC: Em um sistema real, os pseudo-rótulos exigem cuidado porque:
+a) substituem o teste.
+b) erros confiantes podem se propagar e prejudicar o modelo final.
+c) dispensam validação.
+d) são sempre corretos.
+R: b | Por isso, valide em dados rotulados à parte.
+
+MC: Para avaliar se o método ajudou, deve-se usar:
+a) apenas o conjunto de treino.
+b) os próprios pseudo-rótulos.
+c) a precisão dos pseudo-rótulos.
+d) um conjunto de teste rotulado, separado do treino.
+R: d | O teste mede a generalização real.
+
+MC: O que costuma ser verdade sobre a quantidade de dados sem rótulo no FixMatch?
+a) menos dados sempre ajudam mais.
+b) não influencia.
+c) mais dados sem rótulo em geral ajudam, com retornos decrescentes.
+d) só ajuda se for menor que o conjunto rotulado.
+R: c | Como em outros métodos semissupervisionados.
+
+MC: O Pseudo-Label sem limiar, em comparação com o FixMatch, é mais sujeito a:
+a) rejeitar todos os exemplos.
+b) aceitar pseudo-rótulos duvidosos e reforçar erros.
+c) ignorar os dados sem rótulo.
+d) exigir mais rótulos.
+R: b | Sem filtro, todos os alvos entram, certos ou errados.
+
+DISC: Explique o que é um pseudo-rótulo e como o método Pseudo-Label o utiliza.
+R: É o rótulo que o próprio modelo atribui a um exemplo sem rótulo (a classe mais provável). O método treina a rede nesses exemplos como se o pseudo-rótulo fosse verdadeiro, junto com os rotulados.
+
+DISC: Descreva o viés de confirmação e por que ele é um risco nos métodos de pseudo-rótulos.
+R: Um erro confiante do modelo vira pseudo-rótulo, a rede é treinada para repeti-lo e a confiança aumenta, o que espalha o erro. Sem rótulos verdadeiros para corrigi-lo, o erro se autoalimenta.
+
+DISC: Descreva o funcionamento do FixMatch em passos.
+R: Cada exemplo sem rótulo recebe uma versão fraca e uma forte. A previsão na versão fraca, se a confiança superar o limiar, vira pseudo-rótulo. A rede é treinada, com entropia cruzada, para prever esse pseudo-rótulo na versão forte. Soma-se a perda supervisionada.
+
+DISC: Por que o FixMatch usa uma versão fraca para gerar o alvo e uma forte para treinar?
+R: A versão fraca dá previsões mais confiáveis. Treinar na forte obriga a rede a reconhecer a classe apesar de distorções maiores, o que melhora a generalização e implementa a consistência.
+
+DISC: Explique por que o FixMatch pode ser visto como a combinação de pseudo-rótulos e consistência.
+R: O alvo é um pseudo-rótulo duro (ideia do self-training), e a perda exige que versões perturbadas do exemplo recebam a mesma previsão (ideia da consistência).
+
+DISC: Qual o papel do limiar de confiança e quais os riscos de um limiar muito baixo e de um muito alto?
+R: Filtra pseudo-rótulos pouco confiáveis. Muito baixo: aceita muitos alvos errados. Muito alto: aceita poucos, e os dados sem rótulo são pouco aproveitados.
+
+DISC: Explique o mixup e dê um exemplo com os rótulos.
+R: Combina duas imagens e seus rótulos com pesos lambda e 1 - lambda. Por exemplo, 80% de um 1 e 20% de um 3 recebem o rótulo (0,8 para a classe 1; 0,2 para a classe 3).
+
+DISC: Descreva as etapas do MixMatch.
+R: Aplica várias versões aumentadas aos exemplos sem rótulo, tira a média das previsões e a afia. Mistura (mixup) rotulados e não rotulados com seus alvos. Treina com entropia cruzada nos rotulados misturados e erro quadrático nos não rotulados misturados.
+
+DISC: Por que a média de várias versões aumentadas produz um alvo melhor para o MixMatch?
+R: A média reduz o ruído e a variação da previsão em uma única versão, resultando em uma estimativa mais estável e confiável do rótulo.
+
+DISC: O que é o afiamento e por que ele é usado?
+R: É a redução da temperatura da distribuição, concentrando-a na classe mais provável. Faz o alvo ser mais decidido, aproximando-o de um rótulo, o que reforça a minimização da entropia.
+
+DISC: Descreva, em linhas gerais, o que o ReMixMatch acrescenta ao MixMatch.
+R: Alinha a distribuição das classes previstas à distribuição esperada e usa um aumento forte (aprendido) com consistência entre versões, ampliando o ganho com poucos rótulos.
+
+DISC: Por que o desequilíbrio das classes previstas é problemático e como pode ser tratado?
+R: O modelo pode favorecer classes frequentes nos pseudo-rótulos, reforçando o desequilíbrio. Pode-se alinhar a distribuição prevista a uma distribuição esperada (como no ReMixMatch).
+
+DISC: Por que o experimento mede a precisão dos pseudo-rótulos com os rótulos verdadeiros e por que isso é só diagnóstico?
+R: Para entender a qualidade dos alvos. Em um projeto real, esses rótulos não existem, e usá-los no treino invalidaria o experimento.
+
+DISC: Compare Pseudo-Label sem limiar e FixMatch quanto aos riscos.
+R: Sem limiar, todos os pseudo-rótulos entram, inclusive erros confiantes ou duvidosos, e o viés de confirmação é maior. O FixMatch filtra por confiança e usa aumento forte, reduzindo (mas não eliminando) o risco.
+
+DISC: Discuta como o número de rótulos por classe afeta a qualidade dos pseudo-rótulos.
+R: Com poucos rótulos, as previsões iniciais são ruins e os pseudo-rótulos erram mais, reforçando o erro. Com mais rótulos, o modelo inicial é melhor e os alvos mais confiáveis.
+
+DISC: Por que a referência supervisionada deve usar o mesmo aumento e o mesmo número de passos do método semissupervisionado?
+R: Para atribuir o ganho aos dados sem rótulo e não ao aumento ou ao treino extra, evitando superestimar o método.
+
+DISC: Como equilibrar quantidade e qualidade dos alvos ao escolher o limiar de confiança?
+R: Medindo, em validação, a fração e a precisão dos alvos que passam o filtro e escolhendo o limiar que equilibra os dois, sem usar o teste.
+
+DISC: Explique por que um resultado em que o método semissupervisionado não supera a referência deve ser relatado.
+R: Porque a avaliação honesta inclui resultados negativos, que informam quando o método não compensa e evitam conclusões otimistas e decisões ruins.
+
+DISC: Discuta os cuidados ao usar pseudo-rótulos em um sistema real.
+R: Validar com rótulos reais separados, monitorar a precisão dos alvos, usar limiar e aumento forte, revisar classes sensíveis e prever um humano no ciclo para os casos duvidosos.
+
+DISC: Compare conceitualmente o FixMatch com o self-training clássico do Capítulo 4.
+R: Ambos usam pseudo-rótulos de alta confiança. O FixMatch os gera e usa em todos os passos de treino, com aumento fraco e forte, e uma rede profunda treinada de ponta a ponta; o self-training clássico retreina em rodadas.

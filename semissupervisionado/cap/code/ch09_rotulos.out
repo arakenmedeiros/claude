@@ -1,0 +1,6 @@
+CNN supervisionada com aumento forte: quantos rótulos fazem falta? (MNIST, teste com 10.000 imagens; 2 sorteios)
+rótulos (por dígito) | épocas | acerto no teste
+  100 ( 10)         |    100 | 90.2%
+  300 ( 30)         |     60 | 93.9%
+ 1000 (100)         |     30 | 95.7%
+ 3000 (300)         |     15 | 96.8%

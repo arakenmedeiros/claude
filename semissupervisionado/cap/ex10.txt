@@ -1,0 +1,269 @@
+MC: A ideia central da regularização por consistência é que:
+a) as previsões devem mudar a cada época.
+b) o modelo deve ignorar os exemplos rotulados.
+c) exemplos diferentes devem receber previsões diferentes.
+d) versões ligeiramente perturbadas do mesmo exemplo devem receber a mesma previsão.
+R: d | Isso vale também para exemplos sem rótulo, pois não exige saber a classe.
+
+MC: Por que a consistência pode ser calculada em exemplos sem rótulo?
+a) Porque duplica o conjunto de teste.
+b) Porque usa o rótulo verdadeiro escondido.
+c) Porque troca o rótulo por um valor aleatório.
+d) Porque compara duas previsões entre si, sem precisar do rótulo verdadeiro.
+R: d | A perda mede a discordância entre previsões.
+
+MC: A hipótese de suavidade em que a consistência se apoia diz que:
+a) os rótulos são sempre aleatórios.
+b) pontos próximos (ou versões perturbadas do mesmo ponto) tendem a ter o mesmo rótulo.
+c) pontos próximos têm rótulos opostos.
+d) o número de classes é pequeno.
+R: b | É a base do aumento de dados e da consistência.
+
+MC: Em um modelo de consistência, a perturbação pode ser:
+a) somente a mudança da taxa de aprendizado.
+b) somente a troca do rótulo.
+c) somente a remoção de atributos.
+d) aumento de dados, ruído ou dropout.
+R: d | Qualquer transformação que preserve a classe serve.
+
+MC: No Π-model, as duas previsões comparadas vêm:
+a) de duas redes treinadas separadamente.
+b) de um professor congelado.
+c) da mesma rede aplicada a duas versões perturbadas do exemplo.
+d) do conjunto de teste.
+R: c | As duas passagens recebem gradiente.
+
+MC: O nome Π-model vem:
+a) do inventor do método.
+b) do número pi do círculo.
+c) do desenho do diagrama, com duas ramificações em forma de Π.
+d) do uso de probabilidades pi.
+R: c | Laine e Aila (2017) o chamaram assim pelo formato do diagrama.
+
+MC: No Temporal Ensembling, o alvo de consistência é:
+a) uma média móvel das previsões feitas ao longo das épocas anteriores.
+b) a previsão da última época apenas.
+c) uma previsão aleatória.
+d) o rótulo verdadeiro.
+R: a | Evita a segunda passada pela rede, mas guarda uma previsão por exemplo.
+
+MC: A principal desvantagem do Temporal Ensembling é:
+a) guardar uma previsão por exemplo e só atualizá-la uma vez por época.
+b) não usar dados sem rótulo.
+c) exigir mais rótulos.
+d) não funcionar com imagens.
+R: a | Alvos ficam desatualizados em conjuntos grandes.
+
+MC: No Mean Teacher, o professor é:
+a) o próprio conjunto de teste.
+b) uma média móvel exponencial dos pesos do aluno.
+c) uma rede maior treinada com todos os rótulos.
+d) um conjunto de regras.
+R: b | A média tende a ser mais estável e precisa que o aluno.
+
+MC: No Mean Teacher, quem recebe o gradiente é:
+a) somente o aluno.
+b) somente o professor.
+c) nenhum dos dois.
+d) os dois igualmente.
+R: a | O professor é atualizado pela média dos pesos do aluno.
+
+MC: A média móvel exponencial dos pesos (EMA) com fator 0,99 significa que, a cada passo:
+a) o professor copia o aluno.
+b) o professor mantém 99% dos seus pesos e incorpora 1% dos pesos do aluno.
+c) 1% dos pesos é apagado.
+d) o aluno mantém 99% de seus pesos.
+R: b | Por isso o professor muda devagar.
+
+MC: A rampa de peso (ramp-up) serve para:
+a) aumentar gradualmente o peso da perda não supervisionada no início do treino.
+b) reduzir a taxa de aprendizado.
+c) aumentar o número de camadas.
+d) embaralhar os lotes.
+R: a | No começo as previsões são ruins e não devem servir de alvo.
+
+MC: Se o peso da consistência for grande demais no início do treino, o risco é:
+a) a rede decorar os rótulos.
+b) os dados de teste vazarem.
+c) o treino ficar rápido demais.
+d) a rede se acomodar a uma solução trivial, como prever sempre a mesma classe.
+R: d | Previsões coerentes mas inúteis também têm perda baixa.
+
+MC: A perda de consistência mais comum compara as previsões por:
+a) distância entre pesos da rede.
+b) contagem de camadas.
+c) erro quadrático médio entre as probabilidades ou divergência de Kullback-Leibler.
+d) contagem de rótulos.
+R: c | Ambas medem a diferença entre duas distribuições de probabilidade.
+
+MC: Em um treino de consistência, a perda total é:
+a) a perda supervisionada (rotulados) mais o peso vezes a perda de consistência.
+b) somente a perda de consistência.
+c) a média dos pesos.
+d) somente a perda supervisionada.
+R: a | Os dois termos ajudam de formas diferentes.
+
+MC: Na UDA (Unsupervised Data Augmentation), o alvo vem:
+a) da previsão na versão fraca do exemplo, enquanto o aluno vê a versão fortemente aumentada.
+b) de uma média das previsões do conjunto de teste.
+c) da versão forte e o aluno vê a fraca.
+d) de um rótulo humano.
+R: a | A consistência passa a ser entre versão fraca e forte.
+
+MC: O afiamento (sharpening) com temperatura menor que 1 faz com que a distribuição de probabilidades:
+a) troque de classe.
+b) fique mais concentrada na classe mais provável.
+c) fique mais uniforme.
+d) tenha soma maior que 1.
+R: b | Torna o alvo mais decidido.
+
+MC: A máscara de confiança na UDA serve para:
+a) descartar os exemplos rotulados.
+b) usar na consistência apenas os exemplos cujo alvo tem confiança alta.
+c) aumentar a taxa de aprendizado.
+d) aumentar o lote.
+R: b | Evita aprender com alvos duvidosos.
+
+MC: Por que o aumento de dados forte é importante nos métodos de consistência?
+a) Porque reduz o número de classes.
+b) Porque a perturbação precisa ser realista e variada o bastante para a coerência ensinar algo.
+c) Porque elimina o dropout.
+d) Porque substitui o professor.
+R: b | Com perturbação fraca, a coerência é fácil e informa pouco.
+
+MC: Uma perturbação que muda a classe do exemplo (por exemplo, girar 180° um 6, que vira 9) é um problema porque:
+a) reduz o número de pesos.
+b) aumenta a precisão.
+c) torna o gradiente nulo.
+d) exigir consistência entre duas classes diferentes ensina um erro.
+R: d | O aumento deve preservar o rótulo.
+
+MC: O Virtual Adversarial Training (VAT) perturba o exemplo:
+a) de forma aleatória uniforme.
+b) na direção em que a previsão do modelo mais muda.
+c) apagando metade dos atributos.
+d) trocando o rótulo.
+R: b | É uma perturbação 'pior caso', calculada pelo gradiente.
+
+MC: Um professor obtido por EMA costuma ser avaliado no teste porque:
+a) é treinado com mais rótulos.
+b) tem mais camadas.
+c) usa os dados de teste.
+d) costuma ser mais estável e, em geral, mais preciso que o aluno.
+R: d | A média suaviza oscilações do treino.
+
+MC: Em comparação com o self-training clássico, a regularização por consistência:
+a) exige sempre mais rótulos.
+b) não precisa escolher pseudo-rótulos duros, usando a concordância entre previsões.
+c) só funciona com texto.
+d) não usa redes neurais.
+R: b | O alvo é uma distribuição, não uma classe escolhida.
+
+MC: Para saber se um método de consistência ajudou, deve-se comparar com:
+a) a regressão logística treinada em pixels apenas.
+b) um classificador aleatório.
+c) o resultado no conjunto de treino.
+d) a referência supervisionada forte treinada com o mesmo aumento de dados e o mesmo orçamento.
+R: d | A comparação justa usa os mesmos passos, aumento e rótulos.
+
+MC: Em um experimento justo, o número de passos de treino do método semissupervisionado e da referência supervisionada deve ser:
+a) maior no semissupervisionado.
+b) irrelevante.
+c) o mesmo.
+d) maior na referência supervisionada.
+R: c | Caso contrário, o ganho pode vir apenas do treino extra.
+
+MC: Escolher o peso da consistência olhando a acurácia no teste:
+a) é uma forma de vazamento e produz estimativas otimistas.
+b) não afeta os resultados.
+c) é a prática recomendada.
+d) é obrigatório.
+R: a | O correto é usar uma validação separada ou valores fixados a priori.
+
+MC: A quantidade de dados sem rótulo costuma ter efeito:
+a) crescente, mas com retornos decrescentes.
+b) sempre negativo.
+c) nenhum.
+d) sempre linear.
+R: a | Os primeiros exemplos sem rótulo acrescentam mais que os últimos.
+
+MC: O dropout, mantido durante o treino de consistência, funciona como:
+a) uma função de ativação.
+b) uma perturbação adicional do modelo.
+c) um aumento do conjunto de teste.
+d) um tipo de rótulo.
+R: b | Duas passagens com dropout dão previsões diferentes, o que a consistência explora.
+
+MC: A consistência é especialmente adequada quando:
+a) o aumento mudaria a classe do exemplo.
+b) não há nenhum rótulo.
+c) os dados são completamente aleatórios.
+d) existem aumentos de dados confiáveis que preservam a classe.
+R: d | A qualidade da perturbação determina a qualidade do sinal.
+
+MC: A ideia de fundo que une Π-model, Mean Teacher e UDA é:
+a) a previsão deve ser sempre a classe majoritária.
+b) o professor deve ser maior que o aluno.
+c) a previsão do modelo deve ser estável sob perturbações que não mudam a classe.
+d) os rótulos devem ser descartados após o treino.
+R: c | Os métodos diferem em como o alvo é obtido.
+
+DISC: Explique a ideia da regularização por consistência e por que ela usa exemplos sem rótulo.
+R: Exige que versões perturbadas de um mesmo exemplo recebam previsões parecidas. Isso não depende do rótulo, então qualquer exemplo, rotulado ou não, produz um sinal de treino.
+
+DISC: Explique a hipótese de suavidade e sua relação com o aumento de dados.
+R: Pontos próximos, ou versões levemente alteradas do mesmo ponto, devem ter o mesmo rótulo. O aumento cria essas versões, e a consistência obriga o modelo a respeitá-las.
+
+DISC: Descreva o Π-model e o papel das duas perturbações.
+R: Cada exemplo passa duas vezes pela mesma rede, com perturbações diferentes, e a diferença entre as previsões é penalizada. As duas passagens recebem gradiente, e a perda total soma a supervisionada e a de consistência.
+
+DISC: Descreva o Temporal Ensembling e aponte uma limitação.
+R: Usa como alvo uma média móvel das previsões de cada exemplo nas épocas anteriores, evitando a segunda passada. Limitação: guarda uma previsão por exemplo e só a atualiza uma vez por época, o que torna os alvos defasados.
+
+DISC: Explique o Mean Teacher: o que é o professor e como é atualizado?
+R: O professor é uma cópia da rede cujos pesos são a média móvel exponencial dos pesos do aluno. Fornece o alvo de consistência, não recebe gradiente e é atualizado a cada passo por EMA.
+
+DISC: Por que o professor por EMA tende a ser melhor que o aluno?
+R: A média de pesos ao longo do treino suaviza as oscilações e o ruído dos passos individuais, resultando em um modelo mais estável e, em geral, mais preciso.
+
+DISC: Para que serve a rampa de peso e o que pode acontecer sem ela?
+R: Aumenta gradualmente o peso da consistência. Sem ela, no início as previsões são ruins e a rede pode se acomodar a soluções triviais, coerentes mas inúteis, como prever sempre a mesma classe.
+
+DISC: Explique por que prever sempre a mesma classe para todos os exemplos satisfaz a consistência e como se evita isso.
+R: As previsões seriam idênticas sob qualquer perturbação, e a perda seria zero. A perda supervisionada nos rotulados e a rampa de peso impedem que a rede se acomode nessa solução.
+
+DISC: Descreva a UDA: o que é a versão fraca, a forte, o afiamento e a máscara de confiança.
+R: O alvo é a previsão na versão fraca (leve), afiada por uma temperatura menor que 1 e filtrada para exemplos de confiança alta. O aluno vê a versão forte e é treinado a aproximar-se do alvo.
+
+DISC: Compare Π-model, Mean Teacher e UDA quanto à origem do alvo e ao fluxo do gradiente.
+R: Π-model: alvo da mesma rede, gradiente nos dois ramos. Mean Teacher: alvo do professor EMA, gradiente só no aluno. UDA: alvo da versão fraca, afiado e filtrado, sem gradiente no alvo, aluno na versão forte.
+
+DISC: O que é o VAT e em que ele difere do aumento de dados?
+R: Perturba cada exemplo na direção em que a previsão do modelo mais muda (perturbação adversarial virtual), sem exigir rótulos. O aumento usa transformações pré-definidas, não calculadas a partir do modelo.
+
+DISC: Dê dois exemplos de perturbações que preservam a classe em imagens e um que não preserva.
+R: Preservam: pequenos deslocamentos e ruído leve (ou pequenas rotações). Não preserva: girar 180° um 6, que parece um 9, ou apagar a parte decisiva do objeto.
+
+DISC: Por que a qualidade das perturbações limita o ganho da consistência?
+R: Se a perturbação é fraca, a coerência é trivial e informa pouco; se muda a classe, ensina erros. O sinal útil exige variações realistas e que preservem o rótulo.
+
+DISC: Por que é importante usar o mesmo aumento de dados e o mesmo número de passos na referência supervisionada?
+R: Para que o ganho venha dos dados sem rótulo, e não do aumento ou de treino extra. Caso contrário, a comparação superestima o método.
+
+DISC: Explique o risco de escolher o peso da consistência pelo desempenho no teste.
+R: É vazamento: o teste deixa de ser independente e o resultado fica otimista. O peso deve ser fixado antes (por exemplo, pela literatura) ou escolhido em validação separada.
+
+DISC: Descreva como a quantidade de dados sem rótulo costuma afetar o ganho.
+R: O ganho cresce com mais dados sem rótulo, mas com retornos decrescentes, e pode saturar ou depender de os não rotulados serem semelhantes aos rotulados.
+
+DISC: Por que os métodos de consistência não precisam escolher um rótulo duro para cada exemplo sem rótulo?
+R: Usam como alvo uma distribuição de probabilidades ou a concordância entre duas previsões, o que evita fixar um rótulo possivelmente errado, como no self-training.
+
+DISC: Descreva o laço de treino de um método de consistência, em passos.
+R: Sorteia um lote de rotulados e outro de não rotulados, aplica perturbações, calcula a perda supervisionada e a de consistência, soma com o peso da rampa, faz backward e step, e (no Mean Teacher) atualiza o professor por EMA.
+
+DISC: Por que o professor deve ser avaliado separadamente do aluno no experimento?
+R: Porque os dois são modelos diferentes, e o professor por EMA costuma ser mais estável. Relatar apenas um pode esconder diferenças relevantes.
+
+DISC: Resuma quando a regularização por consistência é uma boa escolha e quando pode não ser.
+R: Boa quando há aumentos confiáveis que preservam a classe (como em imagens) e uma rede flexível. Pode falhar se as perturbações mudam a classe, se faltam bons aumentos ou se o orçamento de treino é pequeno.
