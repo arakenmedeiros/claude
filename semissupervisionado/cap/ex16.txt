@@ -1,0 +1,269 @@
+MC: Dados tabulares costumam ser:
+a) heterogêneos, misturando atributos numéricos e categóricos de escalas diferentes.
+b) sempre séries temporais.
+c) sempre imagens.
+d) sempre texto.
+R: a | Isso dificulta definir distâncias e aumentos naturais.
+
+MC: Em dados tabulares, um problema para métodos que usam distância (grafos, k-vizinhos) é:
+a) uso de GPUs.
+b) atributos de escalas diferentes e irrelevantes dominarem a distância.
+c) falta de rótulos apenas.
+d) excesso de dados.
+R: b | Por isso se padroniza e se escolhe atributos com cuidado.
+
+MC: Para usar distâncias em dados tabulares, é recomendável:
+a) remover todos os atributos numéricos.
+b) usar os valores originais, com escalas diferentes.
+c) padronizar os atributos numéricos.
+d) usar só rótulos.
+R: c | A padronização evita que um atributo domine.
+
+MC: Atributos categóricos costumam ser convertidos em:
+a) imagens.
+b) pesos.
+c) variáveis binárias (one-hot).
+d) rótulos.
+R: c | Cada categoria vira uma coluna 0/1.
+
+MC: O aumento de dados em dados tabulares é:
+a) desnecessário sempre.
+b) proibido.
+c) tão simples quanto em imagens.
+d) menos natural que em imagens, pois não há transformações óbvias que preservem a classe.
+R: d | Isso limita a consistência e o FixMatch.
+
+MC: A hipótese de agrupamento (cluster assumption) é importante para métodos como o Label Spreading porque:
+a) eles não usam distância.
+b) eles assumem que exemplos do mesmo grupo têm o mesmo rótulo.
+c) eles ignoram os dados sem rótulo.
+d) eles dispensam rótulos.
+R: b | Se não vale, o método pode piorar.
+
+MC: No benchmark com 8 bases, o Label Spreading melhorou claramente a regressão logística em:
+a) Sonar.
+b) Pima.
+c) Digits.
+d) Ionosphere.
+R: c | Aumentou de 83,2% para 90,3%.
+
+MC: No benchmark com 8 bases, o self-training piorou em bases como:
+a) Digits.
+b) nenhuma.
+c) Sonar, Ionosphere e Pima.
+d) apenas Digits.
+R: c | Os ganhos não foram generalizados.
+
+MC: A mensagem principal do benchmark com 8 bases é que:
+a) a regressão logística é sempre melhor.
+b) o semissupervisionado nunca ajuda.
+c) o semissupervisionado sempre ajuda.
+d) os ganhos do semissupervisionado dependem muito da base e podem ser negativos.
+R: d | Por isso é preciso medir caso a caso.
+
+MC: O desvio entre sorteios em bases pequenas (Iris, Sonar) é:
+a) sempre menor que 1 ponto.
+b) zero.
+c) grande, e as diferenças entre métodos podem ser ruído.
+d) irrelevante.
+R: c | Com poucos exemplos, o resultado varia muito.
+
+MC: Em uma base pequena com poucos rótulos, a escolha de quais exemplos são rotulados:
+a) afeta muito o resultado, e por isso se usam vários sorteios.
+b) é feita pelo teste.
+c) não afeta.
+d) é sempre a melhor possível.
+R: a | Daí a variação grande entre sorteios.
+
+MC: O conjunto Adult (renda > 50 mil) tem aproximadamente:
+a) 0% de exemplos positivos.
+b) 90% de exemplos positivos.
+c) 50% de exemplos positivos.
+d) 24% de exemplos positivos.
+R: d | A classe positiva é minoritária.
+
+MC: Em dados tabulares grandes, modelos baseados em árvores (como o gradient boosting) costumam:
+a) ser sempre piores que redes.
+b) ser muito competitivos com redes neurais.
+c) não funcionar com categóricos.
+d) exigir imagens.
+R: b | Grinsztajn et al. (2022) relatam essa tendência.
+
+MC: Para classes desbalanceadas, a referência supervisionada deve:
+a) usar apenas a acurácia.
+b) usar pesos de classe e uma métrica adequada, como a F1 da classe rara.
+c) usar rótulos balanceados sempre.
+d) ignorar a raridade.
+R: b | Como visto no Capítulo 14.
+
+MC: Em séries temporais, o corte aleatório de janelas sobrepostas entre treino e teste causa:
+a) nenhum problema.
+b) melhoria honesta da avaliação.
+c) vazamento, pois janelas vizinhas são quase idênticas.
+d) redução dos rótulos.
+R: c | O teste 'vê' versões do treino.
+
+MC: Uma forma correta de dividir uma série temporal em treino e teste é:
+a) usar o teste como validação.
+b) sortear janelas ao acaso.
+c) usar o passado para treinar e um período posterior para testar.
+d) usar o futuro no treino.
+R: c | Respeita a ordem do tempo.
+
+MC: No experimento da temperatura, a acurácia com o corte aleatório foi:
+a) maior que com o corte temporal, indicando otimismo.
+b) exatamente igual.
+c) impossível de calcular.
+d) menor que com o corte temporal.
+R: a | Por exemplo, 79,9% contra 74,9% com 30 rótulos para a regressão logística.
+
+MC: A diferença entre as duas divisões foi maior para os métodos baseados em vizinhança porque:
+a) janelas vizinhas no tempo são parecidas e os vizinhos 'vazam' informação.
+b) eles têm menos parâmetros.
+c) eles não usam dados.
+d) eles usam rótulos do teste.
+R: a | Os vizinhos de uma janela de teste são janelas quase idênticas no treino.
+
+MC: Uma janela deslizante de 30 dias com passo 1 gera janelas:
+a) sem nenhuma relação.
+b) independentes entre si.
+c) que nunca se repetem.
+d) que se sobrepõem muito entre si.
+R: d | Cada janela compartilha 29 dias com a seguinte.
+
+MC: Extrair atributos de uma janela (média, desvio, mínimo, máximo, tendência) serve para:
+a) aumentar o ruído.
+b) apagar o tempo.
+c) criar rótulos.
+d) transformar a série em uma tabela de atributos.
+R: d | Depois, aplicam-se os métodos tabulares.
+
+MC: No experimento da temperatura, o Label Spreading:
+a) foi perfeito.
+b) não pôde ser aplicado.
+c) foi muito melhor em todos os casos.
+d) não superou a regressão logística.
+R: d | Resultado negativo relatado.
+
+MC: A deriva (drift) de dados no tempo significa que:
+a) os rótulos desaparecem.
+b) a distribuição dos dados muda com o tempo.
+c) o modelo melhora sozinho.
+d) o conjunto de teste é maior.
+R: b | Um modelo treinado no passado pode piorar no futuro.
+
+MC: O VIME e o SCARF são exemplos de métodos para dados tabulares que usam:
+a) apenas regressão linear.
+b) tarefas auto-supervisionadas e aprendizado contrastivo.
+c) apenas grafos.
+d) apenas rótulos.
+R: b | Adaptam as ideias dos capítulos anteriores à tabela.
+
+MC: Ao usar um grafo de k vizinhos em dados tabulares, um cuidado é:
+a) usar o teste para escolher k.
+b) verificar a escala dos atributos e a conectividade do grafo.
+c) usar k = 1 sempre.
+d) ignorar a escala.
+R: b | Como no Capítulo 8.
+
+MC: O self-training com gradient boosting exige cuidado porque:
+a) não há como treinar.
+b) a confiança do modelo pode não estar bem calibrada.
+c) o gradient boosting não prevê classes.
+d) exige imagens.
+R: b | O limiar depende da calibração.
+
+MC: Ao comparar métodos em várias bases, é útil reportar:
+a) somente a acurácia no treino.
+b) apenas o melhor caso.
+c) apenas o pior caso.
+d) a média e o desvio das diferenças em relação à referência.
+R: d | Evita a seleção do que parece melhor.
+
+MC: Relatar apenas as bases em que o método ajuda é:
+a) irrelevante.
+b) uma prática enganosa (viés de publicação).
+c) uma boa prática.
+d) obrigatória.
+R: b | Distorce a visão geral do método.
+
+MC: Em muitos problemas tabulares reais, uma boa primeira ação com poucos rótulos é:
+a) ignorar os rótulos.
+b) um modelo supervisionado bem ajustado e, se possível, rotular mais exemplos de forma ativa.
+c) usar só dados sem rótulo.
+d) aplicar o método mais complexo.
+R: b | Antes de pensar em semissupervisionado.
+
+MC: O uso de um conjunto de validação separado, em dados tabulares pequenos, é difícil porque:
+a) validação é proibida.
+b) não há dados sem rótulo.
+c) não há teste.
+d) há poucos exemplos rotulados, e dividir os poucos rótulos aumenta a variação.
+R: d | Daí a validação cruzada nos rotulados.
+
+MC: Na prática, antes de investir em semissupervisionado em tabelas, convém:
+a) evitar a referência.
+b) usar só o teste.
+c) medir o ganho em um diagnóstico simples, comparando com a referência supervisionada.
+d) assumir que haverá ganho.
+R: c | O benchmark do capítulo mostra que o ganho é incerto.
+
+DISC: Explique por que dados tabulares são mais difíceis para os métodos semissupervisionados baseados em distância ou aumento do que imagens.
+R: Os atributos são heterogêneos, com escalas e significados diferentes, e não há transformações naturais que preservem a classe. Distâncias podem ser dominadas por atributos irrelevantes, e a hipótese de agrupamento pode não valer.
+
+DISC: Descreva os cuidados ao preparar uma tabela com atributos numéricos e categóricos para um método de grafos.
+R: Padronizar os numéricos, converter categóricos em variáveis binárias, avaliar a relevância dos atributos e verificar a conectividade do grafo e a escolha de k.
+
+DISC: Interprete o resultado do benchmark com 8 bases: onde o semissupervisionado ajudou e onde piorou.
+R: Ajudou claramente no Digits (+5,1 e +7,1 pontos) e, com muita variação, no Glass e no Iris (Label Spreading); piorou nas bases Sonar, Ionosphere e Pima, com ambos os métodos. Os ganhos dependem da estrutura dos dados.
+
+DISC: Por que a hipótese de agrupamento pode falhar em bases como Sonar e Pima?
+R: Os grupos nos atributos não coincidem com as classes (classes sobrepostas, atributos ruidosos). Propagar rótulos por proximidade espalha erros.
+
+DISC: Discuta por que o desvio entre sorteios é grande nas bases pequenas e o que fazer.
+R: Com poucos exemplos, o resultado depende de quais exemplos são rotulados. Devem-se usar muitos sorteios e reportar média e desvio, e interpretar diferenças pequenas com cautela.
+
+DISC: Descreva o conjunto Adult e a preparação feita antes de aplicar os métodos.
+R: Registros do censo dos EUA, com a renda acima de 50 mil como classe positiva (cerca de 24%). Numéricos são padronizados e categóricos viram variáveis binárias; remove-se o que for redundante.
+
+DISC: Explique por que, em dados tabulares grandes, vale comparar modelos de árvores com redes neurais.
+R: Modelos de árvores, como o gradient boosting, costumam ser muito competitivos em dados tabulares, com menos ajuste, e são uma referência forte que os métodos mais complexos precisam superar.
+
+DISC: O que significa vazamento em séries temporais e como a divisão aleatória de janelas o provoca?
+R: O teste contém informação semelhante à do treino. Janelas deslizantes vizinhas compartilham quase todos os pontos, então uma janela de teste tem 'gêmeas' no treino, e a avaliação fica otimista.
+
+DISC: Interprete a diferença entre o corte aleatório e o temporal no experimento da temperatura.
+R: Com o corte aleatório, a acurácia foi maior (por exemplo, 79,9% contra 74,9% para a regressão logística com 30 rótulos), e mais ainda para o 1-vizinho e o Label Spreading (cerca de 6 a 10 pontos), pelo vazamento.
+
+DISC: Por que o corte temporal fornece uma estimativa mais honesta do desempenho futuro?
+R: Imita o uso real: treinar com o passado e prever o futuro, o que inclui a deriva dos dados.
+
+DISC: Descreva como transformar uma série temporal em um problema de classificação tabular.
+R: Divide-se a série em janelas, extraem-se atributos (média, desvio, mínimo, máximo, tendência, autocorrelação) e define-se o rótulo da janela, por exemplo, a estação do ano.
+
+DISC: O que é a deriva de dados e por que ela importa em séries temporais?
+R: É a mudança da distribuição com o tempo. Um modelo treinado no passado pode perder desempenho no futuro, e a avaliação deve refletir isso.
+
+DISC: Por que o Label Spreading não ajudou na série de temperaturas e o que isso sugere?
+R: Os atributos da janela já separam bem as estações e a estrutura do grafo não acrescentou informação; o semissupervisionado só compensa quando os dados sem rótulo trazem estrutura útil que o modelo supervisionado não capta.
+
+DISC: Compare os cuidados de avaliação em imagens, texto, tabelas e séries temporais.
+R: Em todos: referência forte, vários sorteios, teste separado. Texto: prevalência e métrica; tabelas: escalas e heterogeneidade; séries: ordem do tempo e vazamento por sobreposição; imagens: aumento adequado.
+
+DISC: Cite dois métodos auto-supervisionados para dados tabulares e a ideia que adaptam.
+R: VIME (prever máscaras de atributos e reconstruir) e SCARF (contraste entre versões corrompidas de uma linha). Adaptam a ideia de pré-treino e contraste dos capítulos anteriores.
+
+DISC: Por que relatar apenas as bases em que o método ajuda é problemático?
+R: Cria viés de publicação e uma impressão falsa de eficácia. A avaliação honesta reporta todos os casos, inclusive os negativos.
+
+DISC: Como combinar rotulagem ativa e semissupervisionado em um problema tabular?
+R: Usar o modelo para indicar os exemplos mais incertos para um especialista rotular, enquanto os dados sem rótulo continuam sendo usados pelo método semissupervisionado.
+
+DISC: Quais são as limitações do experimento com séries temporais do capítulo?
+R: Uma só série (Melbourne), um problema relativamente fácil (estações), poucos tipos de atributos, e o corte temporal inclui deriva sazonal e anual. Não generaliza para outras séries.
+
+DISC: Discuta como escolher entre self-training e Label Spreading em dados tabulares.
+R: Depende da estrutura: o Label Spreading exige agrupamento nos atributos padronizados; o self-training exige um classificador bem calibrado. Decidir com um diagnóstico em validação e vários sorteios.
+
+DISC: Resuma as lições do Capítulo 16.
+R: Em tabelas e séries, o ganho do semissupervisionado é incerto e específico de cada base; a referência supervisionada forte, a métrica adequada e a divisão correta (temporal) são decisivos; e os resultados negativos devem ser relatados.

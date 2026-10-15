@@ -1,0 +1,32 @@
+Diagnóstico: com 10 vizinhos no PCA de 50 dimensões, 91.8% das arestas ligam imagens da mesma classe
+
+MNIST, 100 rótulos, 10.000 imagens sem rótulo, 5 sorteios pareados. Acerto no teste
+método                       | média ± desvio
+regressão logística, pixels  | 76.6% ± 1.0
+Label Spreading, PCA 50      | 88.0% ± 0.8
+CNN só com rotulados         | 93.2% ± 0.7
+Pseudo-Label                 | 94.9% ± 0.9
+FixMatch                     | 95.4% ± 0.4
+UDA                          | 96.0% ± 0.4
+SimCLR + sonda linear        | 92.0% ± 0.3
+
+Diferença em relação à CNN só com rotulados (pontos percentuais)
+método                       | média  | IC 95% (bootstrap) | vitórias/derrotas | p (teste t pareado)
+regressão logística, pixels  | -16.5  | [-17.7; -15.5]    | 0 / 5             | 0.0000
+Label Spreading, PCA 50      |  -5.2  | [ -6.1;  -4.3]    | 0 / 5             | 0.0006
+Pseudo-Label                 |  +1.7  | [ +0.9;  +2.6]    | 5 / 0             | 0.0242
+FixMatch                     |  +2.3  | [ +1.6;  +2.7]    | 5 / 0             | 0.0024
+UDA                          |  +2.9  | [ +2.5;  +3.1]    | 5 / 0             | 0.0001
+SimCLR + sonda linear        |  -1.2  | [ -1.7;  -0.8]    | 0 / 5             | 0.0080
+
+Acerto por dígito no teste (sorteio 0): CNN só com rotulados x UDA
+  dígito 0:  92.8% x  99.6%
+  dígito 1:  96.8% x  97.0%
+  dígito 2:  96.3% x  97.8%
+  dígito 3:  96.4% x  95.7%
+  dígito 4:  88.7% x  97.0%
+  dígito 5:  89.0% x  95.2%
+  dígito 6:  95.3% x  98.1%
+  dígito 7:  86.7% x  90.8%
+  dígito 8:  94.0% x  93.2%
+  dígito 9:  93.0% x  96.1%

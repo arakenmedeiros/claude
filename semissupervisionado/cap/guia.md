@@ -22,7 +22,20 @@ Atributos úteis do SelfTrainingClassifier: `labeled_iter_` (em qual iteração 
 
 O `estimator` do SelfTrainingClassifier precisa oferecer `predict_proba`. Um `SVC` só oferece se for criado com `probability=True`.
 
-## C.3 Receita: comparar com o modelo de referência
+## C.3 Os módulos de PyTorch do livro (Capítulos 9 a 13 e 18)
+
+Salve estes arquivos na mesma pasta dos seus scripts. Todos foram usados nos experimentos do livro.
+
+| Arquivo | O que oferece | Capítulos |
+|---|---|---|
+| `utilidades.py` | `carregar_mnist()`, `carregar_fashion()`, `sortear_rotulados`, a `CNN`, `aumentar`, `aumento_fraco`, `aumento_forte`, `treinar_supervisionado` | 9 a 18 |
+| `ssl_profundo.py` | `treinar_ssl(metodo, ...)` com os métodos `'sup'`, `'pi'`, `'mt'`, `'uda'`, `'pseudo'`, `'fixmatch'` e `'mixmatch'` | 10, 11, 15, 18 |
+| `contrastivo.py` | `ntxent`, `pre_treinar` (SimCLR e rotação), `sonda_linear`, `ajuste_fino`, `carregar_ou_treinar` | 12, 18 |
+| `generativos.py` | `VAE`, `treinar_vae`, `treinar_m2`, `treinar_sgan`, `treinar_mlp` | 13 |
+
+Parâmetros mais úteis de `treinar_ssl`: `passos` (orçamento de treino), `peso` (peso da perda não supervisionada), `limiar` (confiança do FixMatch e da UDA), `ema` (fator da média móvel), `forte` e `fraco` (funções de aumento), `yu` (rótulos verdadeiros dos não rotulados, **só para diagnóstico**) e `relatar` (passos em que se mede o teste).
+
+## C.4 Receita: comparar com o modelo de referência
 
 ```python
 import numpy as np
@@ -51,7 +64,7 @@ def comparar(X, y, n_rot=20, sementes=20):
     return dif.mean(), int((dif > 0).sum()), int((dif < 0).sum())
 ```
 
-## C.4 Lista de verificação de uma avaliação honesta
+## C.5 Lista de verificação de uma avaliação honesta
 
 | Pergunta | Se a resposta for "não" |
 |---|---|
@@ -62,11 +75,21 @@ def comparar(X, y, n_rot=20, sementes=20):
 | A comparação foi feita no mesmo sorteio? | Diferenças podem ser ruído |
 | Os dados sem rótulo vêm da mesma população dos rotulados? | Risco de descasamento de classes |
 | Os casos em que o método não ajudou foram relatados? | Viés de publicação |
+| O ganho tem intervalo de confiança que exclui o zero, em sorteios pareados? | O ganho pode ser ruído |
+| As classes são desbalanceadas, e a métrica reflete isso? | A acurácia engana |
+| Em séries, a divisão respeitou o tempo? | Vazamento por janelas sobrepostas |
+| O desempenho foi medido por subgrupo (classe, grupo)? | A média pode esconder falhas |
 
-## C.5 Escolhendo as primeiras ações
+## C.6 Escolhendo as primeiras ações
 
 | Se… | Considere | Capítulo |
 |---|---|---|
 | Você precisa de um ponto de partida simples com qualquer classificador | Self-training | 4 |
 | Os dados formam grupos ou curvas bem definidos | Label Spreading | 8 |
 | Você não sabe se vale a pena | Diagnóstico de viabilidade (projeto do Capítulo 3) | 3 |
+| Os dados sem rótulo são imagens e há bons aumentos | UDA ou FixMatch, contra uma CNN com aumento como referência | 10, 11 |
+| Há muito dado sem rótulo e tempo de computação | Pré-treino auto-supervisionado (SimCLR) e sonda linear | 12 |
+| Você tem texto | Representação aprendida com o texto sem rótulo (LSA ou modelo de linguagem) + modelo linear | 14 |
+| Você tem tabelas ou séries | Referência supervisionada forte; teste com cautela; divisão no tempo nas séries | 16 |
+| Você precisa comparar métodos | Sorteios pareados, intervalo de confiança, validação nos rotulados, métricas por classe | 17 |
+| Você vai entregar um projeto | O roteiro de dez passos e o modelo de relatório | 17, 18 |

@@ -1,0 +1,204 @@
+@@EX 1 | Atributos de uma janela à mão | básico
+Dada a janela de 10 temperaturas `w = [12, 13, 11, 14, 15, 16, 14, 17, 18, 19]`, calcule com NumPy: média, desvio padrão, mínimo, máximo, a **tendência** (inclinação da reta ajustada por `np.polyfit`) e a **autocorrelação de defasagem 1** (`np.corrcoef(w[:-1], w[1:])`). Depois, calcule os mesmos atributos da janela **embaralhada** (`RandomState(0).permutation`).
+
+*Pergunta:* quais atributos mudam ao embaralhar? O que isso diz sobre a informação que cada atributo captura?
+@@SOL
+```python
+import numpy as np
+
+def atributos(w):
+    return {"média": w.mean(), "desvio": w.std(), "mínimo": w.min(), "máximo": w.max(), "tendência": np.polyfit(np.arange(len(w)), w, 1)[0], "autocorrelação": np.corrcoef(w[:-1], w[1:])[0, 1]}
+w = np.array([12, 13, 11, 14, 15, 16, 14, 17, 18, 19.0]); emb = w[np.random.RandomState(0).permutation(10)]
+print("atributo       | janela original | janela embaralhada")
+for (k, a), (_, b) in zip(atributos(w).items(), atributos(emb).items()): print(f"{k:14s} | {a:15.3f} | {b:.3f}")
+```
+@@NOTE A média, o desvio, o mínimo e o máximo **não mudam** ao embaralhar a janela (14,900; 2,468; 11 e 19), porque dependem só do **conjunto** de valores. Já a **tendência** (0,782 para −0,042) e a **autocorrelação** (0,731 para −0,417) mudam muito, pois capturam a **ordem** no tempo: a janela original sobe de forma regular, e a embaralhada não. Portanto, os atributos de estatística descritiva ignoram a dinâmica; para distinguir séries que têm os mesmos valores em outra ordem, são necessários atributos como a tendência e a autocorrelação (ou representações aprendidas).
+@@EX 2 | O vazamento some quando as janelas não se sobrepõem? | intermediário
+Com as temperaturas diárias de Melbourne (Seção 16.5; classes: verão, inverno e meia-estação), gere janelas de 30 dias com **passo** (stride) de 1, 5 e 30 dias. Para cada passo, treine o 1-vizinho com 50 rótulos por classe (20 sorteios) e meça o acerto com a divisão **aleatória** e com a **temporal** (treino até 1987, teste de 1988 em diante).
+
+*Pergunta:* o otimismo da divisão aleatória diminui com menos sobreposição?
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+d = pd.read_csv(baixar("https://raw.githubusercontent.com/jbrownlee/Datasets/master/daily-min-temperatures.csv", "dados/daily-min-temperatures.csv"), parse_dates=["Date"]); t, datas = d["Temp"].values, d["Date"]; J = 30
+feat = lambda w: [w.mean(), w.std(), w.min(), w.max(), np.polyfit(np.arange(J), w, 1)[0], np.corrcoef(w[:-1], w[1:])[0, 1]]
+print("passo | janelas | 1-vizinho, divisão aleatória | 1-vizinho, divisão temporal | diferença")
+for passo in [1, 5, 30]:
+    X, y, ano = [], [], []
+    for i in range(0, len(t) - J + 1, passo):
+        mes = datas[i + J // 2].month; X.append(feat(t[i:i + J])); y.append(2 if mes in (12, 1, 2) else 0 if mes in (6, 7, 8) else 1); ano.append(datas[i + J // 2].year)
+    X, y, ano = np.array(X), np.array(y), np.array(ano); r0 = np.random.RandomState(0); perm = r0.permutation(len(y)); res = {}
+    for nome, (tr, te) in {"aleatória": (perm[:int(0.7 * len(y))], perm[int(0.7 * len(y)):]), "temporal": (np.where(ano <= 1987)[0], np.where(ano >= 1988)[0])}.items():
+        esc = StandardScaler().fit(X[tr]); v = []
+        for s in range(20):
+            r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y[tr] == k)[0], 50 if passo < 30 else 20, replace=False) for k in range(3)])
+            v.append(KNeighborsClassifier(1).fit(esc.transform(X[tr])[idx], y[tr][idx]).score(esc.transform(X[te]), y[te]))
+        res[nome] = np.mean(v)
+    print(f"{passo:5d} | {len(y):7d} | {100 * res['aleatória']:27.1f}% | {100 * res['temporal']:26.1f}% | {100 * (res['aleatória'] - res['temporal']):+.1f} p.p.")
+```
+@@NOTE Com passo 1 (3.621 janelas), o 1-vizinho teve 82,6% na divisão aleatória e 74,4% na temporal (+8,1 pontos de otimismo); com passo 5 (725 janelas), 81,9% e 70,8% (+11,1); com passo 30, em que as janelas **não se sobrepõem** (121 janelas), 77,6% e 77,2% (+0,3). O otimismo da divisão aleatória **desaparece quando não há sobreposição**, o que confirma que o vazamento vem das janelas quase idênticas (no passo 5, ainda há 25 dias em comum entre janelas vizinhas). Atenção: com passo 30, o teste temporal tem poucas janelas, e a estimativa é ruidosa, de modo que o +0,3 não deve ser lido com precisão. Observe também que o corte temporal tem acurácia **menor** para os passos 1 e 5 (74,4% e 70,8%) do que para o passo 30 (77,2%), mas isso envolve conjuntos de teste diferentes.
+@@EX 3 | Sonar: escala, redução de dimensão e Label Spreading | intermediário
+No **Sonar** (208 sinais de sonar, 60 atributos, mina ou rocha), com 5 rótulos por classe (20 sorteios), compare no teste (30%): a regressão logística; o Label Spreading (knn, k = 7) sobre os atributos padronizados; e o Label Spreading sobre as **10 primeiras componentes do PCA** (PCA ajustado no treino, atributos padronizados antes).
+
+*Pergunta:* reduzir a dimensão ajuda o grafo?
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+d = pd.read_csv(baixar("https://raw.githubusercontent.com/jbrownlee/Datasets/master/sonar.csv", "dados/sonar.csv"), header=None); X, y = d.drop(columns=60).values.astype(float), pd.factorize(d[60])[0]
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); A, B = esc.transform(X_tr), esc.transform(X_te); p = PCA(10, random_state=0).fit(A); Ap, Bp = p.transform(A), p.transform(B)
+res = {"reg. logística": [], "Label Spreading, 60 atributos": [], "Label Spreading, PCA 10": []}
+for s in range(20):
+    r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == k)[0], 5, replace=False) for k in (0, 1)]); yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    res["reg. logística"].append(LogisticRegression(max_iter=3000).fit(A[idx], y_tr[idx]).score(B, y_te))
+    res["Label Spreading, 60 atributos"].append(LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2, max_iter=200).fit(A, yp).score(B, y_te))
+    res["Label Spreading, PCA 10"].append(LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2, max_iter=200).fit(Ap, yp).score(Bp, y_te))
+for k, v in res.items(): print(f"{k:30s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE A regressão logística obteve 68,1% ± 8,8; o Label Spreading sobre os 60 atributos padronizados, 62,9% ± 7,8; e sobre as 10 componentes do PCA, 58,3% ± 7,6. Portanto, reduzir a dimensão **não ajudou** o grafo (foi pior) e o Label Spreading ficou abaixo da regressão logística nas duas versões. No Sonar, os desvios são grandes (acima de 7 pontos), e as diferenças de 5 pontos estão próximas do ruído. O resultado confirma o do benchmark: nesta base, as classes não formam grupos claros nos atributos.
+@@EX 4 | O estimador-base do self-training: regressão logística x floresta aleatória | avançado
+No **Breast Cancer** (padronizado, 30% de teste) e no **Wine**, com 5 rótulos por classe (20 sorteios), compare o self-training (limiar 0,9) com dois estimadores-base: `LogisticRegression` e `RandomForestClassifier(100 árvores)`, cada um contra o mesmo estimador treinado só com os rotulados. Mostre a acurácia no teste e o ganho.
+
+*Pergunta:* o ganho do self-training depende do estimador?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer, load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.semi_supervised import SelfTrainingClassifier
+
+print("base          | estimador          | só rotulados | self-training | ganho médio ± desvio")
+for nome, carregar in [("Breast Cancer", load_breast_cancer), ("Wine", load_wine)]:
+    X, y = carregar(return_X_y=True); X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+    esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+    for en, fab in [("reg. logística", lambda: LogisticRegression(max_iter=3000)), ("floresta aleatória", lambda: RandomForestClassifier(100, random_state=0))]:
+        a, b = [], []
+        for s in range(20):
+            r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == k)[0], 5, replace=False) for k in np.unique(y)]); yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+            a.append(fab().fit(X_tr[idx], y_tr[idx]).score(X_te, y_te)); b.append(SelfTrainingClassifier(fab(), threshold=0.9).fit(X_tr, yp).score(X_te, y_te))
+        a, b = np.array(a), np.array(b); print(f"{nome:13s} | {en:18s} | {100 * a.mean():11.1f}% | {100 * b.mean():12.1f}% | {100 * (b - a).mean():+.1f} ± {100 * (b - a).std():.1f} p.p.")
+```
+@@NOTE Com a **regressão logística** como estimador, o self-training deu pequenos ganhos: +1,1 ± 1,4 (Breast Cancer) e +1,3 ± 2,2 (Wine). Com a **floresta aleatória**, o self-training **piorou**: −1,8 ± 3,0 e −2,0 ± 3,1. Além disso, a floresta já partia de uma referência pior (89,2% e 91,4% contra 91,0% e 94,5%). Uma explicação possível (não testada) é que as florestas, treinadas com 10 ou 15 exemplos, dão probabilidades bem mais extremas e erram com confiança, introduzindo pseudo-rótulos errados. Resultado: o ganho do self-training **depende do estimador** e da calibração das suas probabilidades. Não escolha o estimador só pela acurácia sem rótulos extras.
+@@EX 5 | Quantos dados sem rótulo no Adult? | avançado
+No **Adult** (preparação da Seção 16.4; 100 rótulos ao acaso, 5 sorteios), varie a quantidade de pessoas "sem rótulo" usadas pelo **self-training com regressão logística (pesos balanceados, limiar 0,9)**: 0 (referência), 1.000, 5.000 e 34.000 (todas). Mostre a F1 da classe positiva.
+
+*Pergunta:* mais dados sem rótulo ajudam?
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import SelfTrainingClassifier
+from sklearn.metrics import f1_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+nomes = ["idade", "classe_trab", "fnlwgt", "escolaridade", "anos_estudo", "estado_civil", "ocupacao", "parentesco", "raca", "sexo", "ganho_capital", "perda_capital", "horas", "pais", "renda"]
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/jbrownlee/Datasets/master/adult-all.csv", "dados/adult-all.csv"), header=None, names=nomes)
+y = (df["renda"] == ">50K").astype(int).values; df = df.drop(columns=["renda", "escolaridade", "fnlwgt"])
+num = ["idade", "anos_estudo", "ganho_capital", "perda_capital", "horas"]; cat = [c for c in df.columns if c not in num]
+prep = ColumnTransformer([("n", StandardScaler(), num), ("c", OneHotEncoder(handle_unknown="ignore", min_frequency=20), cat)])
+d_tr, d_te, y_tr, y_te = train_test_split(df, y, test_size=0.3, stratify=y, random_state=0); A = prep.fit_transform(d_tr); B = prep.transform(d_te)
+print("sem rótulo | F1 da classe positiva (100 rótulos ao acaso, 5 sorteios)")
+for n_u in [0, 1000, 5000, 34000]:
+    v = []
+    for s in range(5):
+        r = np.random.RandomState(s)
+        while True:
+            idx = r.choice(len(y_tr), 100, replace=False)
+            if y_tr[idx].sum() >= 5: break
+        base = LogisticRegression(max_iter=3000, class_weight="balanced")
+        if n_u == 0: m = base.fit(A[idx], y_tr[idx])
+        else:
+            livres = np.setdiff1d(np.arange(len(y_tr)), idx); usar = np.r_[idx, r.choice(livres, min(n_u, len(livres)), replace=False)]
+            yp = np.full(len(usar), -1); yp[:100] = y_tr[idx]; m = SelfTrainingClassifier(base, threshold=0.9).fit(A[usar], yp)
+        v.append(f1_score(y_te, m.predict(B)))
+    print(f"{n_u:10d} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE A F1 da classe positiva foi de 63,5% sem usar dados sem rótulo, 64,0% com 1.000 pessoas sem rótulo, 63,5% com 5.000 e 63,2% com 34.000 (todas). As diferenças (−0,3 a +0,5 ponto) estão dentro do desvio entre sorteios (0,6 a 0,9). Ou seja, **mais dados sem rótulo não ajudaram**, na configuração testada (regressão logística, limiar 0,9, 100 rótulos). Com um modelo linear e um limiar alto, poucos exemplos sem rótulo atingem a confiança exigida, e os que atingem trazem pouca informação nova. Para esse problema, vale mais **rotular mais exemplos** (Seção 16.4: de 100 para 500 rótulos, de 63,5% para 66,3%).
+@@PROJ Rotulagem ativa x aleatória no Adult | Cap16
+**Fonte dos dados.** *Adult* (UCI; também no Kaggle), espelho público; preparação da Seção 16.4.
+
+**Contexto.** Uma ONG tem orçamento para rotular **500 pessoas** do conjunto Adult (renda acima de 50 mil). Em vez de sortear tudo, ela pode rotular em **rodadas**: começar com 100 sorteadas e, em cada uma das quatro rodadas seguintes, rotular **mais 100** escolhidas por um critério. Você deve comparar a **rotulagem aleatória** com a **amostragem por incerteza** (rotular as 100 pessoas cuja probabilidade prevista pelo modelo está mais perto de 0,5).
+
+**Tarefas.**
+1. Use a regressão logística com pesos de classe balanceados, e a F1 da classe positiva no teste.
+2. Faça 5 sorteios: comece com 100 rótulos ao acaso (pelo menos 5 positivos) e adicione 100 por rodada por: (a) sorteio aleatório; (b) incerteza (|p − 0,5| menor).
+3. Mostre a F1 da classe positiva após 100, 200, 300, 400 e 500 rótulos, para cada estratégia, e a quantidade de positivos obtidos entre os rotulados.
+4. Escreva uma recomendação (8 a 10 linhas): a amostragem por incerteza compensa? Que riscos ela traz (por exemplo, para a estimativa da prevalência)?
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import os, urllib.request
+import numpy as np, pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score
+
+def baixar(url, destino):
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    if not os.path.exists(destino): urllib.request.urlretrieve(url, destino)
+    return destino
+nomes = ["idade", "classe_trab", "fnlwgt", "escolaridade", "anos_estudo", "estado_civil", "ocupacao", "parentesco", "raca", "sexo", "ganho_capital", "perda_capital", "horas", "pais", "renda"]
+df = pd.read_csv(baixar("https://raw.githubusercontent.com/jbrownlee/Datasets/master/adult-all.csv", "dados/adult-all.csv"), header=None, names=nomes)
+y = (df["renda"] == ">50K").astype(int).values; df = df.drop(columns=["renda", "escolaridade", "fnlwgt"])
+num = ["idade", "anos_estudo", "ganho_capital", "perda_capital", "horas"]; cat = [c for c in df.columns if c not in num]
+prep = ColumnTransformer([("n", StandardScaler(), num), ("c", OneHotEncoder(handle_unknown="ignore", min_frequency=20), cat)])
+d_tr, d_te, y_tr, y_te = train_test_split(df, y, test_size=0.3, stratify=y, random_state=0); A = prep.fit_transform(d_tr); B = prep.transform(d_te)
+res = {e: np.zeros((5, 5)) for e in ["aleatória", "incerteza"]}; pos = {e: np.zeros((5, 5)) for e in res}
+for s in range(5):
+    r = np.random.RandomState(s)
+    while True:
+        base = r.choice(len(y_tr), 100, replace=False)
+        if y_tr[base].sum() >= 5: break
+    for e in res:
+        idx = base.copy(); rg = np.random.RandomState(100 + s)
+        for rodada in range(5):
+            m = LogisticRegression(max_iter=3000, class_weight="balanced").fit(A[idx], y_tr[idx]); res[e][s, rodada] = f1_score(y_te, m.predict(B)); pos[e][s, rodada] = y_tr[idx].mean()
+            if rodada == 4: break
+            livres = np.setdiff1d(np.arange(len(y_tr)), idx)
+            novos = rg.choice(livres, 100, replace=False) if e == "aleatória" else livres[np.argsort(np.abs(m.predict_proba(A[livres])[:, 1] - 0.5))[:100]]
+            idx = np.r_[idx, novos]
+print("rótulos | F1 positiva (aleatória) | F1 positiva (incerteza) | % de positivos entre os rotulados (aleatória / incerteza)")
+for k in range(5): print(f"{100 * (k + 1):7d} | {100 * res['aleatória'][:, k].mean():9.1f}% ± {100 * res['aleatória'][:, k].std():3.1f}      | {100 * res['incerteza'][:, k].mean():9.1f}% ± {100 * res['incerteza'][:, k].std():3.1f}      | {100 * pos['aleatória'][:, k].mean():5.1f}% / {100 * pos['incerteza'][:, k].mean():5.1f}%")
+```
+@@RUBRICA
+- A divisão treino e teste é feita antes de qualquer escolha, e o teste só é usado para avaliar.
+- As duas estratégias partem dos mesmos 100 rótulos iniciais em cada sorteio.
+- A tabela mostra a F1 da classe positiva e a proporção de positivos nos rotulados após cada rodada.
+- A recomendação discute o ganho (ou a falta de ganho) e o viés da amostra rotulada por incerteza.
+@@NOTE A F1 da classe positiva com a amostragem **aleatória** foi de 63,5% (100 rótulos) a 66,7% (500); com a **incerteza**, de 63,5% a 67,6%. A vantagem da incerteza foi pequena (+0,4 a +0,9 ponto), **dentro de cerca de 1 desvio entre sorteios**. A **proporção de positivos** entre os rotulados mostra o viés: com sorteio aleatório fica em torno de 23% (a prevalência real é de 23,9%), e com a incerteza sobe para **31,9%**. Isto é, a amostra rotulada por incerteza **não representa a população** e não serve para estimar a prevalência (nem outras estatísticas) sem correção. Recomendação: a rotulagem ativa pode ajudar a classificar, mas o ganho foi modesto aqui e exige cuidado com o viés da amostra; se a ONG também quer estimar a proporção de rendas altas, deve **reservar uma amostra aleatória** à parte. Limitações: cinco sorteios, regressão logística e apenas cinco rodadas.
+@@ALEM
+- **UCI:** Adult, Sonar, Ionosphere, Pima Indians Diabetes, Glass, Wine e Breast Cancer Wisconsin.
+- **Kaggle:** Adult Census Income, Daily Minimum Temperatures in Melbourne e Breast Cancer Wisconsin.
+- **Artigos:** Grinsztajn, Oyallon e Varoquaux (2022) e Bergmeir e Benítez (2012).

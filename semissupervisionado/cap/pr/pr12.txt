@@ -17,7 +17,7 @@ print(f"perda com os pares corretos     : {ntxent(z1, z2):.3f}")
 print(f"perda com os pares embaralhados : {ntxent(z1, z2[[1, 2, 0]]):.3f}")
 print(f"perda com os pares corretos e tau = 0,1: {ntxent(z1, z2, 0.1):.3f}")
 ```
-@@NOTE PREENCHER
+@@NOTE Com os pares corretos, a perda é **0,348**; com os pares **embaralhados** (cada versão pareada com a de outro exemplo), sobe para **3,097**. A perda é baixa quando cada versão é mais parecida com o seu par do que com as demais, e alta quando o "par" é, na verdade, um exemplo diferente. Com a temperatura τ = 0,1, a perda dos pares corretos cai a **0,001**: temperaturas baixas "afiam" as diferenças de similaridade e punem muito qualquer negativo parecido com o positivo, de modo que, quando o positivo já é muito mais parecido, a perda quase desaparece.
 @@EX 2 | Rotação como tarefa-pretexto no Digits | intermediário
 No **Digits** (imagens 8×8; 30% reservados para teste), construa uma tarefa-pretexto: para cada imagem de treino, gere as 4 rotações (0°, 90°, 180°, 270°; `np.rot90`) e treine um `MLPClassifier` (uma camada escondida de 64 neurônios) a prever a rotação. Use as **ativações da camada escondida** (ReLU) como atributos e treine uma regressão logística com 50 rótulos (5 por dígito; 10 sorteios) sobre eles. Compare com a regressão logística sobre os 64 pixels e sobre as ativações de uma MLP **sem treino** (pesos aleatórios com a mesma arquitetura).
 
@@ -48,7 +48,7 @@ for nome, (A, B) in conjuntos.items():
         esc = StandardScaler().fit(A[idx]); v.append(LogisticRegression(max_iter=3000).fit(esc.transform(A[idx]), y_tr[idx]).score(esc.transform(B), y_te))
     print(f"{nome:26s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
 ```
-@@NOTE PREENCHER
+@@NOTE A tarefa-pretexto (prever a rotação) foi resolvida com **100%** de acerto no treino. Com 50 rótulos, a regressão logística obteve 82,4% sobre os 64 pixels, 76,7% sobre as ativações de uma MLP **sem treino** e **80,5%** sobre as ativações da MLP **pré-treinada** pela rotação. O pré-treino ajudou em relação à rede sem treino (+3,8 pontos), mas **não superou os pixels** (−1,9). No Digits, que é pequeno e fácil, os pixels já são uma boa representação, e a rotação não acrescentou o suficiente. (No MNIST, o pré-treino por rotação foi ainda pior: Seção 12.6.)
 @@EX 3 | A temperatura do SimCLR | intermediário
 No **MNIST**, pré-treine o SimCLR com 10.000 imagens sem rótulo, 600 passos (lote 128) e temperaturas τ = 0,1; 0,5 e 1,0. Para cada uma, faça a sonda linear com 100 rótulos (3 sorteios).
 
@@ -65,7 +65,7 @@ for tau in [0.1, 0.5, 1.0]:
     v = [sonda_linear(enc, X[sortear_rotulados(y, 10, s)], y[sortear_rotulados(y, 10, s)], X_te, y_te) for s in range(3)]
     print(f"{tau:11.1f} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
 ```
-@@NOTE PREENCHER
+@@NOTE A temperatura mais baixa foi a melhor, com 600 passos de pré-treino: **90,5%** (τ = 0,1), 87,9% (τ = 0,5) e 85,5% (τ = 1,0). Temperaturas baixas dão mais peso aos negativos mais parecidos, o que força a rede a aprender distinções mais finas. Note que o experimento principal do capítulo usou τ = 0,5 (91,8% com 1.500 passos), fixado antes, e que o valor de τ poderia ter sido melhor. Com um sorteio de pré-treino e três sorteios de rótulos, as diferenças de 2 a 5 pontos são maiores que o desvio (0,5 a 1,1), mas escolher τ por esses resultados de teste seria otimista.
 @@EX 4 | Vizinho mais próximo, regressão logística e sonda linear | intermediário
 Reaproveite o codificador SimCLR do capítulo (`carregar_ou_treinar("simclr_forte", ...)`, que usa o mesmo pré-treino de 1.500 passos). Com 100 rótulos (3 sorteios), compare três classificadores sobre os **atributos do codificador**: a regressão logística (sonda linear), o **1-vizinho mais próximo** e o **5-vizinhos**. Compare também com o 1-vizinho sobre os pixels.
 
@@ -89,7 +89,7 @@ for s in range(3):
     res.setdefault("sonda linear (reg. logística), atributos", []).append(sonda_linear(enc, X[idx], y[idx], X_te, y_te))
 for k, v in res.items(): print(f"{k:38s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
 ```
-@@NOTE PREENCHER
+@@NOTE A sonda linear (regressão logística) sobre o codificador SimCLR obteve **91,8%**, o 1-vizinho sobre os mesmos atributos, **80,0%**, e o 5-vizinhos, **78,4%**; o 1-vizinho sobre os pixels, **72,8%**. Portanto, a representação ajuda até os classificadores simples (+7,2 pontos para o 1-vizinho), mas o ganho é **muito maior** com a sonda linear. Os atributos do codificador (128 dimensões, não normalizadas, com ReLU) são **linearmente** separáveis, mas a distância euclidiana entre eles não é uma boa medida de semelhança entre dígitos. O contraste mostra que a qualidade de uma representação depende de **como** ela será usada.
 @@EX 5 | SimCLR no Fashion-MNIST | avançado
 No **Fashion-MNIST**, pré-treine o SimCLR com 10.000 imagens sem rótulo, 1.500 passos (lote 128), com o aumento moderado (`aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)`) nas duas visões. Compare a sonda linear (100 rótulos, 3 sorteios) com a regressão logística sobre os pixels e com um codificador sem treino. Guarde o codificador como `simclr_fashion`, que será reaproveitado no Capítulo 15.
 
@@ -112,7 +112,7 @@ for s in range(3):
 print("Fashion-MNIST, 100 rótulos, 3 sorteios: acerto no teste")
 for k, v in res.items(): print(f"{k:38s} | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
 ```
-@@NOTE PREENCHER
+@@NOTE No Fashion-MNIST, o pré-treino **não ajudou**: a regressão logística sobre os pixels obteve **69,8%**, a sonda sobre o codificador sem treino, 66,8%, e a sonda sobre o SimCLR, **67,3%** (apenas +0,5 sobre o codificador sem treino e −2,5 abaixo dos pixels). No MNIST, o mesmo procedimento deu +15 pontos. Possíveis explicações (não testadas): as roupas diferem entre si por textura e proporções que o aumento moderado e o pré-treino curto (1.500 passos, 10.000 imagens) não captam; em Fashion-MNIST, o aumento por escala e rotação pode apagar sinais úteis (como visto no Capítulo 9). Um orçamento bem maior, ou aumentos específicos para roupas, poderia mudar o quadro.
 @@PROJ Quanto vale cada rótulo depois do pré-treino? A curva rótulos × acurácia no MNIST | Cap12
 **Fonte dos dados.** *MNIST* (LeCun et al.; espelho público), 70.000 imagens 28×28 de dígitos; no Kaggle, *Digit Recognizer*.
 
@@ -149,7 +149,7 @@ for por in [1, 3, 10, 30, 100]:
 - A tabela cobre cinco tamanhos de conjunto rotulado, com três sorteios.
 - A resposta discute onde o ganho do pré-treino diminui, com base nos números.
 - A recomendação admite as limitações do experimento.
-@@NOTE PREENCHER
+@@NOTE Para 10, 30, 100, 300 e 1.000 rótulos, a regressão logística sobre os pixels obteve 49,4%, 61,4%, 76,5%, 83,1% e 87,5%; o codificador sem treino, praticamente o mesmo (49,0%, 61,8%, 77,2%, 83,2%, 87,7%); a rotação, **pior** com poucos rótulos (31,3%, 42,0%, 68,5%, 80,9%) e igual aos pixels com 1.000 (87,2%); e o SimCLR, melhor em todos os tamanhos: **56,4%, 75,1%, 91,8%, 94,5% e 96,3%**. O ganho do SimCLR sobre os pixels é de +7,0, +13,7, +15,3, +11,4 e +8,8 pontos, o que mostra que, **dentro da faixa testada, o pré-treino continua compensando**, embora o ganho diminua com mais rótulos (a partir de 100 por dígito, ele cai). Recomendação: se a escolha é entre pixels e o codificador SimCLR, usar o segundo, sobretudo com 30 a 300 rótulos; contudo, a **CNN treinada do zero** com o mesmo aumento forte (93,2% com 100 rótulos, Capítulo 12) é uma referência ainda mais forte, e o projeto não a incluiu: ela deve ser acrescentada antes de qualquer decisão. Limitações: MNIST fácil, pré-treino curto e um só codificador (um sorteio de pré-treino).
 @@ALEM
 - **UCI:** Optical Recognition of Handwritten Digits.
 - **Kaggle:** Digit Recognizer e Fashion-MNIST.

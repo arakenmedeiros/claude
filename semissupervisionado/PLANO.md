@@ -11,16 +11,16 @@ Autor: Araken de Medeiros Santos. Título: *Aprendizado Semissupervisionado: do 
 | 6 | Modelos generativos e EM | PRONTO |
 | 7 | Baixa densidade: S3VM, TSVM, entropia | PRONTO |
 | 8 | Grafos: Label Propagation/Spreading | PRONTO |
-| 9 | Redes neurais essenciais | |
-| 10 | Regularização por consistência | |
-| 11 | Pseudo-rótulos modernos (MixMatch, FixMatch) | |
-| 12 | Auto-supervisionado e contrastivo | |
-| 13 | Generativos profundos (VAE, GAN) | |
-| 14 | Texto | |
-| 15 | Imagens | |
-| 16 | Séries temporais e tabulares | |
-| 17 | Avaliação, armadilhas, escolha, ética | |
-| 18 | Projeto integrador final (`@final`) | |
+| 9 | Redes neurais essenciais | PRONTO |
+| 10 | Regularização por consistência | PRONTO |
+| 11 | Pseudo-rótulos modernos (MixMatch, FixMatch) | PRONTO |
+| 12 | Auto-supervisionado e contrastivo | PRONTO |
+| 13 | Generativos profundos (VAE, GAN) | PRONTO |
+| 14 | Texto | PRONTO |
+| 15 | Imagens | texto pronto; faltam notas pr15 e abstenção |
+| 16 | Séries temporais e tabulares | PRONTO |
+| 17 | Avaliação, armadilhas, escolha, ética | PRONTO |
+| 18 | Projeto integrador final (`@final`) | rascunho; falta RES1 e resto (ch18_integrador em execução) |
 
 Partes: `@part:` só no 1º capítulo de cada parte: ch04 "Parte II — Métodos Clássicos", ch09 "Parte III — Métodos Modernos com Aprendizado Profundo", ch14 "Parte IV — Prática e Aplicações", ch18 "Parte V — Fechamento".
 
@@ -39,3 +39,9 @@ Usar espelhos públicos de bases originais UCI/Kaggle e dizer isso com franqueza
 ## Regras de honestidade (manter)
 - Todo número do texto vem de execução real. Reportar resultados negativos. Referências de memória, avisar. Sem inventar.
 - Sem pull request. Commit/push na branch `claude/vigilant-fermi-gbu78w` ao fim de cada parte.
+
+
+## Estado (sessão atual)
+- Módulos: cap/code/utilidades.py, ssl_profundo.py, contrastivo.py, generativos.py. Figuras: build/figs_i..m.py e figs_l.py (caps. 12, 14 a 17).
+- Dados: espelhos GitHub (jbrownlee, justmarkham DAT7 yelp.csv).
+- Falta: terminar cap15 (RES1 abstenção), cap18 (resultados, resto), pr15/pr18 notas, build final, QA, commit.

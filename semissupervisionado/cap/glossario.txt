@@ -155,3 +155,13 @@ Espaço latente: espaço (em geral de baixa dimensão) onde o codificador repres
 ELBO: limite inferior da verossimilhança, que o VAE maximiza; soma a qualidade da reconstrução e uma penalidade KL.
 GAN (rede adversária generativa): par de redes, um gerador que cria exemplos falsos e um discriminador que tenta distingui-los dos reais.
 Feature matching: treinar o gerador para que a média dos atributos intermediários do discriminador nos exemplos falsos coincida com a dos reais.
+Deriva de dados (data drift): mudança da distribuição dos dados ao longo do tempo.
+Teste pareado: comparação de dois métodos nos mesmos sorteios, usando as diferenças entre eles.
+Bootstrap: reamostragem com reposição para estimar a incerteza de uma estatística.
+Comparações múltiplas: risco de que, ao comparar muitos métodos ou configurações, algum pareça melhor por acaso.
+Descasamento de classes (class mismatch): quando os dados sem rótulo contêm classes ausentes nos rotulados.
+Humano no ciclo (human in the loop): sistema em que pessoas revisam ou corrigem as decisões do modelo.
+Calibração: concordância entre a confiança de um modelo e a frequência real de acerto.
+ECE (erro de calibração esperado): média da diferença entre confiança e acurácia, calculada por faixas de confiança.
+Abstenção: decisão do sistema de não responder quando a confiança é baixa, encaminhando o caso a uma pessoa.
+Superconfiança: situação em que a confiança do modelo é maior que sua acurácia.

@@ -1,0 +1,269 @@
+MC: O Fashion-MNIST contém:
+a) séries temporais.
+b) texto de avaliações.
+c) imagens 28x28 em tons de cinza de 10 tipos de peças de roupa.
+d) imagens coloridas de animais.
+R: c | São 60.000 imagens de treino e 10.000 de teste.
+
+MC: Comparado ao MNIST, o Fashion-MNIST é:
+a) sem classes.
+b) igual.
+c) mais difícil, com classes visualmente parecidas (camisa, camiseta, pulôver, casaco).
+d) mais fácil.
+R: c | Os métodos obtêm acurácias menores.
+
+MC: Com 100 rótulos, a CNN supervisionada no Fashion-MNIST obteve cerca de:
+a) 98%.
+b) 50%, sempre.
+c) 30%.
+d) 71 a 72%.
+R: d | Bem abaixo do MNIST (93%).
+
+MC: No Fashion-MNIST, o aumento de dados forte do Capítulo 9:
+a) melhorou muito.
+b) não pôde ser aplicado.
+c) piorou o resultado (66,5% contra 71,6% sem aumento).
+d) foi idêntico.
+R: c | O que preserva a classe depende do tipo de imagem.
+
+MC: O espelhamento horizontal, no Fashion-MNIST, deveria preservar a classe porque:
+a) uma camiseta espelhada continua sendo uma camiseta.
+b) gera ruído.
+c) muda a classe.
+d) apaga a imagem.
+R: a | Mas, no experimento, o ganho não apareceu.
+
+MC: Combinar o aumento moderado com o espelhamento, no experimento:
+a) teve acurácia menor que o aumento moderado sozinho.
+b) dobrou a acurácia.
+c) teve acurácia muito maior.
+d) foi idêntico.
+R: a | 68,9% contra 71,1%.
+
+MC: No Fashion-MNIST, com 100 rótulos, os métodos semissupervisionados obtiveram em relação à referência:
+a) ganhos de 20 pontos.
+b) resultados idênticos aos do MNIST.
+c) ganhos pequenos (cerca de 1 ponto), dentro do ruído.
+d) perdas de 20 pontos.
+R: c | 72,5%, 72,2% e 72,2% contra 71,2%.
+
+MC: Com 300 rótulos, no Fashion-MNIST, o maior ganho foi do Pseudo-Label e da UDA, de cerca de:
+a) 10 pontos.
+b) 3 pontos percentuais.
+c) 30 pontos.
+d) 0 ponto.
+R: b | 79,2% e 79,3% contra 76,3%.
+
+MC: Com 1.000 rótulos, no Fashion-MNIST, os métodos semissupervisionados em relação à referência:
+a) praticamente não ganharam.
+b) ganharam 10 pontos.
+c) dobraram a acurácia.
+d) perderam 10 pontos.
+R: a | 81,5% a 82,5% contra 81,6%.
+
+MC: A tendência geral nos dados sem rótulo, observada ao variar os rótulos, é de que o ganho:
+a) diminua quando há mais rótulos.
+b) seja negativo sempre.
+c) seja constante.
+d) aumente sempre com mais rótulos.
+R: a | Mais rótulos reduzem a necessidade dos dados sem rótulo.
+
+MC: A classe mais difícil no Fashion-MNIST, para todos os métodos do capítulo, foi:
+a) bota.
+b) camisa.
+c) calça.
+d) sandália.
+R: b | Muito parecida com camiseta, pulôver e casaco.
+
+MC: As classes mais fáceis foram:
+a) calça, sandália e bota.
+b) camisa e camiseta.
+c) pulôver e casaco.
+d) todas iguais.
+R: a | Têm formas distintas.
+
+MC: No acerto por categoria com 100 rótulos, os métodos semissupervisionados:
+a) ajudaram em algumas categorias e prejudicaram em outras.
+b) melhoraram todas.
+c) pioraram todas.
+d) não mudaram nenhuma.
+R: a | O efeito varia por categoria.
+
+MC: Por que analisar o acerto por categoria?
+a) porque reduz o teste.
+b) a média pode esconder categorias em que o método piora ou que continuam muito ruins.
+c) porque a média é sempre suficiente.
+d) porque dispensa a referência.
+R: b | É uma forma de análise por subgrupo.
+
+MC: A confiança de uma rede neural é:
+a) o número de camadas.
+b) o tamanho do lote.
+c) a probabilidade máxima que ela atribui à classe prevista.
+d) o rótulo verdadeiro.
+R: c | Nem sempre reflete a probabilidade real de acerto.
+
+MC: Uma rede bem calibrada é aquela em que:
+a) não há erros.
+b) a confiança média coincide com a acurácia.
+c) a acurácia é sempre 100%.
+d) a confiança é sempre 100%.
+R: b | Por exemplo, 80% de confiança equivale a 80% de acerto.
+
+MC: O ECE (erro de calibração esperado) mede:
+a) a taxa de aprendizado.
+b) o tamanho do lote.
+c) o número de épocas.
+d) a diferença média entre a confiança e a acurácia, por faixas de confiança.
+R: d | Quanto menor, melhor calibrado.
+
+MC: A abstenção consiste em:
+a) usar o teste.
+b) responder sempre.
+c) o sistema não responder quando a confiança é baixa, encaminhando o caso a uma pessoa.
+d) apagar os exemplos.
+R: c | Troca cobertura por acurácia.
+
+MC: A curva acurácia x fração respondida mostra:
+a) o número de épocas.
+b) o tamanho do lote.
+c) a acurácia obtida ao responder só as imagens mais confiantes.
+d) o erro de treino.
+R: c | Ordena-se o teste pela confiança.
+
+MC: Em um sistema que se abstém dos casos duvidosos, a acurácia nos casos respondidos tende a:
+a) subir, mas a fração respondida cai.
+b) cair.
+c) ficar constante.
+d) chegar a 0%.
+R: a | Troca-se cobertura por acurácia.
+
+MC: Para um painel de qualidade, a decisão de abster-se deve considerar:
+a) apenas a acurácia média.
+b) o custo de um erro automático e o custo da revisão humana.
+c) apenas o tamanho da rede.
+d) apenas o número de rótulos.
+R: b | Define a fração a automatizar.
+
+MC: Uma confiança mal calibrada atrapalha a abstenção porque:
+a) o limiar de confiança deixa de refletir o risco real de erro.
+b) o conjunto de teste aumenta.
+c) os rótulos mudam.
+d) a rede para de aprender.
+R: a | É a mesma lição do limiar do self-training.
+
+MC: O ajuste fino do codificador SimCLR no Fashion-MNIST (Exercício 4):
+a) usa o teste.
+b) dispensa referência.
+c) não usa rótulos.
+d) deve ser comparado com a CNN treinada do zero com os mesmos rótulos.
+R: d | Para saber se o pré-treino ajudou.
+
+MC: A sonda linear sobre o SimCLR no Fashion-MNIST (Capítulo 12) em relação à regressão logística sobre os pixels:
+a) não pôde ser calculada.
+b) ajudou 15 pontos.
+c) não ajudou (67,3% contra 69,8%).
+d) foi igual a 100%.
+R: c | Diferente do MNIST.
+
+MC: Uma razão possível para o pré-treino ajudar menos no Fashion-MNIST é:
+a) os aumentos e o orçamento do pré-treino podem não captar o que distingue as roupas (textura, proporções).
+b) o Fashion-MNIST não tem imagens.
+c) as roupas não têm forma.
+d) o pré-treino exige rótulos.
+R: a | Hipótese não testada.
+
+MC: Quando o ganho do semissupervisionado é pequeno, uma alternativa é:
+a) ignorar a referência.
+b) usar o teste no treino.
+c) rotular mais exemplos.
+d) reduzir os sorteios.
+R: c | Muitas vezes, mais rótulos são o caminho mais seguro.
+
+MC: Em termos de custo de rotulagem, ganhar 3 pontos com 300 rótulos equivale, aproximadamente, a:
+a) ter 30 vezes mais rótulos.
+b) não ter nenhum rótulo.
+c) ter mais alguns rótulos a mais com a referência supervisionada.
+d) perder rótulos.
+R: c | Compare com a curva da referência.
+
+MC: O que um relatório honesto sobre o Fashion-MNIST deve dizer?
+a) que os ganhos foram modestos e dependem do número de rótulos e do método.
+b) que não é preciso referência.
+c) que o semissupervisionado sempre resolve.
+d) que o teste foi usado para escolher.
+R: a | Resultados modestos também são resultados.
+
+MC: O número de sorteios (2) usado nas tabelas do capítulo implica que:
+a) não há ruído.
+b) o teste é inútil.
+c) as conclusões são definitivas.
+d) as diferenças pequenas não são conclusivas.
+R: d | O desvio entre sorteios chegou a 2 pontos.
+
+MC: A principal lição prática do capítulo é:
+a) usar sempre o FixMatch.
+b) ignorar as classes difíceis.
+c) medir o ganho no seu problema, por categoria, com a referência certa, e decidir entre rotular mais ou usar o método.
+d) nunca usar dados sem rótulo.
+R: c | Decisão baseada em evidência.
+
+DISC: Descreva o Fashion-MNIST e explique por que ele é mais difícil do que o MNIST.
+R: São imagens 28x28 de 10 tipos de roupa. Várias classes são visualmente parecidas (camisa, camiseta, pulôver, casaco), e a distância entre pixels não reflete bem a semelhança entre as peças.
+
+DISC: Interprete o experimento do aumento de dados no Fashion-MNIST.
+R: Sem aumento: 71,6%; deslocar 8%: 71,8%; espelhar: 70,9%; moderado: 71,1%; moderado + espelhar: 68,9%; forte: 66,5%. O aumento não ajudou e, quando forte, atrapalhou: o que preserva a classe depende do tipo de imagem.
+
+DISC: Por que o aumento forte pode prejudicar no Fashion-MNIST?
+R: Rotações grandes, apagamentos e ruído podem destruir detalhes que distinguem classes parecidas e tornar a tarefa difícil demais para o orçamento de treino.
+
+DISC: Compare os métodos semissupervisionados com a referência nos três tamanhos de conjunto rotulado.
+R: Com 100 rótulos: ganhos de cerca de 1 ponto. Com 300: Pseudo-Label e UDA ganham cerca de 3 pontos, e o FixMatch, 0,5. Com 1.000: praticamente nenhum ganho.
+
+DISC: Por que o ganho diminui quando há mais rótulos?
+R: Com mais rótulos, o modelo supervisionado aprende mais por si só, e o sinal adicional dos dados sem rótulo é menos necessário, além de o ruído dos pseudo-rótulos poder prejudicar.
+
+DISC: Explique o resultado por categoria com 100 rótulos e o que ele ensina.
+R: Calça, sandália e bota são fáceis; camisa é a pior (17% a 33%). Os métodos ajudam em algumas (vestido, tênis, bolsa) e atrapalham em outras (camiseta, camisa). A média esconde essas diferenças.
+
+DISC: Por que a variação do acerto de uma categoria, como pulôver, entre os métodos é tão grande?
+R: Com um só sorteio, 100 rótulos e classes parecidas, pequenas mudanças alteram a fronteira entre pulôver, casaco e camisa, resultando em oscilações grandes.
+
+DISC: O que é a calibração de uma rede e como medi-la?
+R: É a concordância entre a confiança da previsão e a frequência de acerto. Mede-se, por exemplo, pelo ECE, que compara confiança e acurácia por faixas de confiança.
+
+DISC: Explique a abstenção e a curva acurácia x fração respondida.
+R: O sistema só responde quando a confiança é alta e encaminha os demais a uma pessoa. A curva mostra a acurácia nas respondidas conforme a fração respondida, ordenando os exemplos pela confiança.
+
+DISC: Como decidir a fração de fotos a automatizar em um painel de qualidade?
+R: Escolher o limiar de confiança que atinge a acurácia exigida (por exemplo, 90%), conferindo na curva, e comparar o custo dos erros automáticos com o da revisão humana.
+
+DISC: Por que uma confiança mal calibrada prejudica a abstenção?
+R: O limiar pressupõe que a confiança reflete o risco de erro. Se a rede é superconfiante, erra com alta confiança e passa pelo filtro.
+
+DISC: Compare o pré-treino contrastivo no Fashion-MNIST e no MNIST e discuta possíveis razões.
+R: No MNIST, a sonda subiu 15 pontos; no Fashion-MNIST, não superou os pixels. Possíveis razões: aumentos e orçamento de pré-treino inadequados para roupas e a maior dificuldade das classes.
+
+DISC: Quando vale mais rotular exemplos novos do que usar um método semissupervisionado?
+R: Quando o ganho do método é pequeno ou incerto diante do custo da complexidade, e o custo de rotular mais é baixo. Compara-se a curva de aprendizado da referência com o ganho do método.
+
+DISC: Descreva como a curva rótulos x acurácia da referência ajuda a valorar um método semissupervisionado.
+R: Se o método com 300 rótulos equivale à referência com 500, ele 'economiza' 200 rótulos. Compara-se esse valor com o custo de implementar e manter o método.
+
+DISC: Quais são as limitações dos experimentos do capítulo?
+R: Dois sorteios, CNN pequena, 1.500 a 2.000 passos em CPU, uma única configuração de aumento por método, e o desvio entre sorteios de até 2 pontos.
+
+DISC: Por que escolher o aumento a priori, sem olhar o teste, é importante?
+R: Evita vazamento: escolher o aumento no teste daria estimativas otimistas. Usa-se conhecimento do domínio ou validação.
+
+DISC: Como explicar a um gerente que o ganho do semissupervisionado foi modesto?
+R: Mostrando os números por rótulos e por categoria, com a incerteza, explicando que o método ajuda pouco nesse problema e mostrando o custo-benefício de rotular mais.
+
+DISC: Compare o desempenho do Pseudo-Label, FixMatch e UDA no Fashion-MNIST com o que se viu no MNIST.
+R: No MNIST, os ganhos foram maiores (2 a 3 pontos sobre 93%) e a UDA foi a melhor; no Fashion-MNIST, foram de 1 a 3 pontos, dependentes do número de rótulos, e a ordem não foi estável.
+
+DISC: Por que o experimento com 100 rótulos não permite declarar um método vencedor no Fashion-MNIST?
+R: As diferenças (72,2% a 72,5%) são menores que o desvio entre sorteios, e há apenas dois sorteios.
+
+DISC: Resuma as lições do Capítulo 15.
+R: O Fashion-MNIST é mais difícil; o aumento forte atrapalha; os ganhos do semissupervisionado são modestos e dependem do número de rótulos; a análise por categoria é essencial; e a abstenção com confiança calibrada é uma estratégia prática.

@@ -32,7 +32,7 @@ for n in [100, 500]:
         yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
         mods = {"reg. logística (pesos balanceados)": LogisticRegression(max_iter=3000, class_weight="balanced").fit(A[idx], y_tr[idx]),
                 "gradient boosting (pesos balanceados)": HistGradientBoostingClassifier(class_weight="balanced", random_state=0).fit(A[idx], y_tr[idx]),
-                "gradient boosting + self-training (0,9)": SelfTrainingClassifier(HistGradientBoostingClassifier(random_state=0), threshold=0.9).fit(A, yp)}
+                "gradient boosting balanceado + self-training (0,9)": SelfTrainingClassifier(HistGradientBoostingClassifier(class_weight="balanced", random_state=0), threshold=0.9).fit(A, yp)}
         for k, m in mods.items():
             p = m.predict(B); res.setdefault(k, []).append((f1_score(y_te, p), f1_score(y_te, p, average="macro")))
     for k, v in res.items():

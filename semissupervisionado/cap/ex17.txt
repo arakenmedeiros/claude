@@ -1,0 +1,269 @@
+MC: Segundo Oliver et al. (2018), um problema comum na avaliação de métodos semissupervisionados é:
+a) comparar com referências supervisionadas fracas ou mal ajustadas.
+b) usar GPUs.
+c) usar muitos rótulos.
+d) usar imagens.
+R: a | O ganho aparente pode desaparecer com uma referência forte.
+
+MC: Ajustar hiperparâmetros olhando o conjunto de teste:
+a) é obrigatório.
+b) é a prática recomendada.
+c) produz estimativas otimistas, pois o teste deixa de ser independente.
+d) não afeta os resultados.
+R: c | É uma forma de vazamento.
+
+MC: No experimento de seleção do Capítulo 17, escolher a configuração pelo teste deu uma acurácia:
+a) menor que a escolhida por validação.
+b) igual à média.
+c) impossível de calcular.
+d) maior que a escolhida por validação, mostrando o otimismo.
+R: d | 94,5% contra 93,1%.
+
+MC: Um conjunto de validação separado, quando há muito poucos rótulos, é:
+a) difícil de obter, pois dividir os poucos rótulos aumenta a variação.
+b) sempre grande.
+c) proibido.
+d) desnecessário.
+R: a | Daí a validação cruzada nos rotulados.
+
+MC: A validação cruzada nos exemplos rotulados serve para:
+a) escolher hiperparâmetros sem usar o teste.
+b) usar o teste no treino.
+c) reduzir os dados sem rótulo.
+d) criar pseudo-rótulos.
+R: a | Esconde parte dos rótulos para validar.
+
+MC: O teste pareado compara dois métodos:
+a) em sorteios diferentes.
+b) sem repetições.
+c) nos mesmos sorteios de rotulados.
+d) apenas uma vez.
+R: c | Reduz a variação causada pela escolha dos rotulados.
+
+MC: O teste de Wilcoxon pareado é indicado quando:
+a) há mais de 10 classes.
+b) não há dados.
+c) as diferenças pareadas podem não seguir uma distribuição normal.
+d) há um único sorteio.
+R: c | É não paramétrico.
+
+MC: Um intervalo de confiança por bootstrap para a diferença média serve para:
+a) reduzir o teste.
+b) mostrar a incerteza do ganho estimado.
+c) escolher o limiar.
+d) aumentar a acurácia.
+R: b | Se contém zero, o ganho é incerto.
+
+MC: Se o intervalo de confiança da diferença média inclui o zero, devemos:
+a) ignorar o resultado.
+b) concluir que o método é péssimo.
+c) concluir que o método é ótimo.
+d) ser cautelosos: o ganho pode ser ruído.
+R: d | Há evidência insuficiente de ganho.
+
+MC: No experimento pareado do capítulo, o self-training (limiar 0,7) obteve, em relação à regressão logística:
+a) ganho em todos os sorteios.
+b) ganho de 8 pontos.
+c) perda de 20 pontos.
+d) diferença média pequena e negativa, não distinguível de zero.
+R: d | −0,5 ponto, com intervalo [−2,0; +0,9].
+
+MC: No experimento pareado do capítulo, o Label Spreading (k = 10) obteve:
+a) ganho médio de cerca de 8 pontos, em todos os 30 sorteios.
+b) ganhos em 15 dos 30 sorteios.
+c) ganho nulo.
+d) perda média de 8 pontos.
+R: a | +7,9 pontos, com 30 vitórias e 0 derrotas.
+
+MC: Comparar muitos métodos e relatar só o melhor causa:
+a) nenhuma distorção.
+b) maior rigor.
+c) o problema das comparações múltiplas, que superestima o ganho.
+d) menor variação.
+R: c | Algum método parecerá bom por acaso.
+
+MC: O descasamento de classes (class mismatch) ocorre quando:
+a) há poucos rótulos.
+b) os dados sem rótulo contêm classes que não existem nos rotulados.
+c) o modelo é pequeno.
+d) o teste é grande.
+R: b | Os métodos podem piorar.
+
+MC: Uma forma de reduzir o risco de descasamento de classes é:
+a) usar apenas o aumento fraco.
+b) usar mais camadas.
+c) detectar e filtrar exemplos 'de fora' antes do treino semissupervisionado.
+d) reduzir o teste.
+R: c | Por exemplo, com um VAE ou a confiança do modelo.
+
+MC: A deriva da distribuição entre rotulados e sem rótulo prejudica porque:
+a) aumenta os rótulos.
+b) os dados sem rótulo deixam de representar a população dos rotulados e do uso real.
+c) elimina a necessidade de validação.
+d) reduz o ruído.
+R: b | As suposições dos métodos deixam de valer.
+
+MC: Relatar o desvio padrão entre sorteios é importante porque:
+a) reduz a acurácia.
+b) dispensa a referência.
+c) mostra o quanto o resultado depende de quais exemplos foram rotulados.
+d) substitui o teste.
+R: c | Diferenças menores que o desvio podem ser ruído.
+
+MC: Para escolher um método, o primeiro passo costuma ser:
+a) o maior modelo.
+b) o menor conjunto de teste.
+c) uma referência supervisionada forte e bem ajustada.
+d) o método mais recente.
+R: c | Sem ela, o ganho não é interpretável.
+
+MC: Para imagens com poucos rótulos e muitos dados sem rótulo, os métodos mais fortes vistos no livro foram:
+a) k-means.
+b) S3VM.
+c) regressão linear.
+d) UDA e FixMatch (consistência e pseudo-rótulos com aumento).
+R: d | Resultados do MNIST nos Capítulos 10 e 11.
+
+MC: Para texto com poucos rótulos, a ação com mais retorno vista no livro foi:
+a) aumentar o limiar do self-training.
+b) usar o Label Spreading sempre.
+c) aprender uma representação com o texto sem rótulo (LSA ou modelo pré-treinado).
+d) usar mais camadas.
+R: c | Foi o ganho mais robusto no Capítulo 14.
+
+MC: Para dados em forma de grafo (redes sociais, citações), uma escolha natural é:
+a) métodos de grafos, como o Label Propagation e as redes neurais de grafos.
+b) a UDA.
+c) o MixMatch.
+d) o SimCLR.
+R: a | A informação 'escorre' pelas arestas.
+
+MC: Em um sistema real, os pseudo-rótulos podem amplificar vieses porque:
+a) dispensam validação.
+b) erros e vieses do modelo viram alvos e são reforçados.
+c) são sempre corretos.
+d) reduzem o viés.
+R: b | É a versão ética do viés de confirmação.
+
+MC: Uma preocupação ética com rótulos de baixa qualidade é:
+a) evitar a necessidade de rótulos.
+b) reduzir o custo.
+c) propagar discriminação ou erros para decisões sobre pessoas.
+d) aumentar a acurácia sempre.
+R: c | Rótulos humanos também têm viés.
+
+MC: A privacidade é relevante no uso de dados sem rótulo porque:
+a) dados sem rótulo são sempre anônimos.
+b) não há dados pessoais em imagens.
+c) dados coletados em grande volume podem conter informações pessoais sem consentimento.
+d) a lei não se aplica.
+R: c | Exige base legal e cuidados de proteção.
+
+MC: Em decisões de alto risco (saúde, crédito, justiça), é recomendável:
+a) ignorar subgrupos.
+b) automatizar sem revisão.
+c) manter um humano no ciclo e validar com dados rotulados por especialistas.
+d) usar só pseudo-rótulos.
+R: c | Reduz o risco de erros graves.
+
+MC: Medir o desempenho por subgrupos (por exemplo, por classe ou grupo demográfico) é importante porque:
+a) elimina o viés.
+b) a média pode esconder desempenho ruim em alguns grupos.
+c) a média é sempre suficiente.
+d) reduz o teste.
+R: b | Como visto na acurácia por categoria no Fashion-MNIST.
+
+MC: O custo computacional e ambiental dos métodos profundos deve ser considerado porque:
+a) pré-treinos e muitos passos consomem energia e tempo.
+b) não há custo em CPU.
+c) só os dados custam.
+d) são sempre baratos.
+R: a | Um método mais simples pode ser suficiente.
+
+MC: A reprodutibilidade em um projeto semissupervisionado exige:
+a) usar sorteios diferentes a cada vez.
+b) relatar só o melhor resultado.
+c) não guardar o código.
+d) fixar sementes, registrar versões e disponibilizar o código e os dados.
+R: d | Permite que terceiros repitam o experimento.
+
+MC: Um relatório honesto de um projeto semissupervisionado deve incluir:
+a) apenas o melhor método.
+b) apenas a acurácia no treino.
+c) apenas o teste.
+d) a referência, os sorteios, as métricas, as limitações e os resultados negativos.
+R: d | Para que as conclusões sejam confiáveis.
+
+MC: Quando NÃO usar um método semissupervisionado?
+a) quando há rótulos suficientes e o método não supera a referência, ou quando os dados sem rótulo não representam a população.
+b) quando houver poucos rótulos.
+c) sempre que houver dados sem rótulo.
+d) quando houver imagens.
+R: a | A complexidade extra precisa se justificar.
+
+MC: A rotulagem ativa pode ser combinada ao semissupervisionado para:
+a) aumentar o teste.
+b) reduzir a validação.
+c) rotular só os exemplos mais informativos e aproveitar os demais sem rótulo.
+d) eliminar todos os rótulos.
+R: c | Usa o orçamento de rotulagem de forma eficiente.
+
+DISC: Liste cinco armadilhas de avaliação em aprendizado semissupervisionado e explique duas.
+R: Referência fraca, ajuste no teste, validação irreal, descasamento de classes, poucos sorteios, vazamento. Ex.: referência fraca superestima o ganho; ajuste no teste torna a estimativa otimista.
+
+DISC: Explique o experimento de seleção de configuração no teste e o que ele mostrou.
+R: Escolher 1 entre 12 configurações do Label Spreading olhando o teste deu 94,5%; por validação cruzada nos 50 rotulados, 93,1%; a média foi 86,5%. A escolha no teste é otimista (1,4 ponto) e a configuração importa muito.
+
+DISC: Por que é difícil ter uma validação confiável com poucos rótulos e como contornar?
+R: Dividir poucos rótulos deixa o conjunto de validação muito pequeno e ruidoso. Usa-se validação cruzada nos rotulados, vários sorteios e valores fixados a priori.
+
+DISC: Descreva como comparar dois métodos de forma pareada e estatisticamente cuidadosa.
+R: Usar os mesmos rotulados em cada sorteio, calcular as diferenças, relatar a média, o intervalo de confiança (bootstrap) e um teste pareado (Wilcoxon ou t), além do número de vitórias e derrotas.
+
+DISC: Interprete os resultados do experimento pareado do self-training e do Label Spreading.
+R: Self-training: diferença média de −0,5 ponto, intervalo [−2,0; +0,9], 13 vitórias e 16 derrotas, p = 0,75: sem evidência de efeito. Label Spreading: +7,9 pontos, 30 vitórias, p praticamente zero: ganho claro.
+
+DISC: O que são comparações múltiplas e por que exigem cuidado?
+R: Quanto mais métodos ou configurações se comparam, maior a chance de algum parecer melhor por acaso. Deve-se pré-especificar as comparações, corrigir ou reportar todas.
+
+DISC: Explique o descasamento de classes e como ele afeta os métodos semissupervisionados.
+R: Quando os dados sem rótulo contêm classes ausentes dos rotulados, os pseudo-rótulos ou grafos atribuem classes erradas, e o desempenho pode cair abaixo da referência.
+
+DISC: Como detectar exemplos 'de fora' nos dados sem rótulo? Dê um método.
+R: Usar um modelo treinado só nas classes conhecidas (por exemplo, o erro de reconstrução de um VAE ou a baixa confiança de um classificador) e sinalizar os exemplos com pontuação anômala.
+
+DISC: Descreva um diagrama de decisão para escolher um método conforme o tipo de dado.
+R: Imagens: UDA ou FixMatch com aumento; texto: representação com texto sem rótulo (LSA/pré-treino); tabelas: modelo supervisionado forte e diagnóstico simples; grafos: Label Propagation ou GNN; séries: divisão temporal e atributos de janelas.
+
+DISC: Quando não usar um método semissupervisionado?
+R: Quando há rótulos suficientes, o método não supera a referência forte, os dados sem rótulo vêm de outra população ou o custo de complexidade não se justifica.
+
+DISC: Discuta os riscos éticos dos pseudo-rótulos.
+R: Erros e vieses do modelo viram alvos e são amplificados; grupos minoritários podem ser prejudicados; decisões sobre pessoas passam a depender de rótulos sintéticos sem revisão.
+
+DISC: Por que avaliar por subgrupos e não apenas pela média?
+R: A média pode esconder desempenho ruim em subgrupos (classes, regiões, grupos demográficos), o que pode causar discriminação ou falhas em casos importantes.
+
+DISC: Quais cuidados de privacidade e consentimento envolvem dados sem rótulo?
+R: Dados em grande volume podem conter informações pessoais; é preciso base legal, minimização, anonimização, consentimento quando aplicável e controle de acesso.
+
+DISC: Qual o papel do humano no ciclo em sistemas com pseudo-rótulos?
+R: Revisar uma amostra dos pseudo-rótulos, tratar casos duvidosos e validar o desempenho com rótulos de especialistas, reduzindo erros e vieses acumulados.
+
+DISC: Explique a importância da reprodutibilidade e como garanti-la.
+R: Permite verificar e reutilizar os resultados. Fixar sementes, registrar versões e hardware, publicar código, dados e configurações, e relatar vários sorteios.
+
+DISC: Discuta o custo computacional e ambiental de métodos profundos semissupervisionados.
+R: Pré-treinos e muitos passos consomem energia e tempo. Convém comparar com métodos mais simples e justificar o ganho em relação ao custo.
+
+DISC: Descreva como combinar rotulagem ativa e métodos semissupervisionados.
+R: O modelo semissupervisionado indica os exemplos mais incertos ou informativos para um especialista rotular, e o rótulo novo é usado junto com os dados sem rótulo, repetindo o ciclo.
+
+DISC: O que um relatório honesto deve conter?
+R: Descrição dos dados e da divisão, referência forte, número de sorteios, médias e desvios, intervalos ou testes, resultados negativos, limitações e riscos éticos.
+
+DISC: Compare as lições principais dos Capítulos 10 a 16 em termos de qual método funcionou melhor em cada tipo de dado.
+R: Imagens (MNIST): UDA e FixMatch; representação (SimCLR) ajudou em MNIST mas não em Fashion-MNIST; texto: LSA ajudou; tabelas e séries: ganhos incertos; generativos: pouco ganho.
+
+DISC: Resuma as cinco perguntas essenciais antes de acreditar em um ganho semissupervisionado.
+R: A referência é forte e justa? O teste ficou fora de qualquer escolha? Houve vários sorteios e incerteza reportada? Os dados sem rótulo vêm da mesma população? Os resultados negativos foram relatados?

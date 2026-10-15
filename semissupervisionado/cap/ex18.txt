@@ -1,0 +1,269 @@
+MC: O aprendizado semissupervisionado usa:
+a) apenas exemplos sem rótulo.
+b) nenhum dado.
+c) poucos exemplos rotulados e muitos sem rótulo, em conjunto.
+d) apenas exemplos rotulados.
+R: c | É a ideia central do livro.
+
+MC: Dados sem rótulo ajudam quando:
+a) são muito numerosos, sempre.
+b) não têm nenhuma estrutura.
+c) a estrutura deles tem relação com os rótulos (suavidade, agrupamento, variedade).
+d) são de outra população.
+R: c | As suposições do Capítulo 3.
+
+MC: A hipótese de baixa densidade afirma que:
+a) a fronteira de decisão deve passar por regiões de poucos dados.
+b) os dados são uniformes.
+c) as classes são sempre lineares.
+d) os rótulos são aleatórios.
+R: a | Base do S3VM e da minimização de entropia.
+
+MC: No self-training clássico, o modelo:
+a) rotula os exemplos de que tem mais certeza e aprende com eles.
+b) apaga os rótulos originais.
+c) usa duas visões independentes.
+d) usa apenas o teste.
+R: a | É o método do Capítulo 4.
+
+MC: O co-training exige:
+a) imagens.
+b) duas visões dos dados, suficientes e (idealmente) condicionalmente independentes.
+c) uma única visão.
+d) redes neurais.
+R: b | Capítulo 5.
+
+MC: O EM em modelos generativos serve para:
+a) gerar imagens.
+b) estimar parâmetros com variáveis ocultas, como os rótulos dos exemplos sem rótulo.
+c) dividir treino e teste.
+d) escolher hiperparâmetros.
+R: b | Capítulo 6.
+
+MC: Um risco do modelo generativo semissupervisionado é:
+a) ser rápido demais.
+b) a suposição do modelo estar errada, e os dados sem rótulo prejudicarem.
+c) ignorar os rotulados.
+d) usar poucos parâmetros.
+R: b | Foi visto com o EM no Capítulo 6.
+
+MC: O S3VM busca:
+a) um grafo.
+b) apenas os rotulados.
+c) uma margem larga considerando também os exemplos sem rótulo.
+d) a menor margem.
+R: c | Capítulo 7.
+
+MC: No Label Propagation, cada nó:
+a) recebe a média dos rótulos dos vizinhos, e os rotulados voltam ao valor original.
+b) copia o rótulo do teste.
+c) apaga seus vizinhos.
+d) escolhe um rótulo ao acaso.
+R: a | Capítulo 8.
+
+MC: No kernel RBF com gamma padrão, no Digits sem padronizar:
+a) o resultado foi ruim (10%), pois os pesos do grafo viraram zero.
+b) o grafo se tornou conexo.
+c) o grafo ficou denso e útil.
+d) o resultado foi perfeito.
+R: a | Capítulo 8.
+
+MC: Uma rede neural aprende:
+a) ajustando pesos para reduzir a perda por gradiente (retropropagação).
+b) apenas com regras escritas.
+c) sem nenhum dado.
+d) decorando o conjunto de teste.
+R: a | Capítulo 9.
+
+MC: Com poucos rótulos, uma CNN tende a:
+a) não usar o gradiente.
+b) generalizar perfeitamente.
+c) decorar o treino (sobreajuste), o que o aumento de dados reduz.
+d) ignorar o aumento.
+R: c | Capítulo 9.
+
+MC: A regularização por consistência exige que:
+a) o rótulo mude a cada época.
+b) exemplos diferentes recebam a mesma previsão.
+c) versões perturbadas do mesmo exemplo recebam a mesma previsão.
+d) o teste seja usado no treino.
+R: c | Capítulo 10.
+
+MC: No Mean Teacher, o professor é:
+a) a média móvel exponencial dos pesos do aluno.
+b) uma rede maior.
+c) um rótulo humano.
+d) o conjunto de teste.
+R: a | Capítulo 10.
+
+MC: A UDA obtém o alvo:
+a) da versão fraca do exemplo, afiado e filtrado pela confiança.
+b) da versão forte.
+c) de um sorteio.
+d) de um rótulo humano.
+R: a | Capítulo 10.
+
+MC: O FixMatch usa:
+a) um gerador.
+b) o teste.
+c) somente rótulos humanos.
+d) a previsão confiante na versão fraca como pseudo-rótulo para a versão forte.
+R: d | Capítulo 11.
+
+MC: O viés de confirmação é:
+a) a ausência de viés.
+b) o reforço de erros do modelo quando seus pseudo-rótulos errados são usados no treino.
+c) o aumento de dados.
+d) o uso de rótulos corretos.
+R: b | Capítulo 11.
+
+MC: O mixup combina:
+a) duas bases de dados.
+b) dois testes.
+c) duas imagens e seus rótulos com pesos lambda e 1 - lambda.
+d) dois modelos.
+R: c | Capítulo 11.
+
+MC: O SimCLR aproxima:
+a) duas versões aumentadas do mesmo exemplo e afasta os demais.
+b) pesos da rede.
+c) o teste do treino.
+d) exemplos da mesma classe, usando rótulos.
+R: a | Capítulo 12.
+
+MC: A sonda linear (linear probe) é:
+a) o ajuste fino da rede inteira.
+b) uma perda.
+c) um tipo de aumento.
+d) um classificador linear sobre um codificador congelado.
+R: d | Capítulo 12.
+
+MC: O VAE aprende:
+a) um codificador e um decodificador, com um espaço latente organizado por uma divergência KL.
+b) somente rótulos.
+c) um grafo.
+d) um classificador.
+R: a | Capítulo 13.
+
+MC: Nos experimentos do Capítulo 13, os métodos generativos:
+a) foram idênticos à UDA.
+b) superaram todos os demais.
+c) ficaram muito atrás de UDA e FixMatch na classificação com 100 rótulos.
+d) não puderam ser executados.
+R: c | Resultado modesto em nosso orçamento.
+
+MC: Em texto, o ganho mais robusto vindo de dados sem rótulo foi:
+a) o Naive Bayes + EM.
+b) aprender uma representação (LSA) com o texto sem rótulo.
+c) o Label Spreading.
+d) o self-training com limiar 0,8.
+R: b | Capítulo 14.
+
+MC: O limiar de confiança do self-training:
+a) vale 0,9 sempre.
+b) não influencia o resultado.
+c) não é portátil, pois depende da escala das probabilidades.
+d) deve ser escolhido no teste.
+R: c | Capítulos 11 e 14.
+
+MC: Em séries temporais, a divisão treino e teste deve:
+a) ignorar a sobreposição.
+b) ser aleatória por janela.
+c) usar o futuro no treino.
+d) respeitar a ordem do tempo.
+R: d | Capítulo 16.
+
+MC: Em dados tabulares, o ganho do semissupervisionado:
+a) depende muito da base e pode ser negativo.
+b) só ocorre com redes neurais.
+c) é sempre nulo.
+d) é sempre grande.
+R: a | Capítulo 16.
+
+MC: Ajustar hiperparâmetros olhando o teste:
+a) é a prática recomendada.
+b) não tem efeito.
+c) melhora a generalização.
+d) produz estimativas otimistas.
+R: d | Capítulo 17.
+
+MC: Uma comparação pareada de métodos usa:
+a) os mesmos rotulados em cada sorteio, e a diferença entre eles.
+b) um único sorteio.
+c) sorteios diferentes para cada método.
+d) o teste como validação.
+R: a | Capítulo 17.
+
+MC: O primeiro passo de um projeto semissupervisionado, depois de entender o problema, é:
+a) estabelecer uma referência supervisionada forte.
+b) ignorar os dados sem rótulo.
+c) usar o teste para ajustar.
+d) aplicar o método mais complexo.
+R: a | Sem a referência, o ganho não é interpretável.
+
+MC: Um relatório honesto deve incluir:
+a) a referência, os sorteios, a incerteza, as limitações e os resultados negativos.
+b) apenas a acurácia no treino.
+c) apenas gráficos.
+d) apenas o melhor método.
+R: a | Capítulo 17.
+
+DISC: Resuma as três suposições que explicam quando dados sem rótulo ajudam e dê um exemplo de cada.
+R: Suavidade (pontos próximos têm o mesmo rótulo), baixa densidade (a fronteira passa por regiões vazias) e variedade/agrupamento (dados em estruturas de baixa dimensão ou grupos). Exemplos: duas luas, S3VM, Label Spreading nos dígitos.
+
+DISC: Compare self-training e co-training: o que cada um exige e quais os riscos?
+R: O self-training exige um classificador com boa confiança e corre o risco do viés de confirmação; o co-training exige duas visões suficientes e independentes, e falha quando elas são correlacionadas ou insuficientes.
+
+DISC: Explique por que um modelo generativo semissupervisionado pode piorar o resultado.
+R: Se a suposição do modelo (por exemplo, mistura de gaussianas) não corresponde aos dados, os parâmetros estimados com os dados sem rótulo se afastam das classes e prejudicam o classificador.
+
+DISC: Descreva o Label Spreading e explique a importância do grafo.
+R: Propaga rótulos por um grafo de similaridade com uma matriz normalizada e o parâmetro alpha. O grafo define por onde a informação escorre: poucos vizinhos desconectam, muitos criam pontes entre classes.
+
+DISC: Explique por que a referência supervisionada precisa ser forte, usando o exemplo do MNIST.
+R: Contra a regressão logística, o Label Spreading parecia ganhar 12 pontos; contra uma CNN com aumento e mais passos, o ganho sumiu. A referência fraca superestima o método.
+
+DISC: Descreva a regularização por consistência e as diferenças entre Π-model, Mean Teacher e UDA.
+R: Exige previsões iguais para versões perturbadas. Π-model: mesma rede, duas perturbações. Mean Teacher: alvo do professor (EMA). UDA: alvo da versão fraca, afiado e filtrado, e aluno na versão forte.
+
+DISC: Descreva o FixMatch e explique o papel do limiar e dos aumentos fraco e forte.
+R: A previsão confiante na versão fraca vira pseudo-rótulo para a versão forte. O limiar filtra alvos duvidosos; o aumento forte obriga a rede a reconhecer a classe apesar das distorções.
+
+DISC: Explique o viés de confirmação e como mitigá-lo.
+R: Erros confiantes viram alvos e são reforçados. Mitigam-se com limiar, aumento forte, referências fortes, medir a precisão dos alvos e validar com rótulos reais.
+
+DISC: Compare o pré-treino contrastivo com os métodos de consistência e pseudo-rótulos, citando os resultados do livro.
+R: O SimCLR aprende uma representação sem rótulos e depois usa poucos rótulos (91,8% no MNIST), mas com nosso orçamento não superou a CNN supervisionada forte (93,2%), nem a UDA (96,0%) ou o FixMatch (95,2%).
+
+DISC: Por que os métodos generativos profundos ajudaram pouco nos experimentos do livro?
+R: Gerar é mais difícil que classificar, o treino é delicado e o orçamento era limitado; os de consistência e contraste são mais simples e fortes.
+
+DISC: Explique a lição do Capítulo 14 sobre prevalência das classes.
+R: Com rótulos balanceados ou ao acaso, a ordem dos métodos mudou, e a regressão logística previu 100% positivo com rótulos ao acaso; a prevalência, a métrica e a forma de rotular fazem parte do projeto.
+
+DISC: Por que o limiar do self-training não é portátil? Dê um exemplo do livro.
+R: Depende da escala das probabilidades do modelo. No Yelp, com a LSA, 0,8 não adicionou nada, 0,7 adicionou quase tudo (F1 caiu a 40%) e 0,6 deu 74,7%.
+
+DISC: Explique o vazamento em séries temporais e como evitá-lo.
+R: Janelas sobrepostas tornam o teste quase idêntico ao treino no corte aleatório (otimismo de 5 a 10 pontos). Evita-se dividindo no tempo, com folga entre treino e teste.
+
+DISC: Qual a mensagem do benchmark com oito bases do Capítulo 16?
+R: O ganho do semissupervisionado depende da base: claro no Digits, incerto em Glass e Iris, e nulo ou negativo nas demais. Relatar todas as bases é essencial.
+
+DISC: Descreva um protocolo de avaliação honesta em aprendizado semissupervisionado.
+R: Teste separado antes de tudo, referência forte e justa, hiperparâmetros por validação, vários sorteios pareados, intervalo e teste estatístico, métricas por classe, relatório de resultados negativos.
+
+DISC: Explique a maldição do vencedor e como o livro a mostrou.
+R: Escolher o melhor entre muitos candidatos no mesmo teste produz otimismo, mesmo que todos sejam iguais; no Capítulo 17, a escolha no teste deu 94,5% contra 93,1% por validação.
+
+DISC: Discuta riscos éticos dos pseudo-rótulos e medidas de mitigação.
+R: Amplificação de vieses e erros, prejuízo a grupos minoritários e decisões sem revisão. Medir por subgrupos, manter humanos no ciclo, validar com rótulos de especialistas e documentar limitações.
+
+DISC: Descreva o roteiro de dez passos de um projeto semissupervisionado.
+R: Entender o problema; separar teste; diagnosticar os dados; referência forte; métodos candidatos; validação sem teste; vários sorteios pareados; análise por classe e erros; recomendação com limitações; relatório e reprodutibilidade.
+
+DISC: Como decidir, em um projeto, entre rotular mais exemplos e usar um método semissupervisionado?
+R: Medir o ganho do método contra a referência com mais rótulos, estimar o custo de rotular e comparar. Muitas vezes, rotular mais (ou de forma ativa) é mais barato e seguro que um método complexo.
+
+DISC: Qual foi, para você, a principal lição do livro e por quê?
+R: Resposta pessoal, mas coerente: dados sem rótulo ajudam quando têm estrutura relacionada aos rótulos; a avaliação honesta (referência forte, vários sorteios, resultados negativos) é tão importante quanto o método.

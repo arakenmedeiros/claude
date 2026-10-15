@@ -1,0 +1,8 @@
+Adult (renda > 50 mil): 48842 pessoas, 23.9% na classe positiva. Treino com 34189 pessoas; rótulos sorteados ao acaso; 5 sorteios
+rótulos | método                                  | F1 da classe positiva | F1 macro
+    100 | reg. logística (pesos balanceados)      |      63.5% ±  0.9  |  74.9% ±  0.5
+    100 | gradient boosting (pesos balanceados)   |      58.2% ±  2.7  |  71.6% ±  1.2
+    100 | gradient boosting balanceado + self-training (0,9) |      56.7% ±  4.7  |  71.2% ±  2.1
+    500 | reg. logística (pesos balanceados)      |      66.3% ±  0.7  |  76.2% ±  0.6
+    500 | gradient boosting (pesos balanceados)   |      64.9% ±  0.2  |  76.5% ±  0.2
+    500 | gradient boosting balanceado + self-training (0,9) |      66.3% ±  0.6  |  77.2% ±  0.3

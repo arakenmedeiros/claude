@@ -1,0 +1,8 @@
+Fashion-MNIST, CNN só com 100 rótulos (10 por classe), 1.500 passos, 3 sorteios: o aumento de dados
+aumento                                       | acerto no teste
+nenhum                                        | 71.6% ± 1.2
+deslocar até 8% (fraco)                       | 71.8% ± 1.1
+só espelhar                                   | 70.9% ± 0.3
+moderado (gira 10°, escala 10%, desloca 10%)  | 71.1% ± 0.9
+moderado + espelhar                           | 68.9% ± 1.0
+forte do Cap. 9 (gira 20°, apaga, ruído)      | 66.5% ± 0.7

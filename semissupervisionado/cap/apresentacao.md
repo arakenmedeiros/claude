@@ -15,21 +15,17 @@ O **aprendizado semissupervisionado** nasce dessa assimetria. Ele busca usar **o
 
 ## Como o livro está organizado
 
-O plano completo do livro tem **cinco partes** e **dezessete capítulos**, mais um projeto integrador.
+O livro tem **cinco partes** e **dezoito capítulos**, o último deles um projeto integrador, além dos apêndices.
 
 - **Parte I — Fundamentos:** rótulos escassos, ferramentas essenciais (Python, dados, probabilidade, avaliação) e as suposições que explicam quando dados sem rótulo ajudam. *(Capítulos 1 a 3.)*
 - **Parte II — Métodos clássicos:** autotreinamento, co-treinamento, modelos generativos, separação por baixa densidade (S3VM) e métodos baseados em grafos. *(Capítulos 4 a 8.)*
 - **Parte III — Métodos modernos com aprendizado profundo:** redes neurais, regularização por consistência, pseudo-rótulos modernos (MixMatch, FixMatch), aprendizado contrastivo e modelos generativos profundos. *(Capítulos 9 a 13.)*
 - **Parte IV — Prática e aplicações:** texto, imagens, séries temporais e dados tabulares, além de avaliação, armadilhas e ética. *(Capítulos 14 a 17.)*
-- **Parte V — Fechamento:** projeto integrador, glossário e apêndices.
-
-:::atencao Atenção: o que esta edição contém
-Esta edição reúne a **Parte I completa** (Capítulos 1 a 3), com todos os exercícios, os projetos de capítulo e os apêndices correspondentes (gabarito, glossário, guia rápido, soluções e referências). As Partes II a V seguirão em novas edições, no mesmo formato. Por isso, algumas seções fazem remissões a capítulos futuros (por exemplo, "veja o Capítulo 8"): são o roteiro do livro completo.
-:::
+- **Parte V — Fechamento:** o projeto integrador final *(Capítulo 18)*, o glossário e os apêndices.
 
 ## Como cada capítulo é construído
 
-Todos os capítulos seguem o mesmo roteiro.
+Todos os capítulos seguem o mesmo roteiro (o Capítulo 18, o projeto integrador, tem formato próprio, mas também traz questões e exercícios).
 
 1. **Objetivos de aprendizagem**, para você saber aonde vai chegar.
 2. **Explicação** em frases curtas, com analogias do cotidiano e muitas figuras.
@@ -69,11 +65,15 @@ Um aprofundamento opcional.
 
 ## Sobre os códigos e as bases de dados
 
-Os códigos usam **Python** e **scikit-learn**. Todos os códigos e exercícios foram executados na elaboração do livro, com as versões de biblioteca mostradas na seção 1.12, e as saídas apresentadas são as obtidas nessas execuções. Pequenas diferenças numéricas podem ocorrer com outras versões.
+Os códigos usam **Python** e **scikit-learn** e, a partir do Capítulo 9, **PyTorch**. Todos os códigos e exercícios foram executados na elaboração do livro, com as versões de biblioteca mostradas na seção 1.12, e as saídas apresentadas são as obtidas nessas execuções. Pequenas diferenças numéricas podem ocorrer com outras versões, e os experimentos de aprendizado profundo, feitos em CPU, usam redes pequenas e **orçamentos de treino reduzidos**: onde isso pode afetar uma conclusão, o texto avisa.
 
-Os exercícios usam bases do repositório **UCI Machine Learning** que já acompanham o scikit-learn (Iris, Wine, Breast Cancer Wisconsin e Digits), além de dados simulados. Assim, **tudo roda sem baixar nada**.
+Nos Capítulos 1 a 7, os exercícios usam bases que já acompanham o scikit-learn (Iris, Wine, Breast Cancer Wisconsin e Digits, originárias do repositório **UCI Machine Learning**), além de dados simulados. Dos Capítulos 8 em diante, usamos também bases maiores: **MNIST** e **Fashion-MNIST** (imagens), **SMS Spam Collection** e **Yelp** (texto) e **Adult**, **Sonar**, **Ionosphere**, **Pima**, **Glass** e **temperaturas diárias de Melbourne** (dados tabulares e série temporal). Todas são públicas e têm versões na UCI ou no Kaggle.
 
-Ao final de cada capítulo, o quadro "Para ir além" lista outras bases públicas da UCI e do Kaggle para você praticar. Essas bases **não foram usadas nem testadas** nos códigos do livro: confira, nos sites, a descrição, a licença e as colunas antes de usá-las.
+:::atencao Atenção: de onde vieram os dados deste livro
+Por restrições de acesso durante a elaboração, os arquivos foram baixados de **espelhos públicos no GitHub** dessas bases originais, e não diretamente da UCI ou do Kaggle. Os códigos baixam os arquivos automaticamente na primeira execução (é preciso conexão com a internet) e os guardam na pasta `dados/`. Se algum endereço deixar de existir, as mesmas bases podem ser obtidas nos sites originais, e basta ajustar o caminho no código.
+:::
+
+Ao final de cada capítulo, o quadro "Para ir além" lista outras bases públicas da UCI e do Kaggle para você praticar. Essas bases adicionais **não foram usadas nem testadas** nos códigos do livro: confira, nos sites, a descrição, a licença e as colunas antes de usá-las.
 
 ## Sobre as referências
 

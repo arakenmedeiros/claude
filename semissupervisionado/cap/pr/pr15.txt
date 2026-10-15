@@ -1,0 +1,148 @@
+@@EX 1 | O que a regressão logística confunde no Fashion-MNIST? | básico
+No **Fashion-MNIST**, treine a regressão logística sobre os pixels com **1.000 rótulos** (100 por classe, `sortear_rotulados(y, 100, 0)`) e avalie nas 10.000 imagens de teste. Mostre a acurácia geral e os **cinco pares de classes mais confundidos** (por exemplo, "camisa" prevista como "camiseta").
+
+*Pergunta:* os erros são entre classes parecidas? O que isso sugere sobre os métodos que usam distâncias entre imagens?
+@@SOL
+```python
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix
+from utilidades import *
+
+X, y, X_te, y_te = carregar_fashion(); nomes = ["camiseta", "calça", "pulôver", "vestido", "casaco", "sandália", "camisa", "tênis", "bolsa", "bota"]
+idx = sortear_rotulados(y, 100, 0)
+m = LogisticRegression(max_iter=2000).fit(X[idx].flatten(1).numpy(), y[idx].numpy()); p = m.predict(X_te.flatten(1).numpy())
+print(f"acurácia com 1.000 rótulos: {100 * np.mean(p == y_te.numpy()):.1f}%")
+C = confusion_matrix(y_te.numpy(), p); np.fill_diagonal(C, 0)
+print("\npares mais confundidos (verdadeira -> prevista | número de erros)")
+for k in np.argsort(-C.ravel())[:5]: print(f"  {nomes[k // 10]:9s} -> {nomes[k % 10]:9s} | {C.ravel()[k]}")
+```
+@@NOTE Com 1.000 rótulos, a regressão logística sobre os pixels obtém **79,1%** no teste. Os pares mais confundidos são: camisa prevista como camiseta (163 erros), pulôver como casaco (160), casaco como pulôver (152), camisa como pulôver (148) e camiseta como camisa (130). Todos são entre peças de **"parte de cima"**, que se parecem em uma imagem pequena. Isso sugere que a distância entre pixels não separa bem essas classes, e por isso métodos que dependem de **vizinhos em pixels** (como o Label Spreading do Capítulo 8) tendem a sofrer, e que o grafo precisaria de uma representação melhor.
+@@EX 2 | Confiança, calibração e abstenção | intermediário
+Treine a CNN (`utilidades.py`, aumento fraco, 100 rótulos, 1.500 passos, um sorteio) no **Fashion-MNIST** com `treinar_ssl("sup", ...)` e use as probabilidades no teste. Calcule a **confiança** média e a acurácia, o **erro de calibração esperado** (ECE, com 10 faixas de confiança) e a acurácia quando o sistema **abstém-se** dos 20%, 40% e 60% de imagens de menor confiança.
+
+*Pergunta:* a rede é bem calibrada? A abstenção ajuda?
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_fashion(); idx = sortear_rotulados(y, 10, 0)
+aluno, _, _ = treinar_ssl("sup", X[idx], y[idx], X[:10], passos=1500, forte=aumento_fraco, semente=0, X_teste=X_te, y_teste=y_te, relatar=())
+aluno.eval()
+with torch.no_grad(): P = torch.cat([F.softmax(aluno(X_te[i:i + 2000]), 1) for i in range(0, len(X_te), 2000)])
+conf, pred = P.max(1); ok = (pred == y_te).float()
+print(f"confiança média: {100 * conf.mean():.1f}% | acurácia: {100 * ok.mean():.1f}%")
+ece = 0.0; faixas = np.linspace(0, 1, 11)
+for a, b in zip(faixas[:-1], faixas[1:]):
+    k = (conf > a) & (conf <= b)
+    if k.any(): ece += k.float().mean() * abs(ok[k].mean() - conf[k].mean())
+print(f"erro de calibração esperado (ECE): {100 * float(ece):.1f} p.p.")
+print("\nfração respondida | acurácia nas respondidas")
+ordem = torch.argsort(-conf)
+for f in [1.0, 0.8, 0.6, 0.4]: n = int(f * len(ok)); print(f"{100 * f:16.0f}% | {100 * ok[ordem[:n]].mean():.1f}%")
+```
+@@NOTE A CNN tem confiança média de **94,8%**, mas acerta apenas **70,6%**: é **muito superconfiante**, com um erro de calibração esperado de **24,3 pontos percentuais**. A abstenção ajuda bastante: respondendo apenas 80% das imagens (as mais confiantes), a acurácia sobe para 78,1%; respondendo 60%, para 85,1%; e respondendo 40%, para 91,6%. Ou seja, **a confiança serve para ordenar** os casos (os mais confiantes erram menos), apesar de **não ser uma probabilidade confiável** em termos absolutos. Para escolher um limiar com um objetivo de acurácia, use a curva em dados de validação, e não o valor numérico da confiança.
+@@EX 3 | Quanto dado sem rótulo o FixMatch usa bem? | intermediário
+No **Fashion-MNIST** (100 rótulos, um sorteio, 1.500 passos, aumento "moderado" como `forte` e deslocamento como `fraco`), treine o **FixMatch** com 0 (referência supervisionada), 1.000 e 10.000 imagens sem rótulo. Mostre a acurácia no teste e a fração e a precisão dos alvos aceitos.
+
+*Pergunta:* mais dados sem rótulo ajudam? Os alvos são confiáveis?
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_fashion(); idx = sortear_rotulados(y, 10, 0); pool = np.setdiff1d(np.arange(len(X)), idx)
+moderado = lambda x: aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)
+print("sem rótulo | acurácia no teste | alvos que passam | precisão dos alvos")
+for n in [0, 1000, 10000]:
+    u = np.random.RandomState(100).choice(pool, max(n, 10), replace=False)
+    _, _, h = treinar_ssl("sup" if n == 0 else "fixmatch", X[idx], y[idx], X[u], passos=1500, forte=moderado, fraco=aumento_fraco, yu=y[u], semente=0, X_teste=X_te, y_teste=y_te, relatar=(1500,))
+    _, a, _, fr, pr = h[0]; print(f"{n:10d} | {100 * a:16.1f}% | " + (f"{100 * fr:15.1f}% | {100 * pr:.1f}%" if n else "           -- | --"))
+```
+@@NOTE O FixMatch obteve **72,0%** com 1.000 imagens sem rótulo e **72,3%** com 10.000, contra **69,8%** da referência supervisionada neste sorteio (+2,2 e +2,5 pontos). A fração de alvos aceitos foi de 69,8% e 67,3%, com precisão de **82,2%** e **82,7%**, muito abaixo da do MNIST (cerca de 99%). Mais dados sem rótulo (de 1.000 para 10.000) quase **não mudaram** o resultado, que é **equivalente** na faixa de ruído (um sorteio). Os alvos aceitos erram em quase 1 de cada 5 casos, o que limita o ganho.
+@@EX 4 | Ajuste fino do SimCLR no Fashion-MNIST | avançado
+Use o codificador `simclr_fashion` (Exercício 5 do Capítulo 12) e faça o **ajuste fino** com 100 rótulos (3 sorteios, `ajuste_fino`, 100 épocas, aumento fraco). Compare com a CNN treinada do zero, com os mesmos rótulos e passos (`treinar_supervisionado`, 100 épocas, aumento fraco).
+
+*Pergunta:* o pré-treino ajuda no ajuste fino? Lembre-se de que a sonda linear não ajudou.
+@@SOL
+```python
+import numpy as np, torch
+from contrastivo import *
+
+X, y, X_te, y_te = carregar_fashion(); Xu = X[np.random.RandomState(100).choice(len(X), 10000, replace=False)]
+moderado = lambda x: aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)
+enc = carregar_ou_treinar("simclr_fashion", lambda: pre_treinar(Xu, "simclr", passos=1500, lote=128, aug=moderado))
+a, b = [], []
+for s in range(3):
+    idx = sortear_rotulados(y, 10, s)
+    a.append(ajuste_fino(enc, X[idx], y[idx], X_te, y_te, epocas=100, semente=s, aug=aumento_fraco))
+    torch.manual_seed(s); m = CNN(); b.append(treinar_supervisionado(m, X[idx], y[idx], epocas=100, aug=aumento_fraco, semente=s, X_teste=X_te, y_teste=y_te, relatar=(100,))[0][2])
+print(f"ajuste fino do SimCLR : {100 * np.mean(a):.1f}% ± {100 * np.std(a):.1f}")
+print(f"CNN do zero           : {100 * np.mean(b):.1f}% ± {100 * np.std(b):.1f}")
+```
+@@NOTE O ajuste fino do codificador SimCLR obteve **70,2% ± 1,5**, contra **70,6% ± 0,5** da CNN treinada do zero com os mesmos rótulos e passos. **Não há ganho** em ajustar a partir do pré-treino (a diferença é de −0,4 ponto, dentro do ruído). Isso é coerente com a sonda linear do Capítulo 12, que também não superou os pixels no Fashion-MNIST: com nosso orçamento de pré-treino e o aumento moderado, a representação aprendida **não** carrega mais informação útil sobre as roupas do que a CNN do zero consegue aprender sozinha.
+@@EX 5 | O valor de um rótulo no Fashion-MNIST | avançado
+Com a CNN supervisionada (aumento fraco, `treinar_ssl("sup", ...)`, 1.500 passos, 2 sorteios), meça o acerto no teste com 100, 300, 1.000 e 3.000 rótulos no **Fashion-MNIST**.
+
+*Pergunta:* a partir de quantos rótulos o ganho por rótulo diminui? Compare com o ganho dos métodos semissupervisionados no capítulo.
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_fashion()
+print("rótulos (por classe) | acerto no teste (CNN só com rotulados, aumento fraco, 2 sorteios)")
+for por in [10, 30, 100, 300]:
+    v = []
+    for s in range(2):
+        idx = sortear_rotulados(y, por, s)
+        v.append(treinar_ssl("sup", X[idx], y[idx], X[:10], passos=1500, forte=aumento_fraco, semente=s, X_teste=X_te, y_teste=y_te, relatar=(1500,))[2][0][1])
+    print(f"{10 * por:5d} ({por:3d})        | {100 * np.mean(v):.1f}% ± {100 * np.std(v):.1f}")
+```
+@@NOTE A CNN só com os rotulados (aumento fraco) obteve **71,9%** (100 rótulos), **77,6%** (300), **82,2%** (1.000) e **84,7%** (3.000). Cada triplicada dos rótulos traz um ganho **decrescente**: de 100 para 300, +5,7 pontos; de 300 para 1.000, +4,6; de 1.000 para 3.000, +2,5. O ganho dos métodos semissupervisionados no capítulo (+1 a +3 pontos) equivale, portanto, a **cerca de 1,5 a 2 vezes** mais rótulos na faixa de 100 a 300. Se rotular 200 fotos a mais custar pouco, pode ser mais seguro rotular do que implantar um método complexo.
+@@PROJ Painel de qualidade: fotos de roupa com abstenção | Cap15
+**Fonte dos dados.** *Fashion-MNIST* (Zalando Research; também no Kaggle); `carregar_fashion()` de `utilidades.py`.
+
+**Contexto.** Uma loja online quer classificar automaticamente as fotos de peças, mas só pode rotular **300** (30 por classe). O sistema só deve responder automaticamente quando estiver **confiante**, e encaminhar as demais fotos a uma pessoa. Você deve escolher entre a **CNN só com os rotulados** e o **FixMatch**, e dizer **que fração das fotos** o sistema consegue responder com pelo menos **90% de acerto**.
+
+**Tarefas.**
+1. Use 300 rótulos, 10.000 imagens sem rótulo, 2.000 passos, 2 sorteios, o aumento "moderado" como `forte` e o deslocamento como `fraco`.
+2. Para a CNN só com rotulados e para o FixMatch, calcule a acurácia geral e a curva **acurácia × fração respondida** (ordenando as fotos do teste pela confiança), e a maior fração respondida com acurácia de pelo menos 90%.
+3. Mostre a acurácia por categoria do melhor método (sorteio 0).
+4. Escreva uma recomendação (8 a 10 linhas): qual método? Que fração é automatizável? Que categorias exigem revisão?
+
+**Entregáveis.** Código, tabelas e recomendação.
+@@SOL
+```python
+import numpy as np, torch
+from ssl_profundo import *
+
+X, y, X_te, y_te = carregar_fashion(); nomes = ["camiseta", "calça", "pulôver", "vestido", "casaco", "sandália", "camisa", "tênis", "bolsa", "bota"]
+moderado = lambda x: aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)
+res = {m: [] for m in ("sup", "fixmatch")}; curvas = {m: [] for m in res}; modelo0 = {}
+for s in range(2):
+    idx = sortear_rotulados(y, 30, s); u = np.random.RandomState(100 + s).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
+    for m in res:
+        aluno, _, h = treinar_ssl(m, X[idx], y[idx], X[u], passos=2000, forte=moderado, fraco=aumento_fraco, semente=s, X_teste=X_te, y_teste=y_te, relatar=(2000,)); aluno.eval()
+        with torch.no_grad(): P = torch.cat([F.softmax(aluno(X_te[i:i + 2000]), 1) for i in range(0, len(X_te), 2000)])
+        conf, pred = P.max(1); ok = (pred == y_te).float()[torch.argsort(-conf)].numpy(); res[m].append(h[0][1]); curvas[m].append(np.cumsum(ok) / np.arange(1, len(ok) + 1))
+        if s == 0: modelo0[m] = pred
+print("método    | acerto geral | acurácia respondendo 80% | 60% | 40% | maior fração com >= 90% de acerto")
+for m in res:
+    c = np.mean(curvas[m], axis=0); n = len(c); ok90 = np.where(c >= 0.9)[0]; fr90 = (ok90.max() + 1) / n if len(ok90) else 0.0
+    print(f"{m:9s} | {100 * np.mean(res[m]):10.1f}% | {100 * c[int(0.8 * n) - 1]:23.1f}% | {100 * c[int(0.6 * n) - 1]:.1f}% | {100 * c[int(0.4 * n) - 1]:.1f}% | {100 * fr90:.1f}%")
+melhor = max(res, key=lambda m: np.mean(res[m])); print(f"\nacerto por categoria ({melhor}, sorteio 0)")
+for d in range(10): print(f"  {nomes[d]:9s}: {100 * (modelo0[melhor][y_te == d] == d).float().mean():5.1f}%")
+```
+@@RUBRICA
+- Os rótulos são sorteados do treino; o teste é separado e usado só para avaliar.
+- A CNN só com rotulados e o FixMatch usam o mesmo aumento e o mesmo número de passos.
+- A curva acurácia × fração é calculada no teste, ordenando pela confiança, com a fração respondida com 90% de acerto.
+- A acurácia por categoria é calculada e interpretada.
+- A recomendação é coerente com os números e discute limites (dois sorteios, confiança mal calibrada, categorias confundidas).
+@@NOTE Com 300 rótulos e dois sorteios, a referência obteve **76,3%** e o FixMatch, **76,8%** (+0,5, dentro do ruído). A curva acurácia × fração respondida é praticamente a mesma: respondendo 80%, 83,8% (referência) e 84,1% (FixMatch); 60%, 91,3% e 91,2%; 40%, 97,5% e 96,8%. A **maior fração respondida com pelo menos 90% de acerto** é de cerca de **64%** nos dois casos (63,9% e 63,6%). Por categoria (FixMatch, sorteio 0), calça (97,1%), sandália (94,5%), bolsa (93,8%) e tênis (93,6%) são fáceis, e o **pulôver (37,0%)** e a **camisa (40,3%)** exigem revisão. Recomendação: **não há razão para usar o FixMatch** neste problema (o ganho não é distinguível de zero); a referência supervisionada com abstenção automatiza cerca de 64% das fotos com 90% de acerto, e as categorias camisa e pulôver devem sempre passar por uma pessoa. Limitações: dois sorteios, a curva foi calculada no teste (o limiar real deve ser escolhido em validação) e a confiança é mal calibrada (Exercício 2).
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits.
+- **Kaggle:** Fashion-MNIST, Digit Recognizer e CIFAR-10.
+- **Artigos:** Sohn et al. (2020), Oliver et al. (2018) e, sobre calibração, Guo et al. (2017).

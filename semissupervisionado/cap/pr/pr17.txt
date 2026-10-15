@@ -1,0 +1,168 @@
+@@EX 1 | Intervalo de confiança por bootstrap à mão | básico
+Os ganhos de um método semissupervisionado sobre a referência, em 12 sorteios, foram (em pontos percentuais): `+2,1; +0,5; −0,8; +3,0; +1,2; +0,0; −1,5; +2,4; +0,9; +1,7; −0,3; +2,0`. Com NumPy (`RandomState(0)`), calcule a média, o intervalo de confiança de 95% por bootstrap (5.000 reamostragens) e o número de vitórias e derrotas.
+
+*Pergunta:* o ganho é distinguível de zero?
+@@SOL
+```python
+import numpy as np
+
+d = np.array([2.1, 0.5, -0.8, 3.0, 1.2, 0.0, -1.5, 2.4, 0.9, 1.7, -0.3, 2.0])
+rng = np.random.RandomState(0); boot = [rng.choice(d, len(d)).mean() for _ in range(5000)]
+lo, hi = np.percentile(boot, [2.5, 97.5])
+print(f"média: {d.mean():+.2f} p.p. | IC 95%: [{lo:+.2f}; {hi:+.2f}] | vitórias/empates/derrotas: {int((d > 0).sum())}/{int((d == 0).sum())}/{int((d < 0).sum())}")
+print("o intervalo contém zero?", bool(lo <= 0 <= hi))
+```
+@@NOTE A média dos ganhos é de +0,93 ponto, com intervalo de confiança de 95% de [+0,17; +1,66], que **não contém zero**, com 8 vitórias, 1 empate e 3 derrotas. Portanto, o ganho é distinguível de zero, mas é **pequeno** (menos de 1 ponto, na ordem do desvio entre sorteios) e baseado em apenas 12 sorteios, com um limite inferior muito perto de zero. Para uma decisão, convém repetir com mais sorteios e acompanhar um teste pareado, além de avaliar se um ganho tão pequeno justifica a complexidade.
+@@EX 2 | A maldição do vencedor: vários métodos que são todos iguais | intermediário
+Simule 20 "métodos" que, na verdade, **não têm nenhuma habilidade**: cada um acerta cada exemplo de um teste de 200 exemplos com probabilidade 0,5, ao acaso (`RandomState(0)`). Calcule a acurácia de cada um, a **melhor** e a **média**. Repita em 1.000 simulações e mostre a média das melhores acurácias com 20 métodos e com 100 métodos.
+
+*Pergunta:* o que isso diz sobre escolher o melhor método (ou a melhor configuração) no teste?
+@@SOL
+```python
+import numpy as np
+
+rng = np.random.RandomState(0)
+for n_met in [20, 100]:
+    melhores = [rng.binomial(200, 0.5, size=n_met).max() / 200 for _ in range(1000)]
+    print(f"{n_met:3d} métodos sem habilidade: acurácia média do melhor = {100 * np.mean(melhores):.1f}% (o esperado de cada método é 50,0%)")
+a = rng.binomial(200, 0.5, size=20) / 200
+print(f"\num exemplo com 20 métodos: melhor = {100 * a.max():.1f}%, média = {100 * a.mean():.1f}%")
+```
+@@NOTE Com 20 métodos que **não têm nenhuma habilidade** (cada um é equivalente a jogar uma moeda), a acurácia média do **melhor** é de **56,6%**, e com 100 métodos, de **58,8%**, contra 50,0% esperados de qualquer um deles. Em um exemplo, o melhor de 20 teve 55,5% e a média ficou em 49,8%. Isto é a **maldição do vencedor**: escolher o melhor entre muitos candidatos no mesmo teste produz uma estimativa **otimista**, mesmo que todos sejam iguais. Quanto mais configurações e menor o teste, maior o otimismo, e por isso a escolha deve ser feita em um conjunto à parte, e o teste, usado uma só vez.
+@@EX 3 | Descasamento de classes no Digits | intermediário
+No **Digits**, rotule **5 exemplos de cada um dos dígitos 0 a 4** (25 rótulos) e use como "sem rótulo" os demais exemplos de treino dessas classes **mais** uma fração `f` (0%, 50% e 100%) dos exemplos de treino dos dígitos 5 a 9. Compare, no teste **só com os dígitos 0 a 4**, a regressão logística só com os rotulados, o self-training (limiar 0,9) e o Label Spreading (knn, k = 7). Use 10 sorteios.
+
+*Pergunta:* o que acontece com os métodos quando os dados sem rótulo contêm classes "de fora"?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import SelfTrainingClassifier, LabelSpreading
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+te = y_te <= 4; X_te, y_te = X_te[te], y_te[te]
+print("fração dos dígitos 5-9 entre os sem rótulo | reg. logística | self-training | Label Spreading   (acerto nos dígitos 0 a 4 do teste)")
+for f in [0.0, 0.5, 1.0]:
+    res = {"lr": [], "st": [], "ls": []}
+    for s in range(10):
+        r = np.random.RandomState(s); dentro = np.where(y_tr <= 4)[0]; fora = np.where(y_tr >= 5)[0]
+        idx = np.concatenate([r.choice(np.where(y_tr == d)[0], 5, replace=False) for d in range(5)])
+        fora_sel = r.choice(fora, int(f * len(fora)), replace=False); usar = np.union1d(dentro, fora_sel)
+        Xu, yu = X_tr[usar], y_tr[usar]; yp = np.full(len(usar), -1); pos = np.searchsorted(usar, idx); yp[pos] = y_tr[idx]
+        res["lr"].append(LogisticRegression(max_iter=3000).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+        res["st"].append(SelfTrainingClassifier(LogisticRegression(max_iter=3000), threshold=0.9).fit(Xu, yp).score(X_te, y_te))
+        res["ls"].append(LabelSpreading(kernel="knn", n_neighbors=7, alpha=0.2, max_iter=200).fit(Xu, yp).score(X_te, y_te))
+    print(f"{100 * f:5.0f}%                                      | {100 * np.mean(res['lr']):12.1f}% | {100 * np.mean(res['st']):12.1f}% | {100 * np.mean(res['ls']):.1f}%")
+```
+@@NOTE Nos dígitos 0 a 4 do teste, a regressão logística obteve 92,4% (não usa os dados sem rótulo, então não muda). O **self-training** caiu à medida que aumentou a contaminação: 82,2% (0%), 75,5% (50%) e **70,2%** (100%), **bem abaixo** da referência mesmo sem contaminação (82,2%; uma explicação possível é que, com 25 rótulos, os pseudo-rótulos já são ruins). O **Label Spreading** foi mais robusto: 97,9%, 97,1% e 96,3%, sempre **acima** da regressão logística. A perda do Label Spreading com 100% de contaminação (−1,6 ponto) é pequena, mas real. Nos dígitos 5 a 9 sem rótulo, o self-training atribui classes 0 a 4 a imagens que não pertencem a nenhuma delas, e isso contamina o treino. Lições: o descasamento de classes pode prejudicar, e a robustez depende do método e dos dados (aqui, o grafo continuou separando bem os dígitos 0 a 4 e a propagação não cruzou para os de fora).
+@@EX 4 | Validação cruzada x conjunto de validação minúsculo | avançado
+No **Digits**, com 50 rótulos (20 sorteios), escolha entre as 12 configurações do Label Spreading (k em 3, 5, 7, 10, 15, 30 e alpha em 0,2 e 0,8) de duas formas: (a) **validação cruzada de 5 dobras** nos 50 rotulados; (b) uma **validação com apenas 10 rótulos** separados dos 50 (os outros 40 ficam como rotulados). Mostre a acurácia no teste da configuração escolhida em cada caso e a média das 12.
+
+*Pergunta:* a validação minúscula escolhe tão bem quanto a validação cruzada?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.semi_supervised import LabelSpreading
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+cands = [(k, a) for k in [3, 5, 7, 10, 15, 30] for a in [0.2, 0.8]]
+def ajustar(c, rotulados):
+    yp = np.full(len(y_tr), -1); yp[rotulados] = y_tr[rotulados]; return LabelSpreading(kernel="knn", n_neighbors=c[0], alpha=c[1], max_iter=200).fit(X_tr, yp)
+cv_, pq, med = [], [], []
+for s in range(20):
+    r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == d)[0], 5, replace=False) for d in range(10)])
+    teste = np.array([ajustar(c, idx).score(X_te, y_te) for c in cands]); med.append(teste.mean())
+    pontos_cv = []
+    for c in cands:
+        acc = [np.mean(ajustar(c, idx[a]).transduction_[idx[b]] == y_tr[idx[b]]) for a, b in StratifiedKFold(5, shuffle=True, random_state=s).split(idx, y_tr[idx])]; pontos_cv.append(np.mean(acc))
+    cv_.append(teste[int(np.argmax(pontos_cv))])
+    perm = r.permutation(len(idx)); val, trn = idx[perm[:10]], idx[perm[10:]]
+    pontos_pq = [np.mean(ajustar(c, trn).transduction_[val] == y_tr[val]) for c in cands]; pq.append(ajustar(cands[int(np.argmax(pontos_pq))], idx).score(X_te, y_te))
+print(f"média das 12 configurações            : {100 * np.mean(med):.1f}%")
+print(f"escolha por validação cruzada (50)     : {100 * np.mean(cv_):.1f}% ± {100 * np.std(cv_):.1f}")
+print(f"escolha por validação com só 10 rótulos: {100 * np.mean(pq):.1f}% ± {100 * np.std(pq):.1f}")
+```
+@@NOTE A média das 12 configurações é de 86,5%. A escolha por **validação cruzada** nos 50 rotulados obteve **93,1% ± 1,6**, e a escolha por **validação com apenas 10 rótulos**, **92,9% ± 2,2**: praticamente iguais (0,2 ponto de diferença, abaixo do desvio). Neste problema, a validação minúscula escolheu quase tão bem quanto a validação cruzada, mas com mais variação (desvio de 2,2 contra 1,6), e usa só 40 dos 50 rótulos para o ajuste. A dificuldade da validação com poucos rótulos não aparece na média, e sim na **variabilidade**: em alguns sorteios, a escolha foi ruim.
+@@EX 5 | Desempenho por subgrupo (classe) | avançado
+No **Digits**, com 50 rótulos (20 sorteios), calcule o **acerto por dígito** da regressão logística (só rotulados) e do Label Spreading (knn, k = 10, alpha = 0,2), e a diferença. Mostre os dígitos em que o Label Spreading ganha e perde mais.
+
+*Pergunta:* o ganho médio de um método é igual para todos os dígitos?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+a, b = np.zeros(10), np.zeros(10); SORTEIOS = 20
+for s in range(SORTEIOS):
+    r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == d)[0], 5, replace=False) for d in range(10)]); yp = np.full(len(y_tr), -1); yp[idx] = y_tr[idx]
+    pa = LogisticRegression(max_iter=3000).fit(X_tr[idx], y_tr[idx]).predict(X_te); pb = LabelSpreading(kernel="knn", n_neighbors=10, alpha=0.2, max_iter=200).fit(X_tr, yp).predict(X_te)
+    for d in range(10): a[d] += np.mean(pa[y_te == d] == d) / SORTEIOS; b[d] += np.mean(pb[y_te == d] == d) / SORTEIOS
+print(f"acerto geral: reg. logística {100 * np.mean(a):.1f}% | Label Spreading {100 * np.mean(b):.1f}% (médias por dígito)")
+print("dígito | reg. logística | Label Spreading | diferença")
+for d in np.argsort(b - a): print(f"{d:6d} | {100 * a[d]:13.1f}% | {100 * b[d]:14.1f}% | {100 * (b[d] - a[d]):+6.1f} p.p.")
+```
+@@NOTE O acerto médio por dígito da regressão logística foi de 85,7% e do Label Spreading, de 93,3%, mas o ganho **não é igual para todos os dígitos**: vai de **+0,8** (dígito 0, que já era quase perfeito) a **+12,3** (dígito 1) e **+12,1** (dígito 8). Os dígitos 8 (74,4%), 9 (89,7%) e 4 (94,5%) continuam entre os mais difíceis para o Label Spreading. Nenhum dígito piorou nesta configuração. A lição geral é que a média esconde diferenças relevantes, e que a análise **por subgrupo** pode revelar onde o método ajuda ou prejudica.
+@@PROJ Auditoria de um resultado: o "ganho" do Label Spreading no Breast Cancer | Cap17
+**Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)* (UCI; embutido no scikit-learn): 569 exames, 30 atributos, classes maligno/benigno.
+
+**Contexto.** Um colega relata: "o Label Spreading, com a melhor configuração, melhora a acurácia da regressão logística em vários pontos com apenas 10 rótulos (5 por classe)". Você foi chamado para **auditar** a afirmação seguindo as boas práticas do Capítulo 17.
+
+**Tarefas.**
+1. Padronize os atributos (ajuste no treino) e separe 30% para teste (`random_state=0`). Use 30 sorteios de 10 rótulos (5 por classe).
+2. Para cada sorteio, avalie 12 configurações do Label Spreading (knn, k em 3, 5, 7, 10, 15 e 30; alpha em 0,2 e 0,8). Calcule: (a) o ganho médio da **configuração escolhida pelo teste** (o que o colega fez); (b) o da **escolhida por validação cruzada de 5 dobras** nos 10 rotulados; (c) o da **configuração fixa** k = 10, alpha = 0,2 escolhida antes.
+3. Para a configuração fixa (c), calcule a média da diferença para a regressão logística, o intervalo de confiança de 95% por bootstrap, as vitórias e derrotas e o valor-*p* de Wilcoxon.
+4. Escreva um parecer (8 a 10 linhas): a afirmação do colega se sustenta? Qual o ganho honesto?
+
+**Entregáveis.** Código, tabela e parecer.
+@@SOL
+```python
+import numpy as np
+from scipy import stats
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading
+
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(X_tr); X_tr, X_te = esc.transform(X_tr), esc.transform(X_te)
+cands = [(k, a) for k in [3, 5, 7, 10, 15, 30] for a in [0.2, 0.8]]
+def ajustar(c, rotulados):
+    yp = np.full(len(y_tr), -1); yp[rotulados] = y_tr[rotulados]; return LabelSpreading(kernel="knn", n_neighbors=c[0], alpha=c[1], max_iter=200).fit(X_tr, yp)
+ref, no_teste, por_cv, fixa = [], [], [], []
+for s in range(30):
+    r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y_tr == c)[0], 5, replace=False) for c in (0, 1)])
+    ref.append(LogisticRegression(max_iter=3000).fit(X_tr[idx], y_tr[idx]).score(X_te, y_te))
+    teste = np.array([ajustar(c, idx).score(X_te, y_te) for c in cands]); no_teste.append(teste.max()); fixa.append(teste[cands.index((10, 0.2))])
+    cv = [np.mean([np.mean(ajustar(c, idx[a]).transduction_[idx[b]] == y_tr[idx[b]]) for a, b in StratifiedKFold(5, shuffle=True, random_state=s).split(idx, y_tr[idx])]) for c in cands]
+    por_cv.append(teste[int(np.argmax(cv))])
+ref, no_teste, por_cv, fixa = map(np.array, (ref, no_teste, por_cv, fixa))
+print(f"regressão logística (referência): {100 * ref.mean():.1f}% ± {100 * ref.std():.1f}")
+for nome, v in [("(a) melhor configuração escolhida no TESTE", no_teste), ("(b) escolhida por validação cruzada", por_cv), ("(c) configuração fixa k = 10, alpha = 0,2", fixa)]:
+    print(f"{nome:45s}: {100 * v.mean():.1f}% | ganho {100 * (v - ref).mean():+.1f} p.p.")
+d = fixa - ref; rng = np.random.RandomState(0); boot = [rng.choice(d, len(d)).mean() for _ in range(5000)]; lo, hi = np.percentile(boot, [2.5, 97.5])
+print(f"\nconfiguração fixa: diferença média {100 * d.mean():+.1f} p.p. | IC 95% [{100 * lo:+.1f}; {100 * hi:+.1f}] | vitórias/derrotas {int((d > 0).sum())}/{int((d < 0).sum())} | p (Wilcoxon) = {stats.wilcoxon(d).pvalue:.4f}")
+```
+@@RUBRICA
+- O teste é separado antes de tudo; a padronização é ajustada só no treino.
+- São usados 30 sorteios pareados dos 10 rótulos.
+- São comparadas as três formas de escolher a configuração, com o ganho de cada uma sobre a referência.
+- Para a configuração fixa, são calculados a diferença média, o intervalo de confiança, as vitórias e derrotas e o valor-p.
+- O parecer é coerente com os números, distingue o ganho otimista do honesto e aponta limitações.
+@@NOTE A regressão logística obteve 90,3% ± 2,9 com 10 rótulos. (a) A melhor configuração escolhida **no teste** obteve 91,9%, um ganho de **+1,6 ponto**, que é o que o colega relatou. (b) A configuração escolhida por **validação cruzada** obteve 88,7%, uma **perda** de 1,5 ponto. (c) A configuração **fixa** (k = 10, alpha = 0,2, escolhida antes) obteve 89,6%, com diferença de **−0,7 ponto**, intervalo de confiança [−1,9; +0,5], 14 vitórias e 15 derrotas e p = 0,35 (Wilcoxon). Portanto, a afirmação **não se sustenta**: o "ganho" vem da **escolha da configuração no teste** (maldição do vencedor, Exercício 2); com a escolha honesta, não há ganho distinguível de zero, e o resultado é ligeiramente negativo. Parecer: o Label Spreading não melhora a regressão logística no Breast Cancer com 10 rótulos (diferentemente do Digits). Limitações: um só conjunto de dados e um teste de 171 exemplos; com mais rótulos ou outra representação, a conclusão pode mudar.
+@@ALEM
+- **UCI:** Breast Cancer Wisconsin, Optical Recognition of Handwritten Digits, Wine.
+- **Kaggle:** Breast Cancer Wisconsin e Digit Recognizer.
+- **Artigos:** Oliver et al. (2018) e Demšar (2006).
