@@ -1,0 +1,269 @@
+MC: O que é uma "caixa-preta cara" no contexto da otimização de hiperparâmetros?
+a) Um modelo de rede neural muito grande.
+b) Uma função hiperparâmetros → nota, cuja fórmula é desconhecida e cuja avaliação consome muito tempo.
+c) Um computador sem acesso à internet.
+d) Um conjunto de dados confidencial.
+R: b | Só vemos a nota para cada entrada (caixa-preta), e cada avaliação exige treinar e validar um modelo (cara).
+
+MC: Qual é o objetivo da otimização bayesiana?
+a) Testar todas as combinações possíveis.
+b) Gastar poucas avaliações caras, escolhendo cada uma com inteligência.
+c) Eliminar a necessidade de validação.
+d) Substituir o conjunto de teste.
+R: b | A BO aprende com o histórico para decidir onde avaliar a seguir.
+
+MC: O que é o modelo substituto (surrogate)?
+a) O modelo final que será implantado.
+b) Um modelo barato que imita a função cara, a partir do histórico de tentativas.
+c) Um modelo treinado com dados do teste.
+d) Um algoritmo de pré-processamento.
+R: b | Ele prevê a nota de configurações não testadas, sem treinar o modelo de verdade.
+
+MC: Além de prever a nota, o modelo substituto de uma BO deve informar:
+a) o tempo de treino.
+b) a incerteza da previsão.
+c) o tamanho do conjunto de teste.
+d) o número de atributos.
+R: b | A incerteza permite que a aquisição valorize regiões pouco exploradas.
+
+MC: Em qual passo do ciclo da BO está o custo principal?
+a) Treinar o modelo substituto.
+b) Calcular a função de aquisição.
+c) Escolher o ponto de maior aquisição.
+d) Avaliar de verdade o ponto escolhido (treinar e validar o modelo).
+R: d | Os demais passos são baratos em comparação com treinar o modelo real.
+
+MC: O dilema explorar × aproveitar consiste em:
+a) escolher entre dois algoritmos de classificação.
+b) decidir entre olhar perto do melhor ponto conhecido ou investigar regiões pouco conhecidas.
+c) escolher entre treino e teste.
+d) escolher entre padronizar ou não os dados.
+R: b | Aproveitar refina o que se conhece; explorar busca descobertas maiores, com risco de perder uma avaliação.
+
+MC: A função de aquisição serve para:
+a) medir o desempenho final do modelo.
+b) dar uma nota de interesse a cada ponto, combinando previsão e incerteza.
+c) padronizar os atributos.
+d) dividir os dados em partes.
+R: b | O próximo ponto avaliado é o de maior valor de aquisição.
+
+MC: Qual das funções abaixo é uma função de aquisição?
+a) Matriz de confusão.
+b) EI (melhoria esperada).
+c) StandardScaler.
+d) PCA.
+R: b | PI, EI e UCB são funções de aquisição clássicas.
+
+MC: A melhoria esperada (EI) combina:
+a) apenas a média prevista pelo modelo substituto.
+b) apenas a incerteza.
+c) a média prevista (aproveitar) e a incerteza (explorar).
+d) o número de tentativas e o tempo de treino.
+R: c | O primeiro termo premia média alta; o segundo, incerteza alta.
+
+MC: Na função UCB, o que controla o apetite por explorar?
+a) A semente aleatória.
+b) O coeficiente k que multiplica a incerteza.
+c) O número de partes da validação cruzada.
+d) O tamanho do conjunto de teste.
+R: b | Quanto maior o k, mais o algoritmo valoriza regiões incertas.
+
+MC: Qual a principal propriedade que um processo gaussiano oferece ao ser usado como modelo substituto?
+a) Previsões sem erro.
+b) Uma previsão acompanhada de incerteza, pequena perto dos pontos medidos e grande longe deles.
+c) Treino instantâneo com milhões de pontos.
+d) Dispensa de função de aquisição.
+R: b | Isso permite equilibrar explorar e aproveitar.
+
+MC: O kernel de um processo gaussiano define:
+a) quais pontos são considerados "próximos" e, portanto, com notas parecidas.
+b) o número de tentativas.
+c) o conjunto de teste.
+d) a métrica de avaliação.
+R: a | O kernel expressa a suposição de suavidade da função.
+
+MC: Na figura da BO com 3 avaliações, a faixa de incerteza era enorme porque:
+a) o modelo substituto tinha poucos dados e quase nada sabia da função.
+b) a função era constante.
+c) a função de aquisição estava errada.
+d) a busca terminou.
+R: a | Com poucos pontos, a incerteza é grande em quase todo o espaço.
+
+MC: No experimento da função-agulha, com 5 avaliações, quem estava à frente?
+a) A BO, claramente.
+b) A busca aleatória, pois a BO ainda precisava de pontos para formar um modelo útil.
+c) Ambas empatadas.
+d) Nenhuma encontrou nada.
+R: b | A BO tem uma fase de aquecimento; as primeiras avaliações são pouco aproveitadas.
+
+MC: No mesmo experimento, com 15 avaliações, o que ocorreu?
+a) A aleatória achou a agulha com mais frequência.
+b) A BO achou a agulha com mais frequência.
+c) Ambas acharam sempre.
+d) Nenhuma achou.
+R: b | A BO ficou à frente (cerca de 48% contra 32%).
+
+MC: O TPE (Tree-structured Parzen Estimator) funciona:
+a) ajustando um processo gaussiano ao histórico.
+b) estimando as densidades l(x) das tentativas boas e g(x) das ruins e escolhendo onde l/g é maior.
+c) sorteando valores uniformemente.
+d) treinando redes neurais profundas.
+R: b | O TPE inverte a pergunta: onde as configurações boas costumam estar?
+
+MC: Por que o TPE é natural para o problema CASH?
+a) Porque lida bem com espaços em árvore (condicionais).
+b) Porque não precisa de histórico.
+c) Porque só aceita um hiperparâmetro.
+d) Porque é paralelo por natureza.
+R: a | A escolha do algoritmo condiciona quais hiperparâmetros existem.
+
+MC: O SMAC usa como modelo substituto:
+a) um processo gaussiano.
+b) uma floresta aleatória.
+c) uma regressão linear.
+d) um k-vizinhos.
+R: b | Florestas lidam bem com categorias, condicionais e muitas dimensões.
+
+MC: Qual dos sistemas abaixo usou otimização bayesiana para resolver o CASH?
+a) Auto-WEKA.
+b) K-means.
+c) DBSCAN.
+d) PCA.
+R: a | Thornton e colaboradores (2013) resolveram o CASH com otimização bayesiana.
+
+MC: No Optuna, o que significa a abordagem define-by-run?
+a) O espaço de busca é descrito dentro da própria função-objetivo, com código comum.
+b) O espaço de busca é definido em um arquivo separado de configuração.
+c) O Optuna só roda em nuvem.
+d) O Optuna define as métricas automaticamente.
+R: a | Isso permite espaços dinâmicos e condicionais com if e laços.
+
+MC: Em Optuna, qual método sugere um hiperparâmetro contínuo em escala logarítmica?
+a) trial.suggest_float(nome, a, b, log=True).
+b) trial.suggest_cat(nome).
+c) study.log().
+d) optuna.logscale().
+R: a | O argumento log=True pede amostragem logarítmica.
+
+MC: No Optuna, o que é uma Trial?
+a) O experimento inteiro.
+b) Um teste com um conjunto de valores de hiperparâmetros, que a sua função avalia.
+c) O conjunto de dados.
+d) O modelo final.
+R: b | O estudo reúne várias tentativas (trials).
+
+MC: Em uma função-objetivo do Optuna, o que a função deve devolver?
+a) A nota (valor a otimizar) da tentativa.
+b) O modelo treinado.
+c) Os dados de treino.
+d) Uma lista de hiperparâmetros.
+R: a | O Optuna maximiza ou minimiza o valor devolvido, conforme direction.
+
+MC: Como o Optuna resolve o CASH de forma natural?
+a) Sugerindo primeiro o algoritmo (categórico) e, dentro de if, os hiperparâmetros daquele algoritmo.
+b) Treinando todos os algoritmos com os mesmos hiperparâmetros.
+c) Ignorando os hiperparâmetros.
+d) Usando apenas busca em grade.
+R: a | O espaço condicional é descrito por código comum.
+
+MC: No experimento CASH do capítulo, por que o TPE perdeu o SVM, apesar de ele poder chegar a 0,99?
+a) Porque o SVM não funciona em Digits.
+b) Porque as primeiras tentativas de SVM caíram em regiões ruins e o TPE passou a evitá-lo com orçamento curto.
+c) Porque o Optuna não suporta SVM.
+d) Porque o TPE sorteia sempre a floresta.
+R: b | A região boa do gamma é estreita; com pouco orçamento, o algoritmo foi descartado cedo.
+
+MC: Qual conclusão geral o episódio do CASH ilustra?
+a) Que o TPE nunca funciona.
+b) Que buscas com orçamento curto podem desistir cedo de um bom candidato.
+c) Que a floresta é sempre melhor.
+d) Que o SVM é inferior.
+R: b | É o risco de aproveitar demais e explorar de menos.
+
+MC: No SVM em Digits com espaço amplo, qual foi o resultado da comparação entre TPE e aleatória com 30 avaliações?
+a) TPE venceu por grande margem.
+b) A aleatória venceu por grande margem.
+c) Empataram (cerca de 0,990 e 0,991).
+d) Nenhuma passou de 0,5.
+R: c | O problema tem 2 botões e uma região boa larga, o que favorece a busca aleatória.
+
+MC: Em que situação a BO costuma ajudar mais?
+a) Avaliação barata, orçamento enorme e região boa larga.
+b) Avaliação cara, orçamento pequeno, espaço grande e região boa estreita.
+c) Dados muito pequenos, sem hiperparâmetros.
+d) Sempre, independentemente do problema.
+R: b | É quando aprender com o histórico compensa o custo extra.
+
+MC: Uma limitação típica dos processos gaussianos é:
+a) Não fornecerem incerteza.
+b) Perderem precisão e velocidade com muitas dimensões e muitos pontos.
+c) Só funcionarem com categorias.
+d) Exigirem rótulos aleatórios.
+R: b | O custo cresce com o histórico e o desempenho cai em espaços de alta dimensão.
+
+MC: Qual é a boa prática ao avaliar um novo método de HPO?
+a) Compará-lo com a busca aleatória, com o mesmo orçamento e várias sementes.
+b) Compará-lo apenas em uma execução.
+c) Usar um orçamento diferente para cada método.
+d) Usar o teste final para escolher o método.
+R: a | A busca aleatória é a linha de base obrigatória.
+
+DISC: Explique, com uma analogia, por que a busca aleatória "desperdiça" informação e como a otimização bayesiana tenta corrigir isso.
+R: A aleatória ignora os resultados anteriores, como um garimpeiro que cava ao acaso mesmo após achar ouro. A BO usa o histórico para decidir onde olhar a seguir, concentrando as avaliações caras em regiões promissoras.
+
+DISC: O que é uma caixa-preta cara e por que ela justifica a otimização bayesiana?
+R: É uma função cuja fórmula não conhecemos e cuja avaliação é custosa (treinar e validar um modelo). Como poucas avaliações são possíveis, vale usar um método que escolha cada uma com cuidado.
+
+DISC: Descreva os cinco passos do ciclo da otimização bayesiana.
+R: Treinar o modelo substituto com o histórico; calcular a função de aquisição; escolher o ponto de maior aquisição; avaliar de verdade esse ponto; acrescentar o resultado ao histórico e repetir.
+
+DISC: Explique o dilema explorar × aproveitar com um exemplo do cotidiano e diga como a função de aquisição o resolve.
+R: Escolher entre voltar ao restaurante favorito (aproveitar) ou testar um novo (explorar). A aquisição combina a previsão (aproveitar) e a incerteza (explorar) em uma nota de interesse para cada ponto.
+
+DISC: O que é um processo gaussiano e por que ele é útil como modelo substituto?
+R: É um modelo que prevê valores e informa a incerteza da previsão: pequena perto dos pontos medidos, grande longe deles. Isso permite a aquisição equilibrar explorar e aproveitar.
+
+DISC: Compare PI, EI e UCB.
+R: PI mede a chance de melhorar (ignora o tamanho do ganho); EI mede a melhoria esperada (pondera chance e tamanho); UCB soma média e k vezes a incerteza, com k controlando o apetite por explorar.
+
+DISC: Explique a fórmula da EI em palavras.
+R: O primeiro termo premia pontos de média prevista alta em relação ao melhor atual; o segundo premia pontos de incerteza alta. A soma é a melhoria que se espera obter ao avaliar o ponto.
+
+DISC: Descreva o experimento da função-agulha e o que ele mostra sobre o desempenho da BO ao longo do orçamento.
+R: Comparou-se BO (GP + EI) e aleatória em 40 repetições. Com 5 avaliações a aleatória estava à frente, com 10 empataram e com 15 a BO achou a agulha com mais frequência. A BO precisa de aquecimento.
+
+DISC: Explique a ideia do TPE e por que ele lida bem com espaços condicionais.
+R: Separa o histórico em tentativas boas e ruins, estima as densidades l(x) e g(x) e escolhe onde l/g é maior. Funciona em espaços em árvore porque modela cada hiperparâmetro condicionalmente.
+
+DISC: Compare processo gaussiano, TPE e floresta aleatória (SMAC) como modelos substitutos, indicando um ponto forte de cada um.
+R: GP: poucos dados e poucas dimensões contínuas, com incerteza suave. TPE: espaços condicionais e categóricos. Floresta: categorias, condicionais e muitas dimensões.
+
+DISC: O que são Study, Trial, Sampler e Pruner no Optuna?
+R: Study é o experimento inteiro; Trial é uma tentativa com um conjunto de valores; Sampler escolhe os valores (TPE, aleatório etc.); Pruner interrompe cedo tentativas ruins.
+
+DISC: Escreva, em palavras, os passos para resolver o CASH com o Optuna.
+R: Sugerir o algoritmo como variável categórica; dentro de um if para cada algoritmo, sugerir seus hiperparâmetros; construir o modelo; devolver a nota de validação; criar o estudo e chamar optimize.
+
+DISC: No experimento CASH do capítulo, a floresta venceu, mas o SVM poderia chegar a 0,99. Explique o que aconteceu e como evitar.
+R: As primeiras tentativas do SVM caíram em regiões ruins; com pouco orçamento, o TPE passou a evitá-lo. Remédios: mais orçamento, espaços mais bem desenhados, warm start com configurações conhecidas e avaliação multifidelidade.
+
+DISC: Por que, no SVM em Digits, TPE e aleatória empataram? O que isso ensina?
+R: O problema tem poucos botões e uma região boa larga, então o sorteio já acerta com facilidade, e o TPE gasta tentativas iniciais também aleatórias. Ensina que a BO não é garantia de melhora.
+
+DISC: Cite três limitações da otimização bayesiana.
+R: Dificuldade com muitas dimensões; sensibilidade a ruído e custo do modelo substituto; natureza sequencial (difícil de paralelizar); risco de overfitting da busca.
+
+DISC: Por que a BO é naturalmente sequencial e que consequência isso traz em relação à busca aleatória?
+R: Cada escolha depende dos resultados anteriores. A busca aleatória paraleliza sem esforço, ao passo que a BO exige adaptações para avaliar vários pontos ao mesmo tempo.
+
+DISC: Qual é o papel do argumento log=True no suggest_float e por que ele importa?
+R: Pede amostragem em escala logarítmica, dando a mesma chance a cada ordem de grandeza. Importa para hiperparâmetros como C, gamma e taxas de aprendizado.
+
+DISC: Por que o capítulo recomenda comparar um método de HPO com a busca aleatória em várias sementes e com o mesmo orçamento?
+R: Para que a diferença não seja fruto de sorte de uma execução nem de orçamentos desiguais; a busca aleatória é a linha de base que o método sofisticado deve superar.
+
+DISC: Descreva como o aquecimento (pontos iniciais) afeta a otimização bayesiana e por que ele importa para orçamentos curtos.
+R: Sem pontos iniciais, o modelo substituto nada sabe. As primeiras avaliações têm menor aproveitamento, então em orçamentos muito curtos a BO pode ficar atrás da aleatória.
+
+DISC: Explique por que a nota de validação do melhor ponto de uma BO continua sujeita ao otimismo discutido no Capítulo 4.
+R: A BO escolhe o ponto de melhor nota de validação entre muitos testados; como na busca aleatória, essa nota inclui sorte, e só um teste final intocado mede o desempenho real.

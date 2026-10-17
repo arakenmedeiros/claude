@@ -1,0 +1,236 @@
+@@EX 1 | Sua própria otimização bayesiana | intermediário
+Reutilize o código do capítulo para maximizar uma nova função "cara" no intervalo de 0 a 6: `g(x) = sin(3x) · exp(−0,25x) + 0,5 · sin(9x)`. Faça 12 avaliações (3 iniciais aleatórias e 9 guiadas por EI). Repita com 20 sementes e compare com a busca aleatória de 12 sorteios, mostrando a média do melhor valor encontrado e a fração de execuções que ficou a menos de 0,05 do máximo verdadeiro (calculado em uma malha fina).
+
+*Pergunta:* a BO superou a aleatória neste problema? Em que ponto do orçamento?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import norm
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import Matern, WhiteKernel, ConstantKernel as Ck
+
+g = lambda x: np.sin(3 * x) * np.exp(-0.25 * x) + 0.5 * np.sin(9 * x)
+malha = np.linspace(0, 6, 601)[:, None]
+maximo = g(malha[:, 0]).max()
+print("Máximo verdadeiro (malha fina):", round(maximo, 3))
+
+def bo(semente, n_total=12, n_inicial=3):
+    rng = np.random.default_rng(semente)
+    X = list(rng.uniform(0, 6, n_inicial)); Y = [g(x) for x in X]
+    for _ in range(n_total - n_inicial):
+        k = Ck(1.0) * Matern(length_scale=0.5, nu=2.5) + WhiteKernel(1e-6, (1e-10, 1e-3))
+        gp = GaussianProcessRegressor(k, normalize_y=True, n_restarts_optimizer=2, random_state=semente).fit(np.array(X)[:, None], Y)
+        mu, sd = gp.predict(malha, return_std=True); sd = np.maximum(sd, 1e-9)
+        z = (mu - max(Y) - 0.01) / sd; ei = (mu - max(Y) - 0.01) * norm.cdf(z) + sd * norm.pdf(z)
+        x = float(malha[np.argmax(ei), 0]); X.append(x); Y.append(g(x))
+    return np.maximum.accumulate(Y)
+
+def aleatoria(semente, n_total=12):
+    return np.maximum.accumulate(g(np.random.default_rng(500 + semente).uniform(0, 6, n_total)))
+
+B = np.array([bo(s) for s in range(20)]); A = np.array([aleatoria(s) for s in range(20)])
+print("avaliações | melhor médio (BO x aleatória) | % a menos de 0,05 do máximo")
+for k in (4, 8, 12):
+    print(f"{k:10d} | {B[:, k-1].mean():.3f} x {A[:, k-1].mean():.3f}            | "
+          f"{100*(B[:, k-1] > maximo-0.05).mean():3.0f}% x {100*(A[:, k-1] > maximo-0.05).mean():3.0f}%")
+```
+@@NOTE Na execução de referência, a aleatória estava à frente com 4 avaliações (0,640 contra 0,487) e com 8 (0,747 contra 0,720), mas, com 12, a BO passou à frente (0,903 contra 0,801) e ficou a menos de 0,05 do máximo em 55% das repetições, contra 10% da aleatória. É o mesmo padrão do capítulo: a BO precisa de aquecimento e rende mais quando o orçamento permite que o modelo substituto aprenda.
+@@EX 2 | Optuna em uma floresta aleatória | intermediário
+Use o conjunto **Breast Cancer Wisconsin** (UCI). Com o Optuna (TPE, semente 0), otimize 25 tentativas de uma `RandomForestClassifier`: `n_estimators` (inteiro de 20 a 150), `max_depth` (inteiro de 2 a 15), `min_samples_leaf` (inteiro de 1 a 10) e `max_features` (real de 0,1 a 1,0). Use validação cruzada estratificada de 5 partes. Mostre a melhor nota e os melhores valores, desenhe a curva "melhor nota até agora" e calcule a importância dos hiperparâmetros com `optuna.importance.get_param_importances`.
+
+*Pergunta:* qual hiperparâmetro foi o mais importante? A importância faz sentido?
+@@SOL
+```python
+import numpy as np
+import optuna
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+X, y = load_breast_cancer(return_X_y=True)
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+
+def objetivo(trial):
+    modelo = RandomForestClassifier(
+        n_estimators=trial.suggest_int("n_estimators", 20, 150),
+        max_depth=trial.suggest_int("max_depth", 2, 15),
+        min_samples_leaf=trial.suggest_int("min_samples_leaf", 1, 10),
+        max_features=trial.suggest_float("max_features", 0.1, 1.0),
+        random_state=0, n_jobs=-1)
+    return cross_val_score(modelo, X, y, cv=cv).mean()
+
+estudo = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=0))
+estudo.optimize(objetivo, n_trials=25)
+print("Melhor nota:", round(estudo.best_value, 4))
+print("Melhores valores:", {k: round(v, 3) if isinstance(v, float) else v for k, v in estudo.best_params.items()})
+
+notas = [t.value for t in estudo.trials]
+plt.plot(range(1, 26), np.maximum.accumulate(notas), "o-"); plt.xlabel("tentativa"); plt.ylabel("melhor nota até agora"); plt.show()
+
+imp = optuna.importance.get_param_importances(estudo)
+print("Importância dos hiperparâmetros:")
+for nome, v in imp.items():
+    print(f"  {nome:17s} {v:.2f}")
+print("Variação das notas: de", round(min(notas), 3), "a", round(max(notas), 3))
+```
+@@NOTE As notas variam pouco (de 0,939 a 0,970), pois a floresta é robusta a hiperparâmetros neste conjunto fácil. O Optuna atribuiu a maior importância ao tamanho mínimo da folha (0,60), seguido de `max_features` e `max_depth` (cerca de 0,20) e quase nenhuma ao número de árvores (0,01). Como a análise se baseia em diferenças pequenas e em apenas 25 tentativas, leia esses valores com cautela: em problemas mais difíceis, a variação das notas é maior e a análise é mais informativa.
+@@EX 3 | Reproduzindo e corrigindo a falha do CASH | avançado
+Use o conjunto **Digits**. Rode o CASH do capítulo (SVM, floresta e regressão logística, com *gamma* do SVM entre 10⁻⁸ e 10, 30 tentativas, TPE com semente 0). Mostre a melhor nota por algoritmo. Em seguida, **corrija o espaço de busca**: limite o *gamma* a uma faixa mais razoável (10⁻⁵ a 1, com `X/16` já normalizado) e repita. Compare as duas execuções.
+
+*Pergunta:* a correção resolveu o problema? O que ela revela sobre o papel humano no desenho do espaço de busca?
+@@SOL
+```python
+import optuna
+from sklearn.datasets import load_digits
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+X, y = load_digits(return_X_y=True); X = X / 16.0
+cv = StratifiedKFold(3, shuffle=True, random_state=0)
+
+def rodar(gamma_min, gamma_max, semente=0, n=30):
+    def objetivo(trial):
+        alg = trial.suggest_categorical("algoritmo", ["svm", "floresta", "logistica"])
+        if alg == "svm":
+            m = SVC(C=trial.suggest_float("C", 1e-3, 1e4, log=True), gamma=trial.suggest_float("gamma", gamma_min, gamma_max, log=True))
+        elif alg == "floresta":
+            m = RandomForestClassifier(trial.suggest_int("arvores", 20, 150), max_depth=trial.suggest_int("prof", 3, 20), random_state=0, n_jobs=-1)
+        else:
+            m = make_pipeline(StandardScaler(), LogisticRegression(C=trial.suggest_float("lrC", 1e-4, 1e3, log=True), max_iter=2000))
+        return cross_val_score(m, X, y, cv=cv).mean()
+    est = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=semente))
+    est.optimize(objetivo, n_trials=n)
+    resumo = {}
+    for t in est.trials:
+        r = resumo.setdefault(t.params["algoritmo"], [0, 0.0]); r[0] += 1; r[1] = max(r[1], t.value)
+    return est.best_params["algoritmo"], est.best_value, resumo
+
+for rotulo, (a, b) in [("gamma 1e-8 a 10 ", (1e-8, 10)), ("gamma 1e-5 a 1  ", (1e-5, 1))]:
+    alg, nota, resumo = rodar(a, b)
+    print(f"{rotulo}: vencedor = {alg} ({nota:.3f})")
+    for nome, (n, m) in resumo.items():
+        print(f"    {nome:10s} tentativas = {n:2d} | melhor = {m:.3f}")
+```
+@@NOTE Com o espaço amplo, o SVM teve apenas 5 tentativas e sua melhor nota foi 0,299, enquanto a floresta venceu com 0,977. Ao restringir o *gamma* a uma faixa razoável (10⁻⁵ a 1), o SVM ganhou 16 tentativas, chegou a 0,981 e venceu. A lição: o conhecimento humano sobre faixas plausíveis de hiperparâmetros melhora muito a eficiência de uma busca automática. Espaços absurdamente amplos desperdiçam o orçamento.
+@@EX 4 | Quanto explorar? O coeficiente do UCB | avançado
+Implemente a BO com função de aquisição **UCB** (média + κ · desvio) na função-agulha do capítulo e compare três valores de κ: 0,5, 2 e 6. Faça 15 avaliações (3 iniciais), repetindo com 30 sementes. Para cada κ, mostre a média do melhor valor encontrado e a fração de execuções que achou a agulha (valor maior que 0,95).
+
+*Pergunta:* qual κ funcionou melhor? Como isso se relaciona ao dilema explorar × aproveitar?
+@@SOL
+```python
+import numpy as np
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import Matern, WhiteKernel, ConstantKernel as Ck
+
+f = lambda x: 0.6 * np.exp(-((x - 3) / 1.2) ** 2) + 1.0 * np.exp(-((x - 8.2) / 0.35) ** 2)
+candidatos = np.linspace(0, 10, 501)[:, None]
+
+def bo_ucb(semente, kappa, n_total=15, n_inicial=3):
+    rng = np.random.default_rng(semente)
+    X = list(rng.uniform(0, 10, n_inicial)); Y = [f(x) for x in X]
+    for _ in range(n_total - n_inicial):
+        k = Ck(1.0) * Matern(length_scale=1.0, nu=2.5) + WhiteKernel(1e-6, (1e-10, 1e-3))
+        gp = GaussianProcessRegressor(k, normalize_y=True, n_restarts_optimizer=2, random_state=semente).fit(np.array(X)[:, None], Y)
+        mu, sd = gp.predict(candidatos, return_std=True)
+        x = float(candidatos[np.argmax(mu + kappa * sd), 0]); X.append(x); Y.append(f(x))
+    return max(Y)
+
+print("kappa | melhor médio | % que achou a agulha")
+for kappa in (0.5, 2, 6):
+    r = np.array([bo_ucb(s, kappa) for s in range(30)])
+    print(f"{kappa:5} | {r.mean():12.3f} | {100*(r > 0.95).mean():5.0f}%")
+```
+@@NOTE Na execução de referência, as médias foram 0,728 (κ=0,5), 0,744 (κ=2) e 0,786 (κ=6), e a fração que achou a agulha ficou entre 30% e 33% nos três casos. Com 30 repetições, essas diferenças são pequenas e não permitem declarar um vencedor com segurança. O que se vê é a tendência esperada: κ maior explora mais, o que ajuda a encontrar a agulha estreita, mas pode atrapalhar em outros problemas. O ponto de equilíbrio depende do problema e do orçamento.
+@@PROJ AutoML minimalista com Optuna em regressão (Diabetes) | Cap05
+**Fonte dos dados.** *Diabetes*, incluído no scikit-learn (`load_diabetes`): 442 pacientes, 10 atributos e, como alvo, uma medida de progressão da doença após um ano. A base é de uso didático e tem origem em estudo estatístico clássico, distribuída com o scikit-learn.
+
+**Contexto.** Uma equipe quer prever a progressão de uma doença e comparar um AutoML minimalista (Optuna, resolvendo o CASH para regressão) com a busca aleatória.
+
+**Atenção ética.** Os dados são de uso didático. O modelo **não é ferramenta clínica**.
+
+**Tarefas.**
+1. Separe 25% dos dados como **teste final** (semente fixa). Não toque nele até o fim.
+2. Calcule uma **linha de base** (`DummyRegressor`, que prevê a média) e a nota de uma `Ridge` com os valores padrão, ambas por validação cruzada de 5 partes no treino (métrica R²).
+3. Escreva uma função `objetivo` do Optuna que escolha entre `Ridge`, `RandomForestRegressor`, `GradientBoostingRegressor` e `SVR` (com padronização), cada um com seus hiperparâmetros (use escala logarítmica quando fizer sentido).
+4. Rode **40 tentativas** com TPE. Em seguida, rode a **busca aleatória** (`RandomSampler`) com o mesmo orçamento. Repita ambos com 3 sementes.
+5. Desenhe a curva de "melhor R² até agora" (média das sementes) para TPE e aleatória.
+6. Treine o melhor modelo encontrado (de uma das buscas) no treino completo e avalie **uma vez** no teste final, com R² e RMSE.
+7. Escreva um parágrafo (6 a 8 linhas): o AutoML superou a linha de base e a `Ridge` padrão? TPE superou a aleatória? O desempenho final é compatível com a validação? Que limitações existem?
+
+**Entregáveis.** Um notebook (ou script) comentado, o gráfico e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+import optuna
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_diabetes
+from sklearn.dummy import DummyRegressor
+from sklearn.linear_model import Ridge
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.svm import SVR
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
+from sklearn.metrics import r2_score, mean_squared_error
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+X, y = load_diabetes(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, random_state=0)
+cv = KFold(5, shuffle=True, random_state=0)
+
+print("Linha de base (média) R²:", round(cross_val_score(DummyRegressor(), Xtr, ytr, cv=cv, scoring="r2").mean(), 3))
+print("Ridge padrão          R²:", round(cross_val_score(Ridge(), Xtr, ytr, cv=cv, scoring="r2").mean(), 3))
+
+def construir(trial):
+    alg = trial.suggest_categorical("algoritmo", ["ridge", "floresta", "boosting", "svr"])
+    if alg == "ridge":
+        return make_pipeline(StandardScaler(), Ridge(alpha=trial.suggest_float("alpha", 1e-3, 1e3, log=True)))
+    if alg == "floresta":
+        return RandomForestRegressor(trial.suggest_int("rf_arvores", 20, 150), max_depth=trial.suggest_int("rf_prof", 2, 10),
+                                     min_samples_leaf=trial.suggest_int("rf_folha", 1, 15), random_state=0, n_jobs=-1)
+    if alg == "boosting":
+        return GradientBoostingRegressor(n_estimators=trial.suggest_int("gb_arvores", 20, 200), learning_rate=trial.suggest_float("gb_lr", 0.01, 0.3, log=True),
+                                         max_depth=trial.suggest_int("gb_prof", 1, 4), random_state=0)
+    return make_pipeline(StandardScaler(), SVR(C=trial.suggest_float("svr_C", 1e-1, 1e3, log=True), epsilon=trial.suggest_float("svr_eps", 1e-2, 1.0, log=True),
+                                               gamma=trial.suggest_float("svr_gamma", 1e-4, 1e-1, log=True)))
+
+def objetivo(trial):
+    return cross_val_score(construir(trial), Xtr, ytr, cv=cv, scoring="r2").mean()
+
+N = 40; curvas = {"TPE": [], "Aleatória": []}; melhores = []
+for semente in range(3):
+    for nome, sampler in [("TPE", optuna.samplers.TPESampler(seed=semente)), ("Aleatória", optuna.samplers.RandomSampler(seed=semente))]:
+        est = optuna.create_study(direction="maximize", sampler=sampler); est.optimize(objetivo, n_trials=N)
+        curvas[nome].append(np.maximum.accumulate([t.value for t in est.trials])); melhores.append((est.best_value, est))
+for nome, c in curvas.items():
+    c = np.array(c); plt.plot(range(1, N + 1), c.mean(0), label=nome)
+    print(f"{nome:10s} melhor R² médio após {N} tentativas: {c[:, -1].mean():.3f} (variação entre sementes: {c[:, -1].min():.3f} a {c[:, -1].max():.3f})")
+plt.xlabel("tentativas"); plt.ylabel("melhor R² até agora"); plt.legend(); plt.title("TPE x aleatória (média de 3 sementes)"); plt.show()
+
+valor, est = max(melhores, key=lambda t: t[0])
+modelo = construir(optuna.trial.FixedTrial(est.best_params)).fit(Xtr, ytr)
+p = modelo.predict(Xte)
+print("\nMelhor algoritmo:", est.best_params["algoritmo"], "| R² de validação:", round(valor, 3))
+print(f"Teste final: R² = {r2_score(yte, p):.3f} | RMSE = {np.sqrt(mean_squared_error(yte, p)):.1f}")
+print(f"Linha de base (média) no teste: RMSE = {np.sqrt(mean_squared_error(yte, DummyRegressor().fit(Xtr, ytr).predict(Xte))):.1f}")
+pr = Ridge().fit(Xtr, ytr).predict(Xte)
+print(f"Ridge padrão no teste             : R² = {r2_score(yte, pr):.3f} | RMSE = {np.sqrt(mean_squared_error(yte, pr)):.1f}")
+```
+@@RUBRICA
+- O teste final foi separado antes e usado uma única vez.
+- Foram calculadas a linha de base (média) e a Ridge padrão antes da busca.
+- O espaço CASH é condicional, com hiperparâmetros em escala logarítmica quando adequado.
+- TPE e aleatória foram comparados com o mesmo orçamento e várias sementes.
+- O gráfico de convergência foi construído e discutido.
+- O texto discute limitações (conjunto pequeno, variação entre sementes, caráter didático, ausência de uso clínico).
+@@NOTE Na execução de referência, a linha de base tem R² de −0,014 e a Ridge padrão, 0,425 na validação. A busca chegou a 0,552 (aleatória: 0,550; TPE: 0,524, com as três sementes do TPE convergindo para o mesmo valor): neste problema, a aleatória não ficou atrás. O resultado mais instrutivo vem do teste final: o melhor modelo (um SVR) obteve R² = 0,315 e RMSE = 58,3, **pior** que a Ridge padrão no mesmo teste (R² = 0,357; RMSE = 56,5), embora ambos superem a linha de base (RMSE = 70,5). Ou seja, a nota de validação de 0,552 foi bastante otimista: com 331 exemplos de treino, a busca de 40 tentativas ajustou-se ao acaso da validação. Além disso, o teste tem só 111 exemplos, e sua nota também é ruidosa. A lição: em conjuntos pequenos, um AutoML não garante superar um modelo simples bem escolhido, e só o teste final revela isso.
+@@ALEM
+- **UCI:** Concrete Compressive Strength (resistência de concreto, regressão) e Wine Quality (qualidade de vinhos, regressão ou classificação).
+- **Kaggle:** House Prices (preços de imóveis, muitas variáveis) e Medical Cost Personal Datasets (custos de seguro de saúde).
