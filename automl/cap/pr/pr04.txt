@@ -1,0 +1,181 @@
+@@EX 1 | Sua primeira busca em grade | básico
+No conjunto **Wine** (UCI), monte um pipeline com `StandardScaler` e `KNeighborsClassifier`. Use `GridSearchCV` (validação cruzada de 5 partes, estratificada) para testar `n_neighbors` de 1 a 25 (apenas ímpares) e `weights` em `["uniform", "distance"]`. Mostre o número de combinações e de treinos, a melhor combinação e a acurácia dela. Depois, desenhe a nota de validação em função de `n_neighbors` para cada tipo de peso.
+
+*Pergunta:* a escolha de `weights` fez diferença? Existe uma região ampla de bons valores de `n_neighbors`?
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_wine
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
+
+X, y = load_wine(return_X_y=True)
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+pipe = make_pipeline(StandardScaler(), KNeighborsClassifier())
+grade = {"kneighborsclassifier__n_neighbors": list(range(1, 26, 2)),
+         "kneighborsclassifier__weights": ["uniform", "distance"]}
+busca = GridSearchCV(pipe, grade, cv=cv).fit(X, y)
+
+n = len(busca.cv_results_["params"])
+print("Combinações:", n, "| treinos:", n * 5)
+print("Melhor:", busca.best_params_, "| acurácia =", round(busca.best_score_, 3))
+
+res = pd.DataFrame(busca.cv_results_)
+res["k"] = res["param_kneighborsclassifier__n_neighbors"].astype(int)
+res["peso"] = res["param_kneighborsclassifier__weights"].astype(str)
+for peso, g in res.groupby("peso"):
+    plt.plot(g["k"], g["mean_test_score"], "o-", label=peso)
+    print(f"peso {peso:8s}: melhor = {g['mean_test_score'].max():.3f} | pior = {g['mean_test_score'].min():.3f}")
+plt.xlabel("n_neighbors"); plt.ylabel("acurácia (validação cruzada)"); plt.legend(); plt.show()
+```
+@@NOTE Os dois tipos de peso chegam à mesma nota máxima (0,983) e à mesma mínima (0,955). A melhor combinação (21 vizinhos, peso uniforme) não é muito diferente de várias vizinhas. Nesse tipo de paisagem, em que há uma faixa de valores com notas parecidas, o rigor excessivo em "achar o melhor valor" é desperdício.
+@@EX 2 | Grade ou aleatória? Com a floresta, empatou | intermediário
+Com o conjunto **Breast Cancer Wisconsin** (UCI), compare uma **grade** de 8 combinações (`n_estimators` em [20, 60], `max_depth` em [3, None], `max_features` em ["sqrt", 0.5]) com uma **busca aleatória** de 8 tentativas (`n_estimators` inteiro de 10 a 80, `max_depth` inteiro de 2 a 11, `max_features` real de 0,05 a 0,95). Use a mesma validação cruzada e repita a aleatória com 4 sementes.
+
+*Pergunta:* a aleatória venceu? O que isso diz sobre generalizar a regra "aleatória é melhor que grade"?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import randint, uniform
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, StratifiedKFold
+
+X, y = load_breast_cancer(return_X_y=True)
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+
+grade = {"n_estimators": [20, 60], "max_depth": [3, None], "max_features": ["sqrt", 0.5]}
+g = GridSearchCV(RandomForestClassifier(random_state=0), grade, cv=cv).fit(X, y)
+print(f"Grade ({len(g.cv_results_['params'])} combinações): melhor = {g.best_score_:.4f}")
+
+espaco = {"n_estimators": randint(10, 80), "max_depth": randint(2, 12), "max_features": uniform(0.05, 0.9)}
+notas = [RandomizedSearchCV(RandomForestClassifier(random_state=0), espaco, n_iter=8, cv=cv, random_state=s).fit(X, y).best_score_
+         for s in range(4)]
+print("Aleatória (8 tentativas) x 4 sementes:", np.round(notas, 4), "| média =", round(np.mean(notas), 4))
+```
+@@NOTE Aqui a grade (0,965) e a aleatória (média 0,963) praticamente empataram. Isso é coerente com a teoria: a vantagem da aleatória aparece quando poucos hiperparâmetros importam *e* a grade é pobre em valores distintos. Com 3 botões e uma grade pequena, não há vantagem clara. A regra "aleatória é melhor" é uma tendência, e não uma lei.
+@@EX 3 | Escala logarítmica faz diferença | intermediário
+Use o conjunto **Wine** e uma `LogisticRegression` (com `StandardScaler`). Faça buscas aleatórias com 10 tentativas para o hiperparâmetro `C`, sorteando em dois espaços: **uniforme** entre 0,001 e 1000 e **logarítmico** (`loguniform`) entre 0,001 e 1000. Repita cada uma com 10 sementes e compare as médias e os piores resultados.
+
+*Pergunta:* qual espaço funciona melhor e por quê?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import uniform, loguniform
+from sklearn.datasets import load_wine
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
+
+X, y = load_wine(return_X_y=True)
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+pipe = make_pipeline(StandardScaler(), LogisticRegression(max_iter=5000))
+
+def buscar(dist, semente):
+    r = RandomizedSearchCV(pipe, {"logisticregression__C": dist}, n_iter=10, cv=cv, random_state=semente).fit(X, y)
+    return r.best_score_
+
+for nome, dist in [("uniforme", uniform(0.001, 1000)), ("logarítmico", loguniform(1e-3, 1e3))]:
+    notas = [buscar(dist, s) for s in range(10)]
+    print(f"{nome:12s} média = {np.mean(notas):.4f} | pior = {np.min(notas):.4f}")
+```
+@@NOTE O espaço logarítmico tem média maior (0,990 contra 0,984). No espaço uniforme, quase todos os sorteios caem em valores de C acima de 1; o espaço logarítmico também testa valores pequenos e, em média, encontrou notas melhores. O pior resultado de cada espaço é igual (0,983), então o ganho está em acertar com maior frequência, e não em evitar o pior caso.
+@@EX 4 | Medindo o otimismo da busca | avançado
+Use o conjunto **Wine**, mas com apenas **60 exemplos** (`train_test_split` com `train_size=60`, estratificado, semente variando de 0 a 5). Para cada semente, faça uma busca aleatória de 40 tentativas (SVM com `C` e `gamma` em escala logarítmica, dentro de um pipeline com `StandardScaler`). Registre (a) o `best_score_` da busca e (b) a nota da **validação aninhada** (passe o objeto de busca ao `cross_val_score`). Calcule o otimismo (a − b) em cada semente.
+
+*Pergunta:* o otimismo foi positivo em todas as sementes? O que isso mostra sobre variabilidade?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import loguniform
+from sklearn.datasets import load_wine
+from sklearn.svm import SVC
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import RandomizedSearchCV, cross_val_score, StratifiedKFold, train_test_split
+
+X0, y0 = load_wine(return_X_y=True)
+espaco = {"svc__C": loguniform(1e-2, 1e3), "svc__gamma": loguniform(1e-5, 1)}
+dif = []
+for s in range(6):
+    X, _, y, _ = train_test_split(X0, y0, train_size=60, stratify=y0, random_state=s)
+    pipe = make_pipeline(StandardScaler(), SVC())
+    interno = StratifiedKFold(5, shuffle=True, random_state=s)
+    externo = StratifiedKFold(5, shuffle=True, random_state=50 + s)
+    a = RandomizedSearchCV(pipe, espaco, n_iter=40, cv=interno, random_state=s).fit(X, y).best_score_
+    b = cross_val_score(RandomizedSearchCV(pipe, espaco, n_iter=40, cv=interno, random_state=s), X, y, cv=externo).mean()
+    dif.append(a - b)
+    print(f"semente {s}: busca = {a:.3f} | aninhada = {b:.3f} | otimismo = {a - b:+.3f}")
+print(f"Otimismo médio: {np.mean(dif):+.3f}")
+```
+@@NOTE O otimismo médio é positivo (cerca de +0,02), mas varia bastante de semente para semente e pode até ser negativo em uma delas: com poucos dados, as estimativas são ruidosas. A conclusão confiável vem da média de várias repetições, e não de um único experimento.
+@@PROJ Relatório de otimização de hiperparâmetros em Digits | Cap04
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits* (Digits), do repositório **UCI Machine Learning**, incluído no scikit-learn (`load_digits`).
+
+**Contexto.** Uma equipe quer escolher, entre três algoritmos, o que melhor reconhece dígitos manuscritos, com **orçamento fixo de 12 tentativas por algoritmo**. O relatório deve mostrar como a busca evoluiu e quais hiperparâmetros mais importaram.
+
+**Tarefas.**
+1. Separe 25% dos dados como **teste final** (estratificado, semente fixa). Não toque nele até o fim.
+2. Para cada um de três algoritmos (SVM com kernel RBF, floresta aleatória e `HistGradientBoostingClassifier`), defina um **espaço de busca** apropriado (use escala logarítmica quando fizer sentido).
+3. Rode `RandomizedSearchCV` com 12 tentativas e validação cruzada de 3 partes, **apenas no treino**.
+4. Desenhe um gráfico com a **melhor nota até agora** em função do número de tentativas, uma curva por algoritmo.
+5. Para o algoritmo vencedor na validação, calcule a correlação de Spearman entre cada hiperparâmetro e a nota.
+6. Avalie o vencedor **uma única vez** no teste final.
+7. Escreva um parágrafo (6 a 8 linhas): qual algoritmo venceu? A nota de validação do vencedor é otimista? O orçamento foi suficiente (olhando as curvas)? O que você faria com mais tempo?
+
+**Entregáveis.** Um notebook (ou script) comentado, o gráfico de convergência e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import loguniform, randint, uniform, spearmanr
+from sklearn.datasets import load_digits
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
+from sklearn.model_selection import train_test_split, RandomizedSearchCV, StratifiedKFold
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+cv = StratifiedKFold(3, shuffle=True, random_state=0)
+
+algoritmos = {
+    "SVM": (SVC(), {"C": loguniform(1e-2, 1e3), "gamma": loguniform(1e-5, 1)}),
+    "Floresta": (RandomForestClassifier(random_state=0, n_jobs=-1),
+                 {"n_estimators": randint(20, 150), "max_depth": randint(3, 20), "max_features": uniform(0.05, 0.9)}),
+    "Boosting": (HistGradientBoostingClassifier(max_iter=60, random_state=0),
+                 {"learning_rate": loguniform(0.02, 0.5), "max_leaf_nodes": randint(4, 40), "l2_regularization": loguniform(1e-4, 10)}),
+}
+buscas = {}
+for nome, (modelo, espaco) in algoritmos.items():
+    buscas[nome] = RandomizedSearchCV(modelo, espaco, n_iter=12, cv=cv, random_state=0, refit=True).fit(Xtr, ytr)
+    print(f"{nome:9s} melhor validação = {buscas[nome].best_score_:.3f}")
+
+for nome, b in buscas.items():
+    notas = pd.Series(b.cv_results_["mean_test_score"])
+    plt.plot(range(1, 13), notas.cummax(), "o-", label=nome)
+plt.xlabel("tentativas"); plt.ylabel("melhor nota até agora"); plt.legend(); plt.title("Convergência da busca"); plt.show()
+
+vencedor = max(buscas, key=lambda n: buscas[n].best_score_)
+res = pd.DataFrame(buscas[vencedor].cv_results_)
+print("\nVencedor:", vencedor)
+for h in algoritmos[vencedor][1]:
+    print(f"  {h:18s} rho = {spearmanr(res['param_' + h].astype(float), res['mean_test_score'])[0]:+.2f}")
+print(f"Teste final do vencedor: {buscas[vencedor].score(Xte, yte):.3f}")
+```
+@@RUBRICA
+- O teste final foi separado antes e usado apenas uma vez, no vencedor.
+- Os três espaços de busca são plausíveis e usam escala logarítmica quando adequado.
+- Todos os algoritmos tiveram o mesmo orçamento (12 tentativas) e a mesma validação.
+- O gráfico de convergência compara os algoritmos e é discutido no texto.
+- A análise de importância é apresentada com cautela (correlação simples, poucas tentativas).
+- O texto discute o otimismo da nota de validação e o que mudaria com mais orçamento.
+@@NOTE Na execução de referência, o SVM venceu com folga na validação (0,989), enquanto a floresta e o boosting empataram em 0,967. Com apenas 12 tentativas e poucas iterações de boosting, não dá para dizer que o boosting é pior em geral: ele pode simplesmente precisar de mais orçamento. A correlação de Spearman (C: +0,53; gamma: +0,55) é uma indicação grosseira com 12 pontos, e não uma conclusão. O teste final (0,993) ficou ligeiramente acima da validação: o otimismo da busca é uma tendência média, e não se manifesta em toda execução.
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits (32×32) e Letter Recognition (letras maiúsculas).
+- **Kaggle:** Digit Recognizer (MNIST), onde você pode repetir o projeto em escala maior.

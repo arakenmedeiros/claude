@@ -1,0 +1,269 @@
+MC: HPO é a sigla de:
+a) High Performance Output.
+b) Hyperparameter Optimization (otimização de hiperparâmetros).
+c) Hybrid Prediction Operator.
+d) Hidden Parameter Observation.
+R: b | HPO significa otimização de hiperparâmetros, núcleo do AutoML clássico.
+
+MC: Qual das opções é um hiperparâmetro do SVM com kernel RBF?
+a) Os vetores de suporte aprendidos.
+b) Os coeficientes do hiperplano.
+c) O valor de C.
+d) A classe prevista para um exemplo.
+R: c | C é definido antes do treino. Os demais itens são aprendidos pelo modelo.
+
+MC: Em um espaço de busca, um hiperparâmetro condicional é aquele que:
+a) só existe ou só faz sentido se outra escolha foi feita.
+b) assume apenas valores negativos.
+c) é sempre inteiro.
+d) não pode ser otimizado.
+R: a | Por exemplo, gamma só importa quando o kernel é RBF.
+
+MC: Por que sortear o valor de C de um SVM em escala logarítmica?
+a) Porque assim os valores ficam sempre acima de 1.
+b) Porque isso elimina o sobreajuste.
+c) Porque cada ordem de grandeza passa a ter a mesma chance de ser testada.
+d) Porque o scikit-learn exige.
+R: c | Em sorteio uniforme de 0,01 a 1000, os valores pequenos quase nunca aparecem.
+
+MC: No experimento do capítulo, qual fração dos valores sorteados de forma uniforme entre 0,01 e 1000 ficou abaixo de 1?
+a) Cerca de 0,1% (praticamente nenhum).
+b) Cerca de 40%.
+c) Cerca de 50%.
+d) Cerca de 90%.
+R: a | Menos de 1 em 1000 sorteios uniformes cai abaixo de 1, ao passo que o sorteio logarítmico dá cerca de 40%.
+
+MC: A busca em grade (grid search):
+a) sorteia combinações ao acaso.
+b) testa todas as combinações de valores previamente escolhidos.
+c) usa os resultados anteriores para decidir a próxima tentativa.
+d) elimina a necessidade de validação.
+R: b | A grade percorre o produto cartesiano das listas de valores.
+
+MC: Se há 4 hiperparâmetros com 5 valores cada, quantas combinações a grade testa?
+a) 20.
+b) 625.
+c) 120.
+d) 1.024.
+R: b | 5 × 5 × 5 × 5 = 625.
+
+MC: Qual é o principal problema da busca em grade com muitos hiperparâmetros?
+a) Ela não consegue testar valores inteiros.
+b) O número de combinações cresce exponencialmente.
+c) Ela sempre sobreajusta.
+d) Ela só funciona com árvores.
+R: b | O custo é k elevado a d, a chamada explosão combinatória.
+
+MC: Segundo Bergstra e Bengio (2012), por que a busca aleatória costuma superar a grade?
+a) Porque o sorteio é sempre mais preciso.
+b) Porque a aleatória usa menos memória.
+c) Porque poucos hiperparâmetros realmente importam, e a aleatória testa mais valores distintos deles.
+d) Porque a grade não aceita escala logarítmica.
+R: c | Com poucos botões importantes, a aleatória explora mais valores relevantes com o mesmo orçamento.
+
+MC: Na busca em grade, se um dos botões for irrelevante, o que acontece?
+a) O botão é ignorado automaticamente.
+b) O orçamento é desperdiçado, pois os mesmos valores dos botões importantes se repetem.
+c) A busca fica mais rápida.
+d) A grade falha.
+R: b | Cada valor do botão irrelevante repete os mesmos pares dos botões importantes.
+
+MC: Qual classe do scikit-learn realiza busca aleatória com validação cruzada?
+a) RandomForestClassifier.
+b) GridSearchCV.
+c) RandomizedSearchCV.
+d) StratifiedKFold.
+R: c | RandomizedSearchCV sorteia n_iter configurações de distribuições.
+
+MC: No RandomizedSearchCV, o argumento n_iter define:
+a) o número de partes da validação cruzada.
+b) o número de configurações sorteadas.
+c) o número de árvores da floresta.
+d) o número de núcleos usados.
+R: b | n_iter é o orçamento de tentativas.
+
+MC: A distribuição loguniform(1e-2, 1e3) do scipy serve para:
+a) sortear inteiros.
+b) sortear categorias.
+c) sortear valores em escala logarítmica entre 0,01 e 1000.
+d) calcular logaritmos.
+R: c | É a escolha adequada para hiperparâmetros como C e gamma.
+
+MC: A "paisagem de hiperparâmetros" é:
+a) um mapa que relaciona combinações de hiperparâmetros ao desempenho.
+b) a tabela de dados de treino.
+c) a lista de bibliotecas instaladas.
+d) um tipo de gráfico de dispersão dos rótulos.
+R: a | Cada ponto é uma combinação e sua cor ou altura é a nota de validação.
+
+MC: No mapa de Digits com SVM, a região de resultados muito ruins corresponde a:
+a) gamma grande demais ou C pequeno demais.
+b) C e gamma ambos intermediários.
+c) qualquer valor de C.
+d) C muito grande e gamma muito pequeno.
+R: a | Nesses casos o modelo ou memoriza pontos isolados ou fica rígido de menos.
+
+MC: No experimento com 27 avaliações, o botão tol era quase irrelevante. O que o resultado mostrou?
+a) A grade venceu todas as repetições.
+b) Grade e aleatória empataram exatamente.
+c) A aleatória ficou pior que a grade.
+d) A aleatória superou a grade em todas as 8 repetições.
+R: d | A grade repete poucos pares de C e gamma; a aleatória testa 27 valores distintos de cada um.
+
+MC: O que significam "retornos decrescentes" na busca de hiperparâmetros?
+a) A nota cai a cada tentativa.
+b) As primeiras tentativas trazem a maior parte do ganho; depois, cada tentativa adiciona pouco.
+c) O tempo de busca diminui.
+d) O modelo piora na validação.
+R: b | A curva da melhor nota até agora sobe rápido no início e depois se estabiliza.
+
+MC: Qual argumento permite paralelizar a busca usando todos os núcleos do computador no scikit-learn?
+a) n_jobs=-1.
+b) random_state=-1.
+c) cv=-1.
+d) scoring=-1.
+R: a | n_jobs=-1 usa todos os núcleos disponíveis.
+
+MC: Por que a nota best_score_ de uma busca tende a ser otimista?
+a) Porque o vencedor foi escolhido justamente por ter a melhor nota na validação, o que inclui sorte.
+b) Porque a validação cruzada sempre erra para cima.
+c) Porque o teste final contamina a busca.
+d) Porque a busca usa dados do futuro.
+R: a | A seleção entre muitas configurações infla a nota do melhor.
+
+MC: Na validação aninhada, o laço interno serve para:
+a) medir o desempenho final.
+b) escolher os hiperparâmetros dentro do treino de cada rodada externa.
+c) embaralhar os rótulos.
+d) padronizar os dados.
+R: b | O laço interno realiza a busca; o externo mede o resultado em dados que a busca nunca viu.
+
+MC: Na validação aninhada, o que o laço externo faz?
+a) Ajusta os hiperparâmetros.
+b) Treina vários algoritmos.
+c) Estima o desempenho do processo inteiro, usando partes de teste que não participaram da busca.
+d) Padroniza as colunas.
+R: c | A média das notas externas é a estimativa honesta.
+
+MC: Como se faz a validação aninhada de forma simples no scikit-learn?
+a) Passando um objeto GridSearchCV ao cross_val_score.
+b) Usando duas vezes o train_test_split sem buscar.
+c) Aumentando n_jobs.
+d) Usando DummyClassifier.
+R: a | O objeto de busca é tratado como um estimador e avaliado externamente.
+
+MC: No experimento com 80 exemplos, a nota aninhada em relação à nota comum da busca foi:
+a) maior.
+b) igual.
+c) menor, indicando otimismo da busca comum.
+d) impossível de calcular.
+R: c | A nota comum foi cerca de 3 pontos percentuais acima da aninhada.
+
+MC: Quando o otimismo da busca tende a ser maior?
+a) Com muitos dados e poucas combinações.
+b) Com poucos dados e muitas combinações.
+c) Com muitos dados e muitas combinações.
+d) Nunca varia.
+R: b | Menos dados e mais candidatos aumentam a chance de sorte na seleção.
+
+MC: Qual é a principal desvantagem da validação aninhada?
+a) Ela é muito mais cara computacionalmente.
+b) Ela produz notas otimistas.
+c) Ela não funciona com SVM.
+d) Ela exige rótulos aleatórios.
+R: a | O custo se multiplica pelo número de partes do laço externo.
+
+MC: Uma alternativa prática à validação aninhada é:
+a) usar o teste final apenas ao longo da busca.
+b) reduzir o número de dados.
+c) padronizar o alvo.
+d) separar um teste final intocado, usado só no fim.
+R: d | A ideia é a mesma: a avaliação final não participa da busca.
+
+MC: Em Probst, Boulesteix e Bischl (2019), o conceito de "ajustabilidade" (tunability) refere-se a:
+a) quanto o desempenho pode melhorar ao ajustar um hiperparâmetro em relação a um valor padrão.
+b) o tempo de treino de um modelo.
+c) o número de classes do problema.
+d) o tamanho do conjunto de teste.
+R: a | Mede o ganho potencial de ajustar um hiperparâmetro em comparação com um valor de referência.
+
+MC: Qual é uma boa prática ao iniciar um projeto de HPO?
+a) Começar pelo default e por uma linha de base.
+b) Começar direto por uma grade enorme.
+c) Ignorar a escala logarítmica.
+d) Usar apenas o teste final para escolher.
+R: a | Saber de onde se parte dá sentido ao ganho obtido pela busca.
+
+MC: Qual é o papel da busca aleatória em relação a métodos mais sofisticados de HPO?
+a) Ela não serve como comparação.
+b) Ela é uma linha de base obrigatória.
+c) Ela é sempre pior e dispensável.
+d) Ela só se aplica a redes neurais.
+R: b | Qualquer método sofisticado precisa superar a busca aleatória para justificar sua complexidade.
+
+MC: Em RandomizedSearchCV, qual é a vantagem de passar distribuições (como loguniform) em vez de listas fixas?
+a) Permite sortear valores novos a cada tentativa, em vez de repetir uma lista curta.
+b) Elimina a necessidade de validação cruzada.
+c) Garante que o melhor valor seja encontrado.
+d) Reduz o número de dados.
+R: a | Distribuições permitem explorar valores diferentes de cada hiperparâmetro em cada tentativa.
+
+DISC: O que são hiperparâmetros e por que a posição de todos os botões deve ser buscada em conjunto?
+R: São botões definidos antes do treino. Eles interagem: o melhor valor de um pode depender dos outros, de modo que ajustá-los isoladamente pode não achar a melhor combinação.
+
+DISC: Descreva os cinco tipos de hiperparâmetro apresentados e dê um exemplo de cada.
+R: Contínuo (taxa de aprendizado), inteiro (número de árvores), categórico (tipo de kernel), em escala logarítmica (C do SVM) e condicional (gamma, que só existe com kernel RBF).
+
+DISC: Explique por que sortear C uniformemente entre 0,01 e 1000 é um erro e como a escala logarítmica o corrige.
+R: Quase todo o intervalo uniforme está acima de 1, então valores pequenos quase não são testados. Na escala logarítmica, cada ordem de grandeza tem igual chance, cobrindo todas as faixas.
+
+DISC: Explique como funciona a busca em grade e calcule o número de treinos para 3 hiperparâmetros com 4 valores cada, usando validação cruzada de 5 partes.
+R: Testa todas as combinações. São 4 × 4 × 4 = 64 combinações e 64 × 5 = 320 treinos.
+
+DISC: Por que o custo da busca em grade é chamado de explosão combinatória? Dê um exemplo numérico.
+R: O número de combinações cresce de forma multiplicativa (k elevado a d). Com 5 valores em 10 hiperparâmetros, são quase 10 milhões de avaliações.
+
+DISC: Explique a ideia de Bergstra e Bengio (2012) sobre a eficiência da busca aleatória.
+R: Em muitos problemas só poucos hiperparâmetros importam, e quais importam varia. A busca aleatória testa um valor novo de cada botão em cada tentativa; a grade repete valores, desperdiçando orçamento.
+
+DISC: Por que a grade pode ser uma boa escolha em alguns casos? Quando a aleatória é preferível?
+R: Com poucos hiperparâmetros e faixa bem conhecida, a grade é simples e produz tabelas organizadas para exploração. Em espaços maiores, a aleatória é mais eficiente com o mesmo orçamento.
+
+DISC: Descreva o experimento que comparou grade e aleatória com 27 avaliações. O que ele mostrou e por quê?
+R: Com um botão quase irrelevante (tol), a grade repetiu os mesmos pares de C e gamma e obteve 0,983; a aleatória, com 27 valores distintos, superou a grade nas 8 repetições (média 0,989).
+
+DISC: O que é a paisagem de hiperparâmetros e que informações ela fornece sobre o problema?
+R: É o mapa da nota de validação em função dos hiperparâmetros. Mostra regiões boas e ruins, a extensão do platô de bons resultados e se há botões que quase não alteram a nota.
+
+DISC: Explique os retornos decrescentes na busca de hiperparâmetros e como isso orienta a definição de orçamento.
+R: As primeiras tentativas dão a maior parte do ganho; depois, cada nova tentativa adiciona pouco. Convém fixar um orçamento de tempo ou tentativas e parar quando os ganhos forem mínimos.
+
+DISC: Por que a nota best_score_ de uma busca é otimista? Relacione com o efeito do vencedor.
+R: O vencedor foi escolhido por ter a melhor nota na validação, que inclui um componente de sorte. Entre muitas configurações, a melhor tende a ter nota inflada, como entre muitos competidores em um sorteio.
+
+DISC: Explique, passo a passo, como funciona a validação aninhada.
+R: O laço externo divide treino e teste; para cada divisão, o laço interno faz a busca só no treino externo; o melhor modelo é avaliado no teste externo; a nota final é a média dos testes externos.
+
+DISC: Compare a validação aninhada com um teste final separado. Quando usar cada uma?
+R: Ambas evitam que a avaliação final participe da busca. A aninhada usa melhor poucos dados, mas custa muito mais; o teste final é mais barato e adequado quando há dados suficientes.
+
+DISC: No experimento com 80 exemplos, a nota comum foi 0,979 e a aninhada 0,950. Interprete a diferença.
+R: A diferença de cerca de 3 pontos percentuais é o otimismo da busca: a nota comum reflete a escolha do vencedor na validação, ao passo que a aninhada estima o desempenho do processo inteiro em dados não vistos.
+
+DISC: De que fatores depende o tamanho do otimismo da busca?
+R: Cresce com o menor número de dados, o maior número de configurações testadas e a maior variância da validação.
+
+DISC: Como identificar quais hiperparâmetros mais importam usando os resultados de uma busca aleatória? Que cuidado tomar?
+R: Calcula-se a correlação (por exemplo, de Spearman) entre cada hiperparâmetro e a nota. Cuidado: é uma análise simples; efeitos podem se combinar e o resultado depende do conjunto de dados.
+
+DISC: Por que fixar hiperparâmetros pouco importantes pode ser vantajoso para o orçamento?
+R: Reduz a dimensão do espaço de busca, concentrando as tentativas nos botões que realmente influenciam o desempenho, o que dá melhores resultados com o mesmo orçamento.
+
+DISC: Cite quatro boas práticas de HPO apresentadas no capítulo e justifique uma delas.
+R: Começar pelo default e linha de base; usar escala logarítmica; preferir aleatória à grade em espaços maiores; definir orçamento; medir com honestidade; registrar tudo; repetir com sementes. Justificativa: medir com honestidade evita otimismo.
+
+DISC: Por que o pré-processamento deve estar dentro do pipeline durante a busca de hiperparâmetros?
+R: Para que imputação, escala e seleção sejam reaprendidas em cada divisão da validação, evitando vazamento e permitindo buscar também escolhas do pré-processamento.
+
+DISC: Por que a busca aleatória é considerada a linha de base obrigatória para métodos de HPO mais sofisticados?
+R: Porque é simples, paralelizável e surpreendentemente forte. Um método mais complexo só se justifica se superá-la com o mesmo orçamento.
