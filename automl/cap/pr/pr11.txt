@@ -1,0 +1,203 @@
+@@EX 1 | Contando arquiteturas | básico
+Considere um espaço em cadeia com 1 a 4 camadas ocultas, largura de cada camada em {16, 32, 64} e ativação em {`relu`, `tanh`, `logistic`} (uma ativação única para a rede toda). (a) Calcule o tamanho do espaço pela fórmula. (b) Confirme por enumeração com `itertools.product`. (c) Se cada arquitetura levasse 2 minutos para treinar, quantas horas levaria para avaliar todas?
+
+*Pergunta:* o que acontece com o tamanho do espaço se acrescentarmos mais um valor de largura (por exemplo, 128)?
+@@SOL
+```python
+import itertools
+
+larguras, ativacoes, max_camadas = [16, 32, 64], ["relu", "tanh", "logistic"], 4
+formula = len(ativacoes) * sum(len(larguras) ** L for L in range(1, max_camadas + 1))
+enumerado = sum(1 for L in range(1, max_camadas + 1) for _ in itertools.product(larguras, repeat=L) for _ in ativacoes)
+print("Pela fórmula :", formula)
+print("Enumerando   :", enumerado)
+print("Tempo total  : %.1f horas (2 min por arquitetura)" % (formula * 2 / 60))
+
+larguras2 = larguras + [128]
+novo = len(ativacoes) * sum(len(larguras2) ** L for L in range(1, max_camadas + 1))
+print("Com largura 128 também:", novo, f"(x{novo / formula:.1f})")
+```
+@@NOTE O espaço tem 3 × (3 + 9 + 27 + 81) = 360 arquiteturas (fórmula e enumeração coincidem). Avaliar todas levaria 12 horas, mesmo com um espaço tão pequeno. Acrescentar a largura 128 leva o espaço a 1.020 arquiteturas (2,8 vezes maior): o tamanho cresce **exponencialmente** com o número de camadas e depressa com cada opção nova. Por isso a estratégia de busca e a estimativa barata importam tanto.
+@@EX 2 | Maior é sempre melhor? | intermediário
+No conjunto **Digits**, sorteie 40 arquiteturas (1 a 3 camadas, larguras em {8, 16, 32, 64, 128}, ativação `relu` ou `tanh`, `random_state=0` para o sorteio), treine cada uma com `MLPClassifier` (`max_iter=40`) e meça a acurácia de validação. Calcule a correlação de Spearman entre o **número de parâmetros** e a acurácia, e mostre as três melhores redes.
+
+*Pergunta:* mais parâmetros significam mais acurácia? Há redes pequenas entre as melhores?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from scipy.stats import spearmanr
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_digits(return_X_y=True)
+Xa, Xv, ya, yv = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+sc = StandardScaler().fit(Xa); Xa, Xv = sc.transform(Xa), sc.transform(Xv)
+r = np.random.default_rng(0)
+res = []
+for _ in range(40):
+    L = int(r.integers(1, 4)); h = tuple(int(r.choice([8, 16, 32, 64, 128])) for _ in range(L)); ativ = str(r.choice(["relu", "tanh"]))
+    d = [64, *h, 10]; params = sum(i * o + o for i, o in zip(d[:-1], d[1:]))
+    acc = MLPClassifier(h, activation=ativ, max_iter=40, random_state=0).fit(Xa, ya).score(Xv, yv)
+    res.append((acc, params, h, ativ))
+rho, _ = spearmanr([p for _, p, _, _ in res], [a for a, _, _, _ in res])
+print("Spearman (parâmetros x acurácia): %.2f" % rho)
+for acc, params, h, ativ in sorted(res, reverse=True)[:3]: print(f"  {acc:.3f}  {params:>6d} parâmetros  {h} {ativ}")
+print("Menor rede entre as 10 melhores:", min(sorted(res, reverse=True)[:10], key=lambda t: t[1])[1], "parâmetros")
+```
+@@NOTE A correlação de Spearman entre parâmetros e acurácia foi de 0,73: **em geral**, redes maiores acertam mais, mas a relação está longe de perfeita. As três melhores redes têm de 13 mil a 17 mil parâmetros e, entre as dez melhores, a menor tem apenas 4.810 parâmetros: há redes **pequenas** quase tão boas quanto as grandes. Crescer ajuda no começo, depois os ganhos se achatam.
+@@EX 3 | Aleatória ou hill climbing? | intermediário
+No conjunto **Breast Cancer** (UCI), defina um espaço com 1 a 3 camadas ocultas (larguras em {4, 8, 16, 32, 64}) e ativação `relu` ou `tanh`. Compare, com orçamento de **15 arquiteturas** e **5 sementes**: (a) busca aleatória; (b) *hill climbing*: parte de uma arquitetura aleatória e, em cada passo, avalia uma **mutação** da melhor até agora (muda uma largura, adiciona ou remove uma camada, ou troca a ativação), ficando com a mutação se ela melhorar. Treine com `MLPClassifier(max_iter=100)` e avalie na validação; mostre a melhor nota média e o desvio de cada método.
+
+*Pergunta:* qual método foi melhor? A diferença é maior que o desvio entre sementes?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+Xa, Xv, ya, yv = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+sc = StandardScaler().fit(Xa); Xa, Xv = sc.transform(Xa), sc.transform(Xv)
+LARG, ATIV = [4, 8, 16, 32, 64], ["relu", "tanh"]
+cache = {}
+def nota(a):
+    if a not in cache: cache[a] = MLPClassifier(a[0], activation=a[1], max_iter=100, random_state=0).fit(Xa, ya).score(Xv, yv)
+    return cache[a]
+def sorteia(r):
+    return (tuple(int(r.choice(LARG)) for _ in range(int(r.integers(1, 4)))), str(r.choice(ATIV)))
+def muta(a, r):
+    h, at = list(a[0]), a[1]; op = int(r.integers(4))
+    if op == 0: h[int(r.integers(len(h)))] = int(r.choice(LARG))
+    elif op == 1 and len(h) < 3: h.insert(int(r.integers(len(h) + 1)), int(r.choice(LARG)))
+    elif op == 2 and len(h) > 1: h.pop(int(r.integers(len(h))))
+    else: at = "tanh" if at == "relu" else "relu"
+    return (tuple(h), at)
+B = 15; R = {"aleatória": [], "hill climbing": []}
+for s in range(5):
+    r = np.random.default_rng(s)
+    R["aleatória"].append(max(nota(sorteia(r)) for _ in range(B)))
+    r = np.random.default_rng(100 + s); atual = sorteia(r); melhor = nota(atual)
+    for _ in range(B - 1):
+        f = muta(atual, r)
+        if nota(f) > melhor: atual, melhor = f, nota(f)
+    R["hill climbing"].append(melhor)
+for k, v in R.items(): print(f"{k:<14s} média = {np.mean(v):.4f}  desvio = {np.std(v):.4f}  valores = {np.round(v, 3).tolist()}")
+```
+@@NOTE Médias em 5 sementes: aleatória 0,9661 e hill climbing 0,9637, ambas com desvio de 0,0023. A diferença (0,0024) é do tamanho do desvio e o hill climbing não foi melhor: com 15 avaliações em um espaço generoso, a busca aleatória já alcança bons valores (0,965 em quase todas as sementes). Em orçamentos tão curtos, estratégias guiadas têm pouco tempo para se pagar. Não há evidência de que um método supere o outro neste experimento.
+@@EX 4 | Quanto se pode confiar numa avaliação barata? | avançado
+No conjunto **Digits**, sorteie 30 arquiteturas (como no Exercício 2) e meça a acurácia de validação com **5**, **15** e **60** iterações (épocas). (a) Calcule a correlação de Spearman de 5 e de 15 iterações com 60. (b) Simule um *Successive Halving* de duas rodadas: avalie todas com 5 iterações, mantenha as 10 melhores, reavalie-as com 60 e escolha a melhor. A escolha coincide com a melhor das 30 com 60 iterações? Qual a fração do custo (em iterações) em relação a treinar todas com 60?
+
+*Pergunta:* o que os resultados dizem sobre o perigo de cortar candidatas cedo demais?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from scipy.stats import spearmanr
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_digits(return_X_y=True)
+Xa, Xv, ya, yv = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+sc = StandardScaler().fit(Xa); Xa, Xv = sc.transform(Xa), sc.transform(Xv)
+r = np.random.default_rng(1)
+arqs = [(tuple(int(r.choice([8, 16, 32, 64, 128])) for _ in range(int(r.integers(1, 4)))), str(r.choice(["relu", "tanh"]))) for _ in range(30)]
+def nota(a, it): return MLPClassifier(a[0], activation=a[1], max_iter=it, random_state=0).fit(Xa, ya).score(Xv, yv)
+N = {it: np.array([nota(a, it) for a in arqs]) for it in (5, 15, 60)}
+print("Spearman  5 x 60 iterações: %.2f" % spearmanr(N[5], N[60])[0])
+print("Spearman 15 x 60 iterações: %.2f" % spearmanr(N[15], N[60])[0])
+mantidas = np.argsort(-N[5])[:10]
+escolha = mantidas[np.argmax(N[60][mantidas])]
+print("Melhor das 30 (60 iterações): índice", int(np.argmax(N[60])), "nota %.3f" % N[60].max())
+print("Escolha do halving          : índice", int(escolha), "nota %.3f" % N[60][escolha])
+print("Custo relativo: %.0f%%" % (100 * (30 * 5 + 10 * 60) / (30 * 60)))
+```
+@@NOTE As correlações com 60 iterações foram de 0,86 (5 iterações) e 0,90 (15 iterações): quanto mais cara a estimativa, mais fiel a ordem. O halving manteve as 10 melhores com 5 iterações e escolheu exatamente a melhor rede das 30 (nota 0,980), com 42% do custo. O resultado é favorável porque a correlação é alta; com correlação menor, a melhor rede poderia ser cortada na primeira rodada. Vale lembrar que este é um único sorteio de 30 arquiteturas: seria preciso repetir com outras sementes para medir a frequência de acertos.
+@@PROJ Uma rede enxuta por busca de arquitetura | Cap11
+**Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)* (UCI, via scikit-learn), com duas alterações **simuladas por você** para tornar o problema mais difícil: 70 colunas de ruído e 10% de rótulos trocados ao acaso.
+
+**Contexto.** Uma equipe quer uma rede neural pequena o bastante para rodar em um dispositivo simples. A meta não é só acertar: é acertar com **poucos parâmetros**.
+
+**Atenção ética.** Os dados são de uso didático e foram deliberadamente alterados. O modelo **não é diagnóstico médico**.
+
+**Tarefas.**
+1. Monte o conjunto, separe 25% para **teste final** (estratificado) e, do restante, 30% para **validação**. Padronize com `StandardScaler` ajustado só no treino.
+2. Defina um espaço em cadeia: 1 a 3 camadas ocultas, larguras em {4, 8, 16, 32, 64} e ativação `relu` ou `tanh`. Calcule o tamanho do espaço.
+3. Rode duas estratégias com orçamento de **40 arquiteturas**, em 3 sementes: busca aleatória e *hill climbing* (como no Exercício 3).
+4. Registre, para todas as arquiteturas avaliadas, a acurácia de validação e o número de parâmetros.
+5. Construa a **fronteira de Pareto** (acurácia × parâmetros) com tudo o que foi avaliado.
+6. Escolha a **menor rede dentro de 1 ponto percentual** da melhor acurácia de validação e meça-a **uma única vez** no teste. Compare com a rede de maior acurácia de validação.
+7. Escreva um parágrafo (8 a 10 linhas) discutindo: qual estratégia foi melhor, quanto se economizou em parâmetros e o que o tamanho do teste permite concluir.
+
+**Entregáveis.** Um notebook (ou script) comentado, a tabela de resultados, a fronteira de Pareto (gráfico ou lista) e o parágrafo.
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+rng = np.random.default_rng(0)
+X = np.hstack([X, rng.normal(size=(len(y), 70))])
+y = np.where(rng.random(len(y)) < 0.10, 1 - y, y)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+Xa, Xv, ya, yv = train_test_split(Xtr, ytr, test_size=0.3, stratify=ytr, random_state=0)
+sc = StandardScaler().fit(Xa); Xa, Xv, Xt = sc.transform(Xa), sc.transform(Xv), sc.transform(Xte)
+D = X.shape[1]
+LARG, ATIV = [4, 8, 16, 32, 64], ["relu", "tanh"]
+print("Tamanho do espaço:", len(ATIV) * sum(len(LARG) ** L for L in range(1, 4)))
+cache = {}
+def avalia(a):
+    if a not in cache:
+        m = MLPClassifier(a[0], activation=a[1], max_iter=100, random_state=0).fit(Xa, ya)
+        d = [D, *a[0], 2]; cache[a] = (m.score(Xv, yv), sum(i * o + o for i, o in zip(d[:-1], d[1:])), m.score(Xt, yte))
+    return cache[a]
+def sorteia(r): return (tuple(int(r.choice(LARG)) for _ in range(int(r.integers(1, 4)))), str(r.choice(ATIV)))
+def muta(a, r):
+    h, at = list(a[0]), a[1]; op = int(r.integers(4))
+    if op == 0: h[int(r.integers(len(h)))] = int(r.choice(LARG))
+    elif op == 1 and len(h) < 3: h.insert(int(r.integers(len(h) + 1)), int(r.choice(LARG)))
+    elif op == 2 and len(h) > 1: h.pop(int(r.integers(len(h))))
+    else: at = "tanh" if at == "relu" else "relu"
+    return (tuple(h), at)
+B = 40; vistas = set(); melhores = {"aleatória": [], "hill climbing": []}
+for s in range(3):
+    r = np.random.default_rng(s); h = [sorteia(r) for _ in range(B)]
+    melhores["aleatória"].append(max(avalia(a)[0] for a in h)); vistas.update(h)
+    r = np.random.default_rng(50 + s); atual = sorteia(r); melhor = avalia(atual)[0]; vistas.add(atual)
+    for _ in range(B - 1):
+        f = muta(atual, r); vistas.add(f)
+        if avalia(f)[0] > melhor: atual, melhor = f, avalia(f)[0]
+    melhores["hill climbing"].append(melhor)
+for k, v in melhores.items(): print(f"{k:<14s} melhor validação (3 sementes): {np.round(v, 3).tolist()}  média = {np.mean(v):.3f}")
+T = [(a,) + avalia(a) for a in vistas]            # (arq, validação, parâmetros, teste)
+front = [t for t in T if not any((u[1] >= t[1] and u[2] <= t[2]) and (u[1] > t[1] or u[2] < t[2]) for u in T)]
+front.sort(key=lambda t: t[2])
+print("Arquiteturas distintas avaliadas:", len(T), "| na fronteira:", len(front))
+for a, v, p, _ in front[-6:]: print(f"  {str(a[0]):<14s} {a[1]:<5s} parâmetros = {p:>5d}  validação = {v:.3f}")
+melhor = max(T, key=lambda t: t[1]); pequena = min([t for t in T if t[1] >= melhor[1] - 0.01], key=lambda t: t[2])
+print(f"\nMais acurada na validação : {melhor[0][0]} {melhor[0][1]} | {melhor[2]} parâmetros | val = {melhor[1]:.3f} | TESTE = {melhor[3]:.3f}")
+print(f"Menor dentro de 1 ponto    : {pequena[0][0]} {pequena[0][1]} | {pequena[2]} parâmetros | val = {pequena[1]:.3f} | TESTE = {pequena[3]:.3f}")
+print(f"Redução de parâmetros: {100 * (1 - pequena[2] / melhor[2]):.0f}%  (teste = {len(yte)} exemplos)")
+```
+@@RUBRICA
+- O espaço e o seu tamanho foram definidos e calculados corretamente (310 arquiteturas).
+- As duas estratégias usaram o mesmo orçamento e as mesmas sementes de avaliação.
+- A fronteira de Pareto foi construída com todas as arquiteturas avaliadas.
+- A escolha da rede pequena usou apenas a validação; o teste foi medido uma única vez para cada uma das duas redes.
+- O texto discute o tamanho do teste, o ruído de rótulos e evita declarar vencedor sem evidência.
+@@NOTE O espaço tem 310 arquiteturas; foram avaliadas 117 distintas. O *hill climbing* teve média de validação ligeiramente maior (0,823 contra 0,810 da aleatória), com apenas 3 sementes: é uma diferença pequena, que não permite declarar vencedor. A fronteira de Pareto tem 5 redes. A mais acurada na validação (64, 8, 4; 7.030 parâmetros; validação 0,828) e a menor dentro de 1 ponto (32, 4; 3.374 parâmetros; 0,820) tiveram a **mesma** acurácia no teste (0,706), com 52% menos parâmetros. O teste (0,706) ficou muito abaixo da validação (0,82): há ruído de rótulos (10%), 70 colunas de ruído, validação pequena (cerca de 300 exemplos) e o efeito de a busca escolher pelo melhor valor da validação. Com apenas 143 exemplos de teste, a incerteza é grande. A lição prática: a rede 52% menor custou, aqui, praticamente nada em desempenho.
+@@ALEM
+- **UCI:** Wine Quality, Spambase e Optical Recognition of Handwritten Digits (a base original do Digits).
+- **Kaggle:** Fashion-MNIST e CIFAR-10 (imagens), para experimentar NAS com redes convolucionais e o Auto-Keras.
+- **Desafio:** troque o hill climbing pela evolução regularizada do capítulo (população de 8, sorteio de 3) e compare, com várias sementes, em uma base maior.

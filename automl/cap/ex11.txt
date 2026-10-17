@@ -1,0 +1,269 @@
+MC: O que é a arquitetura de uma rede neural?
+a) O desenho da rede: número de camadas, neurônios, conexões e ativação.
+b) O valor da taxa de aprendizado apenas.
+c) O conjunto de dados de treino.
+d) A métrica usada no teste.
+R: a | Em analogia, é a planta da casa; o treino é a construção.
+
+MC: O que significa NAS?
+a) Neural Architecture Search, a busca automática da arquitetura de uma rede.
+b) Normalized Accuracy Score, uma métrica de acurácia.
+c) New Algorithm Selection, um tipo de pré-processamento.
+d) Network Accuracy Sampling, uma técnica de amostragem.
+R: a | NAS é a busca de arquitetura neural (Elsken et al., 2019).
+
+MC: Quais são os três pilares do NAS segundo Elsken, Metzen e Hutter (2019)?
+a) Espaço de busca, estratégia de busca e estimativa de desempenho.
+b) Dados, rótulos e métrica.
+c) Treino, validação e teste.
+d) Camada, neurônio e ativação.
+R: a | É a organização usada para estruturar a literatura.
+
+MC: O que define o espaço de busca?
+a) O conjunto de arquiteturas que a busca pode encontrar.
+b) A velocidade do computador.
+c) O tamanho do conjunto de teste.
+d) O número de classes do problema.
+R: a | O espaço define o teto: o que não está nele não pode ser achado.
+
+MC: O que é uma função de ativação?
+a) A regra que decide a saída de cada neurônio a partir do que ele recebe.
+b) O tempo máximo de treino.
+c) O número de camadas ocultas.
+d) O método de validação cruzada.
+R: a | Exemplos: relu e tanh.
+
+MC: O que é um espaço de busca em cadeia?
+a) Uma rede formada por uma sequência de camadas, em que a busca escolhe número e tipo delas.
+b) Uma rede formada por células repetidas.
+c) Um espaço com apenas uma arquitetura.
+d) Um espaço de hiperparâmetros contínuos apenas.
+R: a | É o espaço mais simples.
+
+MC: O que é um espaço baseado em células?
+a) Aquele em que a busca desenha um bloco pequeno, repetido e empilhado para formar a rede.
+b) Aquele em que cada neurônio é escolhido isoladamente.
+c) Aquele que usa só modelos lineares.
+d) Aquele sem camadas.
+R: a | Zoph et al. (2018) usaram células transferidas entre conjuntos de imagens.
+
+MC: Por que o espaço baseado em células reduz o custo da busca?
+a) Porque se procura só o desenho de um bloco, que depois é repetido.
+b) Porque dispensa treino.
+c) Porque usa menos dados de teste.
+d) Porque elimina a validação.
+R: a | O espaço a explorar fica muito menor que o da rede inteira.
+
+MC: No espaço do capítulo (1 a 3 camadas, 5 larguras, 2 ativações), quantas arquiteturas existem?
+a) 310.
+b) 155.
+c) 30.
+d) 1.000.
+R: a | 2 × (5 + 25 + 125) = 310.
+
+MC: Por que o capítulo escolheu um espaço de apenas 310 arquiteturas?
+a) Para poder avaliar todas e conhecer a verdade, o que é impossível em NAS real.
+b) Porque 310 é o máximo permitido pelo scikit-learn.
+c) Porque o teste só aceita 310 exemplos.
+d) Porque as redes maiores não treinam.
+R: a | Isso permitiu repetir cada estratégia 300 vezes consultando uma tabela.
+
+MC: Qual conjunto de dados foi usado no mini-NAS do capítulo?
+a) Digits (UCI, via scikit-learn).
+b) Titanic.
+c) ImageNet.
+d) Boston Housing.
+R: a | 1.797 imagens 8×8 de dígitos, 10 classes.
+
+MC: Qual modelo do scikit-learn foi usado para treinar as arquiteturas?
+a) MLPClassifier, um perceptron multicamadas.
+b) KNeighborsClassifier.
+c) DecisionTreeClassifier.
+d) LinearRegression.
+R: a | O MLPClassifier permite escolher camadas e ativação.
+
+MC: Como é medido o tamanho de uma rede no capítulo?
+a) Pelo número de parâmetros (pesos e vieses).
+b) Pelo número de linhas do conjunto de dados.
+c) Pelo tempo de execução do Python.
+d) Pelo número de classes.
+R: a | Parâmetros são os pesos e vieses aprendidos.
+
+MC: Qual é a ideia da busca por aprendizado por reforço (Zoph; Le, 2017)?
+a) Um controlador gera arquiteturas e usa a nota delas como recompensa para melhorar.
+b) Sorteia arquiteturas sem aprender.
+c) Calcula o gradiente da arquitetura.
+d) Remove a validação.
+R: a | A recompensa é o desempenho da arquitetura gerada.
+
+MC: O que caracteriza a evolução regularizada de Real et al. (2019)?
+a) Descartar sempre a arquitetura mais velha da população, e não a pior.
+b) Descartar sempre a pior.
+c) Nunca usar mutação.
+d) Usar apenas busca em grade.
+R: a | Isso favorece arquiteturas que seguem boas ao longo do tempo.
+
+MC: Como a evolução cria uma nova arquitetura?
+a) Sorteia algumas da população, escolhe a melhor e aplica uma pequena mutação.
+b) Sorteia uma nova arquitetura do zero.
+c) Soma os pesos de duas redes.
+d) Remove a camada de saída.
+R: a | Mutação: mudar largura, inserir/remover camada ou trocar ativação.
+
+MC: O que o DARTS faz de diferente?
+a) Torna a escolha entre operações contínua e a otimiza por gradiente descendente.
+b) Sorteia operações.
+c) Usa apenas evolução.
+d) Dispensa a rede.
+R: a | Liu, Simonyan e Yang (2019) propuseram a busca diferenciável.
+
+MC: O que é o compartilhamento de pesos (ENAS)?
+a) Reaproveitar pesos entre arquiteturas candidatas, em vez de treinar cada uma do zero.
+b) Usar a mesma semente em tudo.
+c) Compartilhar o conjunto de teste.
+d) Copiar pesos de outro conjunto de dados sem alterar.
+R: a | Pham et al. (2018) tratam candidatas como partes de uma grande rede.
+
+MC: Por que a busca aleatória é uma boa linha de base em NAS?
+a) Porque costuma ser surpreendentemente competitiva em espaços generosos.
+b) Porque é sempre a melhor.
+c) Porque dispensa avaliação.
+d) Porque é a única possível.
+R: a | Como no Capítulo 4, ela é difícil de superar com folga.
+
+MC: Qual dos itens NÃO é uma forma de estimar o desempenho sem treino completo?
+a) Usar o conjunto de teste para escolher a arquitetura.
+b) Treino curto.
+c) Compartilhamento de pesos.
+d) Extrapolação da curva de aprendizado.
+R: a | Escolher pelo teste causa vazamento; as demais reduzem custo.
+
+MC: O que a correlação de Spearman mede?
+a) Quão bem a ordem (postos) de duas listas coincide.
+b) A diferença de médias.
+c) O número de parâmetros.
+d) O tempo de treino.
+R: a | Vale 1 se a ordem é idêntica.
+
+MC: Qual foi a correlação de Spearman entre 10 e 40 iterações no mini-NAS?
+a) Cerca de 0,87.
+b) 0,00.
+c) 1,00.
+d) Negativa.
+R: a | Isso indica que a estimativa barata preservou bem a ordem.
+
+MC: Por que um corte baseado em estimativa barata pode ser perigoso?
+a) Porque redes que só brilham no fim do treino podem ser descartadas injustamente.
+b) Porque aumenta o conjunto de teste.
+c) Porque elimina a semente.
+d) Porque torna o modelo linear.
+R: a | Quanto menor a correlação entre fidelidades, maior o risco.
+
+MC: No mini-NAS, qual estratégia obteve melhor nota de validação mediana com 30 avaliações?
+a) A evolução regularizada (0,969 contra 0,965 da aleatória).
+b) A aleatória, com folga.
+c) Nenhuma: empataram exatamente.
+d) Nenhuma foi avaliada.
+R: a | A diferença é pequena, mas a evolução ficou mais bem posicionada.
+
+MC: O que o teste mostrou no mini-NAS sobre as duas estratégias?
+a) As escolhas chegaram a acurácias de teste praticamente iguais.
+b) A evolução venceu por 10 pontos.
+c) A aleatória falhou.
+d) O teste não foi medido.
+R: a | A vantagem na validação foi em parte otimismo da busca.
+
+MC: Por que 'ganhar na validação' não significa 'ganhar no teste'?
+a) Porque a busca otimiza a validação e o ganho pode ser parcialmente otimismo da escolha.
+b) Porque o teste é sempre pior.
+c) Porque a validação é ruim.
+d) Porque o teste não é confiável.
+R: a | É o efeito do vencedor visto no Capítulo 2.
+
+MC: O que é a fronteira de Pareto na busca de arquitetura?
+a) O conjunto de redes não dominadas em acurácia e custo.
+b) A lista das redes com mais parâmetros.
+c) A pior rede.
+d) A média das redes.
+R: a | Nenhuma outra rede é melhor nos dois objetivos.
+
+MC: Segundo o capítulo, o que mostrou a fronteira de Pareto do mini-NAS?
+a) Uma rede 55% menor que a mais acurada, perdendo cerca de um ponto de acurácia.
+b) Que a maior rede é sempre a melhor.
+c) Que redes pequenas não funcionam.
+d) Que o número de camadas não importa.
+R: a | 11.794 parâmetros contra 26.122, 0,960 contra 0,970.
+
+MC: O que defende a 'IA verde' (Schwartz et al., 2020)?
+a) Relatar o custo computacional junto com a precisão e valorizar a eficiência.
+b) Usar sempre as maiores redes.
+c) Esconder o custo.
+d) Evitar redes neurais em qualquer caso.
+R: a | Green AI propõe eficiência como critério de avaliação.
+
+MC: Em que situação o NAS tende a fazer mais sentido, segundo o capítulo?
+a) Quando uma rede neural é a escolha certa, como em imagens, áudio e texto.
+b) Sempre que há dados tabulares.
+c) Apenas com poucos exemplos.
+d) Nunca.
+R: a | Em dados tabulares típicos, árvores seguem muito competitivas.
+
+DISC: Explique a analogia entre arquitetura de rede e planta de uma casa.
+R: A planta define andares, cômodos e ligações, e os pedreiros apenas constroem; na rede, a arquitetura define camadas, neurônios e conexões, e o treino a 'constrói'. Uma planta ruim não é salva pelo treino.
+
+DISC: Descreva os três pilares do NAS e relacione-os com o AutoML clássico.
+R: Espaço de busca (o que pode ser encontrado), estratégia de busca (como explorar) e estimativa de desempenho (como avaliar depressa). Equivalem a espaço de hiperparâmetros, método de otimização e avaliação barata (multifidelidade).
+
+DISC: Por que o espaço de busca 'define o teto' do NAS?
+R: Porque a busca só pode encontrar arquiteturas que pertencem ao espaço. Se a melhor rede não está nele, nenhuma estratégia a encontrará.
+
+DISC: Compare espaços em cadeia, baseados em células e hierárquicos.
+R: Em cadeia: sequência de camadas escolhidas pela busca. Células: a busca desenha um bloco pequeno, repetido e empilhado, reduzindo o espaço. Hierárquico: células feitas de células menores, em vários níveis.
+
+DISC: Mostre como calcular o tamanho do espaço do capítulo.
+R: Para L camadas há 5^L combinações de largura; somando L = 1 a 3 dá 5 + 25 + 125 = 155; com 2 ativações, 310.
+
+DISC: Por que o capítulo usou um espaço pequeno e o avaliou por inteiro?
+R: Para conhecer a verdade (a melhor rede) e repetir as estratégias 300 vezes consultando uma tabela, algo impossível em espaços reais, o que permitiu medir com segurança.
+
+DISC: Explique as quatro famílias de estratégias de busca citadas.
+R: Aleatória: sorteia. Reforço: um controlador gera arquiteturas e recebe a nota como recompensa. Evolução: sorteia da população, escolhe a melhor, muta e descarta a mais velha. Gradiente (DARTS): escolha contínua otimizada por gradiente.
+
+DISC: Explique a evolução regularizada e por que descartar a mais velha ajuda.
+R: Em cada passo sorteia-se uma amostra, escolhe-se a melhor, gera-se uma filha por mutação e remove-se a mais velha. Isso favorece arquiteturas que continuam boas e evita que uma sorte isolada domine a população.
+
+DISC: Descreva quatro tipos de mutação usados no mini-NAS.
+R: Mudar a largura de uma camada, inserir uma camada, remover uma camada e trocar a função de ativação.
+
+DISC: O que é compartilhamento de pesos e qual problema ele resolve?
+R: Reaproveitar pesos entre candidatas, tratadas como partes de uma grande rede. Resolve o alto custo de treinar cada arquitetura do zero.
+
+DISC: Compare os resultados de busca aleatória e evolução no mini-NAS.
+R: Na validação, a evolução teve mediana um pouco maior (0,969 contra 0,965) e posto mediano 1,5 contra 6; no teste, as escolhas ficaram praticamente iguais.
+
+DISC: Por que a vantagem da evolução na validação é parcialmente ilusória?
+R: A busca escolhe o que vai melhor na validação, então parte do ganho é otimismo da seleção. O teste, que a busca nunca viu, mostra diferença muito menor.
+
+DISC: Explique o que mede a correlação de Spearman e por que ela importa em NAS.
+R: Mede a concordância entre as ordens de duas listas. Importa porque uma estimativa barata só é útil se preservar a ordem das arquiteturas em relação ao treino completo.
+
+DISC: Descreva o experimento de filtragem com avaliação barata e seu resultado.
+R: Avaliaram-se as 310 redes com 10 iterações e mantiveram-se as k melhores para treinar até 40. A melhor rede sobreviveu em todos os cortes testados (k = 10 a 120), com custo de 28% a 64%.
+
+DISC: Quando uma avaliação barata pode enganar a busca?
+R: Quando redes lentas para começar, que só brilham no fim do treino, são descartadas cedo. Quanto menor a correlação entre fidelidades, maior o risco.
+
+DISC: Cite quatro maneiras de estimar o desempenho de uma arquitetura sem treino completo.
+R: Treino curto (multifidelidade), compartilhamento de pesos, extrapolação da curva de aprendizado e preditores de desempenho.
+
+DISC: Explique a busca multiobjetivo e a fronteira de Pareto em NAS.
+R: Busca-se equilibrar acurácia e custo (parâmetros, tempo, energia). A fronteira reúne as redes não dominadas, aquelas sem outra melhor nos dois critérios ao mesmo tempo.
+
+DISC: Interprete o resultado da fronteira do mini-NAS.
+R: A rede de 11.794 parâmetros (0,960) é 55% menor que a mais acurada (26.122; 0,970), por cerca de um ponto de acurácia, o que pode ser preferível em dispositivos simples.
+
+DISC: O que é IA verde e como ela se aplica ao NAS?
+R: É a proposta de reportar o custo computacional junto com a precisão e valorizar a eficiência (Schwartz et al., 2020). Em NAS: começar pequeno, usar estimativas baratas, reaproveitar resultados e relatar o custo da busca.
+
+DISC: Quando o NAS não compensa? Dê dois motivos.
+R: Em dados tabulares típicos, em que árvores seguem muito competitivas (Grinsztajn et al., 2022), e quando há arquiteturas conhecidas e boas, pois a busca é cara e pode não superar linhas de base.
