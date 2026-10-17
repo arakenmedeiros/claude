@@ -1,0 +1,182 @@
+@@EX 1 | Validação aleatória ou temporal? | básico
+Com a série mensal de CO₂ de Mauna Loa (`statsmodels.api.datasets.co2`, médias mensais), monte atributos com os 12 últimos valores e o mês do ano, tendo como alvo a **diferença para o mesmo mês do ano anterior**. Reserve os últimos 36 meses e, com os dados restantes, estime o MAE de uma regressão `Ridge` com `KFold(5, shuffle=True)` e com `TimeSeriesSplit(5, test_size=12)`.
+
+*Pergunta:* qual validação foi mais otimista? Por que o embaralhamento é perigoso em séries?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+import statsmodels.api as sm
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import KFold, TimeSeriesSplit
+
+y = sm.datasets.co2.load_pandas().data["co2"].interpolate().resample("MS").mean().values
+y = y[:-36]
+X, a = [], []
+for t in range(12, len(y)):
+    X.append(np.r_[y[t - 12:t][::-1] - y[t - 12], np.arange(12) == t % 12]); a.append(y[t] - y[t - 12])
+X, a = np.array(X), np.array(a)
+for nome, cv in (("aleatória", KFold(5, shuffle=True, random_state=0)), ("temporal ", TimeSeriesSplit(5, test_size=12))):
+    e = [np.abs(Ridge(1.0).fit(X[tr], a[tr]).predict(X[va]) - a[va]).mean() for tr, va in cv.split(X)]
+    print(f"Validação {nome}: MAE = {np.mean(e):.3f}")
+```
+@@NOTE O MAE foi de 0,248 com a validação aleatória e de 0,295 com a temporal: a aleatória é **otimista**, embora, neste caso (um modelo linear em série diferenciada), a diferença seja pequena. Com um modelo que não extrapola, como o boosting sobre valores brutos, a diferença é enorme (0,56 contra 1,71 no capítulo). O embaralhamento é perigoso porque deixa o modelo treinar com meses posteriores aos que ele prevê, algo impossível na prática.
+@@EX 2 | Três linhas de base | básico
+Na mesma série, nos últimos 36 meses, calcule o MAE de previsões um mês à frente de três linhas de base: (a) **ingênua** (valor do mês anterior); (b) **sazonal ingênua** (mesmo mês do ano anterior); (c) **média móvel de 12 meses** (média dos 12 últimos valores).
+
+*Pergunta:* qual foi a melhor? Por que a sazonal ingênua pode perder em uma série com tendência?
+@@SOL
+```python
+import numpy as np
+import statsmodels.api as sm
+
+y = sm.datasets.co2.load_pandas().data["co2"].interpolate().resample("MS").mean().values
+n, H = len(y), 36
+real = y[n - H:]
+ing = y[n - H - 1:n - 1]
+saz = y[n - H - 12:n - 12]
+mm = np.array([y[t - 12:t].mean() for t in range(n - H, n)])
+for nome, p in (("ingênua", ing), ("sazonal ingênua", saz), ("média móvel de 12", mm)):
+    print(f"{nome:<18s} MAE = {np.abs(p - real).mean():.3f}")
+print("Crescimento médio anual da série nos últimos 36 meses: %.2f ppm/ano" % ((y[-1] - y[-37]) / 3))
+```
+@@NOTE A melhor foi a ingênua (MAE 1,077), seguida da sazonal ingênua (1,413) e da média móvel de 12 meses (1,964). A série cresce cerca de 1,36 ppm por ano; a sazonal ingênua repete o valor de um ano antes e, por isso, erra, em média, pelo crescimento anual (cerca de 1,4), e a média móvel erra ainda mais, por ficar atrasada em relação à tendência. Qualquer método que ignore a tendência é penalizado.
+@@EX 3 | Quando n-gramas importam? | intermediário
+Gere textos simulados de avaliação (como no capítulo) em duas versões: (a) **sem negação** e (b) com **40% de frases com negação** ("não bom"). Em cada versão, compare, por acurácia no teste, um TF-IDF com palavras isoladas e outro com unigramas e bigramas, ambos com regressão logística.
+
+*Pergunta:* em que situação os bigramas ajudam? O que isso sugere sobre a escolha da representação?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+
+POS = ["ótimo", "bom", "excelente", "rápido", "perfeito", "útil"]; NEG = ["ruim", "péssimo", "lento", "fraco", "horrível", "inútil"]
+SUJ = ["o produto", "a entrega", "o atendimento", "o aplicativo", "a embalagem"]
+
+def gera(n, p_neg, seed=0):
+    r = np.random.default_rng(seed); docs, ys = [], []
+    for _ in range(n):
+        pos = r.random() < 0.5; adj = r.choice(POS if pos else NEG); neg = r.random() < p_neg
+        if neg: pos = not pos
+        docs.append(f"{r.choice(SUJ)} é {'não ' if neg else ''}{adj}"); ys.append(int(pos))
+    return docs, np.array(ys)
+
+for p_neg in (0.0, 0.4):
+    D, Y = gera(1200, p_neg); Dtr, Dte, ytr, yte = train_test_split(D, Y, test_size=0.25, stratify=Y, random_state=0)
+    for ng in ((1, 1), (1, 2)):
+        m = make_pipeline(TfidfVectorizer(ngram_range=ng), LogisticRegression(max_iter=2000)).fit(Dtr, ytr)
+        print(f"negação = {int(p_neg * 100):>2d}% | n-gramas {ng}: teste = {m.score(Dte, yte):.3f}")
+```
+@@NOTE Sem negação, as palavras isoladas e os bigramas empatam em 1,000: não há nada que os bigramas capturem a mais. Com 40% de negação, as palavras isoladas caem para 0,613, enquanto os bigramas mantêm 1,000. Os bigramas só ajudam quando a informação está na **ordem ou na combinação** de palavras. Isso mostra que a representação certa depende do problema, e por isso ela entra no espaço de busca.
+@@EX 4 | Qual distorção ajuda mais? | avançado
+No Digits (treino de 300 imagens, 40% de teste, como no capítulo), compare, com 4 cópias distorcidas por imagem, quatro políticas: (a) só deslocamento (até 1,5 pixel); (b) só rotação (até 15 graus); (c) só ruído (desvio 0,8); (d) as três juntas. Meça a acurácia no teste limpo e no teste deslocado até 1 pixel e girado até 10 graus, com uma SVM (`C=10`).
+
+*Pergunta:* qual política ajudou mais sob distorção? Alguma prejudicou o teste limpo?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from scipy.ndimage import shift, rotate
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+
+X, y = load_digits(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.4, stratify=y, random_state=0)
+Xtr, ytr = Xtr[:300], ytr[:300]
+
+def distorce(Xs, r, dmax, rot, ruido):
+    out = []
+    for x in Xs:
+        im = shift(x.reshape(8, 8), r.uniform(-dmax, dmax, 2), order=1, mode="constant")
+        if rot > 0: im = rotate(im, r.uniform(-rot, rot), reshape=False, order=1, mode="constant")
+        out.append((im + r.normal(0, ruido, im.shape)).ravel())
+    return np.array(out)
+
+Xte_d = distorce(Xte, np.random.default_rng(123), 1.0, 10, 0.0)
+politicas = {"sem ampliação": (0, 0, 0), "só deslocamento": (1.5, 0, 0), "só rotação": (0, 15, 0), "só ruído": (0, 0, 0.8), "as três": (1.5, 15, 0.8)}
+for nome, (d, rot, ru) in politicas.items():
+    r = np.random.default_rng(0); Xs, ys = [Xtr], [ytr]
+    if max(d, rot, ru) > 0:
+        for _ in range(4): Xs.append(distorce(Xtr, r, d, rot, ru)); ys.append(ytr)
+    m = SVC(C=10, gamma="scale").fit(np.vstack(Xs), np.concatenate(ys))
+    print(f"{nome:<16s} teste limpo = {m.score(Xte, yte):.3f} | teste distorcido = {m.score(Xte_d, yte):.3f}")
+```
+@@NOTE Sob distorção, a política das três juntas foi a melhor (0,876), seguida de só deslocamento (0,809) e só rotação (0,687); só ruído (0,527) praticamente não ajudou, igual a não ampliar (0,533), pois o teste distorcido não contém ruído. No teste limpo, todas ficaram entre 0,947 e 0,955, com perda de no máximo 1 ponto. A lição: a ampliação deve **imitar a variação do uso real** (deslocamento e rotação, aqui); ruído é inútil quando o teste não o tem.
+@@PROJ Previsão de manchas solares com mini-AutoML | Cap12
+**Fonte dos dados.** Série anual de **manchas solares** (1700 a 2008), incluída na biblioteca `statsmodels` (`sm.datasets.sunspots`; originalmente de séries públicas de observação solar). Se preferir, use uma série do Kaggle ou da UCI de sua escolha (por exemplo, consumo de energia) e adapte as tarefas.
+
+**Contexto.** Um observatório quer prever o número de manchas do **próximo ano**. A série não tem sazonalidade anual, mas mostra um ciclo de cerca de 11 anos, e muitos modelos vão tentar aprendê-lo.
+
+**Atenção ética.** O exercício é didático. Nenhuma previsão aqui deve apoiar decisões operacionais reais.
+
+**Tarefas.**
+1. Carregue a série (coluna `SUNACTIVITY`) e reserve os **últimos 40 anos** para o teste (validação em avanço, 1 ano à frente).
+2. Monte atributos com os L valores anteriores (L em {4, 11, 22}), com ou sem **diferenciação** (alvo = `y[t] − y[t−1]`, somando de volta `y[t−1]` ao prever).
+3. Defina um espaço com os modelos `Ridge`, `RandomForestRegressor` (100 árvores) e `HistGradientBoostingRegressor`; são 3 × 3 × 2 = 18 configurações.
+4. Selecione a configuração por `TimeSeriesSplit(4, test_size=20)` usando **apenas** os dados de treino (MAE).
+5. Avalie a escolhida no teste por *walk-forward* (reajuste a cada ano) e compare com as linhas de base **ingênua** e **média dos últimos 11 anos**.
+6. Mostre também a **pior** configuração da validação e seu erro no teste.
+7. Escreva um parágrafo (8 a 10 linhas): o mini-AutoML superou as linhas de base? Que limite o ruído natural da série impõe?
+
+**Entregáveis.** Um notebook (ou script) comentado, a tabela de validação das 18 configurações, o MAE de teste dos métodos e o parágrafo.
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import itertools
+import numpy as np
+import statsmodels.api as sm
+from sklearn.linear_model import Ridge
+from sklearn.ensemble import RandomForestRegressor, HistGradientBoostingRegressor
+from sklearn.model_selection import TimeSeriesSplit
+
+y = sm.datasets.sunspots.load_pandas().data["SUNACTIVITY"].values.astype(float)
+n, H = len(y), 40
+MOD = {"ridge": lambda: Ridge(1.0), "floresta": lambda: RandomForestRegressor(100, random_state=0, n_jobs=-1),
+       "hgb": lambda: HistGradientBoostingRegressor(max_iter=100, random_state=0)}
+
+def monta(y, L, dif):
+    X, a = [], []
+    for t in range(L, len(y)):
+        b = y[t - 1] if dif else 0.0
+        X.append(y[t - L:t][::-1] - b); a.append(y[t] - b)
+    return np.array(X), np.array(a)
+
+def mae_cv(cfg):
+    mod, L, dif = cfg; X, a = monta(y[:n - H], L, dif)
+    return np.mean([np.abs(MOD[mod]().fit(X[tr], a[tr]).predict(X[va]) - a[va]).mean() for tr, va in TimeSeriesSplit(4, test_size=20).split(X)])
+
+def walk(cfg):
+    mod, L, dif = cfg; p = []
+    for t in range(n - H, n):
+        X, a = monta(y[:t], L, dif); m = MOD[mod]().fit(X, a); b = y[t - 1] if dif else 0.0
+        p.append(m.predict((y[t - L:t][::-1] - b)[None])[0] + b)
+    return np.array(p)
+
+configs = list(itertools.product(MOD, (4, 11, 22), (False, True)))
+rank = sorted((mae_cv(c), c) for c in configs)
+print("Validação temporal (MAE): 4 melhores e a pior")
+for e, c in rank[:4] + rank[-1:]: print(f"  {e:6.2f}  {c[0]:<9s} lags={c[1]:>2d} dif={'sim' if c[2] else 'não'}")
+real = y[n - H:]
+esc = rank[0][1]; pior = rank[-1][1]
+print("\nTESTE (últimos 40 anos, 1 ano à frente), MAE:")
+print(f"  mini-AutoML {esc[0]}, lags={esc[1]}, dif={'sim' if esc[2] else 'não'} : {np.abs(walk(esc) - real).mean():.2f}")
+print(f"  pior configuração {pior[0]}, lags={pior[1]}, dif={'sim' if pior[2] else 'não'}: {np.abs(walk(pior) - real).mean():.2f}")
+print(f"  ingênua                                  : {np.abs(y[n - H - 1:n - 1] - real).mean():.2f}")
+print(f"  média dos últimos 11 anos                : {np.abs(np.array([y[t - 11:t].mean() for t in range(n - H, n)]) - real).mean():.2f}")
+```
+@@RUBRICA
+- A validação usou apenas dados de treino e respeitou a ordem do tempo (TimeSeriesSplit).
+- O teste foi feito em avanço (reajuste a cada ano), com horizonte de 1 ano.
+- As linhas de base (ingênua e média de 11 anos) foram calculadas nas mesmas condições.
+- A pior configuração foi apresentada e comparada.
+- O texto discute o ruído natural da série e evita declarar superioridade sem evidência.
+@@NOTE A configuração escolhida pela validação foi a floresta aleatória com 22 atrasos e diferenciação (MAE de validação 10,60); no teste, ela errou 12,59 manchas, contra 22,74 da ingênua e 40,42 da média dos últimos 11 anos. A pior configuração (Ridge com 4 atrasos e diferenciação) errou 17,94 no teste, ainda melhor que a ingênua. O mini-AutoML superou as linhas de base com folga neste experimento, mas cuidado: o MAE de cerca de 12 é grande em relação à amplitude da série, refletindo o **ruído natural** do fenômeno solar, que nenhum modelo elimina. Também não se deve extrapolar de uma série e de uma janela de 40 anos para outras situações.
+@@ALEM
+- **UCI:** Appliances Energy Prediction, Beijing PM2.5 e Individual Household Electric Power Consumption (séries reais com muitos pontos).
+- **Kaggle:** Store Item Demand Forecasting, M5 Forecasting e IMDB Reviews (texto), além de Fashion-MNIST (imagens).
+- **Desafio:** troque as médias mensais por previsões de **12 meses à frente de uma só vez** e compare como o erro cresce com o horizonte.

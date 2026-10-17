@@ -1,0 +1,269 @@
+MC: Qual é a principal armadilha do AutoML em séries temporais?
+a) Validar com embaralhamento, vazando o futuro para o treino.
+b) Usar muitos atributos.
+c) Usar poucos modelos.
+d) Usar a semente 0.
+R: a | Em séries, o passado treina e o futuro testa.
+
+MC: O que é a previsão ingênua?
+a) Prever que o próximo valor é igual ao valor atual (mês anterior).
+b) Prever sempre zero.
+c) Prever a média do futuro.
+d) Prever o valor máximo.
+R: a | É uma linha de base difícil de superar em muitas séries.
+
+MC: O que é a previsão sazonal ingênua?
+a) Prever o valor do mês igual ao do mesmo mês do ano anterior.
+b) Prever o valor do mês anterior.
+c) Prever a média de todos os meses.
+d) Prever um valor aleatório.
+R: a | Aproveita a sazonalidade, mas ignora a tendência.
+
+MC: O que é sazonalidade?
+a) Um padrão que se repete em períodos regulares, como o verão.
+b) O crescimento contínuo da série.
+c) Um erro de medição.
+d) O número de atributos.
+R: a | Exemplo: o ciclo anual de CO₂.
+
+MC: O que é tendência em uma série temporal?
+a) Um crescimento ou queda de longo prazo.
+b) Um padrão que se repete todo ano.
+c) A média das previsões.
+d) Um tipo de modelo.
+R: a | A série de CO₂ cresce ao longo das décadas.
+
+MC: O que são atrasos (lags)?
+a) Valores passados da série usados como atributos.
+b) Erros de medição.
+c) Dados de teste.
+d) Parâmetros do modelo.
+R: a | Ex.: y(t−1), y(t−2), y(t−3).
+
+MC: O que é diferenciação em séries temporais?
+a) Prever a mudança em relação a um valor anterior, em vez do valor bruto.
+b) Dividir a série em treino e teste.
+c) Remover outliers.
+d) Normalizar a série.
+R: a | Ajuda a remover tendência e sazonalidade.
+
+MC: Por que árvores de decisão e boosting têm dificuldade com tendências?
+a) Porque não extrapolam: não preveem valores fora do que viram no treino.
+b) Porque são muito lentas.
+c) Porque ignoram atributos.
+d) Porque exigem muitas camadas.
+R: a | Isso explica o erro enorme do boosting sobre valores brutos.
+
+MC: Qual validação é correta para séries temporais?
+a) Validação temporal, com janelas que avançam no tempo.
+b) KFold com embaralhamento.
+c) Treinar com o teste.
+d) Escolher o modelo pelo teste.
+R: a | TimeSeriesSplit respeita a ordem.
+
+MC: O que mostrou o experimento de validação com boosting em valores brutos?
+a) A validação aleatória foi muito mais otimista que a temporal (0,56 contra 1,71).
+b) As duas deram o mesmo valor.
+c) A temporal foi melhor.
+d) O boosting extrapola bem a tendência.
+R: a | A aleatória permite interpolar entre vizinhos no tempo.
+
+MC: Qual configuração venceu no mini-AutoML de CO₂?
+a) Ridge com 24 atrasos, sem diferenciação.
+b) Boosting com 6 atrasos.
+c) Floresta com 12 atrasos.
+d) Naive.
+R: a | Erro de teste de 0,227.
+
+MC: Qual foi o erro de teste da previsão ingênua na série de CO₂ (últimos 36 meses)?
+a) Cerca de 1,08 ppm.
+b) Cerca de 0,23 ppm.
+c) Cerca de 5 ppm.
+d) Zero.
+R: a | O mini-AutoML teve 0,227.
+
+MC: O que é validação em avanço (walk-forward)?
+a) Reajustar o modelo a cada novo ponto e prever o seguinte.
+b) Dividir os dados aleatoriamente.
+c) Treinar uma única vez.
+d) Usar só o futuro.
+R: a | Simula o uso real.
+
+MC: O que a competição M4 comparou?
+a) Mais de 60 métodos de previsão em 100 mil séries.
+b) Apenas redes neurais.
+c) Algoritmos de classificação de texto.
+d) Métodos de visão computacional.
+R: a | Makridakis et al. (2020).
+
+MC: O que é a deriva de conceito (concept drift)?
+a) A mudança do padrão dos dados ao longo do tempo, que envelhece o modelo.
+b) Um erro de programação.
+c) Um tipo de atributo.
+d) Uma técnica de ensemble.
+R: a | Gama et al. (2014).
+
+MC: Por que um texto precisa ser vetorizado?
+a) Porque os modelos clássicos operam sobre números, não sobre palavras.
+b) Para reduzir o treino.
+c) Porque palavras são proibidas.
+d) Para eliminar o teste.
+R: a | TF-IDF é uma técnica clássica.
+
+MC: O que é o TF-IDF?
+a) Um peso que é alto para palavras frequentes no documento e raras nos demais.
+b) Um modelo de rede neural.
+c) Um tipo de validação.
+d) Um classificador.
+R: a | Palavras como 'o' e 'de' recebem peso baixo.
+
+MC: O que são n-gramas?
+a) Sequências de n palavras consecutivas usadas como atributos.
+b) Letras isoladas.
+c) Números aleatórios.
+d) Classes do problema.
+R: a | Bigramas: 'não bom'.
+
+MC: Por que bigramas ajudaram tanto no texto simulado do capítulo?
+a) Porque a negação ('não bom') inverte o sentido e só aparece na combinação de palavras.
+b) Porque aumentam o conjunto de teste.
+c) Porque removem palavras raras.
+d) Porque tornam o modelo mais lento.
+R: a | Palavras isoladas ficaram perto do acaso.
+
+MC: Qual foi o desempenho das palavras isoladas no teste do texto simulado?
+a) Cerca de 61%.
+b) 100%.
+c) 10%.
+d) Cerca de 95%.
+R: a | Perto do acaso em um problema com 40% de negação.
+
+MC: Por que o texto simulado NÃO serve para medir desempenho real?
+a) Porque foi gerado por um programa e exagera um fenômeno para fins didáticos.
+b) Porque é muito longo.
+c) Porque usa muitas classes.
+d) Porque é proibido.
+R: a | Os números ilustram um efeito, não o desempenho em textos reais.
+
+MC: O que é o BERT (Devlin et al., 2019)?
+a) Um modelo de linguagem pré-treinado, ajustado depois para tarefas específicas.
+b) Um algoritmo de busca em grade.
+c) Uma métrica.
+d) Uma base de dados de imagens.
+R: a | Baseado em Transformers.
+
+MC: O que é ajuste fino (fine-tuning)?
+a) Reajustar um modelo pré-treinado para a sua tarefa.
+b) Remover atributos.
+c) Aumentar o teste.
+d) Trocar a métrica.
+R: a | Reaproveita o conhecimento do pré-treino.
+
+MC: O que é ampliação de dados (data augmentation) em imagens?
+a) Criar novas imagens de treino com pequenas distorções das existentes.
+b) Aumentar o tamanho do teste.
+c) Remover imagens ruins.
+d) Trocar o classificador.
+R: a | Ex.: deslocar, girar, adicionar ruído.
+
+MC: O que o AutoAugment (Cubuk et al., 2019) propõe?
+a) Aprender por busca as políticas de ampliação de dados.
+b) Treinar sem dados.
+c) Usar apenas busca em grade.
+d) Substituir redes por árvores.
+R: a | O espaço é quais distorções aplicar e com que intensidade.
+
+MC: Qual foi o efeito da melhor política no teste distorcido do mini-AutoAugment?
+a) A acurácia subiu de 0,529 para 0,873.
+b) Não mudou.
+c) Caiu a 0,3.
+d) Subiu a 1,0.
+R: a | Grande ganho sob distorção.
+
+MC: Qual foi o custo da ampliação no teste limpo?
+a) Uma pequena perda (0,962 para 0,939).
+b) Perda de 50%.
+c) Nenhuma perda.
+d) Ganho de 10 pontos.
+R: a | O modelo divide capacidade entre imagens originais e distorcidas.
+
+MC: Por que o 'ruído' sozinho não ajudou no teste distorcido (Exercício 4)?
+a) Porque o teste distorcido não continha ruído, apenas deslocamento e rotação.
+b) Porque ruído é proibido.
+c) Porque a SVM não aceita ruído.
+d) Porque o treino era grande.
+R: a | A ampliação deve imitar a variação do uso real.
+
+MC: Qual é a lição sobre a validação no mini-AutoAugment?
+a) Ela deve se parecer com o uso real, pois define o que a busca valoriza.
+b) Ela pode ser qualquer coisa.
+c) Ela deve ser sempre limpa.
+d) Ela não importa.
+R: a | Como a validação tinha distorções, premiou políticas robustas a elas.
+
+MC: Qual é a prática moderna quando há poucas imagens?
+a) Usar uma rede pré-treinada e reajustá-la (aprendizado por transferência).
+b) Treinar uma rede grande do zero.
+c) Descartar o problema.
+d) Usar só regressão linear.
+R: a | Reaproveita representações aprendidas em grandes conjuntos.
+
+DISC: Por que embaralhar uma série temporal na validação é um erro?
+R: Porque o modelo treina com valores posteriores aos que vai prever (vazamento do futuro), o que não ocorre na prática e torna a estimativa de erro otimista.
+
+DISC: Explique a validação temporal e a validação em avanço.
+R: Na temporal, treina-se no passado e valida-se em janelas posteriores que avançam no tempo. Em avanço (walk-forward), reajusta-se o modelo a cada novo ponto e prevê-se o seguinte, simulando o uso real.
+
+DISC: Cite duas linhas de base para séries temporais e explique por que são necessárias.
+R: Ingênua (valor anterior) e sazonal ingênua (mesmo mês do ano anterior). São difíceis de superar em muitas séries e mostram se o modelo realmente agrega valor.
+
+DISC: Como transformar uma série em uma tabela para usar modelos do scikit-learn?
+R: Usam-se como atributos os L valores anteriores (atrasos) e informações como o mês do ano; o alvo é o valor seguinte (ou a diferença em relação a um valor anterior).
+
+DISC: O que é diferenciação e por que ajudou o boosting?
+R: Prever a mudança em relação ao mesmo mês do ano anterior. Remove tendência e sazonalidade e evita que a árvore precise extrapolar valores fora do que viu no treino.
+
+DISC: Por que o boosting sobre valores brutos teve erro tão alto na série de CO₂?
+R: Porque árvores não extrapolam: ao prever meses com valores acima de todo o treino, repetem valores que já viram, subestimando a tendência de crescimento.
+
+DISC: Descreva o espaço de busca do mini-AutoML de séries temporais do capítulo.
+R: Modelo (Ridge ou HistGradientBoosting), atrasos (6, 12 ou 24) e diferenciação (sim ou não): 12 configurações, escolhidas por validação temporal.
+
+DISC: Compare o resultado do mini-AutoML com as linhas de base.
+R: O mini-AutoML teve MAE 0,227, contra 1,077 da ingênua e 1,413 da sazonal ingênua; a pior configuração teve 1,399.
+
+DISC: Por que a previsão de 12 meses de uma vez é mais difícil que a de um mês à frente?
+R: Porque os erros se acumulam com o horizonte e os valores intermediários não são observados; por isso é preciso informar o horizonte avaliado.
+
+DISC: O que é o concept drift e como ele afeta modelos de séries?
+R: É a mudança do padrão dos dados ao longo do tempo. O modelo envelhece e perde precisão, exigindo monitoramento e reajuste.
+
+DISC: Explique o pipeline de texto com TF-IDF.
+R: O texto é vetorizado (cada palavra ou n-grama recebe um peso que é alto se for frequente no documento e raro nos outros) e um classificador, como a regressão logística, decide a classe.
+
+DISC: Que escolhas de AutoML existem na vetorização de texto?
+R: Faixa de n-gramas, frequência mínima (min_df), TF sublinear, e também o classificador usado.
+
+DISC: Explique por que os bigramas recuperaram o sentido no texto simulado.
+R: A negação só se revela na combinação 'não bom'. Palavras isoladas veem 'não' e 'bom' separadamente e não sabem a relação; o bigrama a captura.
+
+DISC: Por que o experimento de texto do capítulo não prova nada sobre texto real?
+R: Porque os dados foram gerados por um programa que exagera a negação. Ele ilustra um fenômeno, mas os números não representam o desempenho em textos reais.
+
+DISC: Como modelos pré-treinados como o BERT mudam o espaço de busca em texto?
+R: Em vez de escolher n-gramas, escolhe-se qual modelo pré-treinado usar e como ajustá-lo (taxa de aprendizado, épocas), mantendo a lógica de busca, validação e orçamento.
+
+DISC: O que é ampliação de dados e por que ela ajuda com poucos exemplos?
+R: É criar novas imagens por pequenas distorções (deslocar, girar, ruído). Ensina ao modelo invariâncias (um 7 deslocado continua 7) e reduz o sobreajuste.
+
+DISC: Descreva o mini-AutoAugment do capítulo.
+R: Sorteiam-se 15 políticas (deslocamento, rotação, ruído), geram-se 4 cópias distorcidas por imagem, treina-se uma SVM e escolhe-se a política pela validação distorcida; o teste é medido uma única vez.
+
+DISC: Interprete os resultados do mini-AutoAugment.
+R: No teste distorcido, a acurácia subiu de 0,529 para 0,873; no limpo, caiu de 0,962 para 0,939. A ampliação traz robustez com pequeno custo.
+
+DISC: Por que a validação deve se parecer com o uso real?
+R: Porque ela define o que a busca valoriza. Com validação distorcida, escolhem-se políticas robustas a distorção; com validação limpa, outra política seria escolhida.
+
+DISC: Quando o aprendizado por transferência é preferível?
+R: Quando há poucos dados em imagens ou texto: reaproveita-se uma rede pré-treinada em grandes conjuntos e reajusta-se para a tarefa.

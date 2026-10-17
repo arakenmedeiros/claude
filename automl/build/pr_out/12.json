@@ -1,0 +1,7 @@
+{
+ "12-EX1": "Validação aleatória: MAE = 0.248\nValidação temporal : MAE = 0.295\n",
+ "12-EX2": "ingênua            MAE = 1.077\nsazonal ingênua    MAE = 1.413\nmédia móvel de 12  MAE = 1.964\nCrescimento médio anual da série nos últimos 36 meses: 1.36 ppm/ano\n",
+ "12-EX3": "negação =  0% | n-gramas (1, 1): teste = 1.000\nnegação =  0% | n-gramas (1, 2): teste = 1.000\nnegação = 40% | n-gramas (1, 1): teste = 0.613\nnegação = 40% | n-gramas (1, 2): teste = 1.000\n",
+ "12-EX4": "sem ampliação    teste limpo = 0.955 | teste distorcido = 0.533\nsó deslocamento  teste limpo = 0.947 | teste distorcido = 0.809\nsó rotação       teste limpo = 0.955 | teste distorcido = 0.687\nsó ruído         teste limpo = 0.953 | teste distorcido = 0.527\nas três          teste limpo = 0.951 | teste distorcido = 0.876\n",
+ "12-PROJ0": "Validação temporal (MAE): 4 melhores e a pior\n   10.60  floresta  lags=22 dif=sim\n   10.79  floresta  lags=11 dif=sim\n   11.46  hgb       lags=22 dif=sim\n   11.56  ridge     lags=11 dif=não\n   15.19  ridge     lags= 4 dif=sim\n\nTESTE (últimos 40 anos, 1 ano à frente), MAE:\n  mini-AutoML floresta, lags=22, dif=sim : 12.59\n  pior configuração ridge, lags=4, dif=sim: 17.94\n  ingênua                                  : 22.74\n  média dos últimos 11 anos                : 40.42\n"
+}
