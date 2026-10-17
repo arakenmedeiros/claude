@@ -1,0 +1,269 @@
+MC: Qual é o "contrato" comum à maioria das ferramentas de AutoML para dados tabulares?
+a) Entram dados e um orçamento; saem um modelo (ou ensemble) pronto e, em geral, uma tabela de modelos.
+b) Entram apenas hiperparâmetros; saem os dados limpos.
+c) Entram modelos prontos; saem novos dados sintéticos.
+d) Entram imagens; saem textos.
+R: a | Dados e orçamento entram; modelo ou ensemble e *leaderboard* saem.
+
+MC: Qual é a ideia central do TPOT?
+a) Evoluir pipelines inteiros por programação genética.
+b) Usar apenas regressão linear.
+c) Substituir o cientista de dados por regras fixas.
+d) Treinar redes neurais profundas sem validação.
+R: a | O TPOT usa programação genética para evoluir pipelines (Olson; Moore, 2016).
+
+MC: O que o Auto-sklearn combina, segundo o capítulo?
+a) Meta-aprendizado, otimização bayesiana e construção de ensembles.
+b) Apenas busca em grade.
+c) Apenas redes convolucionais.
+d) Apenas seleção de atributos.
+R: a | Essas são as três ideias da arquitetura do Auto-sklearn.
+
+MC: Qual característica o artigo do FLAML destaca?
+a) Uma busca de baixo custo, leve e rápida.
+b) Exigir sempre um cluster de servidores.
+c) Funcionar apenas com imagens.
+d) Dispensar qualquer métrica.
+R: a | O FLAML começa por configurações baratas e aumenta o esforço onde vale a pena.
+
+MC: Na analogia do garimpeiro prudente, o que corresponde às "peneiradas rápidas"?
+a) Testar modelos pequenos e baratos antes dos caros.
+b) Treinar o maior modelo possível de início.
+c) Embaralhar os rótulos.
+d) Remover o conjunto de teste.
+R: a | O FLAML investe primeiro em configurações baratas e só aprofunda onde há sinal.
+
+MC: Na chamada do FLAML, para que serve o parâmetro `time_budget`?
+a) Definir o tempo máximo de busca, em segundos.
+b) Definir o número de árvores da floresta.
+c) Definir a fração do teste.
+d) Definir a quantidade de classes.
+R: a | É o orçamento de tempo da busca.
+
+MC: O que contém o atributo `best_estimator` de um objeto FLAML ajustado?
+a) O nome do algoritmo vencedor.
+b) O conjunto de teste.
+c) A matriz de dados.
+d) O número de linhas do treino.
+R: a | Por exemplo, `lgbm`, `rf` ou `extra_tree`.
+
+MC: O que guarda o atributo `config_history`?
+a) O histórico das configurações que melhoraram o melhor resultado durante a busca.
+b) A lista de bibliotecas instaladas.
+c) O gabarito do teste.
+d) Os rótulos previstos.
+R: a | Registra tentativa, algoritmo, configuração e tempo de cada melhoria.
+
+MC: Por que fixar a semente (`seed`) não garante resultados idênticos em uma busca com orçamento de tempo?
+a) Porque o tempo de relógio muda a quantidade de tentativas concluídas.
+b) Porque a semente só funciona em imagens.
+c) Porque o FLAML ignora a semente sempre.
+d) Porque o teste muda sozinho.
+R: a | Em 10 segundos, máquinas ou execuções diferentes concluem números diferentes de tentativas.
+
+MC: Para obter resultados mais reprodutíveis, o que se recomenda além de fixar a semente?
+a) Limitar o número de tentativas (`max_iter`) e registrar as versões das bibliotecas.
+b) Usar um orçamento aleatório.
+c) Trocar o conjunto de teste a cada execução.
+d) Desligar a validação.
+R: a | Isso reduz a dependência do tempo de relógio.
+
+MC: O que faz o parâmetro `estimator_list` no FLAML?
+a) Restringe os algoritmos que a busca pode usar.
+b) Escolhe a semente.
+c) Define o número de divisões do teste.
+d) Remove atributos.
+R: a | Restringir pode acelerar a busca, mas pode excluir o melhor algoritmo.
+
+MC: O que o `best_loss_per_estimator` permite observar?
+a) O melhor erro de validação obtido para cada algoritmo testado.
+b) A acurácia no teste de cada algoritmo.
+c) O tempo de relógio total.
+d) Os rótulos de treino.
+R: a | É o resultado do problema CASH, por algoritmo.
+
+MC: Por que o gráfico de orçamento (Digits, duas divisões) não deve ser lido como uma lei?
+a) Porque duas divisões dão pouca informação sobre a variação.
+b) Porque Digits não tem rótulos.
+c) Porque o FLAML não aceita imagens.
+d) Porque o tempo é medido em dias.
+R: a | A diferença entre orçamentos pode caber dentro da variação entre divisões.
+
+MC: Qual destes NÃO é um cuidado para uma comparação justa?
+a) Dar mais tempo ao método que você quer que vença.
+b) Usar as mesmas divisões dos dados.
+c) Dar o mesmo orçamento a todos os métodos.
+d) Usar um teste final intocado.
+R: a | Orçamentos desiguais invalidam a comparação.
+
+MC: Por que incluir uma linha de base simples (modelo padrão) na comparação?
+a) Para saber se o AutoML realmente ganha algo sobre o modelo sem ajuste.
+b) Para reduzir o tamanho do conjunto de dados.
+c) Para evitar o uso de validação.
+d) Para esconder a variação.
+R: a | Se o AutoML não supera a linha de base, ele não se justifica.
+
+MC: Por que a comparação do capítulo usa várias divisões dos dados?
+a) Para observar a variação do resultado entre divisões.
+b) Para aumentar artificialmente a acurácia.
+c) Para dispensar o teste final.
+d) Para treinar com o teste.
+R: a | Uma só divisão pode favorecer ou prejudicar um método por acaso.
+
+MC: Na base Wine, 25% de 178 exemplos formam cerca de 45 exemplos de teste. O que isso implica?
+a) Um único exemplo vale mais de 2 pontos percentuais, então diferenças pequenas podem ser ruído.
+b) A acurácia é sempre exata.
+c) Não é possível avaliar nada.
+d) O teste é grande demais.
+R: a | Com 45 exemplos, 1 exemplo equivale a cerca de 2,2 pontos percentuais.
+
+MC: O que são "postos" (ranks) na comparação entre métodos?
+a) A posição de cada método em cada base, do melhor (1) ao pior.
+b) O número de linhas das bases.
+c) O tempo gasto por cada método.
+d) A quantidade de classes.
+R: a | O posto médio resume a posição ao longo das bases.
+
+MC: Qual hipótese o teste de Friedman testa?
+a) Que todos os métodos comparados são equivalentes.
+b) Que todos os métodos têm acurácia 100%.
+c) Que as bases são iguais.
+d) Que o teste é independente do treino.
+R: a | Se for rejeitada, comparam-se os pares com um teste posterior.
+
+MC: Que teste posterior é mencionado depois do Friedman?
+a) O de Nemenyi.
+b) O de Fibonacci.
+c) O de Rice.
+d) O de Pareto.
+R: a | Demšar (2006) descreve o uso do teste de Nemenyi.
+
+MC: Por que o teste de Friedman com apenas quatro bases tem pouco poder?
+a) Porque poucas bases dificultam rejeitar a hipótese de equivalência, mesmo havendo diferença real.
+b) Porque ele só funciona com imagens.
+c) Porque quatro é um número proibido.
+d) Porque os postos não existem para quatro bases.
+R: a | Com poucos blocos, o teste detecta apenas diferenças enormes.
+
+MC: Por que as três divisões de cada base não contam como três bases independentes?
+a) Porque são recortes dos mesmos dados.
+b) Porque cada divisão tem rótulos diferentes.
+c) Porque têm tamanhos diferentes.
+d) Porque usam outro algoritmo.
+R: a | Por isso o Friedman usou a média por base (N = 4).
+
+MC: Qual é a lição do artigo de comparação AMLB (Gijsbers et al., 2024)?
+a) Compare ferramentas em muitas tarefas, com divisões e orçamentos controlados.
+b) Use apenas uma base de dados.
+c) Não registre o orçamento.
+d) Compare sem teste final.
+R: a | O benchmark controla tarefas, divisões e orçamentos.
+
+MC: Qual é a conclusão geral dos estudos comparativos citados no capítulo?
+a) Não existe um vencedor universal: o desempenho depende da base, da tarefa e do orçamento.
+b) Uma ferramenta vence sempre.
+c) O AutoML nunca ajuda.
+d) Só redes neurais funcionam em tabelas.
+R: a | Cada ferramenta tem pontos fortes em contextos diferentes.
+
+MC: O que Grinsztajn, Oyallon e Varoquaux (2022) investigam?
+a) Por que modelos baseados em árvores seguem competitivos frente ao aprendizado profundo em dados tabulares típicos.
+b) Como colorir gráficos.
+c) Como compactar imagens.
+d) Como traduzir textos.
+R: a | É um estudo de referência sobre dados tabulares.
+
+MC: O que é o TabPFN, citado no capítulo?
+a) Um modelo fundacional pré-treinado para dados tabulares pequenos, que dispensa busca de hiperparâmetros por conjunto.
+b) Um algoritmo de busca em grade.
+c) Uma métrica de erro.
+d) Uma técnica de poda.
+R: a | Descrito por Hollmann et al. (2025).
+
+MC: Qual ferramenta é mais indicada, segundo o roteiro do capítulo, para quem quer auditar o código do pipeline encontrado?
+a) O TPOT, que pode exportar o código do melhor pipeline.
+b) Nenhuma ferramenta permite isso.
+c) Apenas a busca em grade.
+d) O TabPFN.
+R: a | O TPOT exporta o pipeline como código Python.
+
+MC: Para pouco tempo ou poucos recursos, o capítulo sugere:
+a) Uma ferramenta leve, como o FLAML.
+b) Um ensemble empilhado com dezenas de modelos.
+c) Treinar uma rede gigante.
+d) Evitar a validação.
+R: a | O FLAML foi desenhado para custo baixo.
+
+MC: Qual é um custo de ensembles empilhados como os do AutoGluon e do H2O, segundo o capítulo?
+a) Modelos maiores e previsões mais lentas.
+b) Redução da diversidade.
+c) Impossibilidade de usar validação.
+d) Perda do conjunto de teste.
+R: a | Muitos modelos custam mais memória e tempo na produção.
+
+MC: Por que os trechos de Auto-sklearn, TPOT, H2O e AutoGluon do capítulo não trazem resultados?
+a) Porque o código não foi executado no ambiente de preparação do livro.
+b) Porque essas ferramentas não funcionam.
+c) Porque os resultados são secretos.
+d) Porque não existem leaderboards.
+R: a | O livro avisa que esses trechos seguem a documentação, mas não foram executados.
+
+DISC: Descreva o "contrato" comum das ferramentas de AutoML para dados tabulares.
+R: Você entrega os dados de treino e um orçamento (em geral, tempo). A ferramenta escolhe sozinha o tratamento dos dados, os algoritmos e os hiperparâmetros, avalia os candidatos por validação e devolve o melhor modelo (ou um ensemble), em geral com uma tabela dos modelos avaliados.
+
+DISC: Explique a analogia do garimpeiro prudente e relacione-a ao FLAML.
+R: O garimpeiro faz peneiradas rápidas em vários pontos e só cava fundo onde viu brilho. O FLAML testa primeiro configurações baratas (modelos pequenos) e só investe mais onde há ganho.
+
+DISC: Compare as ideias centrais de Auto-sklearn, TPOT, H2O AutoML, AutoGluon e FLAML.
+R: Auto-sklearn: meta-aprendizado, otimização bayesiana e ensemble. TPOT: programação genética de pipelines. H2O e AutoGluon: muitos modelos combinados em ensembles empilhados. FLAML: busca de baixo custo, leve e rápida.
+
+DISC: Cite quatro informações que o objeto do FLAML guarda após o ajuste e explique para que cada uma serve.
+R: best_estimator (algoritmo vencedor), best_config (hiperparâmetros), best_loss (erro de validação) e config_history (histórico das configurações que melhoraram o melhor resultado, útil para inspeção e diagnóstico).
+
+DISC: Explique por que um orçamento de tempo prejudica a reprodutibilidade exata e como mitigar.
+R: O número de tentativas concluídas em N segundos depende da máquina e da carga. Para mitigar, limita-se o número de tentativas (max_iter), fixa-se a semente e registram-se as versões das bibliotecas.
+
+DISC: O que significa dizer que o FLAML resolve o problema CASH?
+R: Ele escolhe o algoritmo e seus hiperparâmetros ao mesmo tempo, avaliando vários algoritmos e guardando o melhor resultado de cada um.
+
+DISC: Descreva a curva "orçamento versus acurácia" e explique por que duas divisões não bastam para conclusões finas.
+R: No início, mais tempo melhora o modelo; depois os ganhos diminuem (retornos decrescentes). Com duas divisões, a diferença entre orçamentos pode caber na variação entre divisões, então só se vê tendência, não uma lei.
+
+DISC: Liste os seis cuidados para uma comparação justa entre ferramentas.
+R: Mesmos dados e divisões; mesmo orçamento; teste final intocado; várias divisões; várias bases; linhas de base simples.
+
+DISC: Por que a linha de base é indispensável em uma avaliação de AutoML?
+R: Porque mostra o ganho real do AutoML sobre um modelo padrão e sem ajuste. Se o ganho for nulo ou menor que a variação, a automação não se justifica naquele problema.
+
+DISC: Explique o que é um posto médio e por que ele é usado para comparar métodos em várias bases.
+R: Em cada base, ordenam-se os métodos (1 = melhor) e tira-se a média dos postos. Isso evita que uma base com notas muito altas ou muito baixas domine o resumo e compara a posição relativa dos métodos.
+
+DISC: O que o teste de Friedman testa e o que fazer se a hipótese for rejeitada?
+R: Testa que todos os métodos são equivalentes em todas as bases. Se for rejeitada, comparam-se os pares com um teste posterior, como o de Nemenyi (Demšar, 2006).
+
+DISC: Por que quatro bases são insuficientes para uma conclusão forte com o Friedman?
+R: Com poucas bases o teste tem baixo poder: só detecta diferenças muito grandes. A pesquisa séria usa dezenas de bases; um experimento com quatro serve como exercício de método.
+
+DISC: Explique por que três divisões de uma mesma base não equivalem a três bases.
+R: São recortes dos mesmos dados, portanto não independentes entre si. Elas estabilizam a nota daquela base, mas não ampliam o número de "rodadas" independentes do teste.
+
+DISC: Qual é o risco de interpretar diferenças pequenas na base Wine?
+R: O teste tem cerca de 45 exemplos, e cada exemplo vale mais de 2 pontos percentuais. Diferenças de um ou dois exemplos estão dentro do ruído.
+
+DISC: Resuma o que os estudos comparativos de AutoML indicam sobre a existência de uma ferramenta "melhor".
+R: Não há vencedor universal: o desempenho relativo depende da base, da tarefa e do orçamento (Gijsbers et al., 2024; Zöller; Huber, 2021). Por isso se deve comparar em condições equivalentes às do seu problema.
+
+DISC: Por que modelos de árvores com boosting são tão usados em dados tabulares, segundo a literatura citada?
+R: Estudos como o de Grinsztajn, Oyallon e Varoquaux (2022) mostram que modelos baseados em árvores seguem muito competitivos frente a redes neurais em dados tabulares típicos.
+
+DISC: O que é o TabPFN e o que ele sugere sobre o futuro do AutoML?
+R: É um modelo fundacional (pré-treinado) para dados tabulares pequenos, que prevê sem busca de hiperparâmetros por conjunto (Hollmann et al., 2025). Sugere que modelos pré-treinados podem substituir parte da busca.
+
+DISC: Como escolher entre FLAML, TPOT, AutoGluon/H2O e Auto-sklearn segundo o roteiro do capítulo?
+R: FLAML para pouco tempo ou recursos; TPOT para auditar o pipeline; AutoGluon ou H2O para máxima precisão com tempo e memória; Auto-sklearn no ecossistema scikit-learn com meta-aprendizado; H2O para dados muito grandes ou cluster.
+
+DISC: Por que os trechos de código de Auto-sklearn, TPOT, H2O e AutoGluon vêm com um aviso de "não executado"?
+R: Porque essas bibliotecas não puderam ser instaladas no ambiente em que o livro foi preparado. O código segue a documentação oficial, mas as versões mudam e nenhum resultado é reportado.
+
+DISC: Liste cinco boas práticas ao usar uma ferramenta de AutoML.
+R: Comece por uma linha de base; registre semente, orçamento, métrica e versões; dê o mesmo orçamento aos métodos comparados; use um teste final intocado; repita com várias divisões e inspecione o modelo final.

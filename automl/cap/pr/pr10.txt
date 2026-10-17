@@ -1,0 +1,165 @@
+@@EX 1 | Primeiro contato com o FLAML | básico
+No conjunto **Wine** (UCI, via scikit-learn), separe 25% para teste (estratificado, `random_state=0`) e ajuste um `AutoML` do FLAML com `estimator_list=["lgbm", "rf"]`, `time_budget=5`, métrica acurácia e validação cruzada de 3 partes. Mostre o algoritmo vencedor, o erro de validação e a acurácia no teste.
+
+*Pergunta:* o algoritmo vencedor era o que você esperava? Por que a acurácia do teste pode diferir de 1 − erro de validação?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+from flaml import AutoML
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+
+X, y = load_wine(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+a = AutoML()
+a.fit(Xtr, ytr, task="classification", estimator_list=["lgbm", "rf"], time_budget=5, metric="accuracy",
+      eval_method="cv", n_splits=3, seed=0, verbose=0)
+print("Vencedor            :", a.best_estimator)
+print("Erro de validação   : %.4f (acurácia %.4f)" % (a.best_loss, 1 - a.best_loss))
+print("Acurácia no teste   : %.4f" % (a.predict(Xte) == yte).mean())
+```
+@@NOTE O FLAML escolheu a floresta aleatória (`rf`), com erro de validação de 0,0375 (acurácia de validação 0,9625), e acertou 100% no teste. Essa diferença não é contradição: a validação cruzada usa partes menores do treino (133 exemplos, 3 partes), enquanto o teste tem apenas 45 exemplos e, por sorte, ficou fácil. Um teste de 45 exemplos tem muita variação: uma acurácia de 1,000 aqui **não** significa que o modelo seja perfeito. O algoritmo vencedor pode mudar com a semente e o tempo.
+@@EX 2 | Tempo ou tentativas? | intermediário
+Ajuste o FLAML duas vezes no **Wine**, com os mesmos dados e a mesma semente: (a) com `time_budget=3` e (b) com `max_iter=12` (e `time_budget=60` apenas como limite de segurança). Em cada caso, conte quantas melhorias foram registradas em `config_history` e compare as duas execuções.
+
+*Pergunta:* qual forma de limitar a busca é mais reprodutível? Por quê?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+from flaml import AutoML
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+
+X, y = load_wine(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+
+def roda(**kw):
+    a = AutoML()
+    a.fit(Xtr, ytr, task="classification", metric="accuracy", eval_method="cv", n_splits=3, seed=0, verbose=0,
+          estimator_list=["lgbm", "rf", "extra_tree"], **kw)
+    return len(a.config_history), a.best_estimator, round(a.best_loss, 4)
+
+print("(a) por tempo (3 s)   :", roda(time_budget=3), "|", roda(time_budget=3))
+print("(b) por tentativas (12):", roda(time_budget=60, max_iter=12), "|", roda(time_budget=60, max_iter=12))
+```
+@@NOTE Nesta máquina, as duas execuções de cada caso deram o mesmo resultado: (a) por tempo, 10 melhorias registradas e `extra_tree` com erro 0,0303; (b) por tentativas, 5 melhorias e `lgbm` com erro 0,0601. A coincidência em (a) **não é garantida**: em outra máquina ou sob outra carga, 3 segundos podem comportar mais ou menos tentativas. Limitar por `max_iter` depende menos do relógio e, por isso, é a forma mais reprodutível. Note também que `config_history` registra as configurações que **melhoraram** o melhor resultado até então, e não todas as avaliadas; e que os resultados de (a) e (b) diferem simplesmente porque as buscas foram interrompidas em pontos diferentes (erro de 0,0303 contra 0,0601).
+@@EX 3 | O AutoML bate a linha de base? | intermediário
+Gere uma base ruidosa com `make_classification(1500, 30, n_informative=8, n_redundant=4, flip_y=0.10, random_state=0)`. Em cada uma de 5 divisões (`random_state` de 0 a 4, 25% de teste), compare a acurácia no teste de: regressão logística (com `StandardScaler`), floresta aleatória padrão (200 árvores) e FLAML (`time_budget=5`). Mostre média e desvio-padrão de cada método.
+
+*Pergunta:* o FLAML superou as linhas de base? A diferença é maior que a variação entre as divisões?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from flaml import AutoML
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+
+X, y = make_classification(1500, 30, n_informative=8, n_redundant=4, flip_y=0.10, random_state=0)
+R = {"Reg. logística": [], "Floresta padrão": [], "FLAML (5 s)": []}
+for s in range(5):
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=s)
+    m1 = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr, ytr)
+    m2 = RandomForestClassifier(200, random_state=s, n_jobs=-1).fit(Xtr, ytr)
+    a = AutoML(); a.fit(Xtr, ytr, task="classification", time_budget=5, metric="accuracy", eval_method="cv", n_splits=3, seed=s, verbose=0)
+    for nome, m in zip(R, (m1, m2, a)): R[nome].append((m.predict(Xte) == yte).mean())
+for nome, v in R.items(): print(f"{nome:<16s} média = {np.mean(v):.3f}  desvio = {np.std(v):.3f}")
+```
+@@NOTE Médias nas 5 divisões: regressão logística 0,846, floresta padrão 0,875 e FLAML 0,873, com desvios de cerca de 0,012 a 0,014. O FLAML supera a regressão logística por uma margem (cerca de 0,027) maior que o dobro do desvio, mas **empata** com a floresta padrão (diferença de 0,002, muito menor que a variação entre divisões). Em outras palavras: neste problema, 5 segundos de AutoML não melhoraram uma floresta sem ajuste. Isso é um resultado legítimo e frequente; a linha de base serve justamente para revelá-lo.
+@@EX 4 | Postos e Friedman à mão | avançado
+Use cinco bases: **Iris**, **Wine**, **Breast Cancer**, **Digits** (todas do scikit-learn) e a base ruidosa do exercício anterior. Para cada base, calcule a acurácia média em validação cruzada de 5 partes de três métodos: regressão logística (com `StandardScaler`), floresta aleatória (100 árvores) e *k*-vizinhos (*k* = 5, com `StandardScaler`). Converta em postos (1 = melhor), calcule o posto médio de cada método e aplique `scipy.stats.friedmanchisquare`.
+
+*Pergunta:* o teste rejeita a equivalência dos métodos ao nível de 5%? Com 5 bases, o que esperar do poder do teste?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from scipy.stats import rankdata, friedmanchisquare
+from sklearn.datasets import load_iris, load_wine, load_breast_cancer, load_digits, make_classification
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+
+bases = {"Iris": load_iris(return_X_y=True), "Wine": load_wine(return_X_y=True),
+         "Cancer": load_breast_cancer(return_X_y=True), "Digits": load_digits(return_X_y=True),
+         "Ruidosa": make_classification(1500, 30, n_informative=8, n_redundant=4, flip_y=0.10, random_state=0)}
+modelos = {"Reg. logística": make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000)),
+           "Floresta": RandomForestClassifier(100, random_state=0, n_jobs=-1),
+           "k-vizinhos": make_pipeline(StandardScaler(), KNeighborsClassifier(5))}
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+M = np.array([[cross_val_score(m, X, y, cv=cv).mean() for m in modelos.values()] for X, y in bases.values()])
+for b, lin in zip(bases, M): print(f"{b:<8s}", "  ".join(f"{v:.3f}" for v in lin))
+P = np.array([rankdata(-l) for l in M])
+print("Postos médios:", dict(zip(modelos, P.mean(0).round(2))))
+est, p = friedmanchisquare(*M.T)
+print(f"Friedman: estatística = {est:.2f}, valor-p = {p:.3f}")
+```
+@@NOTE Os postos médios foram 1,6 (regressão logística), 2,1 (floresta) e 2,3 (k-vizinhos), e o teste de Friedman deu estatística 1,37 e valor-p 0,504: **não rejeita** a equivalência dos métodos. Isso é o esperado com apenas 5 bases, em que o poder do teste é baixo; a regressão logística liderou em três bases (Iris, Wine e Cancer), mas a floresta ganhou na base ruidosa e o k-vizinhos no Digits. Nenhum método dominou.
+@@PROJ Duelo de AutoML em miniatura | Cap10
+**Fonte dos dados.** Quatro bases do repositório UCI disponíveis no scikit-learn (*Iris*, *Wine*, *Breast Cancer Wisconsin* e *Digits*) e, se quiser ampliar, bases públicas do Kaggle ou da UCI baixadas por você (por exemplo, *Wine Quality* e *Spambase*).
+
+**Contexto.** A equipe de dados de uma clínica quer saber se vale a pena adotar uma ferramenta de AutoML ou se um modelo padrão basta. Você fará um *benchmark* em miniatura, com todos os cuidados de uma comparação justa.
+
+**Atenção ética.** Os dados são de uso didático. Nenhum dos modelos deve ser usado para decisões clínicas.
+
+**Tarefas.**
+1. Defina os métodos: (i) floresta aleatória padrão; (ii) `HistGradientBoostingClassifier` padrão; (iii) FLAML com **no máximo 20 tentativas** (`max_iter=20`, para ser reprodutível).
+2. Para cada base, faça 3 divisões estratificadas (25% de teste, `random_state` 0, 1, 2) e registre a acurácia no teste de cada método.
+3. Monte a tabela de médias por base e calcule os postos médios.
+4. Aplique o teste de Friedman (N = número de bases) e comente o poder do teste.
+5. Para uma base à escolha, mostre qual algoritmo o FLAML escolheu em cada divisão e quantas configurações avaliou.
+6. Escreva uma conclusão (8 a 10 linhas) sobre se o AutoML se justificou, respeitando o tamanho dos testes e a variação entre divisões.
+
+**Entregáveis.** Um notebook (ou script) comentado, a tabela de acurácias e postos, o resultado do Friedman e a conclusão.
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from flaml import AutoML
+from scipy.stats import rankdata, friedmanchisquare
+from sklearn.datasets import load_iris, load_wine, load_breast_cancer, load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
+
+bases = {"Iris": load_iris(return_X_y=True), "Wine": load_wine(return_X_y=True),
+         "Cancer": load_breast_cancer(return_X_y=True), "Digits": load_digits(return_X_y=True)}
+nomes = ["Floresta", "Boosting", "FLAML(20)"]
+M = []; escolhas = {}
+for b, (X, y) in bases.items():
+    acc = {n: [] for n in nomes}; esc = []
+    for s in (0, 1, 2):
+        Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=s)
+        m1 = RandomForestClassifier(200, random_state=s, n_jobs=-1).fit(Xtr, ytr)
+        m2 = HistGradientBoostingClassifier(random_state=s).fit(Xtr, ytr)
+        a = AutoML(); a.fit(Xtr, ytr, task="classification", time_budget=120, max_iter=20, metric="accuracy",
+                            eval_method="cv", n_splits=3, seed=s, verbose=0)
+        for n, m in zip(nomes, (m1, m2, a)): acc[n].append((m.predict(Xte) == yte).mean())
+        esc.append((a.best_estimator, len(a.config_history)))
+    M.append([np.mean(acc[n]) for n in nomes]); escolhas[b] = esc
+M = np.array(M)
+print(f"{'':<8s}" + "  ".join(f"{n:>10s}" for n in nomes))
+for b, lin in zip(bases, M): print(f"{b:<8s}" + "  ".join(f"{v:10.3f}" for v in lin))
+P = np.array([rankdata(-l) for l in M])
+print("Postos médios:", dict(zip(nomes, P.mean(0).round(2))))
+est, p = friedmanchisquare(*M.T)
+print(f"Friedman: estatística = {est:.2f}, valor-p = {p:.3f} (N = {len(M)})")
+print("Escolhas do FLAML (algoritmo, nº de configurações):", {b: e for b, e in escolhas.items()})
+```
+@@RUBRICA
+- Os três métodos foram comparados nas mesmas divisões, com o mesmo teste final intocado.
+- O FLAML foi limitado por número de tentativas (max_iter), e o texto explica por quê.
+- A tabela traz médias por base e postos médios corretos (1 = melhor).
+- O Friedman usou N = número de bases (e não de divisões), e o texto discute o baixo poder.
+- A conclusão considera o tamanho dos testes e a variação entre divisões, sem declarar vencedor universal.
+@@NOTE Com `max_iter=20`, o FLAML ficou com o pior posto médio (2,50), contra 1,62 da floresta e 1,88 do boosting; o valor-p do Friedman (0,420, com N = 4) não rejeita a equivalência. Note que o FLAML registrou poucas melhorias (de 1 a 8 configurações em `config_history`) e escolheu quase sempre `lgbm`. Com apenas 20 tentativas e poucos exemplos, a busca não teve tempo de superar bons padrões. Repare que o limite por tentativas, ao contrário do orçamento de tempo, torna a execução reprodutível, mas não necessariamente mais forte. Ao concluir, evite declarar vencedor: com N = 4 bases e testes pequenos (45 a 450 exemplos), as diferenças estão dentro do ruído.
+@@ALEM
+- **UCI:** Wine Quality, Spambase, Adult e Bank Marketing (muitos exemplos, bom para testar orçamentos).
+- **Kaggle:** Titanic, House Prices e Spaceship Titanic (para comparar ferramentas em problemas conhecidos).
+- **Desafio:** instale o Auto-sklearn, o TPOT ou o AutoGluon em um ambiente próprio e inclua-os no duelo, mantendo o mesmo orçamento.

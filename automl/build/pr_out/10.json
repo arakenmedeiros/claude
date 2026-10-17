@@ -1,0 +1,7 @@
+{
+ "10-EX1": "Vencedor            : rf\nErro de validação   : 0.0375 (acurácia 0.9625)\nAcurácia no teste   : 1.0000\n",
+ "10-EX2": "(a) por tempo (3 s)   : (10, 'extra_tree', 0.0303) | (10, 'extra_tree', 0.0303)\n(b) por tentativas (12): (5, 'lgbm', 0.0601) | (5, 'lgbm', 0.0601)\n",
+ "10-EX3": "Reg. logística   média = 0.846  desvio = 0.012\nFloresta padrão  média = 0.875  desvio = 0.014\nFLAML (5 s)      média = 0.873  desvio = 0.013\n",
+ "10-EX4": "Iris     0.960  0.940  0.953\nWine     0.983  0.972  0.961\nCancer   0.979  0.965  0.965\nDigits   0.969  0.973  0.977\nRuidosa  0.863  0.889  0.832\nPostos médios: {'Reg. logística': np.float64(1.6), 'Floresta': np.float64(2.1), 'k-vizinhos': np.float64(2.3)}\nFriedman: estatística = 1.37, valor-p = 0.504\n",
+ "10-PROJ0": "          Floresta    Boosting   FLAML(20)\nIris         0.974       0.974       0.982\nWine         0.993       1.000       0.970\nCancer       0.951       0.949       0.939\nDigits       0.978       0.971       0.947\nPostos médios: {'Floresta': np.float64(1.62), 'Boosting': np.float64(1.88), 'FLAML(20)': np.float64(2.5)}\nFriedman: estatística = 1.73, valor-p = 0.420 (N = 4)\nEscolhas do FLAML (algoritmo, nº de configurações): {'Iris': [('xgboost', 2), ('lgbm', 1), ('lgbm', 4)], 'Wine': [('xgboost', 4), ('lgbm', 3), ('lgbm', 4)], 'Cancer': [('lgbm', 5), ('lgbm', 2), ('lgbm', 4)], 'Digits': [('lgbm', 4), ('lgbm', 8), ('lgbm', 7)]}\n"
+}
