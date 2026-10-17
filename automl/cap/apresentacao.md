@@ -16,10 +16,10 @@ Ao mesmo tempo, o livro avança. Os capítulos partem do nível básico, passam 
 O livro tem **cinco partes** e **catorze capítulos**.
 
 - **Parte I — Fundamentos** (Caps. 1 a 3): o que é AutoML e o problema CASH; o essencial de aprendizado de máquina; pipelines e pré-processamento sem vazamento de dados.
-- **Parte II — Otimização de hiperparâmetros** (Caps. 4 a 7): busca em grade e aleatória; otimização bayesiana; Successive Halving, Hyperband e BOHB; métodos evolutivos e TPOT.
-- **Parte III — Automação do pipeline** (Caps. 8 a 10): engenharia e seleção automática de atributos; meta-aprendizado, *warm start* e ensembles; ferramentas de AutoML na prática.
-- **Parte IV — AutoML avançado** (Caps. 11 e 12): busca de arquiteturas neurais (NAS); AutoML para séries temporais, texto e imagens.
-- **Parte V — AutoML responsável e em produção** (Caps. 13 e 14): explicabilidade, ética, vieses e limitações; MLOps e um projeto integrador final.
+- **Parte II — Otimização de Hiperparâmetros** (Caps. 4 a 7): busca em grade e aleatória; otimização bayesiana; Successive Halving, Hyperband e BOHB; métodos evolutivos e TPOT.
+- **Parte III — Automação do Pipeline** (Caps. 8 a 10): engenharia e seleção automática de atributos; meta-aprendizado, *warm start* e ensembles; ferramentas de AutoML na prática.
+- **Parte IV — Redes Neurais e Novos Domínios** (Caps. 11 e 12): busca de arquiteturas neurais (NAS); AutoML para séries temporais, texto e imagens.
+- **Parte V — Responsabilidade e Prática** (Caps. 13 e 14): explicabilidade, ética, vieses e limitações; MLOps e um projeto integrador final.
 
 Cada capítulo segue o mesmo roteiro:
 
@@ -45,7 +45,7 @@ Algumas caixas coloridas aparecem ao longo do texto.
 
 ## Ambiente de programação
 
-Os códigos usam **Python** e, sobretudo, a biblioteca **scikit-learn**, acompanhada de NumPy, pandas, SciPy e Matplotlib. Para os capítulos de AutoML, usamos também **Optuna** e **FLAML** e, na explicabilidade, **SHAP**. Todos os exemplos executados foram rodados com estas versões:
+Os códigos usam **Python** e, sobretudo, a biblioteca **scikit-learn**, acompanhada de NumPy, pandas, SciPy e Matplotlib. Para os capítulos de AutoML, usamos também **Optuna** e **FLAML**; **statsmodels** (séries temporais), **LightGBM** e **XGBoost** (modelos de árvores) e, na explicabilidade, **SHAP**. Todos os exemplos executados foram rodados com estas versões:
 
 | Biblioteca | Versão |
 |---|---|
@@ -55,6 +55,7 @@ Os códigos usam **Python** e, sobretudo, a biblioteca **scikit-learn**, acompan
 | Matplotlib | 3.11.2 |
 | Optuna / FLAML | 5.0.0 / 2.7.0 |
 | SHAP / XGBoost / LightGBM | 0.54.1 / 3.4.1 / 4.7.0 |
+| statsmodels | 0.15.0 |
 
 Diferenças pequenas nos números são normais com outras versões. Você pode executar tudo no seu computador ou no **Google Colab**, gratuito e no navegador.
 
@@ -63,8 +64,8 @@ Diferenças pequenas nos números são normais com outras versões. Você pode e
 Este livro procura ser transparente sobre o que foi executado durante a sua elaboração:
 
 - **Códigos executados.** Todos os códigos do texto e das soluções que **mostram uma saída** foram executados de fato, e as saídas impressas são as obtidas na execução. Os experimentos usam sementes fixas para que você consiga reproduzi-los.
-- **Códigos não executados.** Algumas ferramentas de AutoML (TPOT, Auto-sklearn, AutoGluon, H2O AutoML e PyCaret) **não puderam ser instaladas** no ambiente em que o livro foi preparado. Os trechos de código que as usam aparecem **sem saída** e são acompanhados de um aviso. Como as interfaces dessas bibliotecas mudam entre versões, consulte a documentação atual antes de usá-los.
-- **Dados.** Os exercícios executados usam conjuntos de dados que acompanham o scikit-learn: Iris, Wine, Breast Cancer Wisconsin e Digits, originários do repositório **UCI Machine Learning**, e Diabetes, originário de um estudo estatístico clássico. Também há dados simulados, sempre que indicado. As bases do UCI e do Kaggle que aparecem na seção "Para ir além" **não foram usadas nem testadas** nos códigos do livro: confira descrição, licença e colunas antes de usá-las.
+- **Códigos não executados.** Algumas ferramentas de AutoML (TPOT, Auto-sklearn, AutoGluon, H2O AutoML, Auto-Keras e o serviço FastAPI do Capítulo 14) **não puderam ser instaladas** no ambiente em que o livro foi preparado. Os trechos de código que as usam aparecem **sem saída** e são acompanhados de um aviso. Como as interfaces dessas bibliotecas mudam entre versões, consulte a documentação atual antes de usá-los.
+- **Dados.** Os exercícios executados usam conjuntos de dados que acompanham o scikit-learn: Iris, Wine, Breast Cancer Wisconsin e Digits, originários do repositório **UCI Machine Learning**, e Diabetes, originário de um estudo estatístico clássico. Há também a série de CO₂ de Mauna Loa e a série de manchas solares, que acompanham a biblioteca statsmodels, e dados **simulados** (crédito, textos de avaliação, séries e ruídos), sempre indicados como tais no texto. Os dados simulados ilustram fenômenos; **não** medem o desempenho no mundo real. As bases do UCI e do Kaggle que aparecem na seção "Para ir além" **não foram usadas nem testadas** nos códigos do livro: confira descrição, licença e colunas antes de usá-las.
 - **Referências.** Os artigos, livros e eventos citados foram conferidos em buscas na internet durante a elaboração. Quando uma informação (como o intervalo de páginas) não pôde ser confirmada, ela foi **omitida** da referência, e não preenchida de memória. Mesmo assim, confira o DOI e as páginas antes de citar o livro em um trabalho acadêmico.
 - **Resultados honestos.** Em vários experimentos, o resultado foi **menos favorável ao método sofisticado** do que se poderia esperar, ou foi um empate com a busca aleatória. Isso foi mantido e comentado de propósito: saber quando uma técnica **não** ajuda é parte da formação.
 

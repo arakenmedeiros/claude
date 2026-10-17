@@ -1,1 +1,132 @@
-AutoML: aprendizado de máquina automatizado.
+Acurácia: proporção de previsões corretas em um problema de classificação.
+Algoritmo genético: método de busca inspirado na evolução, com população, seleção, cruzamento e mutação.
+AMLB: benchmark aberto para comparar ferramentas de AutoML em muitas tarefas, com divisões e orçamentos controlados.
+Amostragem de hiperparâmetros: sorteio de valores de hiperparâmetros a partir de distribuições, como na busca aleatória.
+Ampliação de dados (data augmentation): criação de novos exemplos de treino por pequenas distorções dos existentes, como deslocar ou girar uma imagem.
+Árvore de decisão: modelo que divide os dados por perguntas sucessivas sobre os atributos até chegar a uma previsão.
+Arquitetura (de uma rede neural): desenho da rede, com número de camadas, de neurônios, conexões e funções de ativação.
+Atributo (feature): cada coluna usada como entrada de um modelo.
+Atraso (lag): valor passado de uma série usado como atributo para prever o valor seguinte.
+AUC: área sob a curva ROC; mede a capacidade de separar duas classes, de 0,5 (acaso) a 1 (perfeito).
+Auto-sklearn: sistema de AutoML sobre o scikit-learn que combina meta-aprendizado, otimização bayesiana e ensembles.
+AutoGluon: sistema de AutoML que empilha muitos modelos em camadas, com ênfase em robustez.
+AutoML: aprendizado de máquina automatizado; automatiza escolhas como pré-processamento, algoritmo, hiperparâmetros e ensembles.
+Auto-Keras: biblioteca que oferece busca de arquiteturas neurais sobre o Keras.
+Avaliação barata: estimativa rápida da qualidade de um candidato, por exemplo com poucas épocas ou menos dados.
+Baseline (linha de base): modelo simples usado como referência mínima de comparação.
+Benchmark: conjunto padronizado de tarefas e regras para comparar métodos.
+Bias (viés) de dados: distorção nos dados que leva o modelo a tratar grupos de forma desigual.
+Boosting: ensemble em que cada modelo novo tenta corrigir os erros dos anteriores.
+BOHB: método que combina o Hyperband com otimização bayesiana.
+Busca aleatória: sorteia combinações de hiperparâmetros e avalia cada uma.
+Busca bayesiana (otimização bayesiana): usa os resultados anteriores para decidir qual configuração testar a seguir.
+Busca em grade: testa todas as combinações de uma grade definida de valores.
+Camada: conjunto de neurônios de uma rede que processam, em paralelo, a saída da camada anterior.
+CASH: problema da seleção combinada de algoritmo e hiperparâmetros.
+Classificação: tarefa de prever uma categoria.
+Campeão e desafiante: prática de comparar o modelo em produção com um novo modelo em dados recentes, trocando só se o novo ganhar com margem.
+Célula (em NAS): bloco pequeno de uma rede, desenhado pela busca e repetido para formar a rede toda.
+Classificador: modelo que prevê categorias.
+Cobertura do espaço: quanto do espaço de busca as tentativas realmente exploram.
+Concept drift (deriva de conceito): mudança na relação entre atributos e resposta ao longo do tempo.
+Configuração: conjunto de valores de hiperparâmetros (e do algoritmo) de um candidato.
+Conjunto de teste: dados reservados para a avaliação final, usados uma única vez.
+Conjunto de treino: dados usados para ajustar os parâmetros do modelo.
+Conjunto de validação: dados usados para comparar candidatos e escolher entre eles.
+Correlação de Spearman: correlação entre os postos de duas listas; vale 1 se a ordem coincide.
+Covariate shift (deriva dos dados): mudança na distribuição dos atributos de entrada.
+Cross-validation (validação cruzada): divisão dos dados em partes que se revezam como validação.
+Custo computacional: tempo, memória e energia consumidos para treinar e usar modelos.
+DARTS: método de busca de arquiteturas que torna a escolha de operações contínua e a otimiza por gradiente.
+Data leakage (vazamento de dados): uso, no treino, de informação que não estaria disponível na hora real da previsão.
+Deriva: mudança dos dados ou do conceito que faz o modelo envelhecer.
+Desvio-padrão: medida de dispersão dos valores em torno da média.
+Diferenciação: transformar a série para prever a mudança em relação a um valor anterior, removendo tendência e sazonalidade.
+Dimensionalidade: número de atributos.
+Divisão estratificada: divisão que mantém a proporção das classes em cada parte.
+Early stopping (parada precoce): interromper o treino quando a validação deixa de melhorar.
+Efeito do vencedor (winner's curse): otimismo da nota do melhor candidato escolhido entre muitos.
+Embedding: representação de itens (como palavras) por vetores de números.
+Ensemble: combinação de vários modelos em uma única previsão.
+Entropia: medida de incerteza ou de desequilíbrio entre classes.
+Época: uma passagem completa do treino por todos os dados.
+Erro padrão: estimativa da incerteza de uma média ou de uma proporção.
+Espaço de busca: conjunto de todas as configurações ou arquiteturas que a busca pode considerar.
+Espaço condicional: espaço em que alguns hiperparâmetros só existem se outra escolha foi feita.
+Estimador (no scikit-learn): objeto que aprende a partir de dados, com os métodos fit e predict.
+Estratégia de busca: forma de explorar o espaço de busca (aleatória, evolutiva, bayesiana, por gradiente).
+Explicabilidade: capacidade de explicar por que um modelo toma suas decisões.
+Explicação global: descrição do que o modelo valoriza em geral.
+Explicação local: explicação de uma decisão específica.
+Extrapolar: prever valores fora da faixa vista no treino.
+Fidelidade (em multifidelidade): nível de custo de uma avaliação, como número de épocas ou fração dos dados.
+FLAML: biblioteca leve de AutoML com busca de baixo custo.
+Fronteira de Pareto: conjunto de soluções para as quais nenhuma outra é melhor em todos os objetivos ao mesmo tempo.
+Função de ativação: regra que define a saída de um neurônio, como relu e tanh.
+Função de aquisição: regra da otimização bayesiana que decide qual ponto avaliar a seguir.
+Gradiente: direção de maior variação de uma função; usado para ajustar parâmetros por otimização.
+Hiperparâmetro: ajuste do algoritmo definido antes do treino, como a profundidade de uma árvore.
+Holdout: divisão simples em treino e validação (ou teste).
+Hyperband: método de multifidelidade que roda várias execuções de Successive Halving com orçamentos diferentes.
+Igualdade de oportunidade: critério em que a taxa de verdadeiros positivos é igual entre os grupos.
+Imputação: preenchimento de valores ausentes.
+Interpretabilidade: grau em que a lógica do modelo pode ser lida diretamente por uma pessoa.
+Intervalo de confiança: faixa de valores plausíveis para uma quantidade estimada.
+Kolmogorov-Smirnov (KS): teste que compara duas distribuições.
+Landmarker: nota de um modelo simples e rápido usada como meta-atributo.
+Latência: tempo entre o pedido e a resposta de uma previsão.
+Leaderboard: tabela que ordena os modelos avaliados por desempenho.
+LightGBM: biblioteca eficiente de boosting de árvores.
+LIME: método que explica uma decisão ajustando um modelo simples na vizinhança dela.
+Meta-aprendizado: aprender a aprender; usar a experiência de problemas anteriores para decidir melhor em um novo.
+Meta-atributo: característica que descreve um conjunto de dados inteiro.
+Meta-modelo: modelo que prevê qual algoritmo ou configuração funciona melhor em um conjunto, a partir de meta-atributos.
+Métrica: número que resume o desempenho de um modelo, como acurácia ou erro.
+MLOps: práticas para desenvolver, implantar e operar modelos em produção.
+Mutação: pequena alteração aleatória de uma solução em um algoritmo evolutivo.
+NAS (Neural Architecture Search): busca automática da arquitetura de uma rede neural.
+Neurônio: unidade de cálculo de uma rede neural.
+NSGA-II: algoritmo genético multiobjetivo que ordena as soluções por dominância de Pareto.
+Normalização e padronização: reescala dos atributos, por exemplo para média 0 e desvio 1.
+Orçamento: limite de tempo, de tentativas ou de recursos de uma busca.
+Otimismo da busca: tendência de a nota do melhor candidato superestimar seu desempenho real.
+Overfitting (sobreajuste): quando o modelo memoriza o treino e generaliza mal.
+Paridade demográfica: critério em que a taxa de seleção é igual entre os grupos.
+Parâmetro: valor que o modelo aprende durante o treino, como os pesos de uma rede.
+Perceptron multicamadas (MLP): rede neural de camadas totalmente conectadas.
+Permutação (importância por): mede a queda de desempenho ao embaralhar uma coluna.
+Pipeline: sequência de etapas (pré-processamento e modelo) tratada como um único objeto.
+Poda (pruning): interrupção antecipada de tentativas pouco promissoras.
+Posto (rank): posição de um método quando comparado aos demais.
+Previsão ingênua: prever que o próximo valor é igual ao último valor observado.
+Previsão sazonal ingênua: prever que o valor é igual ao do mesmo período do ano anterior.
+Proxy (variável): variável correlacionada com um atributo sensível que o carrega indiretamente.
+PSI (Population Stability Index): índice que compara a distribuição de um atributo entre dois períodos.
+Quantil: valor que divide os dados em partes de mesmo tamanho.
+Rede neural: modelo formado por camadas de neurônios conectados.
+Regressão: tarefa de prever um número.
+Regressão logística: modelo linear para classificação que estima probabilidades.
+Regularização: penalidade que evita modelos complexos demais.
+Retreino: ajuste do modelo com dados mais recentes.
+Ridge: regressão linear com penalidade que estabiliza os coeficientes.
+Sazonalidade: padrão que se repete em períodos regulares.
+SHAP: método que atribui a cada atributo sua contribuição para uma previsão, com base nos valores de Shapley.
+SMAC: método de otimização bayesiana baseado em florestas aleatórias.
+Stacking: ensemble em que um modelo final aprende a combinar as previsões de outros.
+Successive Halving: descarta, a cada rodada, a metade menos promissora dos candidatos e dá mais recursos aos restantes.
+SVM (máquina de vetores de suporte): modelo que busca a fronteira de maior margem entre classes.
+Taxa de seleção: proporção de pessoas aprovadas em um grupo.
+Taxa de verdadeiros positivos (TPR): entre os casos positivos reais, a proporção que o modelo acertou.
+TF-IDF: peso que valoriza palavras frequentes no documento e raras na coleção.
+Tendência: crescimento ou queda de longo prazo de uma série.
+TPE: estimador de Parzen estruturado em árvore, usado pelo Optuna e pelo Hyperopt.
+TPOT: ferramenta que evolui pipelines por programação genética.
+Transfer learning (aprendizado por transferência): reaproveitar um modelo pré-treinado e reajustá-lo à sua tarefa.
+Transformer: arquitetura de rede baseada em atenção, usada em modelos de linguagem.
+Underfitting (subajuste): quando o modelo é simples demais para captar o padrão.
+Validação aninhada: validação em duas camadas, uma para escolher e outra para estimar o desempenho de quem escolhe.
+Validação temporal: validação que treina no passado e testa no futuro, sem embaralhar.
+Variância: sensibilidade do modelo ou da estimativa às variações dos dados.
+Vetorização: transformação de textos em vetores numéricos.
+Warm start: partida a quente; começar a busca por configurações que funcionaram em problemas parecidos.
+XGBoost: biblioteca de boosting de árvores.

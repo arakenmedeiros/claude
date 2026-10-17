@@ -6,1082 +6,2482 @@
  },
  {
   "level": 3,
-  "text": "Em construção",
+  "text": "Para quem é este livro",
   "id": "h2"
  },
  {
-  "level": 1,
-  "text": "Parte I — Fundamentos",
+  "level": 3,
+  "text": "O que é AutoML, em uma frase",
   "id": "h3"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "level": 3,
+  "text": "Como o livro está organizado",
   "id": "h4"
  },
  {
   "level": 3,
-  "text": "1.1 Uma história para começar",
+  "text": "Ícones e caixas",
   "id": "h5"
  },
  {
   "level": 3,
-  "text": "1.2 O que é AutoML?",
+  "text": "Ambiente de programação",
   "id": "h6"
  },
  {
   "level": 3,
-  "text": "1.3 O caminho do dado até o modelo",
+  "text": "Um aviso importante sobre o que foi testado",
   "id": "h7"
  },
  {
   "level": 3,
-  "text": "1.4 Por que o AutoML existe?",
+  "text": "Como estudar com este livro",
   "id": "h8"
  },
  {
-  "level": 3,
-  "text": "1.5 O problema CASH",
+  "level": 1,
+  "text": "Parte I — Fundamentos",
   "id": "h9"
  },
  {
-  "level": 3,
-  "text": "1.6 Uma breve história do AutoML",
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
   "id": "h10"
  },
  {
   "level": 3,
-  "text": "1.7 Quanto é \"automático\"?",
+  "text": "1.1 Uma história para começar",
   "id": "h11"
  },
  {
   "level": 3,
-  "text": "1.8 O que o AutoML não faz",
+  "text": "1.2 O que é AutoML?",
   "id": "h12"
  },
  {
   "level": 3,
-  "text": "1.9 Preparando o ambiente",
+  "text": "1.3 O caminho do dado até o modelo",
   "id": "h13"
  },
  {
   "level": 3,
-  "text": "1.10 Dados deste capítulo: o conjunto Wine",
+  "text": "1.4 Por que o AutoML existe?",
   "id": "h14"
  },
  {
   "level": 3,
-  "text": "1.11 Do jeito manual: testando três modelos",
+  "text": "1.5 O problema CASH",
   "id": "h15"
  },
  {
   "level": 3,
-  "text": "1.12 Do jeito automático: um mini-AutoML",
+  "text": "1.6 Uma breve história do AutoML",
   "id": "h16"
  },
  {
   "level": 3,
-  "text": "1.13 Os três ingredientes de todo AutoML",
+  "text": "1.7 Quanto é \"automático\"?",
   "id": "h17"
  },
  {
   "level": 3,
-  "text": "1.14 Como este livro está organizado",
+  "text": "1.8 O que o AutoML não faz",
   "id": "h18"
  },
  {
   "level": 3,
-  "text": "Resumo do capítulo",
+  "text": "1.9 Preparando o ambiente",
   "id": "h19"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "1.10 Dados deste capítulo: o conjunto Wine",
   "id": "h20"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "1.11 Do jeito manual: testando três modelos",
   "id": "h21"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "1.12 Do jeito automático: um mini-AutoML",
   "id": "h22"
  },
  {
-  "level": 4,
-  "text": "Exercício 1 — Por que precisamos de uma linha de base",
+  "level": 3,
+  "text": "1.13 Os três ingredientes de todo AutoML",
   "id": "h23"
  },
  {
-  "level": 4,
-  "text": "Exercício 2 — Ampliando o espaço de busca",
+  "level": 3,
+  "text": "1.14 Como este livro está organizado",
   "id": "h24"
  },
  {
-  "level": 4,
-  "text": "Exercício 3 — O efeito da semente",
+  "level": 3,
+  "text": "Resumo do capítulo",
   "id": "h25"
  },
  {
-  "level": 4,
-  "text": "Exercício 4 — Contando o tamanho do espaço de busca",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h26"
  },
  {
   "level": 3,
-  "text": "Projeto integrador do capítulo",
+  "text": "Exercícios discursivos",
   "id": "h27"
  },
  {
-  "level": 4,
-  "text": "Orçamento de busca e honestidade na avaliação",
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h28"
  },
  {
-  "level": 1,
-  "text": "Parte I — Fundamentos",
+  "level": 4,
+  "text": "Exercício 1 — Por que precisamos de uma linha de base",
   "id": "h29"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "level": 4,
+  "text": "Exercício 2 — Ampliando o espaço de busca",
   "id": "h30"
  },
  {
-  "level": 3,
-  "text": "2.1 Por que um capítulo de revisão?",
+  "level": 4,
+  "text": "Exercício 3 — O efeito da semente",
   "id": "h31"
  },
  {
-  "level": 3,
-  "text": "2.2 Os dados: exemplos, atributos e alvo",
+  "level": 4,
+  "text": "Exercício 4 — Contando o tamanho do espaço de busca",
   "id": "h32"
  },
  {
   "level": 3,
-  "text": "2.3 Quatro algoritmos clássicos",
+  "text": "Projeto integrador do capítulo",
   "id": "h33"
  },
  {
-  "level": 3,
-  "text": "2.4 Parâmetros e hiperparâmetros",
+  "level": 4,
+  "text": "Orçamento de busca e honestidade na avaliação",
   "id": "h34"
  },
  {
-  "level": 3,
-  "text": "2.5 Aprender é errar menos",
+  "level": 2,
+  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
   "id": "h35"
  },
  {
   "level": 3,
-  "text": "2.6 Treino, validação e teste",
+  "text": "2.1 Por que um capítulo de revisão?",
   "id": "h36"
  },
  {
   "level": 3,
-  "text": "2.7 Validação cruzada",
+  "text": "2.2 Os dados: exemplos, atributos e alvo",
   "id": "h37"
  },
  {
   "level": 3,
-  "text": "2.8 Métricas: como medir o acerto",
+  "text": "2.3 Quatro algoritmos clássicos",
   "id": "h38"
  },
  {
-  "level": 4,
-  "text": "2.8.1 Métricas de classificação",
+  "level": 3,
+  "text": "2.4 Parâmetros e hiperparâmetros",
   "id": "h39"
  },
  {
-  "level": 4,
-  "text": "2.8.2 Métricas de regressão",
+  "level": 3,
+  "text": "2.5 Aprender é errar menos",
   "id": "h40"
  },
  {
   "level": 3,
-  "text": "2.9 Linha de base: o ponto de comparação",
+  "text": "2.6 Treino, validação e teste",
   "id": "h41"
  },
  {
   "level": 3,
-  "text": "2.10 O perigo escondido: o \"efeito do vencedor\"",
+  "text": "2.7 Validação cruzada",
   "id": "h42"
  },
  {
   "level": 3,
-  "text": "2.11 Boas práticas para levar daqui",
+  "text": "2.8 Métricas: como medir o acerto",
   "id": "h43"
  },
  {
-  "level": 3,
-  "text": "Resumo do capítulo",
+  "level": 4,
+  "text": "2.8.1 Métricas de classificação",
   "id": "h44"
  },
  {
-  "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "level": 4,
+  "text": "2.8.2 Métricas de regressão",
   "id": "h45"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "2.9 Linha de base: o ponto de comparação",
   "id": "h46"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "2.10 O perigo escondido: o \"efeito do vencedor\"",
   "id": "h47"
  },
  {
-  "level": 4,
-  "text": "Exercício 1 — Curvas de aprendizado",
+  "level": 3,
+  "text": "2.11 Boas práticas para levar daqui",
   "id": "h48"
  },
  {
-  "level": 4,
-  "text": "Exercício 2 — Métricas em dados desbalanceados",
+  "level": 3,
+  "text": "Resumo do capítulo",
   "id": "h49"
  },
  {
-  "level": 4,
-  "text": "Exercício 3 — Uma divisão ou várias?",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h50"
  },
  {
-  "level": 4,
-  "text": "Exercício 4 — Reproduzindo o efeito do vencedor",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h51"
  },
  {
   "level": 3,
-  "text": "Projeto integrador do capítulo",
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h52"
  },
  {
   "level": 4,
-  "text": "Protocolo completo de avaliação em Digits",
+  "text": "Exercício 1 — Curvas de aprendizado",
   "id": "h53"
  },
  {
-  "level": 1,
-  "text": "Parte I — Fundamentos",
+  "level": 4,
+  "text": "Exercício 2 — Métricas em dados desbalanceados",
   "id": "h54"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Pipelines e pré-processamento",
+  "level": 4,
+  "text": "Exercício 3 — Uma divisão ou várias?",
   "id": "h55"
  },
  {
-  "level": 3,
-  "text": "3.1 A roupa suja vem antes do modelo",
+  "level": 4,
+  "text": "Exercício 4 — Reproduzindo o efeito do vencedor",
   "id": "h56"
  },
  {
   "level": 3,
-  "text": "3.2 Os dados deste capítulo",
+  "text": "Projeto integrador do capítulo",
   "id": "h57"
  },
  {
-  "level": 3,
-  "text": "3.3 O que acontece se ignorarmos a sujeira?",
+  "level": 4,
+  "text": "Protocolo completo de avaliação em Digits",
   "id": "h58"
  },
  {
-  "level": 3,
-  "text": "3.4 Valores ausentes: imputação",
+  "level": 2,
+  "text": "Capítulo 3 — Pipelines e pré-processamento",
   "id": "h59"
  },
  {
   "level": 3,
-  "text": "3.5 Escalas diferentes: padronização",
+  "text": "3.1 A roupa suja vem antes do modelo",
   "id": "h60"
  },
  {
   "level": 3,
-  "text": "3.6 Categorias em texto: codificação",
+  "text": "3.2 Os dados deste capítulo",
   "id": "h61"
  },
  {
   "level": 3,
-  "text": "3.7 Pipelines: uma linha de montagem em código",
+  "text": "3.3 O que acontece se ignorarmos a sujeira?",
   "id": "h62"
  },
  {
   "level": 3,
-  "text": "3.8 O perigo do vazamento de dados",
+  "text": "3.4 Valores ausentes: imputação",
   "id": "h63"
  },
  {
-  "level": 4,
-  "text": "Um experimento revelador",
+  "level": 3,
+  "text": "3.5 Escalas diferentes: padronização",
   "id": "h64"
  },
  {
   "level": 3,
-  "text": "3.9 O pipeline como espaço de busca",
+  "text": "3.6 Categorias em texto: codificação",
   "id": "h65"
  },
  {
   "level": 3,
-  "text": "3.10 Outras transformações úteis",
+  "text": "3.7 Pipelines: uma linha de montagem em código",
   "id": "h66"
  },
  {
   "level": 3,
-  "text": "3.11 Salvando e reutilizando o pipeline",
+  "text": "3.8 O perigo do vazamento de dados",
   "id": "h67"
  },
  {
-  "level": 3,
-  "text": "3.12 Reprodutibilidade",
+  "level": 4,
+  "text": "Um experimento revelador",
   "id": "h68"
  },
  {
   "level": 3,
-  "text": "Resumo do capítulo",
+  "text": "3.9 O pipeline como espaço de busca",
   "id": "h69"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "3.10 Outras transformações úteis",
   "id": "h70"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "3.11 Salvando e reutilizando o pipeline",
   "id": "h71"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "3.12 Reprodutibilidade",
   "id": "h72"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h73"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h74"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h75"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h76"
  },
  {
   "level": 4,
   "text": "Exercício 1 — Qual imputação escolher?",
-  "id": "h73"
- },
- {
-  "level": 4,
-  "text": "Exercício 2 — Ordinal ou one-hot?",
-  "id": "h74"
- },
- {
-  "level": 4,
-  "text": "Exercício 3 — Vazamento: a nota honesta",
-  "id": "h75"
- },
- {
-  "level": 4,
-  "text": "Exercício 4 — Buscando dentro do pipeline",
-  "id": "h76"
- },
- {
-  "level": 3,
-  "text": "Projeto integrador do capítulo",
   "id": "h77"
  },
  {
   "level": 4,
-  "text": "Pipeline robusto para dados sujos",
+  "text": "Exercício 2 — Ordinal ou one-hot?",
   "id": "h78"
  },
  {
-  "level": 1,
-  "text": "Parte II — Otimização de Hiperparâmetros",
+  "level": 4,
+  "text": "Exercício 3 — Vazamento: a nota honesta",
   "id": "h79"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Busca em grade e aleatória",
+  "level": 4,
+  "text": "Exercício 4 — Buscando dentro do pipeline",
   "id": "h80"
  },
  {
   "level": 3,
-  "text": "4.1 Os botões do algoritmo",
+  "text": "Projeto integrador do capítulo",
   "id": "h81"
  },
  {
-  "level": 3,
-  "text": "4.2 O espaço de busca",
+  "level": 4,
+  "text": "Pipeline robusto para dados sujos",
   "id": "h82"
  },
  {
-  "level": 4,
-  "text": "A escala logarítmica merece atenção",
+  "level": 1,
+  "text": "Parte II — Otimização de Hiperparâmetros",
   "id": "h83"
  },
  {
-  "level": 3,
-  "text": "4.3 Busca em grade (grid search)",
+  "level": 2,
+  "text": "Capítulo 4 — Busca em grade e aleatória",
   "id": "h84"
  },
  {
   "level": 3,
-  "text": "4.4 O custo da grade",
+  "text": "4.1 Os botões do algoritmo",
   "id": "h85"
  },
  {
   "level": 3,
-  "text": "4.5 Busca aleatória (random search)",
+  "text": "4.2 O espaço de busca",
   "id": "h86"
  },
  {
-  "level": 3,
-  "text": "4.6 A paisagem de hiperparâmetros",
+  "level": 4,
+  "text": "A escala logarítmica merece atenção",
   "id": "h87"
  },
  {
-  "level": 4,
-  "text": "Um experimento justo",
+  "level": 3,
+  "text": "4.3 Busca em grade (grid search)",
   "id": "h88"
  },
  {
   "level": 3,
-  "text": "4.7 Quanto orçamento é suficiente?",
+  "text": "4.4 O custo da grade",
   "id": "h89"
  },
  {
   "level": 3,
-  "text": "4.8 O perigo escondido: o otimismo da busca",
+  "text": "4.5 Busca aleatória (random search)",
   "id": "h90"
  },
  {
   "level": 3,
-  "text": "4.9 Quais hiperparâmetros importam?",
+  "text": "4.6 A paisagem de hiperparâmetros",
   "id": "h91"
  },
  {
-  "level": 3,
-  "text": "4.10 Boas práticas",
+  "level": 4,
+  "text": "Um experimento justo",
   "id": "h92"
  },
  {
   "level": 3,
-  "text": "Resumo do capítulo",
+  "text": "4.7 Quanto orçamento é suficiente?",
   "id": "h93"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "4.8 O perigo escondido: o otimismo da busca",
   "id": "h94"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "4.9 Quais hiperparâmetros importam?",
   "id": "h95"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "4.10 Boas práticas",
   "id": "h96"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h97"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h98"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h99"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h100"
  },
  {
   "level": 4,
   "text": "Exercício 1 — Sua primeira busca em grade",
-  "id": "h97"
- },
- {
-  "level": 4,
-  "text": "Exercício 2 — Grade ou aleatória? Com a floresta, empatou",
-  "id": "h98"
- },
- {
-  "level": 4,
-  "text": "Exercício 3 — Escala logarítmica faz diferença",
-  "id": "h99"
- },
- {
-  "level": 4,
-  "text": "Exercício 4 — Medindo o otimismo da busca",
-  "id": "h100"
- },
- {
-  "level": 3,
-  "text": "Projeto integrador do capítulo",
   "id": "h101"
  },
  {
   "level": 4,
-  "text": "Relatório de otimização de hiperparâmetros em Digits",
+  "text": "Exercício 2 — Grade ou aleatória? Com a floresta, empatou",
   "id": "h102"
  },
  {
-  "level": 1,
-  "text": "Parte II — Otimização de Hiperparâmetros",
+  "level": 4,
+  "text": "Exercício 3 — Escala logarítmica faz diferença",
   "id": "h103"
  },
  {
-  "level": 2,
-  "text": "Capítulo 5 — Otimização bayesiana",
+  "level": 4,
+  "text": "Exercício 4 — Medindo o otimismo da busca",
   "id": "h104"
  },
  {
   "level": 3,
-  "text": "5.1 A caixa-preta cara",
+  "text": "Projeto integrador do capítulo",
   "id": "h105"
  },
  {
-  "level": 3,
-  "text": "5.2 A ideia central: um modelo do modelo",
+  "level": 4,
+  "text": "Relatório de otimização de hiperparâmetros em Digits",
   "id": "h106"
  },
  {
-  "level": 3,
-  "text": "5.3 Explorar ou aproveitar?",
+  "level": 2,
+  "text": "Capítulo 5 — Otimização bayesiana",
   "id": "h107"
  },
  {
   "level": 3,
-  "text": "5.4 Processos gaussianos: previsão com incerteza",
+  "text": "5.1 A caixa-preta cara",
   "id": "h108"
  },
  {
   "level": 3,
-  "text": "5.5 Funções de aquisição",
+  "text": "5.2 A ideia central: um modelo do modelo",
   "id": "h109"
  },
  {
   "level": 3,
-  "text": "5.6 Construindo uma otimização bayesiana do zero",
+  "text": "5.3 Explorar ou aproveitar?",
   "id": "h110"
  },
  {
   "level": 3,
-  "text": "5.7 TPE: outro modelo substituto",
+  "text": "5.4 Processos gaussianos: previsão com incerteza",
   "id": "h111"
  },
  {
   "level": 3,
-  "text": "5.8 Outros modelos substitutos: o SMAC",
+  "text": "5.5 Funções de aquisição",
   "id": "h112"
  },
  {
   "level": 3,
-  "text": "5.9 Optuna: otimização bayesiana na prática",
+  "text": "5.6 Construindo uma otimização bayesiana do zero",
   "id": "h113"
  },
  {
   "level": 3,
-  "text": "5.10 Resolvendo o CASH com o Optuna",
+  "text": "5.7 TPE: outro modelo substituto",
   "id": "h114"
  },
  {
   "level": 3,
-  "text": "5.11 Quanto ganhamos de verdade?",
+  "text": "5.8 Outros modelos substitutos: o SMAC",
   "id": "h115"
  },
  {
   "level": 3,
-  "text": "5.12 Limitações",
+  "text": "5.9 Optuna: otimização bayesiana na prática",
   "id": "h116"
  },
  {
   "level": 3,
-  "text": "5.13 Boas práticas",
+  "text": "5.10 Resolvendo o CASH com o Optuna",
   "id": "h117"
  },
  {
   "level": 3,
-  "text": "Resumo do capítulo",
+  "text": "5.11 Quanto ganhamos de verdade?",
   "id": "h118"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "5.12 Limitações",
   "id": "h119"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "5.13 Boas práticas",
   "id": "h120"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
-  "id": "h121"
- },
- {
-  "level": 4,
-  "text": "Exercício 1 — Sua própria otimização bayesiana",
-  "id": "h122"
- },
- {
-  "level": 4,
-  "text": "Exercício 2 — Optuna em uma floresta aleatória",
-  "id": "h123"
- },
- {
-  "level": 4,
-  "text": "Exercício 3 — Reproduzindo e corrigindo a falha do CASH",
-  "id": "h124"
- },
- {
-  "level": 4,
-  "text": "Exercício 4 — Quanto explorar? O coeficiente do UCB",
-  "id": "h125"
- },
- {
-  "level": 3,
-  "text": "Projeto integrador do capítulo",
-  "id": "h126"
- },
- {
-  "level": 4,
-  "text": "AutoML minimalista com Optuna em regressão (Diabetes)",
-  "id": "h127"
- },
- {
-  "level": 1,
-  "text": "Parte II — Otimização de Hiperparâmetros",
-  "id": "h128"
- },
- {
-  "level": 2,
-  "text": "Capítulo 6 — Métodos multifidelidade: Successive Halving, Hyperband e BOHB",
-  "id": "h129"
- },
- {
-  "level": 3,
-  "text": "6.1 A peneira de talentos",
-  "id": "h130"
- },
- {
-  "level": 3,
-  "text": "6.2 O que é fidelidade?",
-  "id": "h131"
- },
- {
-  "level": 3,
-  "text": "6.3 Successive Halving: dividir ao meio, repetidamente",
-  "id": "h132"
- },
- {
-  "level": 4,
-  "text": "Implementando do zero",
-  "id": "h133"
- },
- {
-  "level": 3,
-  "text": "6.4 Quando o corte precoce funciona (e quando não)",
-  "id": "h134"
- },
- {
-  "level": 3,
-  "text": "6.5 No scikit-learn: busca com halving",
-  "id": "h135"
- },
- {
-  "level": 3,
-  "text": "6.6 Hyperband: não apostar tudo em um corte",
-  "id": "h136"
- },
- {
-  "level": 4,
-  "text": "Uma comparação justa",
-  "id": "h137"
- },
- {
-  "level": 3,
-  "text": "6.7 BOHB: multifidelidade com inteligência",
-  "id": "h138"
- },
- {
-  "level": 3,
-  "text": "6.8 Podas no Optuna",
-  "id": "h139"
- },
- {
-  "level": 3,
-  "text": "6.9 Armadilhas e boas práticas",
-  "id": "h140"
- },
- {
-  "level": 3,
   "text": "Resumo do capítulo",
-  "id": "h141"
+  "id": "h121"
  },
  {
   "level": 3,
   "text": "Exercícios de múltipla escolha",
-  "id": "h142"
+  "id": "h122"
  },
  {
   "level": 3,
   "text": "Exercícios discursivos",
-  "id": "h143"
+  "id": "h123"
  },
  {
   "level": 3,
   "text": "Exercícios práticos em Python (scikit-learn)",
-  "id": "h144"
+  "id": "h124"
  },
  {
   "level": 4,
-  "text": "Exercício 1 — Fazendo a conta do Successive Halving",
-  "id": "h145"
+  "text": "Exercício 1 — Sua própria otimização bayesiana",
+  "id": "h125"
  },
  {
   "level": 4,
-  "text": "Exercício 2 — Halving aleatório na floresta",
-  "id": "h146"
+  "text": "Exercício 2 — Optuna em uma floresta aleatória",
+  "id": "h126"
  },
  {
   "level": 4,
-  "text": "Exercício 3 — Comparando podadores",
-  "id": "h147"
+  "text": "Exercício 3 — Reproduzindo e corrigindo a falha do CASH",
+  "id": "h127"
  },
  {
   "level": 4,
-  "text": "Exercício 4 — O fator η importa",
-  "id": "h148"
+  "text": "Exercício 4 — Quanto explorar? O coeficiente do UCB",
+  "id": "h128"
  },
  {
   "level": 3,
   "text": "Projeto integrador do capítulo",
+  "id": "h129"
+ },
+ {
+  "level": 4,
+  "text": "AutoML minimalista com Optuna em regressão (Diabetes)",
+  "id": "h130"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Métodos multifidelidade: Successive Halving, Hyperband e BOHB",
+  "id": "h131"
+ },
+ {
+  "level": 3,
+  "text": "6.1 A peneira de talentos",
+  "id": "h132"
+ },
+ {
+  "level": 3,
+  "text": "6.2 O que é fidelidade?",
+  "id": "h133"
+ },
+ {
+  "level": 3,
+  "text": "6.3 Successive Halving: dividir ao meio, repetidamente",
+  "id": "h134"
+ },
+ {
+  "level": 4,
+  "text": "Implementando do zero",
+  "id": "h135"
+ },
+ {
+  "level": 3,
+  "text": "6.4 Quando o corte precoce funciona (e quando não)",
+  "id": "h136"
+ },
+ {
+  "level": 3,
+  "text": "6.5 No scikit-learn: busca com halving",
+  "id": "h137"
+ },
+ {
+  "level": 3,
+  "text": "6.6 Hyperband: não apostar tudo em um corte",
+  "id": "h138"
+ },
+ {
+  "level": 4,
+  "text": "Uma comparação justa",
+  "id": "h139"
+ },
+ {
+  "level": 3,
+  "text": "6.7 BOHB: multifidelidade com inteligência",
+  "id": "h140"
+ },
+ {
+  "level": 3,
+  "text": "6.8 Podas no Optuna",
+  "id": "h141"
+ },
+ {
+  "level": 3,
+  "text": "6.9 Armadilhas e boas práticas",
+  "id": "h142"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h143"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h144"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h145"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h146"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Fazendo a conta do Successive Halving",
+  "id": "h147"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Halving aleatório na floresta",
+  "id": "h148"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Comparando podadores",
   "id": "h149"
  },
  {
   "level": 4,
-  "text": "Halving em um modelo de boosting: custo e qualidade",
+  "text": "Exercício 4 — O fator η importa",
   "id": "h150"
  },
  {
-  "level": 1,
-  "text": "Apêndice A — Gabarito dos exercícios",
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
   "id": "h151"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "level": 4,
+  "text": "Halving em um modelo de boosting: custo e qualidade",
   "id": "h152"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 2,
+  "text": "Capítulo 7 — Métodos evolutivos e programação genética",
   "id": "h153"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "7.1 A natureza como otimizadora",
   "id": "h154"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "level": 3,
+  "text": "7.2 O vocabulário dos algoritmos genéticos",
   "id": "h155"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "7.3 Um algoritmo genético do zero",
   "id": "h156"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "7.4 Evolução contra busca aleatória",
   "id": "h157"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Pipelines e pré-processamento",
+  "level": 3,
+  "text": "7.5 Programação genética e pipelines em árvore",
   "id": "h158"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "7.6 Dois objetivos ao mesmo tempo",
   "id": "h159"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "7.7 O TPOT na prática",
   "id": "h160"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Busca em grade e aleatória",
+  "level": 3,
+  "text": "7.8 Vantagens e limites dos métodos evolutivos",
   "id": "h161"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "7.9 Boas práticas",
   "id": "h162"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "Resumo do capítulo",
   "id": "h163"
  },
  {
-  "level": 2,
-  "text": "Capítulo 5 — Otimização bayesiana",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h164"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "Exercícios discursivos",
   "id": "h165"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h166"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Métodos multifidelidade",
+  "level": 4,
+  "text": "Exercício 1 — Seleção por torneio: quem é escolhido?",
   "id": "h167"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "Exercício 2 — Algoritmo genético para os hiperparâmetros de um SVM",
   "id": "h168"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "Exercício 3 — Fronteira de Pareto: acurácia × esparsidade",
   "id": "h169"
  },
  {
-  "level": 1,
-  "text": "Apêndice B — Glossário",
+  "level": 4,
+  "text": "Exercício 4 — Mutação e elitismo em um GA simples",
   "id": "h170"
  },
  {
-  "level": 1,
-  "text": "Apêndice C — Guia rápido",
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
   "id": "h171"
  },
  {
-  "level": 3,
-  "text": "Em construção",
+  "level": 4,
+  "text": "Um mini-TPOT com fronteira de Pareto em Breast Cancer",
   "id": "h172"
  },
  {
   "level": 1,
-  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "text": "Parte III — Automação do Pipeline",
   "id": "h173"
  },
  {
   "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "text": "Capítulo 8 — Engenharia e seleção automática de atributos",
   "id": "h174"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Por que precisamos de uma linha de base",
+  "text": "8.1 A matéria-prima do modelo",
   "id": "h175"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Ampliando o espaço de busca",
+  "text": "8.2 Transformações que ajudam",
   "id": "h176"
  },
  {
-  "level": 3,
-  "text": "Exercício 3 — O efeito da semente",
+  "level": 4,
+  "text": "Mais atributos nem sempre ajudam",
   "id": "h177"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Contando o tamanho do espaço de busca",
+  "text": "8.3 Seleção de atributos",
   "id": "h178"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "level": 3,
+  "text": "8.4 Atributos a partir de várias tabelas: DFS",
   "id": "h179"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Curvas de aprendizado",
+  "text": "8.5 Aprender a criar atributos",
   "id": "h180"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Métricas em dados desbalanceados",
+  "text": "8.6 Criação automática \"na marra\" e seus perigos",
   "id": "h181"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Uma divisão ou várias?",
+  "text": "8.7 Riscos e cuidados",
   "id": "h182"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Reproduzindo o efeito do vencedor",
+  "text": "8.8 Boas práticas",
   "id": "h183"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Pipelines e pré-processamento",
+  "level": 3,
+  "text": "Resumo do capítulo",
   "id": "h184"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Qual imputação escolher?",
+  "text": "Exercícios de múltipla escolha",
   "id": "h185"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Ordinal ou one-hot?",
+  "text": "Exercícios discursivos",
   "id": "h186"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Vazamento: a nota honesta",
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h187"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Buscando dentro do pipeline",
+  "level": 4,
+  "text": "Exercício 1 — Quando o produto de dois atributos é a resposta",
   "id": "h188"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Busca em grade e aleatória",
+  "level": 4,
+  "text": "Exercício 2 — Quantos atributos manter?",
   "id": "h189"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — Sua primeira busca em grade",
+  "level": 4,
+  "text": "Exercício 3 — RFECV: deixar a validação cruzada escolher",
   "id": "h190"
  },
  {
-  "level": 3,
-  "text": "Exercício 2 — Grade ou aleatória? Com a floresta, empatou",
+  "level": 4,
+  "text": "Exercício 4 — Mais agregados, mais ganho?",
   "id": "h191"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Escala logarítmica faz diferença",
+  "text": "Projeto integrador do capítulo",
   "id": "h192"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Medindo o otimismo da busca",
+  "level": 4,
+  "text": "Engenharia de atributos honesta em Diabetes",
   "id": "h193"
  },
  {
   "level": 2,
-  "text": "Capítulo 5 — Otimização bayesiana",
+  "text": "Capítulo 9 — Meta-aprendizado, warm start e ensembles",
   "id": "h194"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Sua própria otimização bayesiana",
+  "text": "9.1 Aprender com a experiência",
   "id": "h195"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Optuna em uma floresta aleatória",
+  "text": "9.2 O quadro de Rice: escolher o algoritmo por características do problema",
   "id": "h196"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Reproduzindo e corrigindo a falha do CASH",
+  "text": "9.3 Meta-atributos",
   "id": "h197"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Quanto explorar? O coeficiente do UCB",
+  "text": "9.4 Construindo um meta-aprendizado do zero",
   "id": "h198"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Métodos multifidelidade",
+  "level": 3,
+  "text": "9.5 Warm start: partida a quente",
   "id": "h199"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Fazendo a conta do Successive Halving",
+  "text": "9.6 Ensembles: a sabedoria das multidões",
   "id": "h200"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Halving aleatório na floresta",
+  "text": "9.7 Seleção de ensembles (Caruana)",
   "id": "h201"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Comparando podadores",
+  "text": "9.8 O Auto-sklearn: tudo junto",
   "id": "h202"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — O fator η importa",
+  "text": "9.9 Boas práticas",
   "id": "h203"
  },
  {
-  "level": 1,
-  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "level": 3,
+  "text": "Resumo do capítulo",
   "id": "h204"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h205"
  },
  {
   "level": 3,
-  "text": "Orçamento de busca e honestidade na avaliação",
+  "text": "Exercícios discursivos",
   "id": "h206"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h207"
  },
  {
-  "level": 3,
-  "text": "Protocolo completo de avaliação em Digits",
+  "level": 4,
+  "text": "Exercício 1 — O retrato de um conjunto de dados",
   "id": "h208"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Pipelines e pré-processamento",
+  "level": 4,
+  "text": "Exercício 2 — Votação dura ou suave?",
   "id": "h209"
  },
  {
-  "level": 3,
-  "text": "Pipeline robusto para dados sujos",
+  "level": 4,
+  "text": "Exercício 3 — Diversidade importa",
   "id": "h210"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Busca em grade e aleatória",
+  "level": 4,
+  "text": "Exercício 4 — Warm start com o Optuna",
   "id": "h211"
  },
  {
   "level": 3,
-  "text": "Relatório de otimização de hiperparâmetros em Digits",
+  "text": "Projeto integrador do capítulo",
   "id": "h212"
+ },
+ {
+  "level": 4,
+  "text": "Um mini Auto-sklearn: warm start, busca TPE e ensemble",
+  "id": "h213"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Ferramentas de AutoML na prática",
+  "id": "h214"
+ },
+ {
+  "level": 3,
+  "text": "10.1 Uma feira de ferramentas",
+  "id": "h215"
+ },
+ {
+  "level": 4,
+  "text": "10.1.1 O que há de comum entre elas",
+  "id": "h216"
+ },
+ {
+  "level": 3,
+  "text": "10.2 O FLAML na prática",
+  "id": "h217"
+ },
+ {
+  "level": 4,
+  "text": "10.2.1 Lendo a \"caixa de ferramentas\" do resultado",
+  "id": "h218"
+ },
+ {
+  "level": 4,
+  "text": "10.2.2 Os botões do fit",
+  "id": "h219"
+ },
+ {
+  "level": 3,
+  "text": "10.3 Mais tempo significa melhor modelo?",
+  "id": "h220"
+ },
+ {
+  "level": 3,
+  "text": "10.4 As outras ferramentas: o código de uso",
+  "id": "h221"
+ },
+ {
+  "level": 4,
+  "text": "10.4.1 Auto-sklearn",
+  "id": "h222"
+ },
+ {
+  "level": 4,
+  "text": "10.4.2 TPOT",
+  "id": "h223"
+ },
+ {
+  "level": 4,
+  "text": "10.4.3 H2O AutoML",
+  "id": "h224"
+ },
+ {
+  "level": 4,
+  "text": "10.4.4 AutoGluon",
+  "id": "h225"
+ },
+ {
+  "level": 3,
+  "text": "10.5 Montando uma comparação justa",
+  "id": "h226"
+ },
+ {
+  "level": 3,
+  "text": "10.6 Comparando métodos em várias bases: postos e o teste de Friedman",
+  "id": "h227"
+ },
+ {
+  "level": 3,
+  "text": "10.7 O que as comparações da literatura nos ensinam",
+  "id": "h228"
+ },
+ {
+  "level": 3,
+  "text": "10.8 Escolhendo uma ferramenta",
+  "id": "h229"
+ },
+ {
+  "level": 3,
+  "text": "10.9 Boas práticas",
+  "id": "h230"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h231"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h232"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h233"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h234"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Primeiro contato com o FLAML",
+  "id": "h235"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Tempo ou tentativas?",
+  "id": "h236"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — O AutoML bate a linha de base?",
+  "id": "h237"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Postos e Friedman à mão",
+  "id": "h238"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h239"
+ },
+ {
+  "level": 4,
+  "text": "Duelo de AutoML em miniatura",
+  "id": "h240"
+ },
+ {
+  "level": 1,
+  "text": "Parte IV — Redes Neurais e Novos Domínios",
+  "id": "h241"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Busca de arquitetura neural (NAS)",
+  "id": "h242"
+ },
+ {
+  "level": 3,
+  "text": "11.1 Quem desenha a rede?",
+  "id": "h243"
+ },
+ {
+  "level": 3,
+  "text": "11.2 Os três pilares do NAS",
+  "id": "h244"
+ },
+ {
+  "level": 3,
+  "text": "11.3 O espaço de busca",
+  "id": "h245"
+ },
+ {
+  "level": 3,
+  "text": "11.4 O mapa do tesouro: avaliando todo o espaço",
+  "id": "h246"
+ },
+ {
+  "level": 3,
+  "text": "11.5 Estratégias de busca",
+  "id": "h247"
+ },
+ {
+  "level": 3,
+  "text": "11.6 Mini-NAS: aleatória ou evolução?",
+  "id": "h248"
+ },
+ {
+  "level": 3,
+  "text": "11.7 Estimar sem treinar tudo: fidelidade, pesos compartilhados e preditores",
+  "id": "h249"
+ },
+ {
+  "level": 3,
+  "text": "11.8 Redes boas e pequenas: busca com mais de um objetivo",
+  "id": "h250"
+ },
+ {
+  "level": 3,
+  "text": "11.9 O custo do NAS e a \"IA verde\"",
+  "id": "h251"
+ },
+ {
+  "level": 3,
+  "text": "11.10 Ferramentas: Auto-Keras",
+  "id": "h252"
+ },
+ {
+  "level": 3,
+  "text": "11.11 Boas práticas",
+  "id": "h253"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h254"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h255"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h256"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h257"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Contando arquiteturas",
+  "id": "h258"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Maior é sempre melhor?",
+  "id": "h259"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Aleatória ou hill climbing?",
+  "id": "h260"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Quanto se pode confiar numa avaliação barata?",
+  "id": "h261"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h262"
+ },
+ {
+  "level": 4,
+  "text": "Uma rede enxuta por busca de arquitetura",
+  "id": "h263"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — AutoML para séries temporais, texto e imagens",
+  "id": "h264"
+ },
+ {
+  "level": 3,
+  "text": "12.1 Além das tabelas",
+  "id": "h265"
+ },
+ {
+  "level": 3,
+  "text": "12.2 Séries temporais: o tempo não volta",
+  "id": "h266"
+ },
+ {
+  "level": 4,
+  "text": "12.2.1 O que muda",
+  "id": "h267"
+ },
+ {
+  "level": 4,
+  "text": "12.2.2 Prever com modelos de tabela: atrasos (lags)",
+  "id": "h268"
+ },
+ {
+  "level": 4,
+  "text": "12.2.3 Um mini-AutoML para previsão",
+  "id": "h269"
+ },
+ {
+  "level": 4,
+  "text": "12.2.4 O que a literatura diz",
+  "id": "h270"
+ },
+ {
+  "level": 3,
+  "text": "12.3 Texto: transformar palavras em números",
+  "id": "h271"
+ },
+ {
+  "level": 4,
+  "text": "12.3.1 O pipeline de texto",
+  "id": "h272"
+ },
+ {
+  "level": 4,
+  "text": "12.3.2 Um experimento com texto simulado",
+  "id": "h273"
+ },
+ {
+  "level": 4,
+  "text": "12.3.3 Modelos pré-treinados e a era dos Transformers",
+  "id": "h274"
+ },
+ {
+  "level": 3,
+  "text": "12.4 Imagens: formas, deslocamentos e dados escassos",
+  "id": "h275"
+ },
+ {
+  "level": 4,
+  "text": "12.4.1 O que muda com imagens",
+  "id": "h276"
+ },
+ {
+  "level": 4,
+  "text": "12.4.2 Um mini-AutoAugment",
+  "id": "h277"
+ },
+ {
+  "level": 4,
+  "text": "12.4.3 Transferência e modelos pré-treinados",
+  "id": "h278"
+ },
+ {
+  "level": 3,
+  "text": "12.5 Quadro-resumo",
+  "id": "h279"
+ },
+ {
+  "level": 3,
+  "text": "12.6 Boas práticas",
+  "id": "h280"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h281"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h282"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h283"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h284"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Validação aleatória ou temporal?",
+  "id": "h285"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Três linhas de base",
+  "id": "h286"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Quando n-gramas importam?",
+  "id": "h287"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Qual distorção ajuda mais?",
+  "id": "h288"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h289"
+ },
+ {
+  "level": 4,
+  "text": "Previsão de manchas solares com mini-AutoML",
+  "id": "h290"
+ },
+ {
+  "level": 1,
+  "text": "Parte V — Responsabilidade e Prática",
+  "id": "h291"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Explicabilidade, ética e limitações do AutoML",
+  "id": "h292"
+ },
+ {
+  "level": 3,
+  "text": "13.1 Três perguntas antes de confiar",
+  "id": "h293"
+ },
+ {
+  "level": 3,
+  "text": "13.2 Explicabilidade",
+  "id": "h294"
+ },
+ {
+  "level": 4,
+  "text": "13.2.1 Interpretável ou explicado depois?",
+  "id": "h295"
+ },
+ {
+  "level": 4,
+  "text": "13.2.2 Explicação global e local",
+  "id": "h296"
+ },
+ {
+  "level": 3,
+  "text": "13.3 Justiça e vieses",
+  "id": "h297"
+ },
+ {
+  "level": 4,
+  "text": "13.3.1 De onde vem o viés?",
+  "id": "h298"
+ },
+ {
+  "level": 4,
+  "text": "13.3.2 Como medir",
+  "id": "h299"
+ },
+ {
+  "level": 4,
+  "text": "13.3.3 \"Basta remover o atributo sensível?\"",
+  "id": "h300"
+ },
+ {
+  "level": 4,
+  "text": "13.3.4 Mitigação: ajustar o limiar por grupo",
+  "id": "h301"
+ },
+ {
+  "level": 3,
+  "text": "13.4 O custo da busca",
+  "id": "h302"
+ },
+ {
+  "level": 3,
+  "text": "13.5 Os limites do AutoML",
+  "id": "h303"
+ },
+ {
+  "level": 3,
+  "text": "13.6 Lista de verificação ética para um projeto de AutoML",
+  "id": "h304"
+ },
+ {
+  "level": 3,
+  "text": "13.7 Boas práticas",
+  "id": "h305"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h306"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h307"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h308"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h309"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Quem importa para o modelo?",
+  "id": "h310"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Medindo a disparidade por grupo",
+  "id": "h311"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Detectando proxies",
+  "id": "h312"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Igualdade de oportunidade com os rótulos disponíveis",
+  "id": "h313"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h314"
+ },
+ {
+  "level": 4,
+  "text": "Auditoria ética de um modelo de AutoML",
+  "id": "h315"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — MLOps, implantação e projeto integrador",
+  "id": "h316"
+ },
+ {
+  "level": 3,
+  "text": "14.1 Do notebook ao mundo real",
+  "id": "h317"
+ },
+ {
+  "level": 3,
+  "text": "14.2 O ciclo de vida de um modelo",
+  "id": "h318"
+ },
+ {
+  "level": 3,
+  "text": "14.3 Salvar e reproduzir",
+  "id": "h319"
+ },
+ {
+  "level": 3,
+  "text": "14.4 Servir o modelo: lote ou tempo real",
+  "id": "h320"
+ },
+ {
+  "level": 3,
+  "text": "14.5 Monitoramento: o mundo muda",
+  "id": "h321"
+ },
+ {
+  "level": 3,
+  "text": "14.6 Retreinar: campeão e desafiante",
+  "id": "h322"
+ },
+ {
+  "level": 3,
+  "text": "14.7 Um pipeline completo, de ponta a ponta",
+  "id": "h323"
+ },
+ {
+  "level": 3,
+  "text": "14.8 O projeto integrador final",
+  "id": "h324"
+ },
+ {
+  "level": 3,
+  "text": "14.9 Boas práticas",
+  "id": "h325"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h326"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h327"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h328"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h329"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Ficha do modelo e reprodutibilidade",
+  "id": "h330"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Quanto custa cada previsão?",
+  "id": "h331"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Detectando deriva com KS e PSI",
+  "id": "h332"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Quando trocar o campeão?",
+  "id": "h333"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador final",
+  "id": "h334"
+ },
+ {
+  "level": 4,
+  "text": "Projeto integrador: AutoML de ponta a ponta, com ética e produção",
+  "id": "h335"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito dos exercícios",
+  "id": "h336"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h337"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h338"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h339"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "id": "h340"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h341"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h342"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Pipelines e pré-processamento",
+  "id": "h343"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h344"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h345"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Busca em grade e aleatória",
+  "id": "h346"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h347"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h348"
  },
  {
   "level": 2,
   "text": "Capítulo 5 — Otimização bayesiana",
-  "id": "h213"
+  "id": "h349"
  },
  {
   "level": 3,
-  "text": "AutoML minimalista com Optuna em regressão (Diabetes)",
-  "id": "h214"
+  "text": "Múltipla escolha",
+  "id": "h350"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h351"
  },
  {
   "level": 2,
   "text": "Capítulo 6 — Métodos multifidelidade",
-  "id": "h215"
+  "id": "h352"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h353"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h354"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Métodos evolutivos e programação genética",
+  "id": "h355"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h356"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h357"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia e seleção automática de atributos",
+  "id": "h358"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h359"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h360"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Meta-aprendizado, warm start e ensembles",
+  "id": "h361"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h362"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h363"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Ferramentas de AutoML na prática",
+  "id": "h364"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h365"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h366"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Busca de arquitetura neural (NAS)",
+  "id": "h367"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h368"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h369"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — AutoML para séries temporais, texto e imagens",
+  "id": "h370"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h371"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h372"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Explicabilidade, ética e limitações do AutoML",
+  "id": "h373"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h374"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h375"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — MLOps, implantação e projeto integrador",
+  "id": "h376"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h377"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h378"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice B — Glossário",
+  "id": "h379"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice C — Guia rápido",
+  "id": "h380"
+ },
+ {
+  "level": 3,
+  "text": "C.1 Qual método de busca usar?",
+  "id": "h381"
+ },
+ {
+  "level": 3,
+  "text": "C.2 Receitas de código",
+  "id": "h382"
+ },
+ {
+  "level": 4,
+  "text": "Pipeline sem vazamento",
+  "id": "h383"
+ },
+ {
+  "level": 4,
+  "text": "Busca aleatória",
+  "id": "h384"
+ },
+ {
+  "level": 4,
+  "text": "Validação aninhada (estimar o ganho da busca)",
+  "id": "h385"
+ },
+ {
+  "level": 4,
+  "text": "Successive Halving no scikit-learn",
+  "id": "h386"
+ },
+ {
+  "level": 4,
+  "text": "Otimização bayesiana (TPE) com Optuna",
+  "id": "h387"
+ },
+ {
+  "level": 4,
+  "text": "FLAML",
+  "id": "h388"
+ },
+ {
+  "level": 4,
+  "text": "Ensemble por votação suave",
+  "id": "h389"
+ },
+ {
+  "level": 4,
+  "text": "Séries temporais: validação sem olhar o futuro",
+  "id": "h390"
+ },
+ {
+  "level": 4,
+  "text": "Explicação e auditoria",
+  "id": "h391"
+ },
+ {
+  "level": 4,
+  "text": "Salvar e recarregar o pipeline",
+  "id": "h392"
+ },
+ {
+  "level": 3,
+  "text": "C.3 Fórmulas e métricas em palavras",
+  "id": "h393"
+ },
+ {
+  "level": 3,
+  "text": "C.4 Lista de verificação de um projeto",
+  "id": "h394"
+ },
+ {
+  "level": 3,
+  "text": "C.5 As dez armadilhas mais comuns",
+  "id": "h395"
+ },
+ {
+  "level": 3,
+  "text": "C.6 Mapa dos capítulos",
+  "id": "h396"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h397"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h398"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Por que precisamos de uma linha de base",
+  "id": "h399"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Ampliando o espaço de busca",
+  "id": "h400"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — O efeito da semente",
+  "id": "h401"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Contando o tamanho do espaço de busca",
+  "id": "h402"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "id": "h403"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Curvas de aprendizado",
+  "id": "h404"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Métricas em dados desbalanceados",
+  "id": "h405"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Uma divisão ou várias?",
+  "id": "h406"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Reproduzindo o efeito do vencedor",
+  "id": "h407"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Pipelines e pré-processamento",
+  "id": "h408"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Qual imputação escolher?",
+  "id": "h409"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Ordinal ou one-hot?",
+  "id": "h410"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Vazamento: a nota honesta",
+  "id": "h411"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Buscando dentro do pipeline",
+  "id": "h412"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Busca em grade e aleatória",
+  "id": "h413"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Sua primeira busca em grade",
+  "id": "h414"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Grade ou aleatória? Com a floresta, empatou",
+  "id": "h415"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Escala logarítmica faz diferença",
+  "id": "h416"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Medindo o otimismo da busca",
+  "id": "h417"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Otimização bayesiana",
+  "id": "h418"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Sua própria otimização bayesiana",
+  "id": "h419"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Optuna em uma floresta aleatória",
+  "id": "h420"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Reproduzindo e corrigindo a falha do CASH",
+  "id": "h421"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quanto explorar? O coeficiente do UCB",
+  "id": "h422"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Métodos multifidelidade",
+  "id": "h423"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Fazendo a conta do Successive Halving",
+  "id": "h424"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Halving aleatório na floresta",
+  "id": "h425"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Comparando podadores",
+  "id": "h426"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — O fator η importa",
+  "id": "h427"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Métodos evolutivos e programação genética",
+  "id": "h428"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Seleção por torneio: quem é escolhido?",
+  "id": "h429"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Algoritmo genético para os hiperparâmetros de um SVM",
+  "id": "h430"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Fronteira de Pareto: acurácia × esparsidade",
+  "id": "h431"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Mutação e elitismo em um GA simples",
+  "id": "h432"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia e seleção automática de atributos",
+  "id": "h433"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Quando o produto de dois atributos é a resposta",
+  "id": "h434"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quantos atributos manter?",
+  "id": "h435"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — RFECV: deixar a validação cruzada escolher",
+  "id": "h436"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Mais agregados, mais ganho?",
+  "id": "h437"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Meta-aprendizado, warm start e ensembles",
+  "id": "h438"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — O retrato de um conjunto de dados",
+  "id": "h439"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Votação dura ou suave?",
+  "id": "h440"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Diversidade importa",
+  "id": "h441"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Warm start com o Optuna",
+  "id": "h442"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Ferramentas de AutoML na prática",
+  "id": "h443"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Primeiro contato com o FLAML",
+  "id": "h444"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Tempo ou tentativas?",
+  "id": "h445"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — O AutoML bate a linha de base?",
+  "id": "h446"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Postos e Friedman à mão",
+  "id": "h447"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Busca de arquitetura neural (NAS)",
+  "id": "h448"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Contando arquiteturas",
+  "id": "h449"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Maior é sempre melhor?",
+  "id": "h450"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Aleatória ou hill climbing?",
+  "id": "h451"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quanto se pode confiar numa avaliação barata?",
+  "id": "h452"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — AutoML para séries temporais, texto e imagens",
+  "id": "h453"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Validação aleatória ou temporal?",
+  "id": "h454"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Três linhas de base",
+  "id": "h455"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Quando n-gramas importam?",
+  "id": "h456"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Qual distorção ajuda mais?",
+  "id": "h457"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Explicabilidade, ética e limitações do AutoML",
+  "id": "h458"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Quem importa para o modelo?",
+  "id": "h459"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Medindo a disparidade por grupo",
+  "id": "h460"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Detectando proxies",
+  "id": "h461"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Igualdade de oportunidade com os rótulos disponíveis",
+  "id": "h462"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — MLOps, implantação e projeto integrador",
+  "id": "h463"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Ficha do modelo e reprodutibilidade",
+  "id": "h464"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quanto custa cada previsão?",
+  "id": "h465"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Detectando deriva com KS e PSI",
+  "id": "h466"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quando trocar o campeão?",
+  "id": "h467"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "id": "h468"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h469"
+ },
+ {
+  "level": 3,
+  "text": "Orçamento de busca e honestidade na avaliação",
+  "id": "h470"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "id": "h471"
+ },
+ {
+  "level": 3,
+  "text": "Protocolo completo de avaliação em Digits",
+  "id": "h472"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Pipelines e pré-processamento",
+  "id": "h473"
+ },
+ {
+  "level": 3,
+  "text": "Pipeline robusto para dados sujos",
+  "id": "h474"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Busca em grade e aleatória",
+  "id": "h475"
+ },
+ {
+  "level": 3,
+  "text": "Relatório de otimização de hiperparâmetros em Digits",
+  "id": "h476"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Otimização bayesiana",
+  "id": "h477"
+ },
+ {
+  "level": 3,
+  "text": "AutoML minimalista com Optuna em regressão (Diabetes)",
+  "id": "h478"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Métodos multifidelidade",
+  "id": "h479"
  },
  {
   "level": 3,
   "text": "Halving em um modelo de boosting: custo e qualidade",
-  "id": "h216"
+  "id": "h480"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Métodos evolutivos e programação genética",
+  "id": "h481"
+ },
+ {
+  "level": 3,
+  "text": "Um mini-TPOT com fronteira de Pareto em Breast Cancer",
+  "id": "h482"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia e seleção automática de atributos",
+  "id": "h483"
+ },
+ {
+  "level": 3,
+  "text": "Engenharia de atributos honesta em Diabetes",
+  "id": "h484"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Meta-aprendizado, warm start e ensembles",
+  "id": "h485"
+ },
+ {
+  "level": 3,
+  "text": "Um mini Auto-sklearn: warm start, busca TPE e ensemble",
+  "id": "h486"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Ferramentas de AutoML na prática",
+  "id": "h487"
+ },
+ {
+  "level": 3,
+  "text": "Duelo de AutoML em miniatura",
+  "id": "h488"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Busca de arquitetura neural (NAS)",
+  "id": "h489"
+ },
+ {
+  "level": 3,
+  "text": "Uma rede enxuta por busca de arquitetura",
+  "id": "h490"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — AutoML para séries temporais, texto e imagens",
+  "id": "h491"
+ },
+ {
+  "level": 3,
+  "text": "Previsão de manchas solares com mini-AutoML",
+  "id": "h492"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Explicabilidade, ética e limitações do AutoML",
+  "id": "h493"
+ },
+ {
+  "level": 3,
+  "text": "Auditoria ética de um modelo de AutoML",
+  "id": "h494"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — MLOps, implantação e projeto integrador",
+  "id": "h495"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador: AutoML de ponta a ponta, com ética e produção",
+  "id": "h496"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h217"
+  "id": "h497"
  }
 ]

@@ -362,6 +362,7 @@ const contentSections = [];
   contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Apresentação") }, footers: { default: mkFooter() }, children: ch });
 }
 
+for (let i = chapters.length - 1; i > 0; i--) if (chapters[i].meta.part && chapters[i].meta.part === chapters[i - 1].meta.part) chapters[i].meta.part = null;   // abertura de parte só no 1º capítulo
 for (const c of chapters) {
   if (c.meta.part) {
     const pk = c.meta.part.split(" — ")[0]; const col = PART_COL[pk];
