@@ -1,0 +1,269 @@
+MC: Em uma tabela de dados, cada linha representa normalmente:
+a) um atributo.
+b) um hiperparâmetro.
+c) um exemplo (instância).
+d) um algoritmo.
+R: c | Linhas são exemplos; colunas de entrada são atributos.
+
+MC: Em aprendizado supervisionado, o "alvo" (y) é:
+a) a tabela de atributos.
+b) o conjunto de hiperparâmetros.
+c) o número de exemplos.
+d) o valor que se deseja prever.
+R: d | O alvo (ou rótulo) é a resposta correta que o modelo aprende a prever.
+
+MC: Prever o preço de um imóvel é um problema de:
+a) regressão.
+b) classificação.
+c) agrupamento.
+d) detecção de duplicatas.
+R: a | Quando o alvo é um número contínuo, trata-se de regressão.
+
+MC: Decidir se um e-mail é spam ou não spam é um problema de:
+a) regressão.
+b) classificação.
+c) redução de dimensionalidade.
+d) otimização contínua.
+R: b | O alvo é uma categoria; portanto, classificação.
+
+MC: Qual algoritmo funciona fazendo uma série de perguntas de sim ou não, como no jogo "20 perguntas"?
+a) k-vizinhos.
+b) Regressão logística.
+c) Árvore de decisão.
+d) k-means.
+R: c | A árvore de decisão divide os dados por perguntas sucessivas sobre os atributos.
+
+MC: O algoritmo k-vizinhos classifica um novo exemplo:
+a) traçando uma reta entre as classes.
+b) sorteando uma classe.
+c) treinando centenas de árvores.
+d) adotando a categoria mais frequente entre os k exemplos mais parecidos.
+R: d | Ele consulta os k vizinhos mais próximos e adota a classe mais frequente entre eles.
+
+MC: Por que o k-vizinhos costuma exigir padronização das escalas dos atributos?
+a) Porque ele usa distâncias, e atributos com números grandes dominariam o cálculo.
+b) Porque ele não aceita números.
+c) Porque ele usa apenas categorias.
+d) Porque ele não tem hiperparâmetros.
+R: a | Sem padronização, a coluna com valores maiores domina a distância entre exemplos.
+
+MC: Uma floresta aleatória é formada por:
+a) uma única árvore muito profunda.
+b) centenas de árvores treinadas com amostras diferentes que votam juntas.
+c) vários k-vizinhos.
+d) uma regressão logística em cascata.
+R: b | Breiman (2001) propôs combinar muitas árvores com aleatorização nos exemplos e nos atributos.
+
+MC: No gradient boosting, as árvores são construídas:
+a) todas ao mesmo tempo e de forma independente.
+b) sem usar o erro.
+c) em sequência, cada uma corrigindo os erros das anteriores.
+d) apenas com atributos categóricos.
+R: c | O boosting treina modelos em sequência, focando o que os anteriores erraram.
+
+MC: Qual é a diferença entre parâmetro e hiperparâmetro?
+a) Parâmetros são definidos pelo usuário; hiperparâmetros são aprendidos.
+b) Parâmetros são aprendidos durante o treino; hiperparâmetros são definidos antes dele.
+c) Não há diferença.
+d) Hiperparâmetros só existem em redes neurais.
+R: b | Parâmetros são aprendidos pelo modelo; hiperparâmetros são "botões" fixados antes do treino.
+
+MC: Qual dos itens abaixo é um hiperparâmetro de uma árvore de decisão?
+a) O limite de corte escolhido em um nó.
+b) A profundidade máxima.
+c) O atributo escolhido na raiz.
+d) A classe prevista em uma folha.
+R: b | A profundidade máxima é definida antes do treino. Os demais itens são aprendidos.
+
+MC: Subajuste (underfitting) ocorre quando o modelo:
+a) decora o ruído do treino.
+b) tem erro zero no treino.
+c) é simples demais e erra até no treino.
+d) usa validação cruzada.
+R: c | O modelo não captura o padrão dos dados, resultando em erro alto também no treino.
+
+MC: Sobreajuste (overfitting) ocorre quando o modelo:
+a) é complexo demais e se ajusta ao ruído do treino, errando mais em dados novos.
+b) é simples demais.
+c) usa poucos atributos.
+d) tem erro alto no treino.
+R: a | O modelo "decora" o treino e perde capacidade de generalizar.
+
+MC: Na curva de complexidade, o erro de treino, ao aumentar a complexidade do modelo:
+a) sobe sempre.
+b) oscila sem tendência.
+c) é sempre igual ao erro de validação.
+d) tende a cair sempre.
+R: d | Modelos mais flexíveis se ajustam cada vez melhor ao treino, mesmo quando isso prejudica a generalização.
+
+MC: O que significa generalização?
+a) Desempenho em dados que o modelo nunca viu.
+b) Desempenho nos dados de treino.
+c) Quantidade de algoritmos testados.
+d) Uso de muitos atributos.
+R: a | Um bom modelo deve funcionar em dados novos, e não apenas nos exemplos vistos.
+
+MC: Qual o papel do conjunto de validação?
+a) Ser aberto uma única vez no final para medir o desempenho real.
+b) Treinar os parâmetros do modelo.
+c) Escolher hiperparâmetros e comparar modelos.
+d) Substituir o conjunto de teste.
+R: c | A validação serve para decidir como o modelo deve ser configurado.
+
+MC: O conjunto de teste deve ser usado:
+a) várias vezes, a cada ajuste de hiperparâmetro.
+b) apenas uma vez, no final, para medir o desempenho real.
+c) no lugar do treino.
+d) para escolher o algoritmo.
+R: b | Se o teste influencia decisões, deixa de medir o desempenho honesto.
+
+MC: O argumento stratify=y em train_test_split serve para:
+a) embaralhar os rótulos.
+b) remover atributos.
+c) aumentar o conjunto de treino.
+d) manter a proporção de classes em cada parte.
+R: d | A estratificação preserva a distribuição das classes nas partições.
+
+MC: Qual é a vantagem da validação cruzada sobre uma única divisão treino/validação?
+a) Dá uma estimativa menos dependente da sorte do sorteio.
+b) É sempre mais rápida.
+c) Dispensa o conjunto de teste.
+d) Elimina o sobreajuste.
+R: a | A média sobre várias divisões reduz a variabilidade da estimativa (Kohavi, 1995).
+
+MC: Em uma validação cruzada de 5 partes, cada exemplo é usado como validação:
+a) nenhuma vez.
+b) cinco vezes.
+c) exatamente uma vez.
+d) duas vezes.
+R: c | Cada parte serve de validação uma vez; os exemplos aparecem no treino nas demais.
+
+MC: Um classificador responde sempre "saudável" em uma doença que afeta 5% da população. Qual é sua acurácia aproximada?
+a) 5%.
+b) 50%.
+c) 0%.
+d) 95%.
+R: d | Ele acerta todos os saudáveis (95%) e erra todos os doentes.
+
+MC: No exemplo anterior, qual métrica revelaria o problema?
+a) Acurácia.
+b) Revocação (recall) da classe doente.
+c) Número de exemplos.
+d) Proporção de saudáveis.
+R: b | A revocação seria zero, pois nenhum doente é encontrado.
+
+MC: A precisão (precision) responde à pergunta:
+a) Entre os positivos reais, quantos o modelo encontrou?
+b) Qual a fração de acertos totais?
+c) Entre os que o modelo chamou de positivos, quantos realmente eram?
+d) Qual o tamanho do conjunto de teste?
+R: c | Precisão = VP / (VP + FP).
+
+MC: A revocação (recall) responde à pergunta:
+a) Quantos exemplos há no total?
+b) Entre os que o modelo chamou de positivos, quantos eram?
+c) Qual é o erro quadrático médio?
+d) Entre os positivos reais, quantos o modelo encontrou?
+R: d | Revocação = VP / (VP + FN).
+
+MC: Em uma triagem médica, em que deixar passar um doente é mais grave que pedir um exame extra, qual métrica deve ser priorizada?
+a) Revocação.
+b) Precisão.
+c) Acurácia apenas.
+d) Número de atributos.
+R: a | Prioriza-se reduzir falsos negativos, isto é, aumentar a revocação.
+
+MC: O que é uma linha de base (baseline)?
+a) O melhor modelo possível.
+b) Uma regra trivial de comparação, como prever sempre a classe mais comum.
+c) O conjunto de teste.
+d) Um tipo de validação cruzada.
+R: b | A linha de base dá sentido à nota do modelo.
+
+MC: O MAE em regressão mede:
+a) a fração de acertos.
+b) a proporção de variância explicada.
+c) o número de atributos úteis.
+d) a média do tamanho dos erros, na unidade do alvo.
+R: d | MAE é o erro absoluto médio.
+
+MC: Um R² próximo de zero indica que o modelo:
+a) é perfeito.
+b) explica quase nada além de prever sempre a média.
+c) tem erro zero.
+d) está sobreajustado ao teste.
+R: b | R² = 0 equivale a prever a média; valores negativos indicam pior que isso.
+
+MC: No experimento com dados sem nenhum sinal, o melhor entre 300 modelos teve nota de validação bem acima de 50%. Isso ilustra:
+a) que os dados continham informação.
+b) que a validação cruzada é inútil.
+c) que a seleção entre muitos candidatos infla a nota do vencedor por sorte.
+d) que k-vizinhos é superior a árvores.
+R: c | O melhor entre muitos tende a ter nota otimista; em dados novos, voltou ao acaso.
+
+MC: Qual função de scikit-learn mantém a proporção de classes ao dividir os dados em partes na validação cruzada?
+a) KFold sem embaralhar.
+b) StratifiedKFold.
+c) DummyClassifier.
+d) PolynomialFeatures.
+R: b | StratifiedKFold preserva a proporção das classes em cada parte.
+
+DISC: Diferencie exemplo, atributo e alvo usando uma tabela de clientes de uma loja.
+R: Exemplo é uma linha (um cliente). Atributo é uma coluna de entrada (idade, renda). Alvo é o que se quer prever (por exemplo, se o cliente comprou).
+
+DISC: Explique a diferença entre classificação e regressão, dando um exemplo de cada.
+R: Classificação prevê categorias (spam ou não spam). Regressão prevê números contínuos (preço de um imóvel).
+
+DISC: Explique, com uma analogia, o funcionamento do k-vizinhos e cite uma limitação.
+R: É como perguntar a opinião dos k vizinhos mais parecidos e seguir a maioria. Limitação: sensível à escala dos atributos e custoso com muitos dados, pois calcula distâncias.
+
+DISC: Por que uma floresta aleatória costuma ser mais estável que uma única árvore?
+R: Porque combina o voto de muitas árvores treinadas com amostras diferentes; os erros individuais tendem a se cancelar, reduzindo a variância.
+
+DISC: Defina parâmetro e hiperparâmetro e explique por que a distinção importa para o AutoML.
+R: Parâmetros são aprendidos no treino; hiperparâmetros são definidos antes. O AutoML busca bons hiperparâmetros (e algoritmos); os parâmetros, o algoritmo aprende sozinho.
+
+DISC: Explique subajuste e sobreajuste e descreva como o erro de treino e o de validação se comportam em cada caso.
+R: No subajuste, ambos os erros são altos. No sobreajuste, o erro de treino é baixo e o de validação, alto. A complexidade ideal fica onde o erro de validação é mínimo.
+
+DISC: Por que o erro no treino não serve para escolher o melhor modelo?
+R: Porque ele cai com a complexidade e pode chegar a zero por decoração. Só o desempenho em dados não usados no treino indica a capacidade de generalizar.
+
+DISC: Descreva o papel dos conjuntos de treino, validação e teste usando a analogia do estudante.
+R: Treino são os exercícios com que se aprende. Validação são os simulados usados para ajustar o modo de estudar. Teste é a prova final, aberta uma vez.
+
+DISC: O que acontece se você usar o conjunto de teste para escolher hiperparâmetros? Por quê?
+R: O teste passa a influenciar decisões e deixa de ser independente; a nota fica otimista e já não mede o desempenho real em dados novos.
+
+DISC: Explique como funciona a validação cruzada de k partes e por que ela é preferível a uma única divisão.
+R: Divide-se o conjunto em k partes; treina-se em k-1 e valida-se na restante, rodando k vezes e tirando a média. Reduz a dependência de um sorteio específico.
+
+DISC: Mostre, com um exemplo numérico, por que a acurácia pode ser enganosa em dados desbalanceados.
+R: Com 5% de positivos, um modelo que sempre responde negativo acerta 95%, mas encontra 0% dos positivos. A revocação revelaria a falha.
+
+DISC: Defina precisão, revocação e F1, e dê um exemplo de situação em que cada uma seria priorizada.
+R: Precisão: positivos previstos que eram reais (filtro de spam). Revocação: positivos reais encontrados (triagem médica). F1: equilíbrio entre as duas, útil quando ambos os erros importam.
+
+DISC: Calcule precisão, revocação e F1 para VP=30, FP=10, FN=20.
+R: Precisão = 30/40 = 0,75. Revocação = 30/50 = 0,60. F1 = 2×0,75×0,60/(0,75+0,60) ≈ 0,667.
+
+DISC: Qual é a utilidade de uma linha de base e como você a calcularia em um problema de classificação?
+R: Dá um ponto de comparação mínimo; se o modelo não a supera com folga, não aprendeu algo útil. Em classificação, prever sempre a classe mais comum (DummyClassifier).
+
+DISC: Diferencie MAE e RMSE e explique quando o RMSE é mais adequado.
+R: Ambos medem erro na unidade do alvo. O RMSE pune mais os erros grandes, sendo mais adequado quando erros grandes são particularmente custosos.
+
+DISC: O que o R² mede e o que significa um R² negativo?
+R: Mede a fração da variação dos dados explicada pelo modelo. R² negativo significa desempenho pior que prever sempre a média.
+
+DISC: Explique o "efeito do vencedor" e relacione-o com um sistema de AutoML que testa milhares de modelos.
+R: Entre muitos candidatos, o de melhor nota de validação tende a ter nota inflada pela sorte. Um AutoML que testa milhares de modelos reporta, portanto, uma nota otimista do vencedor.
+
+DISC: Como evitar que a nota de validação do vencedor seja confundida com o desempenho real?
+R: Guardar um conjunto de teste intocado para avaliar apenas o modelo final, ou usar validação aninhada, e relatar essa nota, não a da busca.
+
+DISC: Por que o capítulo diz que "a escolha da métrica define o que o AutoML vai otimizar"? Dê um exemplo de escolha ruim.
+R: O AutoML busca maximizar a métrica fornecida. Em dados desbalanceados, escolher acurácia levaria a modelos que ignoram a classe rara; o ideal seria F1, revocação ou AUC.
+
+DISC: Dê um exemplo do seu cotidiano de sobreajuste (decorar sem entender) e relacione-o ao conceito em aprendizado de máquina.
+R: Um aluno decora as respostas do simulado e vai mal na prova com questões diferentes. Equivale ao modelo que acerta o treino e erra em dados novos.

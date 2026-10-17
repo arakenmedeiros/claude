@@ -1,0 +1,269 @@
+MC: O que significa imputar valores ausentes?
+a) Remover todas as linhas com dados faltando.
+b) Preencher os valores que faltam com um palpite razoável.
+c) Converter texto em números.
+d) Dividir os dados em treino e teste.
+R: b | Imputar é substituir valores ausentes por estimativas, como média, mediana ou valor mais frequente.
+
+MC: Qual estratégia de imputação é mais robusta a valores extremos em uma coluna numérica?
+a) Média.
+b) Mediana.
+c) Soma.
+d) Máximo.
+R: b | A mediana é pouco afetada por valores muito grandes ou muito pequenos.
+
+MC: Para uma coluna categórica com valores faltando, qual imputação costuma ser adequada?
+a) Média.
+b) Mediana.
+c) Valor mais frequente.
+d) Desvio padrão.
+R: c | Média e mediana não se aplicam a categorias; usa-se a categoria mais frequente ou uma categoria "ausente".
+
+MC: Qual a utilidade de um indicador de ausência?
+a) Registrar que o valor estava faltando, pois isso pode ser informativo.
+b) Apagar a coluna com dados faltantes.
+c) Padronizar a coluna.
+d) Aumentar o número de classes.
+R: a | Em alguns problemas, o fato de um valor faltar já carrega informação (por exemplo, renda não informada).
+
+MC: Por que a escala dos atributos é importante para o k-vizinhos?
+a) Porque ele só aceita valores entre 0 e 1.
+b) Porque ele usa distâncias, e atributos com valores grandes dominam o cálculo.
+c) Porque ele não usa distâncias.
+d) Porque ele ignora atributos numéricos.
+R: b | Sem padronização, a coluna com números maiores pesa mais na distância.
+
+MC: Qual algoritmo é, em geral, insensível à escala dos atributos?
+a) k-vizinhos.
+b) SVM com kernel RBF.
+c) Regressão logística regularizada.
+d) Árvore de decisão.
+R: d | Árvores só comparam "maior ou menor" que um limite, de modo que a escala não altera as divisões.
+
+MC: O que faz o StandardScaler?
+a) Subtrai a média e divide pelo desvio padrão.
+b) Leva os valores para o intervalo de 0 a 1.
+c) Remove valores extremos.
+d) Converte categorias em números.
+R: a | O resultado tem média 0 e desvio padrão 1.
+
+MC: O que faz o MinMaxScaler?
+a) Subtrai a mediana.
+b) Remove colunas constantes.
+c) Leva os valores para o intervalo de 0 a 1.
+d) Cria colunas de 0 e 1 para categorias.
+R: c | Reescala linearmente os valores usando o mínimo e o máximo.
+
+MC: Por que não é recomendável codificar "Recife, Natal, Salvador" como 1, 2 e 3 para a maioria dos modelos?
+a) Porque o scikit-learn não aceita números inteiros.
+b) Porque isso reduz o número de linhas.
+c) Porque os números ficariam grandes demais.
+d) Porque cria uma ordem que não existe entre as categorias.
+R: d | O modelo entenderia que existe uma relação de ordem ou distância entre cidades.
+
+MC: Na codificação one-hot, cada categoria é transformada em:
+a) uma coluna de 0 ou 1.
+b) um número inteiro único.
+c) um número entre 0 e 1.
+d) uma linha nova.
+R: a | Cada categoria vira uma coluna que indica se ela está presente.
+
+MC: Quando a codificação ordinal (1, 2, 3) é apropriada?
+a) Sempre que houver texto.
+b) Quando existe uma ordem natural, como baixo, médio e alto.
+c) Nunca.
+d) Apenas em regressão.
+R: b | A ordem das categorias deve refletir uma ordem real.
+
+MC: O que faz handle_unknown="ignore" no OneHotEncoder?
+a) Remove as categorias raras.
+b) Ignora todas as colunas categóricas.
+c) Codifica categorias nunca vistas no treino como "todos zeros", sem gerar erro.
+d) Troca categorias por números aleatórios.
+R: c | Isso evita falhas quando aparecem categorias novas na produção.
+
+MC: Qual é a função do ColumnTransformer?
+a) Treinar vários modelos ao mesmo tempo.
+b) Aplicar tratamentos diferentes a grupos diferentes de colunas.
+c) Dividir os dados em treino e teste.
+d) Escolher o melhor algoritmo.
+R: b | Ele permite, por exemplo, escalar as colunas numéricas e codificar as categóricas.
+
+MC: Um Pipeline do scikit-learn:
+a) só serve para modelos de redes neurais.
+b) executa as etapas em paralelo, sem ordem.
+c) encadeia etapas, sendo a saída de uma a entrada da seguinte.
+d) elimina a necessidade de validação.
+R: c | O último passo é o modelo; os anteriores são transformações.
+
+MC: Em um Pipeline, ao chamar fit(), cada transformador aprende suas estatísticas usando:
+a) todos os dados, inclusive o teste.
+b) apenas os dados que recebe para treino.
+c) dados sorteados da internet.
+d) nenhum dado.
+R: b | Isso é o que evita vazamento quando o pipeline é usado dentro da validação cruzada.
+
+MC: Vazamento de dados (data leakage) é:
+a) perda de arquivos por falha de disco.
+b) a divulgação pública dos dados.
+c) o uso de dados categóricos.
+d) o escape de informação da validação ou do teste para o processo de treino.
+R: d | O modelo parece melhor do que é, porque "viu" informação que não deveria.
+
+MC: Qual das situações abaixo é um exemplo de vazamento?
+a) Escolher os atributos com base em todos os dados e só depois fazer a validação cruzada.
+b) Fixar uma semente aleatória.
+c) Usar StratifiedKFold.
+d) Salvar o pipeline com joblib.
+R: a | A seleção de atributos olhou os rótulos das partes de validação.
+
+MC: No experimento com 2000 atributos aleatórios, por que a acurácia subiu com a seleção feita fora do pipeline?
+a) Porque os atributos continham sinal real.
+b) Porque a seleção usou os rótulos de todos os exemplos, inclusive os de validação.
+c) Porque a regressão logística é muito poderosa.
+d) Porque a amostra era grande.
+R: b | Escolher os atributos mais associados ao alvo usando todos os dados contamina a validação.
+
+MC: Segundo a regra de ouro do capítulo, onde devem ficar as etapas que aprendem algo dos dados?
+a) Antes da divisão em treino e teste.
+b) Em uma planilha separada.
+c) Dentro do Pipeline.
+d) Apenas após a avaliação final.
+R: c | Assim cada etapa é reaprendida só com o treino em cada divisão.
+
+MC: Em um GridSearchCV sobre um pipeline, o nome "modelo__C" indica:
+a) o parâmetro C da etapa chamada "modelo".
+b) uma coluna chamada C.
+c) a classe C.
+d) o número de conjuntos.
+R: a | Dois sublinhados separam o nome da etapa do nome do parâmetro.
+
+MC: Em um espaço com 3 opções de imputação, 3 de escala, 3 de seleção e 3 de algoritmo, quantos pipelines existem (sem contar hiperparâmetros)?
+a) 12.
+b) 27.
+c) 81.
+d) 9.
+R: c | 3 × 3 × 3 × 3 = 81.
+
+MC: Qual transformação é indicada para reduzir muitas colunas em poucas, preservando a maior parte da variação?
+a) OneHotEncoder.
+b) SimpleImputer.
+c) PCA.
+d) LabelEncoder.
+R: c | A análise de componentes principais resume os dados em poucas dimensões.
+
+MC: Qual cuidado é essencial ao carregar um arquivo de pipeline salvo com joblib?
+a) Renomear o arquivo.
+b) Nunca carregar arquivos de origem desconhecida, pois podem executar código.
+c) Abri-lo em um editor de texto.
+d) Compactá-lo antes.
+R: b | Arquivos joblib e pickle podem executar código durante o carregamento.
+
+MC: Por que é melhor salvar o pipeline completo e não apenas o modelo?
+a) Porque o arquivo fica menor.
+b) Porque o modelo sozinho não funciona.
+c) Porque o pré-processamento vai junto e é aplicado exatamente da mesma forma.
+d) Porque evita usar validação cruzada.
+R: c | Quem receber o arquivo aplica as mesmas transformações aos novos dados.
+
+MC: Qual o papel do random_state em divisões e modelos?
+a) Aumentar a acurácia.
+b) Fixar o sorteio para que os resultados sejam repetíveis.
+c) Escolher o melhor algoritmo.
+d) Remover valores ausentes.
+R: b | A semente aleatória torna o experimento reproduzível.
+
+MC: Um PowerTransformer ou QuantileTransformer é útil, por exemplo, para:
+a) dividir os dados.
+b) deixar distribuições muito assimétricas mais parecidas com um sino.
+c) codificar texto.
+d) preencher valores ausentes.
+R: b | Eles reduzem a assimetria de variáveis como renda.
+
+MC: O que o VarianceThreshold faz?
+a) Descarta atributos que quase não variam.
+b) Padroniza as colunas.
+c) Cria interações entre atributos.
+d) Calcula o desempenho do modelo.
+R: a | Colunas praticamente constantes não ajudam a separar as classes.
+
+MC: Segundo o capítulo, o que o AutoML NÃO faz sozinho em relação aos dados?
+a) Testar diferentes tipos de imputação.
+b) Testar diferentes escalas.
+c) Combinar etapas em um pipeline.
+d) Descobrir o significado real de uma coluna ambígua, como um código "999".
+R: d | A interpretação semântica dos dados continua sendo humana.
+
+MC: Qual objeto do scikit-learn é adequado para preencher valores ausentes com a mediana de cada coluna?
+a) OneHotEncoder.
+b) SimpleImputer(strategy="median").
+c) MinMaxScaler.
+d) PCA.
+R: b | O SimpleImputer substitui valores ausentes por uma estatística da coluna, como a mediana.
+
+MC: Por que é arriscado calcular a média e o desvio padrão da padronização usando todos os dados antes de dividir em treino e validação?
+a) Porque a padronização só funciona com dados categóricos.
+b) Porque a validação influencia a escala usada no treino, o que caracteriza vazamento.
+c) Porque o desvio padrão será sempre zero.
+d) Porque os dados deixam de ser numéricos.
+R: b | A escala foi calculada com informação da validação, que não deveria ser conhecida no treino.
+
+DISC: Explique por que os dados reais precisam de pré-processamento antes do treino. Cite três problemas comuns.
+R: Porque chegam com problemas que impedem ou prejudicam o aprendizado: valores ausentes, atributos em escalas muito diferentes, categorias em texto e atributos inúteis. Modelos como a regressão logística recusam NaN e texto.
+
+DISC: Descreva três formas de imputar valores ausentes e quando cada uma é preferível.
+R: Média (dados sem extremos), mediana (dados com valores extremos), mais frequente (categóricas) e vizinhos (quando exemplos parecidos dão boas estimativas). O indicador de ausência pode ser acrescentado quando faltar é informativo.
+
+DISC: Explique, com um exemplo numérico, por que atributos em escalas diferentes atrapalham o k-vizinhos.
+R: Se o álcool varia de 11 a 15 e a prolina de 300 a 1600, uma diferença de 100 na prolina pesa muito mais que uma de 2 no álcool na distância euclidiana; o álcool é praticamente ignorado.
+
+DISC: Diferencie padronização, escala min-máx e escala robusta.
+R: Padronização: média 0 e desvio 1. Min-máx: valores entre 0 e 1. Robusta: usa mediana e quartis, sofrendo menos com valores extremos.
+
+DISC: Por que árvores e florestas não precisam de padronização, enquanto SVM e regressão logística precisam?
+R: Árvores comparam apenas se o valor é maior que um limite, o que não depende da escala. SVM e regressão logística usam produtos e distâncias, sensíveis à escala dos atributos.
+
+DISC: Explique a codificação one-hot e o problema que ela evita.
+R: Cada categoria vira uma coluna de 0 ou 1. Evita que o modelo interprete números atribuídos às categorias como se houvesse ordem ou distância entre elas.
+
+DISC: Quando uma codificação ordinal é adequada? Dê um exemplo.
+R: Quando há ordem natural entre as categorias, como nível de escolaridade (fundamental, médio, superior) ou tamanho (P, M, G).
+
+DISC: Quais problemas pode causar o one-hot em colunas com milhares de categorias? Que cuidado tomar na produção com categorias novas?
+R: Gera um número enorme de colunas, aumentando memória e risco de sobreajuste. Na produção, usar handle_unknown="ignore" para tolerar categorias não vistas.
+
+DISC: Explique o que é um Pipeline e por que ele ajuda a organizar e a proteger o experimento.
+R: É uma sequência encadeada de etapas até o modelo. Ele garante a mesma ordem de transformações, reduz erros e, usado dentro da validação cruzada, evita vazamento.
+
+DISC: O que faz o ColumnTransformer? Dê um exemplo de uso com colunas numéricas e categóricas.
+R: Aplica tratamentos distintos a grupos de colunas. Exemplo: imputar pela mediana e padronizar as numéricas; imputar pelo mais frequente e aplicar one-hot às categóricas.
+
+DISC: Defina vazamento de dados e explique, com uma analogia, por que ele é perigoso.
+R: É quando informação de validação/teste escapa para o treino. Analogia: estudar com a prova na mão; a nota sobe sem medir aprendizado, e o modelo falha em dados reais.
+
+DISC: Descreva o experimento com 2000 atributos aleatórios e o que ele ensina.
+R: Com dados sem sinal, selecionar os atributos com todos os dados antes da validação gerou acurácia bem acima de 50%; dentro do pipeline voltou perto do acaso. Ensina que a seleção deve ser parte do pipeline.
+
+DISC: Dê dois exemplos de vazamento, além da seleção de atributos feita fora do pipeline.
+R: Calcular a média e o desvio da padronização com todos os dados antes de dividir; imputar valores ausentes com estatísticas calculadas incluindo o conjunto de teste; usar uma coluna que só é conhecida após o evento a prever.
+
+DISC: Explique a regra "tudo que aprende dos dados fica dentro do pipeline" e cite quatro etapas a que ela se aplica.
+R: Etapas que estimam algo dos dados devem ser reaprendidas só com o treino a cada divisão. Aplica-se a imputação, padronização, seleção de atributos, PCA e codificações que aprendem categorias.
+
+DISC: Explique em que sentido o pipeline é o espaço de busca do AutoML e como o scikit-learn permite buscar dentro dele.
+R: Cada etapa tem opções; as combinações formam o espaço. Com GridSearchCV, nomes etapa__parametro permitem variar parâmetros e até trocar etapas inteiras, como o tipo de escala.
+
+DISC: Calcule o número de pipelines em um espaço com 2 imputações, 3 escalas, 2 seleções e 4 algoritmos, e comente o que isso sugere sobre a busca manual.
+R: 2 × 3 × 2 × 4 = 48 pipelines, antes de contar hiperparâmetros. O número cresce de forma multiplicativa, o que torna a busca manual inviável e justifica estratégias automáticas.
+
+DISC: Por que salvar o pipeline completo é preferível a salvar apenas o modelo? Qual risco de segurança deve ser lembrado?
+R: Porque o pré-processamento treinado vai junto, garantindo transformações idênticas. O risco é que arquivos joblib/pickle podem executar código; nunca carregar arquivos de origem desconhecida.
+
+DISC: Que cuidados garantem a reprodutibilidade dos experimentos de pré-processamento e modelagem?
+R: Fixar sementes aleatórias, registrar as versões das bibliotecas, guardar o histórico das tentativas da busca e salvar o pipeline treinado.
+
+DISC: Dê um exemplo de coluna cuja interpretação o AutoML não consegue deduzir sozinho e explique o risco.
+R: Uma coluna de idade com valor 999 pode ser um código de "não informado". Se tratada como número, distorce médias e escalas; só uma pessoa conhece o significado e decide o tratamento.
+
+DISC: Compare tratar os dados "à mão" e deixar o AutoML escolher o pré-processamento, apontando uma vantagem e um cuidado.
+R: O AutoML testa sistematicamente opções (imputação, escala etc.) e escolhe pela validação, economizando tempo. O cuidado é manter tudo dentro do pipeline para evitar vazamento e conferir o sentido dos dados.

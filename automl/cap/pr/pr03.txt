@@ -1,0 +1,212 @@
+@@EX 1 | Qual imputação escolher? | intermediário
+Com o conjunto **Breast Cancer Wisconsin** (UCI, via `load_breast_cancer`), apague **15% dos valores ao acaso** em todas as colunas. Compare, por validação cruzada de 5 partes e **dentro de um pipeline** com `StandardScaler` e `LogisticRegression`, quatro tratamentos: média, mediana, `KNNImputer(n_neighbors=5)` e mediana com indicador de ausência (`add_indicator=True`).
+
+*Pergunta:* as diferenças são grandes? Elas são maiores que o desvio padrão da validação cruzada?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+X, y = load_breast_cancer(return_X_y=True)
+rng = np.random.default_rng(0)
+X = X.copy(); X[rng.random(X.shape) < 0.15] = np.nan
+print("Fração de ausentes:", round(np.isnan(X).mean(), 3))
+
+imputadores = {
+    "média": SimpleImputer(strategy="mean"),
+    "mediana": SimpleImputer(strategy="median"),
+    "k-vizinhos": KNNImputer(n_neighbors=5),
+    "mediana + indicador": SimpleImputer(strategy="median", add_indicator=True),
+}
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+for nome, imp in imputadores.items():
+    pipe = make_pipeline(imp, StandardScaler(), LogisticRegression(max_iter=3000))
+    n = cross_val_score(pipe, X, y, cv=cv)
+    print(f"{nome:20s} acurácia = {n.mean():.3f} (±{n.std():.3f})")
+```
+@@NOTE Média (0,967), mediana (0,970) e k-vizinhos (0,965) ficam praticamente empatados: as diferenças são menores que o desvio padrão (cerca de 0,02). Por isso, não vale "coroar" um método por centésimos. A versão com indicador de ausência ficou um pouco abaixo (0,949): como os ausentes foram sorteados ao acaso, o fato de faltar não traz informação, e as colunas extras de indicadores só acrescentam ruído.
+@@EX 2 | Ordinal ou one-hot? | básico
+Simule uma coluna categórica "cidade" com 5 categorias (A a E), cuja **taxa de sucesso** é diferente em cada uma: A=0,10; B=0,80; C=0,20; D=0,90; E=0,15. Gere 2.000 exemplos. Compare, por validação cruzada, uma `LogisticRegression` que recebe a cidade codificada com `OrdinalEncoder` (0 a 4) e outra com `OneHotEncoder`.
+
+*Pergunta:* por que a codificação ordinal vai mal aqui?
+@@SOL
+```python
+import numpy as np
+from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import cross_val_score
+
+rng = np.random.default_rng(0)
+cidades = np.array(list("ABCDE"))
+taxa = {"A": 0.10, "B": 0.80, "C": 0.20, "D": 0.90, "E": 0.15}
+X = rng.choice(cidades, size=(2000, 1))
+y = np.array([rng.random() < taxa[c] for c in X[:, 0]]).astype(int)
+
+ordinal = make_pipeline(OrdinalEncoder(), LogisticRegression())
+onehot = make_pipeline(OneHotEncoder(), LogisticRegression())
+print("Acurácia com ordinal:", round(cross_val_score(ordinal, X, y, cv=5).mean(), 3))
+print("Acurácia com one-hot:", round(cross_val_score(onehot, X, y, cv=5).mean(), 3))
+```
+@@NOTE A taxa de sucesso não cresce nem decresce em linha reta com as letras (alterna entre baixa e alta). Um modelo linear sobre códigos 0 a 4 só consegue uma relação monótona, e por isso vai mal. O one-hot dá a cada cidade seu próprio peso e captura o padrão.
+@@EX 3 | Vazamento: a nota honesta | intermediário
+Use o conjunto **Wine** e acrescente **1.000 colunas de ruído** (`rng.normal`). Simule um problema de **poucos dados**: separe apenas **60 exemplos para treino** (`train_size=60`, estratificado) e deixe o restante como **teste final**, sem usá-lo em nada antes do fim. No treino, estime o desempenho de duas formas: (a) selecione os 15 melhores atributos (`SelectKBest`) com todo o treino e só depois valide; (b) deixe a seleção dentro do pipeline. Para cada forma, meça também o resultado no teste final. Repita com **5 sementes** e calcule as médias.
+
+*Pergunta:* qual estimativa de validação ficou mais perto do resultado no teste final? Qual delas foi otimista?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X0, y = load_wine(return_X_y=True)
+res = []
+for semente in range(5):
+    rng = np.random.default_rng(semente)
+    X = np.hstack([X0, rng.normal(size=(len(y), 1000))])
+    Xtr, Xte, ytr, yte = train_test_split(X, y, train_size=60, stratify=y, random_state=semente)
+
+    # (a) seleção FORA do pipeline (vazamento)
+    sel = SelectKBest(f_classif, k=15).fit(Xtr, ytr)
+    modelo = make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000))
+    val_a = cross_val_score(modelo, sel.transform(Xtr), ytr, cv=5).mean()
+    teste_a = modelo.fit(sel.transform(Xtr), ytr).score(sel.transform(Xte), yte)
+
+    # (b) seleção DENTRO do pipeline
+    pipe = make_pipeline(SelectKBest(f_classif, k=15), StandardScaler(), LogisticRegression(max_iter=3000))
+    val_b = cross_val_score(pipe, Xtr, ytr, cv=5).mean()
+    teste_b = pipe.fit(Xtr, ytr).score(Xte, yte)
+    res.append((val_a, teste_a, val_b, teste_b))
+
+va, ta, vb, tb = np.mean(res, axis=0)
+print(f"(a) fora do pipeline  : validação = {va:.3f} | teste final = {ta:.3f} | otimismo = {va - ta:+.3f}")
+print(f"(b) dentro do pipeline: validação = {vb:.3f} | teste final = {tb:.3f} | otimismo = {vb - tb:+.3f}")
+```
+@@NOTE Em (a), a validação fica acima do teste final: a seleção "viu" os rótulos das partes de validação, e a nota é otimista. Em (b), a estimativa fica abaixo do teste, o que é esperado e honesto: com apenas 60 exemplos, cada rodada da validação interna treina com menos dados do que o modelo final. O exercício mostra duas coisas: vazamento infla a nota, e a estimativa correta pode ser levemente pessimista. Com mais dados ou atributos mais informativos, o efeito do vazamento diminui, mas o princípio permanece.
+@@EX 4 | Buscando dentro do pipeline | básico
+Com o conjunto **Wine**, monte um pipeline com um transformador de escala e um `KNeighborsClassifier`. Use `GridSearchCV` para escolher, ao mesmo tempo, o tipo de escala (`StandardScaler`, `MinMaxScaler` ou nenhuma, com `"passthrough"`) e o número de vizinhos (1, 3, 5, 9, 15). Mostre os 3 melhores resultados.
+
+*Pergunta:* a escala importou?
+@@SOL
+```python
+import pandas as pd
+from sklearn.datasets import load_wine
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+
+X, y = load_wine(return_X_y=True)
+pipe = Pipeline([("escala", StandardScaler()), ("knn", KNeighborsClassifier())])
+grade = {"escala": [StandardScaler(), MinMaxScaler(), "passthrough"], "knn__n_neighbors": [1, 3, 5, 9, 15]}
+busca = GridSearchCV(pipe, grade, cv=5).fit(X, y)
+
+res = pd.DataFrame(busca.cv_results_)[["param_escala", "param_knn__n_neighbors", "mean_test_score"]]
+res["param_escala"] = res["param_escala"].astype(str).str.replace("()", "", regex=False)
+print(res.sort_values("mean_test_score", ascending=False).head(3).to_string(index=False))
+print("Pior combinação:", round(res["mean_test_score"].min(), 3), "| melhor:", round(res["mean_test_score"].max(), 3))
+```
+@@NOTE A escala importou muito: a pior combinação (sem escala) chega a 0,691, enquanto a melhor (padronização, 9 vizinhos) chega a 0,966. A diferença entre `StandardScaler` (0,966) e `MinMaxScaler` (0,961) é pequena. Esta busca é um mini-AutoML sobre o pré-processamento.
+@@PROJ Pipeline robusto para dados sujos | Cap03
+**Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)*, do repositório **UCI Machine Learning**, incluído no scikit-learn. Para o projeto, você vai **sujar** os dados de propósito, simulando o cotidiano.
+
+**Contexto.** Um laboratório quer um modelo robusto a dados incompletos. Você deve construir um pipeline que receba uma tabela "suja" e entregue previsões confiáveis.
+
+**Atenção ética.** Os dados são de uso didático. O modelo **não é diagnóstico médico**.
+
+**Tarefas.**
+1. Carregue os dados em um `DataFrame`. Crie duas colunas categóricas de texto: "tamanho" (a coluna `mean radius` dividida em três faixas: pequeno, médio, grande) e "textura" (a coluna `mean texture` dividida em três faixas). Remova as colunas numéricas originais usadas para criá-las. Apague 10% dos valores ao acaso nas demais colunas numéricas.
+2. Separe 25% para **teste final** (estratificado, semente fixa).
+3. Monte um `ColumnTransformer` com tratamentos separados para colunas numéricas (imputação e padronização) e categóricas (imputação e one-hot).
+4. Compare, por validação cruzada no treino, três modelos no mesmo pré-processamento: regressão logística, k-vizinhos e floresta aleatória. Escolha o melhor.
+5. Faça uma busca em grade **dentro do pipeline** do melhor modelo, incluindo a estratégia de imputação (média ou mediana).
+6. Avalie **uma única vez** no teste final. Salve o pipeline com `joblib`, recarregue-o e preveja três linhas novas, **uma delas com uma categoria nunca vista** (por exemplo, "gigante").
+7. Escreva um parágrafo (6 a 8 linhas): o que o pipeline resolveu? Que cuidado evitou vazamento? O que ainda exigiria atenção humana?
+
+**Entregáveis.** Um notebook (ou script) comentado, o pipeline salvo e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+import joblib
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV, StratifiedKFold
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+dados = load_breast_cancer(as_frame=True)
+df, y = dados.data.copy(), dados.target
+rng = np.random.default_rng(0)
+
+# 1) Sujar os dados de propósito
+df["tamanho"] = pd.qcut(df["mean radius"], 3, labels=["pequeno", "médio", "grande"]).astype(str)
+df["textura"] = pd.qcut(df["mean texture"], 3, labels=["lisa", "média", "áspera"]).astype(str)
+df = df.drop(columns=["mean radius", "mean texture"])
+num = [c for c in df.columns if c not in ("tamanho", "textura")]
+cat = ["tamanho", "textura"]
+for c in num:
+    df.loc[rng.random(len(df)) < 0.10, c] = np.nan
+print("Formato:", df.shape, "| ausentes (numéricas):", round(df[num].isna().mean().mean(), 3))
+
+# 2) Teste final
+Xtr, Xte, ytr, yte = train_test_split(df, y, test_size=0.25, stratify=y, random_state=0)
+
+# 3) Pré-processamento por tipo de coluna
+def preparo(estrategia="median"):
+    return ColumnTransformer([
+        ("num", Pipeline([("imp", SimpleImputer(strategy=estrategia)), ("esc", StandardScaler())]), num),
+        ("cat", Pipeline([("imp", SimpleImputer(strategy="most_frequent")),
+                          ("oh", OneHotEncoder(handle_unknown="ignore"))]), cat),
+    ])
+
+# 4) Comparar modelos
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+modelos = {"logística": LogisticRegression(max_iter=3000), "k-vizinhos": KNeighborsClassifier(),
+           "floresta": RandomForestClassifier(200, random_state=0)}
+res = {}
+for nome, m in modelos.items():
+    res[nome] = cross_val_score(Pipeline([("p", preparo()), ("m", m)]), Xtr, ytr, cv=cv).mean()
+    print(f"{nome:11s} validação = {res[nome]:.3f}")
+melhor = max(res, key=res.get); print("Escolhido:", melhor)
+
+# 5) Busca DENTRO do pipeline (imputação + hiperparâmetro do modelo)
+pipe = Pipeline([("p", preparo()), ("m", modelos[melhor])])
+grade = {"p__num__imp__strategy": ["mean", "median"]}
+if melhor == "logística": grade["m__C"] = [0.01, 0.1, 1, 10]
+elif melhor == "k-vizinhos": grade["m__n_neighbors"] = [3, 5, 9, 15]
+else: grade["m__max_depth"] = [4, 8, None]
+busca = GridSearchCV(pipe, grade, cv=cv).fit(Xtr, ytr)
+print("Melhores ajustes:", busca.best_params_, "| validação =", round(busca.best_score_, 3))
+
+# 6) Teste final (uma vez), salvar, recarregar e prever com categoria nova
+print("Teste final:", round(busca.score(Xte, yte), 3))
+joblib.dump(busca.best_estimator_, "/tmp/pipeline_cap3.joblib")
+rec = joblib.load("/tmp/pipeline_cap3.joblib")
+novas = Xte.iloc[:3].copy(); novas.iloc[2, novas.columns.get_loc("tamanho")] = "gigante"
+print("Previsões em linhas novas:", rec.predict(novas).tolist(), "(a 3ª tem categoria nunca vista)")
+```
+@@RUBRICA
+- Os dados foram "sujos" de forma explícita e documentada (ausentes e categorias).
+- Todo o pré-processamento está dentro do pipeline, sem vazamento.
+- O teste final foi separado antes e usado uma única vez.
+- A busca em grade incluiu uma escolha de pré-processamento (imputação), e não apenas do modelo.
+- O pipeline foi salvo, recarregado e funcionou com uma categoria nunca vista.
+- O texto discute o que ainda exige atenção humana (significado dos dados, métrica, ética).
+@@NOTE Na execução de referência, os três modelos ficam próximos em validação (0,958 a 0,967); a regressão logística foi escolhida e a busca dentro do pipeline chegou a 0,974 de validação. No teste final, a acurácia foi 0,930, abaixo da validação: é uma diferença esperada, em parte porque a validação foi usada para escolher e em parte pelo tamanho pequeno do teste (143 exemplos). O pipeline funciona com categoria nova graças a `handle_unknown="ignore"`. O ganho principal do projeto é de **robustez e organização**: um único objeto recebe tabelas sujas e devolve previsões, sem vazamento.
+@@ALEM
+- **UCI:** Adult (renda de adultos, com muitos atributos categóricos e ausentes) e Heart Disease (cardiologia, com ausentes).
+- **Kaggle:** Titanic (com idade ausente e atributos categóricos) e House Prices (muitos atributos categóricos e ausentes).

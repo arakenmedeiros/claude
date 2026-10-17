@@ -1,0 +1,191 @@
+@@EX 1 | Curvas de aprendizado | intermediário
+Com o conjunto **Breast Cancer Wisconsin** (UCI, via `load_breast_cancer`), use `learning_curve` para comparar uma `DecisionTreeClassifier()` (sem limite de profundidade) e uma `LogisticRegression` com `StandardScaler`. Use `cv=5` e os tamanhos de treino 10%, 30%, 60% e 100%. Mostre a acurácia média de treino e de validação para cada tamanho.
+
+*Pergunta:* qual dos modelos tem maior distância entre treino e validação? O que isso indica?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import learning_curve
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+tamanhos = [0.1, 0.3, 0.6, 1.0]
+modelos = {"Árvore sem limite": DecisionTreeClassifier(random_state=0),
+           "Regressão logística": make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000))}
+for nome, m in modelos.items():
+    n, tr, va = learning_curve(m, X, y, train_sizes=tamanhos, cv=5, scoring="accuracy")
+    print(nome)
+    for ni, a, b in zip(n, tr.mean(1), va.mean(1)):
+        print(f"  treino com {ni:3d} exemplos: treino={a:.3f}  validação={b:.3f}  distância={a-b:.3f}")
+```
+@@NOTE Com todos os dados, a árvore sem limite acerta 100% no treino, mas obtém 0,917 na validação: distância de 0,083, sinal de sobreajuste. A regressão logística chega a 0,981 na validação, com distância de apenas 0,009. Curvas de aprendizado mostram também se mais dados ajudariam: se a validação ainda sobe com mais exemplos, coletar dados pode valer mais que ajustar modelos.
+@@EX 2 | Métricas em dados desbalanceados | intermediário
+Transforme o conjunto Breast Cancer em um problema desbalanceado: mantenha todos os casos benignos (classe 1) e apenas **15 casos malignos** (classe 0, a "rara"). Divida em treino e teste (30%, estratificado). Compare: `DummyClassifier(strategy="most_frequent")`, uma `LogisticRegression` comum e uma `LogisticRegression(class_weight="balanced")`. Calcule acurácia, precisão e revocação **da classe maligna** e a AUC.
+
+*Pergunta:* qual métrica enganaria você? Qual modelo você escolheria em uma triagem?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.dummy import DummyClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+
+X, y = load_breast_cancer(return_X_y=True)
+rng = np.random.default_rng(0)
+mal = rng.choice(np.where(y == 0)[0], 15, replace=False)    # 15 malignos (classe rara)
+ben = np.where(y == 1)[0]                                     # todos os benignos
+idx = np.concatenate([mal, ben]); X, y = X[idx], y[idx]
+y = 1 - y                                                     # agora 1 = maligno (positivo, raro)
+print("Proporção de casos raros:", round(y.mean(), 3))
+
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+modelos = {
+    "Sempre benigno": DummyClassifier(strategy="most_frequent"),
+    "Logística comum": make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)),
+    "Logística balanceada": make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, class_weight="balanced")),
+}
+for nome, m in modelos.items():
+    m.fit(Xtr, ytr); p = m.predict(Xte); pr = m.predict_proba(Xte)[:, 1]
+    print(f"{nome:21s} acur={accuracy_score(yte,p):.3f} prec={precision_score(yte,p,zero_division=0):.3f} "
+          f"revoc={recall_score(yte,p):.3f} AUC={roc_auc_score(yte,pr):.3f}")
+```
+@@NOTE A acurácia engana: o modelo "bobo" tem 0,955 com revocação zero. As duas regressões logísticas têm a mesma acurácia (0,973), mas encontram parcelas diferentes dos casos raros: revocação de 0,40 (comum) contra 0,60 (balanceada), esta última à custa de menor precisão (0,75 contra 1,00). Na triagem, a revocação da classe rara importa mais. Com apenas 5 casos raros no teste, as métricas variam muito: tire conclusões com cautela.
+@@EX 3 | Uma divisão ou várias? | básico
+No conjunto **Wine** (UCI), avalie um `KNeighborsClassifier` (com `StandardScaler`) de duas formas: (a) repita **30 vezes** uma divisão treino/teste (70/30) com sementes diferentes e registre o menor e o maior resultado; (b) faça uma validação cruzada de 5 partes. Compare.
+
+*Pergunta:* o que o intervalo de (a) diz sobre confiar em uma única divisão?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_wine(return_X_y=True)
+modelo = make_pipeline(StandardScaler(), KNeighborsClassifier())
+
+notas = []
+for semente in range(30):
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=semente)
+    notas.append(modelo.fit(Xtr, ytr).score(Xte, yte))
+print(f"30 divisões: menor={min(notas):.3f}  maior={max(notas):.3f}  média={np.mean(notas):.3f}")
+
+cv = cross_val_score(modelo, X, y, cv=5)
+print(f"Validação cruzada (5 partes): média={cv.mean():.3f}  desvio={cv.std():.3f}")
+```
+@@NOTE Em 30 divisões, a acurácia foi de 0,907 a 1,000 (média 0,967). Quem relata apenas a melhor divisão está sendo otimista, e quem relata a pior, pessimista. A validação cruzada resume a variação em média e desvio padrão, e é mais honesta.
+@@EX 4 | Reproduzindo o efeito do vencedor | avançado
+Use os atributos reais do conjunto **Breast Cancer**, mas **embaralhe o alvo** (`rng.permutation(y)`) para destruir qualquer relação entre X e y. Faça uma busca aleatória com 100 candidatos (árvores de profundidade 1 a 12 e k-vizinhos com k de 1 a 40), avaliando por validação cruzada. Depois avalie o melhor candidato em um **conjunto de teste separado**, também embaralhado.
+
+*Pergunta:* qual a diferença entre a melhor nota de validação e a nota no teste? O que isso ensina sobre AutoML?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+rng = np.random.default_rng(0)
+y = rng.permutation(y)                                  # destrói a relação entre X e y
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.4, stratify=y, random_state=0)
+
+melhor, melhor_m = 0.0, None
+for _ in range(100):
+    if rng.random() < 0.5:
+        m = make_pipeline(StandardScaler(), KNeighborsClassifier(int(rng.integers(1, 40))))
+    else:
+        m = DecisionTreeClassifier(max_depth=int(rng.integers(1, 12)), random_state=0)
+    nota = cross_val_score(m, Xtr, ytr, cv=5).mean()
+    if nota > melhor:
+        melhor, melhor_m = nota, m
+melhor_m.fit(Xtr, ytr)
+print(f"Melhor nota de validação (100 candidatos): {melhor:.3f}")
+print(f"Nota no teste separado                    : {melhor_m.score(Xte, yte):.3f}")
+print(f"Proporção da classe majoritária (linha de base): {max(y.mean(), 1-y.mean()):.3f}")
+```
+@@NOTE Sem sinal nos dados, o teste (0,614) fica próximo da linha de base (0,627). A validação do vencedor (0,642) fica acima do teste. Aqui o efeito é modesto, porque o conjunto de treino é relativamente grande (341 exemplos); no exemplo do capítulo, com apenas 120 exemplos, ele foi bem maior. Quanto menor a amostra e maior o número de candidatos, maior o otimismo. O teste final intocado é a defesa.
+@@PROJ Protocolo completo de avaliação em Digits | Cap02
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits* (Digits), do repositório **UCI Machine Learning**, incluído no scikit-learn (`load_digits`): 1.797 imagens 8×8 de dígitos manuscritos, com 64 atributos (intensidades de pixels) e 10 classes.
+
+**Contexto.** Uma equipe quer reconhecer dígitos escritos à mão. Antes de qualquer AutoML, você deve montar o **protocolo de avaliação** que será reutilizado em todo o livro.
+
+**Tarefas.**
+1. Carregue os dados e mostre o formato e a proporção de cada classe.
+2. Separe 25% para **teste final**, com estratificação e semente fixa. Não toque nele até o fim.
+3. Calcule a **linha de base** (classe mais comum) no treino, por validação cruzada.
+4. Compare, por validação cruzada de 5 partes **no treino**, quatro algoritmos: árvore, k-vizinhos (com padronização), regressão logística (com padronização) e floresta aleatória. Reporte média e desvio padrão da acurácia.
+5. Escolha o melhor, treine no treino completo e avalie **uma única vez** no teste final. Mostre a acurácia, o F1 médio entre as classes (`f1_score(average="macro")`) e a **matriz de confusão** como imagem.
+6. Escreva um parágrafo (6 a 8 linhas): qual algoritmo venceu e por quê pode ter vencido? A nota do teste é coerente com a de validação? Quais dígitos mais se confundem?
+
+**Entregáveis.** Um notebook (ou script) comentado, a matriz de confusão e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
+from sklearn.dummy import DummyClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, ConfusionMatrixDisplay
+
+X, y = load_digits(return_X_y=True)
+print("Formato:", X.shape, "| exemplos por classe:", np.bincount(y))
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+base = cross_val_score(DummyClassifier(strategy="most_frequent"), Xtr, ytr, cv=cv).mean()
+print(f"Linha de base: {base:.3f}")
+
+candidatos = {
+    "Árvore": DecisionTreeClassifier(random_state=0),
+    "k-vizinhos": make_pipeline(StandardScaler(), KNeighborsClassifier()),
+    "Reg. logística": make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000)),
+    "Floresta": RandomForestClassifier(200, random_state=0),
+}
+res = {}
+for nome, m in candidatos.items():
+    n = cross_val_score(m, Xtr, ytr, cv=cv)
+    res[nome] = n.mean()
+    print(f"{nome:15s} validação = {n.mean():.3f} (±{n.std():.3f})")
+
+vencedor = max(res, key=res.get)
+modelo = candidatos[vencedor].fit(Xtr, ytr)
+p = modelo.predict(Xte)
+print(f"\nVencedor: {vencedor}")
+print(f"Teste final: acurácia = {accuracy_score(yte, p):.3f} | F1 macro = {f1_score(yte, p, average='macro'):.3f}")
+
+ConfusionMatrixDisplay(confusion_matrix(yte, p)).plot(cmap="Blues", colorbar=False)
+plt.title(f"Matriz de confusão no teste final ({vencedor})"); plt.show()
+cm = confusion_matrix(yte, p); np.fill_diagonal(cm, 0)
+i, j = np.unravel_index(cm.argmax(), cm.shape)
+print(f"Confusão mais frequente: dígito {i} previsto como {j} ({cm[i, j]} vezes)")
+```
+@@RUBRICA
+- O teste final foi separado antes de qualquer comparação e usado uma única vez.
+- A linha de base foi calculada e comparada com os modelos.
+- Os algoritmos foram comparados por validação cruzada estratificada, com média e desvio padrão.
+- Foram reportadas acurácia, F1 macro e matriz de confusão do modelo escolhido.
+- O texto compara validação e teste e discute as confusões mais comuns entre dígitos.
+@@NOTE Na execução de referência, k-vizinhos (0,973), regressão logística (0,971) e floresta (0,977) ficam acima de 97% em validação, muito acima da linha de base (0,100) e da árvore (0,829). A floresta venceu e obteve 0,987 no teste final, coerente com a validação. Houve muito poucos erros no teste (cerca de 1%), e o par mais confundido (0 previsto como 4) ocorreu uma única vez, então não convém tirar conclusões fortes sobre quais dígitos se confundem. Este protocolo (teste intocado, linha de base, validação cruzada) será reaproveitado nos próximos capítulos.
+@@ALEM
+- **UCI:** Optical Recognition of Handwritten Digits (versão completa de 32×32) e Wine Quality (vinhos portugueses).
+- **Kaggle:** Digit Recognizer (versão MNIST, com 28×28 pixels).

@@ -141,87 +141,262 @@
  },
  {
   "level": 1,
-  "text": "Apêndice A — Gabarito dos exercícios",
+  "text": "Parte I — Fundamentos",
   "id": "h29"
  },
  {
   "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
   "id": "h30"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "2.1 Por que um capítulo de revisão?",
   "id": "h31"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "2.2 Os dados: exemplos, atributos e alvo",
   "id": "h32"
  },
  {
-  "level": 1,
-  "text": "Apêndice B — Glossário",
+  "level": 3,
+  "text": "2.3 Quatro algoritmos clássicos",
   "id": "h33"
  },
  {
-  "level": 1,
-  "text": "Apêndice C — Guia rápido",
+  "level": 3,
+  "text": "2.4 Parâmetros e hiperparâmetros",
   "id": "h34"
  },
  {
   "level": 3,
-  "text": "Em construção",
+  "text": "2.5 Aprender é errar menos",
   "id": "h35"
  },
  {
-  "level": 1,
-  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "level": 3,
+  "text": "2.6 Treino, validação e teste",
   "id": "h36"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "level": 3,
+  "text": "2.7 Validação cruzada",
   "id": "h37"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Por que precisamos de uma linha de base",
+  "text": "2.8 Métricas: como medir o acerto",
   "id": "h38"
  },
  {
-  "level": 3,
-  "text": "Exercício 2 — Ampliando o espaço de busca",
+  "level": 4,
+  "text": "2.8.1 Métricas de classificação",
   "id": "h39"
  },
  {
-  "level": 3,
-  "text": "Exercício 3 — O efeito da semente",
+  "level": 4,
+  "text": "2.8.2 Métricas de regressão",
   "id": "h40"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Contando o tamanho do espaço de busca",
+  "text": "2.9 Linha de base: o ponto de comparação",
   "id": "h41"
  },
  {
-  "level": 1,
-  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "level": 3,
+  "text": "2.10 O perigo escondido: o \"efeito do vencedor\"",
   "id": "h42"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "level": 3,
+  "text": "2.11 Boas práticas para levar daqui",
   "id": "h43"
  },
  {
   "level": 3,
-  "text": "Orçamento de busca e honestidade na avaliação",
+  "text": "Resumo do capítulo",
   "id": "h44"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h45"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h46"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h47"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Curvas de aprendizado",
+  "id": "h48"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Métricas em dados desbalanceados",
+  "id": "h49"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Uma divisão ou várias?",
+  "id": "h50"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Reproduzindo o efeito do vencedor",
+  "id": "h51"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h52"
+ },
+ {
+  "level": 4,
+  "text": "Protocolo completo de avaliação em Digits",
+  "id": "h53"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito dos exercícios",
+  "id": "h54"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h55"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h56"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h57"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "id": "h58"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h59"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h60"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice B — Glossário",
+  "id": "h61"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice C — Guia rápido",
+  "id": "h62"
+ },
+ {
+  "level": 3,
+  "text": "Em construção",
+  "id": "h63"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h64"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h65"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Por que precisamos de uma linha de base",
+  "id": "h66"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Ampliando o espaço de busca",
+  "id": "h67"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — O efeito da semente",
+  "id": "h68"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Contando o tamanho do espaço de busca",
+  "id": "h69"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "id": "h70"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Curvas de aprendizado",
+  "id": "h71"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Métricas em dados desbalanceados",
+  "id": "h72"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Uma divisão ou várias?",
+  "id": "h73"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Reproduzindo o efeito do vencedor",
+  "id": "h74"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "id": "h75"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h76"
+ },
+ {
+  "level": 3,
+  "text": "Orçamento de busca e honestidade na avaliação",
+  "id": "h77"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Aprendizado de máquina em um capítulo",
+  "id": "h78"
+ },
+ {
+  "level": 3,
+  "text": "Protocolo completo de avaliação em Digits",
+  "id": "h79"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h45"
+  "id": "h80"
  }
 ]
