@@ -1,0 +1,7 @@
+{
+ "13-EX1": "Reg. logística  acurácia = 0.965 | top 3: compactness error (0.016), worst texture (0.015), perimeter error (0.014)\nBoosting        acurácia = 0.942 | top 3: worst perimeter (0.022), worst texture (0.011), area error (0.008)\n",
+ "13-EX2": "grupo 0: seleção = 0.462 | TPR real = 0.831 | n = 1274\ngrupo 1: seleção = 0.354 | TPR real = 0.649 | n = 526\nAcurácia contra o histórico: 0.817 | contra a verdade: 0.855\n",
+ "13-EX3": "AUC para prever o grupo com todos os atributos: 0.857\n  sem renda            AUC = 0.827\n  sem tempo_emprego    AUC = 0.854\n  sem razao_divida     AUC = 0.856\n  sem cep_score        AUC = 0.694\n  sem score_historico  AUC = 0.855\n",
+ "13-EX4": "limiar único 0,5         TPR histórico = 0.77/0.80 | TPR real = 0.81/0.67 | acc verdade = 0.831\nlimiar do grupo 1 = 0.54 TPR histórico = 0.77/0.77 | TPR real = 0.81/0.63 | acc verdade = 0.826\n",
+ "13-PROJ0": "FLAML (lgbm): acc = 0.800 | Reg. logística: acc = 0.796\nPermutação (FLAML): {'renda': 0.128, 'tempo_emprego': 0.011, 'razao_divida': 0.032, 'cep_score': 0.0, 'score_historico': 0.016}\nFLAML                  acc hist = 0.800 | acc verdade = 0.848 | seleção 0.48/0.37 | TPR real 0.83/0.71\nReg. logística         acc hist = 0.796 | acc verdade = 0.856 | seleção 0.46/0.35 | TPR real 0.82/0.69\nAUC para prever o grupo pelos atributos: 0.833\nFLAML + limiares grupo acc hist = 0.791 | acc verdade = 0.856 | seleção 0.48/0.49 | TPR real 0.83/0.87\nLimiar do grupo 1 = 0.39 | melhorias em config_history = 4 | tempo de busca = 1 s\n"
+}

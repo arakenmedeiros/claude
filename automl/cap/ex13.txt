@@ -1,0 +1,269 @@
+MC: Qual é a diferença entre um modelo interpretável e uma explicação pós-hoc?
+a) O interpretável tem lógica legível por construção; a pós-hoc tenta explicar, depois do treino, um modelo complexo.
+b) Não há diferença.
+c) O pós-hoc é sempre mais preciso.
+d) O interpretável só existe em imagens.
+R: a | Rudin (2019) defende preferir interpretáveis em alto risco.
+
+MC: O que Rudin (2019) defende para decisões de alto risco?
+a) Preferir modelos interpretáveis em vez de explicar caixas-pretas.
+b) Usar sempre redes profundas.
+c) Eliminar a validação.
+d) Explicar tudo com SHAP e confiar.
+R: a | Explicações pós-hoc podem ser imprecisas.
+
+MC: No conjunto Breast Cancer, como se comparam a regressão logística e o boosting no capítulo?
+a) Têm notas muito próximas (0,981 e 0,968), dentro da variação entre partes.
+b) O boosting é muito melhor.
+c) A logística falha.
+d) Não é possível comparar.
+R: a | Por isso vale preferir o modelo simples.
+
+MC: Qual é a regra do empate técnico?
+a) Se um modelo simples e um complexo diferem menos que a variação entre divisões, escolha o simples.
+b) Sempre escolha o complexo.
+c) Sempre escolha o mais lento.
+d) Escolha ao acaso.
+R: a | Ganha-se explicação, velocidade e menos risco.
+
+MC: O que é uma explicação global?
+a) Aquela que mostra o que o modelo valoriza em geral.
+b) Aquela que explica uma única decisão.
+c) Aquela que mede o custo.
+d) Aquela que escolhe a semente.
+R: a | Ex.: importância média dos atributos.
+
+MC: O que é uma explicação local?
+a) Aquela que explica por que o modelo decidiu algo para uma pessoa específica.
+b) A importância média dos atributos.
+c) O tempo de treino.
+d) A divisão do teste.
+R: a | Ex.: contribuições SHAP de um exemplo.
+
+MC: Como funciona a importância por permutação?
+a) Embaralha-se uma coluna e mede-se quanto o desempenho cai.
+b) Remove-se o modelo.
+c) Aumenta-se o treino.
+d) Trocam-se os rótulos.
+R: a | Se cai muito, a coluna importa.
+
+MC: Em que se baseiam os valores SHAP?
+a) Nos valores de Shapley, da teoria dos jogos.
+b) Na busca em grade.
+c) No teste de Friedman.
+d) Na validação cruzada.
+R: a | Lundberg e Lee (2017).
+
+MC: Qual é a analogia do capítulo para o SHAP?
+a) Dividir de forma justa a conta do restaurante entre os amigos.
+b) Escolher o prato mais barato.
+c) Sortear o pagador.
+d) Contar as mesas.
+R: a | Divide-se a 'conta' entre os atributos.
+
+MC: O que faz o LIME (Ribeiro et al., 2016)?
+a) Explica uma decisão ajustando um modelo simples na vizinhança dela.
+b) Treina uma rede maior.
+c) Escolhe hiperparâmetros.
+d) Remove atributos.
+R: a | É uma explicação local.
+
+MC: Por que 'explicar não é justificar'?
+a) Porque a explicação mostra como o modelo decidiu, não se a decisão é correta ou justa.
+b) Porque explicações são sempre falsas.
+c) Porque só vale para árvores.
+d) Porque o SHAP é proibido.
+R: a | Um modelo enviesado pode ser perfeitamente explicável.
+
+MC: De onde costuma vir o viés de um modelo?
+a) Dos dados, como decisões históricas injustas e representação desigual.
+b) Apenas do algoritmo.
+c) Do computador.
+d) Da métrica de acurácia.
+R: a | Mehrabi et al. (2021).
+
+MC: O que é o viés histórico?
+a) Os dados refletem decisões humanas injustas do passado.
+b) Um grupo aparece pouco nos dados.
+c) A variável medida é um mau retrato do que importa.
+d) As decisões do modelo mudam os dados futuros.
+R: a | É o caso do nosso crédito simulado.
+
+MC: O que é o viés de representação?
+a) Um grupo aparece pouco nos dados e o modelo aprende mal sobre ele.
+b) Decisões injustas do passado.
+c) Erro de medição.
+d) Erro de programação.
+R: a | Falta de exemplos de um grupo.
+
+MC: O que é o viés de feedback?
+a) As decisões do modelo alteram os dados futuros e reforçam a distorção.
+b) O erro de arredondamento.
+c) Um tipo de métrica.
+d) Um tipo de ensemble.
+R: a | Cria um ciclo que se retroalimenta.
+
+MC: O que mede a taxa de seleção?
+a) A proporção de pessoas aprovadas em cada grupo.
+b) O tempo de treino.
+c) A acurácia média.
+d) O número de atributos.
+R: a | Se muito diferente entre grupos, há disparidade.
+
+MC: O que é a igualdade de oportunidade (Hardt et al., 2016)?
+a) Entre quem mereceria a aprovação, a taxa de aprovação (TPR) deve ser igual entre os grupos.
+b) Todos os grupos têm a mesma taxa de seleção.
+c) O modelo não usa o grupo.
+d) Todos têm o mesmo score.
+R: a | Compara o TPR por grupo.
+
+MC: O que é uma variável proxy?
+a) Uma variável correlacionada com um atributo sensível que o carrega indiretamente.
+b) Uma variável removida.
+c) Um tipo de modelo.
+d) O rótulo.
+R: a | Ex.: CEP-score e renda.
+
+MC: O que o experimento de remover o CEP-score mostrou?
+a) O grupo 1 continuou sendo aprovado menos; o viés circulou por outras variáveis e pelos rótulos.
+b) O viés desapareceu.
+c) A acurácia caiu a zero.
+d) O grupo 0 foi prejudicado.
+R: a | Seleção 0,48/0,39 e TPR real 0,83/0,69.
+
+MC: Por que o crédito simulado permite conhecer a 'verdade'?
+a) Porque a capacidade real de pagamento foi gerada por nós e é conhecida.
+b) Porque os dados são reais.
+c) Porque o modelo a revela.
+d) Porque o teste a contém.
+R: a | No mundo real, essa verdade é desconhecida.
+
+MC: O que são limiares por grupo?
+a) Pontos de corte diferentes por grupo para decidir a partir da probabilidade.
+b) Hiperparâmetros da árvore.
+c) Tipos de ativação.
+d) Faixas de preço.
+R: a | No capítulo, igualam a taxa de seleção.
+
+MC: O que aconteceu com a acurácia contra a verdade ao usar limiares por grupo no capítulo?
+a) Subiu de 0,847 para 0,858.
+b) Caiu a zero.
+c) Não foi medida.
+d) Caiu para 0,5.
+R: a | A acurácia contra o histórico caiu de 0,818 para 0,801.
+
+MC: Por que o resultado do ajuste de limiares não deve ser generalizado?
+a) Porque vale para o cenário simulado, em que a verdade é conhecida; no mundo real há trade-offs e rótulos enviesados.
+b) Porque a técnica é inválida.
+c) Porque só vale para o grupo 0.
+d) Porque o limiar é aleatório.
+R: a | A escolha do critério é uma decisão humana e social.
+
+MC: No Exercício 4, o que ocorreu ao igualar o TPR contra o histórico enviesado?
+a) O TPR real do grupo 1 não melhorou (0,67 para 0,63).
+b) A disparidade real desapareceu.
+c) A acurácia dobrou.
+d) O TPR do grupo 0 caiu a zero.
+R: a | O padrão de comparação estava contaminado.
+
+MC: Segundo Strubell et al. (2019), qual é o efeito da busca de hiperparâmetros/arquitetura?
+a) Multiplica o custo energético e de carbono do treino.
+b) Reduz o custo.
+c) Não tem efeito.
+d) Elimina o treino.
+R: a | O custo da busca pode ser muito maior que o de um único treino.
+
+MC: O que propõem Schwartz et al. (2020) com a 'IA verde'?
+a) Reportar o custo computacional junto com a precisão e valorizar a eficiência.
+b) Usar sempre as maiores redes.
+c) Esconder o custo.
+d) Abolir o aprendizado de máquina.
+R: a | Green AI.
+
+MC: Qual é o primeiro passo para estimar o custo de um AutoML?
+a) Contar quantos modelos serão treinados.
+b) Medir o tamanho da tela.
+c) Escolher a semente.
+d) Mudar a métrica.
+R: a | Treinos × tempo por treino × consumo.
+
+MC: Qual das alternativas é um limite do AutoML?
+a) Não define o problema nem corrige dados ruins.
+b) Sempre piora o modelo.
+c) Não usa validação.
+d) Só funciona com imagens.
+R: a | O AutoML otimiza a métrica que você der, sobre os dados que você der.
+
+MC: O que diz o teorema 'sem almoço grátis' (Wolpert, 1996), conforme o capítulo?
+a) Nenhum algoritmo é o melhor em todos os problemas.
+b) Todo algoritmo é igual.
+c) O AutoML é sempre melhor.
+d) Dados não importam.
+R: a | Por isso o AutoML precisa procurar.
+
+MC: O que significa uma AUC de 0,857 ao prever o grupo a partir dos atributos (sem o grupo)?
+a) Que os atributos permitem reconstruir o grupo com boa precisão, revelando proxies.
+b) Que o modelo é perfeitamente justo.
+c) Que o grupo é aleatório.
+d) Que não há viés nos dados.
+R: a | AUC de 0,5 seria o acaso; 0,857 indica forte relação entre atributos e grupo.
+
+DISC: Quais são as três perguntas antes de confiar em um modelo de AutoML?
+R: Eu entendo o que ele faz (explicabilidade)? Ele trata as pessoas com justiça (ética)? Quanto custa e o que ele não consegue (custo e limites)?
+
+DISC: Compare modelos interpretáveis e explicações pós-hoc, com a posição de Rudin.
+R: Interpretáveis têm lógica legível; pós-hoc explicam depois. Rudin (2019) defende preferir os interpretáveis em alto risco, pois explicações pós-hoc podem ser imprecisas e não revelam o que o modelo realmente calcula.
+
+DISC: O que a comparação no Breast Cancer mostrou e que regra o capítulo recomenda?
+R: Regressão logística e boosting tiveram notas muito próximas (0,981 e 0,968), dentro da variação. Regra do empate técnico: escolha o modelo simples.
+
+DISC: Diferencie explicação global e local, com um exemplo de cada.
+R: Global: o que o modelo valoriza em geral (importância média de atributos). Local: por que decidiu isso para esta pessoa (contribuições SHAP de um exemplo).
+
+DISC: Explique a importância por permutação e uma limitação.
+R: Embaralha-se uma coluna e mede-se a queda de desempenho. Com atributos correlacionados, a importância se reparte de forma instável e é propriedade do modelo, não do mundo.
+
+DISC: Explique a ideia do SHAP com a analogia do capítulo.
+R: Como dividir de forma justa a conta do restaurante pela contribuição média de cada pessoa em todas as ordens, o SHAP divide a diferença entre a previsão e a média entre os atributos (valores de Shapley).
+
+DISC: Por que explicar não é justificar?
+R: A explicação mostra como o modelo decidiu, não se a decisão é justa. Um modelo enviesado pode ser perfeitamente explicável.
+
+DISC: Cite quatro fontes de viés e dê um exemplo de cada.
+R: Histórico (decisões passadas injustas), representação (grupo pouco presente), medição (variável que retrata mal o que importa) e feedback (decisões do modelo alteram dados futuros).
+
+DISC: Explique taxa de seleção e igualdade de oportunidade.
+R: Taxa de seleção: proporção de aprovados no grupo. Igualdade de oportunidade: entre quem mereceria a aprovação, a taxa de aprovação (TPR) deve ser igual entre os grupos.
+
+DISC: Por que o crédito simulado do capítulo tem rótulos enviesados e como isso aparece nos números?
+R: As decisões históricas exigiam mais do grupo 1: aprovação de 0,29 contra 0,51, embora a proporção de bons pagadores fosse parecida (0,49 contra 0,51).
+
+DISC: Por que apagar o atributo sensível não elimina o viés?
+R: Porque variáveis proxy (renda, CEP) o reconstroem e os rótulos históricos já carregam o viés; o modelo aprende o mesmo padrão.
+
+DISC: Descreva o resultado do teste 'com CEP' e 'sem CEP'.
+R: Em ambos, o grupo 1 foi aprovado menos (seleção 0,38 e 0,39 contra 0,48) e teve TPR real menor (0,67 e 0,69 contra 0,81 e 0,83).
+
+DISC: Explique a mitigação por limiares por grupo e seus resultados no capítulo.
+R: Escolhe-se um limiar menor para o grupo 1 para igualar a taxa de seleção. A seleção igualou-se (0,49), o TPR real do grupo 1 subiu de 0,67 para 0,81 e a acurácia contra a verdade subiu de 0,847 para 0,858.
+
+DISC: Por que o resultado da mitigação não prova que ela resolve o viés em dados reais?
+R: Em dados reais a verdade é desconhecida, os rótulos podem ser enviesados e as definições de justiça podem entrar em conflito. A escolha do critério é decisão humana, social e, às vezes, legal.
+
+DISC: Por que igualar o TPR contra os rótulos históricos pode não corrigir a disparidade real?
+R: Porque o histórico é o enviesado: igualar contra ele considera 'correto' o que ele aprovou. No exercício, o TPR real do grupo 1 até caiu (0,67 para 0,63).
+
+DISC: Como detectar proxies?
+R: Treinar um classificador para prever o atributo sensível a partir dos demais atributos: AUC alta indica que o grupo pode ser reconstruído; remover atributos um a um mostra os que mais contribuem.
+
+DISC: Como estimar o custo de uma busca e como reduzi-lo?
+R: Contando quantos modelos serão treinados (× tempo por treino × consumo). Reduz-se com busca aleatória em vez de grade, parada precoce/Hyperband, warm start e perguntando se a busca vale a pena.
+
+DISC: Cite cinco limites do AutoML.
+R: Não define o problema; não corrige dados ruins; não há almoço grátis; otimiza a validação (otimismo da seleção); não prevê mudanças do mundo; tem custo; pode esconder decisões.
+
+DISC: Que perguntas a lista de verificação ética propõe antes, durante e depois?
+R: Antes: quem é afetado, origem dos dados, ausentes, rótulos. Durante: linha de base e modelo interpretável, validação adequada, desempenho por grupo. Depois: explicação, contestação, monitoramento, custo.
+
+DISC: Por que o AutoML 'desloca' a responsabilidade humana, mas não a elimina?
+R: Porque automatiza a busca de modelos, mas não decide o problema, a métrica, a qualidade dos dados, a justiça, a explicação nem o monitoramento, que continuam humanos.

@@ -1,0 +1,195 @@
+@@EX 1 | Quem importa para o modelo? | básico
+No conjunto **Breast Cancer Wisconsin** (UCI), ajuste uma regressão logística (com `StandardScaler`) e um `HistGradientBoostingClassifier`, usando 70% para treino e 30% para teste (`random_state=0`, estratificado). Calcule a **importância por permutação** (10 repetições) no teste e mostre os três atributos mais importantes de cada modelo.
+
+*Pergunta:* os dois modelos concordam sobre quais atributos importam? Isso é esperado?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.inspection import permutation_importance
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+d = load_breast_cancer(); Xtr, Xte, ytr, yte = train_test_split(d.data, d.target, test_size=0.3, stratify=d.target, random_state=0)
+modelos = {"Reg. logística": make_pipeline(StandardScaler(), LogisticRegression(C=0.5, max_iter=3000)), "Boosting": HistGradientBoostingClassifier(random_state=0)}
+for nome, m in modelos.items():
+    m.fit(Xtr, ytr); pi = permutation_importance(m, Xte, yte, n_repeats=10, random_state=0)
+    top = np.argsort(-pi.importances_mean)[:3]
+    print(f"{nome:<15s} acurácia = {m.score(Xte, yte):.3f} | top 3:", ", ".join(f"{d.feature_names[i]} ({pi.importances_mean[i]:.3f})" for i in top))
+```
+@@NOTE Os dois modelos **não concordam**: a regressão logística destaca `compactness error`, `worst texture` e `perimeter error`, enquanto o boosting destaca `worst perimeter`, `worst texture` e `area error`. Isso é esperado: este conjunto tem muitos atributos **fortemente correlacionados** (perímetro, área e raio medem quase o mesmo), de modo que a importância por permutação se reparte entre eles de forma instável, e modelos diferentes usam atributos diferentes para chegar a notas parecidas (0,965 e 0,942, num teste de 171 exemplos). Importâncias são **propriedades do modelo**, não verdades sobre o mundo.
+@@EX 2 | Medindo a disparidade por grupo | básico
+Gere o crédito simulado do capítulo (função abaixo, que já devolve os atributos, o grupo, o rótulo histórico e a verdade). Treine uma regressão logística (com `StandardScaler`) nos rótulos históricos **sem** o atributo grupo, com 70% de treino. No teste, mostre por grupo: a taxa de seleção e a taxa de verdadeiros positivos (TPR) **contra a verdade**.
+
+*Pergunta:* há disparidade? O modelo teve acesso ao grupo?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+def gera(n=6000, vies=0.6, p_min=0.3, seed=0):
+    r = np.random.default_rng(seed)
+    g = (r.random(n) < p_min).astype(int); z = r.normal(0, 1, n)
+    renda = np.exp(0.5 * z + 0.35 * r.normal(size=n) - 0.25 * g) * 3.0
+    emprego = np.clip(5 + 2 * z + r.normal(0, 2, n), 0, None)
+    divida = np.clip(0.4 - 0.1 * z + r.normal(0, 0.1, n), 0, 1)
+    cep = 0.8 * g + 0.6 * r.normal(size=n); score = z + r.normal(0, 1, n)
+    y_real = (z > 0).astype(int); y_hist = ((z - vies * g + r.normal(0, 0.5, n)) > 0).astype(int)
+    return np.c_[renda, emprego, divida, cep, score], g, y_hist, y_real
+
+X, g, yh, yr = gera()
+Xtr, Xte, gtr, gte, ytr, yte, yrtr, yrte = train_test_split(X, g, yh, yr, test_size=0.3, random_state=0, stratify=yh)
+m = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr, ytr); p = m.predict(Xte)
+for k in (0, 1):
+    print(f"grupo {k}: seleção = {p[gte == k].mean():.3f} | TPR real = {p[(gte == k) & (yrte == 1)].mean():.3f} | n = {(gte == k).sum()}")
+print("Acurácia contra o histórico: %.3f | contra a verdade: %.3f" % ((p == yte).mean(), (p == yrte).mean()))
+```
+@@NOTE Há disparidade clara. O grupo 0 teve seleção de 0,462 e TPR real de 0,831; o grupo 1, seleção de 0,354 e TPR real de 0,649: entre quem **de fato pagaria**, o grupo 1 é aprovado bem menos. O modelo **não** recebeu o grupo, mas aprendeu com rótulos enviesados e com atributos correlacionados (renda). A acurácia contra a verdade (0,855) é até maior que contra o histórico (0,817), pois o histórico está contaminado pelo viés.
+@@EX 3 | Detectando proxies | intermediário
+Com os mesmos dados, **sem** usar o rótulo de crédito, treine um classificador para **prever o grupo** a partir dos cinco atributos e calcule a AUC no teste. Repita removendo cada atributo, um de cada vez.
+
+*Pergunta:* os atributos permitem prever o grupo? Qual atributo mais contribui? O que isso diz sobre "remover o atributo sensível"?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+def gera(n=6000, vies=0.6, p_min=0.3, seed=0):
+    r = np.random.default_rng(seed)
+    g = (r.random(n) < p_min).astype(int); z = r.normal(0, 1, n)
+    renda = np.exp(0.5 * z + 0.35 * r.normal(size=n) - 0.25 * g) * 3.0
+    emprego = np.clip(5 + 2 * z + r.normal(0, 2, n), 0, None)
+    divida = np.clip(0.4 - 0.1 * z + r.normal(0, 0.1, n), 0, 1)
+    cep = 0.8 * g + 0.6 * r.normal(size=n); score = z + r.normal(0, 1, n)
+    y_real = (z > 0).astype(int); y_hist = ((z - vies * g + r.normal(0, 0.5, n)) > 0).astype(int)
+    return np.c_[renda, emprego, divida, cep, score], g, y_hist, y_real
+
+NOMES = ["renda", "tempo_emprego", "razao_divida", "cep_score", "score_historico"]
+X, g, yh, yr = gera()
+Xtr, Xte, gtr, gte = train_test_split(X, g, test_size=0.3, random_state=0, stratify=g)
+def auc(cols):
+    m = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr[:, cols], gtr)
+    return roc_auc_score(gte, m.predict_proba(Xte[:, cols])[:, 1])
+print("AUC para prever o grupo com todos os atributos: %.3f" % auc(list(range(5))))
+for i, nome in enumerate(NOMES): print(f"  sem {nome:<16s} AUC = {auc([j for j in range(5) if j != i]):.3f}")
+```
+@@NOTE Mesmo sem o grupo, os atributos permitem prevê-lo com AUC de 0,857 (0,5 seria o acaso). O atributo que mais contribui é o `cep_score` (a AUC cai a 0,694 sem ele), seguido da `renda` (0,827). Os demais quase não pesam. Isso mostra que **remover o atributo sensível não impede o modelo de "conhecê-lo"**: variáveis proxy o reconstroem. Note ainda que, mesmo sem o `cep_score`, o grupo continua previsível pela renda; portanto, retirar só o proxy mais óbvio não basta.
+@@EX 4 | Igualdade de oportunidade com os rótulos disponíveis | avançado
+No crédito simulado, treine um `HistGradientBoostingClassifier` nos rótulos históricos (sem o grupo). Escolha, **usando apenas o teste e os rótulos históricos**, um limiar para o grupo 1 que iguale o **TPR contra o histórico** ao do grupo 0 (limiar 0,5 para o grupo 0). Depois, como só a simulação permite, calcule a acurácia contra a verdade e o TPR real de cada grupo.
+
+*Pergunta:* igualar o TPR contra o histórico enviesado resolve a disparidade real? Compare com o limiar único.
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.model_selection import train_test_split
+
+def gera(n=6000, vies=0.6, p_min=0.3, seed=0):
+    r = np.random.default_rng(seed)
+    g = (r.random(n) < p_min).astype(int); z = r.normal(0, 1, n)
+    renda = np.exp(0.5 * z + 0.35 * r.normal(size=n) - 0.25 * g) * 3.0
+    emprego = np.clip(5 + 2 * z + r.normal(0, 2, n), 0, None)
+    divida = np.clip(0.4 - 0.1 * z + r.normal(0, 0.1, n), 0, 1)
+    cep = 0.8 * g + 0.6 * r.normal(size=n); score = z + r.normal(0, 1, n)
+    y_real = (z > 0).astype(int); y_hist = ((z - vies * g + r.normal(0, 0.5, n)) > 0).astype(int)
+    return np.c_[renda, emprego, divida, cep, score], g, y_hist, y_real
+
+X, g, yh, yr = gera()
+Xtr, Xte, gtr, gte, ytr, yte, yrtr, yrte = train_test_split(X, g, yh, yr, test_size=0.3, random_state=0, stratify=yh)
+p = HistGradientBoostingClassifier(random_state=0).fit(Xtr, ytr).predict_proba(Xte)[:, 1]
+alvo = (p[(gte == 0) & (yte == 1)] >= 0.5).mean()
+cand = np.linspace(0.05, 0.9, 171)
+t1 = min(cand, key=lambda t: abs((p[(gte == 1) & (yte == 1)] >= t).mean() - alvo))
+for nome, pred in (("limiar único 0,5", (p >= 0.5).astype(int)), (f"limiar do grupo 1 = {t1:.2f}", np.where(gte == 0, p >= 0.5, p >= t1).astype(int))):
+    tprh = [pred[(gte == k) & (yte == 1)].mean() for k in (0, 1)]; tprr = [pred[(gte == k) & (yrte == 1)].mean() for k in (0, 1)]
+    print(f"{nome:<24s} TPR histórico = {tprh[0]:.2f}/{tprh[1]:.2f} | TPR real = {tprr[0]:.2f}/{tprr[1]:.2f} | acc verdade = {(pred == yrte).mean():.3f}")
+```
+@@NOTE O limiar do grupo 1 (0,54) igualou o TPR contra o **histórico** (0,77 nos dois grupos), mas o TPR **real** do grupo 1 caiu de 0,67 para 0,63, e a acurácia contra a verdade caiu de 0,831 para 0,826. Ou seja, igualar a oportunidade usando os **rótulos enviesados** como referência não corrige a disparidade real, e pode até piorá-la: o critério considera "correto" o que o histórico aprovou. Se o rótulo é parte do problema, não pode ser o padrão de comparação.
+@@PROJ Auditoria ética de um modelo de AutoML | Cap13
+**Fonte dos dados.** Crédito **simulado** pelo código do capítulo, com parâmetros diferentes dos do texto: grupo minoritário de 20% (`p_min=0.2`), viés histórico de 0,4 (`vies=0.4`) e semente 7. (Se quiser trabalhar com dados reais, escolha uma base pública do Kaggle ou da UCI que contenha um atributo sensível, como *Adult* ou *German Credit*, e respeite a licença e as restrições legais de uso.)
+
+**Contexto.** Uma instituição usou AutoML para criar um modelo de aprovação de crédito e pediu uma **auditoria** antes da implantação.
+
+**Atenção ética.** Os dados são simulados. Em dados reais, decisões que usam atributos sensíveis podem ser restritas por lei, e a auditoria deve envolver especialistas jurídicos e representantes das pessoas afetadas.
+
+**Tarefas.**
+1. Gere os dados, separe 30% para teste (estratificado pelo rótulo histórico) e treine, **sem o atributo grupo**, o FLAML (`max_iter=20`, `time_budget=120`, `metric="accuracy"`) e uma regressão logística com `StandardScaler` (modelo interpretável).
+2. Compare as duas acurácias contra o histórico e decida, pela regra do empate técnico, qual seria preferível.
+3. Para o modelo do FLAML, calcule a **importância por permutação** e comente.
+4. Calcule, por grupo, a **taxa de seleção** e o **TPR real** dos dois modelos.
+5. Teste se o grupo pode ser previsto pelos atributos (AUC) e discuta o papel de proxies.
+6. Aplique **limiares por grupo** para igualar a taxa de seleção no modelo do FLAML e reporte acurácia contra o histórico, contra a verdade e TPR real.
+7. Registre o **custo** (número de treinos e tempo de busca).
+8. Escreva um relatório curto (10 a 12 linhas) com recomendações: o modelo pode ser implantado? Que salvaguardas (monitoramento, contestação, revisão humana) você exigiria?
+
+**Entregáveis.** Um notebook (ou script) comentado, as tabelas por grupo e o relatório.
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import time
+import numpy as np
+from flaml import AutoML
+from sklearn.inspection import permutation_importance
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+def gera(n=6000, vies=0.6, p_min=0.3, seed=0):
+    r = np.random.default_rng(seed)
+    g = (r.random(n) < p_min).astype(int); z = r.normal(0, 1, n)
+    renda = np.exp(0.5 * z + 0.35 * r.normal(size=n) - 0.25 * g) * 3.0
+    emprego = np.clip(5 + 2 * z + r.normal(0, 2, n), 0, None)
+    divida = np.clip(0.4 - 0.1 * z + r.normal(0, 0.1, n), 0, 1)
+    cep = 0.8 * g + 0.6 * r.normal(size=n); score = z + r.normal(0, 1, n)
+    y_real = (z > 0).astype(int); y_hist = ((z - vies * g + r.normal(0, 0.5, n)) > 0).astype(int)
+    return np.c_[renda, emprego, divida, cep, score], g, y_hist, y_real
+
+NOMES = ["renda", "tempo_emprego", "razao_divida", "cep_score", "score_historico"]
+X, g, yh, yr = gera(vies=0.4, p_min=0.2, seed=7)
+Xtr, Xte, gtr, gte, ytr, yte, yrtr, yrte = train_test_split(X, g, yh, yr, test_size=0.3, random_state=0, stratify=yh)
+t0 = time.time(); a = AutoML()
+a.fit(Xtr, ytr, task="classification", time_budget=120, max_iter=20, metric="accuracy", eval_method="cv", n_splits=3, seed=0, verbose=0)
+tempo = time.time() - t0
+lr = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr, ytr)
+print(f"FLAML ({a.best_estimator}): acc = {(a.predict(Xte) == yte).mean():.3f} | Reg. logística: acc = {lr.score(Xte, yte):.3f}")
+pi = permutation_importance(a.model.estimator, Xte, yte, n_repeats=10, random_state=0)
+print("Permutação (FLAML):", {n: round(float(v), 3) for n, v in zip(NOMES, pi.importances_mean)})
+
+def rel(nome, pred):
+    s = [pred[gte == k].mean() for k in (0, 1)]; t = [pred[(gte == k) & (yrte == 1)].mean() for k in (0, 1)]
+    print(f"{nome:<22s} acc hist = {(pred == yte).mean():.3f} | acc verdade = {(pred == yrte).mean():.3f} | seleção {s[0]:.2f}/{s[1]:.2f} | TPR real {t[0]:.2f}/{t[1]:.2f}")
+rel("FLAML", a.predict(Xte)); rel("Reg. logística", lr.predict(Xte))
+pg = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr, gtr)
+print("AUC para prever o grupo pelos atributos: %.3f" % roc_auc_score(gte, pg.predict_proba(Xte)[:, 1]))
+p = a.predict_proba(Xte)[:, 1]; sel0 = (p[gte == 0] >= 0.5).mean(); t1 = np.quantile(p[gte == 1], 1 - sel0)
+rel("FLAML + limiares grupo", np.where(gte == 0, p >= 0.5, p >= t1).astype(int))
+print(f"Limiar do grupo 1 = {t1:.2f} | melhorias em config_history = {len(a.config_history)} | tempo de busca = {tempo:.0f} s")
+```
+@@RUBRICA
+- Os modelos foram treinados sem o atributo grupo, e o teste foi separado antes de qualquer decisão.
+- A comparação entre FLAML e regressão logística usou a regra do empate técnico.
+- As métricas foram calculadas por grupo (seleção e TPR real) para os dois modelos.
+- O papel dos proxies foi investigado (AUC para prever o grupo) e discutido.
+- A mitigação foi aplicada e discutida com trade-offs, sem declarar o problema resolvido.
+- O relatório cita o custo, as salvaguardas e as limitações da simulação.
+@@NOTE FLAML escolheu `lgbm` e obteve 0,800 de acurácia, contra 0,796 da regressão logística: **empate técnico**, o que, pela regra do capítulo, favorece o modelo interpretável. A importância por permutação é dominada pela `renda` (0,128); o `cep_score` quase não pesa (0,0), mas isso não o inocenta, pois a renda carrega informação do grupo: o grupo pode ser previsto pelos atributos com AUC de 0,833. As disparidades persistem nos dois modelos (seleção de 0,48/0,37 no FLAML; TPR real de 0,83/0,71). Com limiares por grupo, a seleção se iguala (0,48/0,49), o TPR real do grupo 1 sobe para 0,87 e a acurácia contra a verdade se mantém (0,856), com pequena queda contra o histórico (0,791). O custo da busca foi pequeno (4 melhorias registradas e cerca de 1 segundo), pois foi limitada a 20 tentativas. Recomendação: não implantar sem revisão humana, monitoramento por grupo e canal de contestação; os resultados valem para a **simulação**, não para dados reais.
+@@ALEM
+- **UCI:** Adult (renda, com atributos sensíveis) e Statlog German Credit (crédito).
+- **Kaggle:** Give Me Some Credit e COMPAS (justiça criminal, muito discutido na literatura de equidade).
+- **Desafio:** repita a auditoria em uma base real, comparando duas definições de justiça e discutindo por que elas podem entrar em conflito.
