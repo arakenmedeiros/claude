@@ -14,3 +14,11 @@ VI: 27 Benefícios e evidências; 28 Equidade/vieses/segurança/adequação etá
 VII: 31 Diagnóstico/formação/pilotos; 32 Ferramentas/indicadores/monitoramento/plano de ação
 ## Progresso
 (ver tabela abaixo, atualizada a cada lote)
+| cap | texto | exerc. | figuras | obs |
+|---|---|---|---|---|
+| 01 | ok | ok | ok | piloto validado |
+| 02 | ok | ok | ok | |
+| 03 | ok | ok | ok | |
+| 04 | ok | ok | ok | |
+| 05 | ok | ok | ok | Parte I concluída |
+Notas: Consensus esgotado (2 buscas até 01/11); usar WebSearch para verificar. Wang & Fan 2025 (HSSC) reportado como retratado (WebSearch 17/10/2026): NÃO citar como evidência; usar como exemplo no cap. 27.

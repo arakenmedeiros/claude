@@ -228,21 +228,20 @@ def espectro(name, esq, dir_, itens, w=8.4, h=3.0, fs=8.2, cor_esq=TEAL, cor_dir
     """Linha-espectro com itens posicionados em [0,1]: (pos, rótulo)."""
     fig, ax = canvas(w, h, (0, 100), (0, 100 * h / w))
     H = 100 * h / w
-    y0 = H * 0.42
+    y0 = H * 0.45
     n = 100
     for i in range(n):
         t = i / (n - 1)
         c = np.array(matplotlib.colors.to_rgb(cor_esq)) * (1 - t) + np.array(matplotlib.colors.to_rgb(cor_dir)) * t
         ax.add_patch(Rectangle((4 + i * 0.92, y0 - 1.5), 0.93, 3, fc=c, ec="none"))
-    label(ax, 4, y0 + 7, esq, fs, cor_esq, True, ha="left"); label(ax, 96, y0 + 7, dir_, fs, cor_dir, True, ha="right")
+    label(ax, 4, H - 2.0, esq, fs, cor_esq, True, ha="left"); label(ax, 96, H - 2.0, dir_, fs, cor_dir, True, ha="right")
     for k, (p, t) in enumerate(itens):
         x = 4 + p * 92
         up = k % 2 == 0
-        ax.plot([x, x], [y0, y0 + (-9 if up else 9) * -1], c=GRY, lw=1)
+        ty = y0 + 9.5 if up else y0 - 9.5
+        ax.plot([x, x], [y0, ty + (-3.6 if up else 3.6)], c=GRY, lw=1, zorder=1)
         ax.add_patch(Circle((x, y0), 1.6, fc=WHITE, ec=INK, lw=1.4, zorder=4))
-        ty = y0 - 8.5 if up else y0 + 8.5
-        ax.plot([x, x], [y0, ty + (2.6 if up else -2.6)], c=GRY, lw=1, zorder=1)
-        label(ax, x, ty, t, fs - 0.8, INK, wrap_at=17)
+        label(ax, min(max(x, 9), 91), ty, t, fs - 0.8, INK, wrap_at=17)
     save(fig, name)
 
 
@@ -251,6 +250,15 @@ def comparar_cartoes(name, cartoes, w=8.4, h=4.6, fs=8.2, wrap_at=24, colunas=No
     n = len(cartoes)
     cols = colunas or n
     linhas = int(np.ceil(n / cols))
+    cw0 = (96 - (cols - 1) * 3) / cols
+    need = 0
+    for (_t, ls, _c) in cartoes:
+        tot = 13.0
+        for l in ls:
+            tot += (wrap("• " + l, wrap_at).count("\n") + 1) * 2.8 + 1.4
+        need = max(need, tot)
+    h_need = (need * linhas + (linhas - 1) * 3 + 4) * w / 100
+    h = min(h, max(h_need, 1.4))
     fig, ax = canvas(w, h, (0, 100), (0, 100 * h / w))
     H = 100 * h / w
     cw = (96 - (cols - 1) * 3) / cols

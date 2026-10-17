@@ -1,0 +1,319 @@
+MC: Qual é a melhor razão para dizer que não existe uma definição única de inteligência artificial?
++ Porque diferentes perspectivas privilegiam comportamento humano, raciocínio humano, racionalidade lógica ou ação racional.
+- Porque a IA só existe nos filmes e não na realidade. || A IA existe como área de pesquisa e aplicação.
+- Porque os cientistas ainda não conseguiram construir nenhum programa. || Existem muitos sistemas em funcionamento.
+- Porque apenas empresas privadas têm autoridade para defini-la. || Definições vêm de pesquisadores, normas e documentos diversos.
+- Porque a definição depende do país onde o computador foi fabricado. || A origem do equipamento não define o conceito.
+R: Russell e Norvig organizam as definições em quatro perspectivas, o que explica a pluralidade de conceitos.
+
+MC: O termo "inteligência artificial" foi proposto, em 1955, em um documento relacionado a:
++ Uma proposta para um encontro de pesquisa de verão no Dartmouth College.
+- Uma lei brasileira sobre educação. || Não tem relação com legislação educacional.
+- Um manual de uso de calculadoras. || Não se trata de manual de produto.
+- Um relatório sobre a imprensa escolar. || Não se trata disso.
+- Um projeto de criação do primeiro computador pessoal. || O documento não trata de computadores pessoais.
+R: A expressão surgiu na proposta do encontro de Dartmouth, que reuniu pesquisadores interessados em simular aspectos da inteligência por máquinas.
+
+MC: Qual das definições de trabalho a seguir está mais alinhada à adotada no capítulo?
++ Área que desenvolve sistemas capazes de realizar tarefas associadas à inteligência, geralmente por métodos que usam dados.
+- Qualquer equipamento eletrônico que funcione sem intervenção humana. || É ampla demais; inclui máquinas simples.
+- Programas que pensam e sentem como seres humanos. || O capítulo evita atribuir pensamento e sentimentos humanos.
+- Todos os programas de computador existentes. || Seria excessivamente amplo.
+- Sistemas que substituem integralmente os professores. || Não é definição de IA.
+R: A definição enfatiza tarefas e métodos baseados em dados, evitando atribuir inteligência humana aos sistemas.
+
+MC: Por que o capítulo recomenda falar em "tarefas" que o sistema realiza, em vez de dizer simplesmente que ele "é inteligente"?
++ Porque evita atribuir ao sistema capacidades humanas que não foram comprovadas.
+- Porque a palavra "inteligente" foi proibida por lei. || Não há proibição.
+- Porque os sistemas só realizam tarefas manuais. || Realizam tarefas cognitivas e outras.
+- Porque os professores não entendem o termo "inteligente". || A razão é conceitual.
+- Porque "tarefa" é um termo exclusivo da educação infantil. || Não há essa restrição.
+R: Falar em tarefas é prudente e ajuda a evitar equívocos como supor entendimento humano.
+
+MC: O "efeito ELIZA" descreve:
++ A tendência de atribuir compreensão a um sistema que apenas imita a forma de uma conversa.
+- A velocidade com que programas simples calculam resultados. || Não é sobre velocidade.
+- O erro de programas que não reconhecem palavras. || É sobre atribuição de entendimento.
+- A capacidade de prever o trânsito. || Não se refere a previsão.
+- A criptografia de mensagens pessoais. || Não tem relação.
+R: Mesmo sabendo que ELIZA era um programa simples, muitas pessoas lhe atribuíam empatia e compreensão.
+
+MC: Qual das situações caracteriza melhor a automação convencional?
++ Uma planilha que soma automaticamente uma coluna de números segundo uma fórmula definida.
+- Um sistema que aprende a reconhecer rostos a partir de milhões de exemplos. || Aprende com dados.
+- Um modelo que gera imagens novas a partir de uma descrição. || É um sistema gerador baseado em dados.
+- Um assistente que conversa em linguagem natural. || Normalmente usa modelos aprendidos.
+- Um sistema que recomenda vídeos com base no comportamento de usuários. || Usa aprendizado com dados.
+R: Na automação convencional, as regras são escritas explicitamente, e o resultado é previsível.
+
+MC: O que torna difícil escrever regras explícitas para reconhecer um gato em fotografias?
++ A grande variedade de posições, luzes, raças e situações, que gera um número enorme de exceções.
+- A falta de gatos em bancos de imagens. || O problema não é a falta de imagens, e sim a variedade.
+- O fato de gatos não terem características visuais. || Têm características, mas muito variáveis.
+- A proibição de usar imagens de animais. || Não há essa proibição.
+- A inexistência de computadores com memória suficiente. || Não é o motivo principal.
+R: A variedade de situações torna impraticável prever todas as regras, o que favorece o aprendizado com exemplos.
+
+MC: Em aprendizado de máquina, o sistema aprende principalmente a partir de:
++ Exemplos (dados) dos quais extrai padrões.
+- Regras que são digitadas uma a uma por programadores. || Isso caracteriza automação convencional.
+- Leis do país onde é utilizado. || Não é a fonte do aprendizado.
+- Conversas privadas de seus programadores. || Não é o princípio do método.
+- Instruções verbais exclusivas do professor. || Não é a base do método.
+R: Aprender com dados é a ideia central do aprendizado de máquina.
+
+MC: A afirmação "a divisão entre regras e aprendizado é um espectro" significa que:
++ Muitos sistemas reais combinam regras escritas por pessoas com componentes que aprendem com dados.
+- Todos os sistemas usam apenas regras. || Nega o aprendizado de máquina.
+- Todos os sistemas aprendem sem nenhuma regra. || Muitos incluem regras.
+- Regras e aprendizado nunca coexistem. || O espectro indica coexistência frequente.
+- A distinção entre os dois é irrelevante. || A distinção é útil, mas não absoluta.
+R: Por isso é importante perguntar o que, no sistema, aprende com dados.
+
+MC: Qual relação entre os conjuntos descreve corretamente a "família" da IA?
++ IA contém aprendizado de máquina, que contém aprendizado profundo, que contém boa parte dos modelos de IA generativa.
+- Aprendizado profundo contém IA, que contém aprendizado de máquina. || Inverte a relação de inclusão.
+- IA generativa contém toda a IA. || É um subconjunto.
+- Os quatro conceitos são sinônimos perfeitos. || São diferentes, ainda que relacionados.
+- Aprendizado de máquina contém IA. || Inverte a relação.
+R: A imagem das bonecas russas ajuda: cada conceito está dentro do outro.
+
+MC: Sobre as redes neurais do aprendizado profundo, o capítulo afirma que:
++ São modelos matemáticos inspirados de forma muito livre em neurônios conectados, mas não são réplicas do cérebro.
+- São cópias exatas do cérebro humano. || É uma metáfora, não uma réplica.
+- São equipamentos físicos implantados em estudantes. || São modelos matemáticos.
+- Funcionam apenas com dados de áudio. || Aplicam-se a vários tipos de dado.
+- Dispensam dados para aprender. || Dependem de dados.
+R: A inspiração biológica é metafórica e não implica semelhança com o funcionamento do cérebro.
+
+MC: Um LLM (modelo de linguagem de grande porte) pode ser descrito como:
++ Um sistema de IA generativa especializado em texto.
+- Uma calculadora científica avançada. || Não é uma calculadora.
+- Um programa de edição de planilhas. || Não é esse o conceito.
+- Um tipo de banco de dados de notas escolares. || Não é banco de dados.
+- Um sistema que apenas detecta plágio. || Não se limita a isso.
+R: LLMs geram texto com base em padrões aprendidos; são um exemplo de IA generativa.
+
+MC: O que distingue a IA estreita da IA geral?
++ A estreita realiza tarefas específicas; a geral, hipoteticamente, aprenderia e agiria em qualquer tarefa como um humano.
+- A estreita é mais antiga e a geral é a que está nas escolas. || A que está nas escolas é a estreita.
+- A estreita só funciona com internet e a geral, sem internet. || Não é essa a distinção.
+- A geral é a que gera imagens, e a estreita só gera textos. || Não é a distinção.
+- Não há diferença conceitual. || A distinção é relevante.
+R: Os sistemas disponíveis hoje, inclusive os generativos, são considerados estreitos, ainda que muito versáteis.
+
+MC: Uma notícia afirma que "a IA vai superar a humanidade". Qual é a atitude mais prudente do professor?
++ Verificar se a afirmação trata de hipóteses futuras ou das ferramentas disponíveis hoje na escola.
+- Compartilhar imediatamente com os estudantes. || Compartilhar sem análise não é prudente.
+- Cancelar qualquer discussão sobre tecnologia. || Seria evitar o debate.
+- Aceitar sem questionar, por vir de um veículo conhecido. || Autoridade do veículo não substitui análise.
+- Usar a notícia como critério de avaliação. || Notícia sensacionalista não é critério de avaliação.
+R: Muitas matérias tratam de hipóteses, e não do que o professor pode de fato usar.
+
+MC: A tarefa de "estimar o risco de evasão de estudantes" corresponde principalmente a:
++ Prever.
+- Gerar imagem. || Não é geração de imagens.
+- Reconhecer voz. || Não é reconhecimento de voz.
+- Recomendar vídeos. || Não é recomendação de conteúdo.
+- Traduzir. || Não é tradução.
+R: Estimar um evento ou valor futuro a partir de dados é uma tarefa de previsão.
+
+MC: Sugerir exercícios com base no desempenho do estudante é, tipicamente, uma tarefa de:
++ Recomendação.
+- Previsão do clima. || Não é o caso.
+- Compressão de arquivos. || Não é o caso.
+- Criptografia. || Não é o caso.
+- Transcrição de áudio. || Não é o caso.
+R: Sistemas de recomendação sugerem itens com base em dados de uso e desempenho.
+
+MC: Segundo a revisão de Zawacki-Richter et al. (2019), quais são as quatro áreas de aplicação de IA no ensino superior?
++ Perfil e previsão, avaliação, sistemas adaptativos e personalização, e sistemas tutores inteligentes.
+- Uniformes, merenda, transporte e limpeza. || Não são áreas de aplicação de IA identificadas.
+- Escrita, leitura, oralidade e escuta. || São habilidades linguísticas, não a classificação da revisão.
+- Hardware, software, redes e segurança. || São áreas da computação.
+- Currículo, financiamento, legislação e inspeção. || Não é a classificação da revisão.
+R: A classificação é usada até hoje para organizar o campo.
+
+MC: Qual crítica a revisão de Zawacki-Richter et al. (2019) fez à produção científica analisada?
++ Havia pouca reflexão crítica sobre riscos e fraca conexão com teorias pedagógicas.
+- Havia excesso de estudos qualitativos. || A revisão apontou predominância de métodos quantitativos.
+- Todos os estudos eram do ensino infantil. || A revisão era sobre ensino superior.
+- Os estudos eram apenas de ciências humanas. || Predominaram Ciência da Computação e STEM.
+- Não havia nenhum estudo empírico. || Havia estudos empíricos.
+R: A revisão apontou a pouca reflexão sobre desafios e riscos e a fraca ligação com a pedagogia.
+
+MC: Na revisão sobre sistemas tutores inteligentes na educação básica (Létourneau et al., 2025), o resultado geral foi:
++ Efeitos em geral positivos, porém mitigados quando comparados a sistemas de tutoria não inteligentes.
+- Efeitos sempre superiores aos de qualquer outra tutoria. || A comparação mostrou efeito mitigado.
+- Efeitos sempre negativos. || Foram em geral positivos.
+- Nenhuma evidência foi encontrada. || Havia 28 estudos incluídos.
+- Efeitos válidos apenas para o ensino superior. || A revisão tratou da educação básica.
+R: A conclusão é que o ganho depende do tipo de comparação e do contexto, e não de "ter IA".
+
+MC: A distinção entre "educar com IA", "educar sobre IA" e "educar para um mundo com IA" serve para:
++ Mostrar que há várias frentes de ação, e que o professor pode atuar em algumas mesmo sem usar IA em aula.
+- Obrigar todo professor a trabalhar nas três ao mesmo tempo. || Não há obrigação.
+- Defender que a IA deve substituir conteúdos de formação humana. || Contraria a ideia da terceira frente.
+- Dividir os estudantes em grupos por habilidade. || Não é o propósito.
+- Eliminar a necessidade de letramento. || Reforça sua necessidade.
+R: Escolher não usar IA em aula não impede de ensinar sobre ela e preparar para um mundo em que ela existe.
+
+MC: O professor Caio quer verificar se um aplicativo "usa IA". Qual conjunto de perguntas é mais adequado?
++ O que o sistema faz? Com que dados foi construído? Quem o produziu? Quais são suas limitações? Há avaliações independentes?
+- Qual é a cor do ícone? Quantos estudantes o baixaram? É gratuito? || São perguntas periféricas.
+- O nome tem a sigla "IA"? É recente? Tem propaganda? || Marketing não prova nada.
+- Alguém famoso usa? Está na moda? Tem muitos anúncios? || Popularidade não é critério técnico.
+- É difícil de instalar? Funciona em qualquer celular? Tem vídeo tutorial? || São perguntas de usabilidade.
+R: As perguntas ajudam a distinguir tecnologia de marketing e a identificar riscos.
+
+MC: Em qual caso a resposta "depende" é a mais honesta ao classificar uma tecnologia?
++ Um corretor ortográfico que pode combinar listas de regras e modelos aprendidos, conforme a implementação.
+- Uma calculadora simples de quatro operações. || Tipicamente baseada em regras explícitas.
+- Um semáforo com tempos fixos. || Baseado em regras.
+- Um sistema que gera textos novos a pedido. || É claramente baseado em modelos aprendidos.
+- Um formulário que exige campos preenchidos. || Baseado em regras.
+R: Muitas tecnologias combinam as duas abordagens, e a resposta depende de como foram construídas.
+
+MC: Qual afirmação sobre neutralidade da IA é a mais adequada?
++ Os sistemas aprendem com dados feitos por pessoas e são projetados com escolhas humanas, podendo reproduzir vieses.
+- Por serem matemáticos, os sistemas são sempre objetivos e imparciais. || Matemática não elimina vieses de dados.
+- Só sistemas gratuitos apresentam vieses. || Não há essa relação.
+- Vieses só aparecem em imagens, nunca em textos. || Aparecem em diferentes tipos de dados.
+- Sistemas de IA não são afetados pelos dados que recebem. || Dependem dos dados.
+R: A neutralidade é um mito. Reconhecer isso é o primeiro passo para avaliar riscos.
+
+MC: Qual é a posição mais adequada sobre a ideia de que "a IA vai substituir os professores"?
++ Há tarefas que podem ser apoiadas ou automatizadas, mas a docência envolve relações, julgamento, mediação e cuidado; previsões absolutas devem ser vistas com cautela.
+- A substituição completa é certa e imediata. || Previsão absoluta, sem sustentação.
+- A IA é irrelevante para o trabalho docente. || Há impactos, apoios e riscos.
+- Professores devem ser contra qualquer tecnologia. || Postura de rejeição automática.
+- Só professores de determinadas áreas serão afetados. || Não há base para essa afirmação.
+R: O livro adota a valorização da docência, sem negar que tarefas e condições de trabalho podem mudar.
+
+MC: Por que o capítulo diz que, ao ouvir "isso usa IA", vale perguntar "o que, exatamente, nesse sistema aprende com dados"?
++ Porque o termo é usado de forma ampla e imprecisa, e muitos sistemas combinam regras e aprendizado.
+- Porque dados são sempre secretos e não devem ser mencionados. || Não é essa a razão.
+- Porque IA só funciona se não for explicada. || Contraria o princípio de transparência.
+- Porque a pergunta evita o uso de qualquer tecnologia. || Não é esse o objetivo.
+- Porque o professor deve decidir sozinho o que a empresa deve fazer. || Não é o ponto.
+R: A pergunta transforma uma frase de marketing em informação verificável.
+
+MC: Na atividade "Isso é IA?", qual é o valor pedagógico de aceitar a resposta "depende"?
++ Reconhece a complexidade real das tecnologias e valoriza a justificativa em vez da simples memorização de uma resposta.
+- Evita que o professor precise preparar a aula. || Não é o valor pedagógico.
+- Permite que todas as respostas sejam consideradas certas, sem critérios. || Os critérios são necessários.
+- Elimina a discussão em grupo. || A discussão é central.
+- Dispensa o uso de exemplos. || Os exemplos são o ponto de partida.
+R: Argumentar com critérios é uma habilidade de pensamento crítico, mais importante que o gabarito.
+
+MC: Qual cuidado é adequado ao propor a atividade "Isso é IA?" com estudantes?
++ Evitar exemplos que exponham colegas e oferecer cartões com texto e imagem, além de leitura em voz alta.
+- Pedir que cada estudante traga dados pessoais de familiares. || Seria exposição indevida de dados.
+- Usar apenas exemplos em inglês. || Prejudica o acesso.
+- Proibir perguntas dos estudantes. || Perguntas são parte da atividade.
+- Cobrar a memorização do gabarito. || O foco é argumentar.
+R: Cuidados com dados, acessibilidade e adequação etária são requisitos de qualidade das atividades.
+
+MC: Em contexto de poucos recursos, a atividade "Isso é IA?" pode ser feita:
++ Com tiras de papel ou escritas no quadro, centrando-se na discussão oral.
+- Somente com computadores conectados. || Não é necessário.
+- Apenas com tablets individuais. || Não é necessário.
+- Apenas com licenças pagas de software. || Não é necessário.
+- Somente com impressão colorida. || Não é necessário.
+R: A atividade é "desplugada" e pode ser feita só com papel, lousa e conversa.
+
+MC: Qual é o melhor exemplo de risco de "confundir marketing com tecnologia"?
++ Aceitar que um produto "usa IA" porque a propaganda diz, sem saber o que ele faz ou como foi construído.
+- Ler a documentação técnica antes de adotar um sistema. || Isso é a atitude correta.
+- Pedir uma demonstração e testar com casos reais. || Também é prática adequada.
+- Consultar avaliações independentes do produto. || Prática recomendável.
+- Comparar o produto com alternativas mais simples. || Prática recomendável.
+R: A palavra "IA" é muitas vezes usada de forma ampla; sem verificação, vira slogan.
+
+MC: Quando dispensar a IA faz sentido no ensino do conceito de IA?
++ Quando o objetivo é a compreensão conceitual e atividades desplugadas (cartões, dramatização, conversa) já bastam.
+- Nunca, pois só é possível entender IA usando uma ferramenta. || Há formas desplugadas.
+- Sempre, mesmo em projetos que exijam o uso. || Há casos em que o uso é necessário.
+- Apenas se a escola tiver recursos. || Ocorre o contrário: mais simples com poucos recursos.
+- Apenas na educação infantil. || Vale para outros níveis.
+R: Usar uma ferramenta real pode ajudar a exemplificar, mas não é obrigatório para compreender conceitos.
+
+DISC: Explique, com suas palavras, a diferença entre automação convencional e aprendizado de máquina. Dê um exemplo de cada um fora dos exemplos do capítulo.
+R: Na automação convencional, regras são escritas por pessoas e o sistema as executa; é previsível. No aprendizado de máquina, o sistema descobre padrões a partir de muitos exemplos. Exemplos possíveis: catraca com regras de horário (regra) e recomendador de músicas (aprende).
+C: Define ambos; exemplos adequados; menciona previsibilidade ou uso de dados.
+
+DISC: Por que o capítulo recomenda falar em "sistemas que realizam tarefas" em vez de "máquinas que pensam"? Que riscos essa precaução ajuda a evitar?
+R: Porque evita atribuir às máquinas capacidades humanas não comprovadas. Riscos evitados: confiar demais em respostas, supor entendimento, esperar empatia ou julgamento, e perder a noção dos limites.
+C: Relaciona linguagem e decisões; cita ao menos dois riscos.
+
+DISC: Descreva o "efeito ELIZA" e explique por que ele é importante para professores que trabalham com assistentes conversacionais.
+R: É a tendência de atribuir compreensão e empatia a sistemas que apenas imitam a forma de uma conversa. Importa porque estudantes e professores podem confiar demais em respostas fluentes e tratar o sistema como interlocutor com entendimento.
+C: Descreve o fenômeno; relaciona a fluência com confiança indevida.
+
+DISC: Com o desenho de bonecas russas, explique a relação entre IA, aprendizado de máquina, aprendizado profundo e IA generativa. Dê um exemplo de sistema em cada nível.
+R: IA é o conjunto mais amplo; aprendizado de máquina é um subconjunto; aprendizado profundo, subconjunto deste; IA generativa, em boa parte, usa aprendizado profundo. Exemplos: sistema especialista de regras (IA), filtro de spam (AM), reconhecimento de voz (AP), assistente que escreve textos (IA generativa).
+C: Relações de inclusão corretas; exemplos coerentes.
+
+DISC: Em que sentido a IA estreita difere da IA geral? Por que é importante saber que as ferramentas disponíveis hoje são estreitas?
+R: A estreita faz tarefas específicas; a geral, hipotética, faria qualquer tarefa intelectual como um humano. Saber disso ajuda a calibrar expectativas e a distinguir o que está disponível das especulações.
+C: Distinção correta; relação com expectativas realistas.
+
+DISC: Classifique as seguintes tarefas como classificar, prever, recomendar, reconhecer ou gerar: (a) sugerir leituras a um estudante; (b) transcrever a fala de um professor; (c) estimar a probabilidade de reprovação; (d) rascunhar perguntas de uma prova; (e) separar redações por tema. Justifique brevemente.
+R: (a) recomendar; (b) reconhecer; (c) prever; (d) gerar; (e) classificar. Justificativas: cada tarefa corresponde à função principal do sistema.
+C: Cinco classificações corretas com justificativas.
+
+DISC: Apresente as quatro áreas de aplicação de IA no ensino superior identificadas por Zawacki-Richter et al. (2019) e dê um exemplo educacional de cada uma.
+R: Perfil e previsão (risco de evasão); avaliação (correção assistida de questões); sistemas adaptativos e personalização (sequências de exercícios adaptadas); sistemas tutores inteligentes (tutoria passo a passo em um domínio).
+C: Quatro áreas com exemplos plausíveis.
+
+DISC: A revisão de Létourneau et al. (2025) sugere que o efeito dos tutores inteligentes é "mitigado" quando comparado a tutoria não inteligente. Explique o que isso significa e por que não permite concluir que tutores inteligentes são inúteis.
+R: Significa que a vantagem diminui quando o comparativo é um sistema de tutoria sem componentes inteligentes. Não indica inutilidade: os efeitos foram em geral positivos, e o resultado depende de contexto, desenho e comparação.
+C: Interpretação cuidadosa; evita conclusão absoluta.
+
+DISC: Escolha um dos mitos da seção 2.6 e elabore, em um parágrafo, uma resposta que você daria a um colega ou a um estudante, com base no capítulo.
+R: Resposta pessoal. Deve refutar com argumentos (por exemplo: "a IA entende" → modelos geram texto plausível a partir de padrões, e atribuir compreensão exige cautela) e ser acolhedora e clara.
+C: Argumentação correta; linguagem acessível; tom respeitoso.
+
+DISC: Elabore um critério simples (em duas ou três perguntas) para que estudantes do ensino fundamental decidam se uma tecnologia usa IA. Explique por que o critério é uma simplificação.
+R: Por exemplo: Alguém escreveu o passo a passo? Foi construído com muitos exemplos? Cria algo novo? É simplificação porque muitos sistemas combinam regras e aprendizado.
+C: Perguntas claras; reconhece limite da simplificação.
+
+DISC: Descreva como você adaptaria a atividade "Isso é IA?" para o seu nível de atuação, incluindo número de cartões, tempo e forma de registro.
+R: Adaptações possíveis: menos cartões e desenhos nos anos iniciais; mais cartões e justificativas escritas no ensino médio; discussão de casos reais na graduação; versão curta em formação docente.
+C: Adequação etária; viabilidade; coerência com objetivos.
+
+DISC: Quais perguntas você faria a uma empresa que oferece à sua escola uma "plataforma com IA"? Liste ao menos cinco e explique o motivo de uma delas.
+R: O que a plataforma faz? Que dados coleta e onde armazena? Como foi treinada? Quais são os limites conhecidos? Há avaliações independentes? Como é tratada a LGPD? Quem acessa os dados? Quanto custa e o que acontece se interrompermos? A justificativa deve relacionar a pergunta a um risco.
+C: Cinco perguntas pertinentes; justificativa coerente.
+
+DISC: Por que o termo "IA" pode ser considerado, às vezes, uma "frase de marketing"? O que o professor pode fazer para se proteger?
+R: Porque é usado de modo amplo para valorizar produtos, mesmo que usem apenas regras. Proteção: perguntar o que faz, com que dados, quem produziu, limitações e avaliações independentes; pedir demonstrações; consultar colegas.
+C: Explica o uso mercadológico; apresenta medidas.
+
+DISC: Explique por que "educar sobre IA" é importante mesmo para quem decide não usar IA em suas aulas.
+R: Porque os estudantes convivem com sistemas de IA; é preciso desenvolver compreensão, olhar crítico e ética; e porque decidir não usar exige conhecimento.
+C: Relação com realidade dos estudantes; coerência com letramento.
+
+DISC: Compare o que é previsível em um sistema baseado em regras e o que pode ser imprevisível em um sistema que aprende com dados. Que cuidado isso exige de quem usa o segundo?
+R: No primeiro, mesmo dado leva ao mesmo resultado e erros são rastreáveis a regras. No segundo, resultados podem variar e erros decorrem de dados e padrões. Exige verificação, testes e atenção aos limites.
+C: Compara previsibilidade; apresenta cuidado de verificação.
+
+DISC: Dê um exemplo de situação em que um sistema baseado em regras seria preferível a um que aprende com dados no contexto escolar. Justifique.
+R: Cálculo de médias, controle de presença, validação de formulários: regras claras, necessidade de transparência e previsibilidade, e menor risco de vieses.
+C: Exemplo coerente; justificativa com transparência e previsibilidade.
+
+DISC: Por que o capítulo afirma que satisfação com um produto de IA não prova que ele é bom? Relacione com a pergunta "o que, exatamente, nesse sistema aprende com dados?".
+R: Porque gostar ou usar com facilidade não mostra que o sistema é adequado, correto ou benéfico. A pergunta leva a examinar dados, funcionamento e limites, em vez de se basear na aparência.
+C: Distingue satisfação de qualidade; articula a pergunta com análise.
+
+DISC: Planeje uma breve conversa de dez minutos para apresentar a seus colegas a diferença entre "IA", "aprendizado de máquina" e "IA generativa" sem usar jargões. Descreva a analogia e o exemplo que usaria.
+R: Analogia das bonecas russas; exemplos: sistema de regras, filtro de spam e assistente que escreve textos. Fechar com pergunta para o grupo.
+C: Analogia adequada; linguagem simples; exemplos corretos.
+
+DISC: Escreva três perguntas que um estudante curioso poderia fazer sobre IA e que você, como professor, gostaria de investigar com ele. Explique como transformaria uma delas em atividade de pesquisa.
+R: Resposta pessoal. Por exemplo: "como o corretor sabe o que corrigir?", "a IA pode errar?", "quem decide o que ela aprende?". Transformação: levantar hipóteses, buscar fontes confiáveis, testar em exemplos e registrar conclusões.
+C: Perguntas pertinentes; proposta de investigação viável.
+
+DISC: Pense em uma tecnologia que você usa na escola. Aplique o critério "quem escreveu o passo a passo?" e "o que aprendeu com dados?" para classificá-la e discuta o que a sua classificação muda na forma de usá-la.
+R: Resposta pessoal. Deve classificar a tecnologia (regras, aprendizado ou combinação), justificar e indicar consequências: previsibilidade, necessidade de verificação, cuidados com dados e vieses.
+C: Aplica os critérios; justifica; relaciona a classificação com cuidados de uso.

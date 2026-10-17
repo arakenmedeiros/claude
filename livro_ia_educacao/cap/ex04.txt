@@ -1,0 +1,319 @@
+MC: O que o termo "alucinação" designa no contexto de modelos de linguagem?
++ A produção de conteúdo plausível, porém sem fundamento nos dados ou no mundo.
+- Uma percepção sensorial falsa vivida pelo sistema. || O sistema não percebe nem sente.
+- Um defeito físico do computador. || Não é falha de hardware.
+- Um recurso criativo que o usuário liga e desliga. || Não é um recurso opcional.
+- A recusa do sistema em responder. || É o contrário: gera conteúdo infundado.
+R: O termo é popular, mas alguns pesquisadores o consideram impreciso e propõem "confabulação" ou "fabricação".
+
+MC: Por que alguns pesquisadores preferem "confabulação" ou "fabricação" a "alucinação"?
++ Porque alucinar é perceber algo inexistente, e o sistema não percebe; ele produz texto sem fundamento.
+- Porque "alucinação" é um termo proibido por lei. || Não há proibição.
+- Porque o sistema realmente tem visões. || O sistema não tem experiências perceptivas.
+- Porque "fabricação" é termo exclusivo da indústria. || Não é essa a razão.
+- Porque o termo deve ser usado apenas em modelos de imagem. || Não é essa a razão.
+R: O objetivo é evitar atribuir ao sistema experiências humanas.
+
+MC: Qual das situações é um exemplo de "fonte ou dado inventado"?
++ Uma lista de referências com títulos e autores plausíveis que não existem.
+- Uma resposta em português correto. || Não é fonte inventada.
+- Um texto sem referências, mas com informações corretas. || Não há invenção de fonte.
+- Um cálculo que o usuário refez e encontrou correto. || Não é erro.
+- Um parágrafo com linguagem simples. || Não é erro.
+R: Referências inexistentes são um tipo bem documentado de invenção.
+
+MC: O que a literatura sobre "concordância excessiva" (bajulação) sugere sobre modelos treinados com feedback humano?
++ Eles podem tender a ajustar respostas ao que o usuário parece querer ouvir, mesmo quando isso está errado.
+- Sempre contradizem o usuário. || O problema é concordar em excesso.
+- Nunca mudam de resposta. || Podem mudar conforme a pressão do usuário.
+- Só ocorre em modelos de imagem. || Foi observada em modelos de linguagem.
+- Só ocorre em contextos escolares. || Não é restrito à escola.
+R: Por isso, perguntas enviesadas podem produzir respostas enviesadas.
+
+MC: A ideia de "fronteira tecnológica irregular" (jagged frontier) significa que:
++ O desempenho da IA em uma tarefa pode não prever o desempenho em outra aparentemente semelhante.
+- A IA é boa em tudo ou ruim em tudo. || A ideia é a irregularidade.
+- Somente computadores recentes têm esse efeito. || Não se refere a equipamentos.
+- A IA só funciona em tarefas matemáticas. || Não é o caso.
+- Tarefas semelhantes sempre dão resultados semelhantes. || A ideia contesta isso.
+R: Por isso é preciso testar a ferramenta com casos conhecidos da própria disciplina.
+
+MC: No estudo de Walters e Wilder (2023), qual foi o principal resultado sobre referências geradas por duas versões de um assistente?
++ Uma proporção expressiva era fabricada, bem menor na versão mais recente, e muitas referências reais tinham erros.
+- Todas as referências eram corretas. || Houve proporção expressiva de fabricação.
+- Nenhuma referência era fabricada na versão mais antiga. || Na versão mais antiga, mais da metade era fabricada.
+- As duas versões tiveram exatamente o mesmo resultado. || A versão mais recente foi melhor.
+- Referências reais não tinham nenhum erro. || Havia erros substantivos em parte delas.
+R: A melhora entre versões não eliminou o problema.
+
+MC: Por que não é adequado usar um percentual de estudos sobre referências inventadas como garantia de que "agora está tudo certo"?
++ Porque as taxas variam conforme modelo, versão, tema e formato do pedido, e os sistemas mudam rapidamente.
+- Porque todos os estudos foram retirados do ar. || Não é a razão.
+- Porque o percentual é sempre de 100%. || Não é verdade.
+- Porque nenhum estudo foi publicado. || Há estudos publicados.
+- Porque modelos de linguagem não geram referências. || Geram, e podem errar.
+R: Os estudos refletem versões e datas específicas; a verificação deve ser feita em cada caso.
+
+MC: Por que as referências bibliográficas são um terreno fértil para invenções do modelo?
++ Porque têm forma muito previsível, que o modelo domina, mas nem sempre o conteúdo correto.
+- Porque os modelos não conhecem nenhuma palavra em português. || Conhecem.
+- Porque as bibliotecas bloqueiam o acesso dos modelos. || Não é essa a explicação.
+- Porque referências são sempre secretas. || Não são secretas.
+- Porque o modelo nunca viu formatos de referência. || Viu muitos exemplos de formato.
+R: A forma (sobrenome, ano, título, periódico) é aprendida com facilidade; a existência da obra não é garantida.
+
+MC: Instruções como "dê referências" podem agravar o problema porque:
++ Podem pressionar o sistema a fornecer algo, mesmo sem base.
+- Ativam automaticamente uma base de dados confiável. || Não há ativação automática.
+- Obrigam o sistema a pesquisar em bibliotecas físicas. || Não é o caso.
+- Impedem o sistema de gerar texto. || Não impedem.
+- Garantem que as referências existam. || Não garantem.
+R: Sem acesso a fontes, o sistema pode produzir referências plausíveis.
+
+MC: Qual é a melhor definição de viés neste capítulo?
++ Uma tendência sistemática que favorece ou prejudica certos grupos, perspectivas ou resultados.
+- Qualquer erro aleatório de digitação. || O viés tem direção.
+- A velocidade de resposta do sistema. || Não se refere à velocidade.
+- O número de parâmetros do modelo. || Não se refere ao tamanho.
+- A língua utilizada na conversa. || A língua pode influenciar, mas não define viés.
+R: Diferente do erro aleatório, o viés tem direção.
+
+MC: Em quais momentos o viés pode entrar em um sistema de IA, segundo o capítulo?
++ Nos dados, no projeto e no uso.
+- Somente na etapa de venda do produto. || Entra em outros momentos.
+- Somente quando o sistema está desligado. || Não faz sentido.
+- Apenas na instalação do programa. || Não é o caso.
+- Apenas nas imagens geradas. || Pode estar em vários tipos de saída.
+R: Cada momento envolve escolhas e contextos que podem produzir desigualdades.
+
+MC: Qual das situações ilustra viés "nos dados"?
++ Um grupo linguístico aparece pouco nos textos de treinamento, e o modelo funciona pior para ele.
+- Um professor usa a ferramenta com atraso. || Não é viés de dados.
+- Um estudante digita errado. || Não é viés.
+- A tela do computador está sem brilho. || Não tem relação.
+- O servidor está lento. || Não tem relação.
+R: A sub-representação de grupos nos dados tende a prejudicar o desempenho para eles.
+
+MC: O estudo sobre classificação de gênero em sistemas de reconhecimento facial (Buolamwini; Gebru, 2018) é citado para mostrar que:
++ A acurácia pode variar de forma importante conforme características das pessoas, como tom de pele e gênero.
+- Sistemas de reconhecimento facial nunca erram. || O estudo mostrou diferenças de desempenho.
+- Apenas sistemas educacionais têm vieses. || O exemplo não é educacional.
+- A cor da pele é irrelevante para sistemas de visão. || O estudo mostra relevância.
+- O viés só existe em textos. || O exemplo é de imagens.
+R: A média de desempenho pode esconder disparidades entre subgrupos.
+
+MC: A revisão de Baker e Hawn (2022) trata de:
++ Viés algorítmico em educação, incluindo grupos afetados, causas e recomendações.
+- A história do giz e do quadro negro. || Não é o tema.
+- Apenas a arquitetura de modelos de linguagem. || Não é o tema.
+- A construção de prédios escolares. || Não é o tema.
+- A eficiência de impressoras escolares. || Não é o tema.
+R: Mostra que modelos educacionais podem funcionar de modo desigual entre grupos.
+
+MC: O que o estudo sobre detectores de texto de IA e falantes não nativos de inglês (Liang et al., 2023) alerta?
++ Esses detectores podem classificar erroneamente textos de falantes não nativos como gerados por IA, o que impede seu uso como prova de fraude.
+- Detectores de IA são sempre perfeitos. || O estudo aponta erros.
+- Falantes não nativos nunca escrevem bem. || Não é a conclusão.
+- Textos de falantes nativos nunca são classificados. || Não é a conclusão.
+- Detectores devem ser usados como única prova. || O estudo desaconselha tal uso.
+R: Punir estudantes com base em detectores pode gerar injustiças.
+
+MC: Um sistema com bom desempenho médio pode ainda assim ser problemático porque:
++ O desempenho pode ser pior para subgrupos específicos, escondido pela média.
+- Médias nunca são calculadas. || Médias são calculadas.
+- Média alta indica que todos os grupos foram bem. || Não necessariamente.
+- Só importa o desempenho de um subgrupo. || Importam todos os grupos.
+- Médias baixas indicam ausência de vieses. || Não é uma inferência válida.
+R: A análise por subgrupos é essencial para identificar desigualdades.
+
+MC: Qual é a melhor pergunta a um fornecedor sobre vieses?
++ O sistema foi testado com estudantes parecidos com os meus? Como o desempenho varia por grupo?
+- Qual é a cor do logotipo? || Não é relevante.
+- O produto tem muitas versões? || Não é suficiente.
+- Quantos downloads teve ontem? || Não responde sobre vieses.
+- O site é moderno? || Não responde sobre vieses.
+R: Perguntar sobre testes e desempenho por grupo ajuda a avaliar riscos.
+
+MC: Entre "fluência", "correção" e "valor pedagógico", qual dimensão é a mais fácil de ser atendida por um texto de IA e a menos confiável como indicador das demais?
++ Fluência.
+- Correção factual. || Exige verificação.
+- Valor pedagógico. || Depende de contexto e objetivos.
+- Todas são igualmente fáceis. || Não são.
+- Nenhuma é exigível. || São exigíveis.
+R: Texto bem escrito é o produto natural dos modelos, mas não prova correção.
+
+MC: Um material explica corretamente um conceito, porém com linguagem excessivamente complexa para o 6º ano. Qual dimensão falhou?
++ Valor pedagógico (adequação a idade e nível).
+- Fluência. || O texto é fluente.
+- Correção. || É correto.
+- Nenhuma, pois estar correto basta. || Adequação também importa.
+- Todas. || Só uma falhou.
+R: Um conteúdo pode ser correto e fluente, mas inadequado ao público.
+
+MC: O que é a leitura lateral, citada no capítulo?
++ Abrir outras fontes para descobrir quem produziu a informação e o que outras fontes dizem, em vez de ficar apenas na página original.
+- Ler apenas as margens do texto. || Não é o significado.
+- Ler somente o título. || Não é o significado.
+- Ler em voz alta para a turma. || Não é o significado.
+- Ler rapidamente sem anotar. || Não é o significado.
+R: Especialistas em avaliar informação digital costumam usar a leitura lateral.
+
+MC: Qual é o primeiro passo do procedimento de verificação proposto?
++ Marcar o que é checável: datas, nomes, números, leis, citações e referências.
+- Aceitar o texto sem leitura. || Contraria o procedimento.
+- Apagar tudo e recomeçar. || Não é o primeiro passo.
+- Enviar o texto aos estudantes. || Seria antes da verificação.
+- Pedir ao sistema que confirme tudo. || O sistema pode errar ao autoavaliar.
+R: Marcar o que é checável organiza o trabalho de conferência.
+
+MC: Pedir ao sistema que indique o grau de incerteza de suas respostas:
++ Pode ajudar a direcionar a verificação, mas não a substitui.
+- Dispensa totalmente a verificação. || Não dispensa.
+- É proibido em qualquer contexto. || Não é proibido.
+- Sempre produz respostas corretas. || Não garante correção.
+- Faz o sistema deixar de gerar texto. || Não é o efeito.
+R: O sistema também pode errar ao avaliar a própria confiança.
+
+MC: Na atividade "Caça aos erros", qual é o papel do professor ao preparar o texto?
++ Inserir erros conhecidos e conferir o gabarito em fontes confiáveis.
+- Esconder de si mesmo os erros plantados. || O professor deve conhecê-los.
+- Evitar qualquer conferência. || A conferência é necessária.
+- Usar textos com dados de estudantes. || Deve evitar dados pessoais.
+- Incluir erros impossíveis de descobrir. || Os erros devem ser descobríveis.
+R: O gabarito deve ser verificado para que a atividade seja confiável.
+
+MC: Por que o capítulo recomenda tratar a atividade como investigação, e não como "pegadinha"?
++ Porque o objetivo é aprender a verificar, e não expor quem não percebe os erros.
+- Porque pegadinhas são ilegais. || Não é a razão.
+- Porque estudantes devem receber todas as respostas. || Não é a ideia.
+- Porque o professor não pode corrigir. || Não é a razão.
+- Porque o texto não deve conter erros. || Contém erros planejados.
+R: O clima acolhedor favorece a aprendizagem e o respeito.
+
+MC: No texto plantado sobre fotossíntese, qual afirmação está correta?
++ A fotossíntese é fundamental para a vida no planeta, pois fornece alimento e oxigênio.
+- A fotossíntese ocorre nas mitocôndrias. || Ocorre nos cloroplastos.
+- A planta absorve gás oxigênio do ar para realizar a fotossíntese. || Absorve gás carbônico.
+- A fotossíntese libera gás carbônico. || Libera oxigênio.
+- A fotossíntese ocorre apenas durante a noite. || Depende de luz.
+R: Apenas a frase final está correta, o que mostra que textos mistos exigem verificação trecho a trecho.
+
+MC: Qual cuidado de acessibilidade é adequado à atividade "Caça aos erros"?
++ Oferecer o texto em fonte ampliada ou com leitura em voz alta.
+- Exigir que todos leiam sozinhos o texto em fonte pequena. || Prejudica o acesso.
+- Excluir quem tem dificuldade de leitura. || Exclusão é inadequada.
+- Cobrar a resolução em tempo reduzido. || Não é cuidado de acessibilidade.
+- Proibir a consulta a fontes. || Prejudica a atividade.
+R: Adaptar formato e apoio de leitura promove participação.
+
+MC: Em qual situação o capítulo recomenda dispensar a IA?
++ Quando não é possível verificar o conteúdo e há risco para a aprendizagem ou para pessoas, como em saúde, normas legais e citações.
+- Sempre que o assunto for simples. || Não é o critério.
+- Apenas na educação infantil. || O critério é o risco e a verificação.
+- Somente em disciplinas de Humanidades. || Não é restrito a uma área.
+- Quando houver mais de dez estudantes. || Não é o critério.
+R: Conteúdos sensíveis devem vir de fontes primárias e de especialistas.
+
+MC: Um estudante pergunta ao assistente: "Por que a fotossíntese ocorre nas mitocôndrias?" e recebe uma explicação detalhada sem nenhum questionamento da premissa. Que tipo de problema isso ilustra?
++ Concordância excessiva: o sistema aceita a premissa errada e constrói uma resposta a partir dela.
+- Desatualização do conhecimento. || O problema é a premissa errada aceita, não a data.
+- Fonte inventada. || Não há referência em questão.
+- Erro de cálculo. || Não há cálculo.
+- Excesso de cautela do sistema. || O sistema não foi cauteloso.
+R: Perguntas enviesadas podem levar a respostas enviesadas; por isso é útil formular perguntas neutras e conferir premissas.
+
+MC: Qual conduta é mais coerente com a leitura lateral ao receber de um assistente a afirmação "o autor X publicou em 2019 um artigo sobre o tema Y"?
++ Procurar o autor e o artigo em bases ou sites confiáveis, fora da conversa com o assistente.
+- Perguntar ao próprio assistente se tem certeza e aceitar a resposta. || O sistema pode errar ao autoavaliar.
+- Aceitar, pois o texto estava bem escrito. || Fluência não prova correção.
+- Citar no trabalho, indicando "segundo a IA". || Não resolve a existência da fonte.
+- Apagar o trecho sem verificar. || Pode descartar informação correta.
+R: A leitura lateral busca informações independentes sobre a fonte.
+
+MC: Quando um professor conclui que "o desempenho é bom em média, mas pior para estudantes de determinado grupo", qual medida é mais adequada?
++ Investigar as causas, avaliar riscos para esse grupo e limitar ou ajustar o uso até que haja correções comprovadas.
+- Ignorar, pois a média é satisfatória. || A média esconde desigualdades.
+- Usar o sistema normalmente e não informar a ninguém. || É preciso transparência e cuidado.
+- Atribuir a diferença ao esforço dos estudantes. || Seria culpabilizar sem evidência.
+- Excluir o grupo do uso da ferramenta sem consulta. || Seria exclusão inadequada.
+R: Desempenho desigual é sinal de alerta e exige análise e medidas de proteção.
+
+DISC: Descreva, com suas palavras, seis tipos de erro ou distorção que podem aparecer em respostas de IA generativa e dê um exemplo educacional de cada um.
+R: Erro factual (data errada); fonte inventada (referência inexistente); erro de raciocínio ou cálculo (passo incorreto em problema); desatualização (norma revogada); concordância excessiva (confirmar uma premissa errada); viés (personagens estereotipados). Os exemplos podem variar.
+C: Seis tipos corretamente descritos; exemplos coerentes com a educação.
+
+DISC: Explique por que o termo "alucinação" é contestado e por que, mesmo assim, o livro o utiliza. O que o professor deve ter em mente ao usar a palavra?
+R: É contestado porque alucinar implica perceber algo inexistente, e o sistema não percebe; alternativas: confabulação, fabricação. O livro o usa por ser difundido. O professor deve lembrar que não há intenção ou percepção do sistema, apenas produção de texto plausível sem fundamento.
+C: Apresenta a crítica; justifica a escolha; evita antropomorfismo.
+
+DISC: Resuma o que os estudos sobre referências geradas por IA indicam e explique por que não se deve usar suas porcentagens como regra geral para qualquer ferramenta atual.
+R: Mostram proporções expressivas de referências inexistentes ou com erros, variáveis conforme modelo e versão. Não generalizam porque os sistemas mudam, o desempenho depende do tema e do formato do pedido, e os estudos refletem datas e versões específicas.
+C: Resumo fiel; explicação sobre limites de generalização.
+
+DISC: Por que é arriscado pedir "dê referências" a um assistente sem acesso a bases de dados? Que alternativa mais segura você proporia?
+R: O sistema pode inventar referências plausíveis. Alternativas: buscar referências em bases acadêmicas e depois pedir ao assistente ajuda para resumir ou organizar; pedir apenas termos de busca; fornecer os textos e pedir que se baseie neles; conferir cada item.
+C: Reconhece o risco; propõe prática segura e verificável.
+
+DISC: Explique a diferença entre erro aleatório e viés. Por que um sistema com boa média de acertos pode ser injusto com certos estudantes?
+R: Erro aleatório não tem padrão; viés tem direção, afeta mais certos grupos. A média pode esconder desempenho pior em subgrupos, como estudantes de certas línguas, regiões ou contextos.
+C: Distinção correta; relação entre média e subgrupos.
+
+DISC: Descreva os três momentos de entrada do viés (dados, projeto e uso) e dê um exemplo escolar para cada um.
+R: Dados: textos que sub-representam certas regiões. Projeto: decidir medir apenas desempenho em provas e ignorar outras formas de aprendizagem. Uso: usar uma previsão de risco como se fosse sentença sobre o estudante.
+C: Três momentos; exemplos adequados ao contexto escolar.
+
+DISC: O que a pesquisa sobre detectores de texto gerado por IA e falantes não nativos de inglês implica para políticas de integridade em uma escola ou universidade?
+R: Não usar detectores como prova isolada; combinar com evidências de processo (rascunhos, conversa); garantir direito de defesa; atenção a justiça e a vieses; priorizar desenho de avaliações que reduzam incentivos à fraude.
+C: Evita punição automática; propõe alternativas fundamentadas.
+
+DISC: Explique as três dimensões de avaliação de uma resposta de IA (fluência, correção e valor pedagógico) e dê um exemplo em que a resposta passa em uma e falha em outra.
+R: Fluência: clareza e coerência; correção: fatos e cálculos verificáveis; valor pedagógico: adequação ao objetivo, idade, nível e contexto. Exemplo: um texto fluente e correto, porém avançado demais para a turma.
+C: Três dimensões bem definidas; exemplo coerente.
+
+DISC: Aplique o procedimento de verificação em cinco passos a um material de IA da sua área, descrevendo o que faria em cada passo.
+R: Resposta pessoal. Deve incluir marcar itens checáveis, procurar fontes independentes, refazer cálculos ou testar exemplos, avaliar adequação ao público e registrar alterações.
+C: Cinco passos aplicados com especificidade à área.
+
+DISC: Por que a leitura lateral é útil para avaliar respostas de IA? Dê um exemplo prático.
+R: Porque evita confiar apenas na aparência do texto; exige consultar outras fontes para checar autoria e conteúdo. Exemplo: abrir a base de periódicos para confirmar a existência de uma referência.
+C: Explica o princípio; exemplo prático.
+
+DISC: Planeje uma versão da atividade "Caça aos erros" para a sua disciplina, indicando o tema, três erros plantados (um deles sutil) e uma pergunta de fechamento.
+R: Resposta pessoal. Deve apresentar tema, erros plausíveis e conferidos, gabarito e pergunta que conecte fluência e correção.
+C: Erros adequados; gabarito; pergunta reflexiva.
+
+DISC: Como você explicaria aos estudantes, em linguagem simples, por que um texto de IA pode estar bem escrito e ainda assim errado?
+R: Resposta pessoal. Deve usar analogias acessíveis (por exemplo, quem escreve "o que costuma ser escrito"), explicar a diferença entre forma e conteúdo e incentivar a checagem.
+C: Clareza; correção conceitual; incentivo à verificação.
+
+DISC: Uma estudante diz que usou IA e "conferiu" perguntando ao próprio sistema se estava certo. Discuta o que está adequado e o que falta nessa conferência.
+R: Pedir ao sistema que indique incertezas pode orientar a conferência, mas não a substitui: ele pode errar ao avaliar a si mesmo. Falta consultar fontes independentes, refazer cálculos, comparar com materiais confiáveis.
+C: Reconhece o valor limitado; indica fontes independentes.
+
+DISC: Descreva duas situações do seu contexto em que você aceitaria o risco de um erro eventual da IA e duas em que não aceitaria. Justifique.
+R: Aceitaria: rascunho de ideias de atividades a revisar; sugestões de exemplos a adaptar. Não aceitaria: citação de normas, notas, informações sobre estudantes. Justificativa: consequência do erro e capacidade de verificação.
+C: Quatro situações coerentes; critério de risco.
+
+DISC: Elabore um pequeno roteiro de observação de vieses (cinco perguntas) para revisar um material didático gerado por IA com personagens e imagens.
+R: Quem são os personagens? Que papéis e profissões têm? Quem está ausente? Que contextos e famílias são retratados? Há linguagem estereotipada? Como ficaria com variações?
+C: Cinco perguntas pertinentes; foco em representatividade.
+
+DISC: Por que exigir o uso de IA em tarefas sem ensinar a verificar pode ampliar desigualdades entre estudantes?
+R: Porque quem tem mais repertório, apoio e tempo consegue verificar e corrigir, enquanto outros aceitam erros; e quem não tem acesso é excluído. A escola precisa ensinar e oferecer alternativas.
+C: Relaciona verificação, repertório e equidade.
+
+DISC: Como a ideia de "fronteira irregular" influencia a maneira de testar uma ferramenta antes de usá-la com sua turma? Descreva um pequeno protocolo de testes.
+R: Como o desempenho pode variar entre tarefas parecidas, é preciso testar com tarefas representativas do uso previsto, incluindo casos fáceis e difíceis, repetir testes e registrar resultados. Protocolo: selecionar 10 casos, comparar com respostas conhecidas, repetir três vezes, anotar erros e limitações.
+C: Protocolo sistemático e relacionado ao uso real.
+
+DISC: Dê três exemplos de conteúdos em que a IA deve ser dispensada ou usada apenas com verificação de fontes primárias e explique o motivo.
+R: Normas legais, informações de saúde, dados estatísticos oficiais, citações e referências. Motivo: consequências de erros e necessidade de exatidão e rastreabilidade.
+C: Três exemplos adequados; justificativa baseada em risco.
+
+DISC: Retome a situação da estudante com referências inexistentes. Escreva uma conversa acolhedora e educativa que o professor poderia ter com ela, e dois encaminhamentos pedagógicos.
+R: Resposta pessoal. Deve evitar acusação, reconhecer o esforço, explicar o problema das referências, orientar a conferência e propor reescrita com fontes verificadas. Encaminhamentos: oficina de busca em bases; checklist de verificação.
+C: Acolhimento; explicação; encaminhamentos pedagógicos.
+
+DISC: Elabore uma regra de uso (três itens) para a sua turma ou disciplina sobre verificação de conteúdos produzidos por IA.
+R: Resposta pessoal. Por exemplo: (1) toda referência deve ser conferida em fonte confiável; (2) todo cálculo deve ser refeito; (3) o uso de IA deve ser declarado e o que foi alterado, registrado.
+C: Regras claras, viáveis e coerentes com o capítulo.

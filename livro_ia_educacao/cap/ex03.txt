@@ -1,0 +1,319 @@
+MC: Qual das descrições é a mais adequada para um modelo de linguagem de grande porte?
++ Um sistema que aprendeu padrões de linguagem a partir de grandes coleções de textos e gera respostas token a token.
+- Uma enciclopédia digital que consulta um banco de fatos verificados. || Não funciona como consulta a fatos verificados.
+- Um buscador que apenas lista páginas da internet. || Gera textos, e não apenas lista páginas.
+- Uma calculadora de alta precisão. || Não é calculadora.
+- Um programa que repete frases decoradas palavra por palavra. || Gera textos novos a partir de padrões.
+R: O modelo estima, a cada passo, qual token deve vir a seguir com base em padrões aprendidos.
+
+MC: Qual é o primeiro ingrediente de qualquer sistema de aprendizado de máquina, incluindo modelos de linguagem?
++ Dados.
+- Conexão com a internet em sala de aula. || Não é condição do aprendizado.
+- Uma licença de uso para estudantes. || Não é o ingrediente central.
+- Uma autorização legal de professores. || Não é o ingrediente central.
+- Um dicionário de regras gramaticais escritas à mão. || Não é necessário no aprendizado de máquina.
+R: Sem dados, não há o que aprender; as características dos dados influenciam o que o sistema aprende.
+
+MC: Por que a frase "o modelo foi treinado com toda a internet" merece desconfiança?
++ Porque nenhum conjunto de dados contém "tudo"; há escolhas, filtros, lacunas e línguas e culturas mais ou menos representadas.
+- Porque a internet é pequena demais para treinar modelos. || A internet é enorme; o problema é a seleção.
+- Porque é ilegal usar a internet para qualquer fim. || Não é a razão.
+- Porque modelos de linguagem não usam textos. || Usam textos.
+- Porque todo o conteúdo da internet é falso. || Parte é confiável; o ponto é representatividade e seleção.
+R: A composição dos dados influencia o que o modelo aprende, inclusive estereótipos e lacunas.
+
+MC: Qual é um limite importante da analogia da "pessoa que leu milhões de páginas na biblioteca"?
++ A pessoa tem experiências e pode verificar informações no mundo; o modelo, por si só, não.
+- A pessoa não consegue ler tantas páginas. || Esse não é o limite discutido.
+- A pessoa nunca erra. || Pessoas erram.
+- A pessoa só lê livros infantis. || Não é a questão.
+- O modelo tem mais intenções e responsabilidade que a pessoa. || O modelo não tem intenções nem responsabilidade.
+R: A analogia ajuda a pensar em aprendizagem de padrões, mas esconde diferenças como experiência, verificação e responsabilidade.
+
+MC: O que são tokens?
++ Pequenos pedaços de texto, como palavras inteiras, partes de palavras ou sinais, usados pelos modelos.
+- Senhas que protegem o acesso às ferramentas. || É outro uso da palavra.
+- Moedas virtuais pagas aos professores. || Não é o sentido aqui.
+- Imagens geradas pelo modelo. || São unidades de texto.
+- Estudantes que testam o sistema. || Não é esse o sentido.
+R: A divisão em tokens varia entre modelos, e o modelo opera sobre essas unidades.
+
+MC: Em que consiste a tarefa básica de pré-treinamento de um modelo de linguagem?
++ Prever o próximo token a partir de um trecho de texto, repetidas vezes, em grande volume de dados.
+- Responder perguntas com base em um gabarito de professores. || Não é a tarefa de pré-treinamento.
+- Corrigir redações segundo uma rubrica. || Não é a tarefa de pré-treinamento.
+- Memorizar todas as páginas da internet. || Não há memorização integral.
+- Verificar a veracidade de cada frase. || Não há verificação factual na tarefa.
+R: O ajuste dos parâmetros a cada erro de previsão leva o modelo a captar padrões linguísticos.
+
+MC: O teclado do celular que sugere a próxima palavra ilustra:
++ Uma versão simples da ideia de prever o que vem a seguir com base em padrões de uso.
+- Um sistema de verificação de fatos. || Não faz verificação de fatos.
+- Um método de criptografia. || Não é criptografia.
+- Uma regra gramatical fixa escrita por um professor. || O teclado usa padrões, não só regras fixas.
+- Um sistema de reconhecimento facial. || Não se trata de reconhecimento facial.
+R: A analogia é útil, mas os modelos atuais usam contextos mais longos e muito mais dados.
+
+MC: O que busca o ajuste com feedback humano, realizado depois do pré-treinamento?
++ Orientar o modelo a produzir respostas que as pessoas avaliem como mais úteis e adequadas.
+- Garantir que todas as respostas sejam factualmente corretas. || Não garante exatidão factual.
+- Eliminar a necessidade de verificação pelo usuário. || A verificação continua necessária.
+- Remover totalmente os vieses dos dados. || Pode reduzir, não eliminar.
+- Armazenar dados pessoais dos avaliadores. || Não é o objetivo.
+R: Melhora a utilidade e o alinhamento com preferências humanas, mas não transforma o modelo em verificador de fatos.
+
+MC: Por que o fato de uma resposta ter sido "bem avaliada por pessoas em testes" não garante que esteja correta no seu caso?
++ Porque a avaliação é geral e não verifica seu tema, seu contexto e seus dados específicos.
+- Porque pessoas nunca avaliam corretamente. || Não é essa a razão.
+- Porque as avaliações são aleatórias. || Não são aleatórias.
+- Porque os testes eliminam as respostas corretas. || Não eliminam.
+- Porque o sistema só funciona sem avaliação. || Não é verdade.
+R: A verificação no seu contexto continua sendo necessária.
+
+MC: Como o modelo gera uma resposta longa?
++ Calcula probabilidades para o próximo token, escolhe um e repete o processo até completar o texto.
+- Escreve o texto inteiro de uma só vez e depois o revisa. || A geração ocorre token a token.
+- Copia um parágrafo pronto de uma base de dados. || Não é cópia integral de base de dados.
+- Pergunta a uma pessoa o que escrever. || Não envolve consulta a uma pessoa.
+- Pesquisa a resposta na internet sempre. || Nem todo sistema usa buscas.
+R: O processo é sequencial, com sorteio entre opções prováveis.
+
+MC: Por que fazer a mesma pergunta duas vezes ao mesmo assistente pode gerar respostas diferentes?
++ Porque há sorteio entre opções prováveis, e esse processo introduz variabilidade.
+- Porque o assistente muda de opinião conforme o humor. || O sistema não tem humor.
+- Porque o professor digita de forma diferente. || O mesmo texto pode gerar respostas diferentes.
+- Porque a internet muda a cada segundo. || Não é a causa principal.
+- Porque o sistema esquece os dados do usuário. || Não é a causa.
+R: A variabilidade é uma característica do processo de geração e pode ser controlada, em parte, por parâmetros como a temperatura.
+
+MC: Em termos gerais, o que a "temperatura" controla em um modelo generativo?
++ O quanto o modelo arrisca ao escolher entre opções: valores baixos favorecem respostas mais previsíveis; altos, mais variadas.
+- A temperatura do computador. || Não é temperatura física.
+- A velocidade da internet. || Não tem relação.
+- A idade mínima do usuário. || Não tem relação.
+- O idioma da resposta. || Não define o idioma.
+R: Mais variabilidade pode ajudar na criatividade, mas aumenta a chance de erro.
+
+MC: O que significa dizer que o modelo "escolhe o plausível, e não o verdadeiro"?
++ Que ele gera texto que se parece com o que costuma ser escrito, o que nem sempre coincide com os fatos.
+- Que ele só gera mentiras. || Muitas vezes gera informações corretas.
+- Que ele só repete verdades. || Pode errar.
+- Que ele nunca usa dados reais. || Usa dados reais no treinamento.
+- Que ele não produz linguagem fluente. || Produz linguagem fluente.
+R: A coincidência entre plausível e verdadeiro é frequente, porém não garantida.
+
+MC: Em quais circunstâncias aumenta a chance de respostas inventadas com ar de normalidade?
++ Quando o tema é raro, local, recente ou muito específico.
+- Quando a pergunta é sobre assuntos amplamente documentados e estáveis. || Nesses casos o risco tende a ser menor.
+- Quando o usuário digita em letras maiúsculas. || Não é a causa.
+- Quando o professor está em sala de aula. || Não é a causa.
+- Quando o computador está desconectado da energia. || Não é a causa.
+R: Há menos padrões sólidos nos dados, e o modelo tende a "preencher" com continuações plausíveis.
+
+MC: O que é a janela de contexto?
++ O limite de texto que o modelo considera em uma interação; o que ultrapassa esse limite pode ser "esquecido".
+- Uma janela física da sala de aula. || Não é um objeto físico.
+- A tela do computador. || Não é a tela.
+- O horário permitido de uso do sistema. || Não é horário.
+- Um recurso de acessibilidade para daltonismo. || Não é esse recurso.
+R: Por isso, conversas muito longas podem perder informações iniciais.
+
+MC: A afirmação "o conhecimento do modelo tem data de corte" quer dizer que:
++ O treinamento termina em certo momento, e eventos posteriores podem não estar incluídos, salvo se o sistema usar buscas ou documentos.
+- O modelo deixa de funcionar após certa data. || Não é o significado.
+- O modelo só conhece eventos de um único ano. || O corte é um limite, não um ano único.
+- O modelo apaga seus dados a cada mês. || Não é o caso.
+- O modelo é proibido de falar de fatos recentes. || Não é proibição.
+R: Para fatos recentes, é necessário verificar em fontes atualizadas.
+
+MC: Qual ideia resume o mecanismo de "atenção" nos Transformers, em termos intuitivos?
++ Ao processar cada token, o modelo calcula quanto deve "olhar" para os demais tokens do trecho.
+- O modelo presta atenção ao professor para saber o que dizer. || Não é isso.
+- O modelo escolhe a imagem mais bonita. || Não é o caso.
+- O modelo ignora o contexto para ser mais rápido. || Faz o contrário.
+- O modelo conta o número de letras. || Não é a ideia.
+R: A atenção ajuda a relacionar elementos do texto, como "ela" e "aluna".
+
+MC: Qual das alternativas descreve melhor um modelo de difusão para imagens, em linguagem simples?
++ Parte de um ruído e o vai transformando, passo a passo, em uma imagem que corresponda à descrição.
+- Procura em um álbum a foto que o usuário descreveu. || Não é busca em álbum.
+- Copia exatamente fotos de bancos de imagens. || Não é cópia direta.
+- Escreve textos para legendas. || Não é esse o foco.
+- Mede a velocidade de conexão. || Não tem relação.
+R: A geração de imagens pode conter erros, como detalhes incorretos ou texto ilegível.
+
+MC: O que são sistemas multimodais?
++ Sistemas que combinam mais de um tipo de dado, como texto e imagem.
+- Sistemas que funcionam apenas offline. || Não é isso.
+- Sistemas usados somente em ensino superior. || Não é restrição.
+- Sistemas sem erros. || Também erram.
+- Sistemas que substituem câmeras. || Não é o sentido.
+R: Por exemplo, enviar a foto de um exercício e pedir uma explicação.
+
+MC: Qual é a função da geração aumentada por recuperação (RAG) em um assistente?
++ Combinar o modelo com buscas ou documentos para fundamentar as respostas, o que pode reduzir erros, sem eliminá-los.
+- Eliminar completamente qualquer erro do modelo. || Não elimina erros.
+- Substituir os dados de treinamento por regras gramaticais. || Não é isso.
+- Armazenar as notas dos estudantes. || Não é a função.
+- Impedir que o sistema cite fontes. || Pode ajudar a citar fontes.
+R: Mesmo com fontes, o sistema pode interpretar mal ou citar algo que a fonte não diz.
+
+MC: Ao pedir que o sistema trabalhe com um documento que você forneceu, qual cuidado é essencial?
++ Conferir trechos da resposta no documento original e evitar enviar dados pessoais ou materiais cujos direitos impeçam o uso.
+- Confiar integralmente na resposta, pois o documento garante a veracidade. || A interpretação ainda pode falhar.
+- Apagar o documento original. || Seria inadequado.
+- Enviar os dados de todos os estudantes para melhorar a resposta. || Viola a proteção de dados.
+- Evitar qualquer verificação. || A verificação é necessária.
+R: A verificação e a proteção de dados continuam sendo responsabilidade do professor.
+
+MC: Qual das lições práticas do capítulo está correta?
++ O modelo não conhece a sua turma, a menos que você a descreva, e você não deve fazê-lo com dados pessoais.
+- O modelo conhece todos os estudantes do Brasil. || Não conhece.
+- Basta enviar a lista de chamada para ter respostas melhores. || Seria exposição de dados.
+- A resposta nunca muda. || Pode mudar.
+- A resposta é sempre verdadeira se for longa. || Extensão não garante veracidade.
+R: Descrições gerais e anonimizadas bastam para muitas tarefas de planejamento.
+
+MC: Sobre alucinações em modelos de linguagem, a literatura científica aponta que:
++ São um fenômeno reconhecido, com causas ligadas aos dados e ao processo de geração, e há estratégias para mitigá-lo.
+- Não existem, e são apenas boatos. || Há ampla literatura sobre o tema.
+- Ocorrem apenas por erro de digitação do usuário. || Não é a causa principal.
+- Foram completamente eliminadas nos modelos atuais. || Persistem, ainda que atenuadas.
+- Só ocorrem em modelos de imagem. || Ocorrem em texto.
+R: Há consenso sobre a existência do fenômeno, mas não sobre sua eliminação.
+
+MC: Qual é a atitude recomendada diante do debate sobre se os modelos "entendem" a linguagem?
++ Tratar as respostas como hipóteses a verificar, sem precisar resolver o debate para usar com responsabilidade.
+- Afirmar que entendem como pessoas. || Não há comprovação.
+- Afirmar que nada têm de útil. || Seria extremo.
+- Aguardar a resolução do debate antes de qualquer ação. || Não é necessário.
+- Proibir discussões sobre o tema. || Não é recomendação.
+R: O professor pode trabalhar com cautela, independentemente das divergências teóricas.
+
+MC: Na atividade "Jogo da próxima palavra", qual é o principal objetivo?
++ Ajudar estudantes a compreender, de modo intuitivo, que o modelo estima a próxima palavra por padrões e probabilidades.
+- Provar que humanos são superiores a máquinas. || Não é o objetivo.
+- Ensinar a programar um modelo. || Não é o objetivo.
+- Avaliar o desempenho individual dos estudantes. || Não é o foco.
+- Treinar a digitação rápida. || Não é o foco.
+R: A atividade usa a contagem de respostas da turma como analogia da variabilidade e do plausível.
+
+MC: Na terceira rodada do jogo ("A prefeita de nossa cidade em 1985 se chamava ___"), o que se pretende observar?
++ Que, sem conhecimento do fato, as pessoas chutam nomes plausíveis, o que se relaciona às alucinações.
+- Que todos acertarão o nome. || O fato é desconhecido da turma.
+- Que não é possível responder a perguntas locais. || O foco é a analogia com respostas inventadas.
+- Que a internet é indispensável. || Não é o foco.
+- Que o professor sabe todas as respostas. || Não é o objetivo.
+R: Respostas plausíveis, mas infundadas, ajudam a compreender o fenômeno.
+
+MC: Qual cuidado de adequação é importante ao conduzir o jogo?
++ Não pedir informações pessoais e permitir respostas orais, desenhadas ou por votação.
+- Exigir que cada estudante revele dados familiares. || Seria inadequado.
+- Cobrar a mesma forma de resposta de todos. || Prejudica a acessibilidade.
+- Excluir estudantes com dificuldades de escrita. || Exclusão é inadequada.
+- Registrar nomes de quem errou para exposição à turma. || Seria constrangedor e inadequado.
+R: A atividade deve ser acolhedora e acessível.
+
+MC: Em qual situação o capítulo recomenda dispensar o uso de modelos de linguagem?
++ Quando a tarefa exige informação factual precisa que você não terá tempo de conferir, ou quando há consequências para pessoas, como notas e laudos.
+- Sempre que se precisar de ideias para uma atividade. || É um uso possível com revisão.
+- Quando o objetivo é gerar exemplos para revisar. || É um uso possível com revisão.
+- Quando o assunto é amplamente conhecido. || Não é o critério.
+- Somente em escolas sem internet. || Não é o critério.
+R: Nesses casos, a consulta a fontes primárias e a especialistas é mais segura.
+
+MC: Um professor percebe que, após uma conversa muito longa com o assistente, as instruções do início deixaram de ser seguidas. A explicação mais provável é:
++ A conversa ultrapassou a janela de contexto, e informações iniciais deixaram de ser consideradas.
+- O assistente ficou cansado e precisa de descanso. || Sistemas não se cansam.
+- O professor foi punido por conversar demais. || Não há punição desse tipo.
+- O assistente decidiu discordar das instruções. || Não tem intenções próprias.
+- A internet apagou a conversa. || Não é a explicação mais provável.
+R: Repetir instruções importantes, resumir ou iniciar nova conversa ajuda a contornar o limite.
+
+MC: Quais cuidados, em conjunto, o capítulo recomenda ao usar um assistente com um documento fornecido pelo professor?
++ Fornecer só material que possa ser compartilhado, pedir resposta baseada no documento e conferir trechos no original.
+- Enviar o documento com dados pessoais para que a resposta seja mais personalizada. || Dados pessoais devem ser evitados.
+- Aceitar qualquer citação gerada sem conferir. || A conferência é necessária.
+- Pedir que o sistema invente trechos para preencher lacunas. || Contraria o objetivo de fundamentação.
+- Apagar o original após o envio. || Não é cuidado recomendado.
+R: Essas medidas reduzem, mas não eliminam, o risco de erro e de exposição de dados.
+
+DISC: Explique, com suas palavras, por que um modelo de linguagem não é uma enciclopédia nem um buscador. Use a analogia da "pessoa que leu milhões de páginas" e aponte um limite dela.
+R: Um modelo de linguagem aprendeu padrões de como textos são escritos e gera respostas token a token; não consulta uma base de fatos verificados nem apenas lista páginas. A analogia da pessoa na biblioteca ajuda a entender o aprendizado de padrões, mas tem limites: a pessoa tem experiências, pode verificar no mundo e sabe, em geral, quando não sabe.
+C: Descreve o funcionamento básico; usa a analogia; indica ao menos um limite.
+
+DISC: Descreva, em três ou quatro frases, as etapas de construção de um assistente de IA generativa, desde os dados até a conversa com o usuário.
+R: Coleta de dados; pré-treinamento (prever o próximo token); ajuste com instruções; ajuste com feedback humano e regras de segurança; disponibilização como assistente que conversa.
+C: Etapas na ordem correta; linguagem acessível.
+
+DISC: O que são tokens e por que o professor precisa saber que o modelo opera com eles?
+R: Tokens são pedaços de texto (palavras, partes de palavras, pontuação). Saber disso ajuda a entender limites de tamanho (janela de contexto), custos e falhas em tarefas que dependem de letras, sílabas ou contagens.
+C: Define tokens; relaciona a limites ou comportamentos do modelo.
+
+DISC: Explique por que uma resposta fluente pode estar errada. Dê um exemplo de situação na sua área em que isso seria difícil de perceber.
+R: Porque o modelo gera continuações plausíveis, e não consulta fatos; a fluência é produto do treinamento linguístico. Exemplo: um teorema com enunciado quase correto, uma data de um evento regional, uma citação de lei, uma referência bibliográfica inexistente.
+C: Explica a diferença entre fluência e veracidade; exemplo adequado à área.
+
+DISC: Qual é o papel da probabilidade na geração de texto por um modelo? Como isso explica que perguntas repetidas gerem respostas diferentes?
+R: O modelo calcula probabilidades para os próximos tokens e sorteia entre opções prováveis, de modo que o caminho percorrido pode variar a cada geração. A temperatura regula o grau de variação.
+C: Relaciona probabilidade, sorteio e variabilidade.
+
+DISC: Explique o que é a janela de contexto e dê duas consequências práticas para quem usa um assistente em uma conversa longa.
+R: É o limite de texto considerado pelo modelo. Consequências: informações iniciais podem ser esquecidas; é preciso repetir instruções importantes; resumir periodicamente; iniciar nova conversa quando necessário.
+C: Define; apresenta duas consequências coerentes.
+
+DISC: Por que a data de corte do conhecimento é relevante para o planejamento de uma aula que envolve normas, estatísticas ou notícias recentes?
+R: Porque o modelo pode desconhecer atualizações e apresentar informações desatualizadas; é preciso consultar fontes oficiais e atuais.
+C: Relaciona data de corte e verificação de fontes atuais.
+
+DISC: Compare um assistente que apenas conversa com um que consulta documentos fornecidos (RAG). Quais vantagens e quais cuidados cada um exige?
+R: O primeiro depende do que aprendeu e pode inventar; o segundo pode fundamentar respostas no material, mas ainda pode interpretar mal ou citar erroneamente. Em ambos, é preciso verificar; no segundo, conferir os trechos no documento e cuidar de dados e direitos autorais.
+C: Vantagens e cuidados para ambos; menção à verificação.
+
+DISC: Explique, em linguagem simples, o que é um modelo multimodal e dê um exemplo de uso educacional com um cuidado de verificação.
+R: Combina tipos de dado, como texto e imagem. Exemplo: descrever uma figura de um livro para estudantes com deficiência visual; verificar se a descrição é fiel e se não omite informações relevantes.
+C: Definição; exemplo educacional; cuidado adequado.
+
+DISC: O jogo da próxima palavra é uma analogia simplificada. Indique duas diferenças entre o jogo e o funcionamento real de um modelo de linguagem.
+R: O modelo usa contextos muito mais longos; é treinado com bilhões de exemplos; opera com tokens; ajusta parâmetros por treinamento; não consulta uma turma. O jogo é uma simplificação.
+C: Duas diferenças corretas; reconhecimento de que a analogia é parcial.
+
+DISC: Planeje uma versão do "Jogo da próxima palavra" para o seu nível de ensino, com três frases incompletas e uma pergunta de fechamento.
+R: Resposta pessoal. Deve incluir frases adequadas à faixa etária, cuidados com acessibilidade e a relação com probabilidade, variabilidade e verificação.
+C: Frases adequadas; pergunta final conectada aos objetivos; cuidados de acessibilidade.
+
+DISC: Por que não é necessário resolver o debate sobre se os modelos "entendem" para usá-los de modo responsável? Qual conduta prática decorre disso?
+R: Porque o uso responsável depende de tratar as respostas como hipóteses e verificar. A conduta é checar fatos, fontes e adequação pedagógica antes de usar.
+C: Argumento coerente; conduta prática.
+
+DISC: Aponte três riscos de tratar um assistente de IA como "alguém que sabe" e proponha uma medida de proteção para cada.
+R: Antropomorfismo (usar linguagem que lembre que é sistema), excesso de confiança (verificar), falsa segurança com fontes (conferir referências), privacidade (não inserir dados pessoais).
+C: Três riscos e três medidas coerentes.
+
+DISC: Descreva um procedimento de teste que você poderia fazer com um assistente de IA para avaliar sua confiabilidade em um tema da sua disciplina antes de usá-lo com estudantes.
+R: Selecionar perguntas cujas respostas você conhece; incluir casos fáceis, difíceis, locais e recentes; repetir as perguntas; comparar com fontes confiáveis; registrar acertos e erros; decidir limites de uso.
+C: Procedimento sistemático; diversidade de casos; registro.
+
+DISC: O que a expressão "a decisão final é humana" implica em termos de responsabilidade do professor ao usar materiais produzidos por IA?
+R: O professor valida conteúdo, adapta ao contexto e responde pelas decisões pedagógicas; não pode transferir a responsabilidade ao sistema.
+C: Relaciona validação, adaptação e responsabilidade.
+
+DISC: Escreva um breve texto (cinco a oito linhas) para explicar a pais ou responsáveis, em linguagem acessível, como funcionam os assistentes de IA e por que podem errar.
+R: Resposta pessoal. Deve usar linguagem simples, evitar jargões, explicar o "prever a próxima palavra", mencionar erros e a importância da verificação, com tom acolhedor.
+C: Clareza; acolhimento; correção dos conceitos.
+
+DISC: Dê dois exemplos de tarefas pedagógicas em que o uso de um modelo de linguagem é razoável e dois em que é melhor dispensá-lo. Justifique brevemente.
+R: Razoável: rascunhar exemplos para revisar; sugerir perguntas de discussão. Dispensar: atribuir notas; informar sobre normas sem verificar fontes; decisões sobre estudantes específicos.
+C: Quatro exemplos coerentes; justificativas.
+
+DISC: Como você explicaria a um estudante por que o assistente "inventou" uma referência bibliográfica? Que ação prática o estudante deve adotar?
+R: Porque o modelo produz referências com aparência plausível, sem checar se existem; o estudante deve procurar a referência em bases confiáveis, verificar autor, título, ano e conteúdo, e não citar o que não conseguir confirmar.
+C: Explicação correta; ação prática de verificação.
+
+DISC: Que informações sobre uma ferramenta de IA você pediria a um fornecedor antes de adotá-la na escola, com base no que aprendeu sobre dados, treinamento e geração de respostas?
+R: Origem e tipo dos dados de treinamento; limites declarados; data de corte; uso de buscas; política de dados dos usuários; mecanismos de segurança; avaliações independentes; opções de configuração; custos.
+C: Pelo menos cinco informações pertinentes.
+
+DISC: Retome a situação da professora Lúcia. Escreva um plano de ação em quatro passos para que ela use o assistente com segurança no planejamento de aulas de História.
+R: Definir objetivos; pedir rascunhos e hipóteses, não fatos definitivos; conferir datas, nomes e referências em fontes confiáveis; registrar o que foi usado e adaptado; não inserir dados pessoais.
+C: Passos coerentes com verificação, proteção de dados e autonomia do professor.
