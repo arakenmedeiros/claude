@@ -1,0 +1,199 @@
+@@EX 1 | Taxa de aprendizado em ação | básico
+Use o código do gradiente descendente do capítulo (regressão logística do zero, conjunto *Breast Cancer Wisconsin*). Treine por 100 passos com η ∈ {0,001; 0,1; 10; 1000} e imprima a perda final de cada um.
+
+*Pergunta:* qual valor de η foi o pior? Por que valores grandes como 10 ainda funcionaram nesta base?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(Xtr)
+Xtr = esc.transform(Xtr)
+
+def sigmoide(z):
+    return 1 / (1 + np.exp(-np.clip(z, -50, 50)))
+
+def treinar(eta, passos=100):
+    w, b = np.zeros(Xtr.shape[1]), 0.0
+    for _ in range(passos):
+        p = sigmoide(Xtr @ w + b)
+        erro = p - ytr
+        w, b = w - eta * (Xtr.T @ erro / len(ytr)), b - eta * erro.mean()
+    p = sigmoide(Xtr @ w + b)
+    return -np.mean(ytr * np.log(p + 1e-12) + (1 - ytr) * np.log(1 - p + 1e-12))
+
+for eta in [0.001, 0.1, 10, 1000]:
+    print(f"η = {eta:<6} | perda final = {treinar(eta):.4f}")
+```
+@@NOTE Com η = 0,001 a perda quase não sai do lugar (passos minúsculos). Com 0,1 e 10, ela cai bem: dados padronizados e perda logística tolerantes permitem passos grandes. Com η = 1000, os passos ultrapassam o vale e a perda fica alta e instável. Cada problema tem sua faixa boa: teste valores em escala de potências de 10.
+
+@@EX 2 | Gradiente completo versus mini-lotes | básico
+Implemente o SGD com mini-lotes de 16 exemplos para a mesma regressão logística. Compare, após **5 épocas**, a perda e a acurácia no teste do SGD (η = 0,05) com as do gradiente descendente com todos os dados (também η = 0,05, 5 passos).
+
+*Pergunta:* por que o SGD avançou mais em 5 épocas?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(Xtr)
+Xtr, Xte = esc.transform(Xtr), esc.transform(Xte)
+
+sig = lambda z: 1 / (1 + np.exp(-np.clip(z, -50, 50)))
+def perda(w, b):
+    p = sig(Xtr @ w + b)
+    return -np.mean(ytr * np.log(p + 1e-12) + (1 - ytr) * np.log(1 - p + 1e-12))
+def acc(w, b):
+    return np.mean((sig(Xte @ w + b) > 0.5) == yte)
+
+eta, d = 0.05, Xtr.shape[1]
+
+# gradiente completo: 1 passo por época
+w, b = np.zeros(d), 0.0
+for _ in range(5):
+    e = sig(Xtr @ w + b) - ytr
+    w, b = w - eta * Xtr.T @ e / len(ytr), b - eta * e.mean()
+print(f"completo (5 passos)  : perda = {perda(w, b):.4f} | acurácia = {acc(w, b):.3f}")
+
+# SGD: muitos passos por época
+rng = np.random.default_rng(0)
+w, b = np.zeros(d), 0.0
+for _ in range(5):
+    ordem = rng.permutation(len(ytr))
+    for i in range(0, len(ytr), 16):
+        lote = ordem[i:i + 16]
+        e = sig(Xtr[lote] @ w + b) - ytr[lote]
+        w, b = w - eta * Xtr[lote].T @ e / len(lote), b - eta * e.mean()
+print(f"SGD (5 épocas)       : perda = {perda(w, b):.4f} | acurácia = {acc(w, b):.3f}")
+```
+@@NOTE Em 5 épocas, o SGD dá cerca de 125 atualizações (398 exemplos / 16 por lote, 5 vezes), contra 5 do gradiente completo. Por isso avança muito mais por época de leitura dos dados.
+
+@@EX 3 | Acurácia que engana | intermediário
+Crie um conjunto desbalanceado com `make_classification` (2.000 exemplos, 3% de classe positiva, `random_state=0`). Treine um modelo ingênuo (`DummyClassifier(strategy="most_frequent")`), uma `LogisticRegression` e uma `LogisticRegression(class_weight="balanced")`. Mostre acurácia, precisão, revocação e F1 de cada um, e a matriz de confusão da logística comum.
+
+*Pergunta:* o modelo ingênuo parece bom pela acurácia? E pelo F1? Qual modelo você escolheria se não pudesse deixar passar casos positivos?
+@@SOL
+```python
+from sklearn.datasets import make_classification
+from sklearn.dummy import DummyClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.model_selection import train_test_split
+
+X, y = make_classification(n_samples=2000, n_features=10, n_informative=6, n_redundant=0,
+                           weights=[0.97, 0.03], class_sep=2.0, flip_y=0.01, random_state=0)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+
+modelos = {
+    "ingênuo": DummyClassifier(strategy="most_frequent"),
+    "logística": LogisticRegression(max_iter=1000),
+    "balanceada": LogisticRegression(max_iter=1000, class_weight="balanced"),
+}
+for nome, m in modelos.items():
+    pred = m.fit(Xtr, ytr).predict(Xte)
+    print(f"{nome:<11} acc = {accuracy_score(yte, pred):.3f} | prec = {precision_score(yte, pred, zero_division=0):.3f} | "
+          f"rev = {recall_score(yte, pred):.3f} | F1 = {f1_score(yte, pred):.3f}")
+print("Matriz de confusão (logística):")
+print(confusion_matrix(yte, modelos["logística"].predict(Xte)))
+```
+@@NOTE O modelo ingênuo tem acurácia de cerca de 96%, mas revocação e F1 iguais a zero: nunca acha um caso positivo. A logística comum tem acurácia maior, mas ainda deixa passar cerca de um terço dos positivos. Com `class_weight="balanced"`, a revocação sobe, ao custo de mais falsos alarmes e acurácia menor. Não existe escolha sem custo: depende de quanto custa perder um positivo.
+
+@@EX 4 | Padronização federada com clientes de tamanhos diferentes | intermediário
+Divida o treino do conjunto *Wine* (`load_wine`) em cinco clientes de **tamanhos diferentes** (por exemplo, usando `np.split` em pontos desiguais). Calcule média e desvio padrão globais usando apenas n, Σx e Σx² de cada cliente. Compare com o `StandardScaler` e mostre que o resultado é igual. Mostre também o que ocorre se você **errar** e calcular a média simples das médias locais.
+
+*Pergunta:* por que a média das médias dá resultado errado quando os clientes têm tamanhos diferentes?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_wine(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+
+rng = np.random.default_rng(0)
+idx = rng.permutation(len(Xtr))
+clientes = np.split(idx, [10, 30, 60, 90])          # tamanhos desiguais
+print("tamanhos:", [len(c) for c in clientes])
+
+resumos = [(len(c), Xtr[c].sum(axis=0), (Xtr[c] ** 2).sum(axis=0)) for c in clientes]
+n = sum(r[0] for r in resumos)
+mu = sum(r[1] for r in resumos) / n
+sigma = np.sqrt(sum(r[2] for r in resumos) / n - mu ** 2)
+
+ref = StandardScaler().fit(Xtr)
+print("erro na média  (somas)         :", np.abs(mu - ref.mean_).max())
+print("erro no desvio (somas)         :", np.abs(sigma - ref.scale_).max())
+
+media_errada = np.mean([Xtr[c].mean(axis=0) for c in clientes], axis=0)
+print("erro na média  (média de médias):", np.abs(media_errada - ref.mean_).max())
+```
+@@NOTE Com somas, o erro é da ordem do arredondamento. A média simples das médias dá peso igual a todos os clientes, ignorando que alguns têm muito mais dados, e resulta em erro visível. É o mesmo motivo da ponderação por n_k/n na agregação do FedAvg.
+
+@@PROJ Triagem com poucos dados: do zero ao modelo | Cap2
+**Contexto.** Uma clínica (fictícia) tem poucos exemplos e quer montar um modelo de apoio à triagem. Antes de pensar em colaboração, você precisa de um **modelo local bem validado**. Para não depender de downloads, use o conjunto **Breast Cancer Wisconsin** da UCI (`load_breast_cancer`) como substituto didático.
+
+**Tarefas.**
+1. Divida os dados em treino (60%), validação (20%) e teste (20%), com estratificação.
+2. Padronize usando **apenas o treino**.
+3. Treine uma `SGDClassifier` (perda logística) com `partial_fit`, por 30 épocas, registrando a acurácia de treino e de validação a cada época.
+4. Teste três valores de `eta0` (0,001; 0,01; 0,1) e escolha o melhor **pela validação**.
+5. Avalie o modelo escolhido **uma única vez** no teste: acurácia, precisão, revocação, F1 e matriz de confusão.
+6. Escreva um parágrafo explicando por que o teste foi usado só no final.
+
+**Entregáveis.** Código, tabela com a validação de cada `eta0`, métricas finais e o parágrafo.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import SGDClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xtmp, ytr, ytmp = train_test_split(X, y, test_size=0.4, random_state=0, stratify=y)
+Xva, Xte, yva, yte = train_test_split(Xtmp, ytmp, test_size=0.5, random_state=0, stratify=ytmp)
+esc = StandardScaler().fit(Xtr)
+Xtr, Xva, Xte = esc.transform(Xtr), esc.transform(Xva), esc.transform(Xte)
+
+def treinar(eta0, epocas=30):
+    m = SGDClassifier(loss="log_loss", learning_rate="constant", eta0=eta0, random_state=0)
+    hist = []
+    for _ in range(epocas):
+        m.partial_fit(Xtr, ytr, classes=[0, 1])
+        hist.append((m.score(Xtr, ytr), m.score(Xva, yva)))
+    return m, hist
+
+melhor, melhor_val = None, -1
+print("eta0  | acc treino | acc validação (última época)")
+for eta0 in [0.001, 0.01, 0.1]:
+    m, h = treinar(eta0)
+    print(f"{eta0:<6}| {h[-1][0]:10.3f} | {h[-1][1]:.3f}")
+    if h[-1][1] > melhor_val:
+        melhor, melhor_val, eta_escolhido = m, h[-1][1], eta0
+
+pred = melhor.predict(Xte)
+print("\nEscolhido eta0 =", eta_escolhido)
+print(f"Teste: acc = {accuracy_score(yte, pred):.3f} | prec = {precision_score(yte, pred):.3f} | "
+      f"rev = {recall_score(yte, pred):.3f} | F1 = {f1_score(yte, pred):.3f}")
+print(confusion_matrix(yte, pred))
+```
+@@RUBRICA
+- Divisão estratificada em treino, validação e teste, e padronização ajustada apenas no treino.
+- Uso correto de `partial_fit` e registro das curvas de treino e validação.
+- Escolha do `eta0` feita pela validação, não pelo teste.
+- Métricas completas no teste, avaliado uma única vez, e explicação clara do motivo.
+@@NOTE O melhor `eta0` foi o maior (0,1): o menor aprende devagar demais em 30 épocas. O teste só entrou no final para dar uma estimativa honesta. Se você ajustar o modelo olhando o teste, o resultado deixa de ser uma estimativa de desempenho em dados novos.
+@@ALEM
+- **UCI:** *Heart Disease*, *Pima Indians Diabetes* e *Wine Quality* (para treinar validação e métricas).
+- **Kaggle:** *Heart Failure Prediction* e *Credit Card Fraud Detection* (muito desbalanceado, ótimo para praticar F1).

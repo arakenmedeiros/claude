@@ -1,0 +1,157 @@
+@@EX 1 | Resposta aleatorizada: privacidade contra precisão | básico
+Generalize a pesquisa da moeda: com probabilidade `p` a pessoa responde a verdade; com probabilidade `1 − p`, responde "sim" ou "não" por sorteio (50% cada). Para p ∈ {0,25; 0,5; 0,75}, calcule o ε do mecanismo e o erro quadrático médio (RMSE) da estimativa da taxa verdadeira (0,30) com n = 2.000 respostas, repetindo 300 vezes.
+
+*Pergunta:* o que ocorre com o erro quando a privacidade aumenta (ε menor)?
+@@SOL
+```python
+import numpy as np
+
+rng = np.random.default_rng(0)
+n, taxa, repeticoes = 2000, 0.30, 300
+
+print(f"{'p (verdade)':>12}{'ε':>8}{'RMSE da estimativa':>22}")
+for p in (0.25, 0.5, 0.75):
+    p_sim_fez = p + (1 - p) / 2
+    p_sim_nao = (1 - p) / 2
+    eps = np.log(p_sim_fez / p_sim_nao)
+    estimativas = []
+    for _ in range(repeticoes):
+        verdade = rng.random(n) < taxa
+        diz_verdade = rng.random(n) < p
+        resposta = np.where(diz_verdade, verdade, rng.random(n) < 0.5)
+        estimativas.append((resposta.mean() - (1 - p) / 2) / p)         # desfaz o sorteio
+    rmse = np.sqrt(np.mean((np.array(estimativas) - taxa) ** 2))
+    print(f"{p:>12}{eps:>8.2f}{rmse:>22.4f}")
+```
+@@NOTE Quanto menor p (mais sorteio, mais privacidade), menor o ε, mas maior o erro: com p = 0,25, o ε fica em cerca de 0,51 e o erro é bem maior que com p = 0,75 (ε ≈ 1,95). É o compromisso central: privacidade custa precisão, e mais respostas (n maior) compensam parte do custo.
+
+@@EX 2 | Qual ruído preciso para ε = 2? | básico
+Usando `epsilon_rdp` (de `privacidade.py`), encontre por bisseção o menor multiplicador de ruído `z` que garante ε ≤ 2 com δ = 10⁻⁵ para 10, 30, 100 e 300 rodadas.
+
+*Pergunta:* como o ruído necessário cresce com o número de rodadas?
+@@SOL
+```python
+from privacidade import *
+
+def z_minimo(eps_alvo, rodadas, delta=1e-5):
+    lo, hi = 0.1, 500.0
+    for _ in range(50):
+        meio = (lo + hi) / 2
+        if epsilon_rdp(meio, rodadas, delta) > eps_alvo:
+            lo = meio
+        else:
+            hi = meio
+    return hi
+
+print(f"{'rodadas':>8}{'z mínimo para ε ≤ 2':>22}")
+for T in (10, 30, 100, 300):
+    print(f"{T:>8}{z_minimo(2, T):>22.2f}")
+```
+@@NOTE O ruído necessário cresce aproximadamente com a raiz do número de rodadas: para quadruplicar as rodadas (de 30 para 120), é preciso cerca de o dobro do ruído. Treinar menos rodadas, ou treinar de forma mais eficiente, ajuda a economizar o orçamento de privacidade.
+
+@@EX 3 | Escolhendo a norma de corte S | intermediário
+Com 50 clientes IID, `z = 1`, 30 rodadas e 3 sementes, rode `fedavg_dp` para S ∈ {0,1; 0,5; 2; 5}. Calcule a acurácia final média. Mostre também a norma média das atualizações sem corte (mediana na primeira rodada).
+
+*Pergunta:* por que nem um S muito pequeno nem um muito grande é o melhor?
+@@SOL
+```python
+import numpy as np
+from privacidade import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+
+partes = particao_iid(ytr, 50, seed=0)
+W0 = np.zeros((Xtr.shape[1], 10))
+normas = [np.linalg.norm(treino_local(W0, Xtr[p], ytr[p], 5, 0.1, 32) - W0) for p in partes]
+print(f"mediana das normas das atualizações (rodada 1): {np.median(normas):.2f}")
+
+print(f"{'S':>6}{'acurácia final':>16}")
+for S in (0.1, 0.5, 2, 5):
+    accs = []
+    for s in range(3):
+        _, h = fedavg_dp(particao_iid(ytr, 50, s), Xtr, ytr, Xte, yte, z=1.0, S=S, seed=s)
+        accs.append(h[-1])
+    print(f"{S:>6}{np.mean(accs):>16.3f}")
+```
+@@NOTE Com S muito pequeno (0,1), o corte encolhe demais as atualizações e o treino fica lento. Com S grande (5), quase nada é cortado, e o ruído (proporcional a S) fica enorme. O melhor aqui foi S = 0,5, próximo da mediana das normas (cerca de 0,78); S = 2 já perde acurácia por excesso de ruído. A mediana das normas orienta a escolha.
+
+@@EX 4 | Agregação segura e clientes que desistem | intermediário
+Simule 6 clientes com a agregação segura por máscaras. O cliente 3 envia a mensagem mascarada, mas **desiste** antes de a rodada terminar (o servidor não recebe a dele). (a) Mostre que a soma recebida **não** é a soma das atualizações dos sobreviventes. (b) Implemente a **correção**: o servidor, ao receber (por compartilhamento de segredos) as sementes do cliente que desistiu, subtrai as máscaras residuais. Verifique que a soma corrigida é exata.
+
+*Pergunta:* por que as máscaras não se cancelam quando alguém some?
+@@SOL
+```python
+import numpy as np
+
+rng = np.random.default_rng(0)
+K, d = 6, 5
+u = [rng.normal(0, 1, d) for _ in range(K)]
+segredo = {(i, j): int(rng.integers(1 << 31)) for i in range(K) for j in range(i + 1, K)}
+
+def termo(i, j):
+    """Máscara que o cliente i soma (se i < j) ou subtrai (se i > j) por causa do par (i, j)."""
+    v = np.random.default_rng(segredo[(min(i, j), max(i, j))]).normal(0, 100, d)
+    return v if i < j else -v
+
+def mascara(i):
+    return sum(termo(i, j) for j in range(K) if j != i)
+
+enviado = {i: u[i] + mascara(i) for i in range(K)}
+
+desistente = 3
+sobreviventes = [i for i in range(K) if i != desistente]
+soma_recebida = sum(enviado[i] for i in sobreviventes)
+soma_certa = sum(u[i] for i in sobreviventes)
+print("(a) soma recebida == soma dos sobreviventes?", np.allclose(soma_recebida, soma_certa))
+
+# (b) correção: tirar de cada sobrevivente o termo ligado ao desistente
+residuo = sum(termo(i, desistente) for i in sobreviventes)
+soma_corrigida = soma_recebida - residuo
+print("(b) soma corrigida == soma dos sobreviventes?", np.allclose(soma_corrigida, soma_certa))
+```
+@@NOTE Cada máscara de um par (i, j) só se cancela se **ambos** enviarem. Quando o cliente 3 some, os termos (i, 3) dos sobreviventes ficam sem seu par e sobram na soma, a qual vira lixo. No protocolo real, as sementes do desistente são reconstruídas a partir de partes compartilhadas (Shamir) entre os sobreviventes, e o servidor remove os resíduos, como no código. O protocolo também impede que o servidor peça as sementes de clientes que estão vivos.
+
+@@PROJ Orçamento de privacidade da clínica | Cap8
+**Contexto.** Uma clínica (fictícia) treinará um modelo federado com os dados de poucos pacientes por cliente. O comitê de ética quer entender o **preço** de proteger o modelo: o quanto cada nível de privacidade diminui a acurácia e o quanto reduz o risco de inferência de pertencimento (Capítulo 7).
+
+**Tarefas.**
+1. Considere dois cenários: (A) 150 pacientes divididos em 30 clientes; (B) 300 pacientes em 50 clientes.
+2. Para z ∈ {0; 1; 3; 5,8}, rode `fedavg_dp` (S = 0,5, 50 rodadas, `epocas=10`) com 5 sementes e relate: acurácia no teste, **AUC** do ataque do limiar de perda (membros contra `Xte`) e o ε (use `epsilon_rdp(z, 50)`).
+3. Monte uma tabela com os dois cenários.
+4. Escreva um parecer de cinco linhas: que nível de privacidade a clínica consegue pagar em cada cenário? O que seria necessário para ter ε baixo sem perder acurácia?
+
+**Entregáveis.** Código, tabela e parecer.
+@@SOL
+```python
+import numpy as np
+from sklearn.metrics import roc_auc_score
+from privacidade import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+def perdas(W, X, y):
+    P = softmax(X @ W)
+    return -np.log(P[np.arange(len(y)), y] + 1e-12)
+
+print(f"{'cenário':<22}{'z':>5}{'ε (50 rod.)':>13}{'acc teste':>11}{'AUC ataque':>12}")
+for nome, n, K in (("A: 150 pac., 30 cli.", 150, 30), ("B: 300 pac., 50 cli.", 300, 50)):
+    for z in (0, 1, 3, 5.8):
+        aucs, accs = [], []
+        for s in range(5):
+            idx = np.random.default_rng(s).permutation(len(ytr))[:n]
+            partes = [idx[p] for p in particao_iid(ytr[idx], K, s)]
+            W, h = fedavg_dp(partes, Xtr, ytr, Xte, yte, z=z, S=0.5, rodadas=50, epocas=10, seed=s)
+            lm, ln = perdas(W, Xtr[idx], ytr[idx]), perdas(W, Xte, yte)
+            aucs.append(roc_auc_score(np.r_[np.ones(len(lm)), np.zeros(len(ln))], -np.r_[lm, ln]))
+            accs.append(h[-1])
+        eps = "∞" if z == 0 else f"{epsilon_rdp(z, 50):.1f}"
+        print(f"{nome:<22}{z:>5}{eps:>13}{np.mean(accs):>11.3f}{np.mean(aucs):>12.3f}")
+```
+@@RUBRICA
+- Dois cenários, quatro níveis de ruído e cinco sementes, com ε, acurácia e AUC.
+- Interpretação correta do compromisso: mais ruído, menos acurácia, e AUC cai pouco ou nada em modelos que já vazam pouco.
+- Parecer que reconheça que ε baixo exige muito mais clientes e dados, e que nenhum nível testado oferece, ao mesmo tempo, ε baixo e acurácia alta.
+- Menção a limitações: contabilidade conservadora, ataque simples, dados simulados.
+@@NOTE No cenário A (30 clientes), z = 5,8 reduz a AUC do ataque (de cerca de 0,63 para 0,58), mas a acurácia cai de cerca de 0,91 para 0,59. No cenário B (50 clientes), a acurácia sofre menos (cerca de 0,93 para 0,80), e a AUC já é baixa (cerca de 0,56). Em ambos, o ε obtido (6,6 a 59) está longe de valores considerados fortes (< 1). Conclusão: com tão poucos clientes e dados, proteger formalmente custa muito. Seria preciso muito mais clientes e dados, ou aceitar um ε maior, com decisão do comitê.
+@@ALEM
+- **UCI:** *Adult* e *Statlog (German Credit Data)*, para estudar DP em dados financeiros e censitários.
+- **Kaggle:** *Heart Failure Prediction* e *Credit Card Fraud Detection*.

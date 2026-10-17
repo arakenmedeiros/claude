@@ -1,0 +1,269 @@
+MC: Qual a ideia central da analogia dos "ajustes das receitas" no início do capítulo?
+a) Atualizações de modelo não são os dados, mas carregam pistas sobre eles.
+b) Atualizações são sempre inofensivas.
+c) O servidor nunca vê nada.
+d) Receitas não podem ser alteradas.
+R: a | Mesmo enviando só ajustes, é possível deduzir características dos dados.
+
+MC: O que é um modelo de ameaça?
+a) A descrição de quem é o adversário, o que ele sabe e o que pode fazer.
+b) A lista de todos os algoritmos de aprendizado.
+c) Um tipo de rede neural.
+d) Um método de compressão.
+R: a | Define adversário, conhecimento e capacidades.
+
+MC: Um servidor honesto-mas-curioso:
+a) segue o protocolo, mas tenta aprender o que puder das atualizações.
+b) quebra o protocolo de propósito.
+c) não vê nada.
+d) só envia dados falsos.
+R: a | Ele cumpre o protocolo, mas analisa o que recebe.
+
+MC: Um servidor malicioso difere do honesto-mas-curioso porque:
+a) pode quebrar o protocolo, por exemplo, enviando modelos manipulados.
+b) não tem acesso às atualizações.
+c) é sempre um cliente.
+d) só atua depois do treino.
+R: a | Pode desviar-se do protocolo para extrair mais informação.
+
+MC: Quais itens trafegam e podem vazar informação em aprendizado federado?
+a) Atualizações individuais, modelo global a cada rodada e modelo final.
+b) Apenas o modelo final.
+c) Apenas o código do servidor.
+d) Nenhum.
+R: a | Cada um desses itens é uma fonte potencial de vazamento.
+
+MC: A inversão de gradientes tem como objetivo:
+a) reconstruir os dados de treino a partir dos gradientes ou atualizações.
+b) acelerar o treino.
+c) reduzir o modelo.
+d) criptografar os dados.
+R: a | O atacante recupera as entradas a partir do gradiente observado.
+
+MC: Quem mostrou que gradientes de redes neurais podem recuperar imagens de treino (DLG)?
+a) Zhu et al. (2019).
+b) McMahan et al. (2017).
+c) Reddi et al. (2021).
+d) Pedregosa et al. (2011).
+R: a | Zhu, Liu e Han (NeurIPS 2019), "Deep leakage from gradients".
+
+MC: Para um único exemplo na softmax, o gradiente em relação aos pesos é:
+a) o produto externo x ⊗ (p − y).
+b) apenas p.
+c) a soma dos pesos.
+d) o rótulo y.
+R: a | Cada coluna é x multiplicado por (p_c − y_c).
+
+MC: Na softmax com viés, o gradiente do viés é:
+a) (p − y).
+b) x.
+c) zero.
+d) a média de x.
+R: a | O viés atua como atributo constante 1, e seu gradiente é o próprio erro.
+
+MC: Como se recupera x exatamente a partir do gradiente de um único exemplo?
+a) Dividindo uma coluna do gradiente dos pesos pelo gradiente do viés correspondente.
+b) Somando todas as colunas.
+c) Multiplicando por zero.
+d) Não é possível.
+R: a | x = ∇W[:, c] / ∇b[c].
+
+MC: No experimento, com um lote de 1 exemplo, o erro de reconstrução foi:
+a) da ordem de 1e-16 (arredondamento).
+b) 50%.
+c) 10%.
+d) 100%.
+R: a | A reconstrução foi exata, a menos de erros numéricos.
+
+MC: O que acontece com a qualidade da reconstrução quando o lote cresce?
+a) Ela piora, pois o gradiente é uma soma de vários exemplos, mas ainda se parece com algum deles.
+b) Ela melhora sempre.
+c) Ela fica perfeita.
+d) Ela desaparece completamente.
+R: a | A correlação cai de 1,0 (lote 1) para cerca de 0,82 (lote 32).
+
+MC: Por que este experimento é considerado o melhor caso para o atacante?
+a) Modelo linear, gradiente puro e um único passo.
+b) Porque o atacante tem muitos dados.
+c) Porque há ruído.
+d) Porque o servidor é honesto.
+R: a | Em redes profundas e com vários passos, o ataque é mais difícil.
+
+MC: Qual o objetivo da inferência de pertencimento?
+a) Descobrir se um exemplo específico foi usado no treino.
+b) Reconstruir todas as imagens.
+c) Medir a acurácia.
+d) Escolher hiperparâmetros.
+R: a | Pergunta se o exemplo z fez parte dos dados de treino.
+
+MC: Por que a inferência de pertencimento é grave?
+a) Saber que alguém está em um conjunto pode revelar informação sensível, como estar em um tratamento.
+b) Porque aumenta a acurácia.
+c) Porque reduz o tamanho do modelo.
+d) Porque não envolve dados.
+R: a | A pertinência a um conjunto específico pode ser, em si, um dado sensível.
+
+MC: No ataque do limiar de perda, um exemplo é classificado como "membro" quando:
+a) sua perda é baixa.
+b) sua perda é alta.
+c) seu rótulo é zero.
+d) seu tamanho é grande.
+R: a | Modelos tendem a ter perda menor em exemplos de treino.
+
+MC: Uma AUC de 0,5 para o ataque de pertencimento significa:
+a) o ataque equivale a um chute.
+b) o ataque é perfeito.
+c) o ataque é pior que o acaso.
+d) o modelo é perfeito.
+R: a | AUC 0,5 indica ausência de capacidade de distinguir.
+
+MC: Uma AUC de 1,0 significa:
+a) o ataque separa perfeitamente membros de não membros.
+b) o ataque falha sempre.
+c) o modelo está bem treinado.
+d) não há membros.
+R: a | É o ataque ideal.
+
+MC: No experimento de pertencimento, com poucos dados e muito treino a AUC foi de cerca de:
+a) 0,64.
+b) 0,50 exatamente.
+c) 0,99.
+d) 0,10.
+R: a | Com 150 exemplos e 50 rodadas, o ataque atingiu cerca de 0,64.
+
+MC: Com 1.347 exemplos de treino, a AUC do ataque foi de cerca de:
+a) 0,53.
+b) 0,90.
+c) 0,70.
+d) 0,10.
+R: a | Mais dados reduzem a memorização individual e o vazamento.
+
+MC: Qual a relação entre sobreajuste e vazamento de pertencimento?
+a) Quanto mais o modelo decora os exemplos, maior o risco.
+b) Não há relação.
+c) Quanto mais sobreajuste, menor o risco.
+d) Só há relação em modelos lineares.
+R: a | Perda muito menor nos membros facilita o ataque.
+
+MC: A inferência de propriedades (Melis et al., 2019) pergunta:
+a) se o conjunto de dados de um participante tem uma característica, mesmo sem relação com a tarefa.
+b) qual o rótulo de um exemplo.
+c) quantos clientes existem.
+d) qual a taxa de aprendizado.
+R: a | Infere propriedades do conjunto a partir das atualizações.
+
+MC: Carlini et al. (2021) mostraram que modelos de linguagem podem:
+a) memorizar e permitir a extração de sequências literais do treino.
+b) nunca memorizar.
+c) ficar mais privados com mais parâmetros.
+d) esquecer dados após cada época.
+R: a | Foi demonstrada a extração de dados de treino de modelos de linguagem.
+
+MC: Em um ataque ativo, um servidor malicioso pode:
+a) enviar modelos construídos para facilitar o vazamento.
+b) apenas observar.
+c) apagar clientes.
+d) corrigir rótulos.
+R: a | Fowl et al. (2022) inseriram camadas para capturar dados dos clientes.
+
+MC: Qual das práticas abaixo oferece garantia formal de privacidade?
+a) Privacidade diferencial.
+b) Aumentar o lote.
+c) Esparsificar atualizações.
+d) Parar o treino mais cedo.
+R: a | As demais apenas mitigam o risco; DP oferece garantia matemática.
+
+MC: A agregação segura, sozinha, protege contra:
+a) o servidor ver cada atualização individual, mas não contra inferência sobre o modelo final.
+b) todos os ataques.
+c) apenas observadores externos.
+d) nenhum ataque.
+R: a | Ela esconde atualizações individuais; o modelo final ainda pode vazar.
+
+MC: Qual o efeito de lotes maiores sobre a inversão de gradientes?
+a) Dificultam a reconstrução, pois o gradiente mistura mais exemplos.
+b) Facilitam a reconstrução.
+c) Nenhum.
+d) Tornam a reconstrução exata.
+R: a | Mais exemplos somados reduzem a fidelidade da reconstrução de cada um.
+
+MC: Qual dos clientes tende a ser mais exposto a ataques de pertencimento?
+a) O que tem poucos dados e muito treino.
+b) O que tem muitos dados.
+c) O que não participa.
+d) Nenhum.
+R: a | Poucos dados e muitas épocas favorecem a memorização.
+
+MC: Por que os experimentos do capítulo devem ser feitos só com dados públicos?
+a) Para evitar violar a privacidade de pessoas; ataques exigem autorização e aprovação ética.
+b) Porque dados privados não funcionam.
+c) Porque dados públicos são melhores.
+d) Porque é mais rápido.
+R: a | Experimentos de privacidade em dados pessoais sem autorização são antiéticos e ilegais.
+
+MC: Por que a parada antecipada (early stopping) pode ser considerada uma defesa barata contra inferência de pertencimento?
+a) Porque reduz a memorização do treino, diminuindo a diferença de perda entre membros e não membros.
+b) Porque elimina o servidor.
+c) Porque criptografa os dados.
+d) Porque aumenta o número de clientes.
+R: a | Treinar menos reduz o sobreajuste; o ataque do limiar de perda perde força.
+
+DISC: Explique, com a analogia das receitas, por que enviar só as atualizações não garante privacidade.
+R: Mesmo sem ver o caderno, quem recebe o ajuste "tirar toda a pimenta" deduz que a receita tinha muita pimenta. Atualizações de modelo carregam pistas sobre os dados que as geraram.
+
+DISC: Descreva três tipos de adversário em aprendizado federado e o que cada um observa.
+R: Servidor curioso: vê cada atualização individual. Cliente malicioso: vê os modelos globais de cada rodada. Observador de rede: vê mensagens, se não houver criptografia. Usuário do modelo final: vê previsões ou pesos.
+
+DISC: Diferencie servidor honesto-mas-curioso de servidor malicioso.
+R: O curioso segue o protocolo, mas analisa o que recebe. O malicioso se desvia do protocolo, por exemplo, enviando modelos manipulados para facilitar o vazamento.
+
+DISC: Liste as cinco famílias de ataques à privacidade apresentadas e a pergunta que cada uma busca responder.
+R: Reconstrução: quais eram os dados? Pertencimento: o exemplo estava no treino? Propriedades: o conjunto tem tal característica? Memorização: que trechos foram decorados? Ativos: posso manipular o modelo para vazar mais?
+
+DISC: Demonstre por que o gradiente de um exemplo na softmax revela a entrada.
+R: O gradiente dos pesos é x ⊗ (p − y) e o do viés é (p − y). Dividindo uma coluna do primeiro pelo componente correspondente do segundo, obtém-se x exatamente.
+
+DISC: Explique por que o ataque do experimento é um "melhor caso" para o atacante e o que muda em redes profundas.
+R: Modelo linear, um passo e gradiente puro permitem solução fechada. Em redes profundas, há não linearidades, vários passos e lotes maiores; é preciso otimizar uma entrada falsa, o que é mais difícil, mas ainda possível.
+
+DISC: Interprete a tabela de correlação por tamanho de lote (1 a 32).
+R: A correlação cai de 1,0 (lote 1) a cerca de 0,82 (lote 32): lotes maiores misturam exemplos e dificultam a reconstrução, mas ainda restam semelhanças com exemplos reais.
+
+DISC: Explique o ataque do limiar de perda e como medir seu sucesso.
+R: Marca como membro quem tem perda baixa, pois modelos ajustam melhor os exemplos de treino. Mede-se pela AUC: 0,5 equivale a chute; 1,0 é perfeito.
+
+DISC: Por que mais dados de treino reduzem o risco de inferência de pertencimento?
+R: Cada exemplo tem menor influência individual e o modelo decora menos; a diferença de perda entre membros e não membros diminui.
+
+DISC: Relacione sobreajuste, tamanho do modelo e privacidade.
+R: Modelos grandes, treinados muito e com poucos dados tendem a memorizar, tornando exemplos de treino distinguíveis e aumentando o vazamento. Regularização e mais dados reduzem o risco.
+
+DISC: O que é inferência de propriedades e dê um exemplo.
+R: É deduzir uma característica do conjunto de dados de um participante, mesmo irrelevante para a tarefa, por exemplo, se há pessoas de óculos nas fotos de um cliente.
+
+DISC: Explique por que modelos de linguagem representam um risco de memorização.
+R: Têm muitos parâmetros e treinam com grandes volumes de texto, podendo memorizar sequências literais, inclusive informações pessoais, que podem ser extraídas por consultas apropriadas.
+
+DISC: Descreva em linhas gerais um ataque ativo de servidor malicioso.
+R: O servidor envia um modelo modificado, por exemplo com uma camada que captura entradas, de modo que a atualização devolvida revele diretamente os dados dos clientes, mesmo com lotes grandes.
+
+DISC: Diferencie mitigação e garantia de privacidade, com exemplos.
+R: Mitigações (lotes grandes, regularização, compressão) diminuem o risco, sem prova formal. Garantia (privacidade diferencial) oferece limite matemático ao vazamento.
+
+DISC: Por que a agregação segura não basta para proteger contra inferência de pertencimento sobre o modelo final?
+R: Ela esconde apenas as atualizações individuais durante o treino. O modelo agregado ainda pode ser consultado ou inspecionado e pode ter memorizado exemplos.
+
+DISC: Como o tamanho do lote e o número de passos locais afetam o risco de reconstrução?
+R: Lotes maiores misturam mais exemplos e dificultam a reconstrução; mais passos locais adicionam não linearidade e mistura, embora em modelos lineares com um único exemplo a direção da atualização continue proporcional a x.
+
+DISC: Por que clientes com poucos dados são mais expostos?
+R: Cada exemplo tem peso maior na atualização, o modelo local memoriza mais e o gradiente mistura menos exemplos, facilitando reconstrução e inferência de pertencimento.
+
+DISC: Quais cuidados éticos devem existir ao testar ataques de privacidade?
+R: Usar dados públicos ou sintéticos, ter autorização formal e aprovação ética, não reidentificar pessoas e relatar vulnerabilidades de modo responsável.
+
+DISC: Cite duas práticas de projeto que diminuem o risco de vazamento e uma limitação de cada uma.
+R: Lotes maiores: reduzem a fidelidade da reconstrução, mas não dão garantia. Regularização/parada antecipada: reduzem memorização, mas não impedem vazamento por gradientes.
+
+DISC: Resuma em cinco linhas o que você aprendeu sobre ameaças à privacidade, indicando o que faria na prática.
+R: Resposta pessoal coerente com o resumo: atualizações carregam pistas; adversários; famílias de ataques; inversão exata em softmax; pertencimento e sobreajuste; mitigação versus garantia.

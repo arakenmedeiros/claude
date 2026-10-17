@@ -1,0 +1,143 @@
+@@EX 1 | Avaliando o modelo global cliente a cliente | básico
+Crie 10 clientes com `particao_dirichlet(ytr, 10, alfa=0.3)`, divida cada um em treino e teste locais (`dividir_local`) e treine um modelo global com FedAvg (30 rodadas, `epocas=5`). Calcule a acurácia do global **em cada cliente** e use `resumo` para a média, o pior cliente e o percentil 10. Compare com a acurácia no teste global.
+
+*Pergunta:* a acurácia global conta toda a história sobre o desempenho por cliente?
+@@SOL
+```python
+import numpy as np
+from personalizacao import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+partes = particao_dirichlet(ytr, 10, 0.3, seed=0)
+treino, teste = dividir_local(partes, 0.3, seed=0)
+ok = [i for i in range(10) if len(teste[i]) >= 5]
+treino = [treino[i] for i in ok]; teste = [teste[i] for i in ok]
+
+Wg, hist = fedavg(treino, Xtr, ytr, Xte, yte, rodadas=30, epocas=5, eta=0.1, seed=0)
+por_cliente = acuracias_locais([Wg] * len(treino), teste, Xtr, ytr)
+print(f"acurácia no teste global: {hist[-1]:.3f}")
+print("por cliente:", np.round(por_cliente, 3))
+print(resumo(por_cliente))
+```
+@@NOTE A acurácia global é uma média sobre todos os exemplos, e não sobre clientes. A lista por cliente mostra que há clientes acima e abaixo dessa média. Quanto mais heterogêneos os dados, maior a dispersão entre clientes.
+
+@@EX 2 | Quantas épocas de ajuste fino? | básico
+Com 10 clientes Dirichlet (α = 0,1) e o modelo global do FedAvg, aplique ajuste fino local com 0, 1, 3, 5, 10 e 30 épocas (`treino_local`, `eta=0.1`). Para cada valor, reporte a média, o pior cliente e o percentil 10 em 3 sementes.
+
+*Pergunta:* mais épocas sempre ajudam?
+@@SOL
+```python
+import numpy as np
+from personalizacao import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+R = {}
+for s in range(3):
+    partes = particao_dirichlet(ytr, 10, 0.1, s)
+    treino, teste = dividir_local(partes, 0.3, s)
+    ok = [i for i in range(10) if len(teste[i]) >= 5]
+    treino = [treino[i] for i in ok]; teste = [teste[i] for i in ok]
+    Wg, _ = fedavg(treino, Xtr, ytr, Xte, yte, rodadas=30, epocas=5, eta=0.1, seed=s)
+    for E in (0, 1, 3, 5, 10, 30):
+        modelos = [Wg] * len(treino) if E == 0 else \
+                  [treino_local(Wg, Xtr[p], ytr[p], E, 0.1, 32, 0.0, s + i) for i, p in enumerate(treino)]
+        R.setdefault(E, []).append(acuracias_locais(modelos, teste, Xtr, ytr))
+for E, v in R.items():
+    print(f"E = {E:>2}:", resumo(np.concatenate(v)))
+```
+@@NOTE Poucas épocas já trazem ganho grande em relação ao global puro (E = 0). O ganho se estabiliza por volta de 3 a 10 épocas. Com 30 épocas, o resultado não melhora e o pior cliente piora: sinal de sobreajuste. Mais passos nem sempre ajudam.
+
+@@EX 3 | O botão λ do Ditto | intermediário
+Para os mesmos 10 clientes Dirichlet (α = 0,1) e 3 sementes, varie λ ∈ {0; 0,01; 0,1; 0,5; 2; 10} no Ditto. Compare a média, o pior cliente e o percentil 10 com os do global puro.
+
+*Pergunta:* o que acontece com λ pequeno? E com λ grande?
+@@SOL
+```python
+import numpy as np
+from personalizacao import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+R = {}
+for s in range(3):
+    partes = particao_dirichlet(ytr, 10, 0.1, s)
+    treino, teste = dividir_local(partes, 0.3, s)
+    ok = [i for i in range(10) if len(teste[i]) >= 5]
+    treino = [treino[i] for i in ok]; teste = [teste[i] for i in ok]
+    Wg, _ = fedavg(treino, Xtr, ytr, Xte, yte, rodadas=30, epocas=5, eta=0.1, seed=s)
+    R.setdefault("global", []).append(acuracias_locais([Wg] * len(treino), teste, Xtr, ytr))
+    for lam in (0, 0.01, 0.1, 0.5, 2, 10):
+        R.setdefault(f"λ = {lam}", []).append(acuracias_locais(ditto(treino, Xtr, ytr, Wg, lam, seed=s), teste, Xtr, ytr))
+for nome, v in R.items():
+    print(f"{nome:<10}", resumo(np.concatenate(v)))
+```
+@@NOTE Com λ ≤ 0,1, os resultados são idênticos ao ajuste fino (o modelo pessoal começa no global e a coleira quase não age). Com λ = 10, o modelo pessoal fica preso ao global e a média e o percentil 10 caem em direção aos do global. Os valores intermediários (0,5 a 2) equilibram, mas neste problema o melhor resultado foi com coleira fraca.
+
+@@EX 4 | IFCA com o número errado de grupos | intermediário
+Na mudança de conceito (12 clientes, 3 grupos verdadeiros), rode o `ifca` com K ∈ {2, 3, 5}. Para cada K, reporte a acurácia média por cliente (3 sementes) e quantos modelos distintos foram realmente escolhidos pelos clientes.
+
+*Pergunta:* o que ocorre quando K é menor que o número real de grupos? E quando é maior?
+@@SOL
+```python
+import numpy as np
+from personalizacao import *
+
+Xtr, Xte, ytr0, yte0 = carregar_digits()
+print(f"{'K':>3}{'acurácia média':>16}{'modelos usados (por semente)':>32}")
+for K in (2, 3, 5):
+    accs, usados = [], []
+    for s in range(3):
+        partes, y, grupo = particao_conceitos(ytr0, 12, 3, s)
+        treino, teste = dividir_local(partes, 0.3, s)
+        modelos, escolha = ifca(treino, Xtr, y, K=K, seed=s)
+        accs.append(acuracias_locais([modelos[j] for j in escolha], teste, Xtr, y).mean())
+        usados.append(len(set(escolha)))
+    print(f"{K:>3}{np.mean(accs):>16.3f}{str(usados):>32}")
+```
+@@NOTE Com K = 2, dois grupos verdadeiros precisam compartilhar um modelo, e a acurácia média despenca (cerca de 0,64). Com K = 3, os grupos são recuperados (cerca de 0,93). Com K = 5, sobram modelos: alguns ficam sem clientes e o resultado é próximo do de K = 3. Errar para menos é bem pior do que errar para mais.
+
+@@PROJ Chegou um cliente novo: o que fazer com poucos dados? | Cap6
+**Contexto.** A rede de clínicas (fictícia) tem 12 unidades, em 3 grupos com protocolos diferentes (mudança de conceito). Três unidades novas, uma de cada grupo, acabam de aderir, mas só têm **5, 20 ou 50** exemplos rotulados. A diretoria quer saber: *como atender essas unidades bem e rápido?*
+
+**Tarefas.**
+1. Use `particao_conceitos` (12 clientes, 3 grupos) e `dividir_local`. Reserve três clientes (um de cada grupo) como "novos", e treine global e IFCA (K = 3) **apenas com os outros nove**.
+2. Para cada cliente novo, com apenas os `n` primeiros exemplos de treino (n ∈ {5, 20, 50}), avalie no seu teste local: (a) modelo global; (b) modelo treinado **só** com esses exemplos; (c) global com ajuste fino de 5 épocas; (d) o modelo do grupo (IFCA) escolhido pela menor perda nos `n` exemplos.
+3. Reporte a acurácia média dos três clientes novos, em 3 sementes.
+4. Escreva uma recomendação para a diretoria: como atender um cliente novo, sabendo que ele tem poucos dados?
+
+**Entregáveis.** Código, tabela por `n` e recomendação com ressalvas.
+@@SOL
+```python
+import numpy as np
+from personalizacao import *
+
+Xtr, Xte, ytr0, yte0 = carregar_digits()
+print(f"{'n':>4}{'global':>9}{'só local':>10}{'ajuste fino':>13}{'grupo IFCA':>12}")
+for n in (5, 20, 50):
+    saida = {"global": [], "local": [], "ajuste": [], "ifca": []}
+    for s in range(3):
+        partes, y, grupo = particao_conceitos(ytr0, 12, 3, s)
+        treino, teste = dividir_local(partes, 0.3, s)
+        novos = [0, 1, 2]                                  # um cliente de cada grupo
+        resto = [i for i in range(12) if i not in novos]
+        tr_resto = [treino[i] for i in resto]
+        Wg, _ = fedavg(tr_resto, Xtr, y, Xte, yte0, rodadas=30, epocas=5, eta=0.1, seed=s)
+        modelos, _ = ifca(tr_resto, Xtr, y, K=3, seed=s)
+        for i in novos:
+            p, t = treino[i][:n], teste[i]
+            saida["global"].append(acuracia(Wg, Xtr[t], y[t]))
+            saida["local"].append(acuracia(treino_local(np.zeros_like(Wg), Xtr[p], y[p], 30, 0.1, 32, 0.0, i), Xtr[t], y[t]))
+            saida["ajuste"].append(acuracia(treino_local(Wg, Xtr[p], y[p], 5, 0.1, 32, 0.0, i), Xtr[t], y[t]))
+            j = int(np.argmin([perda(W, Xtr[p], y[p]) for W in modelos]))
+            saida["ifca"].append(acuracia(modelos[j], Xtr[t], y[t]))
+    print(f"{n:>4}{np.mean(saida['global']):>9.3f}{np.mean(saida['local']):>10.3f}"
+          f"{np.mean(saida['ajuste']):>13.3f}{np.mean(saida['ifca']):>12.3f}")
+```
+@@RUBRICA
+- Clientes novos fora do treino federado, corretamente separados.
+- Quatro estratégias comparadas para os três valores de n, com 3 sementes.
+- Uso da perda nos poucos exemplos para escolher o grupo (IFCA), sem ver o teste.
+- Recomendação que discuta o efeito do número de exemplos e as ressalvas (grupos limpos, laboratório, K conhecido).
+@@NOTE O modelo do grupo (IFCA) já atende bem o cliente novo com apenas 5 exemplos (cerca de 0,93), pois **só precisa de poucos dados para escolher o grupo certo**. O global falha (cerca de 0,37), e o modelo só local precisa de muito mais exemplos (só chega a cerca de 0,84 com 50). O ajuste fino melhora com n, mas fica atrás. Ressalvas: os grupos do experimento são limpos e K é conhecido; em dados reais, a atribuição de grupo é menos clara.
+@@ALEM
+- **UCI:** *Adult* (agrupe por país ou ocupação para criar grupos naturais), *Human Activity Recognition Using Smartphones* (cada voluntário é um cliente, ótimo para personalização) e *Wine Quality*.
+- **Kaggle:** *Telco Customer Churn* (agrupe por tipo de contrato) e *Heart Failure Prediction*.

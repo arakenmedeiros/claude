@@ -1,0 +1,155 @@
+@@EX 1 | Ponto de ruptura na prática | básico
+Simule 20 clientes cujas atualizações (vetores de 50 dimensões) são honestas: `N(1, 0,1)` em cada coordenada. Faça `m` deles maliciosos, enviando o vetor constante 100. Para `m` de 0 a 9, calcule o erro (norma da diferença até o vetor honesto médio) da **média**, da **mediana**, da **média aparada (β = 0,25)** e do **Krum** (use `agg_krum` de `robustez.py` com `f=m`).
+
+*Pergunta:* a partir de quantos maliciosos cada agregador deixa de funcionar?
+@@SOL
+```python
+import numpy as np
+from robustez import *
+
+rng = np.random.default_rng(0)
+K, d = 20, 50
+honestos = rng.normal(1.0, 0.1, (K, d))
+referencia = honestos.mean(axis=0)
+
+print(f"{'maliciosos':>10}{'média':>10}{'mediana':>10}{'aparada':>10}{'Krum':>10}")
+for m in range(0, 10):
+    D = honestos.copy()
+    D[:m] = 100.0
+    D3 = D.reshape(K, d, 1)
+    erro = lambda v: np.linalg.norm(v.ravel() - referencia)
+    print(f"{m:>10}{erro(agg_media(D3)):>10.2f}{erro(agg_mediana(D3)):>10.2f}"
+          f"{erro(agg_media_aparada(D3, 0.25)):>10.2f}{erro(agg_krum(D3, f=max(m, 1))):>10.2f}")
+```
+@@NOTE A média é arrastada já com **um** atacante (erro enorme). A mediana resiste enquanto os maliciosos forem menos da metade. A média aparada com β = 0,25 descarta 5 de cada lado, por isso funciona até 5 maliciosos e quebra com 6 ou mais. O Krum escolhe sempre um vetor honesto (erro constante de cerca de 0,5, pois usa um único vetor, mesmo sem atacantes), enquanto f é bem estimado e m é menor que cerca de metade dos clientes.
+
+@@EX 2 | Troca de rótulos: até onde vai a média? | básico
+Com 20 clientes IID e o ataque `rotulos`, varie a fração de maliciosos f ∈ {0; 0,1; 0,2; 0,3; 0,4}. Compare a acurácia final (3 sementes) da média e da mediana.
+
+*Pergunta:* como a degradação da média cresce com f? A mediana resiste a 40%?
+@@SOL
+```python
+import numpy as np
+from robustez import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+K = 20
+print(f"{'f':>5}{'média':>9}{'mediana':>10}")
+for f in (0.0, 0.1, 0.2, 0.3, 0.4):
+    linha = []
+    for ag in (agg_media, agg_mediana):
+        accs = []
+        for s in range(3):
+            partes = particao_iid(ytr, K, s)
+            _, h, _ = fedavg_robusto(partes, Xtr, ytr, Xte, yte, agregador=ag, maliciosos=range(int(f * K)),
+                                     ataque="rotulos" if f > 0 else "nenhum", seed=s)
+            accs.append(h[-1])
+        linha.append(np.mean(accs))
+    print(f"{f:>5}{linha[0]:>9.3f}{linha[1]:>10.3f}")
+```
+@@NOTE A média cai de forma progressiva com f (de 0,96 para cerca de 0,66 com 40%). A mediana se mantém em cerca de 0,95 até 30%, mas com 40% já cede um pouco (0,92), pois se aproxima do ponto de ruptura de 50%. A troca de rótulos é um ataque mais brando do que o sinal invertido.
+
+@@EX 3 | Quanto aparar? | intermediário
+Com o ataque `sinal` e 30% de maliciosos (20 clientes), varie o parâmetro β da média aparada ∈ {0; 0,1; 0,2; 0,3; 0,4}. Para cada β, relate a acurácia com ataque e **sem** ataque (3 sementes).
+
+*Pergunta:* qual β é seguro? Que preço se paga por um β grande?
+@@SOL
+```python
+import numpy as np
+from robustez import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+K = 20
+print(f"{'β':>5}{'com ataque 30%':>16}{'sem ataque':>12}")
+for beta in (0.0, 0.1, 0.2, 0.3, 0.4):
+    ag = lambda D, b=beta: agg_media_aparada(D, b)
+    com, sem = [], []
+    for s in range(3):
+        partes = particao_iid(ytr, K, s)
+        com.append(fedavg_robusto(partes, Xtr, ytr, Xte, yte, agregador=ag, maliciosos=range(6), ataque="sinal", seed=s)[1][-1])
+        sem.append(fedavg_robusto(partes, Xtr, ytr, Xte, yte, agregador=ag, seed=s)[1][-1])
+    print(f"{beta:>5}{np.mean(com):>16.3f}{np.mean(sem):>12.3f}")
+```
+@@NOTE Com β = 0, é a média simples e o ataque a derruba (acurácia próxima de zero). Com β = 0,1 (2 de cada lado), ainda sobram 4 atacantes na média, e o dano é grande (0,24). Com β = 0,2 (4 de cada lado), a recuperação é parcial (0,88). A partir de β = 0,3 (6 de cada lado), todos os 6 maliciosos são descartados, e a acurácia chega a cerca de 0,93. Sem ataque, β grande custa pouco em IID. Em dados não-IID, esse custo seria maior.
+
+@@EX 4 | Quando a mediana também cai | intermediário
+Com o ataque de backdoor (`gama=1`), varie a fração de maliciosos f ∈ {0,3; 0,4; 0,5; 0,6} para a **mediana** e a **média aparada (β = 0,25)**, com 20 clientes IID. Relate a acurácia normal e o ASR (3 sementes).
+
+*Pergunta:* a partir de que fração a mediana deixa de proteger?
+@@SOL
+```python
+import numpy as np
+from robustez import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+K = 20
+agregadores = {"mediana": agg_mediana, "média aparada": lambda D: agg_media_aparada(D, 0.25)}
+print(f"{'f':>5} | {'agregador':<15}{'acurácia':>9}{'ASR':>7}")
+for f in (0.3, 0.4, 0.5, 0.6):
+    for nome, ag in agregadores.items():
+        accs, asrs = [], []
+        for s in range(3):
+            partes = particao_iid(ytr, K, s)
+            _, h, r = fedavg_robusto(partes, Xtr, ytr, Xte, yte, agregador=ag, maliciosos=range(int(f * K)),
+                                     ataque="backdoor", gama=1, seed=s)
+            accs.append(h[-1]); asrs.append(r[-1])
+        print(f"{f:>5} | {nome:<15}{np.mean(accs):>9.3f}{np.mean(asrs):>7.2f}")
+```
+@@NOTE Com 30% de maliciosos, a mediana ainda segura o backdoor (ASR 0,08); com 40%, já cede parcialmente (0,39); com 50% ou mais, os maliciosos viram maioria e o ASR dispara (0,99). A média aparada com β = 0,25 só descarta 25% de cada lado, e por isso cede já a partir de 30%. Nenhuma defesa por agregação resiste a mais da metade de clientes maliciosos.
+
+@@PROJ Parecer de segurança: qual agregador adotar? | Cap9
+**Contexto.** Uma rede de clínicas (fictícia) vai treinar um modelo federado com 20 unidades. O time de segurança teme que **até 20%** das unidades possam ser comprometidas, mas os dados das clínicas são **moderadamente heterogêneos**. Você deve recomendar o agregador.
+
+**Tarefas.**
+1. Compare cinco agregadores: média, mediana, média aparada (β = 0,25), Multi-Krum (f = 6, multi = 8) e **corte de norma** (S = 0,5).
+2. Meça, em 3 sementes, três cenários: (a) **sem ataque, dados Dirichlet α = 0,3**; (b) **ataque de sinal invertido com 20% de maliciosos, dados IID**; (c) **backdoor com 10% de maliciosos (γ = 1), dados IID**, medindo a acurácia e o ASR.
+3. Monte uma tabela com os resultados.
+4. Defina o critério: aprovado se a acurácia em (a) e em (b) for ≥ 0,90 e o ASR em (c) for ≤ 0,10. Entre os aprovados, indique o de maior média das acurácias (a, b).
+5. Escreva o parecer de cinco linhas, com duas limitações.
+
+**Entregáveis.** Código, tabela e parecer.
+@@SOL
+```python
+import numpy as np
+from robustez import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+K = 20
+agregadores = {
+    "média":            agg_media,
+    "mediana":          agg_mediana,
+    "média aparada":    lambda D: agg_media_aparada(D, 0.25),
+    "Multi-Krum":       lambda D: agg_krum(D, f=6, multi=8),
+    "corte de norma":   lambda D: agg_corte_norma(D, 0.5),
+}
+print(f"{'agregador':<16}{'(a) acc α=0,3':>15}{'(b) acc sinal 20%':>19}{'(c) acc backdoor':>18}{'(c) ASR':>9}  status")
+resultados = {}
+for nome, ag in agregadores.items():
+    a, b, c_acc, c_asr = [], [], [], []
+    for s in range(3):
+        a.append(fedavg_robusto(particao_dirichlet(ytr, K, 0.3, s), Xtr, ytr, Xte, yte, agregador=ag, seed=s)[1][-1])
+        partes = particao_iid(ytr, K, s)
+        b.append(fedavg_robusto(partes, Xtr, ytr, Xte, yte, agregador=ag, maliciosos=range(4), ataque="sinal", seed=s)[1][-1])
+        _, h, r = fedavg_robusto(partes, Xtr, ytr, Xte, yte, agregador=ag, maliciosos=range(2), ataque="backdoor", gama=1, seed=s)
+        c_acc.append(h[-1]); c_asr.append(r[-1])
+    a, b, c_acc, c_asr = map(np.mean, (a, b, c_acc, c_asr))
+    ok = a >= 0.90 and b >= 0.90 and c_asr <= 0.10
+    resultados[nome] = (a, b, ok)
+    print(f"{nome:<16}{a:>15.3f}{b:>19.3f}{c_acc:>18.3f}{c_asr:>9.2f}  {'aprovado' if ok else 'reprovado'}")
+
+aprovados = {n: (v[0] + v[1]) / 2 for n, v in resultados.items() if v[2]}
+if aprovados:
+    melhor = max(aprovados, key=aprovados.get)
+    print(f"\nRecomendado: {melhor} (média das acurácias a e b = {aprovados[melhor]:.3f})")
+else:
+    print("\nNenhum agregador atendeu ao critério.")
+```
+@@RUBRICA
+- Cinco agregadores avaliados nos três cenários, com 3 sementes.
+- Critério de aprovação aplicado corretamente e escolha justificada.
+- Parecer que mencione o custo da robustez em dados heterogêneos e a tensão com a agregação segura.
+- Pelo menos duas limitações (ataques simples, modelo simples, dados simulados, fração de maliciosos conhecida).
+@@NOTE A média e o corte de norma são reprovados (ASR alto e/ou colapso com sinal invertido). Mediana e média aparada passam: mantêm a acurácia perto de 0,95 no cenário não-IID moderado (α = 0,3), resistem ao sinal invertido e anulam o backdoor. O Multi-Krum passa nos ataques, mas perde acurácia em α = 0,3 (cerca de 0,90). Entre os aprovados, a mediana ou a média aparada têm as maiores acurácias; a diferença é pequena. Limitações: ataques simples (não adaptativos), modelo convexo e participação total. Em uso real, avalie ataques adaptativos e considere a tensão com a agregação segura.
+@@ALEM
+- **UCI:** *Adult*, *Statlog (German Credit Data)* e *Spambase* (bom para estudar envenenamento por troca de rótulos).
+- **Kaggle:** *Credit Card Fraud Detection* e *SMS Spam Collection*.

@@ -1,0 +1,269 @@
+MC: No aprendizado supervisionado, os exemplos de treino contêm:
+a) apenas atributos.
+b) atributos e rótulos (a resposta correta).
+c) apenas recompensas.
+d) apenas rótulos.
+R: b | Há X (atributos) e y (rótulos) para cada exemplo.
+
+MC: Em uma tabela de dados, um atributo (feature) corresponde a:
+a) uma linha.
+b) uma coluna.
+c) o modelo inteiro.
+d) a taxa de aprendizado.
+R: b | Atributos são colunas; exemplos são linhas.
+
+MC: Os parâmetros (pesos) de um modelo são:
+a) os números ajustáveis que o modelo aprende.
+b) as regulagens escolhidas pelo programador, como a taxa de aprendizado.
+c) os exemplos de teste.
+d) as métricas finais.
+R: a | Parâmetros são aprendidos; hiperparâmetros são escolhidos por nós.
+
+MC: Qual é a função de uma função de perda?
+a) Dar uma nota ao erro das previsões do modelo.
+b) Embaralhar os dados.
+c) Criptografar os parâmetros.
+d) Dividir os dados em treino e teste.
+R: a | A perda quantifica o quanto a previsão está errada.
+
+MC: Na entropia cruzada, se o modelo dá probabilidade 0,9 à classe correta, a perda é:
+a) grande (cerca de 2,3).
+b) pequena (cerca de 0,11).
+c) exatamente zero.
+d) negativa.
+R: b | −log(0,9) ≈ 0,105: confiança no acerto gera perda pequena.
+
+MC: Se o modelo dá probabilidade 0,1 à classe correta, a perda de entropia cruzada é:
+a) pequena (cerca de 0,1).
+b) zero.
+c) grande (cerca de 2,3).
+d) igual a 1.
+R: c | −log(0,1) ≈ 2,30: pouca confiança no acerto gera perda grande.
+
+MC: O risco empírico F(w) é:
+a) a perda do pior exemplo.
+b) a média das perdas sobre os exemplos de treino.
+c) a soma dos parâmetros.
+d) o número de épocas.
+R: b | F(w) = (1/n) Σ perda(w; x_i, y_i).
+
+MC: O gradiente de F(w) aponta para:
+a) a direção em que o erro mais diminui.
+b) a direção em que o erro mais aumenta.
+c) um ponto aleatório.
+d) o valor ótimo dos parâmetros.
+R: b | O gradiente indica a subida mais íngreme; andamos no sentido contrário.
+
+MC: Na regra w ← w − η · ∇F(w), o símbolo η representa:
+a) o número de clientes.
+b) a taxa de aprendizado (tamanho do passo).
+c) o ruído.
+d) o rótulo.
+R: b | η controla o tamanho do passo na direção oposta ao gradiente.
+
+MC: O que costuma acontecer quando a taxa de aprendizado é grande demais?
+a) O treino converge mais devagar, mas sempre chega.
+b) O treino pode oscilar ou divergir, com a perda subindo.
+c) O modelo se torna mais privado.
+d) Nada muda.
+R: b | Passos muito grandes ultrapassam o vale e podem se afastar dele.
+
+MC: O que costuma acontecer quando a taxa de aprendizado é pequena demais?
+a) O treino é muito lento.
+b) O treino diverge.
+c) O modelo esquece os dados.
+d) A perda vira negativa.
+R: a | Passos minúsculos exigem muitos passos para chegar ao vale.
+
+MC: O SGD (gradiente descendente estocástico) calcula o gradiente usando:
+a) sempre todos os exemplos.
+b) um mini-lote sorteado de exemplos.
+c) apenas os dados de teste.
+d) os parâmetros do servidor.
+R: b | O gradiente é estimado em mini-lotes, o que é barato e, na média, correto.
+
+MC: Se há 1.000 exemplos de treino e o mini-lote tem 50, quantos passos tem uma época?
+a) 5.
+b) 20.
+c) 50.
+d) 1.000.
+R: b | 1.000 / 50 = 20 passos por época.
+
+MC: Uma época é:
+a) uma atualização de parâmetros.
+b) uma passada completa pelos exemplos de treino.
+c) uma rodada de comunicação.
+d) um mini-lote.
+R: b | Época é uma passada completa; passo é uma atualização.
+
+MC: O que é sobreajuste (overfitting)?
+a) O modelo vai bem no treino e mal em dados novos.
+b) O modelo vai mal em todos os dados.
+c) O modelo é rápido demais.
+d) Os dados têm poucos atributos.
+R: a | O modelo decora o treino e não generaliza.
+
+MC: Para que serve o conjunto de validação?
+a) Dar a nota final, uma única vez.
+b) Escolher hiperparâmetros e acompanhar a generalização.
+c) Ajustar os parâmetros do modelo.
+d) Substituir o conjunto de treino.
+R: b | A validação orienta escolhas sem usar o teste.
+
+MC: Por que não se deve escolher hiperparâmetros com base no conjunto de teste?
+a) Porque o teste é muito grande.
+b) Porque vazaria informação do teste, deixando o resultado otimista.
+c) Porque o teste é criptografado.
+d) Porque isso deixa o modelo mais lento.
+R: b | O teste deve simular dados novos; usá-lo para escolhas o contamina.
+
+MC: A regularização L2 consiste em:
+a) apagar atributos aleatoriamente.
+b) somar à perda uma penalização proporcional ao quadrado dos pesos.
+c) aumentar a taxa de aprendizado.
+d) usar mais clientes.
+R: b | O termo λ‖w‖² desencoraja pesos muito grandes.
+
+MC: Um banco tem 99% de transações legítimas. Um modelo que sempre responde "legítima" tem:
+a) 99% de acurácia e nunca detecta fraudes.
+b) 50% de acurácia.
+c) 100% de revocação para fraudes.
+d) F1 igual a 1.
+R: a | Alta acurácia, mas revocação zero para a classe de interesse.
+
+MC: A revocação (recall) mede:
+a) dos que o modelo chamou de positivos, quantos eram de fato positivos.
+b) dos positivos existentes, quantos o modelo encontrou.
+c) o número de épocas.
+d) a velocidade do modelo.
+R: b | Revocação = VP / (VP + FN).
+
+MC: A precisão mede:
+a) dos que o modelo chamou de positivos, quantos eram de fato positivos.
+b) dos positivos existentes, quantos foram achados.
+c) a taxa de aprendizado ideal.
+d) o tamanho do lote.
+R: a | Precisão = VP / (VP + FP).
+
+MC: O F1 é:
+a) a média aritmética entre acurácia e perda.
+b) a média harmônica entre precisão e revocação.
+c) o menor valor de perda.
+d) o número de falsos positivos.
+R: b | F1 só é alto se precisão e revocação forem ambas altas.
+
+MC: Qual a principal vantagem da regressão logística/softmax neste livro?
+a) É simples, rápida e seu problema de otimização é convexo.
+b) É a mais precisa em qualquer tarefa.
+c) Não usa parâmetros.
+d) Dispensa dados.
+R: a | Convexidade facilita a otimização e a análise.
+
+MC: Quantos parâmetros tem uma softmax para dígitos 8x8 (64 atributos) com 10 classes, contando vieses?
+a) 64.
+b) 650.
+c) 2.410.
+d) 10.
+R: b | 64 × 10 + 10 = 650.
+
+MC: Por que "um modelo federado é um vetor de números" é uma ideia importante?
+a) Porque podemos enviar, receber, somar e dividir modelos como se fossem vetores.
+b) Porque modelos não têm parâmetros.
+c) Porque só modelos lineares existem.
+d) Porque vetores são criptografados por padrão.
+R: a | A agregação opera sobre os parâmetros, que são listas de números.
+
+MC: Para que serve `partial_fit` no scikit-learn?
+a) Reiniciar o modelo do zero a cada chamada.
+b) Continuar o treino com mais dados, sem reiniciar.
+c) Dividir os dados em treino e teste.
+d) Remover o ruído.
+R: b | partial_fit retoma o treino de onde parou, útil para treino local em rodadas.
+
+MC: O que faz `warm_start=True` em um modelo do scikit-learn?
+a) Faz a próxima chamada de fit partir dos parâmetros atuais.
+b) Aquece a CPU antes do treino.
+c) Duplica os dados.
+d) Remove o viés.
+R: a | O treino é retomado do estado anterior em vez de reiniciado.
+
+MC: Quais quantidades cada cliente envia para calcular média e desvio globais de forma federada?
+a) Todos os seus dados brutos.
+b) n, a soma dos valores e a soma dos quadrados.
+c) Apenas os rótulos.
+d) Apenas o nome do cliente.
+R: b | Com n, Σx e Σx² o servidor obtém média e variância globais.
+
+MC: Na padronização federada, a variância global é calculada como:
+a) S2/n − μ², com μ = S1/n.
+b) S1 − S2.
+c) n · μ.
+d) A média das variâncias, sempre.
+R: a | σ² = E[x²] − (E[x])², obtida a partir das somas.
+
+MC: Por que a padronização com somas locais é considerada mais adequada ao federado do que a padronização centralizada?
+a) Porque dispensa tratar escalas.
+b) Porque nenhum dado bruto sai dos clientes.
+c) Porque usa menos memória no servidor em qualquer caso.
+d) Porque elimina a necessidade de treino.
+R: b | Só resumos (contagens e somas) são enviados.
+
+DISC: Explique, com a analogia da montanha com neblina, o que é o gradiente descendente.
+R: Você só enxerga o chão sob seus pés; sente para onde o terreno desce mais e dá um passo nessa direção, repetindo. O gradiente aponta a subida mais íngreme; andamos no sentido oposto para reduzir o erro, com passo de tamanho η.
+
+DISC: Defina função de perda e risco empírico e explique a relação entre eles.
+R: A perda dá uma nota ao erro de uma previsão em um exemplo. O risco empírico é a média dessas perdas sobre os exemplos de treino. Treinar é minimizar o risco empírico.
+
+DISC: Calcule a perda de entropia cruzada (−log) para probabilidades 0,5 e 0,99 atribuídas à classe correta e interprete.
+R: Com 0,5: −log(0,5) ≈ 0,69. Com 0,99: −log(0,99) ≈ 0,01. Quanto mais confiante e correto o modelo, menor a perda; indecisão gera perda intermediária.
+
+DISC: Qual o papel da taxa de aprendizado? Descreva o que ocorre se for pequena demais e grande demais.
+R: Define o tamanho do passo. Pequena demais: convergência lentíssima. Grande demais: o passo ultrapassa o vale, a perda oscila ou diverge.
+
+DISC: Diferencie SGD de gradiente descendente com todos os dados, citando a vantagem do primeiro.
+R: O gradiente completo usa todos os exemplos a cada passo: caminho suave, mas caro. O SGD usa mini-lotes sorteados: gradiente ruidoso, porém barato, e na média correto. Vantagem: muito mais passos por unidade de tempo.
+
+DISC: Diferencie época e passo. Quantos passos tem uma época com 2.400 exemplos e lote de 32?
+R: Época é uma passada completa pelos dados; passo é uma atualização com um mini-lote. 2.400/32 = 75 passos por época.
+
+DISC: Explique o que é sobreajuste e como detectá-lo com os conjuntos de treino e validação.
+R: É quando o modelo decora o treino e generaliza mal. Detecta-se quando o erro de treino é muito menor que o de validação, e a validação para de melhorar ou piora.
+
+DISC: Por que se separam treino, validação e teste? Qual o uso de cada um?
+R: Treino ajusta os parâmetros; validação escolhe hiperparâmetros; teste dá a nota final, uma única vez. A separação evita resultados otimistas por vazamento.
+
+DISC: Explique a regularização L2 e o papel do hiperparâmetro λ.
+R: Soma-se à perda um termo λ‖w‖² que penaliza pesos grandes, produzindo modelos mais simples e menos sobreajustados. λ controla a força: λ grande restringe demais, λ pequeno quase não regulariza.
+
+DISC: Por que a acurácia pode enganar? Dê um exemplo e diga qual métrica usar.
+R: Em classes desbalanceadas, prever sempre a classe majoritária gera acurácia alta sem utilidade (ex.: 99% de transações legítimas). Use revocação, precisão e F1 da classe de interesse.
+
+DISC: Explique precisão e revocação com o exemplo de detecção de fraudes.
+R: Precisão: das transações marcadas como fraude, quantas eram fraude. Revocação: das fraudes existentes, quantas foram detectadas. O F1 combina ambas.
+
+DISC: Monte a matriz de confusão para: 8 fraudes detectadas, 2 fraudes perdidas, 4 alarmes falsos e 86 legítimas corretas. Calcule precisão e revocação.
+R: VP = 8, FN = 2, FP = 4, VN = 86. Precisão = 8/12 ≈ 0,67. Revocação = 8/10 = 0,80. F1 = 2·0,67·0,80/(0,67+0,80) ≈ 0,73.
+
+DISC: Por que se diz que "um modelo federado é um vetor de números"? Qual a consequência prática?
+R: Porque os parâmetros formam listas numéricas; o servidor pode enviá-las, os clientes devolver versões atualizadas e o servidor combinar por média ou soma, sem tocar nos dados.
+
+DISC: Compare softmax e rede neural pequena quanto a número de parâmetros e dificuldade de otimização.
+R: A softmax para dígitos tem 650 parâmetros e otimização convexa. Uma MLP com 32 neurônios tem 2.410, é mais flexível, mas não convexa, o que torna a otimização mais delicada.
+
+DISC: Por que o treino federado precisa de modelos que possam ser retomados? Cite uma ferramenta do scikit-learn.
+R: Em cada rodada o cliente recebe os parâmetros globais e continua o treino a partir deles. O scikit-learn oferece partial_fit e warm_start para retomar o treino.
+
+DISC: Explique como calcular a média global de um atributo sem juntar os dados.
+R: Cada cliente envia n_k e a soma local S1_k. O servidor calcula μ = ΣS1_k / Σn_k. Nenhum valor individual é enviado.
+
+DISC: Explique como obter o desvio padrão global de forma federada.
+R: Cada cliente envia também a soma dos quadrados S2_k. O servidor calcula σ² = ΣS2_k/n − μ² e σ = √σ². Resultado idêntico ao de olhar todos os dados.
+
+DISC: Mesmo em estatísticas simples como somas, quais riscos de privacidade podem existir?
+R: Em grupos muito pequenos, médias e somas podem revelar valores individuais; um servidor curioso pode inferir informações. Por isso, mais adiante, usam-se agregação segura e privacidade diferencial.
+
+DISC: Descreva uma situação cotidiana de "tentar, medir o erro e ajustar" e relacione-a com o treino de um modelo.
+R: Cobrar pênaltis: chuta, vê onde a bola foi, corrige a mira. No treino, o modelo prevê, mede a perda e ajusta os parâmetros na direção que reduz o erro.
+
+DISC: Resuma em cinco linhas as ferramentas deste capítulo que serão reutilizadas no aprendizado federado.
+R: Resposta pessoal coerente com o resumo: perda e risco empírico; gradiente descendente e SGD; treino/validação/teste e F1; modelo como vetor de números; partial_fit e estatísticas por somas locais.

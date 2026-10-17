@@ -1,0 +1,151 @@
+@@EX 1 | Medindo a heterogeneidade de rótulos | básico
+Para os dígitos (`carregar_digits`), crie partições com `particao_dirichlet` (10 clientes, `seed=0`) para α ∈ {100; 1; 0,1}. Para cada α, calcule a distância de variação total média entre a distribuição de classes de cada cliente e a global (ignore clientes sem dados).
+
+*Pergunta:* como TV muda com α? Qual o valor aproximado para α = 100?
+@@SOL
+```python
+import numpy as np
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+global_p = np.bincount(ytr, minlength=10) / len(ytr)
+
+def tv_medio(partes):
+    tvs = []
+    for p in partes:
+        if len(p) == 0:
+            continue
+        pk = np.bincount(ytr[p], minlength=10) / len(p)
+        tvs.append(0.5 * np.abs(pk - global_p).sum())
+    return np.mean(tvs)
+
+for alfa in (100, 1.0, 0.1):
+    partes = particao_dirichlet(ytr, 10, alfa, seed=0)
+    print(f"α = {alfa:>5}: TV médio = {tv_medio(partes):.3f}")
+print(f"shards (1 classe): TV médio = {tv_medio(particao_shards(ytr, 10, 1, seed=0)):.3f}")
+print(f"IID              : TV médio = {tv_medio(particao_iid(ytr, 10, seed=0)):.3f}")
+```
+@@NOTE A distância cresce à medida que α diminui: cerca de 0,04 com α = 100, 0,31 com α = 1 e 0,67 com α = 0,1. Mesmo no IID o valor não é zero (cerca de 0,09), por causa da amostragem finita: com ~135 exemplos por cliente, as proporções flutuam ao acaso. Para shards de uma classe, o valor chega a cerca de 0,89, pois cada cliente tem só uma das 10 classes.
+
+@@EX 2 | Épocas locais e heterogeneidade | básico
+Particione os dígitos em 10 clientes com `particao_shards(ytr, 10, por_cliente=2)`. Treine com FedAvg (`frac=0.3`, `eta=0.1`, `lote=32`, 30 rodadas) para `epocas` ∈ {1, 5, 20}. Imprima a acurácia nas rodadas 5 e 30. Repita para dados IID e compare.
+
+*Pergunta:* mais épocas locais ajudam ou atrapalham no não-IID?
+@@SOL
+```python
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+cenarios = {"IID": particao_iid(ytr, 10, seed=0),
+            "shards (2 classes)": particao_shards(ytr, 10, por_cliente=2, seed=0)}
+print(f"{'cenário':<20}{'E':>4}{'rodada 5':>10}{'rodada 30':>11}")
+for nome, partes in cenarios.items():
+    for E in (1, 5, 20):
+        _, h = fedavg(partes, Xtr, ytr, Xte, yte, rodadas=30, epocas=E, eta=0.1, lote=32, frac=0.3, seed=0)
+        print(f"{nome:<20}{E:>4}{h[4]:>10.3f}{h[-1]:>11.3f}")
+```
+@@NOTE A heterogeneidade atrasa o início: na rodada 5, o IID está em 0,92 a 0,95 e os shards de 2 classes em 0,69 a 0,76. Ao fim de 30 rodadas, porém, os dois cenários ficam equivalentes (cerca de 0,95 a 0,97). Mais épocas locais ajudam bastante no início; no final, E = 20 não superou E = 5. Neste problema simples, a heterogeneidade moderada é bem tolerada. A deriva domina com heterogeneidade extrema e poucos clientes por rodada, como na Figura 4.4. Experimente `por_cliente=1` e `frac=0.1`.
+
+@@EX 3 | Heterogeneidade de quantidade: ponderar ou não? | intermediário
+Crie 10 clientes com **tamanhos muito desiguais**, mas rótulos IID: sorteie tamanhos proporcionais a `rng.lognormal(0, 1)`. Implemente uma variante do FedAvg com **média simples** (sem pesos por n_k) usando `treino_local` da `fedlib`. Compare a acurácia final da média ponderada (`fedavg`) com a da média simples, em 3 sementes.
+
+*Pergunta:* por que a média simples pode ser pior quando os tamanhos variam?
+@@SOL
+```python
+import numpy as np
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+
+def partes_desiguais(y, k, seed):
+    rng = np.random.default_rng(seed)
+    tam = rng.lognormal(0, 1, k)
+    cortes = (np.cumsum(tam) / tam.sum() * len(y)).astype(int)[:-1]
+    return [np.array(p) for p in np.split(rng.permutation(len(y)), cortes)]
+
+def fedavg_simples(partes, X, y, Xte, yte, rodadas=30, epocas=5, eta=0.1, lote=32, seed=0):
+    W = np.zeros((X.shape[1], 10))
+    for r in range(rodadas):
+        locais = [treino_local(W, X[p], y[p], epocas, eta, lote, 0.0, seed * 1000 + r * 50 + i)
+                  for i, p in enumerate(partes) if len(p) > 0]
+        W = np.mean(locais, axis=0)               # média simples
+    return acuracia(W, Xte, yte)
+
+pond, simp = [], []
+for s in range(3):
+    partes = partes_desiguais(ytr, 10, s)
+    if s == 0:
+        print("tamanhos (semente 0):", sorted(len(p) for p in partes))
+    pond.append(fedavg(partes, Xtr, ytr, Xte, yte, rodadas=30, epocas=5, eta=0.1, seed=s)[1][-1])
+    simp.append(fedavg_simples(partes, Xtr, ytr, Xte, yte, seed=s))
+print(f"ponderada: {np.mean(pond):.3f} ± {np.std(pond):.3f}")
+print(f"simples  : {np.mean(simp):.3f} ± {np.std(simp):.3f}")
+```
+@@NOTE Na média simples, um cliente minúsculo tem o mesmo peso que um gigante, e seu modelo, treinado com pouquíssimos dados, é ruidoso. Isso tende a piorar o modelo global. A ponderação por n_k evita essa distorção. A diferença depende dos tamanhos sorteados.
+
+@@EX 4 | Quanto vale a "coleira" do FedProx? | intermediário
+Com 20 clientes e `particao_dirichlet(ytr, 20, alfa=0.1)`, 40 rodadas, `epocas=10`, `eta=0.1`, `frac=0.25`, varie `mu` ∈ {0; 0,01; 0,1; 1; 10}. Para cada valor, repita com 3 sementes e relate a acurácia média na rodada 10 e na rodada 40.
+
+*Pergunta:* algum valor de μ melhorou o FedAvg? O que ocorre com μ = 10?
+@@SOL
+```python
+import numpy as np
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+print(f"{'mu':>6}{'rodada 10':>11}{'rodada 40':>11}")
+for mu in (0, 0.01, 0.1, 1, 10):
+    h10, h40 = [], []
+    for s in range(3):
+        partes = particao_dirichlet(ytr, 20, 0.1, seed=s)
+        _, h = fedavg(partes, Xtr, ytr, Xte, yte, rodadas=40, epocas=10, eta=0.1, frac=0.25, mu=mu, seed=s)
+        h10.append(h[9]); h40.append(h[-1])
+    print(f"{mu:>6}{np.mean(h10):>11.3f}{np.mean(h40):>11.3f}")
+```
+@@NOTE Valores pequenos de μ (até 0,1) ficam praticamente iguais ao FedAvg. Com μ = 1 e, sobretudo, com μ = 10, o progresso é freado: o cliente fica preso ao modelo global e quase não aprende localmente, e a acurácia cai. Aqui não houve ganho com a coleira: o resultado depende do problema.
+
+@@PROJ Escolhendo o algoritmo: mapa de heterogeneidade | Cap4
+**Contexto.** Uma empresa de telemedicina (fictícia) quer escolher um algoritmo federado, mas não sabe o quanto os dados das clínicas diferem. Você fará um **estudo de sensibilidade**: como o desempenho de FedAvg, FedProx e SCAFFOLD muda com a heterogeneidade?
+
+**Tarefas.**
+1. Para α ∈ {1; 0,3; 0,1}, crie partições Dirichlet com 20 clientes. Calcule o TV médio de cada uma.
+2. Para cada α, rode FedAvg, FedProx (μ = 0,1) e SCAFFOLD, com `frac=0.25`, `epocas=10`, `eta=0.1`, 40 rodadas e 3 sementes.
+3. Relate, em uma tabela, a acurácia média na rodada 10 e na rodada 40 e o desvio entre as sementes.
+4. Escreva uma recomendação: em que nível de heterogeneidade vale pagar o custo extra de comunicação do SCAFFOLD?
+
+**Entregáveis.** Código, tabela e recomendação com ao menos duas ressalvas.
+@@SOL
+```python
+import numpy as np
+from fedlib import *
+from scaffold import scaffold
+
+Xtr, Xte, ytr, yte = carregar_digits()
+global_p = np.bincount(ytr, minlength=10) / len(ytr)
+def tv_medio(partes):
+    return np.mean([0.5 * np.abs(np.bincount(ytr[p], minlength=10) / len(p) - global_p).sum() for p in partes if len(p)])
+
+cfg = dict(rodadas=40, epocas=10, eta=0.1, frac=0.25)
+print(f"{'α':>5}{'TV':>6} | {'método':<10}{'rod. 10':>9}{'rod. 40':>9}{'dp':>7}")
+for alfa in (1.0, 0.3, 0.1):
+    res = {"FedAvg": [], "FedProx": [], "SCAFFOLD": []}
+    tvs = []
+    for s in range(3):
+        partes = particao_dirichlet(ytr, 20, alfa, seed=s)
+        tvs.append(tv_medio(partes))
+        res["FedAvg"].append(fedavg(partes, Xtr, ytr, Xte, yte, seed=s, **cfg)[1])
+        res["FedProx"].append(fedavg(partes, Xtr, ytr, Xte, yte, mu=0.1, seed=s, **cfg)[1])
+        res["SCAFFOLD"].append(scaffold(partes, Xtr, ytr, Xte, yte, seed=s, **cfg)[1])
+    for nome, hs in res.items():
+        h = np.array(hs)
+        print(f"{alfa:>5}{np.mean(tvs):>6.2f} | {nome:<10}{h[:, 9].mean():>9.3f}{h[:, -1].mean():>9.3f}{h[:, -1].std():>7.3f}")
+```
+@@RUBRICA
+- TV médio calculado e relacionado ao α.
+- Três métodos comparados nas mesmas partições, com 3 sementes.
+- Tabela com acurácia nas rodadas 10 e 40 e desvio.
+- Recomendação que considere o custo extra do SCAFFOLD (2× comunicação) e cite limites (modelo simples, 3 sementes, dados simulados).
+@@NOTE Em heterogeneidade moderada (α = 1), os três métodos são equivalentes; o custo extra do SCAFFOLD não se justifica. Com α = 0,1, o SCAFFOLD fica ligeiramente à frente (0,963 contra 0,959 no fim), mas a diferença é do tamanho do desvio entre sementes, e o FedProx fica no mesmo nível do FedAvg. Em todos os casos as diferenças finais são pequenas. Para este cenário, **não** vale pagar o dobro de comunicação do SCAFFOLD; o ganho aparece só em heterogeneidade extrema (veja a Figura 4.5). Ressalvas: modelo convexo simples, poucas sementes e partições simuladas.
+@@ALEM
+- **UCI:** *Adult* (particione por país ou ocupação para criar heterogeneidade natural), *Covertype* e *Bank Marketing*.
+- **Kaggle:** *Telco Customer Churn* (particione por tipo de contrato) e *Credit Card Fraud Detection*.

@@ -1,0 +1,269 @@
+MC: O que significa dizer que os dados dos clientes são IID?
+a) Todos vêm da mesma distribuição, como se sorteados de uma única urna.
+b) Cada cliente tem classes diferentes.
+c) Os dados estão criptografados.
+d) Os dados têm o mesmo tamanho em todos os clientes, mas distribuições distintas.
+R: a | IID: independentes e identicamente distribuídos entre clientes.
+
+MC: Dados não-IID entre clientes significam que:
+a) cada cliente tem sua própria distribuição de dados.
+b) os dados estão incompletos.
+c) o modelo é não linear.
+d) os dados são idênticos em todos os clientes.
+R: a | P_k(x, y) difere entre clientes.
+
+MC: No exemplo das pizzarias, o que simboliza o problema do não-IID?
+a) Cada unidade ajusta a receita ao seu público, e a média pode não agradar a ninguém.
+b) Todas vendem a mesma pizza.
+c) A matriz não tem dados.
+d) As pizzarias não têm clientes.
+R: a | Receitas locais divergentes, quando promediadas, podem não servir a nenhum local.
+
+MC: A heterogeneidade de rótulos (label skew) ocorre quando:
+a) a frequência de cada classe muda entre clientes, P(y).
+b) as fotos têm câmeras diferentes.
+c) o tamanho do conjunto muda.
+d) o mesmo dado recebe rótulos diferentes.
+R: a | O que muda é P(y), a distribuição das classes.
+
+MC: Fotos de um mesmo objeto tiradas por câmeras diferentes ilustram:
+a) heterogeneidade de atributos.
+b) heterogeneidade de rótulos.
+c) heterogeneidade de conceito.
+d) dados IID.
+R: a | P(x) muda: a aparência dos dados difere entre clientes.
+
+MC: A heterogeneidade de quantidade (quantity skew) significa que:
+a) n_k, o tamanho do conjunto local, varia entre clientes.
+b) os rótulos variam.
+c) os atributos variam.
+d) o modelo muda.
+R: a | Clientes têm volumes de dados muito diferentes.
+
+MC: A mudança de conceito (concept shift) ocorre quando:
+a) o mesmo atributo recebe rótulos diferentes em clientes diferentes, P(y|x).
+b) há mais exemplos em um cliente.
+c) a taxa de aprendizado muda.
+d) as classes são iguais em todos.
+R: a | Para um cliente "bom" e para outro "regular" o mesmo dado.
+
+MC: Na fórmula P(x, y) = P(y)·P(x|y), o termo P(y) descreve:
+a) quão comum é cada rótulo.
+b) como são os atributos de cada rótulo.
+c) o tamanho do conjunto.
+d) o ruído.
+R: a | P(y) é a distribuição marginal dos rótulos.
+
+MC: Na simulação por shards, se cada cliente recebe um único shard (pedaço ordenado por classe), ele vê:
+a) uma única classe.
+b) todas as classes igualmente.
+c) nenhuma classe.
+d) apenas dados de teste.
+R: a | Como os dados foram ordenados por classe, cada pedaço contém praticamente uma classe.
+
+MC: Na distribuição de Dirichlet usada para particionar dados, um α muito grande (por exemplo, 100) produz:
+a) uma repartição quase uniforme, ou seja, dados quase IID.
+b) cada cliente com uma única classe.
+c) clientes sem dados.
+d) classes aleatórias com ruído.
+R: a | α grande gera proporções próximas de iguais.
+
+MC: Com α = 0,1, o que se espera dos clientes?
+a) Cada classe se concentra em poucos clientes: dados muito heterogêneos.
+b) Todos têm todas as classes igualmente.
+c) Todos têm o mesmo tamanho.
+d) Não há diferença em relação ao α = 100.
+R: a | α pequeno gera repartições concentradas.
+
+MC: Na tabela do capítulo (α = 100), a classe dominante média de cada cliente foi cerca de:
+a) 0,12.
+b) 0,56.
+c) 0,90.
+d) 1,00.
+R: a | Com α = 100, os clientes têm todas as classes em proporções parecidas (≈ 1/10).
+
+MC: Na tabela do capítulo (α = 0,1), a classe dominante média foi cerca de:
+a) 0,12.
+b) 0,24.
+c) 0,56.
+d) 1,00.
+R: c | Com α = 0,1, mais da metade dos exemplos de um cliente é, em média, da classe mais comum.
+
+MC: A deriva dos clientes (client drift) é:
+a) o afastamento do modelo local em direção ao seu mínimo local durante muitos passos de treino.
+b) a perda de conexão do cliente.
+c) a mudança de servidor.
+d) a troca de rótulos.
+R: a | Cada cliente caminha para seu próprio mínimo, afastando-se do global.
+
+MC: A deriva dos clientes tende a ser maior quando:
+a) há muitos passos locais e dados diferentes entre clientes.
+b) os dados são IID e há um passo local.
+c) há apenas um cliente.
+d) o modelo tem zero parâmetros.
+R: a | Mais passos e mais heterogeneidade ampliam a divergência.
+
+MC: A inconsistência do objetivo (Wang et al., 2020) significa que:
+a) o FedAvg pode convergir para um ponto que não minimiza o objetivo global desejado.
+b) os clientes não têm objetivo.
+c) o servidor não tem modelo.
+d) a perda é negativa.
+R: a | Com passos locais diferentes e dados heterogêneos, o ponto de convergência muda.
+
+MC: No exemplo de brinquedo da Figura 4.3, com muitos passos locais, o FedAvg estaciona:
+a) na média dos mínimos locais.
+b) exatamente no mínimo global.
+c) no ponto inicial.
+d) no infinito.
+R: a | Cada cliente vai ao seu mínimo; a média desses mínimos não é o mínimo global.
+
+MC: Quais efeitos o não-IID costuma causar?
+a) Convergência mais lenta e instável, e viés a favor de clientes grandes.
+b) Convergência mais rápida e estável.
+c) Nenhum efeito.
+d) Redução do número de parâmetros.
+R: a | Curvas mais lentas e oscilantes, e clientes grandes dominando a média.
+
+MC: Com modelos convexos e simples, o efeito final do não-IID costuma ser:
+a) moderado: o modelo demora mais e oscila, mas chega perto.
+b) catastrófico em todos os casos.
+c) nulo em todos os casos.
+d) sempre favorável.
+R: a | Em regressão logística o impacto é mais visível na velocidade e na estabilidade.
+
+MC: A distância de variação total TV_k entre a distribuição de classes do cliente e a global varia entre:
+a) 0 e 1.
+b) -1 e 1.
+c) 0 e infinito.
+d) 1 e 10.
+R: a | 0 indica distribuições idênticas; 1, totalmente diferentes.
+
+MC: O FedProx adiciona ao erro local:
+a) um termo que penaliza o afastamento do modelo global (μ/2)‖w − w_t‖².
+b) ruído gaussiano.
+c) uma segunda rede neural.
+d) um termo que aumenta o passo.
+R: a | A "coleira" mantém o modelo local perto do global.
+
+MC: No FedProx, quando μ = 0:
+a) volta-se ao FedAvg.
+b) o cliente fica parado.
+c) o modelo diverge.
+d) o servidor desaparece.
+R: a | Sem penalização, o treino local é o de sempre.
+
+MC: No FedProx, μ muito grande faz com que:
+a) o cliente quase não saia do modelo global, progredindo pouco.
+b) o cliente ande mais rápido.
+c) o servidor ignore o cliente.
+d) o modelo fique melhor sempre.
+R: a | A coleira muito curta limita o aprendizado local.
+
+MC: O SCAFFOLD corrige a deriva usando:
+a) variáveis de controle no servidor (c) e em cada cliente (c_k).
+b) apenas ruído.
+c) criptografia homomórfica.
+d) mais clientes.
+R: a | Corrige cada passo local por g(w) − c_k + c.
+
+MC: Qual o custo extra do SCAFFOLD?
+a) Cerca de o dobro de comunicação e estado armazenado nos clientes.
+b) Nenhum.
+c) Ele reduz a comunicação pela metade.
+d) Exige dados rotulados extras.
+R: a | Variáveis de controle também trafegam e precisam ser guardadas.
+
+MC: O FedNova se destaca por:
+a) normalizar cada atualização local pelo número de passos antes de agregar.
+b) criptografar atualizações.
+c) personalizar o modelo.
+d) eliminar o servidor.
+R: a | Corrige a inconsistência do objetivo causada por números diferentes de passos.
+
+MC: Na comparação com 20 clientes de uma classe, 10% de participação, E = 20 e η = 0,3, o melhor algoritmo foi:
+a) SCAFFOLD (mais rápido e com menos oscilação).
+b) FedProx (μ = 0,1), com folga.
+c) Nenhum aprendeu.
+d) O FedSGD.
+R: a | O SCAFFOLD chegou a cerca de 0,96, contra 0,93 do FedAvg.
+
+MC: Qual foi o efeito do FedProx (μ = 0,1) naquele experimento?
+a) Praticamente nenhum em relação ao FedAvg.
+b) Melhorou muito.
+c) Piorou muito.
+d) Impediu o treino.
+R: a | As curvas ficaram quase sobrepostas; modelo simples e convexo se beneficia pouco da coleira.
+
+MC: Por que comparar algoritmos com várias sementes?
+a) Para saber se uma diferença é maior do que a variação causada pelo acaso.
+b) Para aumentar o número de clientes.
+c) Para reduzir o número de rodadas.
+d) Para criptografar os resultados.
+R: a | Uma única semente pode enganar; médias e desvios dão evidência mais sólida.
+
+MC: Qual dos otimizadores abaixo atua no servidor para lidar com heterogeneidade, tratando a atualização média como gradiente?
+a) FedAdam.
+b) K-means.
+c) PCA.
+d) Validação cruzada.
+R: a | FedAdam, FedYogi e FedAdagrad são otimizadores adaptativos no servidor (Reddi et al., 2021).
+
+DISC: Explique o que são dados IID e não-IID usando uma analogia do cotidiano.
+R: IID: todos os exemplos vêm da mesma fonte, como bolinhas sorteadas de uma única urna. Não-IID: cada cliente tem a sua urna, como pizzarias com públicos diferentes. Uma receita média pode não servir a ninguém.
+
+DISC: Descreva os quatro tipos de heterogeneidade apresentados e dê um exemplo de cada.
+R: Rótulos: hospital oncológico com mais casos de câncer. Atributos: câmeras ou caligrafias diferentes. Quantidade: usuários muito ativos versus pouco ativos. Conceito: o mesmo dado recebe rótulos diferentes por cliente.
+
+DISC: Explique como a distribuição de Dirichlet simula dados não-IID e o papel do parâmetro α.
+R: Para cada classe, sorteia-se uma proporção de repartição entre os clientes. α grande dá repartições quase uniformes (quase IID); α pequeno concentra cada classe em poucos clientes (muito não-IID).
+
+DISC: Explique o procedimento de shards para criar dados não-IID.
+R: Ordenam-se os exemplos por classe, cortam-se em pedaços (shards) e entregam-se poucos pedaços a cada cliente. Com um pedaço por cliente, cada um vê uma única classe.
+
+DISC: O que é a deriva dos clientes e por que ela prejudica o FedAvg?
+R: É o afastamento dos modelos locais em direção a seus mínimos locais. Ao tirar a média, o modelo global pode ficar longe do mínimo global, convergindo mais lentamente ou para um ponto pior.
+
+DISC: Explique a inconsistência do objetivo no FedAvg usando o exemplo de dois clientes com mínimos diferentes.
+R: Se cada cliente treinar até convergir, a média dos modelos é a média dos mínimos locais, que não é o mínimo da função global. O algoritmo, portanto, estaciona em um ponto que não minimiza o objetivo desejado.
+
+DISC: Cite três consequências do não-IID para o treino federado.
+R: Convergência mais lenta; maior oscilação da acurácia entre rodadas; viés em favor de clientes grandes; maior dificuldade de ajustar hiperparâmetros.
+
+DISC: Calcule TV_k para um cliente com distribuição de classes (0,7; 0,2; 0,1) quando a global é (0,4; 0,3; 0,3).
+R: TV = ½ (|0,7−0,4| + |0,2−0,3| + |0,1−0,3|) = ½ (0,3 + 0,1 + 0,2) = 0,3.
+
+DISC: Calcule TV_k para um cliente com apenas a classe 1 quando a distribuição global é (0,5; 0,3; 0,2).
+R: p_k = (1, 0, 0). TV = ½ (|1−0,5| + |0−0,3| + |0−0,2|) = ½ (0,5 + 0,3 + 0,2) = 0,5.
+
+DISC: Explique a ideia do FedProx e o papel de μ.
+R: Adiciona ao erro local um termo (μ/2)‖w − w_t‖² que penaliza o afastamento do modelo global, reduzindo a deriva. μ controla a força: μ = 0 equivale ao FedAvg; μ grande quase impede o aprendizado local.
+
+DISC: Explique a ideia do SCAFFOLD, citando as variáveis de controle e o custo adicional.
+R: Mantém c no servidor e c_k em cada cliente, estimando a diferença entre direções locais e global. O passo local usa g(w) − c_k + c, corrigindo a deriva. O custo é o dobro da comunicação (envio dos controles) e estado extra nos clientes.
+
+DISC: Explique o que o FedNova corrige e como.
+R: Corrige a inconsistência do objetivo causada por clientes com números diferentes de passos locais, normalizando cada atualização pelo número de passos antes de agregar.
+
+DISC: Por que o FedProx pode não ajudar em modelos simples e convexos?
+R: Em problemas convexos a deriva é mais branda; a coleira pouco altera a trajetória, e μ grande apenas reduz o progresso. Os ganhos reportados costumam ocorrer em cenários mais heterogêneos em dispositivos e redes neurais.
+
+DISC: Descreva o experimento com 20 clientes de uma classe cada e as conclusões.
+R: Com 10% de participação, E = 20 e η = 0,3, o SCAFFOLD foi mais rápido e estável (≈ 0,96 contra ≈ 0,93). O FedProx (μ = 0,1) pouco mudou o resultado. Nenhum algoritmo é melhor em tudo; é preciso testar.
+
+DISC: Por que clientes grandes podem dominar o modelo global e que consequência isso traz para clientes pequenos?
+R: A agregação pondera por n_k; clientes grandes têm mais peso. Clientes pequenos ou diferentes ficam mal atendidos pelo modelo global, o que pede personalização ou métodos de justiça.
+
+DISC: Como você verificaria, na prática, se seus clientes são heterogêneos antes de escolher o algoritmo?
+R: Comparando distribuições de classes por cliente (por exemplo, com TV), tamanhos n_k e estatísticas dos atributos; treinando modelos locais e avaliando-os nos dados dos outros clientes.
+
+DISC: Explique a diferença entre heterogeneidade de rótulos e de conceito.
+R: Em rótulos, as classes têm frequências diferentes, mas a relação entre x e y é a mesma. Em conceito, a própria relação P(y|x) muda: o mesmo x tem rótulos diferentes para clientes diferentes.
+
+DISC: Por que o número de passos locais (E, B) interage com a heterogeneidade?
+R: Mais passos locais aumentam a distância percorrida em direção ao mínimo local de cada cliente; com dados heterogêneos, isso amplifica a deriva e pode piorar a média.
+
+DISC: Qual a importância de relatar média e desvio em vez de uma única execução em experimentos federados?
+R: Há muitas fontes de aleatoriedade (particionamento, sorteio de clientes, ordem dos lotes). Uma única execução pode superestimar ou subestimar um método; média e desvio mostram a variabilidade.
+
+DISC: Resuma em cinco linhas o capítulo, destacando o que mais surpreendeu você.
+R: Resposta pessoal coerente com o resumo: tipos de não-IID, simulação por shards e Dirichlet, deriva dos clientes, FedProx/SCAFFOLD/FedNova, e a lição de que cada método depende do problema.

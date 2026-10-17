@@ -1,0 +1,270 @@
+MC: Qual é o objetivo central do aprendizado federado?
+a) Treinar um modelo com vários donos de dados sem juntar os dados brutos.
+b) Eliminar a necessidade de dados.
+c) Substituir a privacidade diferencial.
+d) Reduzir sempre o tamanho do modelo.
+R: a | Leva o modelo até os dados em vez de levar os dados até o modelo.
+
+MC: Na simulação do projeto final, o que o ASR mede?
+a) A taxa de sucesso do backdoor: imagens com gatilho classificadas como a classe alvo.
+b) A acurácia global.
+c) O tráfego total.
+d) A taxa de aprendizado.
+R: a | ASR = attack success rate.
+
+MC: Por que a acurácia global sozinha é insuficiente no projeto final?
+a) Porque não revela o backdoor nem a qualidade em cada cliente.
+b) Porque é sempre igual a 1.
+c) Porque não existe.
+d) Porque depende do servidor.
+R: a | É preciso medir por cliente e sob ataque.
+
+MC: Na base do projeto (média sem proteção), o ASR foi de cerca de:
+a) 0,70.
+b) 0,00.
+c) 0,10.
+d) 1,00 em todas as sementes.
+R: a | Com 2 de 20 clientes maliciosos, o backdoor funciona com a média.
+
+MC: O que a mediana fez com o backdoor no projeto?
+a) Reduziu o ASR a praticamente zero, com pequeno custo de acurácia.
+b) Aumentou o ASR.
+c) Não alterou o ASR.
+d) Impediu o treino.
+R: a | Em dados com heterogeneidade moderada, a mediana resistiu ao backdoor.
+
+MC: Por que a quantização a 8 e 4 bits foi vantajosa no projeto?
+a) Reduziu o tráfego em 4 e 8 vezes sem piorar os resultados.
+b) Aumentou o tráfego.
+c) Eliminou o ruído.
+d) Substituiu o agregador.
+R: a | 386 e 195 KB contra 1.523 KB, com métricas equivalentes.
+
+MC: Por que a DP (z = 1) não impediu o backdoor no projeto?
+a) Corte e ruído limitam a influência de cada cliente, mas não distinguem o malicioso do honesto.
+b) Porque a DP aumenta o ASR.
+c) Porque a DP exige mais clientes honestos.
+d) Porque a DP é sempre inútil.
+R: a | A DP protege contra inferência de pertencimento, não contra envenenamento direcionado.
+
+MC: O ajuste fino local, aplicado após o treino federado, no projeto:
+a) elevou a média e o percentil 10 por cliente, sem custo de comunicação.
+b) piorou a média.
+c) triplicou o tráfego.
+d) eliminou o backdoor.
+R: a | A média por cliente subiu de 0,92 para 0,94.
+
+MC: Qual configuração foi recomendada no projeto de referência?
+a) Mediana com 4 bits e ajuste fino local.
+b) A média sem proteção.
+c) DP com z = 1 apenas.
+d) Nenhuma foi aprovada.
+R: a | Foi aprovada e teve o menor tráfego, com melhor média por cliente no desempate.
+
+MC: Qual a fórmula do objetivo global do aprendizado federado?
+a) f(w) = Σ (n_k/n) · F_k(w).
+b) f(w) = Σ F_k(w)².
+c) f(w) = max F_k(w).
+d) f(w) = 0.
+R: a | Média ponderada dos erros locais pelo tamanho dos dados.
+
+MC: Qual a diferença entre FedSGD e FedAvg?
+a) FedSGD dá um passo de gradiente por rodada; FedAvg faz vários passos locais.
+b) FedAvg não usa servidor.
+c) FedSGD não usa gradientes.
+d) Não há diferença.
+R: a | O FedAvg troca comunicação por computação local.
+
+MC: A deriva dos clientes ocorre porque:
+a) com muitos passos locais e dados diferentes, cada cliente se afasta do mínimo global.
+b) o servidor falha.
+c) o modelo é linear.
+d) os dados são IID.
+R: a | Cada cliente caminha para o seu próprio mínimo local.
+
+MC: Qual das opções ajuda a combater a heterogeneidade dos dados?
+a) SCAFFOLD, com variáveis de controle.
+b) Quantizar para 1 bit.
+c) Aumentar o ruído.
+d) Reduzir o número de clientes a um.
+R: a | Corrige a deriva ao custo de mais comunicação.
+
+MC: A memória de erro (error feedback) é essencial para:
+a) esparsificação agressiva, pois guarda o que foi cortado e o envia depois.
+b) aumentar o ASR.
+c) aumentar o lote.
+d) eliminar o servidor.
+R: a | Evita que valores pequenos nunca sejam enviados.
+
+MC: No Ditto, o parâmetro λ controla:
+a) a coleira que prende o modelo pessoal ao global.
+b) a taxa de aprendizado do servidor.
+c) o número de clientes.
+d) a quantização.
+R: a | λ = 0 equivale ao ajuste fino; λ grande iguala o global.
+
+MC: O IFCA é um método de personalização baseado em:
+a) agrupamento de clientes: cada um escolhe o modelo de menor perda.
+b) criptografia homomórfica.
+c) compressão.
+d) split learning.
+R: a | O servidor mantém K modelos e agrupa os clientes iterativamente.
+
+MC: No Capítulo 7, o gradiente de um exemplo na softmax revela a entrada porque:
+a) é o produto externo x ⊗ (p − y), e o gradiente do viés é (p − y).
+b) é sempre zero.
+c) é aleatório.
+d) é criptografado.
+R: a | Dividir uma coluna pelo gradiente do viés devolve x.
+
+MC: A inferência de pertencimento é mais bem-sucedida quando:
+a) há poucos dados, muito treino e sobreajuste.
+b) há muitos dados e regularização.
+c) o modelo não treina.
+d) o lote é enorme.
+R: a | A perda nos membros fica muito menor que nos não membros.
+
+MC: O que exprime o parâmetro ε na privacidade diferencial?
+a) O vazamento: menor ε, mais privacidade.
+b) A taxa de aprendizado.
+c) O número de clientes.
+d) A acurácia.
+R: a | Mede quanto a saída pode mudar pela presença de uma pessoa.
+
+MC: Qual a função do corte (clipping) no DP-FedAvg?
+a) Limitar a sensibilidade de cada cliente.
+b) Aumentar o tráfego.
+c) Comprimir o modelo.
+d) Eliminar o ruído.
+R: a | Nenhum cliente muda a soma por mais que S.
+
+MC: A agregação segura por máscaras garante que:
+a) o servidor veja só a soma das atualizações, e não cada uma.
+b) o modelo final não vaze nada.
+c) não haja atacantes.
+d) o ruído seja removido.
+R: a | As máscaras de pares se cancelam na soma.
+
+MC: Qual agregador é frágil a um único cliente malicioso?
+a) A média simples.
+b) A mediana.
+c) A média aparada.
+d) O Multi-Krum.
+R: a | Ponto de ruptura zero.
+
+MC: Por que os agregadores robustos pioram com dados não-IID?
+a) Clientes honestos diferentes passam a parecer outliers.
+b) Porque são mais lentos.
+c) Porque usam criptografia.
+d) Porque exigem mais memória.
+R: a | Eles supõem honestos parecidos entre si.
+
+MC: Por que a agregação segura e a detecção de clientes maliciosos entram em tensão?
+a) Para detectar atualizações suspeitas, o servidor precisa vê-las, e a agregação segura as esconde.
+b) Porque ambas usam ruído.
+c) Porque ambas são lentas.
+d) Porque não há tensão.
+R: a | Privacidade e robustez colidem.
+
+MC: No aprendizado vertical, o que pode vazar o rótulo?
+a) O sinal do resíduo (p − y) enviado às partes passivas.
+b) A matriz de mistura.
+c) O corte de norma.
+d) A quantização.
+R: a | Se y = 1, o resíduo é negativo; se y = 0, é positivo.
+
+MC: Qual arquitetura divide a rede neural em duas partes, trocando ativações e gradientes na camada de corte?
+a) Split learning.
+b) Gossip.
+c) HFL.
+d) FedAvg.
+R: a | O cliente computa as primeiras camadas e o servidor, as últimas.
+
+MC: Por que o K-means federado reproduz o centralizado?
+a) Porque depende só de somas e contagens por grupo, que se combinam exatamente.
+b) Porque usa ruído.
+c) Porque ignora clientes pequenos.
+d) Porque usa mediana.
+R: a | Soma de estatísticas suficientes = estatística global.
+
+MC: Por que ajustar modelos de fundação de forma federada pede métodos como LoRA?
+a) Enviar bilhões de parâmetros por rodada é inviável; só A e B trafegam.
+b) Porque LoRA aumenta o modelo.
+c) Porque elimina o pré-treino.
+d) Porque LoRA dá garantia de privacidade.
+R: a | O ajuste de baixo posto reduz comunicação e cálculo local.
+
+MC: O aprendizado federado é uma forma de anonimização?
+a) Não: atualizações vazam e modelos memorizam, podendo ser tratados como dados pessoais.
+b) Sim, sempre.
+c) Sim, apenas em cross-silo.
+d) Sim, se usar quantização.
+R: a | É preciso base legal, minimização e defesas técnicas.
+
+MC: Qual das proposições resume bem a lição final do livro?
+a) Todo método tem um preço; decidir bem é medir esse preço e comunicá-lo com honestidade.
+b) Um bom algoritmo resolve tudo.
+c) A acurácia global basta.
+d) Privacidade e utilidade nunca conflitam.
+R: a | Compromissos entre qualidade, custo, privacidade e robustez estão em toda decisão.
+
+DISC: Explique em suas palavras o que é aprendizado federado, usando uma analogia do cotidiano, e cite dois motivos para adotá-lo.
+R: É treinar um modelo com a colaboração de vários donos de dados sem juntar os dados, como amigas que trocam só os ajustes de uma receita. Motivos: privacidade e leis; custo de mover dados; falta de confiança entre organizações.
+
+DISC: Descreva uma rodada do FedAvg e cite quatro hiperparâmetros.
+R: O servidor sorteia clientes e envia o modelo; cada um treina localmente e devolve a atualização; o servidor agrega por média ponderada. Hiperparâmetros: C, E, B e η.
+
+DISC: Explique por que dados não-IID prejudicam o treino e cite duas soluções.
+R: Cada cliente vai ao seu mínimo local (deriva), tornando a média pior e o treino lento e instável. Soluções: SCAFFOLD, FedProx, FedNova, otimizadores no servidor, personalização.
+
+DISC: Compare quantização e esparsificação top-k, indicando o papel da memória de erro.
+R: Quantização reduz bits por valor; top-k envia só os maiores valores e seus índices. A memória de erro guarda o que foi cortado e o soma depois, sendo crucial na esparsificação forte.
+
+DISC: Diferencie modelo global, ajuste fino local, Ditto e IFCA.
+R: Global: um modelo para todos. Ajuste fino: continua o treino local a partir do global. Ditto: modelo pessoal com coleira λ ao global. IFCA: agrupa clientes e treina um modelo por grupo.
+
+DISC: Explique o ataque de inversão de gradientes na softmax e por que lotes maiores o dificultam.
+R: O gradiente de um exemplo é x ⊗ (p − y), e o do viés é (p − y), logo x = coluna / gradiente do viés. Com lotes maiores, o gradiente é uma soma de vários exemplos e a reconstrução fica misturada.
+
+DISC: Explique a inferência de pertencimento e como ela se relaciona com o sobreajuste.
+R: Pergunta se um exemplo estava no treino, explorando a perda menor nos membros. Quanto mais o modelo decora (poucos dados, muito treino), maior a AUC do ataque.
+
+DISC: Explique a privacidade diferencial, o papel de ε e do corte e do ruído no DP-FedAvg.
+R: A saída quase não muda com a presença de um indivíduo; ε menor, mais privacidade. O corte limita a sensibilidade e o ruído gaussiano z·S esconde a contribuição; ambos custam acurácia.
+
+DISC: Por que a DP exige muitos clientes para ter ε baixo sem destruir a acurácia?
+R: O ruído é dividido pelo número de clientes na média; com poucos clientes, o mesmo ruído pesa muito. Com mais clientes, a acurácia sofre menos.
+
+DISC: Explique como a agregação segura funciona e suas limitações.
+R: Pares de clientes compartilham segredos que se somam e subtraem, mascarando cada atualização; na soma, as máscaras se cancelam. Limitações: não protege o resultado, exige tratar desistências e tem custo de comunicação.
+
+DISC: Explique por que a média é frágil e cite dois agregadores robustos, com uma limitação.
+R: Um único valor extremo a arrasta. Mediana e média aparada resistem; limitação: perdem acurácia com dados não-IID e não resistem a mais da metade de maliciosos.
+
+DISC: Descreva o backdoor do experimento e por que a acurácia global não o revela.
+R: O atacante treina com imagens com gatilho rotuladas como a classe alvo e amplifica a atualização. O modelo funciona bem em imagens normais, e só erra com o gatilho; por isso a acurácia global fica intacta.
+
+DISC: Explique a tensão entre privacidade e robustez em aprendizado federado.
+R: Detectar atualizações maliciosas exige vê-las, mas a agregação segura as esconde. Defesas que inspecionam atualizações enfraquecem a privacidade, e vice-versa.
+
+DISC: Diferencie aprendizado federado horizontal, vertical e por transferência, com exemplos.
+R: Horizontal: mesmas colunas, pessoas diferentes (hospitais). Vertical: mesmas pessoas, colunas diferentes (banco e loja). Transferência: pouca sobreposição, transfere-se conhecimento.
+
+DISC: Explique o vazamento do resíduo no aprendizado vertical e uma defesa.
+R: O sinal de p − y revela o rótulo aos participantes passivos. Defesas: criptografia homomórfica, ruído (DP) ou agregação segura.
+
+DISC: Explique por que K-means e PCA têm versões federadas exatas e dê um aviso de privacidade.
+R: Ambos dependem de somas de estatísticas locais (somas, contagens, covariâncias). Aviso: somas por grupo pequeno revelam informação; combine com agregação segura e DP.
+
+DISC: Explique o papel do LoRA em modelos de fundação federados e a importância do posto.
+R: Congela W₀ e treina só A e B, reduzindo o que trafega. O posto precisa casar com a tarefa: no experimento, o posto 1 não bastou para duas duplas trocadas, e o posto 2 sim.
+
+DISC: Descreva três princípios da LGPD relevantes e uma proposta de justiça em aprendizado federado.
+R: Finalidade, minimização, segurança (também transparência e responsabilização). Justiça: aprendizado federado agnóstico ou q-FFL, que dá mais peso a clientes com maior perda.
+
+DISC: Redija um parágrafo de recomendação para a Federa Saúde, justificando a configuração escolhida com os números do projeto.
+R: Recomenda-se mediana com quantização de 4 bits e ajuste fino local: o ASR cai de cerca de 0,70 para zero, o tráfego cai de 1.523 para 195 KB, a acurácia global fica em cerca de 0,94 e a média por cliente sobe a 0,94. Limites: ataque simples, modelo pequeno, dados substitutos e ausência de garantia formal de privacidade.
+
+DISC: Se a Federa Saúde dobrasse o número de clientes maliciosos (de 2 para 4 em 20), quais configurações do projeto você reavaliaria e por quê?
+R: Reavaliaria a mediana e a média aparada, que perdem robustez à medida que a fração de maliciosos aproxima-se de 30 a 50%, e a DP, que não distingue maliciosos. Mediria o ASR em cada uma e consideraria Multi-Krum ou detecção adicional.
+

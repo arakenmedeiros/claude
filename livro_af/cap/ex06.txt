@@ -1,0 +1,270 @@
+MC: Qual é a principal motivação para personalizar modelos em aprendizado federado?
+a) O modelo global pode servir mal a certos clientes cujos dados são diferentes da média.
+b) Eliminar o servidor.
+c) Aumentar o número de rodadas.
+d) Reduzir o número de parâmetros.
+R: a | Um modelo único é bom na média, mas pode ser ruim para clientes específicos.
+
+MC: Na analogia da camisa, o modelo global corresponde a:
+a) a camisa de prateleira, boa para a média, mas que pode vestir mal alguns.
+b) o alfaiate.
+c) o tecido.
+d) a loja fechada.
+R: a | A personalização seria o alfaiate, que ajusta ao corpo de cada um.
+
+MC: Por que a acurácia média pode esconder injustiças?
+a) Porque pode haver clientes com acurácia muito baixa compensados por outros com acurácia alta.
+b) Porque a média não é calculável.
+c) Porque a média só vale para IID.
+d) Porque a média é sempre pior que a mediana.
+R: a | A média não revela o pior cliente nem a cauda inferior.
+
+MC: O que mede o percentil 10 da acurácia entre clientes?
+a) O valor abaixo do qual estão os 10% piores clientes.
+b) A média dos 10 melhores clientes.
+c) A acurácia do décimo cliente.
+d) O número de clientes com 10 exemplos.
+R: a | 90% dos clientes têm acurácia pelo menos igual a esse valor.
+
+MC: Em que cada cliente deve ser testado para uma avaliação de personalização?
+a) Em um teste local, feito com dados daquele cliente.
+b) Em um teste global igual para todos.
+c) Nos dados de outro cliente.
+d) Em dados sintéticos aleatórios.
+R: a | O modelo será usado nos dados locais; o teste deve refleti-los.
+
+MC: Em qual situação um único modelo global não pode servir a todos?
+a) Em mudança de conceito, quando o mesmo x tem rótulos diferentes entre grupos.
+b) Quando todos os clientes têm os mesmos dados.
+c) Quando há um único cliente.
+d) Quando o modelo é linear.
+R: a | Se P(y|x) muda entre grupos, nenhum modelo único acerta para todos.
+
+MC: O ajuste fino local consiste em:
+a) continuar treinando o modelo global por alguns passos com dados locais.
+b) treinar do zero com dados globais.
+c) enviar dados ao servidor.
+d) apagar o modelo global.
+R: a | O cliente adapta o modelo recebido aos seus dados.
+
+MC: Qual a vantagem do ajuste fino local em termos de comunicação?
+a) Não custa comunicação extra.
+b) Dobra o tráfego.
+c) Exige enviar todos os dados.
+d) Exige K modelos por cliente.
+R: a | A adaptação acontece localmente após receber o modelo.
+
+MC: Qual o risco do ajuste fino com muitos passos?
+a) O cliente pode esquecer o que o global aprendeu e sobreajustar.
+b) O modelo fica mais genérico.
+c) O servidor trava.
+d) A taxa de aprendizado vira zero.
+R: a | Passos demais afastam o modelo do global e podem decorar poucos dados.
+
+MC: No Ditto, o modelo pessoal v_k é treinado para:
+a) minimizar o erro local com uma penalização que o mantém perto do modelo global.
+b) maximizar o erro local.
+c) ser idêntico ao global.
+d) ignorar o dado local.
+R: a | F_k(v_k) + (λ/2)‖v_k − w‖².
+
+MC: No Ditto, λ = 0 corresponde a:
+a) treinar o modelo pessoal só com dados locais.
+b) usar apenas o modelo global.
+c) usar dados de todos os clientes.
+d) eliminar o cliente.
+R: a | Sem penalização, não há ligação com o global.
+
+MC: No Ditto, um λ muito grande faz com que:
+a) o modelo pessoal fique praticamente igual ao global.
+b) o modelo pessoal fique igual ao local puro.
+c) o modelo seja ignorado.
+d) o servidor desapareça.
+R: a | A coleira forte prende o modelo pessoal ao global.
+
+MC: Qual a diferença entre a coleira do FedProx e a do Ditto?
+a) No FedProx, ela estabiliza o treino global; no Ditto, define o modelo pessoal, enquanto o global segue normal.
+b) Não há diferença.
+c) No Ditto não há coleira.
+d) No FedProx a coleira é maior que no Ditto.
+R: a | Ambos usam o termo proximal, mas com propósitos diferentes.
+
+MC: Na partição do modelo (FedRep), a "cabeça" é:
+a) a camada final, pessoal e treinada apenas localmente.
+b) a primeira camada, compartilhada.
+c) o servidor.
+d) o conjunto de teste.
+R: a | O corpo é compartilhado; a cabeça é pessoal.
+
+MC: Qual é uma vantagem adicional da partição corpo/cabeça?
+a) Economizar comunicação, pois a cabeça não precisa ser enviada.
+b) Eliminar a necessidade de dados.
+c) Evitar o treino local.
+d) Aumentar o tamanho do modelo.
+R: a | Só o corpo trafega.
+
+MC: O que o IFCA faz em cada rodada?
+a) Cada cliente escolhe o modelo de menor perda e o servidor faz a média dentro de cada grupo.
+b) Todos os clientes usam o mesmo modelo.
+c) O servidor sorteia os grupos sem olhar os dados.
+d) Os clientes enviam seus dados.
+R: a | O agrupamento emerge da escolha do modelo de menor perda.
+
+MC: No IFCA, o que é preciso definir antes do treino?
+a) O número de grupos K.
+b) O rótulo de cada cliente.
+c) O grupo verdadeiro de cada cliente.
+d) A senha do servidor.
+R: a | K, o número de modelos, é um hiperparâmetro.
+
+MC: No experimento B (mudança de conceito), o modelo global teve acurácia média de cerca de:
+a) 0,35 a 0,45.
+b) 0,90.
+c) 0,99.
+d) 0,10.
+R: a | Um único modelo não serve a três permutações diferentes de rótulos.
+
+MC: No experimento B, o IFCA atingiu aproximadamente:
+a) 0,93.
+b) 0,40.
+c) 0,60.
+d) 0,10.
+R: a | Recuperou os três grupos e treinou dentro de cada um.
+
+MC: Por que o ajuste fino de 5 épocas foi pior que o modelo só local no experimento B?
+a) O modelo global partia de um ponto ruim para cada grupo, e 5 épocas não bastaram para corrigi-lo.
+b) Porque o ajuste fino não funciona.
+c) Porque o local usa mais dados.
+d) Porque os dados eram IID.
+R: a | O global misturava conceitos incompatíveis; pouco treino local não desfaz isso.
+
+MC: No experimento A (α = 0,1), qual foi o ponto fraco do modelo só local?
+a) O pior cliente caiu a cerca de 0,17, por ter pouquíssimos dados.
+b) A média foi 0,10.
+c) Ele não pôde ser treinado.
+d) Ele usou dados dos outros clientes.
+R: a | Clientes com poucos dados não aprendem sozinhos; colaborar os protege.
+
+MC: No experimento A, o ajuste fino e o Ditto aumentaram a média de cerca de 0,95 para:
+a) cerca de 0,97.
+b) cerca de 0,50.
+c) cerca de 0,60.
+d) 1,00 exato.
+R: a | A média subiu cerca de 2 pontos percentuais.
+
+MC: Qual a principal ideia do Per-FedAvg?
+a) Encontrar um modelo inicial que se adapte rapidamente com poucos passos locais.
+b) Eliminar o servidor.
+c) Quantizar atualizações.
+d) Aumentar o lote.
+R: a | É uma abordagem de meta-aprendizado: aprender a se adaptar rápido.
+
+MC: O que é o problema de cold start (cliente novo) na personalização?
+a) O cliente novo não tem dados para personalizar e precisa começar com o modelo global ou ser associado a um grupo.
+b) O servidor reinicia.
+c) O modelo some.
+d) Os dados são apagados.
+R: a | Sem dados locais não há como personalizar.
+
+MC: Qual dos custos abaixo é típico de modelos pessoais?
+a) Memória adicional em cada cliente para guardar o modelo pessoal.
+b) Aumentar a taxa de aprendizado.
+c) Reduzir o número de clientes.
+d) Dobrar o número de classes.
+R: a | Cada cliente precisa armazenar um modelo próprio.
+
+MC: Qual o risco de privacidade da personalização?
+a) Modelos pessoais podem memorizar mais os dados do cliente.
+b) Eles sempre aumentam a privacidade.
+c) Não há riscos.
+d) Eles eliminam ataques.
+R: a | Modelos ajustados a poucos dados tendem a memorizá-los mais.
+
+MC: Qual família de personalização trata cada cliente como uma tarefa relacionada?
+a) Multitarefa (por exemplo, MOCHA).
+b) Quantização.
+c) Esparsificação.
+d) Padronização.
+R: a | MOCHA usa aprendizado multitarefa federado.
+
+MC: Quando o agrupamento de clientes é especialmente útil?
+a) Quando há grupos de clientes com comportamentos ou conceitos distintos.
+b) Quando todos os clientes são idênticos.
+c) Quando há só um cliente.
+d) Quando não há dados.
+R: a | Um modelo por grupo captura as diferenças entre grupos.
+
+MC: No experimento com cliente novo (projeto do capítulo), por que o modelo do grupo (IFCA) funcionou bem com apenas 5 exemplos?
+a) Porque poucos exemplos bastam para identificar o grupo certo pela menor perda, e o modelo do grupo já está treinado.
+b) Porque o IFCA gera dados novos.
+c) Porque o teste foi usado no treino.
+d) Porque o global já era perfeito.
+R: a | Escolher entre K modelos exige poucos dados; o treino pesado já foi feito pelo grupo.
+
+MC: Em que condição o ajuste fino com poucas épocas tende a falhar?
+a) Quando o modelo global é um ponto de partida ruim para o cliente, como em mudança de conceito.
+b) Quando os dados são IID.
+c) Quando há muitos dados locais.
+d) Quando o modelo é linear.
+R: a | Se o global mistura conceitos incompatíveis, poucas épocas não corrigem.
+
+DISC: Explique, com a analogia da camisa, por que um único modelo global pode ser insuficiente.
+R: A camisa de prateleira serve bem à maioria, mas mal a quem tem medidas fora do padrão; da mesma forma, o modelo global é bom na média, mas pode ser ruim para clientes com dados diferentes. A personalização ajusta ao cliente.
+
+DISC: Descreva as três medidas usadas para avaliar a qualidade por cliente e o que cada uma revela.
+R: Média: desempenho geral. Pior cliente: quem é menos bem servido. Percentil 10: valor que 90% dos clientes atingem ou superam, mostrando a cauda inferior sem depender de um único extremo.
+
+DISC: Diferencie mudança de rótulos e mudança de conceito e diga em qual delas o global falha mais.
+R: Mudança de rótulos: as frequências das classes variam, mas P(y|x) é igual. Mudança de conceito: o mesmo x recebe rótulos diferentes entre grupos. Na mudança de conceito, nenhum modelo único acerta para todos, e o global falha mais.
+
+DISC: Explique o ajuste fino local, citando uma vantagem e um risco.
+R: O cliente continua o treino do modelo global com dados locais. Vantagem: simples e sem custo de comunicação. Risco: passos demais afastam o modelo do global e podem sobreajustar poucos dados.
+
+DISC: Explique o papel do hiperparâmetro λ no Ditto e os dois extremos.
+R: λ controla a coleira que prende o modelo pessoal ao global. λ = 0: modelo só local. λ muito grande: igual ao global. Valores intermediários equilibram personalização e colaboração.
+
+DISC: Compare Ditto e FedProx quanto ao papel do termo proximal.
+R: No FedProx, o termo proximal estabiliza o treino do modelo global. No Ditto, serve para treinar um modelo pessoal próximo ao global, que é treinado normalmente em paralelo.
+
+DISC: Descreva a ideia de corpo compartilhado e cabeça pessoal e a vantagem em comunicação.
+R: As camadas iniciais (corpo) aprendem características gerais e são treinadas em conjunto; a camada final (cabeça) é pessoal e não é enviada. Todos compartilham conhecimento geral, e há economia de comunicação.
+
+DISC: Explique o algoritmo IFCA em quatro passos.
+R: 1) O servidor envia K modelos. 2) Cada cliente escolhe o de menor perda nos seus dados. 3) Treina esse modelo e devolve a atualização. 4) O servidor faz a média dentro de cada grupo. Repete.
+
+DISC: Quais são as limitações do IFCA?
+R: Exige escolher K, é sensível à inicialização, pode juntar grupos diferentes no mesmo modelo, e custa mais comunicação por enviar K modelos.
+
+DISC: Interprete o resultado do experimento B para global, só local, ajuste fino e IFCA.
+R: Global (≈ 0,38) falha por misturar conceitos incompatíveis. Só local (≈ 0,87) aprende cada conceito, mas só com dados próprios. Ajuste fino com 5 épocas (≈ 0,79) não desfaz o global. IFCA (≈ 0,93) recupera os grupos e compartilha dentro deles.
+
+DISC: Interprete o experimento A: qual a vantagem de colaborar para clientes com poucos dados?
+R: O modelo só local teve média razoável, mas um pior cliente de cerca de 0,17; os métodos que partem do global protegem quem tem pouco dado, com pior cliente em torno de 0,82 a 0,84.
+
+DISC: Por que o modelo só local pode ser ruim mesmo com boa média?
+R: Porque clientes com poucos exemplos não conseguem aprender sozinhos; a média esconde casos extremos, e a avaliação por cliente revela o pior cliente.
+
+DISC: Explique o que é o Per-FedAvg e por que é mais custoso.
+R: Busca um modelo global que se adapte bem a cada cliente com poucos passos de ajuste (meta-aprendizado). É mais custoso porque a formulação envolve derivadas de segunda ordem ou aproximações.
+
+DISC: O que é cold start em aprendizado federado personalizado e como mitigá-lo?
+R: Um cliente novo não tem dados para personalizar. Mitiga-se começando com o modelo global, atribuindo-o a um grupo semelhante ou usando poucos passos de ajuste conforme chegam dados.
+
+DISC: Cite dois riscos ou custos da personalização.
+R: Memória extra para modelos pessoais; maior risco de memorização de dados do cliente; comunicação extra em métodos com vários modelos (como IFCA).
+
+DISC: Em que cenário você escolheria agrupamento em vez de ajuste fino?
+R: Quando há grupos distintos de clientes com conceitos ou comportamentos diferentes, de modo que o modelo global é ruim como ponto de partida, como no experimento B.
+
+DISC: Como você avaliaria um cliente novo em um sistema personalizado?
+R: Usando um teste local com dados do próprio cliente, medindo o desempenho antes e depois da personalização, e comparando-o com o global e com o modelo só local.
+
+DISC: Por que é importante repetir os experimentos de personalização com várias sementes?
+R: Porque as partições, os tamanhos e os sorteios variam; um cliente pequeno pode distorcer resultados de uma única execução. Várias sementes dão média e variabilidade.
+
+DISC: Resuma o capítulo em cinco linhas, destacando uma situação em que personalizar é indispensável.
+R: Resposta pessoal coerente com o resumo: modelo global, medidas por cliente, ajuste fino, Ditto, partição, IFCA e Per-FedAvg; personalizar é indispensável em mudança de conceito.
+
+DISC: Explique por que, no Ditto com λ = 0 partindo do modelo global, o resultado coincide com o ajuste fino local.
+R: Sem a penalização, o modelo pessoal minimiza apenas o erro local a partir do global, o que é exatamente o ajuste fino. A coleira só diferencia os métodos quando λ > 0.
+

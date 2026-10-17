@@ -1,0 +1,269 @@
+MC: Por que o K-means federado produz o mesmo resultado do centralizado (com a mesma inicialização)?
+a) Porque a atualização dos centroides depende só de somas e contagens por grupo, que se combinam exatamente.
+b) Porque os dados são copiados.
+c) Porque usa ruído.
+d) Porque ignora os clientes pequenos.
+R: a | Soma de somas e soma de contagens reproduzem a média global de cada grupo.
+
+MC: No K-means federado, o que cada cliente devolve ao servidor em cada iteração?
+a) Por grupo, a soma dos pontos e a contagem.
+b) Todos os seus pontos.
+c) Apenas os rótulos.
+d) Uma cópia do modelo.
+R: a | O servidor soma as estatísticas e recalcula os centroides.
+
+MC: O PCA federado calcula a covariância global a partir de:
+a) n, Σx e Σ x xᵀ de cada cliente.
+b) todos os dados brutos.
+c) apenas os rótulos.
+d) apenas as médias.
+R: a | cov = (Σ x xᵀ − n μ μᵀ)/(n − 1).
+
+MC: No experimento com o conjunto Wine, a diferença máxima entre os centroides federados e centralizados foi da ordem de:
+a) 10⁻¹⁶.
+b) 10⁻¹.
+c) 1.
+d) 10.
+R: a | Praticamente zero, diferença de arredondamento.
+
+MC: O que significa ARI = 1 entre o agrupamento federado e o centralizado?
+a) Os agrupamentos são idênticos (a menos de nomes dos grupos).
+b) Os agrupamentos são opostos.
+c) Os agrupamentos são aleatórios.
+d) Um dos agrupamentos falhou.
+R: a | ARI é 1 quando as partições coincidem.
+
+MC: Para quais algoritmos a versão federada exata é possível, segundo o capítulo?
+a) Os que dependem só de somas de estatísticas locais (K-means, PCA, mínimos quadrados).
+b) Qualquer algoritmo.
+c) Apenas redes profundas.
+d) Nenhum.
+R: a | Se os resultados dependem de somas, o servidor reproduz o centralizado.
+
+MC: Por que somas e contagens por grupo ainda podem vazar informação?
+a) Em grupos pequenos, revelam valores individuais ou médias exatas de um cliente.
+b) Porque são sempre criptografadas.
+c) Porque são enormes.
+d) Porque não envolvem dados.
+R: a | A estatística de um grupo de poucos exemplos expõe seus valores.
+
+MC: O que são modelos de fundação (foundation models)?
+a) Grandes modelos pré-treinados com dados gerais, depois especializados.
+b) Modelos lineares simples.
+c) Modelos sem parâmetros.
+d) Modelos treinados só localmente.
+R: a | Ex.: grandes modelos de linguagem.
+
+MC: Por que federar a especialização de modelos de linguagem é interessante?
+a) Muitos dados valiosos (prontuários, contratos) são privados e não podem ser juntados.
+b) Porque dados privados são inúteis.
+c) Porque elimina o pré-treino.
+d) Porque reduz o tamanho do modelo.
+R: a | Federar permite usar dados que não podem ser centralizados.
+
+MC: Qual o principal obstáculo de federar modelos com bilhões de parâmetros?
+a) Enviar o modelo inteiro a cada rodada é inviável em comunicação, memória e cálculo.
+b) Falta de dados.
+c) Excesso de privacidade.
+d) A matemática não funciona.
+R: a | Por isso se usam ajustes eficientes em parâmetros.
+
+MC: A ideia do LoRA é:
+a) aprender a correção dos pesos como o produto de duas matrizes de baixo posto A·B.
+b) apagar o modelo.
+c) quantizar o modelo para 1 bit.
+d) treinar do zero.
+R: a | W = W₀ + A·B, com W₀ congelado.
+
+MC: Em um LoRA com d = 1.000, K = 1.000 e r = 8, quantos parâmetros treináveis há?
+a) 16.000.
+b) 1.000.000.
+c) 8.000.
+d) 2.000.
+R: a | r·(d + K) = 8 · 2.000 = 16.000.
+
+MC: No mesmo caso, qual a fração aproximada em relação ao ajuste completo (d·K = 1.000.000)?
+a) 1,6%.
+b) 16%.
+c) 50%.
+d) 100%.
+R: a | 16.000 / 1.000.000 = 1,6%.
+
+MC: Quais parâmetros trafegam entre cliente e servidor em um LoRA federado?
+a) Apenas A e B.
+b) O modelo W₀ inteiro.
+c) Os dados.
+d) Os rótulos.
+R: a | W₀ é congelado e já está em todos.
+
+MC: No experimento, o LoRA de posto 1 foi insuficiente porque:
+a) trocar duas duplas de classes exige uma correção de posto pelo menos 2.
+b) o posto 1 usa mais bytes.
+c) os clientes eram poucos.
+d) a taxa de aprendizado era zero.
+R: a | A capacidade do adaptador deve casar com a complexidade da tarefa.
+
+MC: No experimento, o LoRA de posto 2 obteve acurácia final de cerca de:
+a) 0,96.
+b) 0,58.
+c) 0,79.
+d) 0,10.
+R: a | Chegou ao nível do ajuste completo com cerca de um quarto do tráfego.
+
+MC: No experimento, quanto tráfego (KB por cliente e rodada) usou o ajuste completo e o LoRA de posto 2?
+a) Cerca de 5,1 KB e 1,2 KB.
+b) 1 KB e 5 KB.
+c) 10 KB e 10 KB.
+d) 0,1 KB e 0,1 KB.
+R: a | O LoRA r = 2 usou cerca de 4 vezes menos tráfego.
+
+MC: Qual a sutileza na agregação de adaptadores A e B?
+a) A média de A e a média de B não é a média dos produtos A·B.
+b) A e B não podem ser somados.
+c) Os produtos são sempre iguais.
+d) Não há sutileza.
+R: a | Isso gera erro de agregação, tratado por métodos recentes.
+
+MC: Qual das ferramentas abaixo é um framework de aprendizado federado independente de biblioteca de ML?
+a) Flower.
+b) LEAF.
+c) PCA.
+d) K-means.
+R: a | Flower suporta PyTorch, TensorFlow e scikit-learn, entre outros.
+
+MC: Qual framework é voltado a cenários industriais cross-silo, incluindo o vertical?
+a) FATE.
+b) PySyft apenas.
+c) Nenhum.
+d) LEAF.
+R: a | FATE é voltado a finanças e empresas, com suporte vertical.
+
+MC: LEAF e FedScale são principalmente:
+a) conjuntos de referência (benchmarks) para comparar algoritmos.
+b) algoritmos de compressão.
+c) bibliotecas de criptografia.
+d) servidores de produção.
+R: a | Servem para avaliar métodos de modo comparável.
+
+MC: Qual pergunta ajuda a escolher um framework?
+a) É simulação ou implantação, cross-device ou cross-silo, e qual biblioteca de ML a equipe usa?
+b) Qual a cor do logotipo?
+c) Quantos funcionários a empresa tem?
+d) Quantas estrelas o repositório tem, apenas?
+R: a | Essas questões definem os requisitos técnicos do projeto.
+
+MC: Em saúde, qual aplicação real com aprendizado federado é citada no capítulo?
+a) Segmentação de tumores cerebrais e previsão de oxigênio na COVID-19.
+b) Reconhecimento de placas.
+c) Tradução automática.
+d) Jogos.
+R: a | Sheller et al. (2020) e Dayan et al. (2021).
+
+MC: No sistema de produção descrito por Bonawitz et al. (2019), os dispositivos participavam quando:
+a) carregando, em rede sem franquia de dados e ociosos.
+b) sempre, a qualquer momento.
+c) desligados.
+d) em uso intenso.
+R: a | Isso evita impacto no usuário.
+
+MC: Por que "os dados não saem" não equivale a anonimização?
+a) Atualizações vazam informação e modelos memorizam, podendo ser tratados como dados pessoais.
+b) Porque os dados são públicos.
+c) Porque o servidor é lento.
+d) Porque não há risco.
+R: a | Defesas técnicas e análise jurídica continuam necessárias.
+
+MC: Qual dos itens abaixo é um princípio de proteção de dados citado no capítulo?
+a) Minimização: coletar e tratar só o necessário.
+b) Maximização do volume de dados.
+c) Retenção ilimitada.
+d) Sigilo sobre o uso.
+R: a | A minimização é princípio da LGPD e do GDPR.
+
+MC: O relatório de impacto à proteção de dados (RIPD / DPIA) serve para:
+a) avaliar e documentar riscos de um tratamento de dados de alto risco.
+b) acelerar o treino.
+c) criptografar os dados.
+d) escolher o modelo.
+R: a | É uma exigência típica de projetos de maior risco.
+
+MC: O aprendizado federado agnóstico (Mohri et al., 2019) busca:
+a) otimizar o pior caso sobre misturas dos clientes.
+b) minimizar a média do erro apenas.
+c) eliminar clientes.
+d) usar menos dados.
+R: a | Visa justiça ao evitar que um grupo seja sacrificado.
+
+MC: O q-FFL (Li et al., 2020) dá mais peso:
+a) aos clientes com maior perda.
+b) aos clientes com mais dados.
+c) aos clientes mais rápidos.
+d) a nenhum cliente.
+R: a | O parâmetro q regula o quanto a justiça pesa na média.
+
+MC: Qual dos itens abaixo é um problema em aberto citado por Kairouz et al. (2021)?
+a) Incentivos e atribuição de valor à contribuição dos clientes.
+b) Instalar o Python.
+c) Escolher o nome do projeto.
+d) Reduzir o número de rodadas a zero.
+R: a | Mecanismos de incentivo e valoração são questões abertas.
+
+DISC: Explique como o K-means federado funciona e por que é exato.
+R: O servidor envia os centroides; cada cliente atribui seus pontos e devolve, por grupo, a soma e a contagem; o servidor soma e divide. Como média = soma/contagem e ambas são somáveis, o resultado é idêntico ao centralizado com a mesma inicialização.
+
+DISC: Explique como se calcula o PCA de forma federada.
+R: Cada cliente envia n, Σx e Σ x xᵀ. O servidor calcula μ e a covariância, cov = (Σ x xᵀ − nμμᵀ)/(n − 1), e extrai os autovetores principais, obtendo o PCA centralizado exato.
+
+DISC: Dê três outros algoritmos que podem ser federados de modo exato por somas de estatísticas e justifique um deles.
+R: Mínimos quadrados (somas de XᵀX e Xᵀy), Naive Bayes (contagens por classe) e médias/variâncias. Em mínimos quadrados, XᵀX e Xᵀy são somas sobre exemplos e, portanto, somáveis entre clientes.
+
+DISC: Por que as somas do K-means federado podem violar a privacidade e como mitigar?
+R: Em grupos com poucos exemplos, a soma e a contagem revelam valores individuais. Mitiga-se com agregação segura (servidor vê só a soma total) e privacidade diferencial (ruído).
+
+DISC: Explique por que modelos de fundação pedem ajuste eficiente em parâmetros em cenários federados.
+R: Enviar bilhões de parâmetros por rodada é inviável em comunicação, memória e cálculo. Ajustar poucos parâmetros (adaptadores, LoRA) reduz tráfego e custo local.
+
+DISC: Descreva o LoRA e calcule o número de parâmetros treináveis para d = 4.096, K = 4.096 e r = 8.
+R: W = W₀ + A·B, com A (d × r) e B (r × K). Parâmetros: r(d + K) = 8 · 8.192 = 65.536, contra d·K ≈ 16,8 milhões (cerca de 0,4%).
+
+DISC: Interprete os resultados do experimento de LoRA (posto 1, 2, 4, 8 e ajuste completo).
+R: O posto 1 não basta (≈ 0,79). Posto 2 atinge ≈ 0,96 com cerca de 1/4 do tráfego do ajuste completo (≈ 0,95). Postos 4 e 8 melhoram um pouco, mas gastam mais bytes. O posto precisa casar com a tarefa.
+
+DISC: Qual a sutileza de agregar A e B separadamente e como a literatura trata?
+R: A média de A e a de B não é a média de A·B, o que causa erro de agregação. Métodos agregam os produtos ΔW = A·B ou empilham adaptadores para reduzir o erro.
+
+DISC: Cite duas outras ideias de modelos de fundação federados além do LoRA.
+R: Prompts aprendidos, destilação (enviar previsões em vez de pesos), modelos pequenos locais com apoio de grandes remotos, e dados sintéticos.
+
+DISC: Compare Flower, TFF e FATE quanto ao foco.
+R: Flower: independente de biblioteca, simulação e implantação. TFF: pesquisa com TensorFlow. FATE: cross-silo industrial com suporte vertical, voltado a empresas e finanças.
+
+DISC: Liste cinco perguntas para escolher um framework de aprendizado federado.
+R: Simulação ou implantação? Cross-device ou cross-silo (horizontal ou vertical)? Qual biblioteca de ML? Quais garantias de segurança são necessárias? A ferramenta é mantida e tem comunidade?
+
+DISC: Descreva duas aplicações reais de aprendizado federado e o que fica local em cada uma.
+R: Saúde: imagens e prontuários permanecem nos hospitais, e só parâmetros trafegam. Teclados móveis: o texto digitado permanece no celular, e só atualizações do modelo são enviadas.
+
+DISC: Explique por que aprendizado federado não é anonimização e as implicações jurídicas.
+R: Atualizações podem vazar e modelos podem memorizar dados pessoais; por isso o modelo pode ser tratado como dado pessoal. É preciso base legal, minimização, segurança e análise de risco.
+
+DISC: Cite quatro princípios da LGPD/GDPR relevantes ao aprendizado federado.
+R: Finalidade, minimização, transparência, segurança, responsabilização e base legal para o tratamento.
+
+DISC: O que é justiça em aprendizado federado e que propostas existem?
+R: Evitar que o modelo global sirva bem à maioria e mal a minorias. Propostas: aprendizado federado agnóstico (otimiza o pior caso) e q-FFL (mais peso a clientes com maior perda).
+
+DISC: Quais questões de governança surgem em um projeto cross-silo?
+R: Quem controla e pode usar o modelo, o que ocorre quando um participante sai, como compartilhar custos e benefícios, auditoria, e responsabilidades legais.
+
+DISC: Por que incentivos são um problema em aprendizado federado?
+R: Participantes podem "pegar carona" no modelo sem contribuir ou contribuir com dados de baixa qualidade; avaliar e recompensar a contribuição de cada um é difícil e é um problema em aberto.
+
+DISC: Aplique a lista de verificação do capítulo a um cenário seu, destacando três itens críticos.
+R: Resposta pessoal coerente com a lista: necessidade, cenário, heterogeneidade, comunicação, privacidade, robustez, avaliação por cliente, base legal e operação, escolhendo os mais críticos para o caso.
+
+DISC: Cite três problemas em aberto no aprendizado federado e explique um.
+R: Privacidade útil com poucos clientes, robustez sem abrir mão da agregação segura, modelos de fundação federados, justiça e incentivos. Exemplo: com poucos clientes, o ruído necessário para ε baixo destrói a acurácia.
+
+DISC: Resuma em cinco linhas o que você aprendeu e como aplicaria o aprendizado federado no seu contexto.
+R: Resposta pessoal coerente com o resumo: algoritmos de somas são exatos, LoRA reduz comunicação, escolha de framework, aplicações, LGPD e justiça.

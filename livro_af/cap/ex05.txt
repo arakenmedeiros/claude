@@ -1,0 +1,269 @@
+MC: Por que a comunicação é um gargalo no aprendizado federado?
+a) Modelos são grandes, as redes são lentas (sobretudo na subida) e os clientes são instáveis.
+b) Porque os clientes têm CPUs lentas demais.
+c) Porque o servidor não tem memória.
+d) Porque os dados são pequenos demais.
+R: a | A transmissão de atualizações de modelos grandes por redes lentas e instáveis limita o treino.
+
+MC: Qual é a característica típica das conexões domésticas relevante ao aprendizado federado?
+a) A subida (upload) costuma ser mais lenta que a descida (download).
+b) A descida é sempre mais lenta que a subida.
+c) Não há diferença.
+d) Não há conexão.
+R: a | A assimetria torna a subida da atualização o trecho mais caro.
+
+MC: A fórmula T ≈ R · (t_comp + t_sub + t_desc) expressa:
+a) o tempo total como número de rodadas vezes o tempo de cada rodada.
+b) a acurácia final.
+c) o número de clientes.
+d) a taxa de aprendizado.
+R: a | Cada rodada soma treino local, subida e descida.
+
+MC: Um modelo ocupa 20 MB e a subida é de 5 Mbit/s. Qual o tempo de subida (1 byte = 8 bits)?
+a) 4 s.
+b) 8 s.
+c) 32 s.
+d) 100 s.
+R: c | 20 × 8 = 160 Mbit; 160 / 5 = 32 s.
+
+MC: Com descida de 20 Mbit/s e modelo de 20 MB, o tempo de descida é:
+a) 8 s.
+b) 32 s.
+c) 16 s.
+d) 2 s.
+R: a | 160 Mbit / 20 Mbit/s = 8 s.
+
+MC: Se o treino local leva 30 s, a descida 8 s e a subida 32 s, uma rodada leva:
+a) 40 s.
+b) 62 s.
+c) 70 s.
+d) 100 s.
+R: c | 30 + 8 + 32 = 70 s.
+
+MC: No exemplo anterior, quanto levariam 500 rodadas?
+a) Cerca de 9,7 horas.
+b) Cerca de 1 hora.
+c) Cerca de 100 horas.
+d) Cerca de 20 minutos.
+R: a | 500 × 70 s = 35.000 s ≈ 9,7 h.
+
+MC: Se a subida for comprimida 8 vezes (de 32 s para 4 s), a rodada passa a levar:
+a) 42 s.
+b) 70 s.
+c) 38 s.
+d) 54 s.
+R: a | 30 + 8 + 4 = 42 s.
+
+MC: O que é quantização de uma atualização?
+a) Representá-la com menos bits por valor.
+b) Aumentar o número de parâmetros.
+c) Apagar as atualizações antigas.
+d) Criptografar os dados.
+R: a | Os valores são aproximados por um número pequeno de níveis.
+
+MC: Com b bits, quantos níveis a quantização uniforme tem?
+a) b.
+b) 2^b.
+c) b^2.
+d) 32.
+R: b | 2 bits dão 4 níveis; 4 bits, 16 níveis.
+
+MC: Qual a vantagem do arredondamento estocástico sobre o determinístico?
+a) Não introduz viés: a esperança do valor quantizado é igual ao valor original.
+b) É sempre mais preciso em cada valor.
+c) Usa mais bits.
+d) Elimina a necessidade do servidor.
+R: a | Em média o erro se cancela, evitando acúmulo de viés.
+
+MC: Se um valor cai em 2,3 degraus, no arredondamento estocástico ele vai para 3 com probabilidade:
+a) 0,3.
+b) 0,7.
+c) 0,5.
+d) 1,0.
+R: a | A probabilidade de subir é a parte fracionária (0,3).
+
+MC: Quantos bytes são necessários para enviar 650 parâmetros com 4 bits cada (sem o cabeçalho)?
+a) 163 bytes.
+b) 325 bytes.
+c) 650 bytes.
+d) 2.600 bytes.
+R: b | 650 × 4 / 8 = 325 bytes (333 com o cabeçalho de mínimo e máximo).
+
+MC: Quantos bytes ocupam 650 parâmetros em 32 bits?
+a) 650.
+b) 1.300.
+c) 2.600.
+d) 5.200.
+R: c | 650 × 4 bytes = 2.600 bytes.
+
+MC: A esparsificação top-k:
+a) envia apenas os k valores de maior módulo e zera o restante.
+b) envia sempre todos os valores.
+c) duplica o tamanho da atualização.
+d) elimina o servidor.
+R: a | Mantém os valores mais importantes e descarta os demais.
+
+MC: Por que a esparsificação precisa enviar os índices?
+a) Porque o servidor precisa saber a qual parâmetro cada valor se refere.
+b) Porque índices são criptografados.
+c) Porque reduzem o ruído.
+d) Porque é uma exigência legal.
+R: a | Sem os índices, os valores não teriam posição.
+
+MC: Quantos bytes custa enviar k valores, se cada valor ocupa 4 bytes e cada índice, 2 bytes?
+a) 4k.
+b) 2k.
+c) 6k.
+d) 8k.
+R: c | Por valor enviado: 4 + 2 = 6 bytes.
+
+MC: Para 650 parâmetros e top-10%, quantos valores são enviados?
+a) 6.
+b) 65.
+c) 130.
+d) 325.
+R: b | 10% de 650 = 65.
+
+MC: Qual o problema de descartar sempre os valores pequenos sem nenhuma compensação?
+a) Eles nunca são enviados, e o modelo deixa de aprender nessas direções.
+b) Eles aumentam a privacidade.
+c) Eles aceleram o treino.
+d) Eles quebram o servidor.
+R: a | O viés sistemático impede o aprendizado dessas componentes.
+
+MC: A memória de erro (error feedback) consiste em:
+a) cada cliente guardar o que não enviou e somá-lo à atualização seguinte.
+b) o servidor corrigir os erros de rótulo.
+c) apagar os clientes que erram.
+d) reduzir a taxa de aprendizado.
+R: a | O resíduo da compressão é adiado, não perdido.
+
+MC: No experimento do capítulo, qual combinação teve acurácia igual à do modelo sem compressão com cerca de 7 vezes menos bytes?
+a) Top-10% com memória de erro.
+b) Top-1% sem memória de erro.
+c) 1 bit.
+d) Nenhuma.
+R: a | Top-10% + EF chegou a 0,959, igual ao float32, com 114 KB contra 762 KB.
+
+MC: No experimento, o top-1% sem memória de erro:
+a) perdeu muita acurácia (cerca de 0,87).
+b) igualou o float32.
+c) foi o melhor de todos.
+d) não pôde ser executado.
+R: a | Descartar quase tudo, sem compensação, prejudicou o aprendizado.
+
+MC: No experimento, o top-1% com memória de erro:
+a) recuperou grande parte da acurácia (cerca de 0,94).
+b) caiu para 0,10.
+c) ficou idêntico ao top-1% sem memória.
+d) usou mais bytes que o float32.
+R: a | A memória de erro permite que os valores adiados sejam enviados depois.
+
+MC: Quantos bits por parâmetro já começam a prejudicar a acurácia no experimento?
+a) 1 bit.
+b) 8 bits.
+c) 4 bits.
+d) Nenhum, nem 1 bit.
+R: a | A 1 bit, a acurácia caiu para cerca de 0,93.
+
+MC: Qual economia aproximada de bytes de subida a 2 bits em relação ao float32?
+a) Cerca de 15 vezes.
+b) Cerca de 2 vezes.
+c) Cerca de 100 vezes.
+d) Nenhuma.
+R: a | 762 KB contra 50 KB.
+
+MC: A técnica signSGD envia:
+a) apenas o sinal de cada valor (1 bit).
+b) o valor completo em 64 bits.
+c) somente os índices.
+d) apenas o maior valor.
+R: a | Enviar o sinal reduz cada valor a 1 bit.
+
+MC: Em que cenário a memória de erro pode ajudar menos?
+a) Cross-device, em que cada cliente participa poucas vezes e a memória fica velha.
+b) Cross-silo com clientes sempre ativos.
+c) Quando há um único cliente.
+d) Quando a rede é rápida.
+R: a | Com participação rara, o resíduo guardado perde relevância.
+
+MC: Por que comparar métodos de compressão apenas pela acurácia é insuficiente?
+a) Porque o objetivo é equilibrar acurácia e bytes enviados.
+b) Porque a acurácia não existe.
+c) Porque bytes não importam.
+d) Porque só o tempo importa.
+R: a | Um método só é bom se mantiver a acurácia com custo de comunicação menor.
+
+MC: Qual das estratégias abaixo NÃO reduz a comunicação total?
+a) Aumentar o número de rodadas mantendo o mesmo tamanho de atualização.
+b) Aumentar as épocas locais para ter menos rodadas.
+c) Quantizar as atualizações.
+d) Enviar só adaptadores em vez do modelo inteiro.
+R: a | Mais rodadas, com o mesmo tamanho, aumentam o tráfego.
+
+MC: Qual a principal vantagem de uma quantização de 8 bits em relação a 32 bits?
+a) Reduz o tráfego de subida em cerca de 4 vezes, em geral com pouca perda de acurácia.
+b) Torna o modelo mais privado.
+c) Aumenta o número de parâmetros.
+d) Elimina a necessidade de treino local.
+R: a | 8 bits ocupam 1/4 do espaço de 32 bits; no experimento a acurácia caiu menos de 0,5 ponto.
+
+DISC: Explique por que a subida costuma ser o gargalo e dê um exemplo numérico.
+R: Porque a conexão costuma ter upload mais lento que download e o cliente precisa enviar toda a atualização. Exemplo: 20 MB a 5 Mbit/s levam 32 s para subir, contra 8 s para descer a 20 Mbit/s.
+
+DISC: Mostre como estimar o tempo total de um treino federado e o que comprimir a subida muda.
+R: T ≈ R·(t_comp + t_sub + t_desc). Se a subida cai 8 vezes, t_sub diminui e T diminui proporcionalmente à parcela da subida. Ex.: 70 s por rodada vira 42 s.
+
+DISC: Descreva a quantização uniforme e o papel do número de bits.
+R: Divide-se o intervalo [mínimo, máximo] em 2^b − 1 degraus e cada valor é aproximado por um degrau. Menos bits significam menos níveis e menos bytes, mas aproximação mais grosseira.
+
+DISC: Explique o arredondamento estocástico e por que ele evita viés.
+R: Arredonda-se para cima com probabilidade igual à parte fracionária, de modo que a esperança do valor quantizado é igual ao original. Os erros são aleatórios e se cancelam ao agregar muitos clientes.
+
+DISC: Calcule quantos bytes uma atualização de 1.000 parâmetros ocupa com 32, 8 e 2 bits (sem cabeçalho).
+R: 32 bits: 4.000 bytes; 8 bits: 1.000 bytes; 2 bits: 250 bytes.
+
+DISC: Explique a esparsificação top-k e o custo de enviar os índices.
+R: Envia-se apenas os k maiores valores em módulo. Como o servidor precisa saber a posição, cada valor vem acompanhado do índice, que ocupa bytes adicionais (por exemplo, 2 bytes por índice).
+
+DISC: Calcule o custo em bytes de enviar top-5% de um modelo de 10.000 parâmetros (valor de 4 bytes e índice de 2 bytes).
+R: k = 500; custo = 500 × 6 = 3.000 bytes, contra 40.000 bytes sem compressão (cerca de 13 vezes menos).
+
+DISC: O que é a memória de erro e por que ela é importante na esparsificação agressiva?
+R: Cada cliente guarda o resíduo do que não enviou e o soma à atualização seguinte. Sem ela, valores pequenos nunca seriam enviados e o modelo deixaria de aprender; com ela, são apenas adiados.
+
+DISC: Interprete os resultados do experimento top-1% com e sem memória de erro.
+R: Sem memória de erro, a acurácia caiu a cerca de 0,87; com ela, subiu a cerca de 0,94, usando os mesmos bytes. A memória de erro recupera grande parte do que a esparsificação perde.
+
+DISC: Compare quantização de 2 bits e top-10% com memória de erro quanto a bytes e acurácia no experimento.
+R: 2 bits usou cerca de 50 KB e atingiu 0,955; top-10% + EF usou cerca de 114 KB e atingiu 0,959. Ambos mantêm a acurácia, e 2 bits é mais econômico, neste caso.
+
+DISC: Por que o cabeçalho de mínimo e máximo é necessário na quantização uniforme?
+R: Para que o servidor reconstrua os valores: ele precisa saber o intervalo que os níveis representam. São apenas 8 bytes por atualização.
+
+DISC: Quais são os riscos de comprimir também a descida (modelo global)?
+R: Os clientes passam a treinar a partir de um modelo aproximado, o que pode introduzir erro sistemático e prejudicar a convergência; é preciso cuidado e, às vezes, compensações.
+
+DISC: Explique o que é o signSGD e uma limitação.
+R: Envia apenas o sinal de cada valor da atualização (1 bit). Limitações: perde a magnitude, pode ser enviesado e costuma exigir correções, como memória de erro.
+
+DISC: Por que aumentar o número de épocas locais também pode ser visto como compressão de comunicação?
+R: Porque cada rodada passa a fazer mais progresso, reduzindo o número de rodadas necessárias e, portanto, o tráfego total. Há, porém, o risco de deriva dos clientes com dados não-IID.
+
+DISC: Dê duas razões pelas quais clientes cross-device têm mais dificuldade que cross-silo quanto à comunicação.
+R: Redes móveis são lentas e instáveis, com restrições de bateria e participação intermitente; em cross-silo, os clientes têm enlaces rápidos e estáveis.
+
+DISC: Como a compressão se relaciona com a privacidade? Ela garante proteção?
+R: Enviar menos informação pode dificultar alguns ataques, mas não oferece garantia formal. Para garantias, é preciso privacidade diferencial e agregação segura.
+
+DISC: Qual a diferença entre compressão com perdas e sem perdas? Qual delas se usa nas atualizações?
+R: Sem perdas (como zip) recupera exatamente o original, mas comprime pouco dados numéricos densos. Com perdas (quantização, top-k) aceita erro em troca de grande economia, e é a usada nas atualizações.
+
+DISC: Se você tivesse um orçamento fixo de 100 KB de subida por rodada, como escolheria um método de compressão?
+R: Estimaria o tamanho do modelo e testaria quantização com poucos bits e top-k com memória de erro, comparando acurácia por bytes em validação; escolheria o que mantém a acurácia dentro do orçamento.
+
+DISC: Quais são as limitações do experimento do capítulo (dados, modelo e repetições)?
+R: Modelo pequeno e convexo, dados dos dígitos (simples), 20 clientes simulados, poucas sementes e contagem simplificada de bytes (sem protocolo de rede). Resultados podem mudar com redes profundas e dados reais.
+
+DISC: Resuma em cinco linhas as técnicas de compressão estudadas e quando usar cada uma.
+R: Resposta pessoal coerente com o resumo: quantização (poucos bits, arredondamento estocástico), top-k com memória de erro (compressão forte), mais épocas locais (menos rodadas), modelos menores/adaptadores e comparação por acurácia × bytes.

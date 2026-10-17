@@ -1,0 +1,120 @@
+Acurácia: fração de previsões corretas de um modelo.
+Adaptador: pequena camada extra inserida em um modelo pré-treinado, treinada no lugar do modelo inteiro.
+Agregação: combinação das atualizações dos clientes em um único modelo global.
+Agregação segura: protocolo criptográfico em que o servidor obtém apenas a soma das atualizações, e não cada uma delas.
+Agregador robusto: regra de agregação (mediana, média aparada, Krum) que limita a influência de clientes maliciosos.
+Alinhamento de entidades: etapa do aprendizado vertical que descobre quais registros de diferentes participantes pertencem à mesma pessoa.
+AUC: área sob a curva ROC; mede a capacidade de um classificador de separar duas classes; 0,5 é chute e 1,0 é perfeito.
+Ataque ativo: ataque em que o adversário se desvia do protocolo, como um servidor que envia modelos manipulados.
+Ataque de envenenamento: ataque em que clientes maliciosos manipulam dados ou atualizações para prejudicar o modelo.
+ASR (taxa de sucesso do ataque): fração de exemplos com gatilho que o modelo classifica como a classe escolhida pelo atacante.
+Backdoor: ataque em que o modelo funciona bem, exceto quando recebe um gatilho secreto, caso em que dá a resposta escolhida pelo atacante.
+Base legal: fundamento jurídico que autoriza o tratamento de dados pessoais, como o consentimento.
+Bizantino: participante que pode se comportar de forma arbitrária, inclusive mentindo ou falhando.
+Centroide: ponto que representa o centro de um grupo, em geral a média de seus pontos.
+Cliente: participante que possui dados e treina localmente.
+Clipping (corte): limitação da norma de um vetor, como a atualização de um cliente, a um valor máximo.
+Cold start: situação em que um cliente novo não tem dados para personalizar o modelo.
+Comunicação (rodada de): ciclo em que o servidor envia o modelo, os clientes treinam e devolvem atualizações, e o servidor agrega.
+Concept shift (mudança de conceito): situação em que o mesmo atributo recebe rótulos diferentes em clientes ou grupos diferentes.
+Consenso: estado em que todos os nós de uma rede descentralizada têm o mesmo valor, em geral a média global.
+Contabilidade de privacidade: cálculo do ε acumulado ao longo de várias aplicações de um mecanismo diferencialmente privado.
+Convexo: diz-se do problema cuja superfície de perda tem um único vale, o que facilita a otimização.
+Corte de norma: técnica que limita a norma de cada atualização antes de agregá-las.
+Cross-device: cenário com milhões de clientes pequenos e instáveis, como celulares.
+Cross-silo: cenário com poucos clientes grandes e confiáveis, como hospitais e bancos.
+Dados não-IID: dados cujas distribuições diferem entre os clientes.
+Deriva dos clientes (client drift): afastamento do modelo local em direção ao mínimo do próprio cliente durante o treino local.
+Descida do gradiente: método de otimização que repete passos na direção oposta ao gradiente da perda.
+Dirichlet: distribuição de probabilidade usada para sortear proporções que somam 1, útil para simular dados não-IID.
+Dados de teste: parte dos dados usada uma única vez para avaliar o modelo final.
+Dados de treino: parte dos dados usada para ajustar os parâmetros do modelo.
+Dados de validação: parte dos dados usada para escolher hiperparâmetros.
+DP (privacidade diferencial): propriedade segundo a qual a saída de um algoritmo quase não muda com a presença ou ausência de qualquer indivíduo.
+DP-FedAvg: FedAvg com privacidade diferencial no nível do cliente, por meio de corte e ruído gaussiano.
+Época: uma passada completa pelos exemplos de treino.
+Entropia cruzada: função de perda usada em classificação; vale −log da probabilidade atribuída à classe correta.
+Épsilon (ε): parâmetro da privacidade diferencial; quanto menor, mais privacidade.
+Delta (δ): probabilidade pequena de falha da garantia de privacidade diferencial.
+Esparsificação: envio apenas dos valores mais importantes de uma atualização, zerando os demais.
+Estatística suficiente: resumo dos dados, como soma e contagem, que se combina entre clientes e basta para um cálculo.
+F1: média harmônica entre precisão e revocação.
+FedAdam: variante do FedAvg com otimizador adaptativo (Adam) aplicado no servidor.
+FedAvg: algoritmo de médias federadas: clientes treinam localmente e o servidor faz a média ponderada dos modelos.
+FedNova: algoritmo que normaliza cada atualização pelo número de passos locais antes de agregá-la.
+FedProx: algoritmo que adiciona ao erro local uma penalização por se afastar do modelo global.
+FedSGD: versão do FedAvg com um único passo de gradiente por rodada.
+Federated analytics (análises federadas): cálculo de estatísticas sobre dados distribuídos sem juntá-los.
+Fine-tuning (ajuste fino): continuação do treino de um modelo com dados específicos.
+Foundation model (modelo de fundação): grande modelo pré-treinado com dados gerais, posteriormente especializado.
+Gatilho: padrão que ativa o comportamento malicioso de um modelo com backdoor.
+GDPR: regulamento de proteção de dados da União Europeia, em vigor desde 2018.
+Gossip: método de comunicação em que cada nó troca informação com poucos vizinhos para que a rede alcance consenso.
+Gradiente: vetor que aponta a direção em que a perda mais cresce.
+Heterogeneidade: diferença entre clientes, de dados (não-IID), de recursos ou de comportamento.
+Hiperparâmetro: ajuste do algoritmo escolhido pelo programador, e não aprendido pelo modelo.
+HFL (aprendizado federado horizontal): partição em que os participantes têm os mesmos atributos e pessoas diferentes.
+IFCA: algoritmo de agrupamento iterativo de clientes, em que cada cliente escolhe o modelo de menor perda.
+IID: independentes e identicamente distribuídos; dados sorteados de uma mesma distribuição.
+Inferência de pertencimento: ataque que tenta descobrir se um exemplo específico foi usado no treino.
+Inferência de propriedades: ataque que tenta descobrir uma característica do conjunto de dados de um participante.
+Interseção privada de conjuntos (PSI): protocolo que revela apenas os elementos em comum entre dois conjuntos.
+Inversão de gradientes: ataque que reconstrói dados de treino a partir de gradientes ou atualizações.
+K-means: algoritmo de agrupamento que alterna atribuir pontos ao centroide mais próximo e recalcular os centroides.
+Krum: agregador robusto que escolhe a atualização mais central entre as recebidas.
+Label skew: heterogeneidade em que a frequência das classes varia entre clientes.
+LGPD: Lei Geral de Proteção de Dados (Lei nº 13.709/2018), do Brasil.
+Lote (mini-batch): pequeno grupo de exemplos usado para calcular uma estimativa do gradiente.
+LoRA: método de ajuste eficiente que aprende uma correção de baixo posto A·B sobre os pesos congelados.
+Matriz de confusão: tabela que conta acertos e erros de um classificador em cada classe.
+Matriz de mistura: matriz duplamente estocástica que define como os nós combinam os valores dos vizinhos.
+Média aparada: média calculada após descartar os valores extremos de cada coordenada.
+Mediana coordenada a coordenada: agregador robusto que toma a mediana de cada parâmetro.
+Memória de erro (error feedback): técnica em que o cliente guarda o que não enviou e soma à atualização seguinte.
+Mecanismo gaussiano: mecanismo de privacidade que soma ruído gaussiano proporcional à sensibilidade.
+Minimização de dados: princípio de coletar e tratar apenas os dados necessários.
+Modelo: função com parâmetros ajustáveis que faz previsões.
+Modelo de ameaça: descrição de quem é o adversário, o que sabe e o que pode fazer.
+Multi-Krum: variante do Krum que faz a média de várias atualizações centrais.
+Ótimo global: valor dos parâmetros que minimiza a perda sobre todos os dados.
+Overfitting (sobreajuste): situação em que o modelo vai bem nos dados de treino e mal em dados novos.
+Parâmetros (pesos): números que o modelo ajusta durante o aprendizado.
+PCA: análise de componentes principais; encontra as direções de maior variação dos dados.
+Percentil 10: valor abaixo do qual estão os 10% piores resultados.
+Per-FedAvg: abordagem de meta-aprendizado que busca um modelo global fácil de adaptar a cada cliente.
+Perda (loss): número que mede o erro de uma previsão.
+Personalização: adaptação do modelo ao cliente, por ajuste fino, regularização, partição ou agrupamento.
+Precisão: dos exemplos que o modelo chamou de positivos, fração que realmente era positiva.
+Privacidade diferencial local: variante em que cada cliente adiciona ruído antes de enviar seus dados ou atualização.
+Regularização: técnica que penaliza modelos complexos para reduzir o sobreajuste.
+Revocação (recall): dos exemplos realmente positivos, fração que o modelo encontrou.
+Risco empírico: média da perda sobre os exemplos de treino.
+Resposta aleatorizada: técnica de pesquisa em que respostas são sorteadas para proteger cada indivíduo, mas permitem estimar taxas coletivas.
+Rodada: ver Comunicação (rodada de).
+SCAFFOLD: algoritmo que usa variáveis de controle para corrigir a deriva dos clientes.
+Sensibilidade: máximo que uma consulta pode mudar quando uma pessoa entra ou sai do conjunto de dados.
+Servidor: coordenador que organiza o treino e agrega as contribuições dos clientes.
+SGD (gradiente descendente estocástico): descida do gradiente com mini-lotes sorteados.
+Shards: pedaços de dados ordenados por classe, usados para simular dados muito heterogêneos.
+Silo de dados: repositório de dados fechado, controlado por um dono.
+Smashed data: ativações enviadas pelo cliente na camada de corte do split learning.
+Softmax: função que transforma notas em probabilidades que somam 1; usada na regressão logística multiclasse.
+SMPC: computação multipartidária segura; várias partes calculam juntas sem revelar suas entradas.
+Split learning: aprendizado em que a rede neural é dividida entre cliente e servidor em uma camada de corte.
+Taxa de aprendizado: tamanho do passo na descida do gradiente.
+TEE: ambiente de execução confiável; área protegida do processador.
+Topologia: estrutura de quem se comunica com quem em uma rede.
+Transferência federada (FTL): aprendizado federado com pouca sobreposição de pessoas e atributos, por meio de um espaço comum de representação.
+VFL (aprendizado federado vertical): partição em que os participantes têm as mesmas pessoas e atributos diferentes.
+Variável de controle: vetor mantido por servidor e clientes no SCAFFOLD para estimar e corrigir a deriva.
+Viés (bias) do modelo: parâmetro de deslocamento somado à nota do modelo.
+Viés estatístico: erro sistemático que não se cancela ao fazer médias.
+Quantização: representação dos valores com menos bits.
+Arredondamento estocástico: arredondamento em que se sobe com probabilidade igual à parte fracionária, evitando viés.
+Criptografia homomórfica: criptografia que permite operar sobre dados cifrados.
+Paillier: esquema de criptografia parcialmente homomórfica que permite somar valores cifrados.
+Compartilhamento de segredos: divisão de um valor em partes de modo que nenhuma parte sozinha o revele.
+Diffie-Hellman: protocolo para que duas partes combinem um segredo comum por um canal aberto.
+q-FFL: método de justiça que dá mais peso aos clientes com maior perda.
+Aprendizado federado agnóstico: método que otimiza o pior caso sobre misturas dos clientes.
+Padronização: transformação dos atributos para média 0 e desvio padrão 1.

@@ -1,0 +1,157 @@
+@@EX 1 | Conhecendo os dados dos "hospitais" | básico
+Carregue o conjunto **Breast Cancer Wisconsin** (`load_breast_cancer`). Mostre o formato de X, o nome das duas classes e quantos exemplos há em cada uma. Depois, sorteie **três hospitais** de 60 pacientes cada (use `np.random.default_rng(1)`) e conte quantos tumores benignos e malignos cada hospital possui.
+
+*Pergunta:* os três hospitais têm proporções de classes parecidas? Por que isso importa no aprendizado federado?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+
+dados = load_breast_cancer()
+X, y = dados.data, dados.target
+print("Formato de X:", X.shape)
+print("Classes:", list(map(str, dados.target_names)), "->", np.bincount(y))
+
+rng = np.random.default_rng(1)
+idx = rng.permutation(len(y))
+hospitais = np.array_split(idx[:180], 3)
+for i, h in enumerate(hospitais, 1):
+    cont = np.bincount(y[h], minlength=2)
+    print(f"Hospital {i}: {len(h)} pacientes | malignos = {cont[0]}, benignos = {cont[1]}")
+```
+@@NOTE Como o sorteio foi aleatório, as proporções são parecidas entre os hospitais (dados IID). Em um cenário real, um hospital de referência em oncologia teria muito mais casos malignos. Essa diferença é a heterogeneidade não-IID, tema do Capítulo 4.
+
+@@EX 2 | Quanto o tamanho do hospital importa? | básico
+Repita o experimento do capítulo variando o número de pacientes por hospital: 10, 25, 50 e 100. Para cada tamanho, calcule a acurácia média dos três modelos locais e a acurácia do modelo obtido pela **média dos coeficientes**. Padronize os dados e use `random_state=0` na divisão.
+
+*Pergunta:* quando os hospitais são muito pequenos, o que acontece com a diferença entre treinar sozinho e colaborar?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(Xtr)
+Xtr, Xte = esc.transform(Xtr), esc.transform(Xte)
+
+def media_de_modelos(modelos):
+    m = LogisticRegression(max_iter=1000)
+    m.coef_ = np.mean([k.coef_ for k in modelos], axis=0)
+    m.intercept_ = np.mean([k.intercept_ for k in modelos], axis=0)
+    m.classes_ = modelos[0].classes_
+    return m
+
+rng = np.random.default_rng(0)
+idx = rng.permutation(len(ytr))
+print("pacientes/hospital | local (média) | colaborando (média dos modelos)")
+for n in [10, 25, 50, 100]:
+    partes = [idx[i * n:(i + 1) * n] for i in range(3)]
+    locais = [LogisticRegression(max_iter=1000).fit(Xtr[p], ytr[p]) for p in partes]
+    acc_local = np.mean([m.score(Xte, yte) for m in locais])
+    acc_fed = media_de_modelos(locais).score(Xte, yte)
+    print(f"{n:>18} | {acc_local:13.3f} | {acc_fed:.3f}")
+```
+@@NOTE Com 10 pacientes por hospital, a colaboração traz um ganho claro (cerca de 4 pontos percentuais). Com 25 e 50, a diferença some. Com 100, a média dos modelos até fica um pouco abaixo do local médio: a média de modelos treinados uma só vez não é igual a treinar com todos os dados. Colaborar vale mais para quem tem pouco dado, e o ganho depende do problema.
+
+@@EX 3 | Repetindo para não se enganar com o acaso | intermediário
+Um único sorteio pode enganar. Repita o experimento com 50 pacientes por hospital em **30 sementes diferentes** (muda a divisão dos hospitais). Calcule a média e o desvio padrão das acurácias de: (a) modelo local, (b) média dos modelos e (c) modelo centralizado com os mesmos 150 pacientes.
+
+*Pergunta:* a média dos modelos é, em média, melhor que o local? E em relação ao centralizado?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(Xtr)
+Xtr, Xte = esc.transform(Xtr), esc.transform(Xte)
+
+def media_de_modelos(modelos):
+    m = LogisticRegression(max_iter=1000)
+    m.coef_ = np.mean([k.coef_ for k in modelos], axis=0)
+    m.intercept_ = np.mean([k.intercept_ for k in modelos], axis=0)
+    m.classes_ = modelos[0].classes_
+    return m
+
+loc, fed, cen = [], [], []
+for semente in range(30):
+    rng = np.random.default_rng(semente)
+    idx = rng.permutation(len(ytr))[:150]
+    partes = np.array_split(idx, 3)
+    modelos = [LogisticRegression(max_iter=1000).fit(Xtr[p], ytr[p]) for p in partes]
+    loc.append(np.mean([m.score(Xte, yte) for m in modelos]))
+    fed.append(media_de_modelos(modelos).score(Xte, yte))
+    cen.append(LogisticRegression(max_iter=1000).fit(Xtr[idx], ytr[idx]).score(Xte, yte))
+
+for nome, v in [("local", loc), ("média dos modelos", fed), ("centralizado", cen)]:
+    print(f"{nome:<18}: {np.mean(v):.3f} ± {np.std(v):.3f}")
+```
+@@NOTE Em média, a média dos modelos fica acima do local e muito próxima do centralizado. O desvio padrão mostra que o resultado varia com o sorteio, e por isso a repetição é importante.
+
+@@PROJ Rede de Clínicas: vale a pena colaborar? | Cap1
+**Contexto.** Cinco clínicas pequenas de uma rede (fictícia) querem um modelo de **apoio à triagem**. Como não temos dados reais, vamos simular com o conjunto **Wine** da UCI (`load_wine`, 178 amostras, 13 atributos, 3 classes), usando-o como substituto didático. Cada clínica possui poucos exemplos e não pode compartilhá-los. A diretoria pergunta: *"Vale a pena colaborar sem juntar os dados?"*
+
+**Tarefas.**
+1. Padronize os dados e separe um conjunto de teste de 30%.
+2. Reparta o treino em cinco clínicas de tamanhos iguais.
+3. Treine uma `LogisticRegression` em cada clínica e meça a acurácia no teste.
+4. Faça a média dos modelos (coeficientes e interceptos) e meça a acurácia.
+5. Compare com o modelo centralizado.
+6. Repita com 20 sementes e relate média e desvio padrão.
+7. Escreva um parágrafo de recomendação para a diretoria, citando **limites** do estudo.
+
+**Entregáveis.** Código comentado, uma tabela de resultados e o parágrafo de recomendação.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_wine(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(Xtr)
+Xtr, Xte = esc.transform(Xtr), esc.transform(Xte)
+
+def media_de_modelos(modelos, pesos):
+    m = LogisticRegression(max_iter=2000)
+    p = np.array(pesos) / np.sum(pesos)
+    m.coef_ = np.tensordot(p, [k.coef_ for k in modelos], axes=1)
+    m.intercept_ = np.tensordot(p, [k.intercept_ for k in modelos], axes=1)
+    m.classes_ = modelos[0].classes_
+    return m
+
+res = {"local": [], "federado": [], "centralizado": []}
+for semente in range(20):
+    rng = np.random.default_rng(semente)
+    idx = rng.permutation(len(ytr))
+    partes = np.array_split(idx, 5)
+    modelos = []
+    for p in partes:
+        modelos.append(LogisticRegression(max_iter=2000).fit(Xtr[p], ytr[p]))
+    res["local"].append(np.mean([m.score(Xte, yte) for m in modelos]))
+    res["federado"].append(media_de_modelos(modelos, [len(p) for p in partes]).score(Xte, yte))
+    res["centralizado"].append(LogisticRegression(max_iter=2000).fit(Xtr, ytr).score(Xte, yte))
+
+print(f"{'estratégia':<14}{'média':>8}{'desvio':>9}")
+for k, v in res.items():
+    print(f"{k:<14}{np.mean(v):8.3f}{np.std(v):9.3f}")
+```
+@@RUBRICA
+- Padronização e separação de teste feitas corretamente (sem vazar o teste).
+- Modelos locais, média dos modelos e centralizado comparados na mesma base de teste.
+- Repetição com várias sementes e relato de média e desvio padrão.
+- Recomendação clara, com ao menos dois limites (dados IID simulados, uma só rodada, escalonamento global).
+@@NOTE Na simulação, o modelo federado (média dos modelos) supera o local médio (cerca de 0,98 contra 0,95) e fica perto do centralizado (1,00, usando todo o treino). O centralizado aqui usa **todos** os dados de treino, então é um teto otimista. Mas lembre dos limites: os dados foram divididos ao acaso (IID), a padronização usou o treino inteiro e houve apenas um encontro com o servidor. A recomendação deve ser cautelosa: o resultado sugere que colaborar vale a pena, mas deve ser validado com dados reais e heterogêneos.
+@@ALEM
+- **UCI:** *Heart Disease*, *Diabetes (Pima Indians)* e *Adult*, ótimos para simular clínicas e bancos.
+- **Kaggle:** *Breast Cancer Wisconsin (Diagnostic)* e *Heart Failure Prediction*.

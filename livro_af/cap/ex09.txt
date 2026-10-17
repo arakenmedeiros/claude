@@ -1,0 +1,270 @@
+MC: O que é um participante bizantino em aprendizado federado?
+a) Um cliente que pode se comportar de forma arbitrária: falhar, mentir ou combinar-se com outros.
+b) Um cliente com poucos dados.
+c) Um servidor lento.
+d) Um cliente que usa criptografia.
+R: a | O termo vem do problema dos generais bizantinos (Lamport et al., 1982).
+
+MC: No envenenamento de dados, o atacante:
+a) controla só os próprios dados, treinando normalmente com dados manipulados.
+b) controla o servidor.
+c) controla o canal de rede.
+d) controla o código dos outros clientes.
+R: a | Exemplo: trocar rótulos nos dados locais.
+
+MC: No envenenamento de modelo, o atacante:
+a) controla a atualização enviada e pode mandar qualquer vetor.
+b) só altera os rótulos.
+c) só observa.
+d) só consulta o modelo final.
+R: a | Pode, por exemplo, enviar o oposto da atualização honesta, amplificada.
+
+MC: Um ataque não direcionado (untargeted) busca:
+a) destruir a acurácia do modelo em geral.
+b) fazer o modelo errar só com um gatilho.
+c) roubar dados.
+d) acelerar o treino.
+R: a | O objetivo é degradar o desempenho geral.
+
+MC: Um ataque de backdoor busca:
+a) fazer o modelo funcionar bem, exceto quando vê um gatilho, caso em que dá a resposta escolhida pelo atacante.
+b) reduzir o número de clientes.
+c) quebrar a criptografia.
+d) tornar o modelo mais privado.
+R: a | O modelo parece normal, mas obedece ao gatilho secreto.
+
+MC: Por que o backdoor é perigoso?
+a) Porque não aparece na acurácia normal do modelo.
+b) Porque destrói toda a acurácia.
+c) Porque é fácil de detectar.
+d) Porque só ocorre em dados IID.
+R: a | O modelo se comporta bem em dados normais, escondendo o ataque.
+
+MC: Qual é o ponto de ruptura da média?
+a) Zero: um único valor suficientemente grande pode levá-la a qualquer lugar.
+b) 50%.
+c) 30%.
+d) 100%.
+R: a | A média não resiste nem a um valor arbitrário.
+
+MC: Com o atacante enviando 1.000 em um conjunto de 10 valores próximos de 7, a mediana:
+a) quase não muda.
+b) vai para 1.000.
+c) vai para 100.
+d) vai para zero.
+R: a | A mediana só se move se mais da metade dos valores mudar.
+
+MC: Em 20 alunos, um envia a nota 1.000 e os outros 19 enviam 7. A média é aproximadamente:
+a) 56,65.
+b) 7.
+c) 1.007.
+d) 100.
+R: a | (19 · 7 + 1.000)/20 = 56,65.
+
+MC: A mediana coordenada a coordenada:
+a) toma, para cada parâmetro, a mediana dos valores enviados.
+b) escolhe um cliente.
+c) soma tudo.
+d) elimina o corte.
+R: a | Aplica a mediana a cada coordenada do vetor.
+
+MC: A média aparada (trimmed mean) com β = 0,2 e m = 20 clientes descarta:
+a) os 4 menores e os 4 maiores valores de cada coordenada.
+b) apenas o maior valor.
+c) 20 valores.
+d) nenhum valor.
+R: a | k = floor(0,2 · 20) = 4 de cada lado.
+
+MC: O Krum escolhe:
+a) a atualização com menor soma de distâncias aos seus vizinhos mais próximos.
+b) a atualização maior.
+c) a média de todas.
+d) uma atualização aleatória.
+R: a | É a mais "central", com muitas outras parecidas.
+
+MC: No Krum, quantos vizinhos mais próximos entram na pontuação?
+a) m − f − 2.
+b) f.
+c) m.
+d) 2.
+R: a | Soma-se a distância aos m − f − 2 vizinhos mais próximos.
+
+MC: Qual a diferença entre Krum e Multi-Krum?
+a) O Multi-Krum faz a média das q melhores atualizações em vez de escolher uma só.
+b) Não há diferença.
+c) O Multi-Krum escolhe a pior.
+d) O Multi-Krum usa criptografia.
+R: a | Isso reduz a perda de informação do Krum.
+
+MC: O corte de norma consiste em:
+a) limitar a norma de cada atualização a S antes da média.
+b) apagar atualizações grandes.
+c) aumentar o ruído.
+d) trocar o servidor.
+R: a | Limita o dano de atualizações gigantes.
+
+MC: Qual a limitação do corte de norma?
+a) Não impede ataques sutis, de norma pequena, como backdoors.
+b) Exige criptografia.
+c) Destrói a acurácia.
+d) Só funciona com um cliente.
+R: a | No experimento, o ASR continuou em torno de 0,7 a 0,9.
+
+MC: No experimento, com 30% de clientes com sinal invertido, a média teve acurácia aproximada de:
+a) 0,00.
+b) 0,95.
+c) 0,50.
+d) 0,80.
+R: a | A média colapsou.
+
+MC: No ataque de ruído com 10% de maliciosos, a média caiu para cerca de:
+a) 0,75.
+b) 0,95.
+c) 0,10.
+d) 0,60.
+R: a | Mesmo uma minoria já prejudica muito a média.
+
+MC: No experimento sem ataque, o Krum puro teve acurácia cerca de 0,88 enquanto a média teve 0,96. Qual a explicação?
+a) O Krum descarta quase toda a informação, ficando com uma única atualização.
+b) O Krum é sempre pior.
+c) A média usa dados de teste.
+d) O Krum usa menos clientes.
+R: a | Escolher uma só atualização desperdiça as demais.
+
+MC: No backdoor do experimento, qual era o gatilho?
+a) Um pequeno bloco de pixels acesos no canto inferior direito da imagem.
+b) Uma palavra secreta.
+c) Uma senha numérica.
+d) Um cliente específico.
+R: a | As imagens com gatilho devem ser classificadas como a classe alvo (0).
+
+MC: O que mede o ASR (taxa de sucesso do ataque)?
+a) A fração de imagens com gatilho (não zeros) classificadas como a classe alvo.
+b) A acurácia normal.
+c) O número de clientes.
+d) O tamanho do modelo.
+R: a | Mede o quanto o backdoor funciona.
+
+MC: Com a média e 10% de maliciosos (γ = 1), o ASR foi cerca de:
+a) 0,77.
+b) 0,00.
+c) 0,10.
+d) 0,30.
+R: a | Mesmo uma minoria implanta o backdoor com a média.
+
+MC: Com a mediana e 10% de maliciosos, o ASR foi:
+a) praticamente zero.
+b) 0,90.
+c) 0,50.
+d) 1,00.
+R: a | Em dados IID, a mediana eliminou o backdoor.
+
+MC: Por que a mediana funcionou bem no backdoor do experimento?
+a) Porque os clientes honestos eram parecidos entre si e os maliciosos eram minoria.
+b) Porque a mediana é criptografada.
+c) Porque os dados eram não-IID.
+d) Porque não havia ruído.
+R: a | Em IID, as atualizações honestas se agrupam, e as maliciosas ficam nas pontas.
+
+MC: O que acontece com agregadores robustos quando os dados são não-IID, mesmo sem ataque?
+a) Perdem acurácia, pois clientes honestos diferentes podem ser tratados como atacantes.
+b) Ganham acurácia.
+c) Nada muda.
+d) Ficam mais rápidos.
+R: a | Com α = 0,1, a mediana caiu de 0,96 para 0,86.
+
+MC: No experimento não-IID (α = 0,1), qual agregador teve o pior desempenho?
+a) Krum, com menos de 0,5.
+b) A média.
+c) A mediana, com 0,96.
+d) Nenhum perdeu acurácia.
+R: a | O Krum depende de haver muitas atualizações parecidas, o que não ocorre em não-IID.
+
+MC: Qual é a tensão entre agregação segura e robustez?
+a) Para detectar atualizações suspeitas, o servidor precisa vê-las; a agregação segura esconde as individuais.
+b) Elas são idênticas.
+c) A agregação segura aumenta o número de clientes.
+d) A robustez exige criptografia.
+R: a | Privacidade e robustez colidem.
+
+MC: O que significa "um pouco é suficiente" (Baruch et al., 2019)?
+a) Que atacantes podem se esconder entre os honestos, com mudanças pequenas, e ainda derrubar defesas.
+b) Que poucos clientes bastam para treinar.
+c) Que pouco ruído é suficiente para privacidade.
+d) Que poucas rodadas bastam.
+R: a | Ataques sutis, ajustados à variabilidade honesta, contornam defesas.
+
+MC: Qual agregador resiste a até quase 50% de clientes maliciosos (em atualizações semelhantes entre honestos)?
+a) A mediana coordenada a coordenada.
+b) A média simples.
+c) O corte de norma isolado.
+d) O FedAvg ponderado.
+R: a | A mediana só é movida quando mais da metade dos valores muda.
+
+MC: Qual o risco de escolher um β pequeno demais na média aparada?
+a) Restarem atacantes entre os valores mantidos, que continuam arrastando a média.
+b) A média ficar perfeita.
+c) O servidor travar.
+d) Os clientes honestos serem sempre descartados.
+R: a | Se β·m é menor que o número de atacantes, sobram atacantes na média.
+
+DISC: Explique com a analogia da nota da turma por que a média é frágil.
+R: Com 20 alunos, se um sugere 1.000 e os outros 7, a média vira cerca de 57: um único participante arrasta a decisão. A mediana continuaria perto de 7.
+
+DISC: Diferencie envenenamento de dados e de modelo, com um exemplo de cada.
+R: Dados: o atacante só controla os próprios dados (ex.: trocar rótulos). Modelo: controla a atualização enviada (ex.: enviar o oposto da atualização honesta, amplificada).
+
+DISC: Diferencie ataque não direcionado de backdoor e diga qual é mais difícil de detectar.
+R: O não direcionado destrói a acurácia geral e é facilmente notado. O backdoor mantém a acurácia normal e só falha com um gatilho, sendo muito mais difícil de detectar.
+
+DISC: Descreva o funcionamento da média aparada e o parâmetro β.
+R: Para cada coordenada, ordenam-se os valores, descartam-se os β·m menores e maiores e faz-se a média do restante. β deve ser pelo menos a fração de maliciosos.
+
+DISC: Explique o Krum em palavras e uma limitação.
+R: Pontua cada atualização pela soma das distâncias aos m − f − 2 vizinhos mais próximos e escolhe a de menor pontuação (a mais central). Limitação: usa uma única atualização, perdendo informação, e é sensível a dados não-IID.
+
+DISC: Explique por que o corte de norma não impede um backdoor.
+R: O backdoor pode ser implantado com atualizações de norma pequena, que o corte não altera; o corte só limita atualizações gigantes, e no experimento o ASR seguiu alto.
+
+DISC: Descreva o backdoor do experimento: gatilho, alvo, cliente malicioso e métricas.
+R: Gatilho: bloco de pixels acesos no canto. Alvo: classe 0. O malicioso treina com dados normais e com gatilho rotulados como 0, amplificando a atualização. Métricas: acurácia normal e ASR.
+
+DISC: Interprete os resultados do backdoor com média, corte de norma e mediana.
+R: Com a média, ASR de 0,77 a 0,97 e acurácia normal intacta; corte de norma não ajudou (0,7 a 0,9); mediana e média aparada zeraram o ASR em dados IID.
+
+DISC: Por que os agregadores robustos pioram com dados não-IID?
+R: Eles supõem honestos parecidos entre si. Com dados heterogêneos, clientes honestos diferem muito, e o agregador pode descartá-los como se fossem atacantes, perdendo informação útil.
+
+DISC: Compare o desempenho do Krum e da média sem atacantes e explique.
+R: Sem ataque, a média tem 0,96 e o Krum 0,88 (IID), pois o Krum usa uma só atualização. Em não-IID o Krum cai ainda mais (0,45 com α = 0,1).
+
+DISC: Explique a tensão entre agregação segura e robustez, e uma possível direção de solução.
+R: O servidor precisa ver as atualizações para filtrá-las, mas a agregação segura as esconde. Direções: verificar limites de norma sobre dados cifrados e usar provas de conhecimento zero de que a atualização é válida.
+
+DISC: O que é a substituição de modelo e por que amplificar a atualização ajuda o atacante?
+R: O atacante multiplica sua atualização por um fator γ para que ela domine a média e substitua o modelo global por um modelo com backdoor. Amplificar aumenta a influência na agregação.
+
+DISC: Dê duas defesas, além de agregadores robustos, contra envenenamento.
+R: Detecção e reputação de clientes ao longo do tempo; validação do modelo agregado com dados no servidor; privacidade diferencial (corte e ruído); provas de que a atualização respeita limites.
+
+DISC: Por que as defesas devem ser avaliadas contra ataques adaptativos?
+R: Atacantes que conhecem a defesa podem ajustar o ataque para contorná-la (como em "um pouco é suficiente" e "cauda"). Defesas avaliadas só contra ataques simples dão falsa sensação de segurança.
+
+DISC: Calcule a média aparada (β = 0,2) para os valores 1, 2, 3, 4, 100 e interprete.
+R: m = 5; k = floor(0,2·5) = 1; descartam-se 1 e 100; média de 2, 3, 4 = 3. A média comum seria 22. O valor extremo é neutralizado.
+
+DISC: Qual a diferença entre falha bizantina e ataque malicioso coordenado?
+R: Falha bizantina pode ser aleatória ou acidental (bug, hardware). Ataque coordenado envolve vários clientes combinando-se para maximizar o dano, o que é mais difícil de defender.
+
+DISC: Como você escolheria o parâmetro β da média aparada em um sistema real?
+R: Estimando a fração máxima plausível de clientes maliciosos e usando β um pouco acima; testando perda de acurácia sem ataque para equilibrar robustez e eficiência.
+
+DISC: Em que situação você recomendaria a mediana em vez da média e em qual evitaria?
+R: Recomendaria quando há risco de clientes maliciosos e os dados são aproximadamente IID. Evitaria com forte heterogeneidade e sem atacantes, em que a média é mais eficiente.
+
+DISC: Resuma em cinco linhas o que você aprendeu sobre robustez em aprendizado federado.
+R: Resposta pessoal coerente com o resumo: bizantinos, tipos de ataque, fragilidade da média, agregadores robustos, backdoor, custo em não-IID e tensão com a agregação segura.
+
+DISC: Por que nenhuma defesa por agregação resiste a mais da metade de clientes maliciosos?
+R: Porque, se os maliciosos são maioria, eles definem o "centro" dos valores (mediana, vizinhança do Krum), e os honestos passam a parecer os outliers. Defesas baseadas em maioria ou centralidade falham.
+

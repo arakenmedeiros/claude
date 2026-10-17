@@ -1,0 +1,269 @@
+MC: Qual algoritmo foi proposto por McMahan et al. (2017) e é a base do aprendizado federado moderno?
+a) FedAvg (Federated Averaging).
+b) K-means federado.
+c) SecAgg.
+d) DP-SGD.
+R: a | O FedAvg combina treino local em mini-lotes com média ponderada dos modelos no servidor.
+
+MC: Qual é o primeiro passo de uma rodada do FedAvg?
+a) O servidor sorteia clientes e envia o modelo global.
+b) Os clientes enviam seus dados ao servidor.
+c) O servidor treina com todos os dados.
+d) Os clientes apagam seus modelos.
+R: a | A rodada começa com seleção de clientes e envio do modelo atual.
+
+MC: No treino local, cada cliente parte de:
+a) um modelo aleatório próprio.
+b) o modelo global w_t recebido do servidor.
+c) os dados dos outros clientes.
+d) o modelo da rodada anterior do próprio cliente, ignorando o servidor.
+R: b | Todos devem partir do mesmo modelo global da rodada.
+
+MC: O que o cliente devolve ao servidor em uma rodada típica?
+a) Os dados brutos.
+b) O modelo atualizado (ou a diferença em relação ao modelo recebido).
+c) Apenas os rótulos.
+d) O nome das classes.
+R: b | Devolve-se o modelo local atualizado ou a atualização (delta).
+
+MC: Como o servidor combina os modelos dos clientes no FedAvg?
+a) Escolhe o melhor modelo e descarta os demais.
+b) Faz a média ponderada pelo número de exemplos de cada cliente.
+c) Soma os dados dos clientes.
+d) Usa o modelo do primeiro cliente.
+R: b | w_(t+1) = Σ (n_k / n_S) · w_k.
+
+MC: Em uma rodada, três clientes têm n = 100, 300 e 600 e devolvem, para um parâmetro, 0,80, 0,60 e 0,50. Qual o valor agregado?
+a) 0,56.
+b) 0,63.
+c) 0,50.
+d) 0,70.
+R: a | 0,1·0,80 + 0,3·0,60 + 0,6·0,50 = 0,56.
+
+MC: Se, no exemplo anterior, fosse usada média simples (sem pesos), o valor seria:
+a) 0,56.
+b) 0,63.
+c) 0,50.
+d) 0,80.
+R: b | (0,80 + 0,60 + 0,50)/3 ≈ 0,63.
+
+MC: Dois clientes: o primeiro com 50 exemplos devolve o valor 1,0; o segundo, com 150 exemplos, devolve 0,0. Qual o valor agregado?
+a) 0,50.
+b) 0,25.
+c) 0,75.
+d) 0,33.
+R: b | (50·1,0 + 150·0,0)/200 = 0,25.
+
+MC: Em qual situação o FedAvg é equivalente ao FedSGD?
+a) Quando E = 1 e o mini-lote é todo o conjunto local (um passo de gradiente por rodada).
+b) Quando E é muito grande.
+c) Quando há apenas um cliente.
+d) Quando η = 0.
+R: a | Um passo de gradiente completo por rodada é o FedSGD.
+
+MC: Qual é a principal desvantagem do FedSGD?
+a) Exige muitas rodadas, pois dá um passo por rodada.
+b) Envia dados brutos.
+c) Não funciona com mais de um cliente.
+d) Não usa gradientes.
+R: a | O custo de comunicação é alto: um passo por rodada.
+
+MC: O FedAvg reduz o número de rodadas principalmente porque:
+a) cada cliente faz vários passos locais antes de comunicar.
+b) o servidor usa mais memória.
+c) os clientes enviam menos dados.
+d) elimina a necessidade de gradientes.
+R: a | Troca comunicação por computação local.
+
+MC: O que significa o hiperparâmetro C no FedAvg?
+a) A fração de clientes sorteados em cada rodada.
+b) O número de classes.
+c) A taxa de aprendizado.
+d) O tamanho do mini-lote.
+R: a | C controla a participação por rodada.
+
+MC: Em um sistema com K = 100 clientes e C = 0,1, quantos clientes são sorteados por rodada?
+a) 1.
+b) 10.
+c) 50.
+d) 100.
+R: b | 0,1 × 100 = 10 clientes.
+
+MC: Com K = 50 e C = 0,3, quantos clientes participam de cada rodada?
+a) 5.
+b) 15.
+c) 30.
+d) 35.
+R: b | 0,3 × 50 = 15.
+
+MC: O hiperparâmetro E representa:
+a) o número de épocas de treino local por rodada.
+b) o erro do modelo.
+c) o número de clientes.
+d) a estimativa de ruído.
+R: a | E é quanto cada cliente treina antes de devolver o modelo.
+
+MC: O hiperparâmetro B representa:
+a) o número de rodadas.
+b) o tamanho do mini-lote no treino local.
+c) o viés do modelo.
+d) o número de classes.
+R: b | B é o tamanho do mini-lote do SGD local.
+
+MC: Um cliente tem 200 exemplos, E = 5 e B = 20. Quantos passos locais ele dá por rodada?
+a) 10.
+b) 50.
+c) 100.
+d) 200.
+R: b | u = E · n_k / B = 5 · 200 / 20 = 50.
+
+MC: Um cliente com 600 exemplos usa E = 2 e B = 30. Quantos passos locais por rodada?
+a) 20.
+b) 40.
+c) 60.
+d) 100.
+R: b | u = 2 · 600 / 30 = 40.
+
+MC: O que é a "deriva dos clientes" (client drift)?
+a) Cada cliente se afasta do mínimo global ao caminhar para o seu mínimo local, e a média fica prejudicada.
+b) Os clientes mudam de endereço IP.
+c) O servidor perde clientes.
+d) Os dados são apagados.
+R: a | Com muitos passos locais e dados diferentes, os modelos divergem do ótimo global.
+
+MC: Por que todos os clientes devem partir do mesmo modelo inicial em redes neurais?
+a) Porque, com inicializações diferentes, a média pode misturar neurônios que não se correspondem e piorar muito o modelo.
+b) Porque isso economiza memória.
+c) Porque o servidor exige.
+d) Porque a média só funciona com modelos lineares.
+R: a | McMahan et al. observaram que a média só funciona bem com inicialização compartilhada.
+
+MC: Na simulação de duas redes pequenas, a média de modelos com inicializações diferentes teve acurácia:
+a) acima dos dois clientes.
+b) bem abaixo dos dois clientes (cerca de 0,89 contra cerca de 0,96).
+c) igual a zero.
+d) idêntica à do centralizado.
+R: b | A média ficou ao redor de 0,89, enquanto cada cliente tinha cerca de 0,96.
+
+MC: A biblioteca fedlib.py, deste livro, é usada para:
+a) simular clientes e servidor em um único computador.
+b) criptografar dados reais.
+c) conectar celulares reais ao servidor.
+d) treinar modelos de linguagem.
+R: a | É uma biblioteca didática de simulação.
+
+MC: Qual modelo a fedlib.py usa por padrão?
+a) Regressão logística multiclasse (softmax) escrita com NumPy.
+b) Rede convolucional profunda.
+c) Árvore de decisão.
+d) K-vizinhos.
+R: a | O modelo simples foca o protocolo e não o modelo.
+
+MC: Quantos parâmetros tem a softmax usada para os dígitos na fedlib.py (65 atributos incluindo viés, 10 classes)?
+a) 64.
+b) 650.
+c) 2.410.
+d) 6.500.
+R: b | 65 × 10 = 650.
+
+MC: Em fedlib.py, por que treino_local faz uma cópia do modelo global (W.copy())?
+a) Para garantir que cada cliente parta do mesmo modelo global, sem alterá-lo.
+b) Para economizar memória.
+c) Para criptografar os pesos.
+d) Para apagar o modelo global.
+R: a | A cópia evita que um cliente modifique o modelo compartilhado.
+
+MC: Para que serve o parâmetro seed nas simulações?
+a) Tornar os experimentos reprodutíveis.
+b) Aumentar o tamanho dos dados.
+c) Reduzir o número de clientes.
+d) Aumentar a privacidade.
+R: a | A mesma semente gera os mesmos sorteios e resultados.
+
+MC: Para um modelo de 1.000 parâmetros em 32 bits e 8 clientes sorteados, o tráfego por rodada (subida + descida) é aproximadamente:
+a) 8.000 bytes.
+b) 32.000 bytes.
+c) 64.000 bytes.
+d) 128.000 bytes.
+R: c | 2 · 4 · 1.000 · 8 = 64.000 bytes.
+
+MC: Qual das variações abaixo atua no lado do servidor, tratando a diferença média como um gradiente?
+a) FedAdam.
+b) K-means.
+c) Padronização.
+d) Validação cruzada.
+R: a | Reddi et al. (2021) propuseram FedAdam, FedYogi e FedAdagrad.
+
+MC: Qual é a regra de ouro mencionada no capítulo sobre o modelo enviado aos clientes?
+a) Enviar modelos diferentes para cada cliente.
+b) Enviar o mesmo modelo a todos os clientes da rodada.
+c) Nunca enviar modelo.
+d) Enviar apenas os dados de teste.
+R: b | Isso mantém os clientes na mesma vizinhança do espaço de parâmetros.
+
+MC: Segundo o capítulo, ao ajustar um sistema federado, por onde convém começar?
+a) Por E e η, depois C, comparando pelo número de rodadas.
+b) Por mudar todos os parâmetros ao mesmo tempo.
+c) Por aumentar K.
+d) Por remover clientes.
+R: a | O número de rodadas é o que custa comunicação.
+
+DISC: Descreva os quatro passos de uma rodada do FedAvg usando a notação w_t, S_t e n_k.
+R: 1) O servidor sorteia S_t e envia w_t. 2) Cada cliente k treina localmente por E épocas, com lote B e passo η, obtendo w_(t+1)^k. 3) Cada cliente devolve w_(t+1)^k. 4) O servidor agrega: w_(t+1) = Σ (n_k/n_S) w_(t+1)^k.
+
+DISC: Por que a agregação usa média ponderada por n_k em vez de média simples?
+R: Porque o objetivo global é a média dos erros sobre todos os exemplos; clientes com mais exemplos devem pesar mais. A média simples superestimaria clientes pequenos e enviesaria o modelo.
+
+DISC: Calcule a agregação para três clientes com n = 20, 30 e 50 que devolvem 2,0, 4,0 e 1,0 para um parâmetro. Mostre as contas.
+R: n_S = 100. w = 0,2·2,0 + 0,3·4,0 + 0,5·1,0 = 0,4 + 1,2 + 0,5 = 2,1.
+
+DISC: Explique a diferença entre FedSGD e FedAvg e diga por que o FedAvg usa menos rodadas.
+R: No FedSGD, cada cliente dá um passo de gradiente por rodada; no FedAvg, vários passos locais (E épocas, lote B). Como cada rodada aproveita muito mais cálculo local, o FedAvg precisa de bem menos rodadas.
+
+DISC: Por que trocar comunicação por computação local é vantajoso em aprendizado federado?
+R: Porque a rede costuma ser lenta, instável e cara, enquanto o dispositivo tem capacidade de sobra. Fazer mais trabalho localmente reduz o número de rodadas e o tráfego.
+
+DISC: Explique o que são C, E, B e η e dê um efeito esperado de aumentar E.
+R: C: fração de clientes por rodada; E: épocas locais; B: tamanho do lote; η: passo. Aumentar E acelera o progresso por rodada, mas, com dados diferentes, aumenta a deriva dos clientes.
+
+DISC: Quantos passos locais um cliente com 450 exemplos dá por rodada com E = 4 e B = 30? Mostre a conta.
+R: u = E · n_k / B = 4 · 450 / 30 = 60 passos.
+
+DISC: O que é a deriva dos clientes e por que ela é maior quando os dados são diferentes entre clientes?
+R: É o afastamento do modelo local em direção ao mínimo do próprio cliente. Quanto mais diferentes os dados, mais diferentes os mínimos locais, e a média dos modelos fica longe do mínimo global.
+
+DISC: Explique por que, em redes neurais, a média de modelos com inicializações diferentes tende a falhar.
+R: Redes podem aprender os mesmos conceitos em neurônios permutados; a média mistura pesos que não correspondem e destrói a função aprendida. Com mesma inicialização, as redes permanecem alinhadas.
+
+DISC: Descreva o experimento da Figura 3.3 e o que ele ensina.
+R: Duas redes pequenas treinaram em metades dos dígitos. Com inicializações diferentes, a média ficou em torno de 0,89, abaixo dos clientes (cerca de 0,96); com mesma inicialização, ficou em torno de 0,97. Ensina a enviar o mesmo modelo a todos.
+
+DISC: Faça uma estimativa do tráfego por rodada para 20 clientes sorteados e um modelo de 500.000 parâmetros de 32 bits.
+R: 2 · 4 · 500.000 · 20 = 80.000.000 bytes, ou cerca de 80 MB por rodada (subida e descida somadas).
+
+DISC: Como o tráfego mudaria no exercício anterior se o modelo tivesse 16 bits por parâmetro?
+R: Cada parâmetro ocuparia 2 bytes; o tráfego cairia pela metade, para cerca de 40 MB por rodada.
+
+DISC: Explique o papel da semente aleatória (seed) em experimentos de simulação federada.
+R: Controla os sorteios (partição dos dados, seleção de clientes, ordem dos mini-lotes). Com a mesma semente, resultados são reproduzíveis; variando a semente, avalia-se a variabilidade.
+
+DISC: Por que a fedlib.py usa uma regressão logística em vez de uma rede profunda? Quais as vantagens e limitações dessa escolha?
+R: Para focar no protocolo, ter modelo pequeno (650 parâmetros), rápido e convexo. Limitações: menos expressividade e, por ser convexo, efeitos como a falha da média com inicializações diferentes não aparecem.
+
+DISC: Por que a comparação entre algoritmos federados deve ser feita por número de rodadas, e não só por épocas?
+R: Porque a rodada envolve comunicação, que é o principal custo; dois métodos com o mesmo número de épocas totais podem exigir números muito diferentes de rodadas.
+
+DISC: Descreva o efeito de reduzir a fração de clientes C quando os dados são IID.
+R: Cada rodada usa uma amostra menor, o que pode atrasar um pouco o início do treino; como qualquer subconjunto representa bem o todo, ao final a diferença costuma ser pequena.
+
+DISC: Explique em palavras o objetivo global f(w) = Σ (n_k/n) F_k(w) e como o FedAvg o aproxima sem juntar dados.
+R: f é o erro médio sobre todos os exemplos. O FedAvg aproxima a minimização fazendo cada cliente reduzir seu F_k localmente e combinando os modelos com pesos n_k/n.
+
+DISC: Cite duas diferenças entre a simulação com fedlib.py e um sistema federado real.
+R: Na simulação tudo roda em uma máquina, sem rede, falhas, autenticação ou criptografia; no real há latência, clientes que somem, segurança e heterogeneidade de hardware.
+
+DISC: Quais estratégias você consideraria para reduzir o custo de comunicação de um treino federado?
+R: Aumentar E (menos rodadas), reduzir o tamanho do modelo, quantizar ou esparsificar as atualizações, e sortear menos clientes por rodada. O Capítulo 5 aprofunda o tema.
+
+DISC: Resuma em cinco linhas o algoritmo FedAvg e suas limitações.
+R: Resposta pessoal coerente com o resumo: sortear clientes, enviar o mesmo modelo, treino local com E, B e η, devolução, média ponderada por n_k. Limitações: deriva dos clientes com dados diferentes, custo de comunicação e ausência de garantias de privacidade.

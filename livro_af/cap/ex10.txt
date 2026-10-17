@@ -1,0 +1,270 @@
+MC: No aprendizado federado horizontal, os participantes têm:
+a) os mesmos atributos, mas pessoas diferentes.
+b) as mesmas pessoas, mas atributos diferentes.
+c) poucas pessoas e atributos em comum.
+d) apenas os rótulos.
+R: a | Cada cliente possui linhas (exemplos) diferentes da mesma tabela.
+
+MC: No aprendizado federado vertical, os participantes têm:
+a) as mesmas pessoas, mas atributos diferentes.
+b) os mesmos atributos e pessoas diferentes.
+c) nenhum dado.
+d) apenas o modelo.
+R: a | Cada participante guarda colunas diferentes sobre as mesmas pessoas.
+
+MC: Um banco e uma loja virtual com clientes em comum, mas dados diferentes sobre eles, ilustram:
+a) aprendizado federado vertical.
+b) aprendizado federado horizontal.
+c) aprendizado descentralizado.
+d) split learning.
+R: a | Mesmas pessoas e atributos distintos: partição vertical.
+
+MC: Dois hospitais com o mesmo tipo de exame, mas pacientes distintos, ilustram:
+a) aprendizado federado horizontal.
+b) aprendizado federado vertical.
+c) aprendizado por transferência.
+d) aprendizado descentralizado.
+R: a | Mesmos atributos, pessoas diferentes.
+
+MC: Quando o aprendizado federado por transferência (FTL) é mais indicado?
+a) Quando há poucas pessoas e poucos atributos em comum entre os participantes.
+b) Quando todos têm a mesma tabela.
+c) Quando há um único participante.
+d) Quando não há rótulos em nenhum lugar.
+R: a | FTL é usado quando quase não há sobreposição de pessoas ou atributos.
+
+MC: Qual é o primeiro desafio específico do aprendizado vertical?
+a) Alinhar as entidades (descobrir quais pessoas são comuns) sem revelar as demais.
+b) Quantizar atualizações.
+c) Cortar a norma.
+d) Escolher o número de clientes.
+R: a | Usa-se, por exemplo, interseção privada de conjuntos.
+
+MC: O que é interseção privada de conjuntos (PSI)?
+a) Um protocolo que descobre os elementos em comum de dois conjuntos sem revelar os demais.
+b) Uma função de perda.
+c) Um tipo de ruído.
+d) Um método de compressão.
+R: a | Permite alinhar registros comuns preservando o restante.
+
+MC: Na regressão logística vertical, o que cada participante k envia à parte que tem o rótulo?
+a) Sua contribuição parcial z_k = X_k · w_k.
+b) Suas colunas X_k.
+c) Seus rótulos.
+d) Seus pesos w_k.
+R: a | Apenas as parcelas, sem expor as colunas.
+
+MC: Quem calcula o resíduo (p − y) no aprendizado vertical simples?
+a) A parte que possui o rótulo.
+b) O servidor, sem rótulos.
+c) Todos os participantes.
+d) Ninguém.
+R: a | Só quem conhece y consegue calcular p − y.
+
+MC: Como cada participante atualiza seus pesos no aprendizado vertical?
+a) w_k ← w_k − η · X_kᵀ · (p − y) / n, usando só as próprias colunas.
+b) Copiando os pesos dos outros.
+c) Usando os rótulos diretamente.
+d) Não atualiza.
+R: a | O resíduo recebido e suas próprias colunas bastam.
+
+MC: No experimento com três participantes de 10 atributos cada, a acurácia do VFL (≈ 0,965) comparada à de cada participante sozinho (≈ 0,92 a 0,96):
+a) foi igual ou maior do que a de qualquer um sozinho.
+b) foi pior que todos.
+c) foi zero.
+d) não pôde ser medida.
+R: a | O treino conjunto aproveitou todas as colunas, sem juntá-las.
+
+MC: Qual é o vazamento do aprendizado vertical simples?
+a) O sinal do resíduo (p − y) revela o rótulo de cada pessoa aos participantes passivos.
+b) As colunas são enviadas ao servidor.
+c) Os pesos são públicos.
+d) O servidor vê os dados brutos.
+R: a | Se y = 1, o resíduo é negativo; se y = 0, é positivo.
+
+MC: Por que o resíduo é negativo quando y = 1?
+a) Porque p está entre 0 e 1, e p − 1 < 0.
+b) Porque p é sempre negativo.
+c) Porque y é negativo.
+d) Porque o resíduo é aleatório.
+R: a | p ∈ (0, 1), então p − 1 < 0 e p − 0 > 0.
+
+MC: No experimento do capítulo, qual fração dos rótulos foi recuperada pelo sinal do resíduo na primeira iteração?
+a) 100%.
+b) 50%.
+c) 10%.
+d) 0%.
+R: a | O sinal do resíduo identifica y exatamente.
+
+MC: Como proteger o resíduo no aprendizado vertical?
+a) Com criptografia homomórfica, privacidade diferencial (ruído) ou agregação segura.
+b) Aumentando o lote.
+c) Removendo clientes.
+d) Usando mais rodadas.
+R: a | Essas técnicas reduzem o vazamento do rótulo.
+
+MC: No split learning, o que o cliente envia ao servidor?
+a) As ativações na camada de corte.
+b) Os dados brutos.
+c) Os rótulos.
+d) O modelo inteiro.
+R: a | São os "dados amassados" (smashed data).
+
+MC: No split learning, o que o servidor devolve ao cliente?
+a) O gradiente na camada de corte.
+b) Os rótulos.
+c) Os pesos do servidor.
+d) Nada.
+R: a | Permite ao cliente concluir a retropropagação.
+
+MC: O experimento do capítulo mostrou que o split learning, comparado ao treino convencional:
+a) produz exatamente os mesmos pesos.
+b) produz pesos muito piores.
+c) não treina.
+d) produz pesos aleatórios.
+R: a | A regra da cadeia garante equivalência matemática.
+
+MC: Qual a principal vantagem do split learning para o cliente?
+a) Faz pouco cálculo (só as primeiras camadas) e mantém os dados brutos locais.
+b) Não precisa de dados.
+c) Elimina a comunicação.
+d) Dispensa servidor.
+R: a | O resto do modelo roda no servidor.
+
+MC: Qual a principal desvantagem do split learning simples?
+a) Treino sequencial e possível vazamento de informação pelas ativações.
+b) Exige muitos clientes.
+c) Não funciona com redes neurais.
+d) É sempre menos preciso.
+R: a | Ativações podem permitir reconstruir a entrada.
+
+MC: O aprendizado descentralizado é aquele em que:
+a) os clientes conversam diretamente entre si, sem servidor central.
+b) o servidor faz tudo.
+c) os dados são juntados.
+d) apenas um cliente treina.
+R: a | Não há ponto central; a comunicação é entre vizinhos.
+
+MC: A técnica de gossip consiste em:
+a) cada nó tirar, a cada rodada, a média do seu modelo com os dos vizinhos.
+b) espalhar rumores falsos.
+c) enviar tudo ao servidor.
+d) criptografar os dados.
+R: a | O consenso emerge de médias locais repetidas.
+
+MC: Uma matriz de mistura A válida para o consenso deve ter:
+a) linhas e colunas somando 1 (duplamente estocástica).
+b) todas as entradas negativas.
+c) apenas zeros.
+d) a diagonal zerada.
+R: a | Isso preserva a média global.
+
+MC: No experimento de topologias, qual conseguiu consenso imediato?
+a) A completa (todos com todos).
+b) O anel.
+c) A estrela.
+d) Nenhuma.
+R: a | Com pesos iguais a 1/n, todos recebem a média global em uma rodada.
+
+MC: Por que o anel é "barato, mas lento"?
+a) Cada nó fala só com dois vizinhos, e a informação leva muitas rodadas para se espalhar.
+b) Porque exige muita banda.
+c) Porque usa criptografia.
+d) Porque não há vizinhos.
+R: a | Pouca comunicação por rodada, mas convergência mais lenta.
+
+MC: Quais são vantagens do aprendizado descentralizado?
+a) Não há ponto único de falha nem servidor que veja tudo.
+b) Convergência sempre mais rápida.
+c) Segurança garantida.
+d) Dispensa dados.
+R: a | A principal motivação é remover o coordenador central.
+
+MC: O que é a transferência federada (FTL)?
+a) Usar um espaço comum de representação para transferir conhecimento entre participantes com pouca sobreposição.
+b) Enviar dados ao servidor.
+c) Quantizar atualizações.
+d) Um tipo de ruído.
+R: a | Alinha representações com poucos exemplos em comum.
+
+MC: Qual arquitetura reparte o modelo entre cliente e servidor por camadas?
+a) Split learning.
+b) HFL.
+c) Gossip.
+d) FTL.
+R: a | A rede é cortada em uma camada.
+
+MC: Qual dos pares abaixo associa corretamente arquitetura e principal desafio?
+a) VFL: alinhamento e vazamento de rótulos.
+b) HFL: alinhar entidades.
+c) Split learning: topologias.
+d) Descentralizado: interseção privada.
+R: a | VFL exige alinhar entidades e protege mal o resíduo.
+
+MC: Quando o aprendizado vertical deixa de compensar, segundo o projeto do capítulo?
+a) Quando poucas pessoas são comuns aos participantes (pouco alinhamento).
+b) Quando há muitos atributos.
+c) Quando os dados são IID.
+d) Quando o modelo é linear.
+R: a | Com poucos registros alinhados, o treino conjunto é limitado.
+
+DISC: Explique as três categorias de partição de dados (horizontal, vertical e por transferência) com um exemplo do cotidiano de cada.
+R: Horizontal: mesmas colunas, pessoas diferentes (dois hospitais). Vertical: mesmas pessoas, colunas diferentes (banco e loja). Transferência: pouco em comum, transfere-se conhecimento (países com poucos clientes comuns).
+
+DISC: Descreva os quatro passos do treino de uma regressão logística vertical.
+R: 1) Cada participante calcula z_k = X_k·w_k e envia à parte com o rótulo. 2) Essa parte soma, calcula p e o resíduo (p − y). 3) Devolve o resíduo. 4) Cada participante atualiza w_k com X_kᵀ(p − y)/n.
+
+DISC: Explique por que o resíduo vaza o rótulo e como a defesa funciona.
+R: Como p ∈ (0,1), o sinal de p − y indica y (negativo se 1, positivo se 0). Defesas: criptografar o resíduo (homomórfica), adicionar ruído (DP) ou usar agregação segura, reduzindo a informação sobre y.
+
+DISC: Como o ruído gaussiano no resíduo afeta a recuperação de rótulos e a acurácia no experimento do projeto?
+R: Com ruído maior, a fração de rótulos recuperada pelo sinal cai (de 100% a cerca de 60% com σ = 2), enquanto a acurácia de teste cai pouco (de 0,965 a 0,951): o ruído protege com custo moderado.
+
+DISC: Explique o problema do alinhamento de entidades no aprendizado vertical.
+R: Para treinar, é preciso saber quais registros de cada participante pertencem à mesma pessoa, sem revelar os registros que não são comuns. Usa-se interseção privada de conjuntos.
+
+DISC: Descreva o split learning e explique por que o resultado é idêntico ao treino convencional.
+R: A rede é cortada: cliente computa até a camada de corte e envia ativações; o servidor completa, calcula a perda e devolve o gradiente no corte. Pela regra da cadeia, as atualizações são as mesmas do treino conjunto.
+
+DISC: Compare a comunicação do split learning com a do FedAvg para um cliente com muitos dados.
+R: No split learning, trafegam ativações e gradientes proporcionais ao número de exemplos por época; no FedAvg, trafega o modelo uma vez por rodada. Com muitos dados locais, o split pode custar bem mais comunicação.
+
+DISC: Quais riscos de privacidade o split learning apresenta?
+R: As ativações na camada de corte podem permitir reconstruir ou inferir a entrada; o servidor conhece os rótulos e as ativações; o treino sequencial pode expor ordem e participação.
+
+DISC: Explique o conceito de consenso em aprendizado descentralizado e a função da matriz de mistura.
+R: Cada nó repete a média ponderada com os vizinhos até todos terem o mesmo valor (a média global). A matriz de mistura A define os pesos; duplamente estocástica, preserva a média e permite convergência.
+
+DISC: Interprete a tabela de erros de consenso por topologia (completa, estrela e anel).
+R: A completa converge em uma rodada; o anel reduz o erro gradualmente (cerca de 0,02 em 30 rodadas); a estrela, com esses pesos, é mais lenta (cerca de 0,10), por causa do gargalo no nó central.
+
+DISC: Dê vantagens e desvantagens do aprendizado descentralizado.
+R: Vantagens: sem ponto único de falha, sem coordenador que veja tudo. Desvantagens: convergência mais lenta em topologias esparsas, sincronização complexa, mais difícil aplicar agregação segura.
+
+DISC: Qual a diferença entre cliente em HFL e participante em VFL quanto aos dados que possuem?
+R: Em HFL, cada cliente tem linhas completas (todos os atributos) de algumas pessoas; em VFL, cada participante tem algumas colunas de todas (ou muitas) as mesmas pessoas.
+
+DISC: Explique por que, no VFL, a parte com o rótulo tem papel especial.
+R: Só ela calcula p e o resíduo (p − y), que coordena o treino; ao devolver o resíduo, ela expõe informação sobre os rótulos às demais, o que exige proteção.
+
+DISC: Descreva o experimento de alinhamento parcial e sua conclusão.
+R: Com alinhamento total, o VFL supera cada participante sozinho; com 50%, ainda é um pouco melhor; com 20% ou menos, deixa de superar um participante sozinho. Poucos registros alinhados limitam o benefício do VFL.
+
+DISC: Em que cenário você preferiria o aprendizado descentralizado ao FedAvg?
+R: Quando não há um coordenador confiável ou se quer evitar ponto único de falha, como em redes de dispositivos de borda cooperantes; aceitando convergência mais lenta e maior complexidade.
+
+DISC: Explique o que é a camada de corte e como escolhê-la.
+R: É a camada onde a rede é dividida. Escolha-se equilibrando o cálculo no cliente (quanto mais camadas, mais cálculo), o tamanho das ativações (comunicação) e o vazamento de informação pelas ativações.
+
+DISC: Cite duas semelhanças e duas diferenças entre agregação segura e aprendizado vertical protegido por homomórfica.
+R: Semelhanças: ambos protegem contribuições individuais e usam criptografia. Diferenças: a agregação segura soma atualizações de modelo entre clientes horizontais; no vertical, combinam-se parcelas de colunas diferentes e protege-se o resíduo de rótulos.
+
+DISC: Resuma em cinco linhas qual arquitetura você escolheria para três cenários distintos e por quê.
+R: Resposta pessoal coerente com a tabela do capítulo: HFL para hospitais com mesmas colunas, VFL para banco e loja com clientes em comum, split learning para dispositivos fracos com redes grandes, descentralizado sem coordenador confiável.
+
+DISC: Por que o treino vertical com K participantes é, em essência, equivalente à regressão logística centralizada?
+R: Porque a nota z é a soma das parcelas X_k·w_k, e o gradiente de cada bloco de pesos depende só do resíduo e das próprias colunas. Reparti-las entre participantes não muda as contas, apenas onde elas são feitas.
+
+DISC: Calcule o tráfego do split learning por época para 5.000 exemplos locais, 32 neurônios na camada de corte e 32 bits, e compare com um modelo de 10.000 parâmetros no FedAvg (por rodada).
+R: Split: 2 · 4 · 5.000 · 32 = 1.280.000 bytes (cerca de 1,25 MB). FedAvg: 2 · 4 · 10.000 = 80.000 bytes (cerca de 78 KB). O split custa cerca de 16 vezes mais.
+

@@ -1,0 +1,76 @@
+@@PROJ Federa Saúde: a decisão final | Cap12
+**Contexto.** A rede de 20 clínicas da seção 12.1 precisa de uma **recomendação técnica** sobre como treinar o modelo federado. O cenário está descrito na seção 12.2: dígitos manuscritos como substituto de dados clínicos, 20 clientes com Dirichlet α = 0,3, 70% de treino e 30% de teste local em cada cliente, e **2 clientes maliciosos** (índices 0 e 1) com ataque de *backdoor* (alvo: classe 0).
+
+**Tarefas.** Use o motor `fedavg_integrado` (arquivo `projeto.py`) e as bibliotecas dos capítulos anteriores.
+
+1. **Diagnóstico:** reporte os tamanhos dos clientes e a distância de variação total média entre as distribuições de rótulos e a global.
+2. **Configurações:** avalie, com **3 sementes**, estas seis configurações:
+   1. base: agregador `media`, sem proteção;
+   2. `mediana`;
+   3. `mediana` com 8 bits;
+   4. `mediana` com 4 bits;
+   5. DP no nível do cliente (`dp_z = 1`, `S = 0,5`);
+   6. `mediana` com 4 bits **e ajuste fino local** (3 épocas) após o treino federado.
+3. **Métricas:** para cada configuração, acurácia global (teste `Xte`), **ASR** do backdoor, **KB de subida** totais, e acurácia **por cliente** (média e percentil 10) no teste local.
+4. **Critério de aprovação:** ASR ≤ 0,10 **e** acurácia global ≥ 0,90 **e** percentil 10 por cliente ≥ 0,84. Entre as aprovadas, escolha a de **menor tráfego** (em caso de empate, a de maior acurácia média por cliente).
+5. **Relatório:** redija o parecer de uma página (resumo executivo, cenário e método, tabela de resultados, riscos e limitações, recomendação e próximos passos), em linguagem acessível.
+
+**Extensão opcional.** Meça a AUC do ataque de pertencimento (Capítulo 7) para as configurações 1 e 5 e discuta o efeito da DP. Repita a análise com o α = 0,1 e relate se a recomendação muda.
+
+**Entregáveis.** Código, tabela e o relatório.
+@@SOL
+```python
+import numpy as np
+from projeto import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+K, ALFA = 20, 0.3
+global_p = np.bincount(ytr, minlength=10) / len(ytr)
+
+# 1) diagnóstico (semente 0)
+partes0 = particao_dirichlet(ytr, K, ALFA, 0)
+tv = [0.5 * np.abs(np.bincount(ytr[p], minlength=10) / len(p) - global_p).sum() for p in partes0 if len(p)]
+print("tamanhos dos clientes:", sorted(len(p) for p in partes0))
+print(f"distância de variação total média: {np.mean(tv):.2f}\n")
+
+# 2) configurações
+configs = [
+    ("1 base (média)",         dict(agregador="media"),                 False),
+    ("2 mediana",              dict(agregador="mediana"),               False),
+    ("3 mediana + 8 bits",     dict(agregador="mediana", bits=8),       False),
+    ("4 mediana + 4 bits",     dict(agregador="mediana", bits=4),       False),
+    ("5 DP (z=1)",             dict(dp_z=1.0),                          False),
+    ("6 mediana+4b+ajuste",    dict(agregador="mediana", bits=4),       True),
+]
+
+print(f"{'configuração':<22}{'acc glob':>9}{'ASR':>7}{'KB':>8}{'cli média':>11}{'cli p10':>9}  status")
+tabela = {}
+for nome, kw, ajustar in configs:
+    linhas = []
+    for s in range(3):
+        partes = particao_dirichlet(ytr, K, ALFA, s)
+        treino, teste = dividir_local(partes, 0.3, s)
+        W, acc, asr, bytes_ = fedavg_integrado(treino, Xtr, ytr, Xte, yte, maliciosos=(0, 1), seed=s, **kw)
+        ok = [i for i in range(K) if len(teste[i]) >= 5]
+        modelos = [treino_local(W, Xtr[treino[i]], ytr[treino[i]], 3, 0.1, 32, 0.0, i) if ajustar else W for i in ok]
+        por_cliente = acuracias_locais(modelos, [teste[i] for i in ok], Xtr, ytr)
+        linhas.append((acc, asr, bytes_ / 1024, por_cliente.mean(), np.percentile(por_cliente, 10)))
+    m = np.mean(linhas, axis=0)
+    aprovada = m[1] <= 0.10 and m[0] >= 0.90 and m[4] >= 0.84
+    tabela[nome] = (m, aprovada)
+    print(f"{nome:<22}{m[0]:>9.3f}{m[1]:>7.2f}{m[2]:>8.0f}{m[3]:>11.3f}{m[4]:>9.3f}  {'aprovada' if aprovada else 'reprovada'}")
+
+aprovadas = {n: v[0] for n, v in tabela.items() if v[1]}
+melhor = min(aprovadas, key=lambda n: (round(aprovadas[n][2]), -aprovadas[n][3]))      # menor KB; empate: maior média por cliente
+print(f"\nRecomendação: {melhor} (tráfego {aprovadas[melhor][2]:.0f} KB; média por cliente {aprovadas[melhor][3]:.3f})")
+```
+@@RUBRICA
+- Diagnóstico de heterogeneidade feito e interpretado.
+- Seis configurações avaliadas em três sementes, com todas as métricas (global, ASR, KB, média e percentil 10 por cliente).
+- Critério de aprovação aplicado corretamente e escolha justificada pelo menor tráfego.
+- Relatório de uma página, claro, com riscos e limitações explícitos (ataque simples, modelo simples, dados substitutos, DP sem contabilidade completa) e sem alegar privacidade formal sem garantia.
+- Extensão opcional: AUC de pertencimento e sensibilidade a α, se feita, bem interpretada.
+@@NOTE A base (média) tem ASR alto (cerca de 0,70): o backdoor funciona e a acurácia global quase não revela o problema. A mediana elimina o backdoor (ASR ≈ 0) com custo pequeno em acurácia (cerca de 1 ponto global e 2 pontos por cliente). A quantização a 8 e 4 bits reduz o tráfego em 4 e 8 vezes sem piorar os resultados. A DP com z = 1 **não** impede o backdoor (ASR em torno de 0,5): o corte e o ruído limitam a influência de cada cliente, mas não distinguem o malicioso do honesto; e ainda custa acurácia. O ajuste fino local melhora a média e o percentil 10 por cliente. Entre as configurações aprovadas, duas empatam no tráfego mínimo (195 KB): a **mediana com 4 bits** e a mesma com **ajuste fino local**; pelo critério de desempate, a recomendada é a segunda, que eleva a média por cliente de 0,92 para 0,94 sem custo de comunicação (a clínica precisa guardar um modelo próprio). Limites: o backdoor é simples (não adaptativo), o modelo é minúsculo, os dados são substitutos, e a DP não tem contabilidade completa nem protege contra servidor malicioso.
+@@ALEM
+- **UCI:** *Optical Recognition of Handwritten Digits*, *Letter Recognition* e *Human Activity Recognition Using Smartphones* (cada voluntário como um cliente).
+- **Kaggle:** *Digit Recognizer*, *Fashion-MNIST* e *Heart Failure Prediction*, para repetir o estudo com dados diferentes.

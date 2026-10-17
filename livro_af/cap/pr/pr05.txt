@@ -1,0 +1,158 @@
+@@EX 1 | Viés do arredondamento: determinístico contra estocástico | básico
+Considere o valor 0,3 em um intervalo [0, 1] quantizado com 2 bits (4 níveis: 0, 1/3, 2/3, 1). Quantize 20.000 vezes o mesmo valor: (a) com arredondamento ao nível mais próximo, (b) com arredondamento estocástico (`quantizar` de `compressao.py`, aplicado a um vetor que contenha 0 e 1 para fixar o intervalo). Compare a média dos resultados com 0,3.
+
+*Pergunta:* qual método é enviesado? Por que isso importa ao somar muitos clientes?
+@@SOL
+```python
+import numpy as np
+from compressao import *
+
+rng = np.random.default_rng(0)
+valor, n = 0.3, 20000
+
+# vetor com 0 e 1 fixa o intervalo [0, 1]; o primeiro elemento é o valor de interesse
+est = []
+for _ in range(n):
+    v = np.array([valor, 0.0, 1.0])
+    est.append(quantizar(v, 2, rng)[0])
+est = np.array(est)
+
+niveis = np.array([0, 1/3, 2/3, 1])
+det = niveis[np.argmin(np.abs(niveis - valor))]          # mais próximo, sempre o mesmo
+
+print(f"valor original            : {valor}")
+print(f"arredondamento determinístico: {det:.4f} (erro fixo = {det - valor:+.4f})")
+print(f"arredondamento estocástico   : média = {est.mean():.4f} | níveis usados = {[float(x) for x in sorted(set(np.round(est, 3)))]}")
+```
+@@NOTE O determinístico devolve sempre 0,3333: erro de +0,0333 que **nunca** se cancela. O estocástico sorteia entre 0 e 1/3, e a média fica muito próxima de 0,3. Ao somar clientes cujo valor real é parecido, o erro sistemático do determinístico se acumula, enquanto o estocástico se cancela.
+
+@@EX 2 | Calculadora de tempo por rodada | básico
+Escreva `tempo_rodada(n_parametros, bits_subida, desc_mbps, sub_mbps, t_comp)` que devolva o tempo total de uma rodada (descida em 32 bits, subida com `bits_subida`). Para um modelo de 5 milhões de parâmetros, tempo de treino de 30 s, descida de 20 Mbit/s e subida de 5 Mbit/s, calcule o tempo por rodada e o total de 500 rodadas para 32, 8, 4 e 2 bits de subida.
+
+*Pergunta:* a partir de quantos bits o ganho adicional é pequeno? Por quê?
+@@SOL
+```python
+def tempo_rodada(n_parametros, bits_subida, desc_mbps, sub_mbps, t_comp):
+    t_desc = n_parametros * 32 / 1e6 / desc_mbps
+    t_sub = n_parametros * bits_subida / 1e6 / sub_mbps
+    return t_comp + t_desc + t_sub, t_desc, t_sub
+
+print(f"{'bits':>5}{'subida (s)':>12}{'rodada (s)':>12}{'500 rodadas (h)':>17}")
+for bits in (32, 8, 4, 2):
+    total, t_desc, t_sub = tempo_rodada(5_000_000, bits, 20, 5, 30)
+    print(f"{bits:>5}{t_sub:>12.1f}{total:>12.1f}{500 * total / 3600:>17.2f}")
+```
+@@NOTE Passar de 32 para 8 bits reduz muito o tempo (a subida cai de 32 s para 8 s). De 8 para 2 bits, o ganho absoluto é menor, pois o tempo de treino (30 s) e de descida (8 s) passam a dominar. É a lei dos retornos decrescentes: comprimir só um trecho do ciclo.
+
+@@EX 3 | Esparsificação com e sem memória de erro | intermediário
+Com `fedavg_comprimido`, teste `top_k` com frações 0,5; 0,1; 0,05 e 0,01, **com e sem** memória de erro. Use 20 clientes Dirichlet (α = 1), 3 sementes, e mostre a acurácia final média e o tráfego de subida em KB.
+
+*Pergunta:* a partir de que fração a memória de erro passa a fazer diferença?
+@@SOL
+```python
+import numpy as np
+from compressao import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+print(f"{'fração':>7}{'sem EF':>9}{'com EF':>9}{'KB':>7}")
+for frac in (0.5, 0.1, 0.05, 0.01):
+    accs = {False: [], True: []}
+    kb = 0
+    for ef in (False, True):
+        for s in range(3):
+            partes = particao_dirichlet(ytr, 20, 1.0, seed=s)
+            _, h, t = fedavg_comprimido(partes, Xtr, ytr, Xte, yte, metodo="topk", param=frac,
+                                        erro_acumulado=ef, seed=s)
+            accs[ef].append(h[-1]); kb = t / 1024
+    print(f"{frac:>7}{np.mean(accs[False]):>9.3f}{np.mean(accs[True]):>9.3f}{kb:>7.0f}")
+```
+@@NOTE Com 50%, o corte é leve e a memória de erro é irrelevante (0,960 contra 0,959). Já com 10% ela começa a ajudar (0,952 para 0,959), e com 5% e 1% a diferença é grande: com 1%, a acurácia sobe de 0,867 para 0,941 usando os mesmos 11 KB. O tráfego (KB) é o total de subida em cada fração, igual com e sem memória.
+
+@@EX 4 | Quantização com dados muito heterogêneos | intermediário
+Repita a quantização (32, 8, 4, 2 e 1 bit) com dados **muito não-IID**: `particao_shards(ytr, 20, por_cliente=1)`, `frac=0.25`, `epocas=5`, 40 rodadas, 3 sementes. Compare com a acurácia obtida em dados IID.
+
+*Pergunta:* a quantização é mais ou menos prejudicial quando os dados são heterogêneos?
+@@SOL
+```python
+import numpy as np
+from compressao import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+configs = [("32 bits", dict()), ("8 bits", dict(metodo="quantizar", param=8)), ("4 bits", dict(metodo="quantizar", param=4)),
+           ("2 bits", dict(metodo="quantizar", param=2)), ("1 bit", dict(metodo="quantizar", param=1))]
+print(f"{'método':<9}{'IID':>8}{'1 classe/cliente':>18}")
+for nome, kw in configs:
+    res = {}
+    for cen, mk in (("iid", lambda s: particao_iid(ytr, 20, s)),
+                    ("shard", lambda s: particao_shards(ytr, 20, 1, s))):
+        accs = []
+        for s in range(3):
+            _, h, _ = fedavg_comprimido(mk(s), Xtr, ytr, Xte, yte, rodadas=40, epocas=5, frac=0.25, seed=s, **kw)
+            accs.append(h[-1])
+        res[cen] = np.mean(accs)
+    print(f"{nome:<9}{res['iid']:>8.3f}{res['shard']:>18.3f}")
+```
+@@NOTE Com 8 e 4 bits, a quantização não prejudica nem no cenário muito heterogêneo (0,964 e 0,960). Com 2 bits, a perda é pequena no IID (0,958) e maior com uma classe por cliente (0,939). Com 1 bit, o efeito é dramático: de 0,910 no IID para 0,687 com uma classe por cliente. Quanto mais heterogêneos os dados, menos tolerante o treino é à compressão agressiva, pois cada cliente puxa o modelo em uma direção diferente.
+
+@@PROJ Orçamento de comunicação: qual configuração escolher? | Cap5
+**Contexto.** Uma empresa de dispositivos médicos (fictícia) pode gastar, no máximo, uma quantidade fixa de tráfego de subida por treino federado. Ela quer saber **qual combinação de método de compressão e épocas locais** entrega a melhor acurácia dentro do orçamento.
+
+**Tarefas.**
+1. Defina dois orçamentos de subida: **100 KB** e **300 KB** (total do treino, somando todos os clientes).
+2. Teste as configurações: float32, 8 bits, 2 bits, top-10% + EF e top-1% + EF, com `epocas` ∈ {1, 5}, 60 rodadas, 20 clientes Dirichlet (α = 1), `frac=0.5`, 2 sementes.
+3. Para cada configuração, calcule o tráfego por rodada e a rodada máxima que cabe em cada orçamento. Registre a acurácia nessa rodada.
+4. Apresente uma tabela e indique a melhor configuração para cada orçamento.
+5. Escreva uma recomendação de três a cinco linhas.
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import numpy as np
+from compressao import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+metodos = [("float32", dict()),
+           ("8 bits", dict(metodo="quantizar", param=8)),
+           ("2 bits", dict(metodo="quantizar", param=2)),
+           ("top-10%+EF", dict(metodo="topk", param=0.1, erro_acumulado=True)),
+           ("top-1%+EF", dict(metodo="topk", param=0.01, erro_acumulado=True))]
+orcamentos = {"100 KB": 100 * 1024, "300 KB": 300 * 1024}
+RODADAS = 60
+
+resultados = {}
+for nome, kw in metodos:
+    for E in (1, 5):
+        hs, bpr = [], []
+        for s in range(2):
+            partes = particao_dirichlet(ytr, 20, 1.0, seed=s)
+            _, h, t = fedavg_comprimido(partes, Xtr, ytr, Xte, yte, rodadas=RODADAS, epocas=E, frac=0.5, seed=s, **kw)
+            hs.append(h); bpr.append(t / RODADAS)
+        resultados[(nome, E)] = (np.mean(hs, axis=0), np.mean(bpr))
+
+print(f"{'configuração':<18}{'bytes/rodada':>13} | " + " | ".join(f"{o:>16}" for o in orcamentos))
+melhores = {o: (None, -1) for o in orcamentos}
+for (nome, E), (h, bpr) in resultados.items():
+    linha = f"{nome + ', E=' + str(E):<18}{bpr:>13.0f} | "
+    cel = []
+    for o, limite in orcamentos.items():
+        r = int(limite // bpr)
+        if r < 1:
+            cel.append(f"{'não cabe':>16}")
+        else:
+            r = min(r, RODADAS); acc = h[r - 1]
+            cel.append(f"{acc:>8.3f} (r={r:>2})".rjust(16))
+            if acc > melhores[o][1]:
+                melhores[o] = (f"{nome}, E={E}", acc)
+    print(linha + " | ".join(cel))
+for o, (cfg, acc) in melhores.items():
+    print(f"melhor para {o}: {cfg} (acurácia {acc:.3f})")
+```
+@@RUBRICA
+- Tráfego por rodada calculado corretamente para cada método.
+- Rodada máxima dentro do orçamento e acurácia nessa rodada registradas.
+- Melhor configuração identificada para cada orçamento, com tabela clara.
+- Recomendação que discuta o compromisso entre bytes por rodada, número de rodadas e épocas locais, e cite limites do estudo.
+@@NOTE Com orçamento pequeno, métodos que enviam poucos bytes por rodada (quantização forte, top-k com memória de erro) permitem **muito mais rodadas** dentro do limite e vencem o float32, que só cabe em poucas rodadas. Com mais orçamento, a vantagem diminui. Mais épocas locais (E = 5) também ajudam, pois cada rodada rende mais. Note que o top-1% com memória de erro gasta só cerca de 22 KB nas 60 rodadas e **não aproveita** o orçamento extra: não adianta economizar demais se sobra banda. Limites: modelo pequeno, duas sementes e contagem simplificada de bytes.
+@@ALEM
+- **UCI:** *Covertype*, *Letter Recognition* e *Isolet* (muitos atributos, bom para testar compressão).
+- **Kaggle:** *Fashion-MNIST* e *Forest Cover Type*, para modelos maiores em que a compressão importa mais.

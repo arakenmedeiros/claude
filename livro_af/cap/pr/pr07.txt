@@ -1,0 +1,171 @@
+@@EX 1 | Reconstruindo cinco dígitos, um por vez | básico
+Treine um modelo global com FedAvg (10 clientes IID, 10 rodadas, `epocas=2`). Para cinco exemplos de treino escolhidos ao acaso, calcule o gradiente de **um** exemplo e reconstrua a entrada com a fórmula `x = ∇W[:, c] / ∇b[c]`. Mostre o erro máximo de cada reconstrução e a classe prevista (índice `c` usado).
+
+*Pergunta:* o que acontece com o erro se o modelo for inicializado com zeros (sem nenhum treino)?
+@@SOL
+```python
+import numpy as np
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+rng = np.random.default_rng(1)
+
+def reconstruir(G):
+    gb = G[-1]
+    c = int(np.argmax(np.abs(gb)))
+    return G[:-1, c] / gb[c], c
+
+Wtreinado, _ = fedavg(particao_iid(ytr, 10), Xtr, ytr, Xte, yte, rodadas=10, epocas=2, eta=0.1)
+modelos = {"treinado": Wtreinado, "zeros (sem treino)": np.zeros_like(Wtreinado)}
+for nome, W in modelos.items():
+    print(f"modelo {nome}:")
+    for i in rng.choice(len(ytr), 5, replace=False):
+        G = gradiente(W, Xtr[i:i + 1], ytr[i:i + 1])
+        xr, c = reconstruir(G)
+        print(f"   exemplo {i:>4} (dígito {ytr[i]}) | coluna usada = {c} | erro máx. = {np.abs(xr - Xtr[i, :-1]).max():.2e}")
+```
+@@NOTE Nos dois casos, a reconstrução é exata (erro da ordem de 1e-16 ou menor). Com o modelo zerado, todos os componentes de (p − y) têm módulo parecido, e qualquer coluna serve. O ataque independe de o modelo estar treinado: basta ter o gradiente de um exemplo.
+
+@@EX 2 | Atualização com vários passos locais | básico
+Simule um cliente com `n` exemplos (n ∈ {1, 8, 32}) que treina `E` épocas (E ∈ {1, 5, 20}) com lote igual a `n` (um passo por época), `eta=0.1`. O atacante observa a atualização `(W − W_local)/eta` e tenta reconstruir a entrada como se fosse um gradiente. Para cada combinação, reporte a melhor correlação com algum exemplo do cliente (média de 20 repetições).
+
+*Pergunta:* o que ocorre quando o cliente tem apenas 1 exemplo, mesmo com muitas épocas?
+@@SOL
+```python
+import numpy as np
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+rng = np.random.default_rng(0)
+W, _ = fedavg(particao_iid(ytr, 10), Xtr, ytr, Xte, yte, rodadas=10, epocas=2, eta=0.1)
+
+def reconstruir(G):
+    gb = G[-1]; c = int(np.argmax(np.abs(gb)))
+    return G[:-1, c] / gb[c]
+
+print(f"{'n':>3}{'E':>4}  correlação média")
+for n in (1, 8, 32):
+    for E in (1, 5, 20):
+        cs = []
+        for _ in range(20):
+            idx = rng.choice(len(ytr), n, replace=False)
+            Wl = treino_local(W, Xtr[idx], ytr[idx], E, 0.1, lote=n)
+            xr = reconstruir((W - Wl) / 0.1)
+            cs.append(max(np.corrcoef(xr, Xtr[i, :-1])[0, 1] for i in idx))
+        print(f"{n:>3}{E:>4}  {np.mean(cs):.3f}")
+```
+@@NOTE Com um único exemplo, a atualização continua proporcional a x, mesmo após 20 épocas (cada passo soma um múltiplo de x ⊗ erro): a correlação segue 1,00. Com 8 ou 32 exemplos, a correlação cai, e mais épocas a reduzem um pouco. Atenção: isto vale para um modelo linear. Em redes profundas, os múltiplos passos mudam a direção e a história é diferente.
+
+@@EX 3 | Quanto tempo de treino é demais? | intermediário
+Com 150 exemplos de treino, 6 clientes IID e `epocas=5`, treine por 5, 20 e 80 rodadas. Para cada duração, meça a acurácia no treino e no teste e a AUC do ataque do limiar de perda (membros contra o `Xte`), em 5 sementes.
+
+*Pergunta:* o risco de pertencimento aumenta com o treino? E a acurácia no teste?
+@@SOL
+```python
+import numpy as np
+from sklearn.metrics import roc_auc_score
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+def perdas(W, X, y):
+    P = softmax(X @ W)
+    return -np.log(P[np.arange(len(y)), y] + 1e-12)
+
+print(f"{'rodadas':>8}{'acc treino':>12}{'acc teste':>11}{'AUC ataque':>12}")
+for rodadas in (5, 20, 80):
+    a_tr, a_te, aucs = [], [], []
+    for s in range(5):
+        idx = np.random.default_rng(s).permutation(len(ytr))[:150]
+        partes = [idx[p] for p in particao_iid(ytr[idx], 6, s)]
+        W, _ = fedavg(partes, Xtr, ytr, Xte, yte, rodadas=rodadas, epocas=5, eta=0.1, seed=s)
+        lm, ln = perdas(W, Xtr[idx], ytr[idx]), perdas(W, Xte, yte)
+        aucs.append(roc_auc_score(np.r_[np.ones(len(lm)), np.zeros(len(ln))], -np.r_[lm, ln]))
+        a_tr.append(acuracia(W, Xtr[idx], ytr[idx])); a_te.append(acuracia(W, Xte, yte))
+    print(f"{rodadas:>8}{np.mean(a_tr):>12.3f}{np.mean(a_te):>11.3f}{np.mean(aucs):>12.3f}")
+```
+@@NOTE Mais rodadas elevam a acurácia de treino e, com isso, a AUC do ataque, enquanto a acurácia de teste estaciona. Ou seja, depois de certo ponto, treinar mais **só aumenta o vazamento**. A parada antecipada é uma defesa barata.
+
+@@EX 4 | Escolhendo o limiar do atacante | intermediário
+Use o modelo federado do Exercício 3 (80 rodadas, 5 épocas, semente 0). Calcule, para o limiar de perda igual à **mediana das perdas dos membros**, a taxa de verdadeiros positivos (membros marcados como membros) e a taxa de falsos positivos (não membros marcados como membros). Use também `roc_curve` para encontrar o limiar que maximiza `TPR − FPR`.
+
+*Pergunta:* o ataque erra muito? Ele serve para acusar alguém individualmente?
+@@SOL
+```python
+import numpy as np
+from sklearn.metrics import roc_curve
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+def perdas(W, X, y):
+    P = softmax(X @ W)
+    return -np.log(P[np.arange(len(y)), y] + 1e-12)
+
+idx = np.random.default_rng(0).permutation(len(ytr))[:150]
+partes = [idx[p] for p in particao_iid(ytr[idx], 6, 0)]
+W, _ = fedavg(partes, Xtr, ytr, Xte, yte, rodadas=80, epocas=5, eta=0.1, seed=0)
+lm, ln = perdas(W, Xtr[idx], ytr[idx]), perdas(W, Xte, yte)
+
+limiar = np.median(lm)
+print(f"limiar = mediana da perda dos membros = {limiar:.4f}")
+print(f"TPR (membros marcados como membros)     : {np.mean(lm <= limiar):.3f}")
+print(f"FPR (não membros marcados como membros) : {np.mean(ln <= limiar):.3f}")
+
+rotulo = np.r_[np.ones(len(lm)), np.zeros(len(ln))]
+fpr, tpr, lim = roc_curve(rotulo, -np.r_[lm, ln])
+k = int(np.argmax(tpr - fpr))
+print(f"melhor ponto: TPR = {tpr[k]:.3f}, FPR = {fpr[k]:.3f}, limiar de perda = {-lim[k]:.4f}")
+```
+@@NOTE Com o limiar na mediana, o TPR é 0,50 por construção e o FPR é cerca de 0,35: para cada três não membros marcados, há cinco membros. No melhor ponto da curva, o TPR sobe a 0,86, mas o FPR vai a 0,60. O ataque erra bastante: dá uma **vantagem estatística**, e não uma prova sobre indivíduos. Mesmo assim, em saúde ou finanças, qualquer vantagem acima do acaso pode ser considerada risco. Um ataque calibrado por exemplo (Carlini et al., 2022) costuma ser bem mais forte.
+
+@@PROJ Auditoria de privacidade: qual configuração aprovar? | Cap7
+**Contexto.** Uma clínica (fictícia) quer treinar um modelo federado e precisa de um **parecer de risco** antes de liberar o modelo. O comitê de ética aceita o modelo se a **AUC do ataque de pertencimento** for menor que **0,58** e se a acurácia de teste for a maior possível dentro desse limite.
+
+**Tarefas.**
+1. Considere as configurações: número de exemplos de treino ∈ {150, 600}; rodadas ∈ {10, 50}; épocas locais ∈ {2, 20}. Use 6 clientes IID.
+2. Para cada configuração, em 5 sementes, calcule a acurácia de treino e de teste e a **média e o desvio da AUC** do ataque do limiar de perda.
+3. Marque como **aprovada** a configuração com AUC média < 0,58.
+4. Entre as aprovadas, indique a de maior acurácia de teste.
+5. Escreva o parecer de risco em até cinco linhas, citando duas limitações da auditoria (por exemplo: o ataque usado é o mais simples; defesas formais não foram avaliadas).
+
+**Entregáveis.** Código, tabela com AUC, acurácia e status e o parecer.
+@@SOL
+```python
+import numpy as np
+from itertools import product
+from sklearn.metrics import roc_auc_score
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+def perdas(W, X, y):
+    P = softmax(X @ W)
+    return -np.log(P[np.arange(len(y)), y] + 1e-12)
+
+LIMITE = 0.58
+linhas = []
+for n, rodadas, epocas in product((150, 600), (10, 50), (2, 20)):
+    aucs, a_tr, a_te = [], [], []
+    for s in range(5):
+        idx = np.random.default_rng(s).permutation(len(ytr))[:n]
+        partes = [idx[p] for p in particao_iid(ytr[idx], 6, s)]
+        W, _ = fedavg(partes, Xtr, ytr, Xte, yte, rodadas=rodadas, epocas=epocas, eta=0.1, seed=s)
+        lm, ln = perdas(W, Xtr[idx], ytr[idx]), perdas(W, Xte, yte)
+        aucs.append(roc_auc_score(np.r_[np.ones(len(lm)), np.zeros(len(ln))], -np.r_[lm, ln]))
+        a_tr.append(acuracia(W, Xtr[idx], ytr[idx])); a_te.append(acuracia(W, Xte, yte))
+    linhas.append((n, rodadas, epocas, np.mean(a_tr), np.mean(a_te), np.mean(aucs), np.std(aucs)))
+
+print(f"{'n':>5}{'rod.':>6}{'ép.':>5}{'acc tr':>8}{'acc te':>8}{'AUC':>7}{'dp':>6}  status")
+for n, r, e, atr, ate, auc, dp in linhas:
+    print(f"{n:>5}{r:>6}{e:>5}{atr:>8.3f}{ate:>8.3f}{auc:>7.3f}{dp:>6.3f}  {'aprovada' if auc < LIMITE else 'reprovada'}")
+aprov = [l for l in linhas if l[5] < LIMITE]
+melhor = max(aprov, key=lambda l: l[4])
+print(f"\nMelhor aprovada: n={melhor[0]}, rodadas={melhor[1]}, épocas={melhor[2]} (acurácia de teste {melhor[4]:.3f}, AUC {melhor[5]:.3f})")
+```
+@@RUBRICA
+- Oito configurações avaliadas, com cinco sementes e AUC média e desvio.
+- Critério de aprovação aplicado corretamente (AUC < 0,58).
+- Escolha da melhor configuração entre as aprovadas, por acurácia de teste.
+- Parecer com ao menos duas limitações e sem afirmar que o modelo é "seguro" sem garantias formais.
+@@NOTE Configurações com 600 exemplos tendem a passar no critério e ainda entregam a maior acurácia de teste. Com 150 exemplos, treinar mais aumenta a AUC e leva à reprovação. O parecer deve ser prudente: o ataque usado é o mais simples e passar nele **não prova** privacidade. Para garantias formais, é preciso privacidade diferencial (Capítulo 8).
+@@ALEM
+- **UCI:** *Adult* e *Heart Disease*, para auditar modelos com dados tabulares sensíveis.
+- **Kaggle:** *Heart Failure Prediction* e *Credit Card Fraud Detection*, para estudar vazamento em dados desbalanceados.

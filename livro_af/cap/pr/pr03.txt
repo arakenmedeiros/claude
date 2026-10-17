@@ -1,0 +1,141 @@
+@@EX 1 | Sua primeira agregação à mão | básico
+Implemente a agregação do FedAvg **sem** usar a `fedlib`. Dados três vetores de parâmetros e os tamanhos dos clientes, calcule a média ponderada e compare com a média simples.
+
+Use: `w1 = [0.8, -1.0]`, `w2 = [0.6, 0.0]`, `w3 = [0.5, 2.0]` e `n = [100, 300, 600]`.
+
+*Pergunta:* de qual cliente o resultado ponderado mais se aproxima? Por quê?
+@@SOL
+```python
+import numpy as np
+
+W = np.array([[0.8, -1.0],
+              [0.6,  0.0],
+              [0.5,  2.0]])
+n = np.array([100, 300, 600])
+
+pesos = n / n.sum()
+ponderada = (pesos[:, None] * W).sum(axis=0)
+simples = W.mean(axis=0)
+
+print("pesos          :", pesos)
+print("média ponderada:", ponderada)
+print("média simples  :", simples)
+print("distância ao cliente 3 (ponderada):", np.linalg.norm(ponderada - W[2]).round(3))
+print("distância ao cliente 3 (simples)  :", np.linalg.norm(simples - W[2]).round(3))
+```
+@@NOTE O resultado ponderado fica perto do cliente 3, que tem 60% dos dados. A média simples ignora o tamanho e fica mais afastada dele.
+
+@@EX 2 | Reproduzindo a curva do FedAvg | básico
+Usando `fedlib`, treine com **10 clientes IID**, 30 rodadas, `epocas=5`, `eta=0.1`, `lote=32`. Imprima a acurácia nas rodadas 1, 5, 10, 20 e 30. Depois repita com `seed=1` e `seed=2`. Calcule a média e o desvio das acurácias finais.
+
+*Pergunta:* os resultados variam muito com a semente?
+@@SOL
+```python
+import numpy as np
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+finais = []
+for semente in (0, 1, 2):
+    partes = particao_iid(ytr, 10, seed=semente)
+    W, hist = fedavg(partes, Xtr, ytr, Xte, yte, rodadas=30, epocas=5, eta=0.1, lote=32, seed=semente)
+    finais.append(hist[-1])
+    print(f"semente {semente}: ", [round(hist[r - 1], 3) for r in (1, 5, 10, 20, 30)])
+print(f"acurácia final: {np.mean(finais):.3f} ± {np.std(finais):.3f}")
+```
+@@NOTE A variação é pequena (da ordem de meio ponto percentual): com dados IID e modelo simples, o resultado é estável. Mesmo assim, é uma boa prática relatar média e desvio sobre várias sementes.
+
+@@EX 3 | Variando E e η | intermediário
+Com 10 clientes IID e 15 rodadas, teste todas as combinações de `epocas` ∈ {1, 5, 20} e `eta` ∈ {0,01; 0,1; 0,5}. Imprima uma tabela com a acurácia final. Depois responda: qual combinação é melhor? Há combinações que desperdiçam computação?
+
+*Dica:* use `lote=32`.
+@@SOL
+```python
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+partes = particao_iid(ytr, 10, seed=0)
+epocas_lista, etas = [1, 5, 20], [0.01, 0.1, 0.5]
+
+print("E \\ eta " + "".join(f"{e:>8}" for e in etas))
+for E in epocas_lista:
+    linha = []
+    for eta in etas:
+        _, hist = fedavg(partes, Xtr, ytr, Xte, yte, rodadas=15, epocas=E, eta=eta, lote=32)
+        linha.append(hist[-1])
+    print(f"{E:>7} " + "".join(f"{a:8.3f}" for a in linha))
+```
+@@NOTE Passos pequenos com poucas épocas ficam para trás; combinações com E e η maiores chegam rápido a valores altos. O custo computacional local cresce com E: a partir de certo ponto, mais épocas rendem pouco, e a computação extra é desperdiçada. O objetivo é equilibrar rodadas (comunicação) e computação local.
+
+@@EX 4 | Calculando o custo de comunicação | intermediário
+Escreva uma função `bytes_por_rodada(n_parametros, n_clientes, bits=32)` que devolva o tráfego total por rodada (descida + subida). Calcule, para a softmax dos dígitos e 10 clientes, o tráfego por rodada e o total após 30 rodadas. Depois estime quanto seria com 16 bits.
+
+*Pergunta:* quantas rodadas cabem em 10 MB com 32 bits?
+@@SOL
+```python
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+n_param = Xtr.shape[1] * 10          # 65 atributos (com viés) x 10 classes
+
+def bytes_por_rodada(n_parametros, n_clientes, bits=32):
+    return 2 * (bits // 8) * n_parametros * n_clientes
+
+for bits in (32, 16):
+    por_rodada = bytes_por_rodada(n_param, 10, bits)
+    print(f"{bits} bits: {por_rodada:,} bytes por rodada | 30 rodadas = {30 * por_rodada / 1024:.1f} KB")
+
+limite = 10 * 1024 * 1024
+print("rodadas em 10 MB (32 bits):", limite // bytes_por_rodada(n_param, 10, 32))
+```
+@@NOTE Com 650 parâmetros, o tráfego é de 52.000 bytes por rodada, e 30 rodadas somam cerca de 1.523 KB. Reduzir para 16 bits corta o tráfego pela metade. Em 10 MB cabem cerca de 201 rodadas. Para modelos grandes, as contas ficam bem mais exigentes.
+
+@@PROJ Rede de Hospitais: do central ao federado | Cap3
+**Contexto.** Dez hospitais (fictícios) querem um modelo para reconhecer dígitos manuscritos em formulários (os dígitos fazem papel de "dados clínicos"). Cada hospital tem cerca de 135 imagens e não pode compartilhá-las. A diretoria quer saber: *"Quantas rodadas são necessárias e quanto vamos gastar em comunicação para chegar perto do modelo centralizado?"*
+
+**Tarefas.**
+1. Treine um modelo centralizado (`LogisticRegression`) como referência.
+2. Treine com FedAvg (10 clientes IID, `epocas=5`, `eta=0.1`, `lote=32`) por 40 rodadas.
+3. Encontre a **primeira rodada** em que o federado chega a 1 ponto percentual da referência.
+4. Calcule o tráfego total até essa rodada (32 bits).
+5. Compare com FedSGD (`epocas=1`, lote gigante, `eta=0.5`): em que rodada ele chega ao mesmo limiar, se chegar?
+6. Escreva uma recomendação curta, em linguagem simples, para a diretoria.
+
+**Entregáveis.** Código, tabela com rodada e tráfego para FedAvg e FedSGD, e a recomendação.
+@@SOL
+```python
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from fedlib import *
+
+Xtr, Xte, ytr, yte = carregar_digits()
+referencia = LogisticRegression(max_iter=3000).fit(Xtr[:, :-1], ytr).score(Xte[:, :-1], yte)
+limiar = referencia - 0.01
+print(f"referência centralizada = {referencia:.3f} | limiar (1 ponto abaixo) = {limiar:.3f}")
+
+partes = particao_iid(ytr, 10, seed=0)
+n_param = Xtr.shape[1] * 10
+bytes_rodada = 2 * 4 * n_param * 10
+
+configs = {
+    "FedAvg (E=5)": dict(epocas=5, eta=0.1, lote=32),
+    "FedSGD (1 passo)": dict(epocas=1, eta=0.5, lote=10 ** 6),
+}
+print(f"{'método':<18}{'1ª rodada >= limiar':>22}{'tráfego até lá':>18}")
+for nome, cfg in configs.items():
+    _, hist = fedavg(partes, Xtr, ytr, Xte, yte, rodadas=40, seed=0, **cfg)
+    ok = [i + 1 for i, a in enumerate(hist) if a >= limiar]
+    if ok:
+        print(f"{nome:<18}{ok[0]:>22}{ok[0] * bytes_rodada / 1024:>15.1f} KB")
+    else:
+        print(f"{nome:<18}{'não atingiu em 40':>22}{40 * bytes_rodada / 1024:>15.1f} KB")
+```
+@@RUBRICA
+- Referência centralizada calculada com todos os dados de treino.
+- Rodada de cruzamento do limiar identificada corretamente para FedAvg e FedSGD.
+- Tráfego calculado com a fórmula 2 × 4 × |w| × clientes × rodadas.
+- Recomendação em linguagem acessível e com ressalvas (dados IID simulados, modelo simples).
+@@NOTE O FedAvg cruza o limiar na rodada 22, com cerca de 1,1 MB de tráfego total, enquanto o FedSGD não o atinge nas 40 rodadas (cerca de 2 MB gastos). Em valores absolutos o custo é trivial para este modelo minúsculo. A recomendação deve ressalvar que os dados foram divididos ao acaso e que o modelo é pequeno; com dados reais e modelos grandes, o orçamento de comunicação será crucial.
+@@ALEM
+- **UCI:** *Optical Recognition of Handwritten Digits*, *Letter Recognition* e *Statlog (Landsat Satellite)*.
+- **Kaggle:** *Digit Recognizer* (MNIST) e *Fashion-MNIST*, para testar modelos maiores.

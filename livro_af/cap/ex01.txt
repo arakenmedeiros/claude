@@ -1,0 +1,269 @@
+MC: Qual é a ideia central do aprendizado federado?
+a) Enviar todos os dados para um servidor poderoso e treinar lá.
+b) Levar o modelo até os dados, em vez de levar os dados até o modelo.
+c) Apagar os dados depois do treino.
+d) Treinar sem usar nenhum dado.
+R: b | No federado, o treino acontece onde os dados estão, e só atualizações de modelo trafegam.
+
+MC: Na analogia das cinco amigas e dos cadernos de receitas, o que cada amiga devolve para a coordenadora?
+a) O caderno completo.
+b) Uma foto de cada receita.
+c) Apenas os ajustes feitos na receita-base.
+d) O nome dos ingredientes secretos.
+R: c | Os ajustes representam as atualizações de modelo; os cadernos (dados) não saem de casa.
+
+MC: Em aprendizado federado, o termo "cliente" designa:
+a) o usuário final que usa o aplicativo pronto.
+b) quem possui dados e treina localmente.
+c) o programador do servidor.
+d) o computador que armazena todos os dados.
+R: b | Cliente é o participante dono de dados, como um celular ou um hospital.
+
+MC: Qual é o papel do servidor (coordenador)?
+a) Guardar os dados brutos de todos os clientes.
+b) Rotular os dados dos clientes.
+c) Organizar o treino e combinar as contribuições dos clientes.
+d) Apagar os modelos antigos dos clientes.
+R: c | O servidor envia o modelo, recebe atualizações e as agrega.
+
+MC: O que é uma "rodada de comunicação"?
+a) Uma reunião entre os donos dos dados.
+b) Um ciclo em que o servidor envia o modelo, clientes treinam e devolvem atualizações, e o servidor agrega.
+c) O envio de todos os dados ao servidor.
+d) O treino de um cliente isolado.
+R: b | Uma rodada reúne envio, treino local, devolução e agregação.
+
+MC: Um "silo de dados" é:
+a) um tipo de algoritmo de agrupamento.
+b) um armazém de dados fechado, controlado por um dono.
+c) uma técnica de criptografia.
+d) um tipo de rede neural.
+R: b | Silos são repositórios isolados que seus donos não podem ou não querem abrir.
+
+MC: Qual destes NÃO é um motivo típico para adotar aprendizado federado?
+a) Dados sensíveis, como prontuários.
+b) Restrições de leis de proteção de dados.
+c) Custo de mover enormes volumes de dados.
+d) Desejo de deixar o modelo menos preciso de propósito.
+R: d | Reduzir a precisão não é objetivo; os motivos são privacidade, leis, custo e confiança.
+
+MC: A LGPD é:
+a) um algoritmo de aprendizado federado.
+b) a lei brasileira de proteção de dados pessoais (Lei nº 13.709/2018).
+c) um protocolo de agregação segura.
+d) uma biblioteca do scikit-learn.
+R: b | LGPD significa Lei Geral de Proteção de Dados.
+
+MC: O princípio de "minimização de dados" diz que se deve:
+a) coletar o maior volume possível de dados.
+b) coletar apenas o necessário para a finalidade.
+c) guardar os dados para sempre.
+d) comprimir todos os dados em arquivos zip.
+R: b | Minimização é coletar e usar só o necessário para a finalidade declarada.
+
+MC: Aprendizado centralizado é aquele em que:
+a) os dados ficam com cada cliente.
+b) os dados são reunidos em um só lugar para o treino.
+c) o servidor nunca vê o modelo.
+d) vários modelos são treinados sem comunicação.
+R: b | No centralizado, os dados são juntados em um repositório único.
+
+MC: Qual cenário descreve melhor o cross-device?
+a) Poucos hospitais sempre conectados.
+b) Milhões de celulares, cada um com poucos dados e disponibilidade instável.
+c) Dois bancos com servidores potentes.
+d) Um único computador com vários núcleos.
+R: b | Cross-device envolve muitos clientes pequenos e instáveis.
+
+MC: Qual cenário descreve melhor o cross-silo?
+a) Milhões de relógios inteligentes.
+b) Poucas organizações com muitos dados e boa infraestrutura.
+c) Um servidor sem clientes.
+d) Dispositivos que participam uma única vez.
+R: b | Cross-silo envolve poucas organizações, geralmente confiáveis e sempre disponíveis.
+
+MC: Em geral, em cada rodada do cenário cross-device:
+a) todos os milhões de clientes participam.
+b) apenas uma fração dos clientes participa.
+c) nenhum cliente participa.
+d) só o servidor treina.
+R: b | Só uma fração disponível, e sorteada, participa de cada rodada.
+
+MC: Na fórmula f(w) = Σ (n_k / n) · F_k(w), o termo n_k / n representa:
+a) a taxa de aprendizado.
+b) o peso do cliente k, proporcional ao tamanho do seu conjunto de dados.
+c) o número de rodadas.
+d) a probabilidade de falha do cliente.
+R: b | Clientes com mais exemplos têm mais peso na média.
+
+MC: Na mesma fórmula, F_k(w) é:
+a) o erro do modelo w nos dados do cliente k.
+b) o número de clientes.
+c) o tamanho do modelo.
+d) o ruído adicionado ao modelo.
+R: a | F_k mede o erro local do cliente k.
+
+MC: O artigo que apresentou o algoritmo FedAvg e popularizou o termo "aprendizado federado" é:
+a) Hastie et al. (2009).
+b) McMahan et al. (2017).
+c) Pedregosa et al. (2011).
+d) Dwork e Roth (2014).
+R: b | McMahan et al. (AISTATS, 2017) propuseram o FedAvg.
+
+MC: A sigla FedAvg significa:
+a) Federated Average Value.
+b) Federated Averaging.
+c) Fed Average Gradient.
+d) Federal Averaging.
+R: b | FedAvg é Federated Averaging, a média federada de modelos.
+
+MC: Qual a principal diferença entre aprendizado distribuído em data center e aprendizado federado?
+a) No data center os dados são controlados e embaralhados; no federado ficam com seus donos e são diferentes entre si.
+b) Não há diferença.
+c) O distribuído usa apenas celulares.
+d) O federado não usa modelos.
+R: a | O federado respeita a localização dos dados, que em geral não são parecidos entre clientes.
+
+MC: Dados "não-IID" significam que:
+a) os dados são idênticos em todos os clientes.
+b) os dados têm distribuições diferentes entre os clientes.
+c) os dados foram criptografados.
+d) os dados estão incompletos.
+R: b | Não-IID é a heterogeneidade das distribuições entre clientes.
+
+MC: A afirmação "no federado a privacidade é automática" é:
+a) verdadeira, sempre.
+b) falsa, pois atualizações de modelo podem vazar informação.
+c) verdadeira apenas para modelos lineares.
+d) falsa apenas para celulares.
+R: b | Ataques podem inferir informações a partir das atualizações; são necessárias defesas.
+
+MC: Qual técnica adiciona ruído para esconder a contribuição de indivíduos?
+a) Agregação segura.
+b) Privacidade diferencial.
+c) Normalização.
+d) Validação cruzada.
+R: b | A privacidade diferencial adiciona ruído calibrado.
+
+MC: Qual proteção impede o servidor de ver a atualização individual de cada cliente, vendo só a soma?
+a) Agregação segura.
+b) Padronização dos dados.
+c) Aumento de dados.
+d) Regularização L2.
+R: a | Na agregação segura, o servidor só obtém a soma das atualizações.
+
+MC: No exemplo dos três hospitais, a média dos modelos funcionou bem. Qual alerta o livro faz?
+a) O resultado vale sempre, para qualquer dado.
+b) O resultado é otimista: dados IID, problema simples e uma só rodada.
+c) O resultado só vale para celulares.
+d) A média dos modelos nunca funciona.
+R: b | Com dados não-IID e problemas mais difíceis, a média pode ser pior.
+
+MC: Qual conjunto de dados foi usado na primeira simulação do capítulo?
+a) MNIST.
+b) Breast Cancer Wisconsin, da UCI, via load_breast_cancer.
+c) CIFAR-10.
+d) ImageNet.
+R: b | O capítulo usa o conjunto de câncer de mama, que vem no scikit-learn.
+
+MC: Qual das opções é um exemplo de uso real de aprendizado federado em saúde mencionado no capítulo?
+a) Previsão de necessidade de oxigênio em pacientes com COVID-19 com dados de hospitais em vários continentes.
+b) Reconhecimento de placas de carro.
+c) Tradução de textos jurídicos.
+d) Recomendação de filmes.
+R: a | Dayan et al. (2021) mostraram esse estudo multicêntrico.
+
+MC: O que é uma "atualização" de modelo?
+a) A mudança nos parâmetros após o treino local.
+b) A instalação de uma nova versão do Python.
+c) O apagamento dos dados de treino.
+d) A troca de servidor.
+R: a | Atualização é a diferença de parâmetros resultante do treino local.
+
+MC: O que é "agregação"?
+a) Dividir um modelo em partes.
+b) Combinar as atualizações de vários clientes em um único modelo.
+c) Criptografar os dados.
+d) Rotular exemplos.
+R: b | Agregação combina contribuições, por exemplo, por média ponderada.
+
+MC: Por que o StandardScaler calculado com todos os dados de treino é uma "trapaça" na simulação?
+a) Porque exige reunir dados que, em um sistema federado real, não poderiam ser juntados.
+b) Porque deixa o modelo mais lento.
+c) Porque só funciona com imagens.
+d) Porque remove o ruído.
+R: a | A média e o desvio globais exigiriam acesso a todos os dados; será resolvido de forma federada no Capítulo 2.
+
+MC: Em um cenário em que dois bancos concorrentes querem melhorar a detecção de fraudes, o principal fator a favor do aprendizado federado é:
+a) a vontade de compartilhar clientes entre si.
+b) a impossibilidade ou indisposição de entregar os dados a terceiros.
+c) a falta de computadores.
+d) o excesso de dados rotulados.
+R: b | Confiança e concorrência impedem o compartilhamento direto de dados.
+
+MC: Treinar na borda (edge), perto de onde os dados são produzidos, ajuda principalmente a:
+a) economizar banda e reduzir latência.
+b) aumentar o tamanho dos dados.
+c) eliminar a necessidade de modelos.
+d) tornar o modelo menos preciso.
+R: a | Evita transportar grandes volumes de dados brutos até um servidor distante.
+
+DISC: Explique, com suas palavras e com uma analogia do cotidiano, o que é aprendizado federado.
+R: É treinar um modelo com a colaboração de vários donos de dados sem que os dados brutos saiam de cada um. Analogia: as amigas com cadernos de receitas secretos que só trocam ajustes da receita-base, nunca os cadernos; o modelo vai até os dados.
+
+DISC: Descreva os quatro passos de uma rodada de aprendizado federado.
+R: 1) O servidor envia o modelo atual aos clientes selecionados. 2) Cada cliente treina o modelo com seus dados locais. 3) Cada cliente devolve a atualização (não os dados). 4) O servidor agrega as atualizações em um novo modelo global e inicia nova rodada.
+
+DISC: Cite quatro obstáculos ao aprendizado centralizado quando os dados são sensíveis e espalhados.
+R: Privacidade e risco de vazamento; leis e regulamentos de proteção de dados; custo e lentidão de mover grandes volumes; falta de confiança entre organizações, sobretudo concorrentes.
+
+DISC: Diferencie cross-device de cross-silo quanto a número de clientes, disponibilidade e volume de dados.
+R: Cross-device: milhões de clientes pequenos (celulares), instáveis, com poucos dados cada, e só uma fração participa por rodada. Cross-silo: poucos clientes grandes (hospitais, bancos), quase sempre disponíveis e com muitos dados.
+
+DISC: Explique a fórmula f(w) = Σ (n_k / n) · F_k(w) em palavras.
+R: O erro global do modelo w é a média ponderada dos erros locais F_k(w), onde cada cliente pesa proporcionalmente ao seu número de exemplos n_k. Assim, o objetivo equivale a minimizar o erro sobre todos os dados, mesmo sem reuni-los.
+
+DISC: Por que aprendizado federado não é o mesmo que aprendizado distribuído em data center?
+R: No data center os dados são do treinador, ficam em máquinas controladas e são embaralhados para ficarem parecidos; o objetivo é velocidade. No federado, os dados ficam com seus donos, tendem a ser diferentes entre clientes, a comunicação é lenta e os participantes variam; o objetivo é respeitar a localização e a privacidade.
+
+DISC: O que significa dizer que dados são não-IID? Dê um exemplo.
+R: Significa que os clientes têm distribuições diferentes. Exemplo: um hospital de referência em câncer vê muito mais casos malignos do que uma clínica de check-up, e cada pessoa escreve de modo distinto no celular.
+
+DISC: Por que o aprendizado federado não garante privacidade por si só?
+R: Porque as atualizações enviadas podem vazar informações sobre os dados: há ataques que reconstroem exemplos ou inferem participação no treino. Para garantias é preciso combinar com técnicas como privacidade diferencial e agregação segura.
+
+DISC: Qual a relação entre aprendizado federado e o princípio de minimização de dados da LGPD e do GDPR?
+R: O federado evita copiar dados brutos para um local central, coletando e circulando apenas o necessário (atualizações de modelo). Isso se alinha à minimização, mas não dispensa a análise jurídica nem outras medidas de segurança.
+
+DISC: Descreva o experimento dos três hospitais e o que ele mostrou.
+R: Três hospitais com 50 pacientes cada treinaram regressão logística sozinhos e tiveram acurácia um pouco menor. A média dos três modelos, sem troca de dados, igualou o modelo centralizado. O resultado é otimista (dados IID, problema simples, uma só rodada).
+
+DISC: Dê dois exemplos de aplicações de aprendizado federado e explique o que permanece local em cada uma.
+R: Teclado móvel: o texto digitado fica no celular, que só envia atualizações do modelo. Saúde: prontuários e imagens ficam no hospital, e só parâmetros do modelo trafegam entre instituições.
+
+DISC: Por que clientes com mais dados recebem peso maior na agregação?
+R: Porque o objetivo global é o erro médio sobre todos os exemplos; um cliente com mais exemplos contribui com mais termos nessa média, e seu modelo local é estimado com mais evidência.
+
+DISC: Explique por que o StandardScaler da simulação do capítulo viola a lógica federada.
+R: Ele calculou média e desvio padrão usando os dados de treino de todos os hospitais juntos, o que exigiria centralizá-los. Em um sistema real, essas estatísticas precisariam ser calculadas de forma federada, combinando somas locais.
+
+DISC: Quais são as vantagens e as limitações do aprendizado federado em relação ao centralizado?
+R: Vantagens: não move dados brutos, respeita leis e silos, economiza banda e permite colaboração. Limitações: comunicação cara, dados não-IID, dispositivos instáveis, maior complexidade e riscos de privacidade e de participantes maliciosos.
+
+DISC: O que é um servidor "honesto, mas curioso" e por que isso importa em aprendizado federado?
+R: É um servidor que segue o protocolo, mas tenta aprender o que puder das atualizações recebidas. Importa porque mostra que enviar só atualizações pode não bastar; defesas como agregação segura e ruído protegem contra essa curiosidade.
+
+DISC: Explique o que significa "levar o modelo até os dados" e dê uma vantagem prática.
+R: Em vez de copiar dados para um local central, o modelo é enviado aos locais onde estão os dados e treinado ali. Vantagem: dados sensíveis não saem do dono, e se evita transportar grandes volumes.
+
+DISC: Cite duas razões pelas quais a comunicação é um gargalo em aprendizado federado.
+R: Conexões de clientes como celulares são lentas e instáveis, e modelos grandes exigem muitos bytes por rodada; além disso, são necessárias muitas rodadas e o envio de subida costuma ser mais lento que o de descida.
+
+DISC: Proponha um cenário no seu contexto (trabalho, estudo ou vida) em que o aprendizado federado seria útil. Identifique clientes, servidor e dados que ficam locais.
+R: Resposta pessoal. Exemplo: clínicas de uma rede que querem um modelo de triagem; cada clínica é cliente, uma entidade central é o servidor e os prontuários permanecem em cada clínica.
+
+DISC: Por que a introdução de um conjunto de dados IID pode dar uma impressão otimista do desempenho da média de modelos?
+R: Porque, com dados IID, cada cliente enxerga a mesma distribuição e os modelos locais apontam para direções parecidas; a média resulta em um bom modelo. Com dados não-IID, as direções divergem e a média pode piorar.
+
+DISC: Resuma em cinco linhas o que você aprendeu neste capítulo.
+R: Resposta pessoal, coerente com o resumo do capítulo: definição de aprendizado federado; ciclo de quatro passos; motivos (privacidade, leis, custo, confiança); cross-device versus cross-silo; e a ressalva de que federado não garante privacidade sozinho.

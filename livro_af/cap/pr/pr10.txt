@@ -1,0 +1,183 @@
+@@EX 1 | Quantos participantes? | básico
+No conjunto *Breast Cancer Wisconsin*, reparta as 30 colunas ao acaso (`np.random.default_rng(0).permutation`) entre K ∈ {1, 2, 3, 5, 10} participantes (partes quase iguais). Treine o VFL (`vfl_treinar`) e compare a acurácia no teste com a da regressão logística centralizada.
+
+*Pergunta:* o número de participantes altera a qualidade do modelo vertical?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from arquiteturas import *
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(Xtr)
+Xtr, Xte = esc.transform(Xtr), esc.transform(Xte)
+ordem = np.random.default_rng(0).permutation(30)
+
+cen = LogisticRegression(max_iter=2000).fit(Xtr, ytr).score(Xte, yte)
+print(f"centralizado: {cen:.3f}")
+print(f"{'K':>3}{'atributos por parte':>34}{'acurácia VFL':>14}")
+for K in (1, 2, 3, 5, 10):
+    colunas = np.array_split(ordem, K)
+    w, b, _ = vfl_treinar([Xtr[:, c] for c in colunas], ytr)
+    acc = (vfl_prever([Xte[:, c] for c in colunas], w, b) == yte).mean()
+    print(f"{K:>3}{str([len(c) for c in colunas]):>34}{acc:>14.3f}")
+```
+@@NOTE A acurácia praticamente não depende de K: a soma das parcelas z_k reproduz exatamente o modelo logístico com todas as colunas, independentemente de como elas são repartidas. O treino vertical é matematicamente equivalente ao centralizado (a diferença vem só da otimização). O custo muda: mais participantes, mais mensagens por passo.
+
+@@EX 2 | Ruído no resíduo | básico
+Modifique o treino vertical para que as partes **passivas** (todas, exceto a parte 0) recebam o resíduo com ruído gaussiano de desvio σ. Para σ ∈ {0; 0,1; 0,5; 1; 2} (5 sementes), reporte a acurácia no teste e a fração de rótulos que um participante passivo recupera pelo sinal do resíduo ruidoso na primeira iteração (p = 0,5).
+
+*Pergunta:* qual σ reduz o vazamento sem estragar o modelo?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from arquiteturas import *
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(Xtr)
+Xtr, Xte = esc.transform(Xtr), esc.transform(Xte)
+colunas = np.array_split(np.random.default_rng(0).permutation(30), 3)
+Xp = [Xtr[:, c] for c in colunas]; Xtp = [Xte[:, c] for c in colunas]
+
+def vfl_ruido(Xp, y, sigma, epocas=300, eta=0.5, seed=0):
+    rng = np.random.default_rng(seed)
+    n = len(y); w = [np.zeros(Xk.shape[1]) for Xk in Xp]; b = 0.0
+    for _ in range(epocas):
+        p = sigmoide(sum(Xk @ wk for Xk, wk in zip(Xp, w)) + b)
+        r = p - y
+        for k, Xk in enumerate(Xp):
+            rk = r if k == 0 else r + rng.normal(0, sigma, len(r))      # só as passivas recebem ruído
+            w[k] -= eta * Xk.T @ rk / n
+        b -= eta * r.mean()
+    return w, b
+
+print(f"{'σ':>5}{'acurácia':>10}{'rótulos recuperados':>22}")
+for sigma in (0, 0.1, 0.5, 1, 2):
+    acc, rec = [], []
+    for s in range(5):
+        w, b = vfl_ruido(Xp, ytr, sigma, seed=s)
+        acc.append((vfl_prever(Xtp, w, b) == yte).mean())
+        r0 = 0.5 - ytr                                                   # resíduo inicial (p = 0,5)
+        ruidoso = r0 + np.random.default_rng(s).normal(0, sigma, len(ytr))
+        rec.append(((ruidoso < 0).astype(int) == ytr).mean())
+    print(f"{sigma:>5}{np.mean(acc):>10.3f}{np.mean(rec):>22.3f}")
+```
+@@NOTE Com σ pequeno (0,1), o vazamento continua total. Com σ = 0,5, cerca de 85% dos rótulos ainda são recuperados. Com σ = 2, a recuperação cai a cerca de 60% (perto do acaso, que é 63% para a classe majoritária neste conjunto), e a acurácia do modelo cai só de 0,965 para 0,951. É um exemplo de compromisso: ruído suficiente reduz o vazamento a um custo moderado. Ruído sem garantia formal não é privacidade diferencial.
+
+@@EX 3 | Comunicação: split learning contra FedAvg | intermediário
+Para os dígitos (1.347 exemplos de treino, 64 atributos) e uma rede de 16 neurônios ocultos e 10 classes, calcule: (a) bytes trocados por época no split learning (ativações para cima e gradientes para baixo, 32 bits); (b) bytes trocados por rodada no FedAvg com 1 cliente com todos os dados (modelo para baixo e para cima). Varie a quantidade de dados locais (100, 1.347, 10.000 e 100.000 exemplos).
+
+*Pergunta:* quando o split learning é mais caro do que o FedAvg?
+@@SOL
+```python
+n_in, n_oculto, n_classes = 64, 16, 10
+n_param_total = n_in * n_oculto + n_oculto * n_classes          # sem vieses, para simplificar
+
+def bytes_split_por_epoca(n_exemplos, bits=32):
+    return 2 * (bits // 8) * n_exemplos * n_oculto               # ativações (↑) + gradientes (↓)
+
+def bytes_fedavg_por_rodada(bits=32):
+    return 2 * (bits // 8) * n_param_total                       # modelo (↓) + atualização (↑)
+
+print(f"parâmetros do modelo completo: {n_param_total}")
+print(f"{'exemplos locais':>16}{'split (KB/época)':>19}{'FedAvg (KB/rodada)':>21}{'razão':>8}")
+for n in (100, 1347, 10_000, 100_000):
+    s, f = bytes_split_por_epoca(n) / 1024, bytes_fedavg_por_rodada() / 1024
+    print(f"{n:>16}{s:>19.1f}{f:>21.1f}{s / f:>8.1f}")
+```
+@@NOTE O custo do split learning cresce com o número de exemplos locais (as ativações de cada exemplo viajam a cada época), enquanto o do FedAvg só depende do tamanho do modelo. Com 100 exemplos o split é mais barato, mas com 1.347 já é cerca de 18 vezes mais caro, e com 100.000, mais de mil vezes. Em contrapartida, o split exige menos cálculo no cliente.
+
+@@EX 4 | Velocidade do consenso no anel | intermediário
+Para um anel com n ∈ {10, 20, 50} nós, calcule o segundo maior autovalor em módulo da matriz de mistura (`matriz_mistura("anel", n)`) e estime o número de rodadas para o erro cair a 1% do inicial, usando `consenso`. Compare com a previsão `ln(0,01)/ln(λ₂)`.
+
+*Pergunta:* como o número de rodadas cresce com n?
+@@SOL
+```python
+import numpy as np
+from arquiteturas import *
+
+rng = np.random.default_rng(0)
+print(f"{'n':>4}{'λ₂':>9}{'rodadas previstas':>20}{'rodadas medidas':>18}")
+for n in (10, 20, 50):
+    A = matriz_mistura("anel", n)
+    autovalores = np.sort(np.abs(np.linalg.eigvalsh(A)))[::-1]
+    lam2 = autovalores[1]
+    previstas = np.log(0.01) / np.log(lam2)
+    valores = rng.normal(0, 1, (n, 5))
+    erros = consenso(valores, A, 3000)
+    medidas = next(t for t, e in enumerate(erros) if e <= 0.01 * erros[0])
+    print(f"{n:>4}{lam2:>9.4f}{previstas:>20.1f}{medidas:>18}")
+```
+@@NOTE O segundo autovalor se aproxima de 1 quando n cresce, e o número de rodadas cresce aproximadamente com n² no anel: com 50 nós, são necessárias centenas de rodadas. A previsão pelo autovalor acompanha o valor medido (de mesma ordem de grandeza). Topologias mais conectadas têm λ₂ menor e convergem muito mais depressa.
+
+@@PROJ Banco e loja: quando o aprendizado vertical compensa? | Cap10
+**Contexto.** Um banco (colunas A) e uma loja (colunas B), fictícios, querem prever o risco de um cliente. O banco possui o rótulo. Os dois têm **apenas parte dos clientes em comum**. O time quer saber: *quanto de alinhamento é necessário para que o treino vertical valha a pena, e o que acontece se protegermos o resíduo com ruído?*
+
+**Tarefas.**
+1. No conjunto *Breast Cancer Wisconsin*, divida as colunas ao acaso entre A e B (15 cada, `np.random.default_rng(1)`).
+2. Para a fração de clientes alinhados ρ ∈ {1; 0,5; 0,2; 0,1} (5 sementes), treine: (a) só A (todos os dados de treino); (b) só B (idem); (c) VFL usando **apenas os clientes alinhados**.
+3. Reporte a acurácia no teste e indique a partir de que ρ o VFL deixa de superar o melhor participante isolado.
+4. Para ρ = 1, repita o VFL com ruído σ = 1 no resíduo enviado às partes passivas, relatando a acurácia e a fração de rótulos recuperada.
+5. Escreva uma recomendação em cinco linhas.
+
+**Entregáveis.** Código, tabela e recomendação.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from arquiteturas import *
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(Xtr)
+Xtr, Xte = esc.transform(Xtr), esc.transform(Xte)
+cA, cB = np.array_split(np.random.default_rng(1).permutation(30), 2)
+
+print(f"{'ρ':>5}{'só A':>8}{'só B':>8}{'VFL':>8}  VFL > melhor sozinho?")
+for rho in (1, 0.5, 0.2, 0.1):
+    a, b, v = [], [], []
+    for s in range(5):
+        idx = np.random.default_rng(s).permutation(len(ytr))[:int(rho * len(ytr))]
+        a.append(LogisticRegression(max_iter=2000).fit(Xtr[:, cA], ytr).score(Xte[:, cA], yte))
+        b.append(LogisticRegression(max_iter=2000).fit(Xtr[:, cB], ytr).score(Xte[:, cB], yte))
+        w, bias, _ = vfl_treinar([Xtr[idx][:, cA], Xtr[idx][:, cB]], ytr[idx])
+        v.append((vfl_prever([Xte[:, cA], Xte[:, cB]], w, bias) == yte).mean())
+    print(f"{rho:>5}{np.mean(a):>8.3f}{np.mean(b):>8.3f}{np.mean(v):>8.3f}  {'sim' if np.mean(v) > max(np.mean(a), np.mean(b)) else 'não'}")
+
+# resíduo com ruído (ρ = 1)
+def vfl_ruido(Xp, y, sigma, epocas=300, eta=0.5, seed=0):
+    rng = np.random.default_rng(seed); n = len(y); w = [np.zeros(Xk.shape[1]) for Xk in Xp]; bias = 0.0
+    for _ in range(epocas):
+        r = sigmoide(sum(Xk @ wk for Xk, wk in zip(Xp, w)) + bias) - y
+        for k, Xk in enumerate(Xp):
+            w[k] -= eta * Xk.T @ (r if k == 0 else r + rng.normal(0, sigma, len(r))) / n
+        bias -= eta * r.mean()
+    return w, bias
+
+acc, rec = [], []
+for s in range(5):
+    w, bias = vfl_ruido([Xtr[:, cA], Xtr[:, cB]], ytr, 1.0, seed=s)
+    acc.append((vfl_prever([Xte[:, cA], Xte[:, cB]], w, bias) == yte).mean())
+    rec.append((((0.5 - ytr) + np.random.default_rng(s).normal(0, 1.0, len(ytr)) < 0).astype(int) == ytr).mean())
+print(f"\nρ = 1 com ruído σ = 1: acurácia = {np.mean(acc):.3f} | rótulos recuperados pelo sinal = {np.mean(rec):.3f}")
+```
+@@RUBRICA
+- Colunas repartidas e treinos (a), (b) e (c) comparados nas mesmas condições.
+- Identificação do ρ a partir do qual o VFL deixa de compensar e explicação (menos exemplos alinhados).
+- Resultado do ruído no resíduo interpretado como compromisso, sem alegar privacidade formal.
+- Recomendação que cite a necessidade de alinhar muitos clientes e proteger o resíduo.
+@@NOTE Com todos alinhados (ρ = 1), o VFL supera cada parte isolada (cerca de 0,965 contra 0,95). Com 50%, ainda há ganho pequeno; com 20% ou menos, o VFL fica abaixo de um participante isolado, pois treina com poucos exemplos. Ruído σ = 1 no resíduo reduz a recuperação de rótulos para cerca de 0,69 (de 1,0), com acurácia de aproximadamente 0,95. Recomendação: só vale investir no VFL se uma fração grande dos clientes puder ser alinhada, e o resíduo deve ser protegido com técnicas formais (homomórfica ou DP).
+@@ALEM
+- **UCI:** *Adult* (separe colunas demográficas e financeiras), *Bank Marketing* e *Statlog (German Credit Data)* (separe atributos do cliente e do crédito).
+- **Kaggle:** *Telco Customer Churn* (separe colunas de contrato e de uso) e *Heart Failure Prediction*.

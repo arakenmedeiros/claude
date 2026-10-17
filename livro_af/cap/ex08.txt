@@ -1,0 +1,269 @@
+MC: Qual defesa oferece garantia matemática formal sobre o que o modelo revela de cada indivíduo?
+a) Privacidade diferencial.
+b) Agregação segura.
+c) Compressão das atualizações.
+d) Aumento do lote.
+R: a | A DP limita, por definição, a influência de qualquer pessoa na saída.
+
+MC: Na pesquisa da moeda (resposta aleatorizada), por que cada pessoa tem "negação plausível"?
+a) Porque a resposta "sim" pode ter vindo do sorteio, e não da verdade.
+b) Porque ninguém responde.
+c) Porque as respostas são criptografadas.
+d) Porque o pesquisador ignora as respostas.
+R: a | O sorteio embaralha a resposta individual, mas permite estimar a taxa agregada.
+
+MC: No experimento da moeda, a taxa verdadeira era 0,30 e a observada 0,41. A estimativa corrigida é obtida por:
+a) 2 × observada − 0,5.
+b) observada × 0,5.
+c) observada + 0,5.
+d) observada − 0,3.
+R: a | Como observada = 0,25 + 0,5 · verdadeira, a verdadeira é 2·observada − 0,5.
+
+MC: Na resposta aleatorizada com duas moedas, P(sim | fez) = 0,75 e P(sim | não fez) = 0,25. Qual o valor de ε?
+a) ln 3 ≈ 1,1.
+b) 3.
+c) 0.
+d) 0,25.
+R: a | ε = ln da razão das probabilidades = ln(0,75/0,25) = ln 3.
+
+MC: Na definição de (ε, δ)-DP, o que significa um ε pequeno?
+a) Mais privacidade: a saída quase não muda com a presença de um indivíduo.
+b) Menos privacidade.
+c) Mais acurácia garantida.
+d) Mais clientes.
+R: a | Quanto menor ε, mais próximas são as distribuições de saída com e sem o indivíduo.
+
+MC: O parâmetro δ na (ε, δ)-DP representa:
+a) uma pequena probabilidade de falha da garantia.
+b) a taxa de aprendizado.
+c) o número de clientes.
+d) o tamanho do lote.
+R: a | δ costuma ser menor que o inverso do número de pessoas.
+
+MC: Em geral, valores de ε considerados fracos em termos de garantia são:
+a) acima de 10.
+b) entre 0,1 e 1.
+c) menores que 0,01.
+d) exatamente 0.
+R: a | ε muito grande dá uma garantia pouco significativa.
+
+MC: O que é sensibilidade (Δ) de uma consulta f?
+a) O máximo que f pode mudar quando uma pessoa entra ou sai do conjunto.
+b) A média de f.
+c) O número de parâmetros.
+d) A taxa de erro.
+R: a | Δ = max ‖f(D) − f(D')‖ para conjuntos vizinhos.
+
+MC: No mecanismo gaussiano, o desvio padrão do ruído é:
+a) σ = z · Δ.
+b) σ = Δ / z.
+c) σ = z + Δ.
+d) σ = 0.
+R: a | O ruído é proporcional à sensibilidade, com multiplicador z.
+
+MC: Aumentar o multiplicador de ruído z produz:
+a) mais privacidade e menos utilidade (acurácia).
+b) menos privacidade e mais utilidade.
+c) nenhuma mudança.
+d) menos clientes.
+R: a | Mais ruído esconde melhor o indivíduo, mas prejudica a acurácia.
+
+MC: Na DP local, o ruído é adicionado:
+a) por cada cliente, antes de enviar.
+b) pelo servidor, após agregar.
+c) apenas no modelo final.
+d) pelo observador de rede.
+R: a | Não exige confiar no servidor, mas costuma ter menor utilidade.
+
+MC: Na DP central, o ruído é adicionado:
+a) pelo servidor, após agregar, exigindo confiança nele.
+b) por cada cliente.
+c) por um terceiro anônimo.
+d) pelo usuário final.
+R: a | Maior utilidade, mas o servidor precisa ser confiável.
+
+MC: Na DP distribuída:
+a) cada cliente soma uma parte do ruído e a agregação segura faz o servidor ver só a soma ruidosa.
+b) ninguém adiciona ruído.
+c) apenas o servidor adiciona ruído.
+d) o ruído é removido na soma.
+R: a | Soma de ruídos gaussianos independentes é gaussiana; a utilidade se aproxima da DP central.
+
+MC: DP no nível do cliente protege:
+a) a participação inteira de um cliente, com todos os seus dados.
+b) apenas um exemplo.
+c) o servidor.
+d) apenas rótulos.
+R: a | Esconde se o cliente participou do treino.
+
+MC: Qual o papel do corte (clipping) no DP-FedAvg?
+a) Limitar a sensibilidade: nenhuma atualização muda a soma por mais que S.
+b) Aumentar a acurácia.
+c) Comprimir o modelo.
+d) Criptografar a atualização.
+R: a | Encolhe cada atualização para norma no máximo S.
+
+MC: No DP-FedAvg, o ruído gaussiano tem desvio padrão:
+a) z · S.
+b) S / z.
+c) z.
+d) S².
+R: a | A sensibilidade é S (norma de corte), e o multiplicador é z.
+
+MC: O que acontece se o valor de corte S for pequeno demais?
+a) Apaga-se parte da informação útil das atualizações.
+b) O modelo fica perfeito.
+c) O ruído deixa de ser necessário.
+d) O servidor falha.
+R: a | Atualizações são encolhidas, reduzindo o progresso do treino.
+
+MC: Um bom ponto de partida para escolher S é:
+a) um valor próximo à mediana das normas das atualizações.
+b) zero.
+c) infinito.
+d) o número de clientes.
+R: a | Equilibra corte e quantidade de ruído.
+
+MC: A contabilidade de privacidade serve para:
+a) calcular o ε acumulado ao longo de muitas rodadas.
+b) calcular a acurácia.
+c) contar clientes.
+d) medir a taxa de aprendizado.
+R: a | Os ε se acumulam a cada rodada.
+
+MC: Na contabilidade de Rényi para o mecanismo gaussiano, ε(α) é:
+a) T·α/(2z²) + ln(1/δ)/(α − 1), e usa-se o menor valor sobre α.
+b) z · T.
+c) α · δ.
+d) T / z.
+R: a | Fórmula usada em `epsilon_rdp` do livro.
+
+MC: Para z = 3 e 30 rodadas (δ = 10⁻⁵), o limite de ε obtido foi de cerca de:
+a) 10,4.
+b) 0,1.
+c) 254.
+d) 1.000.
+R: a | O livro obtém ε ≈ 10,4 com participação total.
+
+MC: Por que o cálculo de ε do livro é um limite superior?
+a) Porque ignora a amplificação de privacidade pelo sorteio de clientes.
+b) Porque usa poucos clientes.
+c) Porque usa criptografia.
+d) Porque ε é sempre maior.
+R: a | Com subamostragem, o ε real é menor; bibliotecas especializadas calculam isso.
+
+MC: No experimento, com 20 clientes e z = 3, a acurácia caiu para cerca de:
+a) 0,87.
+b) 0,96.
+c) 0,50.
+d) 0,10.
+R: a | O ruído dividido por poucos clientes pesa muito.
+
+MC: Com 100 clientes e z = 3, a acurácia foi cerca de:
+a) 0,93.
+b) 0,50.
+c) 0,10.
+d) 0,70.
+R: a | Mais clientes diluem o ruído na média.
+
+MC: Qual a conclusão sobre o número de clientes em DP?
+a) Privacidade forte exige muitos clientes.
+b) Poucos clientes bastam.
+c) O número de clientes não importa.
+d) Mais clientes pioram a privacidade.
+R: a | O ruído da média diminui com o número de clientes.
+
+MC: Na agregação segura por máscaras, o que acontece ao somar as mensagens de todos os clientes?
+a) As máscaras se cancelam e o servidor obtém a soma verdadeira.
+b) O servidor obtém cada atualização individual.
+c) O servidor obtém apenas ruído.
+d) As atualizações são destruídas.
+R: a | O cliente de menor índice soma s, o de maior subtrai; a soma é exata.
+
+MC: Qual das opções NÃO é um problema que o protocolo real de agregação segura resolve em relação à simulação do capítulo?
+a) Esconder o modelo final do usuário.
+b) Acordo de chaves entre pares.
+c) Clientes que desistem no meio.
+d) Servidor malicioso.
+R: a | O protocolo não esconde o modelo final; isso exige DP.
+
+MC: Por que a agregação segura isolada não impede a inferência de pertencimento sobre o modelo final?
+a) Porque protege atualizações individuais, mas o resultado agregado ainda pode vazar informação.
+b) Porque é lenta.
+c) Porque usa pouca memória.
+d) Porque não envolve servidor.
+R: a | O resultado (soma ou modelo) continua revelando a influência dos dados.
+
+MC: A criptografia parcialmente homomórfica, como o Paillier, permite:
+a) somar valores cifrados sem decifrá-los.
+b) multiplicar e somar quaisquer valores.
+c) decifrar sem chave.
+d) comprimir dados.
+R: a | O produto de textos cifrados corresponde à soma dos valores originais.
+
+MC: Por que o ruído da média no DP-FedAvg diminui quando há mais clientes?
+a) Porque o ruído é somado à soma das atualizações e depois dividido por m.
+b) Porque o ruído é removido pelo servidor.
+c) Porque cada cliente envia menos dados.
+d) Porque o corte desaparece.
+R: a | O ruído de desvio z·S é dividido pelo número de clientes m na média.
+
+DISC: Explique, com a pesquisa da moeda, a ideia de privacidade diferencial.
+R: Cada pessoa responde a verdade ou um sorteio, conforme a moeda; ninguém sabe se um "sim" é verdadeiro, mas o pesquisador, conhecendo o sorteio, estima a taxa verdadeira. O ruído esconde o indivíduo e preserva a estatística coletiva.
+
+DISC: Defina (ε, δ)-privacidade diferencial em palavras e interprete ε.
+R: Para quaisquer conjuntos vizinhos, a probabilidade de qualquer saída muda no máximo por um fator e^ε (mais δ) quando uma pessoa entra ou sai. ε pequeno significa que a saída quase não depende de uma pessoa: mais privacidade.
+
+DISC: Explique o que é sensibilidade e como o mecanismo gaussiano a utiliza.
+R: Sensibilidade é o máximo que a consulta pode mudar com uma pessoa a mais ou a menos. O mecanismo gaussiano soma ruído normal com desvio σ = z·Δ, tornando a saída insensível à presença de um indivíduo.
+
+DISC: Compare DP local, central e distribuída quanto a confiança e utilidade.
+R: Local: sem confiança no servidor, mas menor utilidade. Central: maior utilidade, exige servidor confiável. Distribuída: ruído parcial por cliente e agregação segura; confiança mínima e utilidade próxima da central.
+
+DISC: Descreva os dois ingredientes do DP-FedAvg e o papel de cada um.
+R: Corte: limita a norma de cada atualização a S, limitando a sensibilidade. Ruído: soma-se ao total das atualizações cortadas um ruído gaussiano com desvio z·S; depois divide-se por m.
+
+DISC: Por que privacidade forte exige muitos clientes? Use o experimento como argumento.
+R: O ruído é adicionado à soma e dividido por m; com mais clientes, seu efeito na média diminui. Com z = 3, 20 clientes caíram a 0,87, enquanto 100 clientes ficaram em 0,93.
+
+DISC: Calcule o desvio padrão do ruído somado à soma de atualizações com S = 0,5 e z = 4, e o desvio do ruído na média de m = 50 clientes.
+R: σ da soma = z·S = 2,0. Na média, σ/m = 2,0/50 = 0,04.
+
+DISC: Explique por que os ε se acumulam ao longo das rodadas.
+R: Cada rodada é uma nova consulta aos dados que revela alguma informação; pela composição, os custos de privacidade somam-se (ou crescem, em contabilidades mais finas), de modo que mais rodadas exigem mais ruído para manter o mesmo ε.
+
+DISC: Interprete a tabela de ε para z = 0,5 até 10 e 30 contra 300 rodadas.
+R: ε diminui conforme z aumenta (mais ruído) e aumenta com o número de rodadas. Para z = 10, ε ≈ 2,8 em 30 rodadas e ≈ 9,8 em 300. Mesmo ruído alto acumula ε com muitas rodadas.
+
+DISC: Por que o ε calculado no livro é conservador?
+R: Assume participação total e ignora a amplificação de privacidade que o sorteio de clientes traz; bibliotecas como Opacus fazem contas mais justas, com ε menores.
+
+DISC: Explique como a agregação segura por máscaras funciona com três clientes.
+R: Cada par combina um segredo s. O cliente de menor índice soma s, o de maior subtrai. Cada mensagem parece ruído, mas ao somar tudo as máscaras se cancelam e o servidor obtém u₁ + u₂ + u₃.
+
+DISC: Quais problemas o protocolo real de agregação segura resolve além da simulação simples?
+R: Acordo de chaves sem confiar no servidor (Diffie-Hellman), clientes que desistem (compartilhamento de segredos de Shamir), servidor malicioso (dupla máscara) e custo de comunicação.
+
+DISC: Explique por que agregação segura e DP se complementam.
+R: A agregação segura esconde atualizações individuais durante o treino, mas o resultado ainda pode vazar. A DP limita o que o resultado revela. Juntas, protegem o caminho e o produto.
+
+DISC: Explique a propriedade homomórfica aditiva do esquema de Paillier no exemplo do capítulo.
+R: Multiplicar os textos cifrados de 120, 345 e 77 e decifrar o produto resulta em 542, a soma dos valores. O servidor soma sem ver os valores individuais.
+
+DISC: O que é computação multipartidária segura e como se relaciona com a agregação segura?
+R: Permite que várias partes calculem juntas uma função dos seus dados privados sem revelar as entradas, tipicamente por compartilhamento de segredos. A agregação segura é um caso particular, em que a função é a soma.
+
+DISC: Qual a diferença entre criptografia parcialmente e totalmente homomórfica?
+R: A parcial suporta uma operação (por exemplo, soma) sobre cifrados; a totalmente suporta somas e multiplicações arbitrárias, mas é muito mais custosa computacionalmente.
+
+DISC: Descreva um ambiente de execução confiável (TEE) e sua principal limitação.
+R: Área protegida do processador em que nem o dono da máquina vê o cálculo. Exige confiar no fabricante do hardware e pode sofrer ataques de canal lateral.
+
+DISC: Interprete o experimento de defesa contra inversão de gradientes.
+R: Sem ruído, a correlação da reconstrução é 1,0. Com σ = 0,1, cai para cerca de 0,23, e com σ ≥ 0,5, fica próxima de zero: a combinação de corte e ruído destrói a reconstrução.
+
+DISC: Dê um exemplo de decisão de projeto em que privacidade e acurácia entram em conflito e como você a resolveria.
+R: Escolher z: valores altos dão mais privacidade, mas pioram a acurácia em poucos clientes. Resolveria aumentando o número de clientes, ajustando S, e definindo com juristas e a organização um ε aceitável.
+
+DISC: Resuma em cinco linhas as defesas estudadas e o que cada uma protege.
+R: Resposta pessoal coerente com o resumo: DP (resultado, garantia formal); agregação segura (atualizações individuais); homomórfica e SMPC (cálculo cifrado); TEE (operador); combinação em camadas.
