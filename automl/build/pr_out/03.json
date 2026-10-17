@@ -1,0 +1,7 @@
+{
+ "3-EX1": "Fração de ausentes: 0.15\nmédia                acurácia = 0.967 (±0.020)\nmediana              acurácia = 0.970 (±0.013)\nk-vizinhos           acurácia = 0.965 (±0.018)\nmediana + indicador  acurácia = 0.949 (±0.020)\n",
+ "3-EX2": "Acurácia com ordinal: 0.571\nAcurácia com one-hot: 0.839\n",
+ "3-EX3": "(a) fora do pipeline  : validação = 0.983 | teste final = 0.951 | otimismo = +0.032\n(b) dentro do pipeline: validação = 0.917 | teste final = 0.951 | otimismo = -0.034\n",
+ "3-EX4": "  param_escala  param_knn__n_neighbors  mean_test_score\nStandardScaler                       9         0.966349\n  MinMaxScaler                       9         0.960794\nStandardScaler                      15         0.955238\nPior combinação: 0.691 | melhor: 0.966\n",
+ "3-PROJ0": "Formato: (569, 30) | ausentes (numéricas): 0.103\nlogística   validação = 0.967\nk-vizinhos  validação = 0.962\nfloresta    validação = 0.958\nEscolhido: logística\nMelhores ajustes: {'m__C': 1, 'p__num__imp__strategy': 'mean'} | validação = 0.974\nTeste final: 0.93\nPrevisões em linhas novas: [1, 0, 0] (a 3ª tem categoria nunca vista)\n"
+}

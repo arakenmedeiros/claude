@@ -1,0 +1,7 @@
+{
+ "8-EX1": "(a) só x1 e x2      : R² = -0.032\n(b) com x1·x2       : R² = 0.915\n",
+ "8-EX2": "k    | acurácia\n   2 | 0.935\n   5 | 0.947\n  10 | 0.960\n  20 | 0.984\n  30 | 0.970\n  50 | 0.946\n 100 | 0.935\n 230 | 0.921\nsem seleção (230 atributos): 0.921\n",
+ "8-EX3": "RFECV escolheu 8 atributos, dos quais 8 estão entre os 13 reais\nAcurácia da validação externa do pipeline completo: 0.989\n",
+ "8-EX4": "(a) agregados do capítulo                  AUC = 0.857\n(b) mais mínimo, mediana e acima de 100    AUC = 0.853\n",
+ "8-PROJ0": "A: Ridge                                   R² = 0.524 (±0.063)\nB: quadráticos + Ridge                     R² = 0.466 (±0.076)\nC: quadráticos + SelectKBest(15) + Ridge   R² = 0.499 (±0.063)\nD: quadráticos + Lasso                     R² = 0.488 (±0.070)\nE: gradient boosting                       R² = 0.480 (±0.061)\n\nMelhor na validação: A: Ridge\nTeste final | A: Ridge                                   R² = 0.358 | RMSE = 56.5\n"
+}

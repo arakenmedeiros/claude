@@ -253,6 +253,7 @@ function exercises(ex) {
 
 // ---------------------------------------------------------------- exercícios práticos e projetos
 const PR_OUT = fs.existsSync(path.join(__dirname, "pr_out.json")) ? JSON.parse(fs.readFileSync(path.join(__dirname, "pr_out.json"), "utf8")) : {};
+if (fs.existsSync(path.join(__dirname, "pr_out"))) for (const f of fs.readdirSync(path.join(__dirname, "pr_out")).sort()) Object.assign(PR_OUT, JSON.parse(fs.readFileSync(path.join(__dirname, "pr_out", f), "utf8")));
 function parsePr(text) {
   const lines = text.replace(/\r/g, "").split("\n"); const items = []; const alem = []; let cur = null, mode = null;
   for (const ln of lines) {

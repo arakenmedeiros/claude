@@ -33,11 +33,11 @@ for f in files:
         fl,code=flags_of(m.group(1))
         if "naoexec" in fl:
             out.append("```python\n"+code+"```\n"); continue
-        if "nb" in fl:
+        if "nb" in fl or "nbx" in fl:
             full=prefix+("print('%s')\n"%SEP if prefix else "")+code
             res,rc=run(full)
             if rc==0 and SEP in res: res=res.split(SEP+"\n",1)[1] if SEP+"\n" in res else res.split(SEP,1)[1]
-            prefix+=code+("\n" if not code.endswith("\n") else "")
+            if "nb" in fl: prefix+=code+("\n" if not code.endswith("\n") else "")
         else:
             res,rc=run(code)
         if rc: bad+=1; print("FALHA",os.path.basename(f),"bloco",n); print(res)

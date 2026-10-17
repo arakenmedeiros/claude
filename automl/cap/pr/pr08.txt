@@ -1,0 +1,181 @@
+@@EX 1 | Quando o produto de dois atributos é a resposta | básico
+Simule 1.000 exemplos com dois atributos `x1` e `x2` (normais) e o alvo `y = x1 · x2 + ruído` (ruído normal com desvio 0,3). Compare, por validação cruzada de 5 partes (métrica R²), uma `LinearRegression` com (a) apenas `x1` e `x2` e (b) `x1`, `x2` e o atributo criado `x1·x2`.
+
+*Pergunta:* por que o modelo linear falha em (a) e acerta em (b)? Esse resultado "prova" que a engenharia de atributos sempre ajuda?
+@@SOL
+```python
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_score, KFold
+
+rng = np.random.default_rng(0)
+x1, x2 = rng.normal(size=1000), rng.normal(size=1000)
+y = x1 * x2 + rng.normal(0, 0.3, 1000)
+
+cv = KFold(5, shuffle=True, random_state=0)
+a = cross_val_score(LinearRegression(), np.c_[x1, x2], y, cv=cv, scoring="r2").mean()
+b = cross_val_score(LinearRegression(), np.c_[x1, x2, x1 * x2], y, cv=cv, scoring="r2").mean()
+print(f"(a) só x1 e x2      : R² = {a:.3f}")
+print(f"(b) com x1·x2       : R² = {b:.3f}")
+```
+@@NOTE Em (a), o modelo linear não consegue representar uma interação multiplicativa e obtém um R² próximo de zero. Em (b), o atributo certo torna o problema linear e o R² chega perto de 0,9. Atenção: os dados foram simulados com essa relação; em dados reais, não sabemos de antemão qual transformação funcionará, e é por isso que a avaliação cuidadosa é essencial.
+@@EX 2 | Quantos atributos manter? | intermediário
+Com o conjunto **Breast Cancer Wisconsin** (UCI), acrescente 200 colunas de ruído normal. Em um pipeline com `StandardScaler`, `SelectKBest(f_classif)` e `LogisticRegression`, varie `k` em [2, 5, 10, 20, 30, 50, 100, 230] e calcule a acurácia de validação cruzada de 5 partes. Mostre também o resultado sem seleção.
+
+*Pergunta:* qual faixa de `k` funciona melhor? O que acontece com `k` muito pequeno e com `k` muito grande?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+X0, y = load_breast_cancer(return_X_y=True)
+rng = np.random.default_rng(0)
+X = np.hstack([X0, rng.normal(size=(len(y), 200))])                  # 30 reais + 200 de ruído
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+
+print("k    | acurácia")
+for k in (2, 5, 10, 20, 30, 50, 100, 230):
+    pipe = make_pipeline(StandardScaler(), SelectKBest(f_classif, k=k), LogisticRegression(max_iter=3000))
+    print(f"{k:4d} | {cross_val_score(pipe, X, y, cv=cv).mean():.3f}")
+sem = make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000))
+print("sem seleção (230 atributos):", round(cross_val_score(sem, X, y, cv=cv).mean(), 3))
+```
+@@NOTE A acurácia sobe de 0,935 (k = 2) até 0,984 (k = 20) e depois cai: 0,970 (k = 30), 0,946 (k = 50), 0,935 (k = 100) e 0,921 sem seleção (230 atributos). Com k pequeno, o modelo perde informação útil; com k grande, o ruído volta a entrar. O melhor valor fica em uma faixa intermediária, abaixo do número de atributos realmente informativos (30): é a curva em "U invertido", típica, que mostra por que k deve ser tratado como hiperparâmetro.
+@@EX 3 | RFECV: deixar a validação cruzada escolher | intermediário
+No conjunto **Wine** (UCI) com 100 colunas de ruído acrescentadas, use `RFECV` (eliminação recursiva com validação cruzada) com uma `LogisticRegression` e `StandardScaler`, `step=5`, `cv=5`. Mostre quantos atributos o `RFECV` escolheu, quantos desses são dos 13 reais e a acurácia de validação cruzada **externa** do pipeline completo (`RFECV` + modelo), para evitar vazamento.
+
+*Pergunta:* o número escolhido faz sentido? Por que é importante avaliar o pipeline completo com uma validação externa?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.feature_selection import RFECV
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+Xw, y = load_wine(return_X_y=True)
+rng = np.random.default_rng(0)
+X = np.hstack([Xw, rng.normal(size=(len(y), 100))])                  # 13 reais + 100 de ruído
+
+def novo_pipeline():
+    sel = RFECV(LogisticRegression(max_iter=3000), step=5, cv=StratifiedKFold(5, shuffle=True, random_state=1))
+    return make_pipeline(StandardScaler(), sel, LogisticRegression(max_iter=3000))
+
+pipe = novo_pipeline().fit(X, y)
+suporte = pipe[1].support_
+print(f"RFECV escolheu {suporte.sum()} atributos, dos quais {suporte[:13].sum()} estão entre os 13 reais")
+externa = cross_val_score(novo_pipeline(), X, y, cv=StratifiedKFold(5, shuffle=True, random_state=0)).mean()
+print(f"Acurácia da validação externa do pipeline completo: {externa:.3f}")
+```
+@@NOTE O RFECV escolheu 8 atributos, todos entre os 13 reais: nenhum ruído foi mantido. A validação externa do pipeline completo foi de 0,989. Essa validação externa é essencial: a nota interna do RFECV foi usada para escolher o número de atributos e é, portanto, otimista, enquanto a validação externa avalia o processo inteiro com dados que a seleção não viu.
+@@EX 4 | Mais agregados, mais ganho? | intermediário
+Reconstrua os dados simulados de clientes e compras da Seção 8.4 (800 clientes, mesma semente). Compare o AUC (gradient boosting, validação cruzada estratificada de 5 partes) usando: (a) os agregados do capítulo (média, máximo, desvio, contagem e razão desvio/média) e (b) esses agregados mais três novos: **mínimo**, **mediana** e **número de compras acima de 100**.
+
+*Pergunta:* os atributos extras ajudaram? Por quê?
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+rng = np.random.default_rng(0)
+n = 800
+clientes = pd.DataFrame({"id": range(n), "idade": rng.integers(18, 75, n), "cidade": rng.choice(["A", "B", "C"], n)})
+n_compras = rng.poisson(8, n) + 1
+media = rng.uniform(30, 120, n)
+variab = rng.uniform(0.1, 1.2, n)
+linhas = []
+for i in range(n):
+    valores = media[i] * np.exp(rng.normal(0, variab[i], n_compras[i]))
+    linhas += [(i, v) for v in valores]
+compras = pd.DataFrame(linhas, columns=["id_cliente", "valor"])
+
+g = compras.groupby("id_cliente")["valor"]
+agg = g.agg(media_valor="mean", max_valor="max", std_valor="std", n_compras="count")
+agg["min_valor"] = g.min(); agg["mediana_valor"] = g.median()
+agg["acima_100"] = compras.assign(a=compras["valor"] > 100).groupby("id_cliente")["a"].sum()
+agg = agg.fillna(0).reset_index().rename(columns={"id_cliente": "id"})
+dados = clientes.merge(agg, on="id")
+dados["cv_valor"] = dados["std_valor"] / dados["media_valor"]
+
+risco = 2.0 * dados["cv_valor"] - 0.02 * dados["n_compras"]
+y = (rng.random(n) < 1 / (1 + np.exp(-3 * (risco - risco.median())))).astype(int)
+
+base = pd.get_dummies(dados[["idade", "cidade"]]).astype(float)
+col_a = ["media_valor", "max_valor", "std_valor", "n_compras", "cv_valor"]
+col_b = col_a + ["min_valor", "mediana_valor", "acima_100"]
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+for nome, cols in [("(a) agregados do capítulo", col_a), ("(b) mais mínimo, mediana e acima de 100", col_b)]:
+    auc = cross_val_score(GradientBoostingClassifier(random_state=0), pd.concat([base, dados[cols]], axis=1), y, cv=cv, scoring="roc_auc").mean()
+    print(f"{nome:42s} AUC = {auc:.3f}")
+```
+@@NOTE O AUC foi 0,857 em (a) e 0,853 em (b): os atributos extras não ajudaram (a pequena queda está dentro do ruído da validação cruzada). O padrão simulado depende da variabilidade relativa e do número de compras, que já estavam em (a); mínimo, mediana e contagem acima de 100 são redundantes ou pouco informativos. Acrescentar atributos só compensa quando eles trazem informação nova.
+@@PROJ Engenharia de atributos honesta em Diabetes | Cap08
+**Fonte dos dados.** *Diabetes*, incluído no scikit-learn (`load_diabetes`): 442 pacientes, 10 atributos e uma medida de progressão da doença após um ano (regressão). A base é de uso didático.
+
+**Contexto.** Uma equipe quer saber se vale a pena sofisticar os atributos para prever a progressão da doença: termos quadráticos, seleção de atributos ou um modelo mais flexível.
+
+**Atenção ética.** Os dados são de uso didático. O modelo **não é ferramenta clínica**.
+
+**Tarefas.**
+1. Separe 25% dos dados como **teste final** (semente fixa).
+2. Monte cinco pipelines (todos com a engenharia **dentro** do pipeline): (A) `StandardScaler` + `Ridge`; (B) termos quadráticos + `StandardScaler` + `Ridge`; (C) termos quadráticos + `SelectKBest(f_regression, k=15)` + `Ridge`; (D) termos quadráticos + `StandardScaler` + `Lasso` (seleção embutida); (E) `GradientBoostingRegressor`.
+3. Avalie cada um por **validação cruzada repetida** no treino (`RepeatedKFold`, 5 partes × 3 repetições, métrica R²) e registre média e desvio padrão.
+4. Escolha o melhor pelo critério da validação. Avalie **apenas esse** (e, para comparação, o pipeline A) no teste final, com R² e RMSE.
+5. Escreva um parágrafo (6 a 8 linhas): a engenharia de atributos ajudou? A diferença entre os pipelines é maior que a variação da validação cruzada? O que você recomendaria à equipe?
+
+**Entregáveis.** Um notebook (ou script) comentado, a tabela de resultados e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_diabetes
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.model_selection import train_test_split, cross_val_score, RepeatedKFold
+from sklearn.metrics import r2_score, mean_squared_error
+
+X, y = load_diabetes(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, random_state=0)
+poly = lambda: PolynomialFeatures(2, include_bias=False)
+
+pipelines = {
+    "A: Ridge": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
+    "B: quadráticos + Ridge": make_pipeline(poly(), StandardScaler(), Ridge(alpha=10.0)),
+    "C: quadráticos + SelectKBest(15) + Ridge": make_pipeline(poly(), StandardScaler(), SelectKBest(f_regression, k=15), Ridge(alpha=1.0)),
+    "D: quadráticos + Lasso": make_pipeline(poly(), StandardScaler(), Lasso(alpha=0.5, max_iter=20000)),
+    "E: gradient boosting": GradientBoostingRegressor(n_estimators=100, learning_rate=0.05, max_depth=2, random_state=0),
+}
+cv = RepeatedKFold(n_splits=5, n_repeats=3, random_state=0)
+res = {}
+for nome, p in pipelines.items():
+    r = cross_val_score(p, Xtr, ytr, cv=cv, scoring="r2")
+    res[nome] = r.mean()
+    print(f"{nome:42s} R² = {r.mean():.3f} (±{r.std():.3f})")
+
+melhor = max(res, key=res.get)
+print("\nMelhor na validação:", melhor)
+for nome in dict.fromkeys([melhor, "A: Ridge"]):
+    p = pipelines[nome].fit(Xtr, ytr).predict(Xte)
+    print(f"Teste final | {nome:42s} R² = {r2_score(yte, p):.3f} | RMSE = {np.sqrt(mean_squared_error(yte, p)):.1f}")
+```
+@@RUBRICA
+- Toda a engenharia (quadráticos, seleção, Lasso) está dentro do pipeline, sem vazamento.
+- Os pipelines foram comparados por validação cruzada repetida, com média e desvio padrão.
+- O teste final foi separado antes e usado apenas para o vencedor e para a linha de base (pipeline A).
+- O texto compara a diferença entre pipelines com a variação da validação cruzada.
+- A recomendação final é coerente com os resultados e reconhece as limitações (conjunto pequeno, caráter didático).
+@@NOTE O pipeline mais simples (A, Ridge) foi o melhor na validação (R² = 0,524), à frente de todos os que acrescentaram sofisticação: quadráticos + Ridge (0,466), com SelectKBest (0,499), com Lasso (0,488) e gradient boosting (0,480). As diferenças entre A e os demais (de 0,025 a 0,058) são da ordem do desvio padrão da validação cruzada (cerca de 0,06), o que mostra que a vantagem não é grande, mas todos os caminhos sofisticados ficaram atrás. No teste final, o pipeline A obteve R² = 0,358 e RMSE = 56,5, abaixo da validação (0,524): o teste tem só 111 exemplos e a validação foi usada para escolher. A recomendação honesta é adotar o modelo mais simples.
+@@ALEM
+- **UCI:** Wine Quality (regressão), Concrete Compressive Strength (relações não lineares entre ingredientes) e Online Retail (transações para praticar agregações).
+- **Kaggle:** House Prices (muitos atributos para criar e selecionar) e Instacart Market Basket Analysis (várias tabelas relacionadas, ideal para DFS).

@@ -1,0 +1,269 @@
+MC: O que é meta-aprendizado?
+a) Usar a experiência de conjuntos de dados anteriores para decidir melhor em um problema novo.
+b) Treinar um modelo com dados do teste.
+c) Aumentar o número de camadas de uma rede neural.
+d) Dividir os dados em treino e validação.
+R: a | É "aprender a aprender": aproveitar resultados de problemas anteriores.
+
+MC: Na analogia do capítulo, o meta-aprendizado corresponde ao:
+a) médico experiente, que reconhece o caso e começa pelo exame certo.
+b) médico iniciante, que pede todos os exames.
+c) paciente.
+d) laboratório de exames.
+R: a | A experiência acumulada orienta por onde começar.
+
+MC: O problema da seleção de algoritmos foi formulado por:
+a) Rice, em 1976.
+b) Wolpert, em 1992.
+c) Caruana, em 2004.
+d) Feurer, em 2015.
+R: a | Rice (1976) descreveu o problema com quatro espaços.
+
+MC: Qual dos itens abaixo NÃO é um dos quatro espaços do quadro de Rice?
+a) Espaço dos problemas.
+b) Espaço das características.
+c) Espaço dos algoritmos.
+d) Espaço dos usuários.
+R: d | O quadro tem problemas, características, mapeamento de seleção e algoritmos, mais uma medida de desempenho.
+
+MC: O que são meta-atributos?
+a) Descrições resumidas de um conjunto de dados inteiro.
+b) Colunas de um conjunto de dados.
+c) Hiperparâmetros de um modelo.
+d) Rótulos de classes.
+R: a | Por exemplo, número de exemplos, entropia das classes e assimetria média.
+
+MC: O que é um landmarker?
+a) A nota de um modelo simples e rápido no problema, usada como sonda.
+b) Um monumento histórico da área.
+c) Um hiperparâmetro do Optuna.
+d) Uma função de aquisição.
+R: a | Uma árvore rasa, por exemplo, indica o tipo de estrutura que os dados têm.
+
+MC: A entropia das classes, como meta-atributo, indica:
+a) quão balanceadas estão as classes.
+b) quantos atributos existem.
+c) o tempo de treino.
+d) a correlação entre atributos.
+R: a | Entropia máxima significa classes balanceadas; baixa, classes muito desiguais.
+
+MC: Por que a literatura aponta dificuldades de reprodução com meta-atributos?
+a) Porque sua descrição, organização e cálculo variam entre trabalhos.
+b) Porque meta-atributos não podem ser calculados.
+c) Porque só funcionam em dados de texto.
+d) Porque dependem de GPU.
+R: a | Rivolli e colaboradores (2022) tratam dessa falta de padronização.
+
+MC: Como foi construído o meta-conjunto do capítulo?
+a) Com 150 conjuntos simulados, descritos por meta-atributos e rotulados com o melhor entre quatro algoritmos.
+b) Com 4 conjuntos reais.
+c) Com 150 conjuntos reais do Kaggle.
+d) Com imagens de dígitos.
+R: a | Foram usados conjuntos de make_classification com tamanhos, ruídos e separabilidades variados.
+
+MC: O que significa a validação "deixe um conjunto de fora" no meta-aprendizado?
+a) O meta-modelo é treinado com os outros conjuntos e testado no excluído.
+b) O conjunto de teste é removido do estudo.
+c) Uma coluna de cada conjunto é removida.
+d) O meta-modelo só usa um conjunto.
+R: a | Evita avaliar o meta-modelo em conjuntos que ele já viu.
+
+MC: Qual era a linha de base do experimento de meta-aprendizado?
+a) Recomendar sempre o algoritmo que mais vence.
+b) Recomendar sempre a floresta aleatória.
+c) Não recomendar nada.
+d) Sortear o algoritmo.
+R: a | No experimento, era o SVM, que foi o melhor em mais da metade dos conjuntos.
+
+MC: Qual foi o resultado do meta-modelo frente à linha de base no experimento?
+a) Acertou na mesma proporção (cerca de 59%) e teve perda média só ligeiramente menor.
+b) Foi muito superior, com 95% de acerto.
+c) Foi muito inferior, com 20% de acerto.
+d) Não pôde ser avaliado.
+R: a | O ganho foi humilde: 0,593 de acerto nos dois, e perda 0,0100 contra 0,0110.
+
+MC: Qual das razões abaixo explica o pequeno ganho do meta-modelo?
+a) Poucos conjuntos simulados, poucos meta-atributos e algoritmos competitivos entre si.
+b) Falta de memória do computador.
+c) Erro de digitação no código.
+d) O uso de validação cruzada.
+R: a | Sistemas reais usam centenas de conjuntos e meta-atributos mais ricos.
+
+MC: Qual forma de meta-aprendizado é mais robusta e mais usada na prática, segundo o capítulo?
+a) Recomendar por onde começar a busca (warm start).
+b) Recomendar o algoritmo com poucos dados.
+c) Escolher os atributos.
+d) Dividir os dados.
+R: a | O warm start reaproveita configurações que funcionaram bem em problemas parecidos.
+
+MC: O que é warm start na otimização de hiperparâmetros?
+a) Iniciar a busca com configurações que se saíram bem em problemas parecidos.
+b) Aquecer a CPU antes do treino.
+c) Sortear a primeira configuração.
+d) Usar o teste como validação.
+R: a | Feurer, Springenberg e Hutter (2015) propuseram inicializar a otimização bayesiana dessa forma.
+
+MC: No experimento de portfólio, como foi escolhido o portfólio de 3 configurações?
+a) Por escolha gulosa: cada nova configuração melhora ao máximo o melhor resultado médio nos conjuntos de origem.
+b) Por sorteio.
+c) Pelo teste final.
+d) Por votação humana.
+R: a | A escolha gulosa busca configurações complementares.
+
+MC: Por que se usou um gamma relativo (gamma = gamma_rel / d) no portfólio?
+a) Para tornar as configurações transferíveis entre conjuntos com números diferentes de atributos.
+b) Para acelerar o treino.
+c) Para evitar o uso de validação.
+d) Porque o scikit-learn exige.
+R: a | O melhor gamma depende do número de atributos d.
+
+MC: No experimento do portfólio, qual foi o resultado com 3 configurações do portfólio nos conjuntos reais?
+a) Chegaram perto do melhor valor possível em todos.
+b) Foram sempre piores que o sorteio.
+c) Empataram com a pior configuração.
+d) Não puderam ser avaliadas.
+R: a | O portfólio chegou muito perto do melhor valor da grade em Iris, Wine, Cancer e Digits.
+
+MC: Em que momento da busca o warm start é mais vantajoso?
+a) No começo, quando cada tentativa vale mais.
+b) Sempre no final.
+c) Apenas depois de 1000 tentativas.
+d) Nunca.
+R: a | Com muitas tentativas, a busca comum acaba alcançando os mesmos valores.
+
+MC: Qual método do Optuna permite dar um warm start com configurações conhecidas?
+a) study.enqueue_trial().
+b) study.pause().
+c) trial.skip().
+d) optuna.freeze().
+R: a | Ele coloca configurações na fila das primeiras tentativas.
+
+MC: Para que ensembles funcionem bem, os modelos precisam:
+a) errar de maneiras diferentes (diversidade).
+b) ser todos idênticos.
+c) ter a mesma semente.
+d) usar sempre a mesma fronteira.
+R: a | Os erros de uns compensam os de outros.
+
+MC: Na analogia do "boi gordo", o que corresponde à votação de modelos?
+a) A média dos chutes de vários visitantes.
+b) O chute do melhor visitante.
+c) O peso verdadeiro do boi.
+d) O preço do boi.
+R: a | A média de muitos palpites independentes costuma ficar perto do valor real.
+
+MC: O que é stacking?
+a) Um meta-modelo aprende a combinar as previsões dos modelos de base.
+b) Empilhar dados de treino.
+c) Escolher o modelo de maior nota.
+d) Rodar modelos em paralelo sem combinar.
+R: a | Wolpert (1992) propôs treinar um modelo de nível superior sobre as previsões dos modelos de base.
+
+MC: Por que as previsões usadas para treinar o meta-modelo do stacking devem ser feitas fora do treino?
+a) Para que o meta-modelo não confie demais em modelos que apenas decoraram os dados.
+b) Para reduzir o tamanho dos dados.
+c) Para evitar o uso de probabilidades.
+d) Para acelerar a validação cruzada.
+R: a | Previsões feitas no próprio treino são otimistas e enganam o meta-modelo.
+
+MC: No experimento com votação e stacking, qual foi o resultado em relação ao melhor modelo individual?
+a) Votação e stacking ficaram acima do melhor modelo individual.
+b) Ficaram abaixo de todos os modelos.
+c) Ficaram idênticos à regressão logística.
+d) Não puderam ser comparados.
+R: a | O stacking foi um pouco além da votação, no problema simulado e difícil.
+
+MC: Por que o conjunto Digits não foi usado para demonstrar o ganho dos ensembles?
+a) Porque é fácil demais: um único modelo já passa de 98%.
+b) Porque tem poucas linhas.
+c) Porque é proibido.
+d) Porque não tem rótulos.
+R: a | Quando um modelo já é quase perfeito, há pouco espaço para a combinação melhorar.
+
+MC: O que faz a seleção de ensembles de Caruana?
+a) Acrescenta, passo a passo, o modelo da biblioteca que mais melhora o ensemble na validação.
+b) Escolhe aleatoriamente os modelos.
+c) Remove o pior modelo a cada passo.
+d) Usa apenas o melhor modelo.
+R: a | A seleção gulosa para frente pode escolher o mesmo modelo várias vezes, o que funciona como peso.
+
+MC: Por que o mesmo modelo pode ser escolhido mais de uma vez na seleção de Caruana?
+a) Isso funciona como dar a ele um peso maior no ensemble.
+b) Por erro de implementação.
+c) Para reduzir o número de modelos.
+d) Para evitar a validação.
+R: a | As contagens finais viram os pesos.
+
+MC: No experimento de Caruana, a média simples dos 40 modelos:
+a) já chegou perto do ensemble de Caruana, mostrando que grande parte do ganho vem da diversidade.
+b) foi a pior opção, muito abaixo dos demais.
+c) foi igual a 50%.
+d) não foi calculada.
+R: a | A simples média capturou boa parte do ganho; a seleção acrescentou um pouco.
+
+MC: Qual das ideias abaixo NÃO faz parte do Auto-sklearn (versão original)?
+a) Meta-aprendizado para warm start.
+b) Otimização bayesiana.
+c) Construção de ensembles com os modelos avaliados.
+d) Busca de arquiteturas neurais por gradiente.
+R: d | A busca de arquiteturas é tema do Capítulo 11 e não faz parte do Auto-sklearn original.
+
+DISC: Explique a ideia do meta-aprendizado usando uma analogia do cotidiano.
+R: Um médico experiente reconhece um caso parecido com outros e vai direto aos exames mais prováveis, enquanto o iniciante pede todos. O meta-aprendizado usa a experiência de conjuntos anteriores para decidir por onde começar em um conjunto novo.
+
+DISC: Descreva os quatro espaços do quadro de Rice e a medida de desempenho.
+R: Espaço dos problemas (conjuntos de dados), espaço das características (meta-atributos), mapeamento de seleção (meta-modelo que escolhe o algoritmo) e espaço dos algoritmos. A medida de desempenho avalia o quanto o algoritmo escolhido resolve bem o problema.
+
+DISC: Cite as quatro famílias de meta-atributos e dê um exemplo de cada.
+R: Simples/estatísticos (número de exemplos); teoria da informação (entropia das classes); complexidade do problema (sobreposição entre classes); landmarkers (nota de uma árvore rasa).
+
+DISC: Explique o que é um landmarker e por que ele é um meta-atributo útil.
+R: É a nota de um modelo simples e rápido no problema. Funciona como sonda do tipo de estrutura dos dados (por exemplo, se classes são separáveis por regras simples), e é barato de calcular.
+
+DISC: Descreva como foi construído e avaliado o meta-modelo do capítulo.
+R: Simularam-se 150 conjuntos, calcularam-se meta-atributos e rotularam-se com o melhor entre quatro algoritmos. Treinou-se uma floresta aleatória como meta-modelo, avaliada deixando um conjunto de fora, e comparada com a regra de recomendar sempre o algoritmo mais frequente.
+
+DISC: Interprete o resultado do meta-modelo: ele funcionou? Cite três razões para o ganho ser pequeno.
+R: Acertou o melhor algoritmo na mesma proporção que a regra boba (cerca de 59%), com perda média só um pouco menor. Razões: poucos conjuntos, simulados; poucos meta-atributos; algoritmos de desempenhos parecidos, com o SVM competitivo quase sempre.
+
+DISC: Por que o capítulo diz que recomendar o algoritmo é a forma mais difícil de meta-aprendizado?
+R: Porque as diferenças entre algoritmos padrão costumam ser pequenas e dependem de detalhes sutis dos dados; é preciso muitos conjuntos e meta-atributos ricos para aprender regras confiáveis.
+
+DISC: Explique o warm start e por que ele é mais robusto do que recomendar o algoritmo.
+R: Começa a busca com configurações que funcionaram bem em problemas parecidos. É robusto porque, mesmo que a recomendação não seja ótima, ela só define o ponto de partida; a busca continua e pode corrigir.
+
+DISC: Descreva como se construiu o portfólio de configurações e como ele foi avaliado.
+R: Avaliaram-se 25 configurações de SVM em 40 conjuntos simulados de origem; escolheram-se 3 de forma gulosa para maximizar o melhor resultado médio do portfólio; testaram-se essas 3 em conjuntos reais, comparando com 3 e 6 configurações sorteadas.
+
+DISC: Interprete os resultados do portfólio. Em que situação o benefício é maior?
+R: Com 3 configurações do portfólio, chegou-se perto do melhor valor possível em todos os conjuntos reais; o sorteio de 3 ficou atrás. O benefício é maior no começo da busca, quando cada tentativa vale mais.
+
+DISC: Por que se usa um gamma relativo no portfólio de SVM?
+R: O melhor gamma depende do número de atributos d. Usando gamma_rel/d, as configurações se tornam comparáveis e transferíveis entre conjuntos de dimensões diferentes.
+
+DISC: Explique por que combinar modelos costuma funcionar melhor do que escolher só um.
+R: Modelos diferentes erram em lugares diferentes; a combinação compensa erros individuais (como a média dos chutes no concurso do boi gordo), reduzindo a variância e melhorando a previsão, desde que haja diversidade.
+
+DISC: Compare bagging/florestas, boosting, votação e stacking.
+R: Bagging/florestas: muitos modelos do mesmo tipo em amostras diferentes. Boosting: modelos em sequência corrigindo erros. Votação: média ou maioria de modelos de tipos diferentes. Stacking: um meta-modelo aprende a combinar as previsões.
+
+DISC: Descreva o algoritmo de seleção de ensembles de Caruana.
+R: Começa com ensemble vazio; a cada passo acrescenta o modelo da biblioteca que mais melhora o ensemble na validação, podendo repetir modelos; após um número de passos, as contagens viram os pesos.
+
+DISC: Interprete os resultados do experimento de Caruana, incluindo o papel da média simples.
+R: O ensemble superou o melhor modelo escolhido pela validação e quase todos os modelos individuais. A média simples dos 40 modelos já chegou perto, mostrando que a diversidade responde por boa parte do ganho; a seleção acrescentou um pouco.
+
+DISC: Por que o ensemble também está sujeito ao sobreajuste da validação e como evitar?
+R: Os pesos são escolhidos na validação; ao testar muitas combinações, o ensemble pode se ajustar ao acaso da validação. Evita-se com teste final intocado e relatando a nota nele.
+
+DISC: Descreva a arquitetura do Auto-sklearn e a contribuição de cada componente.
+R: Meta-aprendizado inicia a busca com configurações promissoras; a otimização bayesiana avalia candidatos em um espaço amplo (classificadores e pré-processadores); a construção de ensembles combina os modelos avaliados, em vez de ficar com um só.
+
+DISC: O que mudou na versão 2.0 do Auto-sklearn, segundo o capítulo?
+R: Buscou-se um funcionamento sem configuração manual, com meta-aprendizado sem meta-atributos e uma estratégia de bandidos para alocar orçamento, com ganhos reportados em um benchmark aberto de 39 conjuntos.
+
+DISC: Cite três cuidados práticos com ensembles (custo, interpretabilidade e avaliação) e comente um.
+R: Custo (mais memória e tempo de previsão), perda de interpretabilidade e avaliação honesta (pesos na validação, medida no teste). Exemplo: um ensemble de 30 modelos custa cerca de 30 vezes mais para prever, o que pesa em produção.
+
+DISC: Como o capítulo mostra que o AutoML é uma "orquestra" de ideias vistas antes? Cite quatro delas.
+R: O Auto-sklearn combina busca bayesiana (Cap. 5), orçamento por bandidos (Cap. 6), pipelines (Cap. 3), validação honesta (Caps. 2 e 4), meta-aprendizado e ensembles.

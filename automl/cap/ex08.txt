@@ -1,0 +1,269 @@
+MC: O que é engenharia de atributos?
+a) O trabalho de criar, transformar e selecionar atributos para ajudar o modelo.
+b) A escolha do algoritmo de aprendizado.
+c) A divisão dos dados em treino e teste.
+d) O ajuste dos hiperparâmetros.
+R: a | Envolve produzir atributos novos a partir dos existentes e escolher os mais úteis.
+
+MC: Na analogia do chef, a engenharia de atributos corresponde a:
+a) cortar, temperar e combinar os ingredientes antes de ir ao fogo.
+b) escolher o forno.
+c) provar o prato pronto.
+d) lavar a louça.
+R: a | O preparo dos ingredientes (atributos) determina o que o modelo consegue aproveitar.
+
+MC: Por que o modelo linear não separa os dois círculos concêntricos usando apenas x1 e x2?
+a) Porque ele só traça retas, e nenhuma reta separa as classes nesses atributos.
+b) Porque os dados têm valores ausentes.
+c) Porque há classes demais.
+d) Porque a regressão logística não aceita números reais.
+R: a | A fronteira entre círculos é curva; é preciso um atributo como r² = x1² + x2² para torná-la linear.
+
+MC: No exemplo dos círculos, o que torna o problema fácil para um modelo linear?
+a) Acrescentar o atributo r² = x1² + x2² (termos quadráticos).
+b) Padronizar x1 e x2.
+c) Remover x2.
+d) Usar mais exemplos.
+R: a | No espaço (x1, r²), uma reta horizontal separa as duas classes.
+
+MC: Qual transformação é mais útil para variáveis muito assimétricas, como renda?
+a) Logaritmo.
+b) Cubo.
+c) Codificação one-hot.
+d) Remover a variável.
+R: a | O logaritmo comprime valores muito grandes e reduz a assimetria.
+
+MC: Qual transformação cria atributos como "gasto por visita"?
+a) Razão entre dois atributos.
+b) Quadrado.
+c) Faixas (binning).
+d) Padronização.
+R: a | A razão combina dois atributos em uma medida mais informativa.
+
+MC: No experimento com o conjunto Diabetes, acrescentar termos quadráticos:
+a) piorou o R² em relação aos atributos originais.
+b) melhorou muito o R².
+c) não mudou nada.
+d) impossibilitou o treino.
+R: a | O R² caiu de cerca de 0,49 para cerca de 0,46: mais atributos não garantem melhora.
+
+MC: Qual a lição do experimento com o conjunto Diabetes?
+a) A engenharia de atributos precisa ser avaliada, e não presumida.
+b) Termos quadráticos sempre ajudam.
+c) O conjunto Diabetes não pode ser modelado.
+d) A validação cruzada é inútil.
+R: a | O ganho depende do problema, e a avaliação honesta é indispensável.
+
+MC: Qual não é um objetivo clássico da seleção de atributos?
+a) Aumentar o número de colunas.
+b) Melhorar a previsão.
+c) Tornar os modelos mais rápidos e baratos.
+d) Facilitar a compreensão do problema.
+R: a | A seleção busca reduzir e escolher bem as colunas, e não aumentá-las.
+
+MC: Os métodos de filtro avaliam:
+a) cada atributo isoladamente, antes do modelo, por medidas estatísticas.
+b) subconjuntos de atributos treinando o modelo de verdade.
+c) atributos durante o treino do modelo.
+d) apenas atributos categóricos.
+R: a | Por exemplo, o teste F e a informação mútua.
+
+MC: Qual é uma limitação típica dos filtros univariados?
+a) Ignoram as interações entre atributos.
+b) São lentos demais.
+c) Não funcionam com números.
+d) Só funcionam em regressão.
+R: a | Como avaliam cada atributo sozinho, não percebem combinações ou redundâncias.
+
+MC: O RFE (recursive feature elimination) é um exemplo de:
+a) wrapper.
+b) filtro.
+c) método embutido.
+d) transformação de cauda.
+R: a | Ele treina o modelo, descarta os atributos menos importantes e repete.
+
+MC: Qual característica descreve melhor os wrappers?
+a) Precisos, porém mais caros computacionalmente.
+b) Muito rápidos e sempre superficiais.
+c) Independentes do modelo.
+d) Não usam validação.
+R: a | Treinam o modelo muitas vezes sobre diferentes subconjuntos.
+
+MC: Um método embutido de seleção é:
+a) a penalidade L1, que zera coeficientes de atributos pouco úteis.
+b) o teste F.
+c) o StandardScaler.
+d) o train_test_split.
+R: a | A seleção ocorre durante o treino do próprio modelo.
+
+MC: No experimento do Wine com 100 colunas de ruído, o que ocorreu sem seleção?
+a) O modelo ficou prejudicado pelo ruído.
+b) Todos os métodos empataram.
+c) O modelo atingiu 100% de acurácia.
+d) O modelo não pôde ser treinado.
+R: a | Sem seleção, a acurácia foi menor do que a obtida com RFE e L1.
+
+MC: Qual conjunto de métodos obteve as maiores acurácias no experimento de seleção com ruído?
+a) RFE e penalidade L1.
+b) Apenas o teste F.
+c) Apenas a floresta com limiar na mediana.
+d) Nenhum, todos pioraram.
+R: a | Ambos escolheram quase só atributos reais e chegaram a cerca de 0,98.
+
+MC: Por que a floresta com limiar na mediana manteve muito ruído?
+a) Porque o limiar na mediana mantém metade dos atributos, incluindo ruído.
+b) Porque florestas não calculam importâncias.
+c) Porque o ruído era informativo.
+d) Porque o pipeline estava fora da validação.
+R: a | O limiar de corte é um hiperparâmetro; a mediana é generosa em um problema com muito ruído.
+
+MC: Por que colocar a seleção de atributos dentro do pipeline?
+a) Para evitar vazamento: ela é reaprendida só com o treino de cada divisão.
+b) Para deixar o código mais curto apenas.
+c) Para aumentar o número de atributos.
+d) Para dispensar a validação cruzada.
+R: a | A seleção olhando todos os rótulos antes da divisão contamina a validação.
+
+MC: A síntese profunda de atributos (DFS) serve principalmente para:
+a) criar atributos agregando informações de tabelas relacionadas.
+b) escolher hiperparâmetros.
+c) padronizar atributos numéricos.
+d) dividir os dados.
+R: a | Ela aplica funções de agregação ao longo dos caminhos entre tabelas.
+
+MC: Na DFS, o que significa "profundidade 2"?
+a) Agregações de agregações, conforme as tabelas se encadeiam.
+b) O dobro de exemplos.
+c) Duas validações cruzadas.
+d) Duas colunas de saída.
+R: a | Profundidade 1 agrega diretamente; profundidade 2 agrega os resultados das agregações.
+
+MC: No exemplo com clientes e compras, qual é um atributo criado por DFS?
+a) A média dos valores das compras de cada cliente.
+b) O nome do arquivo.
+c) A semente aleatória.
+d) O número de linhas da tabela de clientes.
+R: a | MEAN(compras.valor) por cliente é uma agregação típica.
+
+MC: No experimento simulado da DFS, qual foi o AUC usando apenas a tabela de clientes?
+a) Cerca de 0,5, no nível do acaso.
+b) Cerca de 0,95.
+c) Cerca de 0,75.
+d) Cerca de 1,0.
+R: a | A informação relevante estava nas compras, não na idade ou na cidade.
+
+MC: Por que o capítulo diz que o resultado da DFS simulada "mostra o potencial, e não o desempenho em dados reais"?
+a) Porque os dados foram simulados com um padrão que sabíamos existir.
+b) Porque a DFS só funciona em simulações.
+c) Porque o AUC não é uma métrica válida.
+d) Porque não houve validação cruzada.
+R: a | A relação entre agregados e cancelamento foi criada por nós.
+
+MC: Qual é o risco de vazamento temporal ao agregar atributos?
+a) Usar compras posteriores à data da previsão, "vendo o futuro".
+b) Usar um número ímpar de linhas.
+c) Usar variáveis categóricas.
+d) Usar a validação cruzada.
+R: a | Agregados devem respeitar a linha do tempo da previsão.
+
+MC: Qual a abordagem de Khurana, Samulowitz e Turaga (2018) para criar atributos?
+a) Aprendizado por reforço sobre um grafo de transformações.
+b) Busca em grade de hiperparâmetros.
+c) Seleção por torneio em um algoritmo genético.
+d) Padronização dos dados.
+R: a | Eles aprendem uma estratégia de busca no grafo, com atributos interpretáveis.
+
+MC: Com 100 atributos originais, quantos candidatos de pares × 6 operações são possíveis, aproximadamente?
+a) Cerca de 30 mil.
+b) 600.
+c) 100.
+d) 6.
+R: a | 6 × 100 × 99 / 2 = 29.700.
+
+MC: Por que gerar todas as transformações possíveis e selecionar depois pode falhar?
+a) Há explosão de candidatos, redundância e chance de sinais falsos por sorte.
+b) Porque a seleção não funciona em nenhum caso.
+c) Porque os modelos não aceitam muitos atributos.
+d) Porque isso elimina o vazamento.
+R: a | Com muitos candidatos, alguns parecem bons por acaso nos dados de treino.
+
+MC: No experimento do gerador automático em Wine e Câncer, o que ocorreu?
+a) Os atributos gerados pioraram a acurácia nos casos testados.
+b) Os atributos gerados melhoraram sempre muito a acurácia.
+c) O gerador não pôde ser treinado.
+d) Todos os modelos atingiram 100%.
+R: a | O resultado foi desfavorável à criação automática indiscriminada.
+
+MC: Qual das opções é uma boa prática ao criar atributos?
+a) Começar pelo conhecimento do problema e medir o ganho contra uma linha de base.
+b) Gerar o máximo possível sem avaliar.
+c) Usar o teste final para escolher atributos.
+d) Ignorar o vazamento temporal.
+R: a | Criar atributos precisa de um motivo e de avaliação honesta.
+
+MC: Qual método da biblioteca scikit-learn gera automaticamente termos quadráticos e produtos entre atributos?
+a) PolynomialFeatures.
+b) StandardScaler.
+c) SimpleImputer.
+d) OneHotEncoder.
+R: a | PolynomialFeatures(2) cria x1, x2, x1², x1·x2 e x2², por exemplo.
+
+DISC: Explique, com uma analogia, por que a engenharia de atributos costuma pesar mais que a escolha do algoritmo.
+R: O chef que prepara bem os ingredientes (corta, tempera, combina) obtém um bom prato mesmo com forno comum; ingredientes mal preparados não são salvos pelo melhor forno. Do mesmo modo, bons atributos tornam o padrão visível a qualquer modelo.
+
+DISC: Explique o exemplo dos círculos concêntricos e o que ele ensina sobre transformações.
+R: Nos atributos originais, nenhuma reta separa os círculos. Com r² = x1² + x2², uma reta basta. Ensina que uma transformação adequada pode tornar linear um problema não linear.
+
+DISC: Cite quatro transformações de atributos e uma situação em que cada uma ajuda.
+R: Quadrado (relações curvas); logaritmo (variáveis assimétricas como renda); razão (gasto por visita); faixas (efeitos em degraus, como faixas de idade); data e hora (sazonalidade); agregações (dados em várias tabelas).
+
+DISC: Por que a criação de termos quadráticos piorou o resultado no conjunto Diabetes e o que isso ensina?
+R: Passou-se de 10 para 65 atributos, aumentando o risco de sobreajuste em um conjunto pequeno e ruidoso. Ensina que transformar não garante melhora e deve ser avaliado.
+
+DISC: Compare filtros, wrappers e métodos embutidos de seleção de atributos.
+R: Filtros: rápidos, avaliam atributos isoladamente. Wrappers: treinam o modelo em subconjuntos, precisos e caros. Embutidos: a seleção ocorre no treino (L1, importância de árvores), com bom equilíbrio.
+
+DISC: Explique como o RFE funciona.
+R: Treina o modelo com todos os atributos, descarta os de menor importância, treina de novo e repete até restar o número desejado de atributos.
+
+DISC: Por que a seleção de atributos deve ficar dentro do pipeline? Relacione com o experimento do Capítulo 3.
+R: Para ser reaprendida só com o treino em cada divisão. Fora do pipeline, ela vê os rótulos da validação e infla a nota, como no experimento com 2000 atributos aleatórios.
+
+DISC: Interprete os resultados do experimento de seleção no Wine com 100 colunas de ruído.
+R: Sem seleção, o ruído prejudicou o modelo; filtros ajudaram um pouco; RFE e L1 obtiveram as maiores acurácias (cerca de 0,98) escolhendo quase só atributos reais; a floresta com limiar na mediana manteve muito ruído.
+
+DISC: Explique a ideia da DFS e dê um exemplo de atributos que ela cria para uma tabela de clientes.
+R: Aplica funções de agregação ao longo dos relacionamentos entre tabelas. Para clientes e compras: média, máximo, desvio padrão e contagem dos valores de compra de cada cliente, e razões entre eles.
+
+DISC: O que mostrou o experimento simulado da DFS e que cuidado se deve ter ao interpretá-lo?
+R: Sem as compras, o AUC ficou em cerca de 0,5; com agregados, subiu muito. Os dados foram simulados com um padrão conhecido; mostra o potencial da técnica, e não desempenho em dados reais.
+
+DISC: Explique o vazamento temporal em atributos agregados e como evitá-lo.
+R: Ocorre quando o agregado inclui informação posterior ao momento da previsão (por exemplo, média de compras futuras). Evita-se calculando os agregados apenas com dados anteriores à data de referência.
+
+DISC: Descreva a explosão de candidatos na criação automática de atributos e uma consequência estatística dela.
+R: O número de combinações cresce depressa com o número de atributos e a ordem das operações (quase 30 mil pares×operações para 100 atributos). Com tantos candidatos, alguns parecem informativos só por sorte, causando sobreajuste da busca.
+
+DISC: Interprete o resultado do gerador automático em Wine e Câncer e explique três razões para a piora.
+R: Os atributos gerados pioraram a acurácia. Razões: os originais já eram bons; os candidatos eram redundantes e o SelectKBest univariado os escolheu sem considerar a redundância, descartando originais úteis; poucos exemplos favorecem sinais falsos.
+
+DISC: Em que situação criar atributos automaticamente é promissor e em qual é questionável?
+R: Promissora: dados em várias tabelas, em que agregações trazem informação oculta (DFS). Questionável: dados já bem representados e pequenos, com geração indiscriminada de combinações.
+
+DISC: Cite quatro riscos da criação automática de atributos e uma medida contra um deles.
+R: Vazamento, vazamento temporal, sobreajuste da busca, redundância, perda de interpretabilidade, custo e instabilidade. Medida contra vazamento: manter geração e seleção dentro do pipeline.
+
+DISC: Por que atributos criados precisam também ser calculados em produção e que implicação isso traz?
+R: O modelo espera os mesmos atributos ao fazer previsões. Atributos complexos exigem código e dados disponíveis em produção, aumentando custo e risco de inconsistência entre treino e produção.
+
+DISC: Como o número de atributos a manter na seleção pode ser tratado como hiperparâmetro?
+R: Colocando SelectKBest no pipeline e incluindo selectkbest__k na grade ou no espaço de busca, avaliado por validação cruzada junto aos demais hiperparâmetros.
+
+DISC: Descreva a abordagem de aprendizado por reforço para criar atributos (Khurana e colegas, 2018).
+R: O espaço de transformações é representado como um grafo e uma estratégia de busca é aprendida a partir de execuções anteriores. Os atributos resultantes continuam interpretáveis por usarem funções matemáticas padrão.
+
+DISC: Resuma quatro boas práticas de engenharia de atributos apresentadas no capítulo.
+R: Partir do conhecimento do problema; medir o ganho contra uma linha de base; manter tudo dentro do pipeline; limitar a explosão gerando a partir de poucos atributos; documentar cada atributo; checar vazamento temporal.
+
+DISC: Por que o número de atributos a manter e o limiar de corte de um seletor devem ser tratados como hiperparâmetros?
+R: Porque influenciam o desempenho e dependem do problema. Escolhê-los com validação cruzada dentro do pipeline evita ajustes arbitrários e vazamento.

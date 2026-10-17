@@ -1,0 +1,204 @@
+@@EX 1 | O retrato de um conjunto de dados | básico
+Calcule cinco meta-atributos (número de exemplos, número de atributos, razão exemplos/atributos, número de classes e entropia normalizada das classes) para três versões do conjunto **Wine** (UCI): (a) original; (b) com 100 colunas de ruído acrescentadas; (c) uma amostra de apenas 60 exemplos.
+
+*Pergunta:* quais meta-atributos mudaram e quais permaneceram iguais? O que isso sugere sobre o que cada meta-atributo captura?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import entropy
+from sklearn.datasets import load_wine
+
+def meta(X, y):
+    n, d = X.shape; c = len(np.unique(y)); p = np.bincount(y) / n
+    return {"n": n, "d": d, "n/d": round(n / d, 2), "classes": c, "entropia": round(float(entropy(p) / np.log(c)), 3)}
+
+X, y = load_wine(return_X_y=True)
+rng = np.random.default_rng(0)
+print("(a) original             :", meta(X, y))
+print("(b) com 100 colunas ruído:", meta(np.hstack([X, rng.normal(size=(len(y), 100))]), y))
+idx = rng.choice(len(y), 60, replace=False)
+print("(c) amostra de 60        :", meta(X[idx], y[idx]))
+```
+@@NOTE Em (b), só mudam d e n/d: o ruído altera a dimensão, mas não a distribuição das classes. Em (c), mudam n, n/d e possivelmente a entropia (a amostra pode desbalancear as classes). O número de classes só muda se uma classe desaparecer. Cada meta-atributo captura um aspecto: tamanho, dimensionalidade, balanceamento. Nenhum deles diz nada sobre quão "difícil" é separar as classes: para isso, servem as medidas de complexidade e os landmarkers.
+@@EX 2 | Votação dura ou suave? | básico
+No problema simulado difícil do capítulo (2.000 exemplos, 3 classes, 20 atributos, 8% de ruído, `random_state=1`), compare, por validação cruzada de 5 partes, a votação **dura** (`voting="hard"`, cada modelo vota em uma classe) e a **suave** (`voting="soft"`, média das probabilidades) com os quatro modelos de base (SVM, k-vizinhos, regressão logística e floresta).
+
+*Pergunta:* qual funcionou melhor? Por que a votação suave costuma ser preferível?
+@@SOL
+```python
+from sklearn.datasets import make_classification
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+X, y = make_classification(n_samples=2000, n_features=20, n_informative=8, n_redundant=4, n_classes=3,
+                           n_clusters_per_class=3, class_sep=0.9, flip_y=0.08, random_state=1)
+base = [("svm", SVC(C=10, gamma=0.02, probability=True, random_state=0)), ("knn", KNeighborsClassifier(5, weights="distance")),
+        ("lr", LogisticRegression(C=1, max_iter=2000)), ("rf", RandomForestClassifier(100, random_state=0, n_jobs=-1))]
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+for tipo in ("hard", "soft"):
+    print(f"votação {tipo:4s}: acurácia = {cross_val_score(VotingClassifier(base, voting=tipo), X, y, cv=cv).mean():.3f}")
+```
+@@NOTE Compare os dois números. A votação suave usa mais informação (a confiança de cada modelo) do que a dura (apenas o voto), o que costuma lhe dar vantagem, sobretudo com poucas classes e modelos bem calibrados. Mas a diferença pode ser pequena, e há situações em que a dura se sai tão bem quanto a suave.
+@@EX 3 | Diversidade importa | intermediário
+No mesmo problema, divida os dados em treino e teste (25%, estratificado). Compare a acurácia no teste de: (a) um único `RandomForestClassifier`; (b) um ensemble por votação suave de **três florestas com sementes diferentes** (pouca diversidade); (c) um ensemble por votação suave de **quatro modelos de tipos diferentes** (SVM, k-vizinhos, regressão logística e floresta). Calcule também a **taxa de discordância** média entre os pares de modelos de cada ensemble (fração de exemplos de teste em que as previsões diferem).
+
+*Pergunta:* o ensemble menos diverso ajudou? Qual a relação entre diversidade e ganho?
+@@SOL
+```python
+import itertools
+import numpy as np
+from sklearn.datasets import make_classification
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.model_selection import train_test_split
+
+X, y = make_classification(n_samples=2000, n_features=20, n_informative=8, n_redundant=4, n_classes=3,
+                           n_clusters_per_class=3, class_sep=0.9, flip_y=0.08, random_state=1)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+
+def discordancia(modelos):
+    prev = [m.fit(Xtr, ytr).predict(Xte) for m in modelos]
+    return np.mean([np.mean(a != b) for a, b in itertools.combinations(prev, 2)])
+
+floresta = lambda s: RandomForestClassifier(100, random_state=s, n_jobs=-1)
+tres_florestas = [("rf%d" % s, floresta(s)) for s in (1, 2, 3)]
+quatro_tipos = [("svm", SVC(C=10, gamma=0.02, probability=True, random_state=0)), ("knn", KNeighborsClassifier(5, weights="distance")),
+                ("lr", LogisticRegression(C=1, max_iter=2000)), ("rf", floresta(0))]
+
+print(f"(a) uma floresta                : teste = {floresta(0).fit(Xtr, ytr).score(Xte, yte):.3f}")
+print(f"(b) três florestas (sementes)   : teste = {VotingClassifier(tres_florestas, voting='soft').fit(Xtr, ytr).score(Xte, yte):.3f} | discordância média = {discordancia([m for _, m in tres_florestas]):.3f}")
+print(f"(c) quatro tipos de modelos     : teste = {VotingClassifier(quatro_tipos, voting='soft').fit(Xtr, ytr).score(Xte, yte):.3f} | discordância média = {discordancia([m for _, m in quatro_tipos]):.3f}")
+```
+@@NOTE Três florestas com sementes diferentes discordam pouco entre si, então combiná-las traz ganho mínimo sobre uma só (cada floresta já é um ensemble). Já modelos de tipos diferentes discordam muito mais, e sua combinação tende a render mais. A diversidade é a matéria-prima dos ensembles: sem ela, combinar é quase o mesmo que repetir o mesmo modelo.
+@@EX 4 | Warm start com o Optuna | avançado
+No conjunto **Wine** (UCI), ajuste um `SVC` (com `StandardScaler`) com o Optuna (TPE) por 10 tentativas, em duas versões: (a) partida a frio (sem fila) e (b) com warm start, enfileirando com `study.enqueue_trial` as três configurações do portfólio do capítulo: (C = 1, γ_rel = 1), (C = 10, γ_rel = 1) e (C = 10, γ_rel = 0,1), com `gamma = γ_rel / d`. Repita com 5 sementes e mostre a melhor nota média após 1, 3 e 10 tentativas.
+
+*Pergunta:* o warm start ajudou? Em que parte da busca?
+@@SOL
+```python
+import numpy as np
+import optuna
+from sklearn.datasets import load_wine
+from sklearn.svm import SVC
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+X, y = load_wine(return_X_y=True); d = X.shape[1]
+cv = StratifiedKFold(3, shuffle=True, random_state=0)
+PORTFOLIO = [(1, 1), (10, 1), (10, 0.1)]                                  # (C, gamma relativo)
+
+def objetivo(trial):
+    C = trial.suggest_float("C", 1e-2, 1e3, log=True)
+    g_rel = trial.suggest_float("gamma_rel", 1e-3, 1e1, log=True)
+    return cross_val_score(make_pipeline(StandardScaler(), SVC(C=C, gamma=g_rel / d)), X, y, cv=cv).mean()
+
+def rodar(semente, quente):
+    est = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=semente))
+    if quente:
+        for C, g in PORTFOLIO: est.enqueue_trial({"C": C, "gamma_rel": g})
+    est.optimize(objetivo, n_trials=10)
+    return np.maximum.accumulate([t.value for t in est.trials])
+
+frio = np.array([rodar(s, False) for s in range(5)]); quente = np.array([rodar(s, True) for s in range(5)])
+print("tentativas | partida a frio | com warm start")
+for k in (1, 3, 10):
+    print(f"{k:10d} | {frio[:, k-1].mean():14.3f} | {quente[:, k-1].mean():.3f}")
+```
+@@NOTE O warm start ajuda sobretudo nas primeiras tentativas: com 1 e 3 tentativas, a versão com portfólio já parte de bons valores, enquanto a partida a frio ainda sorteia. Com 10 tentativas, a diferença diminui ou desaparece, pois a busca comum também chega a boas regiões. Em um conjunto fácil como o Wine, o teto de acurácia é alto, e as duas versões acabam próximas.
+@@PROJ Um mini Auto-sklearn: warm start, busca TPE e ensemble | Cap09
+**Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)* (UCI, via scikit-learn), com duas alterações **simuladas por você** para tornar o problema mais difícil: 100 colunas de ruído e 10% de rótulos trocados ao acaso (ruído de rótulo).
+
+**Contexto.** Uma equipe quer montar, com as peças do capítulo, um AutoML minimalista: começa por configurações conhecidas (warm start), busca com o TPE do Optuna e combina os modelos avaliados em um ensemble.
+
+**Atenção ética.** Os dados são de uso didático e foram deliberadamente alterados. O modelo **não é diagnóstico médico**.
+
+**Tarefas.**
+1. Monte o conjunto e separe 25% para **teste final** (estratificado). Do restante, separe um conjunto de **validação** (um terço), usado **apenas** para escolher os pesos do ensemble.
+2. Defina um espaço CASH condicional no Optuna com `LogisticRegression`, `SVC` e `RandomForestClassifier` (use escala logarítmica quando fizer sentido).
+3. Enfileire como *warm start* duas configurações conhecidas (um SVM com C = 1 e gamma = `1/d`; uma floresta com 100 árvores e profundidade 8).
+4. Rode 30 tentativas. Em cada uma, avalie a nota por **validação cruzada de 3 partes no treino**; depois, treine o modelo no treino completo e **guarde as probabilidades** na validação e no teste.
+5. Calcule: (a) o melhor modelo único pela validação cruzada; (b) a média simples de todos os modelos; (c) o ensemble de Caruana (seleção gulosa, 20 passos, na perda logarítmica da validação).
+6. Compare as três opções no **teste final**, uma única vez.
+7. Escreva um parágrafo (6 a 8 linhas): o ensemble ajudou? A média simples bastou? Que riscos permanecem (tamanho do teste, ruído)?
+
+**Entregáveis.** Um notebook (ou script) comentado, a tabela comparativa e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+import optuna
+from sklearn.datasets import load_breast_cancer
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
+from sklearn.metrics import accuracy_score, log_loss
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+X0, y0 = load_breast_cancer(return_X_y=True)
+rng = np.random.default_rng(0)
+X = np.hstack([X0, rng.normal(size=(len(y0), 100))])
+y = np.where(rng.random(len(y0)) < 0.10, 1 - y0, y0)                      # 10% de rótulos trocados
+d = X.shape[1]
+Xa, Xte, ya, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+Xtr, Xva, ytr, yva = train_test_split(Xa, ya, test_size=1/3, stratify=ya, random_state=0)
+cv = StratifiedKFold(3, shuffle=True, random_state=0)
+
+guardados = {}                                                              # probabilidades de cada tentativa
+def objetivo(trial):
+    alg = trial.suggest_categorical("alg", ["lr", "svm", "rf"])
+    if alg == "lr":
+        m = make_pipeline(StandardScaler(), LogisticRegression(C=trial.suggest_float("lr_C", 1e-4, 1e2, log=True), max_iter=3000))
+    elif alg == "svm":
+        m = make_pipeline(StandardScaler(), SVC(C=trial.suggest_float("svm_C", 1e-2, 1e3, log=True),
+                          gamma=trial.suggest_float("svm_gamma", 1e-5, 1e-1, log=True), probability=True, random_state=0))
+    else:
+        m = RandomForestClassifier(trial.suggest_int("rf_n", 20, 150), max_depth=trial.suggest_int("rf_prof", 2, 14), random_state=0, n_jobs=-1)
+    nota = cross_val_score(m, Xtr, ytr, cv=cv).mean()
+    m.fit(Xtr, ytr); guardados[trial.number] = (m.predict_proba(Xva), m.predict_proba(Xte))
+    return nota
+
+est = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=0))
+est.enqueue_trial({"alg": "svm", "svm_C": 1.0, "svm_gamma": 1.0 / d})       # warm start
+est.enqueue_trial({"alg": "rf", "rf_n": 100, "rf_prof": 8})
+est.optimize(objetivo, n_trials=30)
+
+ids = sorted(guardados); PV = [guardados[i][0] for i in ids]; PT = [guardados[i][1] for i in ids]
+melhor = max(est.trials, key=lambda t: t.value).number
+print(f"Melhor modelo único (validação cruzada = {est.best_value:.3f}): {est.best_params['alg']}")
+
+escolhidos, atual = [], None                                                # seleção de Caruana na validação
+for _ in range(20):
+    perdas = []
+    for j in range(len(PV)):
+        cand = PV[j] if not escolhidos else (atual * len(escolhidos) + PV[j]) / (len(escolhidos) + 1)
+        perdas.append(log_loss(yva, np.clip(cand, 1e-12, 1), labels=[0, 1]))
+    j = int(np.argmin(perdas)); atual = PV[j] if not escolhidos else (atual * len(escolhidos) + PV[j]) / (len(escolhidos) + 1); escolhidos.append(j)
+pesos = np.bincount(escolhidos, minlength=len(PV))
+
+teste_unico = accuracy_score(yte, PT[ids.index(melhor)].argmax(1))
+teste_media = accuracy_score(yte, (sum(PT) / len(PT)).argmax(1))
+teste_caruana = accuracy_score(yte, (sum(p * w for p, w in zip(PT, pesos)) / pesos.sum()).argmax(1))
+print(f"\nTESTE FINAL ({len(yte)} exemplos):")
+print(f"  melhor modelo único        : {teste_unico:.3f}")
+print(f"  média simples de 30 modelos: {teste_media:.3f}")
+print(f"  ensemble de Caruana        : {teste_caruana:.3f} ({(pesos > 0).sum()} modelos distintos)")
+```
+@@RUBRICA
+- O teste final foi separado antes; a validação foi usada apenas para os pesos do ensemble; a busca usou validação cruzada no treino.
+- O espaço CASH é condicional e usa escala logarítmica quando adequado.
+- O warm start foi implementado com enqueue_trial.
+- As três opções (melhor único, média simples, Caruana) foram comparadas no mesmo teste final, usado uma única vez.
+- O texto discute o tamanho do teste, o ruído de rótulos e o fato de a média simples poder bastar.
+@@NOTE O resultado depende do ruído: com 10% de rótulos trocados, o teto de acurácia é de cerca de 90%, e as diferenças entre as três opções tendem a ser pequenas, dentro do ruído de um teste de 143 exemplos. Veja na saída se o ensemble superou o melhor único e se a média simples bastou. Mesmo que o ensemble ganhe por um ou dois exemplos, isso não é conclusivo; o valor do exercício está em montar o fluxo completo (warm start, busca, ensemble) de forma honesta.
+@@ALEM
+- **UCI:** Wine Quality (classificação de qualidade), Adult (renda) e Spambase (spam; bom para ensembles).
+- **Kaggle:** Titanic e Spaceship Titanic (poucos dados, onde ensembles costumam ajudar).

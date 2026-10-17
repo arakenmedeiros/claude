@@ -1,0 +1,7 @@
+{
+ "6-EX1": "n=64, r=1, η=4\n    64 candidatos x   1 épocas =   64\n    16 candidatos x   4 épocas =   64\n     4 candidatos x  16 épocas =   64\n     1 candidatos x  64 épocas =   64\n   custo total = 256 | treinar todos até 64 épocas = 4096 | economia = 94%\nn=81, r=1, η=3\n    81 candidatos x   1 épocas =   81\n    27 candidatos x   3 épocas =   81\n     9 candidatos x   9 épocas =   81\n     3 candidatos x  27 épocas =   81\n     1 candidatos x  81 épocas =   81\n   custo total = 405 | treinar todos até 81 épocas = 6561 | economia = 94%\n",
+ "6-EX2": "Halving: candidatos por rodada [30, 10, 4] | árvores por rodada [10, 30, 90]\nAleatória : melhor = 0.942 | custo = 13,500 árvores treinadas\nHalving   : melhor = 0.939 | custo = 2,880 árvores treinadas\nEconomia de custo: 79%\n",
+ "6-EX3": "sem poda         podadas =  0/40 | épocas = 2400 | melhor acurácia = 0.972\nMedianPruner     podadas = 20/40 | épocas = 1297 | melhor acurácia = 0.969\nHyperbandPruner  podadas = 25/40 | épocas = 1198 | melhor acurácia = 0.972\n",
+ "6-EX4": "η = 2: gasto médio =    305 épocas | acurácia média = 0.964 (±0.003)\nη = 3: gasto médio =    297 épocas | acurácia média = 0.965 (±0.004)\nη = 5: gasto médio =    261 épocas | acurácia média = 0.961 (±0.004)\n",
+ "6-PROJ0": "Halving: candidatos por rodada [24, 8, 3] | iterações por rodada [10, 30, 90]\nCusto aproximado (iterações de boosting): aleatória = 7,200 | halving = 2,250 | economia = 69%\nValidação: aleatória = 0.970 | halving = 0.966\nTeste final: aleatória = 0.973 | halving = 0.973\n"
+}

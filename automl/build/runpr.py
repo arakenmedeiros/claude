@@ -25,8 +25,7 @@ def parse(path):
     return items
 if __name__=="__main__":
     import os
-    PJ="/home/user/claude/automl/build/pr_out.json"
-    out=json.load(open(PJ)) if os.path.exists(PJ) else {}
+    out={}
     files=sorted(glob.glob("/home/user/claude/automl/cap/pr/pr*.txt")) if len(sys.argv)<2 else [f"/home/user/claude/automl/cap/pr/pr{int(a):02d}.txt" for a in sys.argv[1:]]
     fails=0
     for f in files:
@@ -45,5 +44,6 @@ if __name__=="__main__":
                 print("FAIL",key); print(r.stderr[-700:]); fails+=1
             else:
                 print("OK  ",key,flush=True); out[key]=r.stdout
-    json.dump(out,open(PJ,"w"),ensure_ascii=False,indent=1)
+    for ch in sorted({int(k.split("-")[0]) for k in out}):
+        json.dump({k:v for k,v in out.items() if int(k.split("-")[0])==ch},open(f"/home/user/claude/automl/build/pr_out/{ch:02d}.json","w"),ensure_ascii=False,indent=1)
     print("falhas:",fails)

@@ -1,0 +1,7 @@
+{
+ "9-EX1": "(a) original             : {'n': 178, 'd': 13, 'n/d': 13.69, 'classes': 3, 'entropia': 0.989}\n(b) com 100 colunas ruído: {'n': 178, 'd': 113, 'n/d': 1.58, 'classes': 3, 'entropia': 0.989}\n(c) amostra de 60        : {'n': 60, 'd': 13, 'n/d': 4.62, 'classes': 3, 'entropia': 0.993}\n",
+ "9-EX2": "votação hard: acurácia = 0.747\nvotação soft: acurácia = 0.759\n",
+ "9-EX3": "(a) uma floresta                : teste = 0.704\n(b) três florestas (sementes)   : teste = 0.702 | discordância média = 0.115\n(c) quatro tipos de modelos     : teste = 0.742 | discordância média = 0.298\n",
+ "9-EX4": "tentativas | partida a frio | com warm start\n         1 |          0.865 | 0.983\n         3 |          0.986 | 0.989\n        10 |          0.989 | 0.989\n",
+ "9-PROJ0": "Melhor modelo único (validação cruzada = 0.863): rf\n\nTESTE FINAL (143 exemplos):\n  melhor modelo único        : 0.811\n  média simples de 30 modelos: 0.818\n  ensemble de Caruana        : 0.818 (3 modelos distintos)\n"
+}

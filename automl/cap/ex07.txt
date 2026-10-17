@@ -1,0 +1,269 @@
+MC: Quais são os três ingredientes da evolução que inspiram os algoritmos evolutivos?
+a) Variação, seleção e hereditariedade.
+b) Treino, validação e teste.
+c) Média, mediana e moda.
+d) Entrada, saída e erro.
+R: a | Indivíduos diferentes, seleção dos melhores e transmissão de características aos descendentes.
+
+MC: Em um algoritmo genético aplicado a pipelines, o que representa um "indivíduo"?
+a) Um exemplo da tabela de dados.
+b) Um pipeline completo, descrito pelo seu genoma.
+c) Um atributo isolado.
+d) Uma classe do problema.
+R: b | Cada indivíduo é um pipeline (escala, redução, modelo e hiperparâmetros).
+
+MC: O que é a aptidão (fitness) de um indivíduo no nosso problema?
+a) O tamanho do conjunto de dados.
+b) A nota de validação cruzada do pipeline.
+c) O número de genes.
+d) O tempo de execução do computador.
+R: b | A aptidão mede quão bom é o pipeline; maior nota, maior aptidão.
+
+MC: O que é o genoma de um pipeline?
+a) A lista de escolhas que o descreve (escala, PCA, modelo, hiperparâmetros).
+b) O conjunto de dados de treino.
+c) O arquivo em que o modelo é salvo.
+d) A tabela de resultados.
+R: a | O genoma é a codificação do pipeline como conjunto de genes.
+
+MC: O papel da seleção em um algoritmo genético é:
+a) dar mais chance de reprodução aos indivíduos mais aptos.
+b) eliminar a necessidade de avaliar os indivíduos.
+c) mudar genes ao acaso.
+d) padronizar os atributos.
+R: a | Concentra a busca em regiões promissoras.
+
+MC: O cruzamento (crossover) consiste em:
+a) combinar genes de dois pais para formar um filho.
+b) apagar o indivíduo de menor aptidão.
+c) mudar um gene ao acaso.
+d) treinar o modelo com mais dados.
+R: a | Boas ideias dos pais podem se juntar no filho.
+
+MC: Qual é a principal função da mutação?
+a) Manter a diversidade da população e introduzir novidade.
+b) Garantir que o melhor indivíduo seja preservado.
+c) Calcular a aptidão.
+d) Reduzir o número de gerações.
+R: a | Sem mutação, a população perde variedade e pode ficar presa em um tipo de solução.
+
+MC: O elitismo, em um algoritmo genético, é:
+a) copiar os melhores indivíduos diretamente para a próxima geração.
+b) eliminar os melhores indivíduos.
+c) aumentar a taxa de mutação.
+d) usar apenas um pai.
+R: a | Evita perder o melhor resultado já encontrado.
+
+MC: Na seleção por torneio com 3 competidores, o que se faz?
+a) Sorteiam-se 3 indivíduos e escolhe-se o melhor deles como pai.
+b) Escolhem-se os 3 piores.
+c) Escolhem-se os 3 melhores da população inteira.
+d) Cruzam-se os 3 entre si.
+R: a | Os melhores têm mais chance, mas os fracos ainda podem ser escolhidos.
+
+MC: O que o dicionário cache faz na função aptidao?
+a) Evita avaliar duas vezes o mesmo pipeline.
+b) Aumenta a taxa de mutação.
+c) Embaralha a população.
+d) Remove genes ruins.
+R: a | Pipelines iguais reutilizam a nota já calculada, economizando tempo.
+
+MC: Por que o capítulo usou 300 imagens de Digits com 200 colunas de ruído?
+a) Para tornar a busca mais difícil e fazer as escolhas de escala e PCA importarem.
+b) Para reduzir o número de classes.
+c) Porque o scikit-learn exige colunas de ruído.
+d) Para evitar o uso de validação cruzada.
+R: a | Em um problema muito fácil, todos os métodos chegariam ao mesmo resultado.
+
+MC: O que se observa na nota média da população ao longo das gerações?
+a) Tende a subir, embora possa oscilar, pois a mutação cria filhos ruins.
+b) Cai sempre.
+c) É sempre constante.
+d) É sempre igual à melhor nota.
+R: a | A população inteira melhora com a seleção, mas a mutação gera variações pouco aptas.
+
+MC: No experimento do capítulo, em quantas das 5 sementes o algoritmo genético superou a busca aleatória?
+a) 4 de 5.
+b) 0 de 5.
+c) 5 de 5.
+d) 2 de 5.
+R: a | Ele venceu em 4 sementes e perdeu em 1, com diferença média modesta.
+
+MC: Por que a vantagem do algoritmo genético no experimento deve ser interpretada com cautela?
+a) Porque foram só 5 repetições e a diferença média foi pequena.
+b) Porque o GA não foi avaliado.
+c) Porque a busca aleatória usou mais avaliações.
+d) Porque o experimento não usou validação cruzada.
+R: a | Com poucas repetições, não se pode afirmar superioridade geral.
+
+MC: Por que uma lista fixa de escolhas representa mal alguns pipelines reais?
+a) Porque pipelines reais podem ter números e formas variados de etapas.
+b) Porque listas não funcionam em Python.
+c) Porque pipelines só têm uma etapa.
+d) Porque os modelos não têm hiperparâmetros.
+R: a | Árvores permitem estruturas de tamanhos e formas diferentes.
+
+MC: Na programação genética, cada solução é representada como:
+a) uma árvore, em que cada nó é uma operação.
+b) um número real.
+c) uma tabela de dados.
+d) um vetor de 0 e 1 fixo.
+R: a | Os nós são etapas do pipeline, e os filhos de um nó são suas entradas.
+
+MC: No cruzamento da programação genética, o que acontece?
+a) Subárvores dos dois pais são trocadas.
+b) O pai de maior nota é copiado sem alterações.
+c) Os dados são divididos em treino e teste.
+d) As árvores são ordenadas por tamanho.
+R: a | Pedaços inteiros do tratamento dos dados mudam de dono.
+
+MC: O que é o TPOT?
+a) Uma ferramenta de AutoML que usa programação genética para evoluir pipelines do scikit-learn.
+b) Um algoritmo de busca em grade.
+c) Uma métrica de classificação.
+d) Um tipo de rede neural.
+R: a | O TPOT (Tree-based Pipeline Optimization Tool) foi apresentado por Olson e colaboradores em 2016.
+
+MC: Qual é o produto final do TPOT?
+a) O código Python do scikit-learn do melhor pipeline encontrado, que pode ser lido e editado.
+b) Apenas a acurácia.
+c) Um relatório em PDF sem código.
+d) O conjunto de teste.
+R: a | A exportação como código é um ponto a favor da transparência.
+
+MC: Qual problema comum em programação genética motiva um segundo objetivo de simplicidade?
+a) A tendência de produzir pipelines cada vez maiores e mais complicados.
+b) A falta de aleatoriedade.
+c) O excesso de dados.
+d) A ausência de validação cruzada.
+R: a | Acrescentar etapas costuma aumentar levemente a nota, o que faz o tamanho crescer.
+
+MC: Em otimização multiobjetivo, quando um pipeline "domina" outro?
+a) Quando é melhor ou igual em todos os objetivos e estritamente melhor em pelo menos um.
+b) Quando tem a maior acurácia, independentemente da complexidade.
+c) Quando é o mais simples, independentemente da acurácia.
+d) Quando foi avaliado mais vezes.
+R: a | É a definição de dominância de Pareto.
+
+MC: O que é a fronteira de Pareto?
+a) O conjunto de soluções que nenhuma outra domina: as melhores concessões entre os objetivos.
+b) A lista de todos os pipelines avaliados.
+c) O pior conjunto de soluções.
+d) O pipeline de maior acurácia, apenas.
+R: a | Ela mostra as opções de equilíbrio entre acurácia e simplicidade.
+
+MC: Qual algoritmo multiobjetivo clássico é citado no capítulo?
+a) NSGA-II.
+b) K-means.
+c) DBSCAN.
+d) PCA.
+R: a | Deb e colaboradores (2002) propuseram o NSGA-II.
+
+MC: No capítulo, qual foi o segundo objetivo usado no cálculo da fronteira de Pareto?
+a) O número de atributos usados pelo modelo.
+b) O tempo do dia.
+c) A semente aleatória.
+d) O número de classes.
+R: a | O PCA reduz de 264 colunas para 10 a 40 componentes; outros pipelines usam as 264.
+
+MC: No exemplo de código do TPOT, o que faz tpot.export("melhor_pipeline.py")?
+a) Grava o código do melhor pipeline em um arquivo Python.
+b) Treina o modelo novamente.
+c) Remove o pipeline.
+d) Calcula a fronteira de Pareto.
+R: a | O arquivo exportado pode ser lido, editado e reutilizado.
+
+MC: Por que o capítulo avisa que o código do TPOT não foi executado na elaboração do livro?
+a) Porque não foi possível instalar o TPOT no ambiente de preparo, e a interface da biblioteca muda entre versões.
+b) Porque o código tem erros.
+c) Porque o TPOT é pago.
+d) Porque o TPOT só funciona em Windows.
+R: a | É importante ser transparente sobre o que foi ou não testado.
+
+MC: Qual das opções é uma desvantagem típica dos métodos evolutivos?
+a) Custo computacional elevado e dependência da aleatoriedade.
+b) Incapacidade de lidar com categorias.
+c) Impossibilidade de paralelização.
+d) Obrigação de usar sempre um único objetivo.
+R: a | Cada geração avalia muitos pipelines e as execuções variam com a semente.
+
+MC: Qual alternativa descreve melhor o paralelismo nos algoritmos genéticos?
+a) Os indivíduos de uma geração podem ser avaliados ao mesmo tempo.
+b) Não existe paralelismo possível.
+c) Só um indivíduo pode ser avaliado por vez.
+d) O paralelismo exige sempre uma GPU.
+R: a | Os indivíduos são independentes dentro da mesma geração.
+
+MC: Qual das famílias abaixo usa um modelo substituto com função de aquisição?
+a) Otimização bayesiana.
+b) Busca em grade.
+c) Algoritmos genéticos.
+d) Busca aleatória.
+R: a | A família bayesiana (GP, TPE, SMAC) usa modelo substituto e aquisição.
+
+MC: O que acontece com a diversidade de uma população se não houver mutação?
+a) Ela tende a diminuir, e a busca pode ficar presa em um tipo de solução.
+b) Ela aumenta indefinidamente.
+c) Ela permanece idêntica sempre.
+d) Ela deixa de importar.
+R: a | A mutação introduz variações novas; sem ela, os indivíduos tendem a se parecer cada vez mais.
+
+DISC: Explique a analogia entre o trabalho de um criador de plantas e um algoritmo genético.
+R: O criador seleciona as melhores plantas a cada safra, usa suas sementes e preserva variações úteis. O algoritmo genético mantém uma população de soluções, seleciona as melhores, combina e muta, geração após geração.
+
+DISC: Defina, para o problema de evoluir pipelines, os termos indivíduo, genoma, aptidão e geração.
+R: Indivíduo: um pipeline. Genoma: a lista de escolhas que o descreve. Aptidão: a nota de validação cruzada. Geração: uma rodada de avaliação, seleção, cruzamento e mutação.
+
+DISC: Descreva o ciclo de um algoritmo genético.
+R: Cria-se uma população inicial; avalia-se a aptidão; selecionam-se os melhores; cruzam-se pares; aplicam-se mutações; forma-se a nova geração; repete-se até acabar o orçamento.
+
+DISC: Compare cruzamento e mutação quanto ao papel de cada um na busca.
+R: O cruzamento combina boas ideias de dois pais (aproveitar). A mutação introduz variação e mantém a diversidade (explorar). Juntos, equilibram aproveitamento e exploração.
+
+DISC: O que é elitismo e por que ele é útil?
+R: É copiar os melhores indivíduos diretamente para a próxima geração. Garante que a melhor solução já encontrada não se perca por causa de mutações ou sorteios desfavoráveis.
+
+DISC: Explique a seleção por torneio e por que ela mantém alguma diversidade.
+R: Sorteiam-se alguns indivíduos e escolhe-se o melhor deles como pai. Os bons têm mais chance, mas indivíduos fracos podem ser escolhidos quando competem só com outros fracos, preservando variedade.
+
+DISC: Descreva o experimento do capítulo que comparou o algoritmo genético e a busca aleatória e interprete o resultado.
+R: Com o mesmo número de pipelines avaliados e 5 sementes, o GA terminou à frente em média (cerca de 0,92 contra 0,91) e venceu em 4 de 5 sementes. A diferença é modesta, e com 5 repetições não prova superioridade geral.
+
+DISC: Por que a nota média da população pode oscilar entre gerações, mesmo com o algoritmo funcionando bem?
+R: A mutação gera filhos que podem ser ruins; a nota média reflete toda a população, e não só os melhores. O elitismo preserva o melhor, mesmo que a média oscile.
+
+DISC: Explique por que a programação genética representa soluções como árvores e dê uma vantagem disso.
+R: Árvores representam estruturas de tamanho e forma variáveis, como pipelines com números diferentes de etapas. Isso permite que o cruzamento troque subárvores inteiras e que pipelines variados convivam na população.
+
+DISC: Descreva, em linhas gerais, como o TPOT funciona.
+R: Mantém uma população de pipelines em árvore, avalia por validação cruzada, seleciona (com NSGA-II, em uma variante multiobjetivo), aplica cruzamento e mutação por gerações e exporta o melhor pipeline como código Python.
+
+DISC: Por que a programação genética tende a produzir pipelines cada vez maiores e como mitigar isso?
+R: Acrescentar etapas costuma aumentar levemente a nota, então a seleção favorece árvores maiores. Mitiga-se com um segundo objetivo de simplicidade (otimização multiobjetivo) ou com limites de tamanho.
+
+DISC: Explique o conceito de dominância de Pareto e o de fronteira de Pareto.
+R: Uma solução domina outra se é melhor ou igual em todos os objetivos e estritamente melhor em pelo menos um. A fronteira é o conjunto das soluções que nenhuma outra domina: as melhores concessões entre os objetivos.
+
+DISC: Dê um exemplo do cotidiano (diferente do capítulo) de fronteira de Pareto.
+R: Escolher um celular: quanto maior a qualidade da câmera, maior o preço. Os aparelhos que não são superados em câmera e preço ao mesmo tempo formam a fronteira; os demais são piores que algum outro.
+
+DISC: Como o capítulo calculou a fronteira de Pareto de pipelines e o que ela oferece a quem decide?
+R: Tomou-se todos os pipelines avaliados, com acurácia e número de atributos, e mantiveram-se os não dominados. Ela mostra opções entre o mais preciso e o mais enxuto, permitindo escolher a concessão adequada.
+
+DISC: Cite duas vantagens e duas limitações dos métodos evolutivos.
+R: Vantagens: flexibilidade com estruturas variáveis e objetivos múltiplos; paralelismo natural. Limitações: custo computacional elevado; aleatoriedade e muitos parâmetros próprios (população, taxas).
+
+DISC: Por que o capítulo diz que o tamanho da população e a taxa de mutação são "hiperparâmetros do método"? Que consequência isso traz?
+R: Porque precisam ser escolhidos e afetam o desempenho da busca, como os hiperparâmetros de um modelo. Isso significa que o próprio método evolutivo também exige ajustes e teste de sensibilidade.
+
+DISC: Compare as famílias aleatória, bayesiana, multifidelidade e evolutiva quanto à ideia central e a um cuidado de cada uma.
+R: Aleatória: sorteio, não aprende. Bayesiana: modelo substituto, sequencial e sensível a dimensões altas. Multifidelidade: corte precoce, o ranking pode mudar. Evolutiva: população e operadores, custo e aleatoriedade.
+
+DISC: Por que é importante ler o pipeline exportado pelo TPOT antes de usá-lo?
+R: Para entender o que ele faz, verificar se é razoável para o problema, detectar vazamentos ou etapas estranhas e poder explicá-lo e mantê-lo.
+
+DISC: Como o overfitting da busca se manifesta em métodos evolutivos e como evitá-lo?
+R: Ao avaliar muitos pipelines, o melhor tem nota otimista por sorte. Evita-se com teste final intocado, relato de variação entre execuções e comparação com a busca aleatória.
+
+DISC: Liste quatro boas práticas ao usar métodos evolutivos para AutoML.
+R: Definir o orçamento (população e gerações); fixar sementes e repetir; usar elitismo e cache de avaliações; controlar a complexidade; comparar com a busca aleatória; avaliar em teste intocado e ler o pipeline final.

@@ -1,0 +1,245 @@
+@@EX 1 | Seleção por torneio: quem é escolhido? | básico
+Considere uma população de 20 indivíduos com aptidões de 1 a 20 (posto 1 = pior, posto 20 = melhor). Simule 20.000 torneios para cada tamanho de torneio k = 2, 3 e 5 (sorteie k indivíduos sem repetição e escolha o de maior aptidão). Mostre a frequência com que o melhor indivíduo e o pior indivíduo são escolhidos, e a aptidão média dos escolhidos.
+
+*Pergunta:* como o tamanho do torneio controla a "pressão de seleção"?
+@@SOL
+```python
+import numpy as np
+
+rng = np.random.default_rng(0)
+aptidoes = np.arange(1, 21)                     # 1 = pior, 20 = melhor
+for k in (2, 3, 5):
+    escolhidos = np.array([max(rng.choice(20, k, replace=False), key=lambda i: aptidoes[i]) for _ in range(20000)])
+    freq = np.bincount(escolhidos, minlength=20) / 20000
+    print(f"k={k}: melhor escolhido em {100*freq[19]:4.1f}% | pior escolhido em {100*freq[0]:4.1f}% | aptidão média dos escolhidos = {aptidoes[escolhidos].mean():.2f}")
+print("Se a escolha fosse totalmente aleatória: 5,0% para cada indivíduo e aptidão média 10,50")
+```
+@@NOTE Com k = 2, o melhor é escolhido em 10,2% das vezes (o dobro do acaso, que seria 5%); com k = 3, em 14,8%; com k = 5, em 24,8%. O pior indivíduo nunca é escolhido em nenhum dos casos (em qualquer torneio ele perde para os outros competidores). A aptidão média dos escolhidos sobe de 10,5 (acaso) para 14,0, 15,7 e 17,5. Torneios maiores aumentam a pressão de seleção: a busca fica mais gananciosa (aproveita mais, explora menos) e perde diversidade mais rápido. Torneios pequenos mantêm mais diversidade.
+@@EX 2 | Algoritmo genético para os hiperparâmetros de um SVM | intermediário
+No conjunto **Digits** (UCI), implemente um GA com codificação real para otimizar `log10(C)` (de −2 a 3) e `log10(gamma)` (de −5 a 0) de um SVM. Use população de 8, 5 gerações (48 avaliações no total, contando a população inicial), seleção por torneio de 3, cruzamento por média ponderada, mutação gaussiana (desvio de 0,3) e elitismo de 1. A aptidão é a acurácia de validação cruzada de 3 partes. Compare, com 5 sementes, com a busca aleatória de 48 sorteios.
+
+*Pergunta:* o GA superou a aleatória? Por que o resultado pode ser um empate?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.svm import SVC
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+X, y = load_digits(return_X_y=True); X = X / 16.0
+cv = StratifiedKFold(3, shuffle=True, random_state=0)
+limites = np.array([[-2, 3], [-5, 0]])
+
+def nota(ind):
+    return cross_val_score(SVC(C=10 ** ind[0], gamma=10 ** ind[1]), X, y, cv=cv).mean()
+
+def ga(semente, pop=8, geracoes=5):
+    rng = np.random.default_rng(semente)
+    P = rng.uniform(limites[:, 0], limites[:, 1], (pop, 2)); aval = 0; melhor = 0
+    for g in range(geracoes + 1):
+        f = np.array([nota(i) for i in P]); aval += pop; melhor = max(melhor, f.max())
+        if g == geracoes: break
+        nova = [P[f.argmax()].copy()]                                         # elitismo de 1
+        while len(nova) < pop:
+            a, b = (P[max(rng.choice(pop, 3, replace=False), key=lambda i: f[i])] for _ in range(2))
+            w = rng.uniform(0, 1); filho = w * a + (1 - w) * b                # cruzamento por média ponderada
+            filho = filho + rng.normal(0, 0.3, 2)                             # mutação gaussiana
+            nova.append(np.clip(filho, limites[:, 0], limites[:, 1]))
+        P = np.array(nova)
+    return melhor, aval
+
+def aleatoria(semente, n):
+    rng = np.random.default_rng(100 + semente)
+    return max(nota(rng.uniform(limites[:, 0], limites[:, 1])) for _ in range(n))
+
+res = []
+for s in range(5):
+    m, n = ga(s); res.append((m, aleatoria(s, n)))
+r = np.array(res)
+print("semente | genético | aleatória")
+for s, (a, b) in enumerate(r): print(f"{s:7d} | {a:8.3f} | {b:9.3f}")
+print(f"média   | {r[:,0].mean():8.3f} | {r[:,1].mean():9.3f}   (avaliações por método: {n})")
+```
+@@NOTE Em todas as 5 sementes, os dois métodos terminaram com a mesma acurácia (0,991): empate completo. Em um problema de apenas dois botões e com uma região boa larga, a busca aleatória já acerta com facilidade, e o GA não tem vantagem a mostrar com 48 avaliações. O GA tende a ajudar mais em espaços maiores, estruturados e com regiões boas estreitas.
+@@EX 3 | Fronteira de Pareto: acurácia × esparsidade | intermediário
+No conjunto **Breast Cancer Wisconsin** (UCI), ajuste uma `LogisticRegression` com penalidade L1 (`penalty="l1"`, `solver="liblinear"`) para 15 valores de `C` entre 10⁻³ e 10² (escala logarítmica), com `StandardScaler`. Para cada valor, calcule a acurácia de validação cruzada de 5 partes e o **número de coeficientes diferentes de zero** (ajuste no conjunto completo). Calcule a fronteira de Pareto (maximizar acurácia, minimizar coeficientes) e mostre-a.
+
+*Pergunta:* qual a menor quantidade de atributos que ainda mantém a acurácia próxima do máximo?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+X, y = load_breast_cancer(return_X_y=True)
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+pontos = []
+for C in np.logspace(-3, 2, 15):
+    modelo = make_pipeline(StandardScaler(), LogisticRegression(penalty="l1", solver="liblinear", C=C))
+    acc = cross_val_score(modelo, X, y, cv=cv).mean()
+    nz = int((modelo.fit(X, y)[-1].coef_ != 0).sum())
+    pontos.append((nz, acc, C))
+
+domina = lambda a, b: a[0] <= b[0] and a[1] >= b[1] and (a[0] < b[0] or a[1] > b[1])
+fronteira = sorted({(nz, round(acc, 4), round(C, 4)) for nz, acc, C in pontos if not any(domina(q, (nz, acc)) for q in pontos)})
+print("coeficientes não nulos | acurácia | C")
+for nz, acc, C in fronteira:
+    print(f"{nz:22d} | {acc:8.3f} | {C}")
+print("Acurácia máxima:", round(max(p[1] for p in pontos), 3))
+```
+@@NOTE Com 0 coeficientes, o modelo é constante (acurácia de 0,373, que é a fração de uma das classes). Com apenas 4 coeficientes não nulos, a acurácia já é 0,953; com 9, 0,975; com 12, 0,979; e o máximo (0,981) exige 16. Ou seja, 9 atributos entregam cerca de 0,6 ponto percentual a menos que o máximo, com pouco mais da metade dos atributos. Decidir quantos atributos "valem a pena" é uma decisão humana que a fronteira torna explícita.
+@@EX 4 | Mutação e elitismo em um GA simples | avançado
+Maximize a função-agulha do Capítulo 5, `f(x) = 0,6·exp(−((x−3)/1,2)²) + 1,0·exp(−((x−8,2)/0,35)²)`, em [0, 10], com um GA de população 10 e 8 gerações (80 avaliações). Compare quatro configurações: (mutação σ = 0 e sem elitismo), (σ = 0 e com elitismo), (σ = 0,5 e sem elitismo) e (σ = 0,5 e com elitismo de 1). Use 40 sementes e relate a média do melhor valor encontrado e a fração das execuções que achou a agulha (valor maior que 0,95).
+
+*Pergunta:* qual é o papel de cada componente?
+@@SOL
+```python
+import numpy as np
+
+f = lambda x: 0.6 * np.exp(-((x - 3) / 1.2) ** 2) + 1.0 * np.exp(-((x - 8.2) / 0.35) ** 2)
+
+def ga(semente, sigma, elitismo, pop=10, geracoes=8):
+    rng = np.random.default_rng(semente)
+    P = rng.uniform(0, 10, pop); melhor = 0.0
+    for g in range(geracoes + 1):
+        aptidao = f(P); melhor = max(melhor, aptidao.max())
+        if g == geracoes: break
+        nova = [P[aptidao.argmax()]] if elitismo else []
+        while len(nova) < pop:
+            a, b = (P[max(rng.choice(pop, 3, replace=False), key=lambda i: aptidao[i])] for _ in range(2))
+            w = rng.uniform(); filho = w * a + (1 - w) * b + rng.normal(0, sigma) if sigma > 0 else w * a + (1 - w) * b
+            nova.append(float(np.clip(filho, 0, 10)))
+        P = np.array(nova)
+    return melhor
+
+print("mutação σ | elitismo | melhor médio | % que achou a agulha")
+for sigma, elit in [(0, False), (0, True), (0.5, False), (0.5, True)]:
+    r = np.array([ga(s, sigma, elit) for s in range(40)])
+    print(f"{sigma:9} | {str(elit):8s} | {r.mean():12.3f} | {100 * (r > 0.95).mean():5.0f}%")
+```
+@@NOTE Na execução de referência, a média do melhor valor foi 0,777 (sem mutação, sem elitismo), 0,785 (sem mutação, com elitismo), 0,802 (com mutação, sem elitismo) e 0,839 (com mutação e elitismo), e a fração que achou a agulha foi de 35%, 40%, 35% e 60%. A combinação de mutação com elitismo foi a mais eficaz. Sem mutação, o cruzamento por média só gera pontos entre os pais, de modo que a população se contrai e perde a capacidade de explorar; o elitismo protege o melhor já encontrado, mas sozinho não cria novidade. Com 40 sementes, as diferenças menores (entre as três primeiras configurações) são pequenas e não conclusivas.
+@@PROJ Um mini-TPOT com fronteira de Pareto em Breast Cancer | Cap07
+**Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)*, do repositório **UCI Machine Learning**, incluído no scikit-learn. Para tornar o problema mais interessante, você vai usar 250 exemplos e acrescentar 100 colunas de ruído.
+
+**Contexto.** Uma equipe quer um pipeline que acerte muito e que seja o mais **enxuto** possível. Você usará um algoritmo genético de pipelines (como o do capítulo) e analisará a fronteira de Pareto.
+
+**Atenção ética.** Os dados são de uso didático. O modelo **não é diagnóstico médico**.
+
+**Tarefas.**
+1. Monte o conjunto: 250 exemplos de `load_breast_cancer` mais 100 colunas de ruído normal. Separe 30% para **teste final** (estratificado, semente fixa).
+2. Implemente um genoma com: escala (nenhuma ou padrão), `SelectKBest` com `k` em {5, 10, 20, 40, todos} e modelo (regressão logística, k-vizinhos ou floresta) com hiperparâmetros.
+3. Rode um GA (população 12, 5 gerações, elitismo 2, torneio de 3) **apenas no treino**, com validação cruzada de 3 partes, e uma busca aleatória com o mesmo número de avaliações. Use 3 sementes.
+4. Para a semente 0, calcule a **fronteira de Pareto** entre acurácia de validação e número de atributos usados.
+5. Escolha o pipeline mais acurado e o pipeline "enxuto" (o menor da fronteira que perde no máximo 1 ponto percentual de acurácia para o mais acurado). Avalie ambos **uma única vez** no teste final.
+6. Escreva um parágrafo (6 a 8 linhas): o GA superou a aleatória? Qual pipeline você escolheria e por quê? Quais limitações existem?
+
+**Entregáveis.** Um notebook (ou script) comentado, a tabela da fronteira e o parágrafo de conclusões.
+@@SOL
+```python
+import copy
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
+
+X0, y0 = load_breast_cancer(return_X_y=True)
+rng_d = np.random.default_rng(0)
+idx = rng_d.choice(len(y0), 250, replace=False)
+X = np.hstack([X0[idx], rng_d.normal(size=(250, 100))]); y = y0[idx]
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+cv = StratifiedKFold(3, shuffle=True, random_state=0)
+KS = [5, 10, 20, 40, 0]                                   # 0 = todos os atributos
+
+def sortear_modelo(rng, m):
+    if m == "logistica": return {"C": float(10 ** rng.uniform(-3, 2))}
+    if m == "knn":       return {"kv": int(rng.integers(1, 25))}
+    return {"arvores": int(rng.integers(20, 120)), "prof": int(rng.integers(2, 15))}
+
+def sortear(rng):
+    g = {"escala": str(rng.choice(["nenhuma", "padrao"])), "k": int(rng.choice(KS)), "modelo": str(rng.choice(["logistica", "knn", "floresta"]))}
+    g.update(sortear_modelo(rng, g["modelo"])); return g
+
+def construir(g):
+    passos = [StandardScaler()] if g["escala"] == "padrao" else []
+    if g["k"] > 0: passos.append(SelectKBest(f_classif, k=g["k"]))
+    m = g["modelo"]
+    if m == "logistica": passos.append(LogisticRegression(C=g["C"], max_iter=500))
+    elif m == "knn":     passos.append(KNeighborsClassifier(g["kv"]))
+    else:                passos.append(RandomForestClassifier(g["arvores"], max_depth=g["prof"], random_state=0, n_jobs=-1))
+    return make_pipeline(*passos)
+
+def n_atributos(g): return g["k"] if g["k"] > 0 else X.shape[1]
+
+def aptidao(g, cache):
+    chave = str(sorted(g.items()))
+    if chave not in cache: cache[chave] = float(cross_val_score(construir(g), Xtr, ytr, cv=cv).mean())
+    return cache[chave]
+
+def cruzar(a, b, rng):
+    f = {k: (a[k] if rng.random() < 0.5 else b[k]) for k in ("escala", "k")}
+    pai = a if rng.random() < 0.5 else b
+    f.update({k: v for k, v in pai.items() if k not in ("escala", "k")}); return f
+
+def mutar(g, rng, p=0.3):
+    g = copy.deepcopy(g)
+    if rng.random() < p: g["escala"] = str(rng.choice(["nenhuma", "padrao"]))
+    if rng.random() < p: g["k"] = int(rng.choice(KS))
+    if rng.random() < p:
+        g = {k: g[k] for k in ("escala", "k")}; g["modelo"] = str(rng.choice(["logistica", "knn", "floresta"])); g.update(sortear_modelo(rng, g["modelo"]))
+    return g
+
+def evoluir(semente, pop=12, geracoes=5, elite=2):
+    rng = np.random.default_rng(semente); cache = {}
+    P = [sortear(rng) for _ in range(pop)]; todos = []
+    for ger in range(geracoes + 1):
+        f = np.array([aptidao(g, cache) for g in P]); todos += list(zip(P, f))
+        if ger == geracoes: break
+        ordem = np.argsort(-f); nova = [copy.deepcopy(P[i]) for i in ordem[:elite]]
+        torneio = lambda: P[max(rng.choice(pop, 3, replace=False), key=lambda i: f[i])]
+        while len(nova) < pop: nova.append(mutar(cruzar(torneio(), torneio(), rng), rng))
+        P = nova
+    return cache, todos
+
+def aleatoria(semente, n):
+    rng = np.random.default_rng(500 + semente); cache = {}
+    return max(aptidao(sortear(rng), cache) for _ in range(n))
+
+resultados = []
+for s in range(3):
+    cache, todos = evoluir(s)
+    resultados.append((max(cache.values()), aleatoria(s, len(cache)), len(cache)))
+    if s == 0: todos0 = todos
+for s, (a, b, n) in enumerate(resultados): print(f"semente {s}: {n} avaliações | genético = {a:.3f} | aleatória = {b:.3f}")
+
+unicos = {str(sorted(g.items())): (g, float(f)) for g, f in todos0}
+pontos = [(n_atributos(g), f, g) for g, f in unicos.values()]
+domina = lambda a, b: a[0] <= b[0] and a[1] >= b[1] and (a[0] < b[0] or a[1] > b[1])
+fronteira = sorted([p for p in pontos if not any(domina(q, p) for q in pontos)], key=lambda p: p[0])
+fronteira = list({(n, round(f, 4)): (n, f, g) for n, f, g in fronteira}.values())          # remove duplicatas (mesmos objetivos)
+print("\nFronteira de Pareto (semente 0): atributos | acurácia de validação | modelo")
+for n, f, g in fronteira: print(f"  {n:9d} | {f:.3f} | {g['modelo']}, escala={g['escala']}")
+
+melhor = max(fronteira, key=lambda p: p[1]); limite = melhor[1] - 0.01
+enxuto = min([p for p in fronteira if p[1] >= limite], key=lambda p: p[0])
+for nome, p in [("mais acurado", melhor), ("enxuto", enxuto)]:
+    teste = construir(p[2]).fit(Xtr, ytr).score(Xte, yte)
+    print(f"Pipeline {nome:12s}: {p[0]:3d} atributos | validação = {p[1]:.3f} | TESTE FINAL = {teste:.3f}")
+```
+@@RUBRICA
+- O teste final foi separado antes e cada pipeline escolhido foi avaliado nele uma única vez.
+- O GA e a busca aleatória usaram o mesmo número de avaliações, com várias sementes.
+- A fronteira de Pareto foi calculada corretamente (acurácia × número de atributos).
+- A escolha do pipeline enxuto seguiu uma regra explícita (perda máxima de 1 ponto percentual).
+- O texto discute a incerteza (poucos exemplos, poucas sementes) e a decisão entre acerto e simplicidade.
+@@NOTE Na execução de referência, o GA terminou à frente da aleatória em duas das três sementes e empatou em uma (0,977 contra 0,971; 0,977 contra 0,977; 0,983 contra 0,977), com apenas 39 avaliações por busca. A fronteira da semente 0 vai de 5 atributos (0,937) a 40 atributos (0,977). O pipeline "enxuto" (20 atributos, validação 0,971) obteve 0,933 no teste final e o "mais acurado" (40 atributos, validação 0,977) obteve 0,920: o menor foi igual ou melhor, ou seja, a escolha do pipeline simples saiu "de graça" (a diferença de 1 ponto percentual equivale a um exemplo em 75). Atenção: a acurácia do teste (0,92 a 0,93) ficou bem abaixo da validação (0,97), o que mostra o otimismo da busca e a incerteza de um teste com apenas 75 exemplos.
+@@ALEM
+- **UCI:** Wine Quality e Heart Disease (conjuntos pequenos, bons para treinar a fronteira de Pareto).
+- **Kaggle:** Heart Failure Prediction (poucos atributos clínicos) e Credit Card Fraud Detection (muito desbalanceado, para estudar métricas).

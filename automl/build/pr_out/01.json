@@ -1,0 +1,7 @@
+{
+ "1-EX1": "Linha de base (bobo)   acurácia = 0.627\nRegressão logística    acurácia = 0.981\nProporção da classe mais comum: 0.627\n",
+ "1-EX2": "0.989  logistica  {'C': 0.758}\n0.983  logistica  {'C': 1.419}\n0.983  logistica  {'C': 0.822}\nAlgoritmos entre os 10 melhores: ['floresta', 'logistica', 'svm']\n",
+ "1-EX3": "Melhores notas por semente: [0.983, 0.983, 0.989, 0.989, 0.994]\nMédia = 0.988  Desvio padrão = 0.004\n",
+ "1-EX4": "Combinações: 160 | tempo total: 480 s = 8.0 min\nCom 4 hiperparâmetros: 1600 | tempo total: 4800 s = 1.33 h\n",
+ "1-PROJ0": "orçamento   5: validação = 0.971 | teste final = 0.948\norçamento  10: validação = 0.978 | teste final = 0.951\norçamento  20: validação = 0.985 | teste final = 0.955\norçamento  40: validação = 0.987 | teste final = 0.957\norçamento  80: validação = 0.988 | teste final = 0.957\n"
+}
