@@ -5,3 +5,8 @@ def add(path, text):
     idx=max(i for i,b in enumerate(s) if b.startswith("MC:"))
     s[idx+1:idx+1]=new
     open(path,"w").write("\n\n".join(s)+"\n")
+def add_disc(path, text):
+    s=open(path).read().strip().split("\n\n")
+    new=text.strip().split("\n\n")
+    s.extend(new)
+    open(path,"w").write("\n\n".join(s)+"\n")

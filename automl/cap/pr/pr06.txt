@@ -1,0 +1,191 @@
+@@EX 1 | Fazendo a conta do Successive Halving | básico
+Escreva uma função que, dados `n` (candidatos iniciais), `r` (recurso inicial) e `eta`, devolva a tabela de rodadas (candidatos, recurso por candidato, custo da rodada) e o custo total. Calcule para (n=64, r=1, η=4) e para (n=81, r=1, η=3). Compare cada custo total com o de treinar todos os candidatos até o recurso máximo atingido.
+
+*Pergunta:* qual a economia em cada caso?
+@@SOL
+```python
+def tabela_sh(n, r, eta):
+    linhas, total = [], 0
+    while True:
+        custo = n * r
+        linhas.append((n, r, custo)); total += custo
+        if n <= 1: break
+        n, r = max(1, n // eta), r * eta
+    return linhas, total
+
+for n, r, eta in [(64, 1, 4), (81, 1, 3)]:
+    linhas, total = tabela_sh(n, r, eta)
+    r_max = linhas[-1][1]
+    print(f"n={n}, r={r}, η={eta}")
+    for cand, rec, custo in linhas:
+        print(f"   {cand:3d} candidatos x {rec:3d} épocas = {custo:4d}")
+    print(f"   custo total = {total} | treinar todos até {r_max} épocas = {n * r_max} | economia = {100 * (1 - total / (n * r_max)):.0f}%")
+```
+@@NOTE Para (64, 1, 4) o custo é 64+64+64+64 = 256 contra 4.096 (economia de 94%). Para (81, 1, 3) o custo é 405 contra 6.561 (economia de 94%). A economia vem de cada rodada custar quase o mesmo e do número de rodadas crescer só de forma logarítmica.
+@@EX 2 | Halving aleatório na floresta | intermediário
+Com o conjunto **Digits** (UCI), compare `RandomizedSearchCV` e `HalvingRandomSearchCV` (com `resource="n_estimators"`, `max_resources=150`, `min_resources=10`, `factor=3`) para uma `RandomForestClassifier`. Use os mesmos hiperparâmetros: `max_depth` (inteiro de 3 a 25), `max_features` (real de 0,05 a 0,6) e `min_samples_leaf` (inteiro de 1 a 8). Use 30 candidatos em ambos e `cv=3`. Mostre candidatos por rodada, recursos por rodada, a melhor nota de cada um e o custo aproximado em "árvores treinadas".
+
+*Pergunta:* quanto o halving economizou? A nota final ficou parecida?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import randint, uniform
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import RandomizedSearchCV, HalvingRandomSearchCV
+from sklearn.datasets import load_digits
+from sklearn.ensemble import RandomForestClassifier
+
+X, y = load_digits(return_X_y=True)
+espaco = {"max_depth": randint(3, 25), "max_features": uniform(0.05, 0.55), "min_samples_leaf": randint(1, 8)}
+
+aleat = RandomizedSearchCV(RandomForestClassifier(n_estimators=150, random_state=0, n_jobs=-1), espaco, n_iter=30, cv=3, random_state=0).fit(X, y)
+halv = HalvingRandomSearchCV(RandomForestClassifier(random_state=0, n_jobs=-1), espaco, n_candidates=30, resource="n_estimators",
+                             max_resources=150, min_resources=10, factor=3, cv=3, random_state=0).fit(X, y)
+
+custo_aleat = 30 * 150 * 3
+custo_halv = sum(c * r * 3 for c, r in zip(halv.n_candidates_, halv.n_resources_))
+print("Halving: candidatos por rodada", halv.n_candidates_, "| árvores por rodada", halv.n_resources_)
+print(f"Aleatória : melhor = {aleat.best_score_:.3f} | custo = {custo_aleat:,} árvores treinadas")
+print(f"Halving   : melhor = {halv.best_score_:.3f} | custo = {custo_halv:,} árvores treinadas")
+print(f"Economia de custo: {100 * (1 - custo_halv / custo_aleat):.0f}%")
+```
+@@NOTE O halving gasta uma fração do custo, pois a maioria dos candidatos é avaliada com poucas árvores e descartada cedo. A nota final fica próxima da aleatória. Lembre que a nota do halving vem da última rodada (poucos candidatos, mais recursos) e que a escolha final entre candidatos muito parecidos pode variar com a semente.
+@@EX 3 | Comparando podadores | intermediário
+No problema do `SGDClassifier` em Digits do capítulo (60 épocas, 40 tentativas, TPE com semente 0), compare três podadores do Optuna: `NopPruner` (sem poda), `MedianPruner(n_startup_trials=5, n_warmup_steps=3)` e `HyperbandPruner(min_resource=3, max_resource=60, reduction_factor=3)`. Para cada um, mostre quantas tentativas foram podadas, quantas épocas foram treinadas e a melhor acurácia.
+
+*Pergunta:* qual podador economizou mais? A qualidade do resultado foi mantida?
+@@SOL
+```python
+import numpy as np
+import optuna
+from sklearn.datasets import load_digits
+from sklearn.linear_model import SGDClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+X, y = load_digits(return_X_y=True)
+Xtr, Xva, ytr, yva = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(Xtr); Xtr, Xva = esc.transform(Xtr), esc.transform(Xva)
+EPOCAS = 60
+
+def objetivo(trial):
+    m = SGDClassifier(loss=trial.suggest_categorical("loss", ["hinge", "log_loss", "modified_huber"]),
+                      alpha=trial.suggest_float("alpha", 1e-8, 1e1, log=True), eta0=trial.suggest_float("eta0", 1e-6, 1e1, log=True),
+                      learning_rate="constant", random_state=0)
+    for epoca in range(EPOCAS):
+        m.partial_fit(Xtr, ytr, classes=np.arange(10))
+        nota = m.score(Xva, yva)
+        trial.report(nota, epoca)
+        if trial.should_prune():
+            raise optuna.TrialPruned()
+    return nota
+
+podadores = {"sem poda": optuna.pruners.NopPruner(),
+             "MedianPruner": optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=3),
+             "HyperbandPruner": optuna.pruners.HyperbandPruner(min_resource=3, max_resource=EPOCAS, reduction_factor=3)}
+for nome, p in podadores.items():
+    est = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=0), pruner=p)
+    est.optimize(objetivo, n_trials=40)
+    podadas = sum(t.state == optuna.trial.TrialState.PRUNED for t in est.trials)
+    epocas = sum(len(t.intermediate_values) for t in est.trials)
+    print(f"{nome:16s} podadas = {podadas:2d}/40 | épocas = {epocas:4d} | melhor acurácia = {est.best_value:.3f}")
+```
+@@NOTE Sem poda, foram 2.400 épocas. O `MedianPruner` podou 20 tentativas e usou 1.297 épocas; o `HyperbandPruner` podou 31 e usou 964 épocas, o menos de todos. A melhor acurácia foi 0,972 sem poda e 0,969 nos dois podadores: uma perda de três milésimos, que com uma única semente está dentro do ruído. Só conclusões repetidas em várias sementes são confiáveis.
+@@EX 4 | O fator η importa | avançado
+Reutilize `Candidato` e `sucessivo` do capítulo. Para 81 candidatos por semente e 8 sementes, rode o Successive Halving com η = 2, 3 e 5 (com recurso inicial de 1 época e máximo de 81). Para cada η, mostre o gasto médio em épocas e a acurácia média da melhor configuração encontrada.
+
+*Pergunta:* o que aconteceu com o custo e com a qualidade quando η cresce?
+@@SOL
+```python
+import math
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.linear_model import SGDClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+def carregar_dados(semente=0):
+    X, y = load_digits(return_X_y=True)
+    Xtr, Xva, ytr, yva = train_test_split(X, y, test_size=0.3, stratify=y, random_state=semente)
+    e = StandardScaler().fit(Xtr); return e.transform(Xtr), e.transform(Xva), ytr, yva
+
+class Candidato:
+    def __init__(self, rng, dados):
+        self.hp = {"alpha": 10 ** rng.uniform(-8, 1), "eta0": 10 ** rng.uniform(-6, 1), "loss": str(rng.choice(["hinge", "log_loss", "modified_huber"]))}
+        self.modelo = SGDClassifier(loss=self.hp["loss"], alpha=self.hp["alpha"], learning_rate="constant", eta0=self.hp["eta0"], random_state=int(rng.integers(1e6)))
+        self.dados, self.epocas, self.nota = dados, 0, 0.0
+    def treinar_ate(self, epocas):
+        Xtr, Xva, ytr, yva = self.dados
+        while self.epocas < epocas:
+            self.modelo.partial_fit(Xtr, ytr, classes=np.arange(10)); self.epocas += 1; self.nota = self.modelo.score(Xva, yva)
+        return self.nota
+
+def sucessivo(candidatos, r_min, eta, r_max):
+    r, gasto = r_min, 0
+    while True:
+        for c in candidatos:
+            antes = c.epocas; c.treinar_ate(int(min(r, r_max))); gasto += c.epocas - antes     # nunca passa de r_max
+        if len(candidatos) <= 1 or r >= r_max: break
+        candidatos = sorted(candidatos, key=lambda c: -c.nota)[:max(1, len(candidatos) // eta)]; r *= eta
+    return max(candidatos, key=lambda c: c.nota), gasto
+
+dados = carregar_dados(0)
+for eta in (2, 3, 5):
+    gastos, notas = [], []
+    for s in range(8):
+        cands = [Candidato(np.random.default_rng(2000 + s * 1000 + i), dados) for i in range(81)]
+        v, g = sucessivo(cands, 1, eta, 81); gastos.append(g); notas.append(v.nota)
+    print(f"η = {eta}: gasto médio = {np.mean(gastos):6.0f} épocas | acurácia média = {np.mean(notas):.3f} (±{np.std(notas):.3f})")
+```
+@@NOTE O gasto foi parecido nos três casos (305, 297 e 261 épocas), porque, ao retomar o treino de onde parou, cada rodada só paga as épocas novas. O η = 5, com cortes mais agressivos, gastou menos (261) e teve a menor acurácia média (0,961, contra 0,964 para η = 2 e 0,965 para η = 3). Mas essas diferenças de acurácia são pequenas, do tamanho do desvio padrão entre sementes (cerca de 0,004), e não permitem concluir com segurança. O que fica é a ideia: η maior economiza um pouco mais, ao risco de eliminar bons candidatos mais cedo.
+@@PROJ Halving em um modelo de boosting: custo e qualidade | Cap06
+**Fonte dos dados.** *Optical Recognition of Handwritten Digits* (Digits), do repositório **UCI Machine Learning**, incluído no scikit-learn (`load_digits`).
+
+**Contexto.** Uma equipe quer ajustar um `HistGradientBoostingClassifier`, cujo treino é mais caro. Ela precisa decidir se a busca com *halving* economiza custo sem perder qualidade em relação à busca aleatória comum.
+
+**Tarefas.**
+1. Separe 25% dos dados como **teste final** (estratificado, semente fixa).
+2. Defina um espaço de busca para `learning_rate` (log, de 0,02 a 0,5), `max_leaf_nodes` (inteiro de 4 a 40), `l2_regularization` (log, de 1e-4 a 10) e `min_samples_leaf` (inteiro de 5 a 40).
+3. Rode `RandomizedSearchCV` com 24 candidatos, `max_iter=100` fixo e `cv=3`, apenas no treino.
+4. Rode `HalvingRandomSearchCV` com 24 candidatos e `resource="max_iter"` (`min_resources=10`, `max_resources=100`, `factor=3`), com o mesmo espaço e `cv=3`.
+5. Calcule o **custo aproximado** de cada busca (candidatos × iterações × partes) e a economia.
+6. Avalie os dois vencedores **uma única vez** no teste final.
+7. Escreva um parágrafo (6 a 8 linhas): o halving economizou? A qualidade final foi parecida? O que o resultado diz sobre quando a multifidelidade compensa?
+
+**Entregáveis.** Um notebook (ou script) comentado, a tabela de custos e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+from scipy.stats import loguniform, randint
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import train_test_split, RandomizedSearchCV, HalvingRandomSearchCV
+from sklearn.datasets import load_digits
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+X, y = load_digits(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+espaco = {"learning_rate": loguniform(0.02, 0.5), "max_leaf_nodes": randint(4, 40),
+          "l2_regularization": loguniform(1e-4, 10), "min_samples_leaf": randint(5, 40)}
+
+aleat = RandomizedSearchCV(HistGradientBoostingClassifier(max_iter=100, random_state=0), espaco, n_iter=24, cv=3, random_state=0, n_jobs=-1).fit(Xtr, ytr)
+halv = HalvingRandomSearchCV(HistGradientBoostingClassifier(random_state=0), espaco, n_candidates=24, resource="max_iter",
+                             min_resources=10, max_resources=100, factor=3, cv=3, random_state=0, n_jobs=-1).fit(Xtr, ytr)
+
+custo_a = 24 * 100 * 3
+custo_h = sum(c * r * 3 for c, r in zip(halv.n_candidates_, halv.n_resources_))
+print("Halving: candidatos por rodada", halv.n_candidates_, "| iterações por rodada", halv.n_resources_)
+print(f"Custo aproximado (iterações de boosting): aleatória = {custo_a:,} | halving = {custo_h:,} | economia = {100 * (1 - custo_h / custo_a):.0f}%")
+print(f"Validação: aleatória = {aleat.best_score_:.3f} | halving = {halv.best_score_:.3f}")
+print(f"Teste final: aleatória = {aleat.score(Xte, yte):.3f} | halving = {halv.score(Xte, yte):.3f}")
+```
+@@RUBRICA
+- O teste final foi separado antes e cada vencedor foi avaliado nele uma única vez.
+- Os dois métodos usaram o mesmo espaço de busca, o mesmo número de candidatos e a mesma validação.
+- O custo foi calculado de forma explícita e comparável (candidatos × iterações × partes).
+- O texto distingue economia de custo de qualidade final e discute o ruído com uma única execução.
+- O texto discute quando a multifidelidade compensa (treinos caros, orçamento limitado).
+@@NOTE Na execução de referência, o halving usou 2.250 iterações de boosting no total, contra 7.200 da busca aleatória (economia de 69%). A validação foi 0,970 (aleatória) contra 0,966 (halving), mas no teste final as duas empataram em 0,973. Ou seja, neste caso a economia foi "de graça". Com uma única execução e um teste de 450 exemplos, diferenças de uma ou duas décimas de ponto percentual não são conclusivas.
+@@ALEM
+- **UCI:** Letter Recognition (letras, 20.000 exemplos, treinos mais caros) e Covertype (cobertura florestal, mais de meio milhão de exemplos, ideal para halving).
+- **Kaggle:** Santander Customer Transaction Prediction e Porto Seguro Safe Driver (conjuntos grandes em que a multifidelidade se destaca).

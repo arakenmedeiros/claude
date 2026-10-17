@@ -1,0 +1,269 @@
+MC: Qual é a ideia central dos métodos multifidelidade?
+a) Treinar todos os candidatos até o fim, sem exceção.
+b) Avaliar muitos candidatos de forma barata e aproximada e reservar a avaliação cara para os mais promissores.
+c) Usar apenas um candidato, escolhido ao acaso.
+d) Eliminar a validação cruzada.
+R: b | A multifidelidade economiza treino ao descartar cedo candidatos fracos.
+
+MC: Na analogia da peneira de futebol, o treino curto inicial corresponde a:
+a) uma avaliação de baixa fidelidade.
+b) o teste final.
+c) o ajuste de hiperparâmetros do clube.
+d) a validação cruzada.
+R: a | O treino curto é uma avaliação barata e aproximada dos candidatos.
+
+MC: Qual das opções NÃO é uma forma de fidelidade?
+a) Número de épocas de treino.
+b) Fração dos dados usada no treino.
+c) Número de atributos usados no teste rápido.
+d) O nome do arquivo de dados.
+R: d | Épocas, dados e atributos são recursos que podem ser variados; o nome do arquivo é irrelevante.
+
+MC: A aposta central da multifidelidade é que:
+a) o ranking em baixa fidelidade se parece com o ranking em alta fidelidade.
+b) todos os candidatos terão o mesmo desempenho.
+c) o treino curto é sempre melhor que o longo.
+d) a busca aleatória é inútil.
+R: a | Quem vai bem no começo tende a ir bem no fim.
+
+MC: O que acontece quando a aposta central da multifidelidade falha?
+a) O corte precoce pode descartar candidatos que seriam campeões.
+b) O método passa a treinar mais rápido.
+c) A validação cruzada se torna desnecessária.
+d) Todos os candidatos são mantidos.
+R: a | Candidatos de largada lenta podem ser eliminados cedo.
+
+MC: No Successive Halving com fator η = 3, após cada rodada:
+a) mantém-se 1/3 melhor dos candidatos e triplica-se o orçamento por candidato.
+b) mantêm-se todos os candidatos e triplica-se o orçamento.
+c) descartam-se os melhores candidatos.
+d) reduz-se o orçamento por candidato a um terço.
+R: a | Menos candidatos recebem mais recursos a cada rodada.
+
+MC: Com n = 27, r = 1 e η = 3, quantas épocas são gastas na rodada 2 do Successive Halving?
+a) 9.
+b) 27.
+c) 81.
+d) 3.
+R: b | São 9 candidatos × 3 épocas = 27 épocas.
+
+MC: Com n = 27, r = 1 e η = 3, qual é o custo total do Successive Halving?
+a) 27 épocas.
+b) 81 épocas.
+c) 108 épocas.
+d) 729 épocas.
+R: c | Quatro rodadas de 27 épocas cada: 4 × 27 = 108.
+
+MC: Treinar os mesmos 27 candidatos por 27 épocas cada custaria:
+a) 108 épocas.
+b) 27 épocas.
+c) 81 épocas.
+d) 729 épocas.
+R: d | 27 × 27 = 729 épocas, mais de seis vezes o custo do Halving.
+
+MC: Qual método do scikit-learn aplica a ideia do halving a uma grade de hiperparâmetros?
+a) HalvingGridSearchCV.
+b) StratifiedKFold.
+c) GridSearchCV padrão.
+d) DummyClassifier.
+R: a | HalvingGridSearchCV (e HalvingRandomSearchCV) são marcados como experimentais.
+
+MC: O que é preciso fazer para usar HalvingGridSearchCV no scikit-learn?
+a) Instalar um pacote extra pago.
+b) Importar sklearn.experimental.enable_halving_search_cv antes.
+c) Usar apenas com redes neurais.
+d) Nada, pois é padrão.
+R: b | As classes ainda são experimentais e exigem habilitação explícita.
+
+MC: Em HalvingGridSearchCV, o recurso padrão que cresce a cada rodada é:
+a) o número de exemplos de treino.
+b) o número de atributos.
+c) o número de classes.
+d) o valor do hiperparâmetro C.
+R: a | As primeiras rodadas usam poucos exemplos; as seguintes, mais.
+
+MC: No exemplo do capítulo, qual foi a economia aproximada de custo da busca halving em relação à grade completa?
+a) Cerca de 83%.
+b) Cerca de 10%.
+c) Nenhuma.
+d) Cerca de 99,9%.
+R: a | O custo caiu de cerca de 259 mil para cerca de 43 mil exemplos processados.
+
+MC: O que é o Hyperband?
+a) Um algoritmo que roda vários torneios de Successive Halving com apostas diferentes.
+b) Um tipo de rede neural.
+c) Um método de pré-processamento.
+d) Um modelo de regressão.
+R: a | O Hyperband varia o equilíbrio entre quantidade de candidatos e treino por candidato.
+
+MC: Que dilema o Hyperband resolve?
+a) Escolher entre treino e teste.
+b) Decidir entre testar muitas configurações com pouco treino ou poucas com muito treino.
+c) Escolher entre classificação e regressão.
+d) Escolher a métrica.
+R: b | Em vez de escolher, ele executa os dois extremos e intermediários.
+
+MC: No Hyperband, qual é o papel do parâmetro R?
+a) O número de classes.
+b) O máximo de recurso (por exemplo, épocas) que uma configuração pode receber.
+c) O número de sementes.
+d) O fator de regularização.
+R: b | R é o orçamento máximo por configuração.
+
+MC: Com R = 81 e η = 3, quantos torneios (brackets) tem o Hyperband?
+a) 3.
+b) 4.
+c) 5.
+d) 81.
+R: c | s_max = log₃(81) = 4, portanto s = 4, 3, 2, 1, 0: cinco torneios.
+
+MC: No torneio s = 0 do Hyperband, o que ocorre?
+a) Poucas configurações recebem o treino completo, sem cortes.
+b) Muitas configurações recebem 1 época.
+c) Nenhuma configuração é treinada.
+d) Usa-se apenas o teste final.
+R: a | É a aposta mais conservadora: não confia em cortes precoces.
+
+MC: No experimento do capítulo, como o Successive Halving se saiu em relação à busca aleatória com o mesmo orçamento?
+a) Ligeiramente melhor e mais estável.
+b) Muito pior.
+c) Idêntico, sem diferença alguma.
+d) Não pôde ser comparado.
+R: a | 0,963 contra 0,955, com menor variação entre as sementes.
+
+MC: No experimento do capítulo, o principal benefício do Hyperband sobre a aleatória foi:
+a) acurácia muito maior.
+b) maior estabilidade (menor desvio entre sementes), com ganho modesto de acurácia.
+c) menos tempo de processamento que qualquer método.
+d) dispensar o teste final.
+R: b | 0,969 (±0,002) contra 0,965 (±0,007).
+
+MC: O que é o BOHB?
+a) Uma combinação do Hyperband com otimização bayesiana (TPE).
+b) Um novo tipo de kernel.
+c) Um método de pré-processamento de texto.
+d) Uma métrica de classificação.
+R: a | O Hyperband organiza os torneios e o TPE sugere os candidatos (Falkner, Klein e Hutter, 2018).
+
+MC: Qual a vantagem do BOHB sobre o Hyperband puro?
+a) Os candidatos são escolhidos de forma inteligente, e não ao acaso.
+b) Dispensa o orçamento.
+c) Evita qualquer corte.
+d) Elimina a validação.
+R: a | Um modelo TPE treinado com resultados por fidelidade sugere as configurações.
+
+MC: No Optuna, o método trial.report(nota, epoca) serve para:
+a) informar a nota parcial da tentativa na época atual.
+b) salvar o modelo em disco.
+c) encerrar o estudo.
+d) trocar o amostrador.
+R: a | É a base da poda: o podador usa as notas parciais.
+
+MC: No Optuna, o que faz trial.should_prune()?
+a) Pergunta ao podador se a tentativa deve ser interrompida.
+b) Remove todos os dados.
+c) Reinicia o estudo.
+d) Calcula a importância dos hiperparâmetros.
+R: a | Se retornar True, a função-objetivo levanta optuna.TrialPruned().
+
+MC: O MedianPruner interrompe uma tentativa quando:
+a) sua nota parcial está abaixo da mediana das notas das outras tentativas na mesma época.
+b) a nota é igual a 1.
+c) o número de épocas passa de 10.
+d) a semente é par.
+R: a | É uma regra simples e robusta de poda.
+
+MC: No experimento com o MedianPruner, o que se observou?
+a) Cerca de metade das tentativas foi podada, economizando épocas, com nota final parecida.
+b) Nenhuma tentativa foi podada.
+c) A nota final caiu para 0,3.
+d) O tempo triplicou.
+R: a | Foram podadas 20 de 40 tentativas, com 1.297 épocas contra 2.400 sem poda.
+
+MC: Por que fidelidade baixa demais pode ser um problema?
+a) Porque a avaliação passa a ser quase um sorteio, sem discriminar bons e maus candidatos.
+b) Porque o treino fica muito caro.
+c) Porque a validação cruzada para de funcionar.
+d) Porque os dados somem.
+R: a | Se todos parecem iguais em baixa fidelidade, o corte não separa os bons dos ruins.
+
+MC: Por que não se deve comparar notas obtidas em fidelidades diferentes?
+a) Porque elas medem coisas diferentes: uma avaliação com mais recurso é mais precisa.
+b) Porque as notas são sempre iguais.
+c) Porque só a acurácia pode ser comparada.
+d) Porque isso é proibido pelo scikit-learn.
+R: a | Compare apenas candidatos avaliados com o mesmo orçamento.
+
+MC: Qual cuidado é recomendado para reduzir o risco de eliminar campeões de largada lenta?
+a) Usar um orçamento inicial razoável e, se possível, um fator η menor.
+b) Usar um orçamento inicial de zero épocas.
+c) Cortar 99% dos candidatos na primeira rodada.
+d) Evitar usar curvas de aprendizado.
+R: a | Cortes mais suaves e orçamento inicial maior reduzem o risco.
+
+MC: Em um torneio do Hyperband, a quantidade de recurso por candidato:
+a) aumenta a cada rodada, enquanto o número de candidatos diminui.
+b) diminui a cada rodada, enquanto o número de candidatos aumenta.
+c) permanece constante em todas as rodadas.
+d) é sorteada aleatoriamente a cada época.
+R: a | Menos candidatos recebem mais recursos a cada rodada, como no Successive Halving.
+
+DISC: Explique, com uma analogia do cotidiano, por que treinar todos os candidatos até o fim é um desperdício.
+R: Em uma peneira de futebol, treinar 270 jovens por um ano seria caro; um treino curto já revela os mais fracos. Do mesmo modo, muitas configurações ruins mostram sua fraqueza cedo, e treiná-las até o fim desperdiça recursos.
+
+DISC: Defina fidelidade e dê quatro exemplos de como variá-la.
+R: Fidelidade é o quanto uma avaliação se parece com a completa (barata e aproximada versus cara e precisa). Exemplos: número de épocas, fração dos dados, subconjunto de atributos, resolução das imagens, número de partes da validação cruzada.
+
+DISC: Qual é a hipótese em que se baseiam os métodos multifidelidade e o que ocorre quando ela falha?
+R: Que o ranking em baixa fidelidade se parece com o de alta fidelidade. Quando falha, candidatos de largada lenta (que seriam os melhores no fim) são eliminados cedo.
+
+DISC: Descreva o algoritmo Successive Halving passo a passo.
+R: Começa com n candidatos e orçamento pequeno r; treina todos e avalia; mantém a fração 1/η melhor; multiplica o orçamento por η; repete até restar um candidato.
+
+DISC: Para n = 81, r = 1 e η = 3, descreva as rodadas e calcule o custo total em épocas, comparando com treinar todos até 81 épocas.
+R: Rodadas: 81 candidatos × 1, 27 × 3, 9 × 9, 3 × 27 e 1 × 81, cada uma com 81 épocas; total 405. Treinar todos até 81 custaria 81 × 81 = 6.561 épocas.
+
+DISC: Por que a nota de um candidato pode não crescer de forma regular com as épocas? Dê um exemplo do capítulo.
+R: Com o SGD de passo constante, a acurácia oscila de uma época para outra. No exemplo, a melhor acurácia da última rodada (0,956) foi menor que a de rodadas anteriores (0,969).
+
+DISC: Interprete o resultado dos postos das três campeãs após 3 épocas (5, 10 e 20 de 40). O que isso mostra sobre o corte precoce?
+R: Cortar para as 13 melhores manteria duas campeãs (postos 5 e 10), mas eliminaria a terceira (posto 20). Mostra que o corte precoce pode descartar boas configurações cujas curvas melhoram devagar.
+
+DISC: Explique como funciona HalvingGridSearchCV e por que a nota final dele não é diretamente comparável à de uma grade completa.
+R: Avalia todas as combinações com poucos exemplos e vai mantendo as melhores com mais exemplos. A nota final vem da última rodada, com mais dados mas poucos candidatos; difere da nota da grade completa, que usa todos os dados em todas.
+
+DISC: Qual é o dilema que o Hyperband resolve e como ele o faz?
+R: O dilema é testar muitas configurações com pouco treino ou poucas com muito treino. O Hyperband executa vários torneios de Successive Halving com apostas diferentes e fica com o melhor resultado.
+
+DISC: Descreva os parâmetros R e η do Hyperband e o que os torneios s = 4 e s = 0 representam.
+R: R é o máximo de recurso por configuração; η é o fator de corte. s = 4 testa muitas configurações com pouco treino (aposta ampla); s = 0 testa poucas com treino completo (aposta conservadora).
+
+DISC: Resuma os resultados do experimento do capítulo comparando Successive Halving, Hyperband e busca aleatória.
+R: Com o mesmo orçamento, o Halving (0,963) superou a aleatória (0,955) com menor variação; o Hyperband (0,969, ±0,002) superou a aleatória (0,965, ±0,007) com mais estabilidade. O ganho em média foi modesto.
+
+DISC: Por que o ganho em acurácia média foi modesto no experimento? Em que situações a multifidelidade tende a ajudar mais?
+R: O espaço continha muitas configurações boas, então a aleatória já encontra boas. Ajuda mais com orçamento pequeno, treinos muito caros (redes profundas) e quando se quer menor dependência de sorte.
+
+DISC: Explique a ideia do BOHB e por que ele combina o melhor dos dois métodos.
+R: Usa o Hyperband para organizar os torneios e cortes, e um modelo TPE para sugerir candidatos em vez de sorteá-los. Combina bom desempenho inicial (Hyperband) com convergência rápida (otimização bayesiana).
+
+DISC: Explique como usar poda no Optuna: o que a função-objetivo deve fazer em cada época?
+R: Informar a nota parcial com trial.report(nota, epoca) e perguntar com trial.should_prune(); se verdadeiro, levantar optuna.TrialPruned() para interromper a tentativa.
+
+DISC: Interprete os resultados do MedianPruner no capítulo (20 de 40 tentativas podadas).
+R: Metade das tentativas foi interrompida, reduzindo as épocas de 2.400 para 1.297, com melhor acurácia quase igual (0,969 contra 0,972). A poda economizou cerca de 46% do treino sem perda relevante.
+
+DISC: Cite três armadilhas dos métodos multifidelidade e como mitigá-las.
+R: O ranking pode mudar (orçamento inicial razoável, η menor); fidelidade baixa demais não discrimina (testar a fidelidade mínima); notas de fidelidades diferentes não são comparáveis (comparar apenas no mesmo orçamento).
+
+DISC: Por que é importante guardar o estado do modelo (checkpoint) em métodos multifidelidade?
+R: Para retomar o treino de onde parou quando um candidato avança de rodada, sem recomeçar do zero e sem gastar épocas repetidas.
+
+DISC: Como o fator η afeta o Successive Halving? Compare η = 2 e η = 5.
+R: Com η menor, os cortes são mais suaves (mais rodadas, menos risco de eliminar campeãs lentas, mais custo). Com η maior, os cortes são agressivos (poucas rodadas, mais economia, mais risco).
+
+DISC: Por que o capítulo recomenda avaliar o vencedor em um teste final treinado com orçamento completo?
+R: Porque a seleção usou notas de baixa fidelidade e ruidosas; o desempenho real do vencedor deve ser medido em dados nunca usados, com o modelo treinado completamente.
+
+DISC: Por que o Hyperband é mais robusto que um único Successive Halving quando não sabemos o quão confiável é o corte precoce?
+R: Porque ele roda vários torneios com graus diferentes de agressividade, de muitos candidatos com pouco treino até poucos candidatos com treino completo. Se o corte precoce for pouco confiável, os torneios conservadores compensam.
