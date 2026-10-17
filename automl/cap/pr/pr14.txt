@@ -1,0 +1,227 @@
+@@EX 1 | Ficha do modelo e reprodutibilidade | básico
+No conjunto **Wine** (UCI), treine um pipeline (`StandardScaler` + `LogisticRegression`), salve-o com `joblib` e escreva uma ficha com versões (Python, scikit-learn), semente e um *hash* dos dados de treino. Recarregue o modelo e confirme que as previsões são idênticas. Depois, altere **um único valor** dos dados de treino e mostre que o hash muda.
+
+*Pergunta:* por que o hash dos dados é útil? Por que salvar o pipeline inteiro, e não só o modelo?
+@@SOL
+```python
+import hashlib, json, os, sys, tempfile
+import joblib, numpy as np, sklearn
+from sklearn.datasets import load_wine
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_wine(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+pipe = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr, ytr)
+h = lambda A: hashlib.sha256(A.tobytes()).hexdigest()[:16]
+pasta = tempfile.mkdtemp(); joblib.dump(pipe, os.path.join(pasta, "m.joblib"))
+ficha = {"python": sys.version.split()[0], "scikit-learn": sklearn.__version__, "semente": 0, "hash_treino": h(Xtr)}
+print("Ficha:", json.dumps(ficha))
+print("Previsões idênticas após recarregar:", np.array_equal(pipe.predict(Xte), joblib.load(os.path.join(pasta, "m.joblib")).predict(Xte)))
+Xalt = Xtr.copy(); Xalt[0, 0] += 0.001
+print("Hash depois de alterar um valor em 0,001:", h(Xalt), "| igual ao original?", h(Xalt) == h(Xtr))
+```
+@@NOTE O pipeline recarregado deu previsões idênticas às do original. O hash dos dados mudou por completo ao alterarmos **um único valor** em 0,001: ele é uma "impressão digital" que revela qualquer mudança nos dados de treino, o que permite saber se dois modelos foram treinados com os mesmos dados. Salva-se o pipeline inteiro porque o pré-processamento (como o `StandardScaler`) faz parte do modelo: sem ele, os dados de produção chegariam em outra escala. Os valores do hash e das versões dependem do ambiente.
+@@EX 2 | Quanto custa cada previsão? | intermediário
+No **Digits** (UCI), ajuste uma floresta aleatória com 10, 100 e 500 árvores (`n_jobs=1`). Meça o tempo de **uma previsão isolada** (média de 50 repetições) e o de um **lote de 5.000** casos.
+
+*Pergunta:* como o custo cresce com o número de árvores? Que tipo de aplicação sofreria mais?
+@@SOL
+```python
+import time
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.ensemble import RandomForestClassifier
+
+X, y = load_digits(return_X_y=True); lote = np.vstack([X] * 3)[:5000]
+print(f"{'árvores':>8s} {'1 previsão (ms)':>16s} {'lote 5 mil (s)':>15s}")
+for k in (10, 100, 500):
+    m = RandomForestClassifier(k, random_state=0, n_jobs=1).fit(X, y); m.predict(X[:1])
+    t = time.perf_counter()
+    for _ in range(50): m.predict(X[:1])
+    ms = (time.perf_counter() - t) / 50 * 1000
+    t = time.perf_counter(); m.predict(lote); print(f"{k:>8d} {ms:>16.2f} {time.perf_counter() - t:>15.3f}")
+```
+@@NOTE O custo de uma previsão isolada cresceu de 0,71 ms (10 árvores) para 5,46 ms (100) e 19,38 ms (500), isto é, aproximadamente **proporcional ao número de árvores**; o lote de 5.000 foi de 0,007 s para 0,193 s. As aplicações em tempo real (milhares de pedidos por segundo, com respostas em poucos milissegundos) sofreriam mais; em lote, o custo é diluído. Os valores exatos dependem da máquina.
+@@EX 3 | Detectando deriva com KS e PSI | intermediário
+No **Wine** (UCI), use 70% dos dados como referência (treino) e 30% como "produção". Calcule o KS e o PSI de todos os atributos e mostre os três com maior PSI. Depois, **simule uma deriva**: multiplique por 1,3 o atributo `alcohol` da "produção" e recalcule KS e PSI desse atributo.
+
+*Pergunta:* os dados sem deriva ficaram abaixo do limite de alerta (0,10)? O alarme detectou a deriva simulada?
+@@SOL
+```python
+import numpy as np
+from scipy.stats import ks_2samp
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+
+def psi(ref, novo, k=10):
+    cortes = np.quantile(ref, np.linspace(0, 1, k + 1)[1:-1])
+    a = np.bincount(np.searchsorted(cortes, ref), minlength=k) / len(ref)
+    b = np.bincount(np.searchsorted(cortes, novo), minlength=k) / len(novo)
+    a, b = np.clip(a, 1e-4, None), np.clip(b, 1e-4, None)
+    return float(np.sum((b - a) * np.log(b / a)))
+
+d = load_wine(); Xr, Xp = train_test_split(d.data, test_size=0.3, random_state=0)
+psis = [psi(Xr[:, j], Xp[:, j]) for j in range(Xr.shape[1])]
+print("Sem deriva - três maiores PSI:", ", ".join(f"{d.feature_names[j]} ({psis[j]:.3f})" for j in np.argsort(psis)[::-1][:3]))
+j = d.feature_names.index("alcohol"); Xd = Xp.copy(); Xd[:, j] *= 1.3
+print(f"alcohol sem deriva : KS = {ks_2samp(Xr[:, j], Xp[:, j]).statistic:.3f} | PSI = {psi(Xr[:, j], Xp[:, j]):.3f}")
+print(f"alcohol com +30%   : KS = {ks_2samp(Xr[:, j], Xd[:, j]).statistic:.3f} | PSI = {psi(Xr[:, j], Xd[:, j]):.3f}")
+```
+@@NOTE **Atenção:** mesmo sem deriva alguma, o PSI de alguns atributos passou do limite de alerta (por exemplo, `total_phenols` 0,954 e `nonflavanoid_phenols` 0,591), porque a "produção" tem apenas 54 casos e o PSI, calculado em 10 faixas, é muito instável com poucos dados. O KS do `alcohol` sem deriva foi 0,098 (PSI 0,115, no alerta); com +30%, o KS chegou a 1,000 e o PSI a 8,192, uma deriva óbvia. Lição: o PSI exige **amostras razoáveis** (centenas ou milhares de casos) e as regras práticas de 0,10 e 0,25 não valem para amostras pequenas; use também testes estatísticos e inspeção visual.
+@@EX 4 | Quando trocar o campeão? | avançado
+No crédito simulado (função abaixo), treine o campeão em dados de `infl=0`. Para 20 repetições (sementes diferentes), gere dados recentes com `infl=0,5`, treine um desafiante com 2.000 casos e compare ambos em 2.000 casos de desafio. Conte em quantas repetições o desafiante "assume" pela regra de margem (diferença > 2 erros padrão).
+
+*Pergunta:* o desafiante assume sempre? Que regra você usaria para evitar trocas por ruído?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+def gera(n=6000, vies=0.6, p_min=0.3, seed=0, infl=0.0):
+    r = np.random.default_rng(seed)
+    g = (r.random(n) < p_min).astype(int); z = r.normal(0, 1, n)
+    renda = np.exp(0.5 * z + 0.35 * r.normal(size=n) - 0.25 * g) * 3.0 * (1 + infl)
+    emprego = np.clip(5 + 2 * z + r.normal(0, 2, n), 0, None)
+    divida = np.clip(0.4 - 0.1 * z + r.normal(0, 0.1, n), 0, 1)
+    cep = 0.8 * g + 0.6 * r.normal(size=n); score = z + r.normal(0, 1, n)
+    y_real = (z > 0).astype(int); y_hist = ((z - vies * g + r.normal(0, 0.5, n)) > 0).astype(int)
+    return np.c_[renda, emprego, divida, cep, score], g, y_hist, y_real
+
+X0, g0, y0, _ = gera(5000, seed=1); campeao = HistGradientBoostingClassifier(random_state=0).fit(X0[:, [0, 1, 2, 4]], y0)
+assume, difs = 0, []
+for s in range(20):
+    X, g, yh, yr = gera(4000, seed=100 + s, infl=0.5); X = X[:, [0, 1, 2, 4]]
+    des = HistGradientBoostingClassifier(random_state=0).fit(X[:2000], yr[:2000])
+    ac, ad = campeao.score(X[2000:], yr[2000:]), des.score(X[2000:], yr[2000:])
+    ep = np.sqrt(ad * (1 - ad) / 2000); difs.append(ad - ac); assume += (ad - ac) > 2 * ep
+print(f"Diferença média (desafiante - campeão) = {np.mean(difs):+.3f} | mínima = {min(difs):+.3f} | máxima = {max(difs):+.3f}")
+print(f"O desafiante assumiu em {assume} de 20 repetições")
+```
+@@NOTE A diferença média do desafiante sobre o campeão foi de +0,015 (de −0,005 a +0,030), e ele assumiu em apenas 9 das 20 repetições pela regra de margem. Ou seja, **o desafiante não assume sempre**, mesmo havendo um ganho médio positivo, pois em boa parte das amostras a diferença não passa de 2 erros padrão. Para evitar trocas por ruído, use margem estatística, avalie em mais dados (ou em várias janelas de tempo) e considere o custo do retreino.
+@@PROJ Projeto integrador: AutoML de ponta a ponta, com ética e produção | Cap14
+**Fonte dos dados.** Crédito **simulado** (função abaixo), com 20% do grupo minoritário (`p_min=0.25`), viés histórico de 0,5 (`vies=0.5`) e semente 11. Para uma versão com dados reais, use uma base pública da UCI ou do Kaggle com atributo sensível (por exemplo, *Adult*, *German Credit* ou *Give Me Some Credit*), respeitando licenças e restrições legais.
+
+**Contexto.** Você é a pessoa responsável por entregar, a um banco fictício, um modelo de aprovação de crédito desenvolvido com AutoML, **pronto para auditoria e para produção**. O projeto integra todos os capítulos do livro.
+
+**Atenção ética.** Os dados são simulados. Em dados reais, o uso de atributos sensíveis em decisões pode ser restrito por lei, e a auditoria exige especialistas jurídicos e representantes das pessoas afetadas.
+
+**Tarefas.**
+1. **Definição do problema** (Cap. 1): escreva o objetivo, a métrica (acurácia contra o histórico, mas também acompanhe a taxa de seleção e o TPR por grupo) e as restrições (latência máxima de 20 ms por previsão).
+2. **Dados e validação** (Caps. 2 e 3): separe 25% para **teste final** (estratificado), do restante separe 25% para **validação** dos pesos do ensemble; não use o atributo grupo nos modelos.
+3. **Linhas de base** (Caps. 2 e 10): regressão logística (com `StandardScaler`) e floresta com parâmetros padrão.
+4. **Busca** (Caps. 4 a 6): com o Optuna (TPE, semente fixa), 30 tentativas, espaço CASH condicional com `LogisticRegression`, `RandomForestClassifier` e `LGBMClassifier`, avaliando por validação cruzada de 3 partes no treino.
+5. **Ensemble** (Cap. 9): média das probabilidades do **melhor modelo de cada algoritmo** encontrado na busca (até 3 modelos, para garantir diversidade), treinados no treino completo e comparados, na validação, com o melhor modelo único.
+6. **Teste final único** (Cap. 2): compare linha de base, melhor único e ensemble no teste, uma vez; discuta se o ganho é maior que o erro padrão.
+7. **Explicação e auditoria** (Cap. 13): importância por permutação do modelo escolhido; taxa de seleção e TPR real por grupo; AUC para prever o grupo pelos atributos; limiares por grupo para igualar a seleção.
+8. **Produção** (Cap. 14): salve o pipeline e a ficha (versões, semente, hash dos dados); meça a latência de uma previsão e confira o orçamento de 20 ms; simule uma deriva (`infl=0,4`) e calcule o PSI da renda e a acurácia.
+9. **Relatório final** (12 a 15 linhas): recomendação (implantar ou não?), salvaguardas, limites e custo da busca.
+
+**Entregáveis.** Um notebook (ou script) comentado, as tabelas pedidas e o relatório.
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import hashlib, json, os, sys, tempfile, time
+import joblib, numpy as np, optuna, sklearn
+import lightgbm as lgb
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.inspection import permutation_importance
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+
+def gera(n=6000, vies=0.6, p_min=0.3, seed=0, infl=0.0):
+    r = np.random.default_rng(seed)
+    g = (r.random(n) < p_min).astype(int); z = r.normal(0, 1, n)
+    renda = np.exp(0.5 * z + 0.35 * r.normal(size=n) - 0.25 * g) * 3.0 * (1 + infl)
+    emprego = np.clip(5 + 2 * z + r.normal(0, 2, n), 0, None)
+    divida = np.clip(0.4 - 0.1 * z + r.normal(0, 0.1, n), 0, 1)
+    cep = 0.8 * g + 0.6 * r.normal(size=n); score = z + r.normal(0, 1, n)
+    y_real = (z > 0).astype(int); y_hist = ((z - vies * g + r.normal(0, 0.5, n)) > 0).astype(int)
+    return np.c_[renda, emprego, divida, cep, score], g, y_hist, y_real
+def psi(ref, novo, k=10):
+    cortes = np.quantile(ref, np.linspace(0, 1, k + 1)[1:-1])
+    a = np.bincount(np.searchsorted(cortes, ref), minlength=k) / len(ref)
+    b = np.bincount(np.searchsorted(cortes, novo), minlength=k) / len(novo)
+    a, b = np.clip(a, 1e-4, None), np.clip(b, 1e-4, None)
+    return float(np.sum((b - a) * np.log(b / a)))
+
+NOMES = ["renda", "tempo_emprego", "razao_divida", "score_historico"]
+X, g, yh, yr = gera(6000, vies=0.5, p_min=0.25, seed=11); X = X[:, [0, 1, 2, 4]]            # sem cep e sem grupo
+Xa, Xte, ya, yte, ga, gte, yra, yrte = train_test_split(X, yh, g, yr, test_size=0.25, random_state=0, stratify=yh)
+Xtr, Xv, ytr, yv = train_test_split(Xa, ya, test_size=0.25, random_state=0, stratify=ya)
+
+def constroi(p):
+    if p["alg"] == "lr": return make_pipeline(StandardScaler(), LogisticRegression(C=p["C"], max_iter=2000))
+    if p["alg"] == "rf": return RandomForestClassifier(p["n"], max_depth=p["prof"], random_state=0, n_jobs=-1)
+    return lgb.LGBMClassifier(n_estimators=p["n"], learning_rate=p["lr"], num_leaves=p["folhas"], random_state=0, verbose=-1)
+
+def objetivo(t):
+    alg = t.suggest_categorical("alg", ["lr", "rf", "lgbm"])
+    if alg == "lr": p = {"alg": alg, "C": t.suggest_float("C", 1e-3, 1e2, log=True)}
+    elif alg == "rf": p = {"alg": alg, "n": t.suggest_int("n_rf", 50, 200), "prof": t.suggest_int("prof", 3, 14)}
+    else: p = {"alg": alg, "n": t.suggest_int("n_lgb", 50, 300), "lr": t.suggest_float("lr", 0.01, 0.3, log=True), "folhas": t.suggest_int("folhas", 4, 32)}
+    return cross_val_score(constroi(p), Xtr, ytr, cv=3).mean()
+
+def params(t):
+    d = t.params; a = d["alg"]
+    return {"alg": a, **({"C": d["C"]} if a == "lr" else {"n": d["n_rf"], "prof": d["prof"]} if a == "rf" else {"n": d["n_lgb"], "lr": d["lr"], "folhas": d["folhas"]})}
+
+estudo = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=0)); estudo.optimize(objetivo, n_trials=30)
+ordem = sorted([t for t in estudo.trials if t.value is not None], key=lambda t: -t.value)
+escolhidos, vistos = [], set()
+for t in ordem:                                              # o melhor de cada algoritmo, para ter diversidade
+    if t.params["alg"] not in vistos: vistos.add(t.params["alg"]); escolhidos.append(t)
+modelos = [constroi(params(t)).fit(Xtr, ytr) for t in escolhidos]
+print("Melhor da busca:", params(ordem[0]), "| CV = %.3f" % ordem[0].value)
+print("Algoritmos no ensemble:", [params(t)["alg"] for t in escolhidos])
+P = lambda ms, A: np.mean([m.predict_proba(A)[:, 1] for m in ms], axis=0)
+print("Validação: melhor único = %.3f | ensemble = %.3f" % (modelos[0].score(Xv, yv), ((P(modelos, Xv) >= 0.5) == yv).mean()))
+
+base_lr = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr, ytr); base_rf = RandomForestClassifier(100, random_state=0, n_jobs=-1).fit(Xtr, ytr)
+pred_ens = (P(modelos, Xte) >= 0.5).astype(int)
+cands = {"reg. logística (base)": base_lr.predict(Xte), "floresta padrão (base)": base_rf.predict(Xte), "melhor único": modelos[0].predict(Xte), "ensemble por algoritmo": pred_ens}
+print("\nTESTE FINAL (n = %d, erro padrão ~ %.3f):" % (len(yte), np.sqrt(0.8 * 0.2 / len(yte))))
+for nome, p in cands.items(): print(f"  {nome:<24s} acurácia = {(p == yte).mean():.3f}")
+
+def rel(nome, pred):
+    s = [pred[gte == k].mean() for k in (0, 1)]; t = [pred[(gte == k) & (yrte == 1)].mean() for k in (0, 1)]
+    print(f"  {nome:<22s} acc hist = {(pred == yte).mean():.3f} | acc verdade = {(pred == yrte).mean():.3f} | seleção {s[0]:.2f}/{s[1]:.2f} | TPR real {t[0]:.2f}/{t[1]:.2f}")
+print("\nAUDITORIA POR GRUPO:"); rel("ensemble", pred_ens)
+pi = permutation_importance(modelos[0], Xte, yte, n_repeats=10, random_state=0)
+print("  Permutação do melhor único:", {n: round(float(v), 3) for n, v in zip(NOMES, pi.importances_mean)})
+Xg_tr, Xg_te, g_tr, g_te = train_test_split(X, g, test_size=0.3, random_state=0, stratify=g)
+pg = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xg_tr, g_tr)
+print("  AUC para prever o grupo pelos atributos: %.3f" % roc_auc_score(g_te, pg.predict_proba(Xg_te)[:, 1]))
+p = P(modelos, Xte); sel0 = (p[gte == 0] >= 0.5).mean(); t1 = np.quantile(p[gte == 1], 1 - sel0)
+rel("ensemble + limiares", np.where(gte == 0, p >= 0.5, p >= t1).astype(int))
+
+pasta = tempfile.mkdtemp(); joblib.dump(modelos[0], os.path.join(pasta, "modelo.joblib"))
+ficha = {"python": sys.version.split()[0], "scikit-learn": sklearn.__version__, "semente": 0, "hash_treino": hashlib.sha256(Xtr.tobytes()).hexdigest()[:16]}
+um = Xte[:1]; modelos[0].predict(um); t0 = time.perf_counter()
+for _ in range(50): modelos[0].predict(um)
+lat = (time.perf_counter() - t0) / 50 * 1000; um_ens = time.perf_counter()
+for _ in range(50): P(modelos, um)
+lat_e = (time.perf_counter() - um_ens) / 50 * 1000
+print("\nPRODUÇÃO: ficha =", json.dumps(ficha)); print(f"  Latência por previsão: melhor único = {lat:.1f} ms | ensemble = {lat_e:.1f} ms (orçamento: 20 ms)")
+Xd, g_d, yh_d, yr_d = gera(3000, vies=0.5, p_min=0.25, seed=99, infl=0.4); Xd = Xd[:, [0, 1, 2, 4]]
+print(f"  Deriva (inflação de 40%): PSI da renda = {psi(Xtr[:, 0], Xd[:, 0]):.3f} | acurácia contra a verdade: base = {(modelos[0].predict(Xte) == yrte).mean():.3f} -> {(modelos[0].predict(Xd) == yr_d).mean():.3f}")
+```
+@@RUBRICA
+- O teste final foi separado antes de qualquer decisão e usado uma única vez, com erro padrão discutido.
+- O atributo grupo não foi usado nos modelos; a validação do ensemble ficou separada do teste.
+- A busca (Optuna/TPE) e o ensemble foram comparados com linhas de base simples e com o melhor modelo único.
+- A auditoria por grupo inclui seleção, TPR real, proxies (AUC) e mitigação, discutindo trade-offs.
+- A ficha do modelo, a latência frente ao orçamento e a simulação de deriva foram apresentadas.
+- O relatório é honesto: cita limites, custo da busca, a natureza simulada dos dados e salvaguardas.
+@@NOTE A busca (TPE, 30 tentativas) escolheu a **regressão logística** (C ≈ 0,065, CV 0,800): o problema simulado é praticamente linear, e o modelo simples bastou. No teste final (1.500 casos, erro padrão cerca de 0,010), regressão logística (0,808), melhor único (0,806), ensemble por algoritmo (0,804) e floresta padrão (0,785) ficam todos próximos: **as diferenças entre os três primeiros estão dentro do ruído**, e só a floresta padrão ficou um pouco abaixo. O ensemble não se justifica aqui, sobretudo porque ele custou **50,5 ms por previsão, acima do orçamento de 20 ms**, contra 0,5 ms do melhor único (o valor depende da máquina, mas a ordem de grandeza é o ponto). Na auditoria, o ensemble seleciona 0,47 do grupo 0 e 0,38 do grupo 1 e tem TPR real de 0,83 contra 0,72; os atributos permitem prever o grupo com AUC de 0,650 (sem o CEP-score o proxy é mais fraco, mas a renda ainda carrega informação). Com limiares por grupo, a seleção se iguala (0,47) e o TPR real do grupo 1 sobe para 0,82, com a acurácia contra a verdade se mantendo (0,855 contra 0,851) e leve queda contra o histórico (0,797). Na deriva de 40% de inflação, o PSI da renda foi 0,304 (acima de 0,25, "mudança grande"), mas a acurácia contra a verdade **não caiu** (0,853 para 0,864): alarme não é diagnóstico, e a deriva é um sinal para investigar. Recomendação: implantar o **melhor único (ou a regressão logística)**, que é simples, rápido e interpretável, com monitoramento por grupo, limiares por grupo sujeitos a revisão jurídica, canal de contestação e revisão humana. Limites: dados simulados, uma única semente e um problema quase linear.
+@@ALEM
+- **UCI:** Adult, Statlog German Credit, Bank Marketing (marketing bancário, com muitos exemplos).
+- **Kaggle:** Give Me Some Credit, Home Credit Default Risk e Titanic (para praticar o fluxo completo).
+- **Desafio:** troque a simulação por uma base real e repita o projeto, comparando FLAML, Auto-sklearn ou AutoGluon com o seu mini-AutoML, com o mesmo orçamento e a mesma validação.

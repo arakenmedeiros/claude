@@ -1,0 +1,269 @@
+MC: O que é MLOps?
+a) O conjunto de práticas para desenvolver e operar modelos de ML em produção, com automação, versionamento e monitoramento.
+b) Um algoritmo de busca de hiperparâmetros.
+c) Uma métrica de acurácia.
+d) Um tipo de rede neural.
+R: a | Kreuzberger, Kühl e Hirschl (2023).
+
+MC: O que dizem Sculley et al. (2015) sobre sistemas de ML reais?
+a) O código do modelo é uma parte pequena; a dívida técnica está no entorno.
+b) O modelo é a única parte relevante.
+c) A dívida técnica não existe em ML.
+d) Basta treinar o modelo.
+R: a | Há coleta de dados, configuração, infraestrutura e monitoramento ao redor.
+
+MC: Qual é a analogia do capítulo para MLOps?
+a) A cozinha do restaurante: servir todos os dias com a mesma qualidade.
+b) Um jogo de tabuleiro.
+c) Uma viagem de avião.
+d) Um campeonato.
+R: a | Criar a receita é só uma parte do trabalho.
+
+MC: Quais são as etapas do ciclo de vida do modelo?
+a) Dados, treino, validação, implantação, monitoramento e retreino.
+b) Apenas treino e teste.
+c) Apenas implantação.
+d) Apenas dados.
+R: a | O ciclo é contínuo.
+
+MC: Por que salvar o pipeline inteiro e não só o modelo?
+a) Porque o pré-processamento faz parte do modelo; sem ele, os dados chegariam em outra escala.
+b) Porque o modelo não pode ser salvo sozinho.
+c) Porque economiza memória.
+d) Porque o pipeline é mais lento.
+R: a | O StandardScaler, por exemplo, deve ir junto.
+
+MC: O que é a ficha do modelo?
+a) O registro de versões, semente, parâmetros e hash dos dados usados na construção.
+b) A lista de clientes.
+c) Um gráfico de desempenho.
+d) Uma licença de uso.
+R: a | Permite reproduzir e auditar.
+
+MC: Para que serve o hash dos dados de treino?
+a) Funciona como impressão digital: muda se qualquer valor mudar.
+b) Aumenta a acurácia.
+c) Acelera o treino.
+d) Remove outliers.
+R: a | No exercício, mudar 0,001 em um valor mudou o hash.
+
+MC: Qual é o risco de carregar um arquivo joblib ou pickle desconhecido?
+a) Ele pode executar código ao ser carregado.
+b) Nada: são arquivos de texto.
+c) Só perda de memória.
+d) Só perda de precisão.
+R: a | Nunca carregue modelos de origem desconhecida.
+
+MC: O que é previsão em lote?
+a) Processar muitos casos de uma vez, de tempos em tempos.
+b) Prever um caso por vez em milissegundos.
+c) Treinar com poucos dados.
+d) Prever só o futuro.
+R: a | A latência importa pouco; a vazão importa.
+
+MC: O que é previsão em tempo real?
+a) Cada pedido chega sozinho e exige resposta imediata.
+b) Processar tudo à noite.
+c) Treinar o modelo a cada pedido.
+d) Usar só ensembles.
+R: a | A latência por previsão é crítica.
+
+MC: O que mostrou o experimento de latência do capítulo?
+a) Modelos simples respondem muito mais depressa que floresta e ensemble.
+b) Todos têm o mesmo custo.
+c) O ensemble é o mais rápido.
+d) A latência independe do modelo.
+R: a | Cerca de 0,5 ms contra cerca de 13 ms por previsão isolada.
+
+MC: Por que o orçamento de latência deve ser definido antes do AutoML?
+a) Porque o ensemble campeão pode ser inviável para o tempo de resposta exigido.
+b) Porque o AutoML não mede latência.
+c) Porque a latência não importa.
+d) Porque simplifica o código.
+R: a | Muitas ferramentas permitem restringir algoritmos e tamanho do ensemble.
+
+MC: O que é deriva dos dados (data drift)?
+a) A distribuição dos atributos de entrada muda.
+b) A relação entre atributos e resposta muda.
+c) O modelo é trocado.
+d) O teste é maior.
+R: a | Ex.: rendas sobem por inflação.
+
+MC: O que é deriva de conceito (concept drift)?
+a) A relação entre atributos e resposta muda.
+b) Apenas a média dos atributos muda.
+c) O código muda.
+d) A semente muda.
+R: a | Ex.: com a mesma renda, a chance de pagar passa a ser outra.
+
+MC: Por que a deriva dos dados é mais fácil de detectar?
+a) Porque não depende dos rótulos, que chegam depois.
+b) Porque é sempre pequena.
+c) Porque o modelo avisa.
+d) Porque os rótulos são gratuitos.
+R: a | Em produção, rótulos chegam semanas depois.
+
+MC: O que faz o teste de Kolmogorov-Smirnov (KS)?
+a) Compara a distribuição de um atributo no treino e na produção.
+b) Treina um modelo.
+c) Escolhe hiperparâmetros.
+d) Mede a latência.
+R: a | Valor-p pequeno indica distribuições diferentes.
+
+MC: O que é o PSI?
+a) Um índice que compara a proporção de casos por faixa entre treino e produção.
+b) Um tipo de ensemble.
+c) Uma função de ativação.
+d) Um limiar de classificação.
+R: a | Population Stability Index.
+
+MC: Qual é uma convenção prática de leitura do PSI?
+a) Abaixo de 0,10 estável; 0,10 a 0,25 alerta; acima de 0,25 mudança grande.
+b) Sempre acima de 1.
+c) Sempre abaixo de 0,001.
+d) Não há convenção.
+R: a | São regras práticas, não leis.
+
+MC: No experimento de inflação, quando o KS rejeitou a igualdade pela primeira vez?
+a) Já no mês 1, quando a acurácia ainda não tinha caído.
+b) Só no mês 6.
+c) Nunca.
+d) No mês 0.
+R: a | Isso mostra o valor do alarme antecipado.
+
+MC: O que o PSI do tempo de emprego (atributo estável) mostrou?
+a) Ficou abaixo de 0,01, sem alarme falso.
+b) Disparou como o da renda.
+c) Ficou acima de 1.
+d) Não foi calculado.
+R: a | O alarme não dispara por qualquer motivo.
+
+MC: Por que 'alarme não é diagnóstico'?
+a) Deriva dos dados não garante queda de desempenho, e a ausência dela não garante que o conceito não mudou.
+b) Porque alarmes são sempre falsos.
+c) Porque o PSI é inválido.
+d) Porque rótulos não importam.
+R: a | No projeto integrador, o PSI foi 0,304 e a acurácia não caiu.
+
+MC: O que é o desafio entre campeão e desafiante?
+a) Comparar o modelo em produção com um novo modelo em dados recentes, trocando só se o novo ganhar com margem.
+b) Treinar dois modelos iguais.
+c) Uma competição de acurácia no treino.
+d) Trocar o modelo a cada semana.
+R: a | Evita trocas por ruído.
+
+MC: Por que o desafiante precisa ganhar 'com margem'?
+a) Para não trocar o modelo por diferenças que são só ruído amostral.
+b) Porque o campeão não pode perder.
+c) Para aumentar o custo.
+d) Porque a regra é arbitrária.
+R: a | Ex.: diferença maior que 2 erros padrão.
+
+MC: No Exercício 4, em quantas das 20 repetições o desafiante assumiu?
+a) Em 9 de 20.
+b) Em todas.
+c) Em nenhuma.
+d) Em 20 de 20.
+R: a | Mesmo com ganho médio positivo, nem sempre passa da margem.
+
+MC: O que o Exercício 3 mostrou sobre o PSI com poucos dados?
+a) Com amostras pequenas, o PSI é instável e pode passar do alerta sem deriva alguma.
+b) O PSI é sempre exato.
+c) O PSI não funciona com Wine.
+d) O PSI é sempre zero.
+R: a | A 'produção' tinha só 54 casos.
+
+MC: Qual foi o resultado de latência do ensemble no projeto integrador?
+a) Cerca de 50 ms por previsão, acima do orçamento de 20 ms.
+b) Cerca de 0,1 ms.
+c) Exatamente 20 ms.
+d) Não foi medida.
+R: a | O melhor único teve cerca de 0,5 ms.
+
+MC: O que a busca escolheu no projeto integrador e o que isso indica?
+a) A regressão logística: o problema simulado é quase linear e o modelo simples bastou.
+b) O LightGBM, por ser o mais complexo.
+c) A floresta, por ser a mais lenta.
+d) Nada.
+R: a | O AutoML não garante que o complexo vença.
+
+MC: Qual conselho final de professor aparece no capítulo?
+a) Busque o projeto mais honesto, não a maior nota.
+b) Busque sempre o maior ensemble.
+c) Esconda os limites do modelo.
+d) Evite baselines.
+R: a | Um relatório honesto vale mais que um ganho vistoso sem teste.
+
+MC: Por que o Exercício 1 recarrega o modelo e compara as previsões?
+a) Para confirmar que o modelo salvo reproduz exatamente as previsões do original.
+b) Para aumentar a acurácia.
+c) Para reduzir o tamanho do arquivo.
+d) Para escolher hiperparâmetros.
+R: a | Reprodutibilidade: previsões idênticas após salvar e carregar.
+
+MC: Qual é a melhor resposta quando o PSI de um atributo passa de 0,25?
+a) Investigar: comparar o desempenho com rótulos recentes e avaliar um retreino.
+b) Retreinar sempre, às cegas.
+c) Ignorar o alarme.
+d) Apagar o atributo.
+R: a | O alarme pede investigação, não ação automática.
+
+DISC: Explique, com a analogia da cozinha, por que um modelo no notebook ainda não é um produto.
+R: Criar a receita (o modelo) é só uma parte; servir todo dia, com qualidade, exige estoque, higiene, equipe e controle (dados, infraestrutura, monitoramento): o trabalho de MLOps.
+
+DISC: Resuma a mensagem de Sculley et al. (2015) sobre dívida técnica em ML.
+R: O código do modelo é pequeno diante do sistema (coleta e verificação de dados, atributos, configuração, infraestrutura, monitoramento). Esse entorno gera dívida técnica escondida que cobra juros ao longo do tempo.
+
+DISC: Descreva as seis etapas do ciclo de vida de um modelo.
+R: Dados, treino e busca, validação, implantação, monitoramento e retreino, voltando aos dados; o ciclo é contínuo.
+
+DISC: O que deve conter a ficha de um modelo e por quê?
+R: Versões das bibliotecas, semente, parâmetros e hash dos dados, para reproduzir, auditar e saber com que dados e ambiente o modelo foi feito.
+
+DISC: Por que não se deve carregar arquivos joblib/pickle de origem desconhecida?
+R: Porque eles podem executar código arbitrário ao serem carregados, o que é um risco de segurança.
+
+DISC: Compare previsão em lote e em tempo real.
+R: Lote: muitos casos de uma vez, de tempos em tempos; importa a vazão. Tempo real: um caso por vez, resposta em milissegundos; a latência é crítica.
+
+DISC: Por que ensembles podem ser inviáveis em tempo real? Use os números do capítulo.
+R: Cada previsão exige rodar vários modelos: cerca de 13 ms contra 0,5 ms da regressão logística por previsão isolada, e 0,8 s contra 0,05 s em lote de 10 mil. Em milhares de pedidos por segundo, a diferença pesa.
+
+DISC: Diferencie deriva dos dados e deriva de conceito, com exemplos.
+R: Dados: a distribuição dos atributos muda (rendas sobem com a inflação). Conceito: a relação entre atributos e resposta muda (com a mesma renda, a chance de pagar é outra).
+
+DISC: Explique o KS e o PSI como ferramentas de monitoramento.
+R: KS: teste que compara a distribuição de um atributo entre treino e produção. PSI: compara a proporção de casos por faixa (quantis do treino); regras práticas: abaixo de 0,10 estável, 0,10 a 0,25 alerta, acima de 0,25 mudança grande.
+
+DISC: Interprete a Figura de monitoramento do capítulo.
+R: O PSI da renda cresce mês a mês (cruza 0,10 no mês 2 e 0,25 no mês 4) e o KS rejeita já no mês 1, antes de a acurácia cair (0,851 para 0,808 no mês 6); o PSI do tempo de emprego fica abaixo de 0,01.
+
+DISC: Por que 'alarme não é diagnóstico'? Dê um exemplo dos dados do livro.
+R: Deriva dos dados não implica queda de desempenho: no projeto integrador, com PSI de 0,304, a acurácia contra a verdade não caiu (0,853 para 0,864). O alarme pede investigação com rótulos.
+
+DISC: Descreva o desafio entre campeão e desafiante e a regra de margem.
+R: O modelo novo, treinado com dados recentes, é comparado ao em produção em dados recentes com rótulos; só assume se a diferença superar uma margem (por exemplo, 2 erros padrão), evitando trocas por ruído.
+
+DISC: O que o Exercício 4 mostrou sobre a decisão de trocar o modelo?
+R: O ganho médio do desafiante foi positivo (+0,015), mas ele só assumiu em 9 de 20 repetições; é preciso margem, mais dados e consideração do custo.
+
+DISC: Por que o PSI é instável com poucos dados? Dê o exemplo do Exercício 3.
+R: Com 10 faixas e só 54 casos, a proporção por faixa oscila muito. No Wine, mesmo sem deriva, o PSI de total_phenols foi 0,954; as regras práticas valem para amostras grandes.
+
+DISC: Liste os dez passos do roteiro completo de um projeto de AutoML.
+R: Problema e métrica; teste final e vazamento; linhas de base; pipeline; busca; ensemble e ferramentas; teste único por grupo; explicar e auditar; implantar com ficha; monitorar e retreinar.
+
+DISC: Resuma o resultado do projeto integrador e a recomendação.
+R: A busca escolheu a regressão logística; os métodos ficaram empatados no teste (0,804 a 0,808); o ensemble custou cerca de 50 ms contra o orçamento de 20 ms. Recomenda-se o modelo simples, com monitoramento por grupo, limiares sujeitos a revisão, contestação e revisão humana.
+
+DISC: Por que o projeto integrador diz que o ensemble 'não se justifica'?
+R: Não ganhou do modelo simples no teste (diferenças dentro do ruído), estourou o orçamento de latência e é mais difícil de explicar.
+
+DISC: Quais salvaguardas você exigiria para implantar um modelo de crédito auditado?
+R: Monitoramento de desempenho, deriva e disparidades por grupo; canal de contestação; revisão humana; revisão jurídica do uso de limiares ou atributos sensíveis; registro da ficha e do custo.
+
+DISC: O que significa 'busque o projeto mais honesto'?
+R: Valorizar relatórios que reconhecem empates, limites, custo e incerteza, em vez de anunciar ganhos pequenos sem teste de significância.
+
+DISC: Por que o PSI e o KS não substituem a avaliação com rótulos recentes?
+R: Eles detectam mudanças nos dados de entrada, mas não dizem se o desempenho caiu nem se a relação entre atributos e resposta mudou; só os rótulos recentes permitem medir o desempenho real.
