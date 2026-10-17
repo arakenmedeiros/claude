@@ -22,3 +22,6 @@ VII: 31 Diagnóstico/formação/pilotos; 32 Ferramentas/indicadores/monitorament
 | 04 | ok | ok | ok | |
 | 05 | ok | ok | ok | Parte I concluída |
 Notas: Consensus esgotado (2 buscas até 01/11); usar WebSearch para verificar. Wang & Fan 2025 (HSSC) reportado como retratado (WebSearch 17/10/2026): NÃO citar como evidência; usar como exemplo no cap. 27.
+| 06 | ok | ok | ok | Parte II |
+| 07 | ok | ok | ok | |
+| 08 | ok | ok | ok | |

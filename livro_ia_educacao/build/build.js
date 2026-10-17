@@ -244,7 +244,8 @@ function parseEx(text, ch) {
   const blocks = text.trim().split(/\n\s*\n/);
   const mc = [], dc = [];
   for (const bl of blocks) {
-    const L = bl.split("\n").filter((x) => x.trim() !== "");
+    const L = bl.split("\n").filter((x) => x.trim() !== "" && !/^#\d*\s*$/.test(x.trim()));
+    if (!L.length) continue;
     if (L[0].startsWith("MC:")) {
       const stem = L[0].slice(3).trim();
       const opts = []; let why = "";
