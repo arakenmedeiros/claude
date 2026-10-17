@@ -1,0 +1,207 @@
+@@EX 1 | Por que precisamos de uma linha de base | básico
+Carregue o conjunto **Breast Cancer Wisconsin (Diagnostic)** (`load_breast_cancer`), do repositório UCI, que já vem no scikit-learn. Avalie, por validação cruzada de 5 partes, dois modelos: um `DummyClassifier(strategy="most_frequent")`, que sempre responde a classe mais comum, e uma `LogisticRegression` com `StandardScaler`.
+
+*Pergunta:* qual é a acurácia do modelo "bobo"? Por que ela é útil como ponto de comparação?
+@@SOL
+```python
+from sklearn.datasets import load_breast_cancer
+from sklearn.dummy import DummyClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score
+
+X, y = load_breast_cancer(return_X_y=True)
+bobo = DummyClassifier(strategy="most_frequent")
+logis = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000))
+
+for nome, m in [("Linha de base (bobo)", bobo), ("Regressão logística", logis)]:
+    notas = cross_val_score(m, X, y, cv=5)
+    print(f"{nome:22s} acurácia = {notas.mean():.3f}")
+print("Proporção da classe mais comum:", round(y.mean(), 3))
+```
+@@NOTE O modelo "bobo" acerta cerca de 63% só por responder sempre a classe majoritária. Qualquer modelo útil precisa superar essa linha de base com folga. Todo projeto de AutoML deve começar por uma linha de base.
+@@EX 2 | Ampliando o espaço de busca | intermediário
+Reescreva o mini-AutoML do capítulo para o conjunto **Wine**, acrescentando mais dois algoritmos ao espaço de busca: **SVM com kernel RBF** (`SVC`, hiperparâmetros `C` e `gamma`, ambos em escala logarítmica) e **Gradient Boosting** (`GradientBoostingClassifier`, hiperparâmetros `n_estimators` e `learning_rate`). Faça 60 tentativas e mostre os **três melhores candidatos**.
+
+*Pergunta:* o vencedor mudou em relação ao capítulo?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.svm import SVC
+
+X, y = load_wine(return_X_y=True)
+rng = np.random.default_rng(0)
+
+def sortear():
+    alg = rng.choice(["arvore", "knn", "logistica", "floresta", "svm", "gboost"])
+    if alg == "arvore":
+        hp = {"max_depth": int(rng.integers(1, 15)), "min_samples_leaf": int(rng.integers(1, 20))}
+        m = DecisionTreeClassifier(random_state=0, **hp)
+    elif alg == "knn":
+        hp = {"n_neighbors": int(rng.integers(1, 30))}
+        m = make_pipeline(StandardScaler(), KNeighborsClassifier(**hp))
+    elif alg == "logistica":
+        hp = {"C": float(10 ** rng.uniform(-3, 3))}
+        m = make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000, **hp))
+    elif alg == "floresta":
+        hp = {"n_estimators": int(rng.integers(10, 150)), "max_depth": int(rng.integers(2, 15))}
+        m = RandomForestClassifier(random_state=0, **hp)
+    elif alg == "svm":
+        hp = {"C": float(10 ** rng.uniform(-2, 3)), "gamma": float(10 ** rng.uniform(-4, 0))}
+        m = make_pipeline(StandardScaler(), SVC(**hp))
+    else:
+        hp = {"n_estimators": int(rng.integers(20, 150)), "learning_rate": float(10 ** rng.uniform(-2, 0))}
+        m = GradientBoostingClassifier(random_state=0, **hp)
+    return str(alg), hp, m
+
+resultados = []
+for _ in range(60):
+    alg, hp, m = sortear()
+    resultados.append((float(cross_val_score(m, X, y, cv=5).mean()), alg, hp))
+
+resultados.sort(key=lambda t: -t[0])
+for nota, alg, hp in resultados[:3]:
+    print(f"{nota:.3f}  {alg:10s}", {k: round(v, 3) if isinstance(v, float) else v for k, v in hp.items()})
+print("Algoritmos entre os 10 melhores:", sorted({a for _, a, _ in resultados[:10]}))
+```
+@@NOTE O topo é ocupado por regressões logísticas com valores de C parecidos, mas floresta aleatória e SVM também aparecem entre os 10 melhores, com diferenças na terceira casa decimal. Em um conjunto pequeno como este, essas diferenças estão dentro do ruído da validação cruzada. Não faz sentido "coroar" o primeiro lugar com excesso de confiança.
+@@EX 3 | O efeito da semente | intermediário
+Rode o mini-AutoML do Exercício 2 com **5 sementes diferentes** (0 a 4), usando 30 tentativas em cada uma. Para cada semente, registre a **melhor nota** encontrada. Calcule a média e o desvio padrão das 5 melhores notas.
+
+*Pergunta:* por que relatar apenas uma execução pode enganar?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+
+X, y = load_wine(return_X_y=True)
+
+def melhor_da_busca(semente, n=30):
+    rng = np.random.default_rng(semente)
+    melhor = 0.0
+    for _ in range(n):
+        alg = rng.choice(["knn", "logistica", "floresta", "svm"])
+        if alg == "knn":
+            m = make_pipeline(StandardScaler(), KNeighborsClassifier(int(rng.integers(1, 30))))
+        elif alg == "logistica":
+            m = make_pipeline(StandardScaler(), LogisticRegression(C=10 ** rng.uniform(-3, 3), max_iter=3000))
+        elif alg == "floresta":
+            m = RandomForestClassifier(int(rng.integers(10, 150)), max_depth=int(rng.integers(2, 15)), random_state=0)
+        else:
+            m = make_pipeline(StandardScaler(), SVC(C=10 ** rng.uniform(-2, 3), gamma=10 ** rng.uniform(-4, 0)))
+        melhor = max(melhor, cross_val_score(m, X, y, cv=5).mean())
+    return float(melhor)
+
+notas = [melhor_da_busca(s) for s in range(5)]
+print("Melhores notas por semente:", [round(n, 3) for n in notas])
+print(f"Média = {np.mean(notas):.3f}  Desvio padrão = {np.std(notas):.3f}")
+```
+@@NOTE A melhor nota varia de uma semente para outra. Relatar só uma execução esconde essa variação. O correto é informar média e dispersão de várias execuções.
+@@EX 4 | Contando o tamanho do espaço de busca | básico
+Um espaço de busca tem três hiperparâmetros: `max_depth` com 10 valores possíveis, `min_samples_leaf` com 8 valores e `criterion` com 2 valores. (a) Quantas combinações existem? (b) Se cada avaliação por validação cruzada levar 3 segundos, quanto tempo levaria testar todas? (c) Quanto tempo se acrescentarmos um quarto hiperparâmetro com 10 valores?
+
+*Pergunta:* o que isso sugere sobre testar tudo à mão?
+@@SOL
+```python
+from math import prod
+
+espaco = {"max_depth": 10, "min_samples_leaf": 8, "criterion": 2}
+n = prod(espaco.values())
+print("Combinações:", n, "| tempo total:", n * 3, "s =", round(n * 3 / 60, 1), "min")
+
+espaco["max_features"] = 10
+n = prod(espaco.values())
+print("Com 4 hiperparâmetros:", n, "| tempo total:", n * 3, "s =", round(n * 3 / 3600, 2), "h")
+```
+@@NOTE O número de combinações cresce de forma multiplicativa. Acrescentar um único hiperparâmetro com 10 valores multiplicou o custo por 10. Em espaços reais, com dezenas de botões, testar tudo é impossível. Daí a necessidade de estratégias inteligentes de busca.
+@@PROJ Orçamento de busca e honestidade na avaliação | Cap01
+**Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)*, do repositório **UCI Machine Learning**, incluído no scikit-learn.
+
+**Contexto.** Uma equipe quer saber **quanto vale a pena buscar**: dobrar o número de tentativas do mini-AutoML melhora, de fato, o resultado em dados novos?
+
+**Atenção ética.** Os dados são de uso didático. O modelo que você construir **não é diagnóstico médico**.
+
+**Tarefas.**
+1. Separe 25% dos dados como **teste final** (`train_test_split`, com `stratify=y` e `random_state=0`). Não toque neles até o fim.
+2. Use o mini-AutoML do capítulo (algoritmos à sua escolha) para buscar, **apenas no conjunto de treino**, com orçamentos de **5, 10, 20, 40 e 80 tentativas**. Repita cada orçamento com 5 sementes.
+3. Para cada orçamento, registre a **melhor nota de validação cruzada** (média das 5 sementes).
+4. Treine novamente o melhor candidato de cada busca no treino completo e meça a acurácia no **teste final**. Registre a média das 5 sementes.
+5. Desenhe um gráfico com duas curvas (validação e teste) em função do orçamento.
+6. Escreva um parágrafo (5 a 8 linhas): o que o gráfico mostra? A nota de validação é uma estimativa honesta do desempenho final? Por quê?
+
+**Entregáveis.** Um notebook (ou script) comentado, o gráfico e o parágrafo de conclusões.
+@@SOL
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+
+def sortear(rng):
+    alg = rng.choice(["knn", "logistica", "floresta", "svm"])
+    if alg == "knn":
+        return make_pipeline(StandardScaler(), KNeighborsClassifier(int(rng.integers(1, 30))))
+    if alg == "logistica":
+        return make_pipeline(StandardScaler(), LogisticRegression(C=10 ** rng.uniform(-3, 3), max_iter=3000))
+    if alg == "floresta":
+        return RandomForestClassifier(int(rng.integers(10, 150)), max_depth=int(rng.integers(2, 15)), random_state=0)
+    return make_pipeline(StandardScaler(), SVC(C=10 ** rng.uniform(-2, 3), gamma=10 ** rng.uniform(-4, 0)))
+
+def buscar(orcamento, semente):
+    rng = np.random.default_rng(semente)
+    melhor, melhor_m = -1.0, None
+    for _ in range(orcamento):
+        m = sortear(rng)
+        nota = cross_val_score(m, Xtr, ytr, cv=5).mean()
+        if nota > melhor:
+            melhor, melhor_m = nota, m
+    melhor_m.fit(Xtr, ytr)
+    return float(melhor), float(melhor_m.score(Xte, yte))
+
+orcamentos = [5, 10, 20, 40, 80]
+val, teste = [], []
+for o in orcamentos:
+    r = [buscar(o, s) for s in range(5)]
+    val.append(np.mean([a for a, _ in r])); teste.append(np.mean([b for _, b in r]))
+    print(f"orçamento {o:3d}: validação = {val[-1]:.3f} | teste final = {teste[-1]:.3f}")
+
+plt.plot(orcamentos, val, "o-", label="validação cruzada (usada na busca)")
+plt.plot(orcamentos, teste, "s-", label="teste final (nunca visto)")
+plt.xscale("log"); plt.xlabel("nº de tentativas"); plt.ylabel("acurácia"); plt.legend()
+plt.title("Mais busca ajuda? Validação vs. teste"); plt.show()
+```
+@@RUBRICA
+- O teste final foi separado antes da busca e não foi usado para escolher nada.
+- A busca ocorreu apenas no conjunto de treino, com validação cruzada.
+- Cada orçamento foi repetido com várias sementes e os resultados foram resumidos por média.
+- O gráfico compara validação e teste, com eixos e legenda claros.
+- O texto discute o efeito de buscar mais, a diferença entre validação e teste e o risco de superajuste da busca.
+@@NOTE Na execução de referência, a nota de validação subiu de 0,971 (5 tentativas) para 0,988 (80), enquanto a do teste final foi de 0,948 para 0,957. Dois fatos se destacam. Primeiro, os ganhos são pequenos e diminuem: de 40 para 80 tentativas, quase nada muda. Segundo, a validação fica cerca de 3 pontos percentuais acima do teste final: ela é otimista, porque foi usada para escolher o vencedor. Por isso o teste final deve ficar intocado até o fim.
+@@ALEM
+- **UCI:** Wine Quality (vinhos portugueses, com notas de qualidade) e Adult (renda de adultos, com atributos categóricos).
+- **Kaggle:** Titanic (sobreviventes, com dados faltantes e categóricos).

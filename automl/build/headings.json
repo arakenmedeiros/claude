@@ -1,0 +1,227 @@
+[
+ {
+  "level": 1,
+  "text": "Apresentação",
+  "id": "h1"
+ },
+ {
+  "level": 3,
+  "text": "Em construção",
+  "id": "h2"
+ },
+ {
+  "level": 1,
+  "text": "Parte I — Fundamentos",
+  "id": "h3"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h4"
+ },
+ {
+  "level": 3,
+  "text": "1.1 Uma história para começar",
+  "id": "h5"
+ },
+ {
+  "level": 3,
+  "text": "1.2 O que é AutoML?",
+  "id": "h6"
+ },
+ {
+  "level": 3,
+  "text": "1.3 O caminho do dado até o modelo",
+  "id": "h7"
+ },
+ {
+  "level": 3,
+  "text": "1.4 Por que o AutoML existe?",
+  "id": "h8"
+ },
+ {
+  "level": 3,
+  "text": "1.5 O problema CASH",
+  "id": "h9"
+ },
+ {
+  "level": 3,
+  "text": "1.6 Uma breve história do AutoML",
+  "id": "h10"
+ },
+ {
+  "level": 3,
+  "text": "1.7 Quanto é \"automático\"?",
+  "id": "h11"
+ },
+ {
+  "level": 3,
+  "text": "1.8 O que o AutoML não faz",
+  "id": "h12"
+ },
+ {
+  "level": 3,
+  "text": "1.9 Preparando o ambiente",
+  "id": "h13"
+ },
+ {
+  "level": 3,
+  "text": "1.10 Dados deste capítulo: o conjunto Wine",
+  "id": "h14"
+ },
+ {
+  "level": 3,
+  "text": "1.11 Do jeito manual: testando três modelos",
+  "id": "h15"
+ },
+ {
+  "level": 3,
+  "text": "1.12 Do jeito automático: um mini-AutoML",
+  "id": "h16"
+ },
+ {
+  "level": 3,
+  "text": "1.13 Os três ingredientes de todo AutoML",
+  "id": "h17"
+ },
+ {
+  "level": 3,
+  "text": "1.14 Como este livro está organizado",
+  "id": "h18"
+ },
+ {
+  "level": 3,
+  "text": "Resumo do capítulo",
+  "id": "h19"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h20"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h21"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h22"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Por que precisamos de uma linha de base",
+  "id": "h23"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Ampliando o espaço de busca",
+  "id": "h24"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — O efeito da semente",
+  "id": "h25"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Contando o tamanho do espaço de busca",
+  "id": "h26"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h27"
+ },
+ {
+  "level": 4,
+  "text": "Orçamento de busca e honestidade na avaliação",
+  "id": "h28"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito dos exercícios",
+  "id": "h29"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h30"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
+  "id": "h31"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h32"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice B — Glossário",
+  "id": "h33"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice C — Guia rápido",
+  "id": "h34"
+ },
+ {
+  "level": 3,
+  "text": "Em construção",
+  "id": "h35"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h36"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h37"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Por que precisamos de uma linha de base",
+  "id": "h38"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Ampliando o espaço de busca",
+  "id": "h39"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — O efeito da semente",
+  "id": "h40"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Contando o tamanho do espaço de busca",
+  "id": "h41"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "id": "h42"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao AutoML",
+  "id": "h43"
+ },
+ {
+  "level": 3,
+  "text": "Orçamento de busca e honestidade na avaliação",
+  "id": "h44"
+ },
+ {
+  "level": 1,
+  "text": "Referências",
+  "id": "h45"
+ }
+]

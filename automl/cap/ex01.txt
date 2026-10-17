@@ -1,0 +1,269 @@
+MC: AutoML (aprendizado de máquina automatizado) é, essencialmente:
+a) um programa que dispensa totalmente a participação de pessoas.
+b) o conjunto de técnicas que automatiza as escolhas necessárias para construir um bom modelo.
+c) uma linguagem de programação própria para ciência de dados.
+d) um tipo específico de rede neural profunda.
+R: b | AutoML automatiza decisões como preparo, atributos, algoritmo e hiperparâmetros; a pessoa continua responsável pelo problema e pela decisão final.
+
+MC: Na analogia da cozinha, o "ajudante incansável" representa:
+a) o conjunto de dados de teste.
+b) o espaço de busca.
+c) o AutoML explorando muitas combinações de forma sistemática.
+d) o cozinheiro que prova o prato no final.
+R: c | O ajudante que testa centenas de receitas e investiga as mais promissoras corresponde ao AutoML.
+
+MC: Chamamos de hiperparâmetro:
+a) qualquer coluna da tabela de dados.
+b) um valor que o modelo aprende sozinho durante o treino.
+c) o rótulo que se deseja prever.
+d) um "botão de ajuste" do algoritmo, definido antes do treino.
+R: d | Hiperparâmetros, como a profundidade máxima de uma árvore, são definidos antes do treino; os parâmetros é que são aprendidos.
+
+MC: O que significa a sigla CASH?
+a) Seleção combinada de algoritmo e otimização de hiperparâmetros.
+b) Classificação automática de sistemas heterogêneos.
+c) Cálculo adaptativo de erros sistemáticos.
+d) Coleta automática de séries históricas.
+R: a | CASH vem de Combined Algorithm Selection and Hyperparameter optimization.
+
+MC: Por que o problema CASH não pode ser resolvido ajustando algoritmo e hiperparâmetros em separado?
+a) Porque os hiperparâmetros são iguais em todos os algoritmos.
+b) Porque a melhor escolha de algoritmo depende de quão bem cada um foi ajustado, e os botões variam conforme o algoritmo.
+c) Porque os algoritmos não aceitam ajustes.
+d) Porque a validação cruzada impede o ajuste.
+R: b | As duas escolhas são interdependentes: cada algoritmo traz seus próprios botões e seu desempenho depende deles.
+
+MC: O sistema que tratou o CASH de forma completa pela primeira vez, usando otimização bayesiana sobre a biblioteca WEKA, foi o:
+a) Auto-WEKA.
+b) TPOT.
+c) FLAML.
+d) AutoGluon.
+R: a | Thornton e colaboradores (2013) propuseram o Auto-WEKA, que formalizou o CASH.
+
+MC: O que significa dizer que "não existe almoço grátis" (No Free Lunch) em aprendizado de máquina?
+a) Todo algoritmo exige pagamento de licença.
+b) Algoritmos simples são sempre melhores.
+c) Nenhum algoritmo é o melhor para todos os problemas.
+d) Algoritmos complexos sempre vencem os simples.
+R: c | Wolpert (1996) mostrou que, sem suposições sobre o problema, nenhum algoritmo supera os demais em média.
+
+MC: Qual é a consequência prática do teorema do "almoço grátis não existe" para o AutoML?
+a) Basta escolher sempre o algoritmo mais recente.
+b) É preciso testar vários algoritmos nos dados em questão, e não apenas supor qual é o melhor.
+c) O AutoML se torna desnecessário.
+d) Só devemos usar redes neurais.
+R: b | Como o melhor algoritmo depende dos dados, a avaliação empírica é indispensável.
+
+MC: Em 1976, John Rice formulou o problema:
+a) da seleção de algoritmos.
+b) da maldição da dimensionalidade.
+c) da validação cruzada.
+d) do viés de confirmação.
+R: a | O problema da seleção de algoritmos pergunta qual algoritmo resolve melhor um dado problema.
+
+MC: O espaço de busca do AutoML é:
+a) o conjunto de todas as combinações de escolhas (algoritmos, hiperparâmetros etc.) que o sistema pode testar.
+b) a memória do computador usada no treino.
+c) o espaço físico dos servidores.
+d) a tabela de dados de treino.
+R: a | O espaço de busca reúne todas as configurações possíveis que a estratégia de busca pode explorar.
+
+MC: Quais são os três ingredientes de qualquer sistema de AutoML apresentados no capítulo?
+a) Dados, rótulos e métricas.
+b) Treino, teste e produção.
+c) Espaço de busca, estratégia de busca e estimativa de desempenho.
+d) Hardware, software e rede.
+R: c | Todo AutoML define o que pode escolher, como escolhe o próximo candidato e como avalia cada candidato.
+
+MC: No mini-AutoML do capítulo, qual era a estratégia de busca?
+a) Otimização bayesiana.
+b) Programação genética.
+c) Busca em grade.
+d) Sorteio aleatório de candidatos (busca aleatória).
+R: d | O mini-AutoML sorteava 40 candidatos do espaço CASH e guardava o melhor.
+
+MC: No mini-AutoML, a estimativa de desempenho de cada candidato foi feita por:
+a) validação cruzada de 5 partes.
+b) uma única divisão treino/teste fixa.
+c) sorteio do resultado.
+d) avaliação por especialistas humanos.
+R: a | Cada candidato foi avaliado com cross_val_score e cv=5.
+
+MC: Pipeline, em aprendizado de máquina, é:
+a) um tipo de rede neural.
+b) uma sequência de etapas que transforma dados brutos em previsões.
+c) um cano físico entre servidores.
+d) o conjunto de dados de teste.
+R: b | Um pipeline encadeia etapas como preparo, atributos e modelo.
+
+MC: Qual das etapas abaixo ainda depende fortemente de pessoas, segundo o capítulo?
+a) O ajuste de hiperparâmetros.
+b) A coleta e a limpeza dos dados.
+c) A combinação de modelos.
+d) A busca em grade.
+R: b | Coletar e limpar dados é a etapa mais trabalhosa e, hoje, ainda muito dependente de pessoas.
+
+MC: Em qual nível de automação (escala didática do capítulo) as ferramentas atuais costumam estar?
+a) Nível 0.
+b) Nível 5.
+c) Entre os níveis 2 e 3.
+d) Nível 4 sempre.
+R: c | A maioria das ferramentas faz busca inteligente e monta pipelines, mas não cobre todo o ciclo.
+
+MC: O AutoML "corrige" automaticamente dados com erros e vieses?
+a) Sim, sempre.
+b) Sim, mas só em dados tabulares.
+c) Sim, quando usa validação cruzada.
+d) Não: dados ruins produzem resultados ruins, apenas mais bem ajustados.
+R: d | O AutoML otimiza o que recebe; erros, vieses e vazamentos nos dados permanecem.
+
+MC: Por que "mais busca" nem sempre é melhor?
+a) Porque a busca nunca melhora o resultado.
+b) Porque buscar demais pode ajustar o modelo ao acaso dos dados de validação.
+c) Porque computadores se cansam.
+d) Porque a busca aleatória é proibida.
+R: b | Ao testar muitas configurações, a melhor nota de validação pode ser inflada pela sorte, o que é overfitting da busca.
+
+MC: Quem formulou, em 2010, o alerta de que o excesso de ajuste na seleção de modelos gera viés na avaliação de desempenho?
+a) Cawley e Talbot.
+b) Rice.
+c) Wolpert.
+d) Olson e Moore.
+R: a | Cawley e Talbot (2010) discutem o sobreajuste na seleção de modelos e o viés resultante na avaliação.
+
+MC: O TPOT, citado no capítulo, usa qual técnica para montar pipelines?
+a) Otimização bayesiana com processos gaussianos.
+b) Programação genética, inspirada na evolução.
+c) Busca em grade exaustiva.
+d) Aprendizado por reforço profundo.
+R: b | O TPOT evolui árvores de pipelines por programação genética (Olson e Moore, 2016).
+
+MC: O Auto-sklearn introduziu, no AutoML em Python, duas ideias importantes. Quais?
+a) Redes adversariais e difusão.
+b) Meta-aprendizado e combinação automática de modelos.
+c) Busca em grade e validação simples.
+d) Quantização e poda de redes.
+R: b | Feurer e colaboradores (2015) combinaram meta-aprendizado e ensembles sobre o scikit-learn.
+
+MC: Hyperband e BOHB se destacaram por:
+a) usar apenas busca em grade.
+b) projetar arquiteturas de redes neurais.
+c) eliminar a necessidade de dados de validação.
+d) acelerar a busca abandonando cedo as tentativas ruins.
+R: d | Ambos são métodos multifidelidade que gastam pouco com candidatos pouco promissores.
+
+MC: Qual projeto do capítulo ofereceu um benchmark aberto para comparar ferramentas de AutoML?
+a) AMLB.
+b) FLAML.
+c) DARTS.
+d) Optuna.
+R: a | O AMLB (Gijsbers et al., 2024) é um benchmark aberto e extensível para frameworks de AutoML.
+
+MC: Qual é a principal função da validação cruzada no mini-AutoML?
+a) Aumentar o número de colunas.
+b) Embaralhar os rótulos.
+c) Obter uma estimativa de desempenho mais confiável do que uma única divisão.
+d) Treinar o modelo mais rápido.
+R: c | Ao rodar várias divisões e tirar a média, reduz-se a dependência de uma divisão específica.
+
+MC: Qual alternativa descreve melhor o papel da pessoa em um projeto com AutoML?
+a) Apenas apertar um botão.
+b) Nenhum, pois o sistema decide tudo.
+c) Apenas escolher cores dos gráficos.
+d) Formular o problema, escolher a métrica, cuidar da ética e decidir se confia no resultado.
+R: d | As decisões de contexto, ética e confiança continuam humanas.
+
+MC: Se você usar a métrica errada, o AutoML:
+a) detectará o erro e trocará a métrica.
+b) otimizará a métrica errada com grande eficiência.
+c) deixará de funcionar.
+d) usará automaticamente a acurácia.
+R: b | O AutoML otimiza o que foi mandado otimizar; a escolha da métrica é responsabilidade humana.
+
+MC: No conjunto Wine usado no capítulo, qual é a tarefa?
+a) Agrupar vinhos sem usar rótulos.
+b) Prever o preço do vinho.
+c) Classificar a categoria do vinho a partir de 13 medidas químicas.
+d) Detectar vinhos falsificados.
+R: c | São 178 vinhos, 13 medidas químicas e 3 categorias: um problema de classificação.
+
+MC: Para que serve o StandardScaler usado antes do k-vizinhos?
+a) Para colocar as colunas na mesma escala.
+b) Para aumentar o número de vizinhos.
+c) Para remover os rótulos.
+d) Para escolher o algoritmo.
+R: a | O k-vizinhos usa distâncias; colunas com números grandes dominariam o cálculo sem padronização.
+
+MC: Qual afirmação sobre o AutoML é um mito, segundo o capítulo?
+a) "O AutoML muda o trabalho do especialista."
+b) "O AutoML tem custo de tempo e energia."
+c) "O AutoML sempre vence um modelo feito à mão."
+d) "O AutoML registra cada tentativa da busca."
+R: c | Em dados pequenos ou com forte conhecimento especializado, um bom modelo manual pode competir.
+
+MC: Qual das opções NÃO é uma razão para a existência do AutoML?
+a) Faltam especialistas em aprendizado de máquina.
+b) O espaço de busca é gigantesco.
+c) A busca automática registra tentativas, favorecendo a reprodutibilidade.
+d) Algoritmos de aprendizado de máquina nunca precisam de ajustes.
+R: d | Justamente porque os algoritmos precisam de ajustes, e em grande número, o AutoML é útil.
+
+DISC: Explique com suas palavras, usando uma analogia do cotidiano diferente da cozinha, o que é AutoML.
+R: AutoML é automatizar a busca pelas melhores escolhas na construção de um modelo. Analogia: ao escolher um plano de celular, em vez de comparar 100 planos à mão, um aplicativo compara tudo e mostra os três melhores; você decide.
+
+DISC: Defina hiperparâmetro e dê dois exemplos de algoritmos diferentes com seus hiperparâmetros.
+R: Hiperparâmetro é um botão de ajuste definido antes do treino. Exemplos: profundidade máxima e mínimo de amostras por folha na árvore de decisão; número de vizinhos e tipo de peso no k-vizinhos.
+
+DISC: O que é o problema CASH e por que ele é considerado difícil?
+R: É a seleção combinada de algoritmo e de seus hiperparâmetros. É difícil porque o espaço de busca é grande, tem estrutura condicional (cada algoritmo tem seus botões) e cada avaliação exige treinar um modelo, o que é caro.
+
+DISC: Explique o significado do teorema "No Free Lunch" e sua relação com a necessidade do AutoML.
+R: Nenhum algoritmo é o melhor para todos os problemas. Como o melhor depende dos dados, é preciso testar e comparar empiricamente, e o AutoML automatiza essa comparação em larga escala.
+
+DISC: Descreva as sete etapas da linha de montagem do aprendizado de máquina apresentadas no capítulo e indique quais o AutoML mais automatiza.
+R: Coletar e limpar; preparar; criar e selecionar atributos; escolher o algoritmo; ajustar hiperparâmetros; combinar modelos; avaliar e implantar. O AutoML clássico automatiza principalmente de atributos até a combinação de modelos, com foco em algoritmo e hiperparâmetros.
+
+DISC: Por que o AutoML não elimina a necessidade de especialistas? Cite pelo menos três tarefas que continuam humanas.
+R: Porque ele otimiza o que lhe é pedido. Seguem humanas: formular o problema, definir a métrica adequada, verificar a qualidade e o viés dos dados, interpretar resultados e decidir se o modelo deve ser usado.
+
+DISC: Quais são os três ingredientes de qualquer sistema de AutoML? Identifique-os no mini-AutoML do capítulo.
+R: Espaço de busca (4 algoritmos com seus hiperparâmetros), estratégia de busca (sorteio aleatório) e estimativa de desempenho (validação cruzada de 5 partes).
+
+DISC: Explique por que dados ruins produzem modelos ruins mesmo com AutoML. Dê um exemplo.
+R: O AutoML ajusta o modelo aos dados disponíveis. Se os dados têm erros ou vieses (por exemplo, histórico de crédito que excluía um grupo), o modelo aprende e reproduz o problema, só que com melhor ajuste.
+
+DISC: O que é overfitting da busca e como ele pode ocorrer em um AutoML que testa milhares de configurações?
+R: É escolher uma configuração cuja boa nota de validação se deve em parte ao acaso. Ao testar muitas configurações, a melhor nota tende a ser otimista; o desempenho em dados novos costuma ser pior que o observado na validação.
+
+DISC: Compare a abordagem manual e a automática para escolher um algoritmo, destacando vantagens e limitações de cada uma.
+R: Manual: usa intuição e contexto, mas testa poucas opções, é lenta e difícil de reproduzir. Automática: testa muitas opções, registra tudo e é reproduzível, mas tem custo computacional e pode superajustar à validação; não substitui o julgamento humano.
+
+DISC: Resuma a contribuição do Auto-WEKA e do Auto-sklearn para o campo do AutoML.
+R: O Auto-WEKA formalizou e resolveu o CASH com otimização bayesiana sobre o WEKA. O Auto-sklearn levou a ideia ao ecossistema scikit-learn e acrescentou meta-aprendizado e combinação automática de modelos.
+
+DISC: Explique a ideia central do TPOT e por que a evolução é uma metáfora útil para a busca de pipelines.
+R: O TPOT representa pipelines como árvores e os evolui com programação genética: seleciona os melhores, recombina e muda partes, repetindo por gerações. Como na evolução, boas soluções se propagam e variações exploram novas possibilidades.
+
+DISC: Por que métodos como Hyperband economizam tempo em relação a treinar todos os candidatos até o fim?
+R: Eles avaliam os candidatos com pouco orçamento no início e descartam cedo os que parecem ruins, concentrando o orçamento nos promissores, em vez de gastar o mesmo tempo com todos.
+
+DISC: Cite três custos (além de dinheiro) associados ao uso intensivo de AutoML e comente um deles.
+R: Tempo de computação, consumo de energia e emissões associadas, e dificuldade de auditar milhares de tentativas. Exemplo: treinar milhares de modelos consome energia significativa, o que motiva ferramentas econômicas e relatórios de orçamento computacional.
+
+DISC: O que é validação cruzada e por que ela foi usada no mini-AutoML em vez de uma única divisão treino/teste?
+R: É dividir os dados em partes, treinando em algumas e testando na restante, em rodízio, e tirar a média. Reduz a dependência de uma divisão específica e dá uma estimativa mais estável do desempenho.
+
+DISC: Interprete a fórmula do CASH em palavras, explicando o papel da média sobre k divisões.
+R: Procura-se o par (algoritmo, ajustes) que minimize o erro médio em dados de validação. A média sobre k divisões evita que a escolha dependa de uma divisão favorável por sorte.
+
+DISC: Por que fixar a semente aleatória e relatar mais de uma execução é uma boa prática em AutoML?
+R: Fixar a semente permite reproduzir o experimento; repetir com sementes diferentes mostra a variabilidade dos resultados, evitando conclusões baseadas em uma única execução afortunada.
+
+DISC: Discuta o mito "o AutoML sempre vence modelos feitos à mão". Em que situações isso pode não valer?
+R: Em dados pequenos, com forte conhecimento de domínio embutido em atributos ou restrições específicas, um modelo manual bem pensado pode igualar ou superar o AutoML. A comparação deve ser feita com protocolo justo.
+
+DISC: Proponha um problema do seu cotidiano ou trabalho em que o AutoML poderia ajudar. Indique o que a pessoa ainda precisaria decidir.
+R: Exemplo: prever cancelamento de clientes de uma academia. O AutoML testaria algoritmos e ajustes; a pessoa decidiria a definição de cancelamento, a métrica (por exemplo, revocação), a qualidade dos dados, o uso ético da previsão e a ação resultante.
+
+DISC: Por que o capítulo afirma que o nível 5 de automação "ainda não existe na prática"? Que tarefas ainda exigem pessoas?
+R: Porque ninguém ainda automatiza com segurança o ciclo todo, da definição do problema à decisão final. Continuam humanas a formulação do problema, a ética, a validação do contexto e a responsabilização pelas decisões.
