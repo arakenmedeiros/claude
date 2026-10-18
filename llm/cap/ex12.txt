@@ -3,6 +3,7 @@ MC: Qual problema é mais adequado para resolver com RAG do que com ajuste fino?
 - Fazer o modelo adotar sempre o tom de voz da instituição.
 - Padronizar o formato de uma saída em milhares de requisições.
 - Reduzir o tamanho do prompt eliminando os exemplos.
+- Resumir textos longos em poucas linhas, sem fonte alguma.
 J: Conhecimento que muda ou que exige fonte citável deve ficar em documentos recuperados; o ajuste é mais indicado para comportamento (estilo, formato, critério).
 
 MC: Qual é o primeiro passo recomendado antes de decidir ajustar um modelo?
@@ -10,6 +11,7 @@ MC: Qual é o primeiro passo recomendado antes de decidir ajustar um modelo?
 - Escolher o maior valor possível de r para o adaptador.
 - Misturar o conjunto de teste ao de treino para ter mais dados.
 - Quantizar o modelo para 2 bits.
+- Aumentar o número de camadas do modelo antes de qualquer teste.
 J: Ajustar só vale se superar a linha de base medida; muitos problemas se resolvem com especificação ou recuperação melhores.
 
 MC: Na conta de custo da Seção 12.5, o que determina se o ajuste se paga?
@@ -17,6 +19,7 @@ MC: Na conta de custo da Seção 12.5, o que determina se o ajuste se paga?
 - Apenas o número de camadas do modelo.
 - O idioma em que o prompt foi escrito.
 - A cor do gráfico de perda.
+- A cor das curvas usadas no relatório de avaliação.
 J: O ponto de equilíbrio é o custo do ajuste dividido pela economia por requisição; tarefas de baixo volume ou instáveis raramente compensam.
 
 MC: Qual formato descreve um exemplo típico de ajuste supervisionado?
@@ -24,6 +27,7 @@ MC: Qual formato descreve um exemplo típico de ajuste supervisionado?
 - Apenas uma lista de palavras soltas.
 - Somente os pesos do modelo em texto.
 - Um gráfico de perda por época.
+- Uma imagem do modelo em formato PNG.
 J: Os registros instrução-resposta (ou listas de mensagens com papéis) são o formato mais comum para ajuste de modelos de linguagem.
 
 MC: Por que usar o mesmo molde de conversa (chat template) no ajuste e no uso?
@@ -31,6 +35,7 @@ MC: Por que usar o mesmo molde de conversa (chat template) no ajuste e no uso?
 - Porque o molde aumenta o número de parâmetros treináveis.
 - Porque o molde substitui a necessidade de dados de validação.
 - Porque o molde impede qualquer esquecimento.
+- Porque o molde é cobrado como imposto pelo provedor.
 J: O formato do texto que chega ao modelo faz parte do que ele aprendeu; divergências entre ajuste e inferência costumam prejudicar.
 
 MC: O que é vazamento (leakage) entre treino e teste?
@@ -38,6 +43,7 @@ MC: O que é vazamento (leakage) entre treino e teste?
 - O modelo esquecer a tarefa original.
 - A GPU perder memória durante o treino.
 - O adaptador ser mesclado aos pesos.
+- O modelo ser quantizado em blocos de 64 valores.
 J: Com vazamento, o teste deixa de medir generalização; é comum em textos repetidos e duplicatas.
 
 MC: No experimento do capítulo, por que a divisão aleatória deixou 25% do teste com duplicatas no treino?
@@ -45,6 +51,7 @@ MC: No experimento do capítulo, por que a divisão aleatória deixou 25% do tes
 - Porque o conjunto de teste era muito grande.
 - Porque o hash do texto foi usado na divisão aleatória.
 - Porque as mensagens estavam em outra língua.
+- Porque o teste tinha letras maiúsculas e minúsculas misturadas.
 J: Com muitas duplicatas, dividir ao acaso as distribui entre treino e teste; a divisão por hash do texto normalizado as mantém juntas.
 
 MC: Qual cuidado de privacidade deve vir antes do treinamento?
@@ -52,6 +59,7 @@ MC: Qual cuidado de privacidade deve vir antes do treinamento?
 - Aumentar a taxa de aprendizado.
 - Aumentar o posto r do adaptador.
 - Treinar por mais épocas para esquecer os dados.
+- Escolher uma taxa de aprendizado maior, sem outros cuidados.
 J: Dados pessoais podem ser memorizados e reproduzidos; a LGPD pede finalidade, minimização e base legal.
 
 MC: Por que um detector de dados pessoais baseado em expressões regulares é insuficiente?
@@ -59,6 +67,7 @@ MC: Por que um detector de dados pessoais baseado em expressões regulares é in
 - Ele sempre remove textos inteiros.
 - Ele depende de GPU.
 - Ele altera os pesos do modelo.
+- Ele sempre acerta, pois conhece todos os formatos de dados.
 J: Regras cobrem formatos conhecidos (CPF, e-mail, telefone); o restante exige ferramentas especializadas e revisão por amostragem.
 
 MC: Qual é a memória típica por parâmetro no treino completo com Adam em precisão mista, segundo o Capítulo 5?
@@ -66,6 +75,7 @@ MC: Qual é a memória típica por parâmetro no treino completo com Adam em pre
 - Cerca de 2 bytes.
 - Cerca de 0,5 byte.
 - Cerca de 64 bytes.
+- Cerca de 1 byte.
 J: Pesos (2), gradientes (2), cópia mestre (4) e dois momentos do Adam (4 + 4) somam 16 bytes por parâmetro, sem ativações.
 
 MC: Qual a principal ideia dos métodos de ajuste eficiente em parâmetros?
@@ -73,6 +83,7 @@ MC: Qual a principal ideia dos métodos de ajuste eficiente em parâmetros?
 - Treinar todos os parâmetros com taxa menor.
 - Apagar as camadas finais do modelo.
 - Duplicar o modelo para cada exemplo.
+- Treinar todos os pesos e guardar uma cópia por exemplo.
 J: Sem gradientes nem estado do otimizador para a base, a memória cai muito e o adaptador fica pequeno.
 
 MC: Qual a diferença entre adaptadores de Houlsby et al. e LoRA quanto à latência na inferência?
@@ -80,6 +91,7 @@ MC: Qual a diferença entre adaptadores de Houlsby et al. e LoRA quanto à latê
 - Os dois eliminam toda a computação da base.
 - LoRA exige sempre mais camadas que os adaptadores.
 - Nenhum dos dois pode ser usado em Transformers.
+- Os dois exigem sempre o mesmo número de camadas extras.
 J: Como a correção de LoRA é uma soma de matrizes, ela pode ser mesclada, mantendo a arquitetura original.
 
 MC: Qual é a ideia do prefix tuning?
@@ -87,6 +99,7 @@ MC: Qual é a ideia do prefix tuning?
 - Reescrever o vocabulário do tokenizador.
 - Quantizar os pesos em blocos de 64.
 - Remover o prefixo de cada frase do corpus.
+- Apagar a camada de atenção e manter só o MLP.
 J: O prefixo é um conjunto de parâmetros treináveis que condiciona a geração sem alterar os pesos do modelo.
 
 MC: Na formulação de LoRA, W' = W + (α/r)·B·A, qual é a forma de B quando W é d × k?
@@ -94,6 +107,7 @@ MC: Na formulação de LoRA, W' = W + (α/r)·B·A, qual é a forma de B quando 
 - r × k.
 - d × k.
 - k × r.
+- k × k.
 J: B tem d linhas e r colunas; A tem r linhas e k colunas, de modo que BA tem forma d × k.
 
 MC: Por que B é inicializado com zeros em LoRA?
@@ -101,6 +115,7 @@ MC: Por que B é inicializado com zeros em LoRA?
 - Para impedir que A seja treinado.
 - Para que o gradiente seja sempre zero.
 - Para reduzir r a 1.
+- Para reduzir o tamanho do vocabulário.
 J: Com B = 0, ΔW = 0 no início; A aleatório garante que B receba gradiente não nulo e o aprendizado comece.
 
 MC: Se A e B fossem ambos inicializados com zeros, o que aconteceria?
@@ -108,6 +123,7 @@ MC: Se A e B fossem ambos inicializados com zeros, o que aconteceria?
 - O modelo aprenderia mais rápido.
 - O posto da correção aumentaria.
 - A mesclagem deixaria de funcionar.
+- A correção ficaria sempre idêntica à da base, mas mais rápida.
 J: O gradiente de B depende de A e o de A depende de B; com os dois em zero, as duas parcelas são nulas.
 
 MC: Quantos parâmetros treináveis LoRA adiciona a uma matriz d × k com posto r?
@@ -115,6 +131,7 @@ MC: Quantos parâmetros treináveis LoRA adiciona a uma matriz d × k com posto 
 - d·k.
 - r·d·k.
 - d + k + r.
+- 2·r.
 J: B tem d·r e A tem r·k elementos, somando r(d + k).
 
 MC: Em quais matrizes Hu et al. aplicaram LoRA nos experimentos principais do artigo original?
@@ -122,6 +139,7 @@ MC: Em quais matrizes Hu et al. aplicaram LoRA nos experimentos principais do ar
 - Apenas nos embeddings.
 - Somente na camada final de saída.
 - Em nenhuma matriz, apenas nos vieses.
+- Apenas nas camadas de normalização.
 J: O artigo adapta pesos de atenção e mantém o restante congelado; práticas posteriores estendem a todas as camadas lineares.
 
 MC: No experimento da camada única, o que ocorreu quando r era menor que o posto da mudança verdadeira?
@@ -129,6 +147,7 @@ MC: No experimento da camada única, o que ocorreu quando r era menor que o post
 - O erro foi zero em qualquer r.
 - O treino divergiu para infinito.
 - A saída ficou idêntica à base.
+- O erro ficou idêntico ao de r maior, pois r não importa.
 J: Uma matriz de posto no máximo r não representa uma mudança de posto maior; com r = 1 e 2 e posto 3, os erros ficaram em 64% e 39%.
 
 MC: O que o experimento mostrou ao aumentar r de 3 para 8 na camada única?
@@ -136,6 +155,7 @@ MC: O que o experimento mostrou ao aumentar r de 3 para 8 na camada única?
 - O erro cresceu muito com r maior.
 - A saída passou a ter posto 24.
 - O modelo deixou de ser congelado.
+- O erro em ΔW passou a crescer de forma linear com r.
 J: O r necessário é o posto efetivo da mudança; além disso, o ganho é nulo e o custo cresce.
 
 MC: Como o experimento verificou que as fórmulas dos gradientes de LoRA estavam corretas?
@@ -143,6 +163,7 @@ MC: Como o experimento verificou que as fórmulas dos gradientes de LoRA estavam
 - Treinando por mil épocas e observando a perda.
 - Comparando com o tamanho do arquivo do modelo.
 - Usando apenas a perda de validação.
+- Contando quantas vezes cada peso foi atualizado.
 J: O gradiente numérico (f(x+h) − f(x−h))/2h deve coincidir com o analítico; é uma verificação padrão.
 
 MC: O que significa dizer que o ajuste produziu esquecimento catastrófico?
@@ -150,6 +171,7 @@ MC: O que significa dizer que o ajuste produziu esquecimento catastrófico?
 - O modelo passou a ter mais parâmetros.
 - A perda de treino chegou a zero.
 - O adaptador foi mesclado.
+- O modelo passar a recusar qualquer pergunta.
 J: Mede-se avaliando a tarefa original antes e depois do ajuste, em conjunto de teste fixo.
 
 MC: Qual vantagem estrutural LoRA tem para recuperar o modelo original?
@@ -157,6 +179,7 @@ MC: Qual vantagem estrutural LoRA tem para recuperar o modelo original?
 - O adaptador impede que o modelo mude.
 - O modelo original é apagado ao final.
 - A perda original sempre diminui.
+- A taxa de aprendizado ser reduzida a cada época.
 J: Como W não é alterado, retirar a correção restaura exatamente o comportamento anterior.
 
 MC: Qual foi a conclusão do experimento sobre esquecimento com LoRA?
@@ -164,6 +187,7 @@ MC: Qual foi a conclusão do experimento sobre esquecimento com LoRA?
 - LoRA eliminou totalmente o esquecimento.
 - O ajuste completo não esqueceu nada.
 - O esquecimento não pôde ser medido.
+- O esquecimento foi inferior a 1% nos dois métodos.
 J: A perplexidade original passou de 2,415 para 5,180 com LoRA e 6,229 no ajuste completo, em uma única configuração minúscula.
 
 MC: Qual estratégia reduziu o esquecimento no experimento?
@@ -171,6 +195,7 @@ MC: Qual estratégia reduziu o esquecimento no experimento?
 - Aumentar a taxa de aprendizado.
 - Remover a validação.
 - Treinar sem adaptadores nem dados novos.
+- Reduzir a validação a um único exemplo.
 J: Com 50% de dados antigos, a perplexidade original ficou em 2,553, perto do base, ao custo de um ganho menor na tarefa nova.
 
 MC: Como se verifica numericamente a mesclagem de um adaptador?
@@ -178,6 +203,7 @@ MC: Como se verifica numericamente a mesclagem de um adaptador?
 - Contando os arquivos gravados no disco.
 - Comparando apenas o número de parâmetros.
 - Verificando se r é par.
+- Calculando só o tamanho do arquivo do adaptador.
 J: As saídas devem coincidir, dentro do erro de ponto flutuante (da ordem de 1e-14 no experimento).
 
 MC: Na quantização absmax de um bloco, qual é o erro máximo por elemento?
@@ -185,6 +211,7 @@ MC: Na quantização absmax de um bloco, qual é o erro máximo por elemento?
 - O dobro da escala, 2s.
 - Sempre zero.
 - O número de elementos do bloco.
+- A soma dos valores absolutos do bloco.
 J: Cada valor é arredondado para o inteiro mais próximo, então o erro é no máximo meio passo (s/2), sem contar saturação.
 
 MC: Por que blocos menores ajudam quando há valores extremos (outliers)?
@@ -192,6 +219,7 @@ MC: Por que blocos menores ajudam quando há valores extremos (outliers)?
 - Porque blocos menores usam menos constantes de escala.
 - Porque blocos menores aumentam r.
 - Porque blocos menores removem os extremos.
+- Porque blocos menores aumentam o número de bits por peso.
 J: No teste com outliers, o erro relativo em 8 bits foi de 1,0% com bloco 64 e 7,2% com bloco 4096.
 
 MC: Qual a ideia do QLoRA descrita por Dettmers et al. (2023)?
@@ -199,6 +227,7 @@ MC: Qual a ideia do QLoRA descrita por Dettmers et al. (2023)?
 - Treinar todos os pesos em 2 bits.
 - Usar adaptadores sem base.
 - Substituir o otimizador por uma tabela.
+- Quantizar apenas os adaptadores e manter a base em 32 bits.
 J: A economia vem de guardar a base em 4 bits; os adaptadores recebem os gradientes e compensam parte do erro de quantização.
 
 MC: O que é a dupla quantização citada no QLoRA?
@@ -206,6 +235,7 @@ MC: O que é a dupla quantização citada no QLoRA?
 - Quantizar o modelo duas vezes em sequência com a mesma escala.
 - Treinar dois adaptadores ao mesmo tempo.
 - Duplicar o tamanho do bloco a cada época.
+- Substituir toda a base por pesos aleatórios antes do treino.
 J: Para blocos de 64, os autores contam a redução de 0,5 para cerca de 0,127 bit por parâmetro nas constantes.
 
 DISC[C]: Explique por que o ajuste fino é indicado para ensinar comportamento e não para ensinar fatos que mudam, e o que usar para esses fatos.

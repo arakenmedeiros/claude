@@ -1,0 +1,406 @@
+MC: Qual das afirmações descreve melhor a diferença entre injeção de prompt direta e indireta?
+= Na direta, a instrução maliciosa vem do usuário; na indireta, vem de um conteúdo lido pelo sistema, como documento, página ou e-mail.
+- Na direta, o ataque altera os pesos; na indireta, apenas o prompt.
+- A direta só ocorre em modelos locais; a indireta só em serviços de nuvem.
+- A direta exige acesso administrativo ao servidor onde o modelo executa, enquanto a indireta dispensa qualquer acesso desse tipo ao sistema.
+- As duas são idênticas e diferem apenas no nome.
+J: Na indireta, o autor do conteúdo é o atacante e o usuário pode ser inocente, o que amplia a superfície de ataque, especialmente em RAG e agentes.
+
+MC: Por que a segurança de uma aplicação com LLM não pode depender de o modelo "se comportar"?
+= Porque instruções e dados chegam ao modelo como texto no mesmo contexto, sem separação garantida entre eles.
+- Porque os modelos são sempre programados para obedecer ao último usuário.
+- Porque o modelo guarda, em seus pesos, as senhas de todos os usuários que já conversaram com ele e as revela quando pedido.
+- Porque modelos não aceitam delimitadores.
+- Porque a segurança é responsabilidade apenas do provedor.
+J: Sem separação garantida, o controle precisa estar também fora do modelo (privilégios, validações, filtros e aprovação).
+
+MC: O que significa tratar o prompt de sistema como se pudesse ser lido por qualquer pessoa?
+= Não colocar nele segredos, como chaves e credenciais, nem regras cuja divulgação cause dano.
+- Publicá-lo no início de todas as respostas, para que ninguém possa acusar a equipe de esconder instruções dos usuários.
+- Escrevê-lo apenas em inglês.
+- Criptografá-lo dentro do próprio prompt.
+- Deixá-lo vazio.
+J: Vazamento do prompt é um ataque comum e nem sempre evitável; por isso ele não deve conter segredos.
+
+MC: Em uma exfiltração por imagem em Markdown, como os dados saem do sistema?
+= Estão embutidos no endereço da imagem, e a interface, ao renderizá-la, faz uma requisição que os entrega ao atacante.
+- O modelo envia um e-mail sem nenhuma ferramenta.
+- A imagem altera os pesos do modelo.
+- O navegador apaga os dados do servidor.
+- O atacante lê diretamente a memória do processador do servidor onde o modelo está executando, sem usar a interface.
+J: Um filtro de saída que remove links fora de uma lista de domínios confiáveis bloqueia esse caminho.
+
+MC: Qual é a principal medida contra o risco de ferramentas com privilégios excessivos?
+= Conceder apenas as ferramentas necessárias ao papel e validar em código os argumentos de cada chamada.
+- Pedir ao modelo que use as ferramentas com cuidado.
+- Dar todas as ferramentas e confiar em um aviso no prompt.
+- Esconder os nomes das ferramentas no prompt, confiando que o atacante nunca descobrirá como invocá-las por outros meios.
+- Usar um modelo maior.
+J: O privilégio mínimo limita o dano mesmo quando a injeção é bem-sucedida.
+
+MC: Por que a verificação `"aurora.example" in destino` é insegura para validar o domínio de e-mail?
+= Porque aceita domínios de terceiros que apenas contêm esse texto, como "aurora.example.coleta.example".
+- Porque diferencia maiúsculas e minúsculas.
+- Porque só funciona com endereços do Brasil.
+- Porque é computacionalmente lenta demais para ser executada a cada mensagem em um serviço com muitos usuários simultâneos.
+- Porque rejeita todos os domínios internos.
+J: O correto é comparar o domínio inteiro (a parte após o último @) com a lista permitida.
+
+MC: Em que consiste o envenenamento de uma base de RAG?
+= Inserir conteúdo falso ou malicioso que pareça legítimo e seja recuperado para as perguntas de interesse do atacante.
+- Reduzir o tamanho do modelo até que ele pare de funcionar.
+- Aumentar a temperatura de amostragem.
+- Treinar o modelo novamente com mais dados verdadeiros e revisados, de modo que as fontes falsas deixem de existir.
+- Trocar o tokenizador do índice.
+J: O modelo pode responder de forma correta com base em uma fonte ruim, e por isso procedência e controle de escrita são necessários.
+
+MC: O que um manifesto de procedência com hashes de documentos consegue, e o que não consegue?
+= Detecta documentos de fora e adulterações, mas não protege contra documento autorizado que já nasça errado ou manifesto comprometido.
+- Garante que todo documento autorizado seja verdadeiro.
+- Impede qualquer injeção de prompt futura, pois o hash dos documentos também protege o contexto enviado ao modelo.
+- Substitui o controle de acesso e a revisão de conteúdo.
+- Protege também os pesos do modelo contra qualquer alteração.
+J: O hash prova que o conteúdo não mudou em relação ao registrado, não que o conteúdo registrado seja correto.
+
+MC: Por que ler um arquivo de modelo serializado com pickle de origem desconhecida é perigoso?
+= Porque a leitura pode executar código arbitrário embutido no arquivo.
+- Porque o formato apaga os pesos do modelo assim que o arquivo é aberto, tornando o carregamento impossível de repetir.
+- Porque o arquivo sempre contém vírus conhecidos.
+- Porque o Python proíbe a leitura.
+- Porque o formato é pesado demais para a memória.
+J: Ler dados serializados desse formato equivale a executar código do arquivo; use fontes verificadas e formatos que guardem apenas tensores.
+
+MC: O que é defesa em profundidade?
+= Combinar camadas imperfeitas e de naturezas diferentes, de modo que o que escapa de uma seja barrado por outra, e limitar o dano.
+- Usar um único filtro muito sofisticado, treinado com milhares de exemplos, no lugar de várias medidas independentes.
+- Instalar o mesmo filtro várias vezes.
+- Confiar apenas na revisão humana.
+- Esconder o sistema dos usuários.
+J: Camadas redundantes somam pouco; camadas complementares reduzem o resíduo, mas nenhuma é completa.
+
+MC: Na simulação do capítulo, a aprovação humana não reduziu a taxa depois do privilégio mínimo. O que isso ilustra?
+= Que camadas redundantes não somam: o privilégio mínimo já bloqueava as ações que a pessoa revisaria.
+- Que a revisão humana nunca funciona.
+- Que o privilégio mínimo é desnecessário.
+- Que o simulador está errado.
+- Que a taxa de sucesso é sempre zero.
+J: Cada camada deve cobrir falhas que as outras não cobrem; o ganho marginal depende do que já foi barrado.
+
+MC: O que significa uma taxa de sucesso do ataque igual a zero em 50 tentativas?
+= Que a taxa verdadeira pode ainda ser de alguns por cento (o intervalo de Wilson vai até cerca de 7%), e só vale para os casos testados.
+- Que o sistema é totalmente seguro contra esse tipo de ataque, pois nenhuma tentativa conseguiu atravessar as defesas.
+- Que o ataque é impossível.
+- Que o intervalo de confiança é zero.
+- Que não é preciso testar novamente.
+J: Ausência de sucesso em poucas tentativas não prova ausência de vulnerabilidade.
+
+MC: Por que um filtro de entrada por padrões tem custo para o uso legítimo?
+= Porque pode recusar mensagens inocentes que contenham as mesmas palavras ou expressões dos ataques.
+- Porque exige reiniciar o servidor a cada mensagem recebida para recarregar a lista de padrões suspeitos.
+- Porque aumenta o número de parâmetros do modelo.
+- Porque apaga o histórico do usuário.
+- Porque só aceita mensagens em inglês.
+J: É preciso medir a fração de mensagens legítimas respondidas junto com a taxa de sucesso do ataque.
+
+MC: Qual cuidado deve acompanhar o intervalo de confiança calculado sobre um catálogo de ataques?
+= Lembrar que o catálogo foi escolhido pela equipe, e não é amostra aleatória de todos os ataques possíveis.
+- Nenhum, pois o intervalo calculado já cobre todos os ataques possíveis, inclusive os que a equipe nunca imaginou.
+- Usar sempre o mesmo catálogo para sempre.
+- Divulgar o catálogo aos atacantes.
+- Calcular o intervalo só com uma tentativa.
+J: A taxa baixa vale contra os casos testados; atacantes criativos usam casos imprevistos.
+
+MC: Qual o objetivo da negação de serviço por custo em serviços cobrados por tokens?
+= Fazer o sistema gastar orçamento com pedidos grandes ou repetidos, sem necessariamente derrubá-lo.
+- Apagar os pesos do modelo.
+- Alterar a licença do modelo para que o provedor deixe de poder cobrar pelo uso do serviço contratado.
+- Reduzir o tamanho da janela de contexto.
+- Reidentificar usuários.
+J: Limites de pedidos, de tokens por pedido e de orçamento por usuário reduzem o dano.
+
+MC: Segundo a visão geral da LGPD apresentada no capítulo, qual afirmação sobre bases legais está correta?
+= O consentimento é uma entre várias bases legais, e a base adequada depende do caso.
+- O consentimento é a única base legal possível.
+- Nenhum tratamento exige base legal quando a aplicação usa IA, porque a lei trata apenas de bancos de dados tradicionais.
+- A base legal é escolhida pelo modelo de IA.
+- Bases legais só valem para dados de saúde.
+J: A lei prevê várias bases (por exemplo, obrigação legal, execução de contrato, políticas públicas, tutela da saúde, legítimo interesse), sem hierarquia entre consentimento e as demais; consulte o texto vigente e profissional de direito.
+
+MC: Qual princípio da LGPD se traduz em mascarar dados pessoais antes de enviá-los a um serviço externo?
+= Necessidade (minimização): usar só o mínimo pertinente e proporcional.
+- Livre acesso, que trata de permitir que o titular consulte os próprios dados de forma facilitada.
+- Responsabilização apenas.
+- Qualidade dos dados, apenas.
+- Não discriminação, apenas.
+J: A minimização reduz o que é exposto; ela complementa, e não substitui, segurança e finalidade.
+
+MC: Qual a diferença central entre pseudonimização e anonimização?
+= Na pseudonimização a reidentificação ainda é possível com uma chave ou dados auxiliares; a anonimização torna a reidentificação inviável por meios razoáveis.
+- São sinônimos.
+- A pseudonimização é irreversível; a anonimização é reversível.
+- A anonimização só vale para imagens.
+- A pseudonimização apaga os dados.
+J: Por isso dados pseudonimizados continuam sendo tratados como dados pessoais para fins de proteção.
+
+MC: No experimento de detecção de dados pessoais, qual tipo teve a pior revocação no conjunto difícil?
+= Nomes de pessoas, por estarem fora do dicionário ou em minúsculas.
+- CEP.
+- Prontuário no formato PRT-número.
+- Data de nascimento com contexto "nascido em".
+- Nenhum tipo teve perda de revocação.
+J: Dados de formato rígido são bem detectados; nomes e formatos incomuns exigem outras técnicas, também imperfeitas.
+
+MC: Por que medir um detector de dados pessoais apenas em textos sintéticos é insuficiente?
+= Porque ele só é medido contra o que foi sintetizado; textos reais têm variações imprevistas.
+- Porque textos sintéticos não podem conter números de CPF, por vedação legal, o que impede qualquer teste do detector.
+- Porque o sintético é sempre mais difícil que o real.
+- Porque a precisão não pode ser calculada em sintéticos.
+- Porque dados sintéticos violam a LGPD.
+J: Antes de depender do detector, deve-se avaliá-lo em amostras reais autorizadas e revisadas por pessoas.
+
+MC: O que o k-anonimato exige de uma tabela?
+= Que cada combinação de quase identificadores apareça em pelo menos k registros.
+- Que nenhum registro tenha CPF.
+- Que todos os registros sejam apagados automaticamente após k dias de armazenamento, qualquer que seja o seu conteúdo.
+- Que os dados sejam criptografados com chave de k bits.
+- Que existam k tabelas diferentes.
+J: Generalizar atributos (por exemplo, CEP e idade) aumenta k ao custo de detalhe, sem garantir proteção total.
+
+MC: Por que remover o atributo protegido dos dados de entrada não elimina o viés de um modelo?
+= Porque outras variáveis podem ser correlacionadas com ele ou carregar medidas enviesadas.
+- Porque o modelo sempre adivinha o atributo por magia.
+- Porque o atributo protegido é necessário para o cálculo da função de perda durante o treinamento de qualquer classificador.
+- Porque a remoção deixa o modelo sem dados.
+- Porque a legislação obriga a manter o atributo.
+J: No experimento, a nota subestimava o grupo B e as taxas-base diferiam, de modo que havia diferenças mesmo sem o atributo.
+
+MC: O que mede a igualdade de oportunidades?
+= A diferença entre grupos na taxa de seleção entre os realmente qualificados (taxa de verdadeiros positivos).
+- A diferença entre grupos na taxa de seleção geral.
+- A acurácia média do modelo.
+- O número de variáveis de entrada usadas pelo modelo em cada decisão tomada pelo sistema.
+- A velocidade de resposta do modelo.
+J: A paridade demográfica compara as taxas de seleção gerais; a igualdade de oportunidades condiciona em Y = 1.
+
+MC: Por que não existe uma métrica única de equidade?
+= Porque, com taxas-base diferentes entre grupos, critérios razoáveis não podem ser satisfeitos ao mesmo tempo, e a escolha depende do dano a evitar.
+- Porque a equidade é um conceito exclusivamente filosófico, que não pode ser medido com nenhuma estatística sobre decisões.
+- Porque todas as métricas são equivalentes.
+- Porque o scikit-learn só implementa uma métrica.
+- Porque a equidade é decidida pelo modelo.
+J: Resultados de Kleinberg et al. (2017) e Chouldechova (2017) mostram essas incompatibilidades.
+
+MC: Por que a explicação escrita por um LLM sobre a própria resposta não deve ser tomada como prova?
+= Porque é mais texto gerado e pode não refletir os fatores que realmente influenciaram a saída.
+- Porque o modelo nunca escreve explicações sobre as próprias respostas, a menos que seja treinado novamente para isso.
+- Porque explicações são sempre curtas demais.
+- Porque o modelo copia as explicações de outro idioma.
+- Porque a explicação sempre é idêntica à resposta.
+J: Turpin et al. (2023) mostram explicações plausíveis que omitem fatores influentes; use citações, regras e testes contrafactuais.
+
+MC: No exemplo do classificador com atalho, o que revelou que a justificativa era infiel?
+= O teste contrafactual: remover a palavra "urgente" mudou a decisão, embora a justificativa citasse o conteúdo do pedido.
+- A leitura atenta da justificativa.
+- O tamanho da justificativa.
+- O número de parâmetros do classificador, que denunciaria que o modelo estava usando um atalho.
+- A temperatura de amostragem.
+J: Testes contrafactuais não dependem de a explicação ser fiel.
+
+MC: O que significa dizer que os pesos de um modelo estão disponíveis, mas que ele não é aberto?
+= Os pesos podem ser baixados, mas a licença pode restringir uso, redistribuição ou finalidade.
+- Os pesos estão criptografados.
+- O modelo não tem licença nenhuma.
+- O modelo só funciona sem internet.
+- O código de treino foi apagado por padrão pelo provedor, e por isso ninguém pode reproduzi-lo em nenhuma circunstância.
+J: Leia a licença da versão usada; "aberto" exige liberdade de uso, estudo, modificação e redistribuição.
+
+MC: Qual a natureza do NIST AI Risk Management Framework 1.0?
+= Uma estrutura voluntária, organizada em Govern, Map, Measure e Manage.
+- Uma lei federal de cumprimento obrigatório.
+- Um modelo de linguagem de grande porte desenvolvido pelo NIST para responder perguntas sobre gestão de riscos.
+- Um regulamento da União Europeia.
+- Um padrão de compressão de pesos.
+J: Não é regulação; serve de roteiro para governar, mapear, medir e gerenciar riscos (NIST, 2023).
+
+MC: O que o capítulo recomenda ao tratar de normas como o AI Act e o PL 2.338/2023?
+= Descrever só o que foi confirmado, informar a data de consulta e conferir fontes oficiais, pois o cenário muda.
+- Considerar a primeira notícia encontrada como definitiva.
+- Ignorar as normas até que haja multa aplicada ao setor, pois só então elas passam a produzir efeitos.
+- Copiar prazos de postagens em redes sociais.
+- Afirmar que o projeto brasileiro já é lei.
+J: As datas e o andamento mudam; o texto vigente e a assessoria jurídica são a fonte de decisão.
+
+MC: Em uma matriz RACI de governança, o que significa o papel A?
+= Quem responde pelo resultado da atividade, uma pessoa por atividade.
+- Quem executa todas as tarefas.
+- Quem apenas é informado depois que a decisão já foi tomada, sem poder opinar sobre ela.
+- Quem audita o código do modelo.
+- Quem desenvolve o modelo.
+J: R executa, A responde pelo resultado, C é consultado e I é informado.
+
+DISC[C]: Explique por que "nenhuma defesa é completa" e como a defesa em profundidade lida com isso. Dê dois exemplos de camadas de naturezas diferentes.
+R: Cada defesa tem furos: filtros por padrões são contornados por paráfrases e grafias alteradas; instruções ao modelo são probabilísticas; revisão humana sofre de cansaço. A defesa em profundidade empilha camadas complementares, de modo que o que escapa de uma seja barrado por outra, e limita o dano quando todas falham. Exemplos: filtro de entrada (determinístico, por padrões) e privilégio mínimo de ferramentas (determinístico, por permissões); instruções firmes ao modelo (probabilística) e aprovação humana (humana).
+CRIT: Cita furos de pelo menos duas defesas.
+CRIT: Distingue camadas probabilísticas, determinísticas e humanas.
+CRIT: Menciona limitar o dano, e não só detectar.
+
+DISC[C]: Distinga injeção de prompt direta e indireta e explique por que a indireta é mais difícil de controlar em aplicações com RAG e agentes.
+R: Na direta, o usuário escreve a instrução maliciosa. Na indireta, a instrução está em conteúdo que o sistema lê (página, e-mail, documento), e o usuário pode ser inocente. É mais difícil porque o sistema lê muito conteúdo de fontes variadas, nem sempre revisadas, e o modelo recebe tudo no mesmo contexto, sem separação garantida entre instrução e dado. Mitigações: tratar todo conteúdo externo como não confiável, privilégio mínimo, filtros, procedência e aprovação de ações de risco.
+
+DISC[C]: Diferencie pseudonimização e anonimização e explique por que dados pseudonimizados continuam exigindo proteção.
+R: Na pseudonimização, identificadores são trocados por códigos estáveis, e quem possui a chave ou dados auxiliares pode reidentificar. Na anonimização, a reidentificação deve ser inviável por meios razoáveis, o que é difícil por causa de quase identificadores. Dados pseudonimizados continuam tratados como dados pessoais para fins de proteção, pois a reversão é possível.
+
+DISC[C]: Por que as explicações escritas por um LLM não são visão fiel do processamento interno? Que alternativas verificáveis existem para justificar uma decisão?
+R: A explicação é mais texto gerado, condicionado pelo prompt; pode ser plausível e omitir os fatores que realmente influenciaram a saída (Turpin et al., 2023). Alternativas: citações literais conferidas por código, regras explícitas, cálculos refeitos em código, evidências estruturadas, testes contrafactuais (alterar um elemento e observar a decisão) e revisão humana nos casos de risco.
+
+DISC[C]: Explique por que "pesos disponíveis" não significa "modelo aberto" e liste três itens a verificar na licença de um modelo antes de usá-lo em uma aplicação comercial.
+R: Pesos baixáveis podem vir com termos próprios que restringem uso, redistribuição, número de usuários ou finalidades; "aberto" exige liberdade de uso, estudo, modificação e redistribuição. Verificar: uso comercial permitido; restrições de finalidade ou de escala; obrigações de atribuição e de repasse da licença; direitos sobre derivados (ajustes finos); licenças dos dados de treino, quando informadas. Consultar os termos vigentes e profissional de direito.
+
+DISC[C]: Descreva como os princípios de finalidade e necessidade da LGPD podem orientar o desenho do registro (log) de conversas de um assistente. Não ofereça aconselhamento jurídico; trate como boas práticas de engenharia.
+R: Finalidade: definir antes para que os logs servem (depuração, auditoria de segurança) e não reutilizá-los para outros fins sem avaliação. Necessidade: registrar o mínimo (por exemplo, identificadores técnicos e metadados, texto mascarado), evitar guardar dados pessoais desnecessários. Complementos: retenção definida com eliminação automática, controle de acesso, transparência ao usuário e avaliação com o encarregado de dados. A aplicação concreta depende do texto vigente da lei e de orientação jurídica.
+
+DISC[M]: Com os vetores abaixo, calcule em código a diferença de paridade demográfica e a de igualdade de oportunidades entre os grupos A e B.
+R: Calcula-se a taxa de seleção por grupo (média de y_pred) e a taxa de verdadeiros positivos por grupo (média de y_pred entre os y_true = 1), e subtrai-se B de A. Para os vetores do código, a paridade demográfica é 0,33 (A seleciona 4/6; B, 2/6) e a igualdade de oportunidades é 0 (entre os qualificados, ambos têm taxa 2/3): as duas métricas dão conclusões diferentes.
+CODE:
+import numpy as np
+
+y_true = np.array([1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0])
+y_pred = np.array([1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0])
+g      = np.array(["A"] * 6 + ["B"] * 6)
+
+def dif_paridade(y_pred, g):
+    return y_pred[g == "A"].mean() - y_pred[g == "B"].mean()
+
+def dif_oportunidade(y_true, y_pred, g):
+    a = (g == "A") & (y_true == 1); b = (g == "B") & (y_true == 1)
+    return y_pred[a].mean() - y_pred[b].mean()
+
+dp, io = dif_paridade(y_pred, g), dif_oportunidade(y_true, y_pred, g)
+assert abs(dp - 1 / 3) < 1e-9 and abs(io) < 1e-9, (dp, io)
+print(f"paridade demográfica: {dp:.4f} | igualdade de oportunidades: {io:.4f}")
+ENDCODE
+CRIT: Calcula a taxa de seleção por grupo.
+CRIT: Condiciona em y_true = 1 para a oportunidade.
+CRIT: Interpreta as duas diferenças separadamente.
+
+DISC[M]: Aplique a "regra dos três": se um ataque não teve sucesso em 100 tentativas independentes, qual o limite superior aproximado de 95% para a taxa verdadeira? Compare com o intervalo de Wilson.
+R: A regra dos três dá cerca de $3/n=3/100=0{,}03$. O limite superior de Wilson para 0 de 100 é cerca de 0,037, da mesma ordem. Mesmo com zero sucessos, a taxa verdadeira pode ser de alguns por cento, e só para os casos testados.
+
+DISC[M]: Um ajuste usa 4 aceleradores de 0,35 kW por 50 horas, com PUE de 1,2. Estime a energia e, com um fator de emissão hipotético de 0,08 kg de CO2e por kWh, as emissões. Que custos a estimativa omite?
+R: $E=4\times0{,}35\times50\times1{,}2=84$ kWh; emissões $=84\times0{,}08=6{,}72$ kg de CO2e. Omite fabricação do hardware, refrigeração além do PUE, o custo do uso (inferência) e a variação do fator de emissão no tempo e no local.
+
+DISC[M]: Um atacante dispara 30 pedidos por minuto de 6 000 tokens durante uma hora. Calcule os tokens consumidos sem limites e com limite de 5 pedidos por minuto e 1 000 tokens por pedido. Qual a redução?
+R: Sem limites: $30\times6000\times60=10{,}8\times10^6$ tokens. Com limites: $5\times1000\times60=3\times10^5$ tokens. Redução de $10{,}8\times10^6/3\times10^5=36$ vezes. Os limites devem ser calibrados para não recusar usuários legítimos.
+
+DISC[P]: Implemente `cpf_valido(texto)` que remova a pontuação e confira os dígitos verificadores, rejeitando sequências de dígitos iguais.
+CODE:
+import re
+
+def cpf_valido(texto):
+    d = re.sub(r"\D", "", texto)
+    if len(d) != 11 or len(set(d)) == 1:
+        return False
+    for k in (9, 10):
+        s = sum(int(d[i]) * (k + 1 - i) for i in range(k))
+        r = (s * 10) % 11
+        if (0 if r == 10 else r) != int(d[k]):
+            return False
+    return True
+
+assert cpf_valido("529.982.247-25") and cpf_valido("52998224725")
+assert not cpf_valido("111.111.111-11") and not cpf_valido("529.982.247-24") and not cpf_valido("123")
+print("ok")
+ENDCODE
+CRIT: Remove caracteres não numéricos.
+CRIT: Calcula os dois dígitos verificadores.
+CRIT: Rejeita sequências repetidas e tamanhos errados.
+
+DISC[P]: Implemente `destino_permitido(destino, dominios)` que aceite apenas endereços cujo domínio seja exatamente um dos permitidos (ou subdomínio, se `subdominios=True`) e mostre que "aurora.example.coleta.example" é rejeitado.
+CODE:
+def destino_permitido(destino, dominios, subdominios=False):
+    if destino.count("@") != 1:
+        return False
+    dom = destino.split("@")[1].lower()
+    for d in dominios:
+        if dom == d or (subdominios and dom.endswith("." + d)):
+            return True
+    return False
+
+P = ["aurora.example"]
+assert destino_permitido("a@aurora.example", P)
+assert not destino_permitido("a@aurora.example.coleta.example", P)
+assert not destino_permitido("a@outro.example", P)
+assert destino_permitido("a@sub.aurora.example", P, subdominios=True) and not destino_permitido("a@sub.aurora.example", P)
+assert not destino_permitido("a@b@aurora.example", P)
+print("ok")
+ENDCODE
+CRIT: Compara o domínio inteiro, e não uma subcadeia.
+CRIT: Trata subdomínios apenas quando autorizado.
+CRIT: Inclui testes com domínio parecido e com arroba duplicada.
+
+DISC[P]: Implemente `wilson(k, n)` (intervalo de 95%) e compare com o intervalo normal aproximado para 3 sucessos em 40 tentativas. Mostre que o intervalo normal pode sair do intervalo [0, 1] ou subestimar a incerteza.
+CODE:
+import numpy as np
+
+def wilson(k, n, z=1.96):
+    p = k / n; c = 1 + z * z / n
+    centro = (p + z * z / (2 * n)) / c
+    meia = z * np.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / c
+    return centro - meia, centro + meia
+
+def normal(k, n, z=1.96):
+    p = k / n; e = z * np.sqrt(p * (1 - p) / n)
+    return p - e, p + e
+
+lo_w, hi_w = wilson(3, 40); lo_n, hi_n = normal(3, 40)
+print(f"Wilson [{lo_w:.3f}; {hi_w:.3f}] | normal [{lo_n:.3f}; {hi_n:.3f}]")
+assert lo_n < 0 <= lo_w and 0.02 < lo_w < 0.03 and 0.19 < hi_w < 0.20
+ENDCODE
+CRIT: Implementa corretamente a fórmula de Wilson.
+CRIT: Observa que o intervalo normal tem limite inferior negativo.
+CRIT: Comenta o uso em contagens pequenas ou perto de 0.
+
+DISC[P]: Implemente `k_anonimato(registros, generalizar)` que devolva o k mínimo antes e depois de generalizar (CEP com 3 dígitos e idade em faixas de 10 anos) para uma tabela sintética de 600 registros.
+CODE:
+import numpy as np
+from collections import Counter
+
+def k_min(regs):
+    return min(Counter(regs).values())
+
+def k_anonimato(regs, generalizar):
+    return k_min(regs), k_min([generalizar(r) for r in regs])
+
+rng = np.random.default_rng(0)
+regs = [(int(c), int(i)) for c, i in zip(rng.integers(60000, 60040, 600), rng.integers(18, 80, 600))]
+antes, depois = k_anonimato(regs, lambda r: (r[0] // 100, (r[1] // 10) * 10))
+print("k antes:", antes, "| k depois:", depois)
+assert antes == 1 and depois > antes
+ENDCODE
+CRIT: Usa contagem de combinações de quase identificadores.
+CRIT: Aplica a generalização antes da segunda contagem.
+CRIT: Discute a perda de detalhe como custo.
+
+DISC[A]: Uma equipe conclui: "nosso filtro de entrada bloqueou 100% dos ataques do teste, então o sistema está seguro". Aponte ao menos quatro problemas da conclusão e proponha melhorias.
+R: Problemas: o catálogo pode conter só ataques óbvios (mede o filtro, não a segurança); sem variantes (paráfrases, grafias alteradas, outros idiomas); poucas repetições e sem intervalo de confiança; zero sucessos não implica taxa zero; o catálogo não é amostra de todos os ataques; não se mediu o custo para mensagens legítimas; uma única camada. Melhorias: variantes, repetição, intervalo (por exemplo, Wilson), medida de recusas legítimas, camadas complementares (privilégio mínimo, filtro de saída, aprovação), bateria de regressão e novos casos a cada mudança.
+
+DISC[A]: Uma equipe afirma que "removemos a coluna de gênero, então o modelo de triagem é justo". Analise a afirmação e proponha verificações.
+R: A remoção não elimina o viés: outras variáveis podem ser correlacionadas com o atributo ou medir pior para um grupo; as taxas-base podem diferir. Verificações: calcular métricas por grupo (seleção, taxa de verdadeiros positivos, falsos positivos, valor preditivo); comparar diferenças com intervalo; investigar a origem (dados, rótulos, medidas); discutir qual métrica serve ao dano que se quer evitar, reconhecendo o trade-off; verificar o que a legislação permite; registrar a decisão e acompanhar após a implantação.
+
+DISC[A]: Uma organização "anonimiza" CPFs aplicando um hash simples (SHA-256, sem chave) e publica a tabela. Analise o risco e proponha alternativas.
+R: Há cerca de $10^9$ combinações de nove dígitos (mais dígitos verificadores determinados), e é fácil calcular o hash de todas e comparar: o hash simples é reversível por força bruta e por tabelas pré-calculadas, e permite ligar registros. Trata-se, no máximo, de pseudonimização frágil. Alternativas: não publicar o identificador; usar HMAC com chave secreta guardada separadamente (pseudonimização, ainda dado pessoal); agregar ou generalizar (k-anonimato) e avaliar risco de reidentificação por quase identificadores; minimizar o que se publica.
+
+DISC[A]: Propõe-se enviar anotações clínicas completas (sintéticas, no teste) a um serviço externo de LLM para gerar resumos. Analise riscos e controles, sem oferecer aconselhamento clínico ou jurídico.
+R: Riscos: dados sensíveis expostos a terceiro; retenção e uso pelo provedor; alucinação com consequência clínica; dependência excessiva; vazamento por logs. Controles: dados sintéticos nos testes; minimização e mascaramento (imperfeito, medir revocação); avaliar termos do provedor e alternativas locais; saída apenas como rascunho com citação do trecho-fonte; revisão e assinatura do profissional; controle de acesso e registro; RIPD e plano de incidentes; encaminhar a análise legal ao encarregado e ao jurídico.
+
+DISC[D]: Projete o modelo de ameaças (S, T, R, I, D, E) e as camadas de mitigação de um assistente de órgão público que redige minutas de resposta a pedidos de cidadãos, com acesso a uma base de normas e a uma ferramenta de envio de ofícios.
+R: Fluxo: cidadão, base de normas (RAG), assistente, ferramenta de envio, registro. Ameaças: S (conteúdo que imita fonte oficial); T (alteração de normas na base); R (sem registro de versão e de quem aprovou); I (vazamento de dados de outros cidadãos ou do prompt); D (pedidos enormes); E (envio de ofícios por injeção). Controles: base apenas com fontes oficiais e manifesto de procedência; citação literal conferida por código; assistente só redige rascunhos e a ferramenta de envio exige aprovação de servidor responsável e domínios permitidos; filtros de entrada e saída; limites de custo; isolamento por perfil; mascaramento; registros de versão do prompt, modelo e aprovações; red teaming com variantes e IC; plano de incidentes; transparência ao cidadão; decisão e motivação sempre do agente público.
+CRIT: Cobre as seis categorias.
+CRIT: Propõe camadas de naturezas diferentes e privilégio mínimo.
+CRIT: Define papel humano e registro.
+
+DISC[D]: Elabore um plano de governança para a adoção de um tutor com LLM em uma escola: inventário, classificação de risco, papéis, critérios de aprovação, supervisão humana, monitoramento e resposta a incidentes.
+R: Inventário: finalidade, público (menores), dados, modelo, fornecedor, responsável. Risco: médio a alto, por menores, dados pessoais e possível efeito sobre avaliação. Papéis: direção responde (A); coordenação pedagógica e TI executam; encarregado de dados consultado; professores supervisionam. Aprovação: testes funcionais e de segurança com taxa de ataque e IC, avaliação por subgrupos, política de uso, aviso a estudantes e responsáveis, retenção curta. Supervisão: tutor orienta sem entregar respostas prontas; notas e decisões ficam com o professor; amostragem de conversas mascaradas. Monitoramento: reclamações, desvios, custos e uso indevido; reavaliação a cada mudança de modelo ou prompt. Incidentes: canal, classificação, comunicação, correção e lições, com registro e auditoria periódica.
+CRIT: Inclui inventário, risco, papéis (RACI) e portão de aprovação.
+CRIT: Trata proteção de menores e dados pessoais.
+CRIT: Define supervisão humana, monitoramento e incidentes.

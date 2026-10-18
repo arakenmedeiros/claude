@@ -1,0 +1,443 @@
+MC: Qual das alternativas descreve melhor por que avaliar sistemas com LLM é mais difícil do que contar acertos de um classificador tradicional?
+= As saídas são abertas, variam entre execuções e dependem da redação do prompt.
+- O modelo sempre devolve a mesma resposta.
+- Os LLMs não podem ser testados com dados.
+- Só é possível avaliar com bancos de dados públicos.
+- O número de parâmetros impede qualquer medição.
+J: Saídas abertas, variabilidade e sensibilidade ao prompt exigem desenho cuidadoso, repetição e relato da incerteza.
+
+MC: Qual é a principal diferença entre avaliação intrínseca e extrínseca?
+= A intrínseca mede uma propriedade do modelo isolado, como a perplexidade; a extrínseca mede o desempenho na tarefa de aplicação.
+- A intrínseca usa humanos e a extrínseca usa apenas máquinas.
+- A intrínseca é sempre mais cara que a extrínseca.
+- A extrínseca só se aplica ao treinamento do modelo.
+- Não há diferença, são sinônimos.
+J: A perplexidade é intrínseca; a tarefa de aplicação é a medida extrínseca, a que importa ao usuário.
+
+MC: Por que não se deve comparar a perplexidade por token de dois modelos com tokenizadores diferentes?
+= Porque os tokens têm tamanhos diferentes, de modo que a unidade da medida não é a mesma.
+- Porque a perplexidade só existe para modelos de n-gramas.
+- Porque o tokenizador altera os pesos do modelo no teste.
+- Porque a perplexidade é medida em segundos.
+- Porque modelos diferentes sempre têm a mesma perplexidade.
+J: Uma alternativa comparável é usar bits por caractere ou outra unidade independente do tokenizador.
+
+MC: Em um teste de intenções, 95% dos casos são "normal" e 5% são "fraude". Um sistema que diz sempre "normal" tem acurácia de 0,95. Que métrica revelaria o problema?
+= O F1 macro (ou a revocação da classe "fraude"), que pesa as classes por igual.
+- A acurácia, que já mostra o problema.
+- O número de tokens da resposta.
+- A perplexidade do modelo.
+- A temperatura de geração.
+J: A revocação de "fraude" seria zero, e o F1 macro cairia a cerca de 0,49.
+
+MC: Qual a função de dividir o conjunto de teste em estratos?
+= Mostrar o desempenho em subgrupos relevantes, que a média geral pode esconder.
+- Aumentar artificialmente a acurácia total.
+- Reduzir o número de casos necessários a zero.
+- Substituir o conjunto de desenvolvimento.
+- Evitar a necessidade de anotação humana.
+J: Estratos como perguntas diretas, paráfrases e sem resposta revelam onde o sistema falha.
+
+MC: Com $p=0{,}5$ e margem de erro de ±5 pontos percentuais (95%), quantos casos são necessários, aproximadamente?
+= Cerca de 385 casos.
+- Cerca de 50 casos.
+- Cerca de 100 casos.
+- Cerca de 3 850 casos.
+- Cerca de 20 casos.
+J: $n=1{,}96^2\times0{,}25/0{,}05^2\approx385$.
+
+MC: Um sistema acerta 30 de 30 casos. O que se pode afirmar com honestidade estatística?
+= Que a taxa verdadeira de acerto pode ser relativamente baixa: o IC de Wilson de 95% começa perto de 0,89.
+- Que a taxa verdadeira é exatamente 100%.
+- Que o sistema nunca erra em produção.
+- Que o intervalo de confiança tem largura zero.
+- Que o teste é perfeito e dispensa novas amostras.
+J: Zero erros em amostra pequena não implica risco zero.
+
+MC: Por que o conjunto de teste não deve influenciar nenhuma decisão de ajuste do prompt?
+= Porque, se influenciar, a nota deixa de estimar o desempenho em casos novos e fica otimista.
+- Porque o conjunto de teste é sempre menor.
+- Porque o teste não pode conter casos difíceis.
+- Porque o prompt é secreto.
+- Porque ajustar prompts é proibido.
+J: Escolher a versão com a melhor nota no teste faz o teste virar desenvolvimento.
+
+MC: O que é contaminação de um conjunto de teste?
+= Quando o conteúdo do teste já foi visto pelo sistema (treino, exemplos, base de documentos ou quase-duplicatas do desenvolvimento).
+- Quando o teste contém erros de digitação.
+- Quando o teste tem mais de 1 000 casos.
+- Quando o modelo usa temperatura alta.
+- Quando os avaliadores discordam entre si.
+J: A nota passa a medir memória, e não capacidade.
+
+MC: Uma defesa prática contra a contaminação por treinamento de modelos de terceiros é:
+= Avaliar com dados privados e recentes, que o modelo não poderia ter visto.
+- Usar apenas benchmarks públicos conhecidos.
+- Reduzir o número de casos de teste.
+- Aumentar a temperatura para zero.
+- Evitar medir a incerteza.
+J: Como não se conhece o treinamento de terceiros, a defesa é usar dados novos e privados.
+
+MC: Em extração de entidades, o que o critério de casamento define?
+= Quando uma entidade extraída conta como acerto: exata, normalizada ou parcial.
+- O número de parâmetros do extrator.
+- A temperatura usada na extração.
+- O tamanho máximo do prompt.
+- O idioma dos documentos.
+J: Precisão, revocação e F1 dependem desse critério, que deve ser registrado antes.
+
+MC: Na comparação de "A paráfrase correta" com "a resposta com número errado", o ROUGE-1 tende a:
+= Dar nota mais alta à resposta com número errado, por ela ter mais palavras em comum com a referência.
+- Dar sempre nota maior à paráfrase correta.
+- Detectar números errados com precisão.
+- Dar nota zero a ambas as respostas.
+- Ignorar a sobreposição de palavras.
+J: Métricas de sobreposição não verificam fatos; um token trocado pesa pouco.
+
+MC: Por que a similaridade de embeddings sozinha é insuficiente para validar respostas factuais?
+= Porque ela captura o assunto, mas pode ser cega a números, negações e detalhes.
+- Porque embeddings não representam palavras.
+- Porque só funcionam em inglês.
+- Porque sempre devolvem o valor zero.
+- Porque exigem temperatura zero.
+J: Uma resposta com o valor errado ou incompleta pode ter similaridade altíssima com a correta.
+
+MC: Em avaliação de RAG, por que separar recuperação e geração?
+= Porque as falhas têm causas e remédios diferentes, e uma nota única esconde onde está o problema.
+- Porque a recuperação nunca falha.
+- Porque a geração não depende do contexto.
+- Porque só a geração tem custo.
+- Porque a separação elimina a necessidade de teste.
+J: Recuperação ruim pede ajuste na busca; geração ruim, no prompt ou no modelo.
+
+MC: Em um RAG, aumentar o limiar de abstenção tende a:
+= Aumentar a recusa correta das perguntas sem resposta, mas também a recusa indevida das respondíveis.
+- Eliminar todos os erros.
+- Reduzir a recusa indevida a zero.
+- Não alterar nenhuma taxa.
+- Melhorar a recuperação.
+J: Não existe limiar sem custo; a escolha depende do custo de cada tipo de erro.
+
+MC: Um verificador que confere se todo número da resposta aparece no contexto recuperado:
+= Detecta números inventados, mas deixa passar erros em que o número alterado aparece em outro trecho do contexto.
+- Garante que a resposta esteja correta.
+- Mede a perplexidade da resposta.
+- Substitui a recuperação de documentos.
+- Elimina a necessidade de revisão humana.
+J: É uma verificação por regra, parcial.
+
+MC: Qual alternativa descreve o viés de posição de um juiz?
+= A tendência de favorecer a resposta apresentada em certa posição, como a primeira, independentemente da qualidade.
+- A tendência de preferir respostas mais curtas.
+- A preferência por respostas do próprio estilo.
+- A recusa de julgar respostas em português.
+- A preferência por respostas com números.
+J: Zheng et al. (2023) descrevem esse viés, entre outros.
+
+MC: Como se mitiga o viés de posição em comparações de pares?
+= Fazendo o julgamento nas duas ordens e aceitando um vencedor só quando os dois julgamentos concordam.
+- Aumentando a temperatura do juiz.
+- Sempre apresentando a melhor resposta primeiro.
+- Usando apenas um juiz por vez, em uma única ordem.
+- Removendo a rubrica.
+J: Discordância entre as ordens vira empate.
+
+MC: Qual das medidas expõe melhor o viés de verbosidade de um juiz?
+= A taxa de escolha da melhor resposta em pares nos quais ela é a mais curta.
+- O número de pares julgados por hora.
+- A perplexidade do juiz.
+- O kappa entre dois humanos.
+- O tamanho do prompt do juiz.
+J: Se o juiz falha justamente quando a melhor resposta é a curta, há viés de tamanho.
+
+MC: O kappa de Cohen mede:
+= A concordância entre dois avaliadores, corrigida pela concordância esperada ao acaso.
+- A concordância bruta, sem correção.
+- A variância do conjunto de teste.
+- A perplexidade média do modelo.
+- O tamanho da amostra necessário.
+J: $\kappa=(p_o-p_e)/(1-p_e)$.
+
+MC: O paradoxo do kappa ocorre quando:
+= A concordância bruta é alta, mas o kappa é baixo, por haver uma categoria muito dominante.
+- Dois avaliadores nunca concordam.
+- O kappa é sempre igual à acurácia.
+- A amostra é grande demais.
+- Há só duas categorias de resposta.
+J: O acaso já prevê muita concordância quando uma categoria é quase universal.
+
+MC: Qual a vantagem do alfa de Krippendorff sobre o kappa de Cohen?
+= Admite vários avaliadores, dados faltantes e escalas nominal, ordinal ou intervalar.
+- Só funciona com dois avaliadores.
+- Não precisa de rótulos humanos.
+- Elimina a necessidade de guia de anotação.
+- Dispensa a escolha de uma escala.
+J: É mais geral e é adequado a desenhos em que nem todos avaliam todos os itens.
+
+MC: Por que a amostra rotulada por humanos, usada para calibrar um juiz, deve ser aleatória?
+= Para que as taxas de erro estimadas representem o comportamento do juiz em todo o conjunto.
+- Para que o juiz acerte mais.
+- Para reduzir o número de rótulos a um.
+- Para evitar o uso de intervalos de confiança.
+- Para eliminar vieses do juiz.
+J: Uma amostra enviesada produz sensibilidade e especificidade que não valem para o restante.
+
+MC: Por que um teste pareado é preferível ao comparar dois sistemas nos mesmos casos?
+= Porque usa os resultados dos dois sistemas em cada caso, e só os casos discordantes informam a diferença.
+- Porque exige menos que um caso.
+- Porque ignora a variabilidade.
+- Porque dispensa um conjunto de teste.
+- Porque sempre encontra diferença significativa.
+J: Usar os pares remove a variação entre casos fáceis e difíceis.
+
+MC: No teste de McNemar, $b$ e $c$ representam:
+= O número de casos em que só A acerta e o número em que só B acerta.
+- O número de casos fáceis e difíceis.
+- O número de execuções e de sementes.
+- Os parâmetros dos dois modelos.
+- As médias de acerto de A e de B.
+J: Sob equivalência, $b$ segue uma binomial com $b+c$ tentativas e probabilidade 1/2.
+
+MC: Ao comparar 100 variantes equivalentes a 5% de nível sem correção, espera-se cerca de:
+= 5 falsos positivos.
+- Nenhum falso positivo.
+- 50 falsos positivos.
+- 95 falsos positivos.
+- 100 falsos positivos.
+J: Cada comparação tem 5% de chance de falso positivo; Holm ou Benjamini-Hochberg corrigem isso.
+
+MC: Por que reportar a temperatura e a semente em uma avaliação?
+= Porque, sem elas, o resultado de um sistema com amostragem não pode ser reproduzido nem comparado.
+- Porque elas aumentam o acerto.
+- Porque dispensam repetir a avaliação.
+- Porque substituem o conjunto de teste.
+- Porque eliminam a variabilidade.
+J: A temperatura altera a distribuição de saída, e a semente fixa o sorteio.
+
+MC: Qual o limite de usar benchmarks públicos como único teste de uma aplicação?
+= Podem estar saturados ou contaminados e não medem o seu idioma, seus documentos nem seus riscos.
+- São sempre pequenos demais.
+- São proibidos por lei.
+- Não aceitam modelos de linguagem.
+- Nunca incluem perguntas de múltipla escolha.
+J: Servem para triagem; a decisão exige o teste próprio.
+
+MC: Um portão de regressão com proteção por estrato reprova uma mudança quando:
+= O IC da diferença pareada passa da margem tolerada ou algum estrato importante cai além do limite.
+- Qualquer mudança é feita no código.
+- A média geral sobe um pouco.
+- O número de casos de teste diminui.
+- O modelo usa temperatura zero.
+J: A proteção por estrato pega quedas concentradas que a média esconde.
+
+DISC[C]: Explique por que uma única execução de um sistema com amostragem não basta para avaliá-lo, e o que fazer.
+R: A saída é uma amostra de um processo aleatório (temperatura, semente, ordem, versão do serviço). Uma execução pode estar acima ou abaixo da média por acaso. É preciso repetir K vezes (ou com várias sementes), na configuração de produção, e relatar média e dispersão, somando a incerteza do conjunto de teste, além de registrar temperatura, semente, modelo e data.
+CRIT: Cita a aleatoriedade da geração.
+CRIT: Propõe repetir e relatar dispersão.
+CRIT: Menciona o registro de parâmetros.
+
+DISC[C]: Descreva três vieses de um LLM usado como juiz e uma mitigação para cada um.
+R: Posição: troca da ordem de apresentação e aceitação do vencedor só quando coincide. Verbosidade: comparar respostas de tamanho semelhante, incluir pares adversariais em que a melhor é a curta e validar contra humanos. Autopreferência: usar um juiz de outra família ou um comitê de juízes. Em todos os casos, medir o viés no seu caso, pois os tamanhos variam (Zheng et al., 2023).
+CRIT: Nomeia os três vieses.
+CRIT: Associa uma mitigação a cada um.
+
+DISC[C]: Por que o kappa pode ser baixo mesmo com concordância bruta alta? Dê um exemplo e diga o que reportar.
+R: Com uma categoria muito dominante, a concordância esperada ao acaso é alta, e o numerador do kappa $p_o-p_e$ fica pequeno. Exemplo: 95% de casos "bons", dois avaliadores concordam em 96%, mas o kappa fica em torno de 0,58. Reporte a concordância bruta, o kappa (ou o alfa), a distribuição das categorias e, se for ordinal, a versão ponderada.
+CRIT: Explica o papel da concordância ao acaso.
+CRIT: Indica o que reportar.
+
+DISC[C]: Por que benchmarks públicos não substituem testes próprios? Cite quatro razões.
+R: (1) Medem outra tarefa, em outro formato (muitas vezes múltipla escolha, em inglês). (2) Saturam e deixam de discriminar. (3) Podem estar contaminados por estarem nos dados de treinamento. (4) São sensíveis ao formato do prompt e do processo de avaliação, e seus incentivos levam à otimização para a nota. Servem como triagem; a decisão usa o teste próprio, com seus documentos, idioma e riscos.
+CRIT: Quatro razões distintas.
+CRIT: Papel de triagem do benchmark.
+
+DISC[M]: Calcule o número de casos para estimar uma taxa de acerto de 0,9 com margem de ±3 pontos percentuais (95%), e confira com o código. Compare com o necessário para a margem de ±5 pontos.
+CODE:
+import math
+def n_prop(p, e, z=1.96): return math.ceil(z**2 * p * (1 - p) / e**2)
+n3, n5 = n_prop(0.9, 0.03), n_prop(0.9, 0.05)
+assert n3 == 385 and n5 == 139
+print(n3, n5, round(n3 / n5, 2))
+ENDCODE
+R: $n=1{,}96^2\times0{,}9\times0{,}1/0{,}03^2\approx385$; para ±5 pontos, $\approx139$. Reduzir a margem de 5 para 3 pontos multiplica os casos por cerca de 2,8, aproximadamente o quadrado da razão das margens ($(5/3)^2\approx2{,}8$).
+
+DISC[M]: Dois anotadores classificam 100 respostas. Ambos dizem "boa" em 60 e "ruim" em 20; A diz "boa" e B "ruim" em 15; o inverso em 5. Calcule o kappa de Cohen, à mão e em código, e interprete.
+CODE:
+a = [1] * 60 + [0] * 20 + [1] * 15 + [0] * 5
+b = [1] * 60 + [0] * 20 + [0] * 15 + [1] * 5
+n = len(a)
+po = sum(x == y for x, y in zip(a, b)) / n
+pa, pb = sum(a) / n, sum(b) / n
+pe = pa * pb + (1 - pa) * (1 - pb)
+kappa = (po - pe) / (1 - pe)
+from sklearn.metrics import cohen_kappa_score
+assert abs(kappa - cohen_kappa_score(a, b)) < 1e-12
+print(round(po, 3), round(pe, 3), round(kappa, 3))
+ENDCODE
+R: $p_o=0{,}80$; A diz "boa" em 75 e B em 65 casos, então $p_e=0{,}75\times0{,}65+0{,}25\times0{,}35=0{,}575$ e $\kappa=0{,}225/0{,}425\approx0{,}53$. A concordância é apenas moderada: o guia de anotação deve ser revisto antes de usar esses rótulos.
+
+DISC[M]: Um juiz aprova 60% das respostas. Na amostra rotulada por humanos, sua sensibilidade é 0,95 e sua especificidade, 0,80. Estime a taxa de aprovação verdadeira e explique de onde vem a fórmula.
+R: $\hat\pi=(p_{obs}+e-1)/(s+e-1)=(0{,}60+0{,}80-1)/(0{,}95+0{,}80-1)=0{,}40/0{,}75\approx0{,}53$. A taxa observada mistura aprovações corretas e falsas: $p_{obs}=\pi s+(1-\pi)(1-e)$. Isolando $\pi$ obtém-se a fórmula. A estimativa tem incerteza da amostra rotulada, que deve ser relatada.
+CRIT: Aplica a fórmula corretamente.
+CRIT: Explica a relação entre taxa observada e verdadeira.
+
+DISC[M]: Para detectar uma diferença pareada de 4 pontos percentuais com 15% de discordância (alfa 5%, poder 80%), quantos casos são necessários? Calcule com a fórmula e verifique com uma simulação.
+CODE:
+import numpy as np
+from scipy.stats import chi2, norm
+delta, psi = 0.04, 0.15
+za, zb = norm.ppf(0.975), norm.ppf(0.80)
+n = int(np.ceil((za * np.sqrt(psi) + zb * np.sqrt(psi - delta**2))**2 / delta**2))
+rng = np.random.default_rng(0)
+c = rng.multinomial(n, [(psi + delta) / 2, (psi - delta) / 2, 1 - psi], size=4000)
+b, cc = c[:, 0], c[:, 1]
+x2 = (np.abs(b - cc) - 1) ** 2 / np.maximum(b + cc, 1)
+poder = np.mean(chi2.sf(x2, 1) < 0.05)
+assert 0.70 < poder < 0.90
+print(n, round(float(poder), 3))
+ENDCODE
+R: Com $\delta=0{,}04$ e $\psi=0{,}15$, $n=\left(1{,}96\sqrt{0{,}15}+0{,}84\sqrt{0{,}15-0{,}0016}\right)^2/0{,}04^2\approx734$ casos. A simulação dá poder empírico de cerca de 0,78, próximo do alvo de 0,80 (um pouco menor, pela correção de continuidade e pela aproximação normal).
+
+DISC[P]: Implemente `f1_macro_micro(y_true, y_pred, classes)` sem scikit-learn e confira com `sklearn.metrics.f1_score`.
+CODE:
+import numpy as np
+from sklearn.metrics import f1_score
+
+def f1_macro_micro(y_true, y_pred, classes):
+    tp = {c: 0 for c in classes}; fp = {c: 0 for c in classes}; fn = {c: 0 for c in classes}
+    for t, p in zip(y_true, y_pred):
+        if t == p: tp[t] += 1
+        else:
+            if p in fp: fp[p] += 1
+            if t in fn: fn[t] += 1
+    def f1(a, b, c): return 2 * a / (2 * a + b + c) if (2 * a + b + c) else 0.0
+    macro = np.mean([f1(tp[c], fp[c], fn[c]) for c in classes])
+    micro = f1(sum(tp.values()), sum(fp.values()), sum(fn.values()))
+    return macro, micro
+
+y_true = ["a", "a", "b", "b", "b", "c", "c", "a", "b", "c"]
+y_pred = ["a", "b", "b", "b", "a", "c", "a", "a", "b", "c"]
+ma, mi = f1_macro_micro(y_true, y_pred, ["a", "b", "c"])
+assert abs(ma - f1_score(y_true, y_pred, average="macro")) < 1e-12
+assert abs(mi - f1_score(y_true, y_pred, average="micro")) < 1e-12
+print(round(ma, 3), round(mi, 3))
+ENDCODE
+R: A F1 de cada classe é $2TP/(2TP+FP+FN)$. A macro é a média simples entre as classes; a micro soma TP, FP e FN de todas as classes antes de calcular a F1 e, em rótulo único, coincide com a acurácia.
+CRIT: Calcula TP, FP e FN por classe.
+CRIT: Distingue macro de micro.
+CRIT: Confere com scikit-learn.
+
+DISC[P]: Implemente `mcnemar_exato(a_ok, b_ok)` que devolva $b$, $c$ e o valor-p exato bilateral, e confira com `scipy.stats.binomtest`.
+CODE:
+from scipy.stats import binomtest
+
+def mcnemar_exato(a_ok, b_ok):
+    b = sum(1 for x, y in zip(a_ok, b_ok) if x and not y)
+    c = sum(1 for x, y in zip(a_ok, b_ok) if y and not x)
+    d = b + c
+    if d == 0: return b, c, 1.0
+    return b, c, min(1.0, binomtest(min(b, c), d, 0.5).pvalue)
+
+a = [1] * 40 + [1] * 12 + [0] * 3 + [0] * 45
+b = [1] * 40 + [0] * 12 + [1] * 3 + [0] * 45
+bb, cc, p = mcnemar_exato(a, b)
+assert (bb, cc) == (12, 3) and 0.0 < p < 0.05
+print(bb, cc, round(p, 4))
+ENDCODE
+R: Só os discordantes entram: $b=12$ e $c=3$. Sob equivalência, $b\sim\text{Binomial}(15;\,0{,}5)$; o valor-p bilateral é a probabilidade de um desbalanceamento ao menos tão extremo, aqui próxima de 0,035.
+CRIT: Conta apenas os casos discordantes.
+CRIT: Usa a binomial com probabilidade 1/2.
+
+DISC[P]: Implemente `rouge_l_f(ref, hip)` baseado na maior subsequência comum de palavras (minúsculas, separadas por espaço) e mostre um exemplo em que o ROUGE-L dá nota alta a uma resposta factualmente errada.
+CODE:
+def lcs(a, b):
+    dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
+    for i in range(len(a)):
+        for j in range(len(b)):
+            dp[i + 1][j + 1] = dp[i][j] + 1 if a[i] == b[j] else max(dp[i][j + 1], dp[i + 1][j])
+    return dp[-1][-1]
+
+def rouge_l_f(ref, hip):
+    r, h = ref.lower().split(), hip.lower().split()
+    l = lcs(r, h)
+    if l == 0: return 0.0
+    p, rc = l / len(h), l / len(r)
+    return 2 * p * rc / (p + rc)
+
+ref = "a multa por atraso é de 1,50 por dia"
+errada = "a multa por atraso é de 5,00 por dia"
+correta_parafrase = "cada dia de atraso custa 1,50"
+assert rouge_l_f(ref, errada) > rouge_l_f(ref, correta_parafrase)
+print(round(rouge_l_f(ref, errada), 3), round(rouge_l_f(ref, correta_parafrase), 3))
+ENDCODE
+R: A LCS conta a sequência comum de palavras; a resposta com valor errado compartilha quase toda a frase, e a paráfrase correta compartilha pouco. A métrica mede forma, e não correção factual.
+CRIT: Implementa a LCS e a F.
+CRIT: Mostra o exemplo e comenta a limitação.
+
+DISC[P]: Implemente `portao_regressao(base_ok, novo_ok, estratos, margem, queda_estrato)` com bootstrap pareado, e teste com uma queda concentrada em um estrato.
+CODE:
+import numpy as np
+
+def portao_regressao(base_ok, novo_ok, estratos, margem=0.03, queda_estrato=0.10, n=2000, seed=0):
+    base_ok, novo_ok = np.asarray(base_ok, float), np.asarray(novo_ok, float)
+    d = novo_ok - base_ok
+    rng = np.random.default_rng(seed)
+    medias = d[rng.integers(0, len(d), (n, len(d)))].mean(1)
+    lo = np.quantile(medias, 0.025)
+    motivos = []
+    if lo < -margem: motivos.append("queda geral")
+    est = np.asarray(estratos)
+    for e in sorted(set(est)):
+        m = est == e
+        if d[m].mean() < -queda_estrato: motivos.append(f"queda no estrato {e}")
+    return not motivos, motivos
+
+rng = np.random.default_rng(1)
+est = np.array(["x"] * 400 + ["y"] * 100)
+base = (rng.random(500) < 0.9).astype(float)
+novo = base.copy()
+idx = np.where((est == "y") & (base == 1))[0][:15]
+novo[idx] = 0
+ok, mot = portao_regressao(base, novo, est)
+assert not ok and any("y" in m for m in mot)
+print(ok, mot)
+ENDCODE
+R: O portão reprova se o limite inferior do IC da diferença pareada passar da margem ou se algum estrato cair mais que o limite. No teste, a queda de 15 casos no estrato y dispara a regra de estrato (e também a regra geral). Em geral, a regra por estrato é a que pega quedas concentradas quando a média geral mal se mexe.
+CRIT: Usa diferença pareada com bootstrap.
+CRIT: Inclui a regra por estrato.
+
+DISC[A]: Uma prefeitura quer avaliar um assistente que responde a cidadãos sobre prazos de serviços com base em um regulamento. Proponha o desenho do teste: estratos, métricas, tratamento das perguntas sem resposta e papel da revisão humana.
+R: Estratos: perguntas diretas, por paráfrase, sem resposta, com informação ambígua ou contraditória. Métricas por estrato: recuperação (hit@k), resposta correta com verificação por regra de números e datas, fidelidade ao trecho citado, existência e vigência da citação, taxa de recusa correta e de recusa indevida. Erros graves (prazo ou valor errado) em separado, com IC. O limiar de abstenção é decisão de política, pois a recusa custa pouco e o erro pode custar um direito. Revisão humana nas decisões que afetam direitos e possibilidade de contestação; reavaliar a cada mudança da norma; dados pessoais anonimizados.
+CRIT: Estratos incluindo sem resposta.
+CRIT: Métricas de recuperação e de geração.
+CRIT: Assimetria de custos e revisão humana.
+
+DISC[A]: Uma equipe valida um juiz automático com 200 respostas rotuladas por duas pessoas e obtém kappa de 0,48 entre elas e de 0,42 entre cada pessoa e o juiz. Interprete e indique os próximos passos.
+R: O juiz concorda com cada pessoa quase tanto quanto as pessoas entre si, mas o teto de concordância é baixo: o critério está mal definido. Próximos passos: melhorar o guia de anotação com exemplos limítrofes, rodar um piloto, adjudicar divergências, refazer a medida (preferencialmente com kappa ponderado ou alfa) e só então calibrar o juiz. Verificar o desempenho por estrato e os vieses de tamanho e de posição.
+CRIT: Reconhece o teto de concordância humano.
+CRIT: Propõe ações no guia e na medida.
+
+DISC[A]: Um sistema novo "subiu" de 82% para 85% em 100 casos. A equipe quer trocar o sistema em produção. O que você diria, e que análise pediria?
+R: Com 100 casos, o IC de cada acerto tem largura de cerca de ±8 pontos; 3 pontos estão dentro da incerteza. Pediria a análise pareada (McNemar, bootstrap pareado), mais casos (ou o cálculo do n para a diferença de interesse), a análise por estrato, a repetição com várias sementes e a definição de uma margem de relevância. Registraria a decisão e a incerteza.
+CRIT: Reconhece a incerteza.
+CRIT: Pede análise pareada e mais casos.
+
+DISC[A]: Descreva como monitorar em produção um assistente de atendimento sem rótulos de verdade, e que amostra revisar semanalmente.
+R: Sinais indiretos: taxa de abstenção, falhas de formato, tamanho das respostas, latência, custo, distribuição dos tipos de pergunta, encaminhamentos a humano, polegar para baixo; comparar com uma referência por carta de controle e investigar alertas. Revisão semanal: todos os casos de baixa confiança ou sinalizados, mais uma amostra aleatória dos demais, para estimar a taxa de erro dos casos confiantes. O feedback do usuário é enviesado e serve para descobrir problemas e alimentar o conjunto de teste.
+CRIT: Cita sinais indiretos e carta de controle.
+CRIT: Propõe amostra de baixa confiança e aleatória.
+
+DISC[D]: Discuta a afirmação: "Se o juiz automático concorda com humanos em 85% dos casos, podemos substituir a avaliação humana."
+R: A concordância bruta ignora o acaso e pode esconder erros nos casos que importam (respostas longas e bem escritas, porém erradas), além de variar por estrato. Convém medir kappa ou alfa, vieses de posição, tamanho e autopreferência, calibrar com amostra rotulada e manter humanos para casos de risco e para revalidar periodicamente. O juiz pode reduzir o custo, mas não elimina a necessidade de validação.
+CRIT: Critica a concordância bruta.
+CRIT: Propõe validação e manutenção de amostra humana.
+
+DISC[D]: Discuta se faz sentido usar um corretor automático de respostas discursivas para atribuir a nota final em uma disciplina.
+R: Notas afetam trajetórias; o sistema pode ter viés sistemático (por exemplo, penalizar paráfrases corretas, afetando quem escreve diferente), seu erro não é aleatório e a explicação gerada não é fiel. O uso mais adequado é de apoio: rascunho de nota por critério, sinalização de casos duvidosos e segunda leitura, com decisão final e possibilidade de revisão pelo professor, avaliando a concordância com professores por critério e por estrato antes de adotar.
+CRIT: Aponta o risco de viés e o impacto nas pessoas.
+CRIT: Propõe o uso como apoio, com decisão humana.
+
+DISC[D]: Discuta os limites e os usos adequados da avaliação com simuladores, como a feita neste capítulo, e o que mudaria ao avaliar um LLM real.
+R: Os simuladores permitem conhecer a verdade e verificar se os métodos de avaliação a recuperam, mas os números não descrevem modelos reais, e os vieses foram programados. Com um LLM real, o desenho do teste, as métricas, os testes pareados e o cartão de avaliação seriam os mesmos; mudariam as taxas (de formato, de abstenção, de vieses do juiz), a variabilidade (temperatura, versão do serviço), a necessidade de registrar o modelo e a data, e os custos.
+CRIT: Distingue método de resultado.
+CRIT: Indica o que muda com um modelo real.
