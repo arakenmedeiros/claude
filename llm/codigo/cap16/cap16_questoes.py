@@ -33,7 +33,7 @@ poder = np.mean(chi2.sf(x2, 1) < 0.05)
 assert 0.70 < poder < 0.90
 print(n, round(float(poder), 3))
 
-# %% [Questão discursiva 9]
+# %% [Questão discursiva 10]
 import numpy as np
 from sklearn.metrics import f1_score
 
@@ -56,7 +56,7 @@ assert abs(ma - f1_score(y_true, y_pred, average="macro")) < 1e-12
 assert abs(mi - f1_score(y_true, y_pred, average="micro")) < 1e-12
 print(round(ma, 3), round(mi, 3))
 
-# %% [Questão discursiva 10]
+# %% [Questão discursiva 11]
 from scipy.stats import binomtest
 
 def mcnemar_exato(a_ok, b_ok):
@@ -72,7 +72,7 @@ bb, cc, p = mcnemar_exato(a, b)
 assert (bb, cc) == (12, 3) and 0.0 < p < 0.05
 print(bb, cc, round(p, 4))
 
-# %% [Questão discursiva 11]
+# %% [Questão discursiva 12]
 def lcs(a, b):
     dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]
     for i in range(len(a)):
@@ -93,7 +93,7 @@ correta_parafrase = "cada dia de atraso custa 1,50"
 assert rouge_l_f(ref, errada) > rouge_l_f(ref, correta_parafrase)
 print(round(rouge_l_f(ref, errada), 3), round(rouge_l_f(ref, correta_parafrase), 3))
 
-# %% [Questão discursiva 12]
+# %% [Questão discursiva 13]
 import numpy as np
 
 def portao_regressao(base_ok, novo_ok, estratos, margem=0.03, queda_estrato=0.10, n=2000, seed=0):
