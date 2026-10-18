@@ -29,3 +29,9 @@ Notas: Consensus esgotado (2 buscas até 01/11); usar WebSearch para verificar. 
 | 10 | ok | ok | ok | Parte II concluída |
 | 11 | ok | ok | ok | Parte III |
 | 12 | ok | ok | ok | |
+
+## Estado final (18/10/2026)
+- Caps. 1–32, front matter e apêndices A–M escritos; build completo em duas passagens (779 páginas no LibreOffice; sumário com páginas estáveis; campo TOC atualizável com F9 no Word).
+- Itens a conferir antes de publicação: textos oficiais de ECA Digital, Lei 9.610, LDB (arts. 14 e 24), CNPq 2026; resumos de Bastani/Kestin/Fan/Lee (descritos qualitativamente); referencial UNESCO 2024; volume/páginas de Noy & Zhang 2023; referências M (clássicos) não reverificadas; ref. MAYER 2009, MOLLICK 2023 e algumas M sem citação nos capítulos (não aparecem na lista consolidada).
+- Capítulos 18–32 excedem a meta de extensão (~4.000–4.900 palavras).
+- Próximo passo (aguarda autorização do autor): PPTX por capítulo.

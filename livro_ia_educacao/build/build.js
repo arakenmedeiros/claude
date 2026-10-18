@@ -433,7 +433,7 @@ if (!ONLY) {
   // Referências consolidadas
   const used = new Set(); Object.values(usedByChapter).forEach((s) => s.forEach((k) => used.add(k)));
   const kids = [heading(1, "Referências")];
-  kids.push(P("Lista consolidada das obras citadas nos capítulos e apêndices. Os dados de autoria, título, periódico e ano dos artigos de periódico marcados como verificados foram conferidos em base bibliográfica em 17/10/2026; volume, número e páginas, quando ausentes, devem ser completados na revisão editorial. A legislação e os documentos de política foram citados conforme os dados oficiais conhecidos, com status de vigência a conferir na data de uso. Veja a Nota sobre a verificação das fontes, no início do livro.", { run: { color: C.gry } }));
+  kids.push(P("Lista consolidada das obras citadas nos capítulos e apêndices. Os dados de autoria, título, periódico e ano dos artigos de periódico marcados como verificados foram conferidos em base bibliográfica em 17/10/2026; volume, número e páginas, quando ausentes, devem ser completados na revisão editorial. A legislação e os documentos de política foram citados conforme os dados oficiais conhecidos, com status de vigência a conferir na data de uso. Veja a Nota sobre a verificação das fontes (Apêndice C).", { run: { color: C.gry } }));
   [...used].map((k) => BANK[k].ref).sort((a, b) => a.localeCompare(b, "pt")).forEach((r) => kids.push(new Paragraph({ keepLines: true, spacing: { after: 90, line: 264 }, indent: { left: 420, hanging: 420 }, children: [new TextRun({ text: r, size: 19 })] })));
   contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Referências") }, footers: { default: mkFooter() }, children: kids });
 }
