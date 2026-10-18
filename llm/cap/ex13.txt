@@ -1,0 +1,380 @@
+MC: O que é uma modalidade, no contexto de modelos multimodais?
+= Um tipo de dado com estrutura própria, como texto, imagem ou áudio.
+- Um modo de execução do modelo na GPU.
+- Um hiperparâmetro que controla a criatividade.
+- Um formato de arquivo compactado.
+- Um idioma suportado pelo tokenizador.
+J: Texto, imagem, áudio, vídeo e tabelas são modalidades; um modelo multimodal lida com mais de uma.
+
+MC: Qual o formato típico de uma imagem colorida de altura H e largura L em NumPy?
+= (H, L, 3), com um número por canal em cada pixel.
+- (H, L), com uma letra por pixel.
+- (3, 3), independentemente do tamanho.
+- (H * L,), sempre com valores 0 ou 1.
+- (L, 3, 3, H).
+J: Em RGB há três canais (vermelho, verde, azul) para cada pixel.
+
+MC: Quantos números tem uma imagem RGB de 224×224 pixels?
+= 150 528.
+- 50 176.
+- 448.
+- 672.
+- 1 024.
+J: 224 × 224 × 3 = 150 528.
+
+MC: No ViT, o que é um patch?
+= Um bloco quadrado da imagem, achatado em vetor e projetado, que faz o papel de um token.
+- Um filtro convolucional aprendido.
+- Uma correção de segurança do modelo.
+- Uma palavra do texto da pergunta.
+- O rótulo de classe da imagem.
+J: A imagem é dividida em blocos que viram a sequência de entrada do Transformer.
+
+MC: Uma imagem 224×224 é dividida em patches 16×16. Quantos patches resultam?
+= 196.
+- 256.
+- 14.
+- 784.
+- 49.
+J: (224/16) × (224/16) = 14 × 14 = 196.
+
+MC: Por que se soma uma informação de posição aos embeddings de patch?
+= Porque a atenção, sem posição, não distingue a ordem dos blocos.
+- Para reduzir o número de patches.
+- Para converter a imagem em tons de cinza.
+- Para normalizar o brilho da imagem.
+- Para aumentar a taxa de amostragem.
+J: Sem posição, embaralhar os patches não altera a saída da atenção.
+
+MC: Qual o efeito de diminuir o tamanho do patch (de 32 para 16) em uma mesma imagem?
+= Aumenta o número de tokens visuais e o custo da atenção, preservando mais detalhe.
+- Reduz o número de tokens e o custo, preservando mais detalhe.
+- Não altera o número de tokens.
+- Elimina a necessidade de posição.
+- Transforma a imagem em áudio.
+J: Cada redução do lado do patch pela metade multiplica por quatro o número de patches.
+
+MC: Qual a ideia central do treinamento contrastivo imagem–texto?
+= Aproximar os embeddings de pares corretos e afastar os de pares incorretos no lote.
+- Gerar legendas palavra por palavra a partir da imagem.
+- Classificar imagens em categorias fixas.
+- Comprimir a imagem sem perda.
+- Traduzir texto para outro idioma.
+J: Os dois codificadores aprendem um espaço comum em que pares correspondentes ficam próximos.
+
+MC: Na perda contrastiva simétrica, o que significa "simétrica"?
+= Soma-se a entropia cruzada por linhas (imagem→texto) e por colunas (texto→imagem).
+- Imagem e texto usam o mesmo codificador.
+- Todos os pares têm o mesmo peso e o mesmo rótulo.
+- A temperatura é igual a 1.
+- A perda é calculada só na diagonal.
+J: A classificação do texto correto para cada imagem e da imagem correta para cada texto são tratadas juntas.
+
+MC: Com n pares por lote e embeddings ao acaso, que valor se espera para a perda contrastiva?
+= Cerca de ln n.
+- Cerca de zero.
+- Cerca de n².
+- Cerca de 1/n.
+- Infinito.
+J: Cada softmax fica quase uniforme sobre n candidatos, e −ln(1/n) = ln n.
+
+MC: O que faz a temperatura τ na matriz S = cos/τ?
+= Controla a nitidez do softmax: τ pequeno amplifica diferenças entre similaridades.
+- Define quantas épocas de treino serão feitas.
+- Altera o número de dimensões do embedding.
+- Escolhe o otimizador.
+- Remove o ruído dos dados.
+J: Dividir por um τ pequeno torna as pontuações mais afastadas e o softmax mais afiado.
+
+MC: Por que não se deve comparar perdas contrastivas obtidas com temperaturas diferentes?
+= A perda é calculada sobre pontuações em escalas distintas, então não mede a mesma coisa.
+- Porque a perda só existe para τ igual a 1.
+- Porque τ muda o número de pares do lote.
+- Porque a perda deixa de ser diferenciável.
+- Porque a temperatura é fixada pelo sistema operacional.
+J: Para τ grande o softmax fica achatado e a perda alta mesmo com bom alinhamento.
+
+MC: O que mede o recall@5 na recuperação imagem→texto?
+= A fração de imagens cujo texto correto aparece entre os 5 mais similares.
+- A fração de textos com mais de 5 palavras.
+- O número de imagens com 5 canais.
+- A similaridade média dos 5 melhores pares.
+- A perda após 5 épocas.
+J: É a proporção de consultas com algum item correto no top 5.
+
+MC: Por que um recall@k precisa vir acompanhado do critério de "correto" e do tamanho da galeria?
+= Porque o mesmo sistema tem números muito diferentes conforme o critério e o número de candidatos.
+- Porque o recall é sempre igual a 1 em galerias pequenas.
+- Porque o critério é definido pelo tamanho da imagem.
+- Porque o recall não depende dos dados.
+- Porque a galeria é sempre o conjunto de treino.
+J: Critério estrito e galerias grandes tornam o problema mais difícil e mudam o valor.
+
+MC: Como funciona a classificação zero-shot por descrições, na ideia do CLIP?
+= Embutem-se descrições das classes e atribui-se cada imagem à descrição mais similar.
+- Treina-se um novo classificador com rótulos de cada classe.
+- Sorteia-se uma classe ao acaso.
+- Usa-se apenas a cor média da imagem.
+- Compara-se o tamanho do arquivo com um limiar.
+J: Nenhum classificador é treinado: a classe vem da similaridade com as descrições.
+
+MC: Qual a função do projetor em modelos tipo LLaVA?
+= Mapear embeddings visuais para o espaço de embeddings de token do LLM.
+- Reduzir a resolução do vídeo.
+- Traduzir a pergunta para outro idioma.
+- Converter o áudio em espectrograma.
+- Armazenar as chaves da API.
+J: Os vetores projetados entram na sequência do LLM como se fossem tokens.
+
+MC: Qual afirmação descreve melhor o que um LLM multimodal "vê" de uma imagem?
+= Vetores produzidos pelo codificador visual e alinhados ao seu espaço de tokens.
+- Os pixels originais, um a um.
+- Uma descrição escrita por uma pessoa.
+- Apenas os metadados do arquivo.
+- A imagem em formato vetorial editável.
+J: O LLM nunca recebe pixels; se o alinhamento perde um detalhe, ele não tem como saber.
+
+MC: Segundo o teorema de Nyquist, qual a maior frequência representada sem ambiguidade em um sinal amostrado a 16 000 Hz?
+= 8 000 Hz.
+- 16 000 Hz.
+- 32 000 Hz.
+- 4 000 Hz.
+- 1 600 Hz.
+J: O limite é fs/2.
+
+MC: O que é o aliasing?
+= Frequências acima de fs/2 que aparecem "dobradas" como frequências menores.
+- Um tipo de compressão do texto.
+- O aumento da taxa de amostragem após o corte.
+- A remoção de ruído por difusão.
+- A troca de canais de cor.
+J: Um tom de 5 000 Hz amostrado a 8 000 Hz aparece como 3 000 Hz.
+
+MC: O que representa um espectrograma?
+= A energia por frequência ao longo do tempo, obtida por janelas curtas (STFT).
+- O texto transcrito de um áudio.
+- A forma de onda original sem alterações.
+- O número de amostras por segundo.
+- O volume médio de todo o arquivo.
+J: Empilham-se os espectros de janelas sucessivas, formando uma imagem frequência × tempo.
+
+MC: Qual o compromisso ao escolher o tamanho da janela da STFT?
+= Janelas longas resolvem melhor frequências e pior o tempo; janelas curtas, o inverso.
+- Janelas longas melhoram ambos, tempo e frequência.
+- Janelas curtas melhoram ambos, tempo e frequência.
+- O tamanho da janela não afeta a resolução.
+- Janelas longas eliminam o ruído.
+J: Resolução em frequência é fs/n_fft, e janelas longas borram os instantes.
+
+MC: Por que a transcrição automática de fala precisa de revisão antes de alimentar um resumo feito por LLM?
+= Os erros de transcrição (nomes, siglas, palavras parecidas) se propagam ao resumo.
+- O LLM só aceita texto digitado por pessoas.
+- A transcrição apaga o texto original.
+- O resumo corrige automaticamente a transcrição.
+- A fala não pode virar texto.
+J: O resumo herda o que a transcrição errou e pode apresentá-lo com fluência.
+
+MC: Por que um CER baixo ainda pode corromper muitos campos de um documento?
+= Um valor tem vários caracteres, e basta um erro para alterá-lo.
+- O CER mede apenas a cor do texto.
+- O CER só conta erros em palavras com acento.
+- O CER é sempre igual à taxa de erro por campo.
+- O OCR nunca confunde dígitos.
+J: Na simulação do capítulo, um CER de 0,82% deixou 16,5% dos totais errados.
+
+MC: O que o processo direto da difusão faz?
+= Acrescenta ruído gaussiano em passos, até restar quase só ruído.
+- Gera a imagem final a partir de texto.
+- Treina a rede para classificar o ruído.
+- Remove o ruído em um único passo.
+- Comprime a imagem em JPEG.
+J: É um processo fixo, sem parâmetros aprendidos.
+
+MC: Na fórmula x_t = √ᾱ_t x_0 + √(1−ᾱ_t) ε, o que ocorre quando ᾱ_t se aproxima de 0?
+= O sinal original some e x_t se torna essencialmente ruído puro.
+- O ruído desaparece e x_t se iguala a x_0.
+- A imagem fica idêntica à anterior.
+- O coeficiente do ruído se anula.
+- A variância de x_t se torna infinita.
+J: Coeficiente do sinal tende a 0 e o do ruído, a 1.
+
+MC: O que a rede de um modelo de difusão do tipo DDPM aprende a prever, na formulação usual?
+= O ruído ε que foi somado a x_0 para formar x_t.
+- O rótulo de classe da imagem.
+- O número de passos T.
+- A taxa de amostragem do áudio.
+- O tamanho do patch.
+J: O treino minimiza o erro quadrado entre ε e a previsão da rede.
+
+MC: Qual medida reduz o risco de privacidade ao enviar fotos a um serviço externo?
+= Remover metadados e borrar rostos e placas, se não forem necessários.
+- Aumentar a resolução da imagem.
+- Enviar sempre o original sem edição.
+- Trocar o formato para PNG.
+- Pedir ao modelo que esqueça a imagem.
+J: Dados pessoais e sensíveis devem ser minimizados antes do envio, com base legal e avaliação de risco.
+
+MC: Qual boa prática para texto alternativo gerado por IA?
+= Revisar por uma pessoa e, para gráficos, oferecer também a tabela de dados.
+- Publicar sem revisão, pois o texto é fluente.
+- Descrever toda figura com pelo menos cem palavras.
+- Usar o mesmo texto para todas as figuras.
+- Omitir números para evitar erros.
+J: Descrições automáticas erram detalhes que importam, como números e direção de setas.
+
+MC: Qual a melhor forma de reduzir alucinações visuais em um pedido a um modelo multimodal?
+= Pedir abstenção ("ilegível") e conferir os trechos lidos, sem tratar a fluência como prova.
+- Pedir que o modelo "tenha certeza" de tudo.
+- Reduzir a resolução ao mínimo possível.
+- Remover o texto da pergunta.
+- Aceitar a primeira resposta sempre.
+J: Abstenção e verificação ajudam, mas não eliminam o problema.
+
+MC: Qual a limitação de usar um limiar de similaridade para o sistema se abster diante de entradas fora do domínio?
+= Ele aceita parte do ruído e rejeita parte dos casos válidos, e precisa ser calibrado com dados reais.
+- Ele elimina todas as alucinações visuais.
+- Ele só funciona para áudio.
+- Ele dispensa a avaliação por fatia.
+- Ele torna a temperatura irrelevante.
+J: No experimento do capítulo, o limiar do percentil 5 ainda aceitou 68,7% do ruído e rejeitou 5% dos dígitos reais.
+
+DISC[C]: Explique o que é uma modalidade e por que, para o computador, todas elas são arrays de números. Dê dois exemplos de estrutura que cada modalidade traz.
+R: Modalidade é um tipo de dado com estrutura própria (texto, imagem, áudio, vídeo, tabela). Todas são armazenadas como arrays: ids de tokens, grades de pixels, amostras no tempo. A estrutura varia: texto tem ordem e gramática; imagem tem vizinhança espacial e bordas; áudio tem periodicidade e frequências. Os modelos convertem cada uma em sequências de embeddings.
+CRIT: Cita ao menos três modalidades.
+CRIT: Relaciona forma do array com a estrutura a aproveitar.
+
+DISC[C]: Descreva as etapas do ViT desde a imagem até a sequência entregue ao Transformer, e explique o papel da posição.
+R: A imagem é dividida em patches p×p; cada patch é achatado em um vetor de p² (por canal) números; uma projeção linear leva cada vetor à dimensão do modelo; soma-se um vetor de posição a cada embedding, e costuma-se acrescentar um token especial de classificação. A posição é necessária porque a atenção sem ela trata a sequência como um conjunto e não distingue a ordem dos blocos.
+
+DISC[C]: Explique como funciona o treinamento contrastivo com pares imagem–texto e por que ele dispensa rótulos de classe.
+R: Há dois codificadores. Em cada lote de n pares, a perda eleva a pontuação do par correto e reduz a dos n²−n pares incorretos, por softmax sobre linhas e colunas da matriz de similaridades. A legenda é a supervisão, então não são necessárias classes fixas, e as descrições de classe podem ser escritas depois para classificar de modo zero-shot.
+
+DISC[C]: Descreva como um projetor liga um codificador visual a um LLM e por que isso não garante que o LLM "enxergue" tudo.
+R: O codificador gera embeddings de patch; o projetor (linear ou pequena rede) os mapeia à dimensão de token do LLM, e eles entram na sequência com os tokens do texto. O LLM só recebe esses vetores; detalhes finos que o codificador ou o projetor não preservam (números pequenos, texto ilegível) estão perdidos, e o modelo pode completar com o plausível, o que é uma alucinação visual.
+
+DISC[C]: Explique as duas fases da difusão e o que significa "gerar uma imagem" nesse tipo de modelo.
+R: No processo direto, ruído gaussiano é somado em T passos até restar ruído puro (sem aprendizado). No reverso, uma rede treinada prevê o ruído em cada passo e permite removê-lo gradualmente. Gerar é partir de ruído puro e aplicar o reverso, opcionalmente guiado por um embedding de texto.
+
+DISC[M]: Uma imagem de 640×480 pixels é dividida em patches de 32×32. Quantos patches resultam e quantos números tem cada patch em RGB? Compare com patches de 16×16.
+R: Com 32: (640/32)×(480/32) = 20×15 = 300 patches, cada um com 32×32×3 = 3 072 números. Com 16: 40×30 = 1 200 patches de 768 números. Reduzir o lado do patch pela metade multiplica o número de tokens por 4 (e o custo da atenção por cerca de 16).
+
+DISC[M]: Em um lote de 2 pares, S = [[2, 0], [0, 2]] (já divididas por τ). Calcule a perda simétrica.
+R: Cada linha e cada coluna têm o par correto com pontuação 2 e o incorreto com 0, logo a perda de cada uma é −ln(e²/(e²+1)) = ln(1+e⁻²) ≈ 0,1269. A média é 0,1269, que é também a perda simétrica.
+
+DISC[M]: Um sinal é amostrado a 16 000 Hz e a STFT usa n_fft = 512 e salto de 160 amostras. Calcule a resolução em frequência, o passo no tempo e a frequência máxima representável.
+R: Resolução: 16 000/512 = 31,25 Hz. Passo no tempo: 160/16 000 = 0,010 s (10 ms, ou 100 quadros por segundo). Frequência máxima: 8 000 Hz (Nyquist).
+
+DISC[M]: Com ᾱ_t = 0,36, x_0 = 5 e ε = 2, calcule x_t. Calcule também a variância de x_t se x_0 for fixo.
+R: x_t = √0,36·5 + √0,64·2 = 0,6·5 + 0,8·2 = 4,6. Com x_0 fixo e ε ~ N(0,1), a variância é (1−ᾱ_t) = 0,64.
+
+DISC[M]: Uma aplicação envia 20 000 imagens por mês, cada uma com 800 tokens visuais e 150 tokens de texto. Com preço hipotético de 3 unidades por milhão de tokens de entrada, qual o custo? E se a resolução for reduzida e a imagem passar a ter 200 tokens?
+R: Por requisição: 950 tokens; total 19 milhões de tokens; custo 19 × 3 = 57 unidades. Com 200 tokens por imagem: 350 tokens por requisição, 7 milhões no total, custo 21 unidades (redução de cerca de 63%). Deve-se medir se a perda de resolução prejudica a tarefa.
+CRIT: Usa o preço como hipotético, sem afirmar valores reais de serviços.
+
+DISC[P]: Implemente `num_patches(h, l, p)` e `patches_flat(img, p)` em NumPy, que divide uma imagem (h, l) em blocos p×p achatados, e verifique que a reconstrução devolve a imagem original.
+CODE:
+import numpy as np
+
+def num_patches(h, l, p):
+    assert h % p == 0 and l % p == 0
+    return (h // p) * (l // p)
+
+def patches_flat(img, p):
+    h, l = img.shape
+    return img.reshape(h // p, p, l // p, p).transpose(0, 2, 1, 3).reshape(-1, p * p)
+
+def reconstruir(P, h, l, p):
+    return P.reshape(h // p, l // p, p, p).transpose(0, 2, 1, 3).reshape(h, l)
+
+img = np.arange(64, dtype=float).reshape(8, 8)
+P = patches_flat(img, 4)
+assert P.shape == (num_patches(8, 8, 4), 16)
+assert np.array_equal(reconstruir(P, 8, 8, 4), img)
+print(P.shape, num_patches(224, 224, 16), "reconstrução exata")
+ENDCODE
+CRIT: Usa reshape e transpose (ou laços) corretamente.
+CRIT: Verifica a reconstrução exata.
+CRIT: Trata o caso de tamanho não divisível.
+
+DISC[P]: Implemente a perda contrastiva simétrica a partir de uma matriz de cossenos e uma temperatura, e confira com o valor calculado à mão para o exemplo S = cos/τ, com cos = [[0,8, 0,2], [0,1, 0,6]] e τ = 0,5 (esperado: cerca de 0,2920).
+CODE:
+import numpy as np
+
+def perda_contrastiva(cos, tau):
+    S = cos / tau
+    n = len(S)
+    def ce(M):
+        M = M - M.max(axis=1, keepdims=True)
+        logp = M - np.log(np.exp(M).sum(axis=1, keepdims=True))
+        return -np.mean(np.diag(logp))
+    return 0.5 * (ce(S) + ce(S.T))
+
+cos = np.array([[0.8, 0.2], [0.1, 0.6]])
+L = perda_contrastiva(cos, 0.5)
+print(round(L, 4))
+assert abs(L - 0.2920) < 1e-3
+print("perda com tau=5:", round(perda_contrastiva(cos, 5.0), 4), "| ln 2 =", round(np.log(2), 4))
+ENDCODE
+CRIT: Calcula o softmax por linhas e por colunas.
+CRIT: Usa subtração do máximo para estabilidade numérica.
+CRIT: Confere o valor esperado.
+
+DISC[P]: Gere um sinal com dois tons (500 Hz e 1 500 Hz, fs = 8 000 Hz, 1 s) e use `np.fft.rfft` para localizar os dois picos. Explique a resolução em frequência obtida.
+CODE:
+import numpy as np
+
+fs = 8000
+t = np.arange(fs) / fs
+x = np.sin(2 * np.pi * 500 * t) + 0.5 * np.sin(2 * np.pi * 1500 * t)
+mag = np.abs(np.fft.rfft(x))
+f = np.fft.rfftfreq(len(x), 1 / fs)
+picos = f[np.argsort(mag)[-2:]]
+print(sorted(picos.tolist()))
+assert sorted(picos.tolist()) == [500.0, 1500.0]
+print("resolução (Hz):", fs / len(x))
+ENDCODE
+CRIT: Usa rfft e rfftfreq com a taxa correta.
+CRIT: Identifica os dois picos esperados.
+CRIT: Relaciona a resolução a fs/N (aqui 1 Hz, pois a janela tem 1 s).
+
+DISC[P]: Implemente o ruído direto da difusão com fórmula fechada e verifique, por simulação, que a média e a variância de x_t concordam com √ᾱ_t·x_0 e 1−ᾱ_t para x_0 fixo.
+CODE:
+import numpy as np
+
+T = 1000
+beta = np.linspace(1e-4, 0.02, T)
+abar = np.cumprod(1 - beta)
+
+def x_t(x0, t, rng):
+    eps = rng.standard_normal(x0.shape)
+    return np.sqrt(abar[t]) * x0 + np.sqrt(1 - abar[t]) * eps
+
+rng = np.random.default_rng(0)
+x0 = np.full(200_000, 3.0)
+for t in (99, 499):
+    x = x_t(x0, t, rng)
+    print(t + 1, round(x.mean(), 3), round(np.sqrt(abar[t]) * 3.0, 3), round(x.var(), 3), round(1 - abar[t], 3))
+    assert abs(x.mean() - np.sqrt(abar[t]) * 3.0) < 0.01
+    assert abs(x.var() - (1 - abar[t])) < 0.01
+ENDCODE
+CRIT: Usa o produto acumulado de alfa.
+CRIT: Usa ruído gaussiano padrão.
+CRIT: Compara média e variância com os valores teóricos.
+
+DISC[A]: Uma equipe pretende usar um modelo multimodal para ler faturas e lançar os totais automaticamente. Analise os riscos e proponha um desenho com validações e revisão humana.
+R: Riscos: erros silenciosos de OCR (0/O, vírgula/ponto), perda de estrutura de tabelas, alucinação de valores ilegíveis, dados pessoais em faturas. Desenho: extrair em campos estruturados com validação de esquema; validar somas (itens contra total) e formatos; exigir abstenção quando ilegível; revisar por amostragem e sempre os casos que falham nas validações; medir erro por campo em conjunto anotado; registrar versões; avaliar privacidade e contratos antes de usar serviço externo.
+
+DISC[A]: Um CLIP-like obteve recall@1 de 0,95 em um conjunto de teste e a equipe concluiu que "o modelo entende as imagens". Analise a conclusão.
+R: O recall depende do critério de "correto", do tamanho da galeria e da dificuldade do conjunto; um conjunto fácil ou com vazamento superestima. Alinhamento por similaridade não equivale a compreensão; é preciso medir por fatia, com critérios estritos, galerias maiores, dados fora do domínio e intervalos de confiança, e verificar abstenção diante de entradas ilegíveis.
+
+DISC[A]: Analise se é adequado usar descrições automáticas de imagem como texto alternativo em um curso, e que processo de qualidade você adotaria.
+R: O texto alternativo é essencial à acessibilidade, mas descrições automáticas erram detalhes relevantes (números, setas). Processo: rascunho automático, revisão pelo professor, tabela de dados para gráficos, amostragem e teste com estudantes que usam tecnologias assistivas, registro de erros frequentes e proibição de enviar imagens de estudantes. Meça fatos obrigatórios corretos por figura, com intervalo de confiança.
+
+DISC[D]: Projete a avaliação de um sistema que responde perguntas sobre diagramas de arquitetura de software, incluindo conjunto de teste, métricas, fatias e tratamento de abstenção.
+R: Conjunto: diagramas reais e sintéticos, com perguntas de resposta verificável (quais componentes se conectam, direção das setas), incluindo casos ilegíveis ou sem resposta. Métricas: acerto por tipo de pergunta, fatos citados corretos, taxa de abstenção correta, taxa de invenção, custo em tokens. Fatias: resolução, densidade, tipo de diagrama, idioma dos rótulos. Intervalos de confiança por bootstrap. Fonte textual do diagrama como verdade, quando disponível. Revisão humana de amostra.
+
+DISC[D]: Defina uma política de privacidade para um sistema que descreve fotos enviadas por usuários, considerando rostos, metadados, retenção e uso de serviços externos.
+R: Minimização (aceitar só o necessário), remoção de metadados no envio, borrar ou recortar rostos e placas quando não essenciais, base legal e consentimento claros, aviso sobre uso de serviço externo e contrato com o provedor, retenção curta e definida, controle de acesso e registros, canal para exclusão de dados, avaliação de impacto quando houver dados sensíveis (como biométricos) e envolvimento do encarregado de dados. Proibir uso das imagens para treino sem autorização.
+
+DISC[D]: Proponha um experimento para estudar o efeito do tamanho do patch e da resolução sobre o custo e a qualidade de leitura de gráficos por um modelo multimodal de sua escolha.
+R: Montar 100 gráficos com valores conhecidos; variar resolução (por exemplo, três níveis) e recortes; para cada condição, perguntar valores e contagem de elementos pedindo abstenção; registrar modelo, versão, data, parâmetros; medir acerto de valores (com tolerância), taxa de invenção e tokens por imagem; calcular intervalos de confiança e diferenças pareadas entre condições; reportar curva custo × acerto e escolher o menor custo que atenda ao requisito. Repetir para verificar variabilidade.
