@@ -1,234 +1,242 @@
 MC: Qual das alternativas descreve melhor por que avaliar sistemas com LLM é mais difícil do que contar acertos de um classificador tradicional?
-= As saídas são abertas, variam entre execuções e dependem da redação do prompt.
-- O modelo sempre devolve a mesma resposta.
-- Os LLMs não podem ser testados com dados.
-- Só é possível avaliar com bancos de dados públicos.
-- O número de parâmetros impede qualquer medição.
+= As saídas são abertas, variam entre execuções e dependem do prompt.
+- O modelo devolve sempre a mesma resposta, o que impede comparações entre versões.
+- Os LLMs não podem ser testados com dados, pois o treinamento já os avaliou por completo.
+- Só se pode avaliar com bancos de dados públicos, que são os únicos aceitos pelos modelos.
+- O número de parâmetros impede qualquer tipo de medição, mesmo em amostras pequenas.
 J: Saídas abertas, variabilidade e sensibilidade ao prompt exigem desenho cuidadoso, repetição e relato da incerteza.
 
 MC: Qual é a principal diferença entre avaliação intrínseca e extrínseca?
-= A intrínseca mede uma propriedade do modelo isolado, como a perplexidade; a extrínseca mede o desempenho na tarefa de aplicação.
-- A intrínseca usa humanos e a extrínseca usa apenas máquinas.
-- A intrínseca é sempre mais cara que a extrínseca.
-- A extrínseca só se aplica ao treinamento do modelo.
-- Não há diferença, são sinônimos.
+= A intrínseca mede o modelo isolado (como a perplexidade); a extrínseca mede o desempenho na tarefa de aplicação.
+- A intrínseca depende de humanos e a extrínseca só de máquinas, em qualquer tipo de tarefa.
+- A intrínseca é sempre mais cara que a extrínseca porque exige treinar o modelo de novo.
+- A extrínseca só se aplica durante o treinamento do modelo, antes de qualquer uso por pessoas.
+- Não há diferença: os dois termos nomeiam a mesma medida, calculada sobre os mesmos dados.
 J: A perplexidade é intrínseca; a tarefa de aplicação é a medida extrínseca, a que importa ao usuário.
 
 MC: Por que não se deve comparar a perplexidade por token de dois modelos com tokenizadores diferentes?
-= Porque os tokens têm tamanhos diferentes, de modo que a unidade da medida não é a mesma.
-- Porque a perplexidade só existe para modelos de n-gramas.
-- Porque o tokenizador altera os pesos do modelo no teste.
-- Porque a perplexidade é medida em segundos.
-- Porque modelos diferentes sempre têm a mesma perplexidade.
+= Porque os tokens têm tamanhos diferentes e a unidade da medida deixa de ser a mesma.
+- Porque a perplexidade só existe para modelos de n-gramas e não para modelos neurais.
+- Porque o tokenizador altera os pesos do modelo no momento em que o teste é executado.
+- Porque a perplexidade é medida em unidades de tempo e depende do hardware usado.
+- Porque modelos diferentes sempre têm exatamente a mesma perplexidade em qualquer texto.
 J: Uma alternativa comparável é usar bits por caractere ou outra unidade independente do tokenizador.
 
-MC: Em um teste de intenções, 95% dos casos são "normal" e 5% são "fraude". Um sistema que diz sempre "normal" tem acurácia de 0,95. Que métrica revelaria o problema?
-= O F1 macro (ou a revocação da classe "fraude"), que pesa as classes por igual.
-- A acurácia, que já mostra o problema.
-- O número de tokens da resposta.
-- A perplexidade do modelo.
-- A temperatura de geração.
+MC: Em um teste, 95% dos casos são "normal" e 5% são "fraude". Um sistema que diz sempre "normal" tem acurácia de 0,95. Que métrica revelaria o problema?
+= O F1 macro, ou a revocação da classe "fraude", que pesam as classes por igual.
+- A própria acurácia, que já mostra com clareza que o sistema é inútil nesse conjunto.
+- O número médio de tokens por resposta, que cairia quando o sistema ignora a fraude.
+- A perplexidade do modelo no conjunto de teste, que dispararia diante das fraudes.
+- A temperatura de geração usada, que determina a taxa de fraudes detectadas.
 J: A revocação de "fraude" seria zero, e o F1 macro cairia a cerca de 0,49.
 
 MC: Qual a função de dividir o conjunto de teste em estratos?
 = Mostrar o desempenho em subgrupos relevantes, que a média geral pode esconder.
-- Aumentar artificialmente a acurácia total.
-- Reduzir o número de casos necessários a zero.
-- Substituir o conjunto de desenvolvimento.
-- Evitar a necessidade de anotação humana.
+- Aumentar a acurácia total, porque os casos difíceis são removidos da média final.
+- Reduzir a zero o número de casos necessários, já que cada estrato conta como um caso.
+- Substituir o conjunto de desenvolvimento, que deixa de ser necessário com os estratos.
+- Evitar a anotação humana, pois os estratos dispensam um rótulo de referência.
 J: Estratos como perguntas diretas, paráfrases e sem resposta revelam onde o sistema falha.
 
 MC: Com $p=0{,}5$ e margem de erro de ±5 pontos percentuais (95%), quantos casos são necessários, aproximadamente?
 = Cerca de 385 casos.
-- Cerca de 50 casos.
-- Cerca de 100 casos.
-- Cerca de 3 850 casos.
-- Cerca de 20 casos.
+- Cerca de 50 casos, o suficiente para qualquer proporção.
+- Cerca de 100 casos, qualquer que seja a margem desejada.
+- Cerca de 3 850 casos, dez vezes o valor calculado.
+- Cerca de 20 casos, por tratar-se do pior caso.
 J: $n=1{,}96^2\times0{,}25/0{,}05^2\approx385$.
 
 MC: Um sistema acerta 30 de 30 casos. O que se pode afirmar com honestidade estatística?
-= Que a taxa verdadeira de acerto pode ser relativamente baixa: o IC de Wilson de 95% começa perto de 0,89.
-- Que a taxa verdadeira é exatamente 100%.
-- Que o sistema nunca erra em produção.
-- Que o intervalo de confiança tem largura zero.
-- Que o teste é perfeito e dispensa novas amostras.
+= Que a taxa verdadeira ainda pode ser baixa: o IC de Wilson de 95% começa perto de 0,89.
+- Que a taxa verdadeira de acerto é exatamente 100%, pois não houve nenhum erro observado.
+- Que o sistema nunca vai errar em produção, porque passou em todos os casos do teste.
+- Que o intervalo de confiança tem largura zero, já que não há variação nas respostas.
+- Que o teste é perfeito e dispensa a coleta de novas amostras em outros cenários.
 J: Zero erros em amostra pequena não implica risco zero.
 
 MC: Por que o conjunto de teste não deve influenciar nenhuma decisão de ajuste do prompt?
-= Porque, se influenciar, a nota deixa de estimar o desempenho em casos novos e fica otimista.
-- Porque o conjunto de teste é sempre menor.
-- Porque o teste não pode conter casos difíceis.
-- Porque o prompt é secreto.
-- Porque ajustar prompts é proibido.
+= Porque a nota deixaria de estimar o desempenho em casos novos e ficaria otimista.
+- Porque o conjunto de teste é sempre menor que o de desenvolvimento e não comporta ajustes.
+- Porque o teste não pode conter casos difíceis, que só pertencem ao desenvolvimento.
+- Porque o prompt precisa permanecer secreto até o fim do projeto, por exigência legal.
+- Porque ajustar prompts é proibido pelas regras de qualquer conjunto de dados.
 J: Escolher a versão com a melhor nota no teste faz o teste virar desenvolvimento.
 
 MC: O que é contaminação de um conjunto de teste?
-= Quando o conteúdo do teste já foi visto pelo sistema (treino, exemplos, base de documentos ou quase-duplicatas do desenvolvimento).
-- Quando o teste contém erros de digitação.
-- Quando o teste tem mais de 1 000 casos.
-- Quando o modelo usa temperatura alta.
-- Quando os avaliadores discordam entre si.
+= O conteúdo do teste já foi visto pelo sistema (treino, exemplos, base de documentos ou quase-duplicatas).
+- O teste contém erros de digitação que atrapalham a leitura pelo modelo e pelos avaliadores.
+- O teste tem mais de mil casos, o que impede o cálculo correto de qualquer intervalo.
+- O modelo usa temperatura alta, o que contamina as respostas com texto aleatório.
+- Os avaliadores humanos discordam entre si, contaminando os rótulos de referência.
 J: A nota passa a medir memória, e não capacidade.
 
 MC: Uma defesa prática contra a contaminação por treinamento de modelos de terceiros é:
 = Avaliar com dados privados e recentes, que o modelo não poderia ter visto.
-- Usar apenas benchmarks públicos conhecidos.
-- Reduzir o número de casos de teste.
-- Aumentar a temperatura para zero.
-- Evitar medir a incerteza.
+- Usar apenas benchmarks públicos bem conhecidos, que foram revisados pela comunidade.
+- Reduzir o número de casos de teste, para que o modelo tenha menos chance de memorizá-los.
+- Fixar a temperatura em zero, o que impede o modelo de repetir o que viu no treino.
+- Evitar o cálculo de intervalos de confiança, que revelam a contaminação aos usuários.
 J: Como não se conhece o treinamento de terceiros, a defesa é usar dados novos e privados.
 
 MC: Em extração de entidades, o que o critério de casamento define?
 = Quando uma entidade extraída conta como acerto: exata, normalizada ou parcial.
-- O número de parâmetros do extrator.
-- A temperatura usada na extração.
-- O tamanho máximo do prompt.
-- O idioma dos documentos.
+- O número de parâmetros do extrator, que determina se a entidade pode ser reconhecida.
+- A temperatura usada na extração, que decide quantas entidades aparecem por documento.
+- O tamanho máximo do prompt, que limita a quantidade de entidades do conjunto de ouro.
+- O idioma dos documentos, que define o tipo de entidade que será extraída em cada um.
 J: Precisão, revocação e F1 dependem desse critério, que deve ser registrado antes.
 
-MC: Na comparação de "A paráfrase correta" com "a resposta com número errado", o ROUGE-1 tende a:
-= Dar nota mais alta à resposta com número errado, por ela ter mais palavras em comum com a referência.
-- Dar sempre nota maior à paráfrase correta.
-- Detectar números errados com precisão.
-- Dar nota zero a ambas as respostas.
-- Ignorar a sobreposição de palavras.
+MC: Ao comparar a "paráfrase correta" com a "resposta de número errado", o ROUGE-1 tende a:
+= Dar nota maior à resposta com número errado, por ela repetir mais palavras da referência.
+- Dar sempre a nota maior à paráfrase correta, por ela expressar o mesmo significado.
+- Detectar com precisão que o número está errado, pois números têm peso maior que palavras.
+- Atribuir nota zero a ambas as respostas, por nenhuma coincidir exatamente com a referência.
+- Ignorar a sobreposição de palavras e comparar apenas o significado das duas frases.
 J: Métricas de sobreposição não verificam fatos; um token trocado pesa pouco.
 
 MC: Por que a similaridade de embeddings sozinha é insuficiente para validar respostas factuais?
-= Porque ela captura o assunto, mas pode ser cega a números, negações e detalhes.
-- Porque embeddings não representam palavras.
-- Porque só funcionam em inglês.
-- Porque sempre devolvem o valor zero.
-- Porque exigem temperatura zero.
-J: Uma resposta com o valor errado ou incompleta pode ter similaridade altíssima com a correta.
+= Ela captura o assunto, mas pode ser cega a números, negações e detalhes.
+- Embeddings não representam palavras individuais, apenas a ordem em que elas aparecem.
+- Embeddings só funcionam em inglês, e por isso falham em textos escritos em português.
+- Embeddings sempre devolvem o valor zero quando o texto contém algum número.
+- Embeddings exigem temperatura zero para funcionar, o que as impede de serem usadas.
+J: Uma resposta com o valor errado, ou incompleta, pode ter similaridade altíssima com a correta.
 
 MC: Em avaliação de RAG, por que separar recuperação e geração?
-= Porque as falhas têm causas e remédios diferentes, e uma nota única esconde onde está o problema.
-- Porque a recuperação nunca falha.
-- Porque a geração não depende do contexto.
-- Porque só a geração tem custo.
-- Porque a separação elimina a necessidade de teste.
+= As falhas têm causas e remédios diferentes, e uma nota única esconde onde está o problema.
+- A recuperação nunca falha em sistemas com BM25, então só a geração precisa ser medida.
+- A geração não depende do contexto recuperado, de modo que as duas partes são independentes.
+- Só a geração tem custo computacional, e por isso só ela merece uma avaliação própria.
+- A separação elimina a necessidade de qualquer conjunto de teste para o sistema completo.
 J: Recuperação ruim pede ajuste na busca; geração ruim, no prompt ou no modelo.
 
 MC: Em um RAG, aumentar o limiar de abstenção tende a:
-= Aumentar a recusa correta das perguntas sem resposta, mas também a recusa indevida das respondíveis.
-- Eliminar todos os erros.
-- Reduzir a recusa indevida a zero.
-- Não alterar nenhuma taxa.
-- Melhorar a recuperação.
+= Aumentar a recusa correta das perguntas sem resposta e também a recusa indevida das respondíveis.
+- Eliminar todos os erros do sistema, pois o assistente passa a responder só quando tem certeza.
+- Reduzir a recusa indevida a zero, já que o sistema fica mais exigente com as respostas.
+- Deixar todas as taxas inalteradas, porque o limiar só afeta o tempo de resposta.
+- Melhorar a recuperação dos documentos, porque o limiar também ajusta o índice de busca.
 J: Não existe limiar sem custo; a escolha depende do custo de cada tipo de erro.
 
 MC: Um verificador que confere se todo número da resposta aparece no contexto recuperado:
-= Detecta números inventados, mas deixa passar erros em que o número alterado aparece em outro trecho do contexto.
-- Garante que a resposta esteja correta.
-- Mede a perplexidade da resposta.
-- Substitui a recuperação de documentos.
-- Elimina a necessidade de revisão humana.
+= Detecta números inventados, mas deixa passar o número alterado que aparece em outro trecho do contexto.
+- Garante que a resposta esteja correta, pois todos os fatos foram verificados contra o contexto.
+- Mede a perplexidade da resposta, indicando o quanto o modelo estava incerto ao responder.
+- Substitui a etapa de recuperação de documentos, que deixa de ser necessária.
+- Elimina a necessidade de revisão humana, mesmo nas decisões que afetam direitos.
 J: É uma verificação por regra, parcial.
 
 MC: Qual alternativa descreve o viés de posição de um juiz?
-= A tendência de favorecer a resposta apresentada em certa posição, como a primeira, independentemente da qualidade.
-- A tendência de preferir respostas mais curtas.
-- A preferência por respostas do próprio estilo.
-- A recusa de julgar respostas em português.
-- A preferência por respostas com números.
+= Favorecer a resposta apresentada em certa posição, como a primeira, independentemente da qualidade.
+- Preferir sempre as respostas mais curtas, porque parecem mais objetivas ao juiz.
+- Preferir respostas escritas no mesmo estilo das que o próprio modelo produziria.
+- Recusar-se a julgar respostas em português, por falta de dados de treinamento.
+- Preferir respostas que contenham números, por serem mais fáceis de verificar.
 J: Zheng et al. (2023) descrevem esse viés, entre outros.
 
 MC: Como se mitiga o viés de posição em comparações de pares?
-= Fazendo o julgamento nas duas ordens e aceitando um vencedor só quando os dois julgamentos concordam.
-- Aumentando a temperatura do juiz.
-- Sempre apresentando a melhor resposta primeiro.
-- Usando apenas um juiz por vez, em uma única ordem.
-- Removendo a rubrica.
+= Julgando nas duas ordens e aceitando um vencedor só quando os dois julgamentos concordam.
+- Aumentando a temperatura do juiz, para que as preferências se distribuam ao acaso.
+- Apresentando sempre a melhor resposta em primeiro lugar, para facilitar o trabalho do juiz.
+- Usando um único juiz e uma única ordem, para evitar julgamentos contraditórios.
+- Removendo a rubrica, para que o juiz decida sem ser influenciado por critérios.
 J: Discordância entre as ordens vira empate.
 
 MC: Qual das medidas expõe melhor o viés de verbosidade de um juiz?
 = A taxa de escolha da melhor resposta em pares nos quais ela é a mais curta.
-- O número de pares julgados por hora.
-- A perplexidade do juiz.
-- O kappa entre dois humanos.
-- O tamanho do prompt do juiz.
+- O número de pares julgados por hora, que cresce quando as respostas são longas.
+- A perplexidade do juiz sobre o texto das respostas, calculada em cada par.
+- O kappa entre dois humanos que avaliaram o mesmo conjunto de respostas.
+- O tamanho do prompt do juiz, que determina o comprimento das respostas escolhidas.
 J: Se o juiz falha justamente quando a melhor resposta é a curta, há viés de tamanho.
 
 MC: O kappa de Cohen mede:
 = A concordância entre dois avaliadores, corrigida pela concordância esperada ao acaso.
-- A concordância bruta, sem correção.
-- A variância do conjunto de teste.
-- A perplexidade média do modelo.
-- O tamanho da amostra necessário.
+- A concordância bruta entre dois avaliadores, sem qualquer correção pelo acaso.
+- A variância das notas do conjunto de teste em relação à média de todos os casos.
+- A perplexidade média do modelo avaliado sobre o conjunto de respostas julgadas.
+- O tamanho da amostra necessário para atingir uma margem de erro predefinida.
 J: $\kappa=(p_o-p_e)/(1-p_e)$.
 
 MC: O paradoxo do kappa ocorre quando:
 = A concordância bruta é alta, mas o kappa é baixo, por haver uma categoria muito dominante.
-- Dois avaliadores nunca concordam.
-- O kappa é sempre igual à acurácia.
-- A amostra é grande demais.
-- Há só duas categorias de resposta.
+- Dois avaliadores nunca concordam em nenhuma categoria, mesmo com muitos exemplos.
+- O kappa é sempre exatamente igual à acurácia, quaisquer que sejam as categorias.
+- A amostra é grande demais e o kappa perde significado estatístico por esse motivo.
+- Há apenas duas categorias possíveis, o que impede o cálculo da concordância esperada.
 J: O acaso já prevê muita concordância quando uma categoria é quase universal.
 
 MC: Qual a vantagem do alfa de Krippendorff sobre o kappa de Cohen?
 = Admite vários avaliadores, dados faltantes e escalas nominal, ordinal ou intervalar.
-- Só funciona com dois avaliadores.
-- Não precisa de rótulos humanos.
-- Elimina a necessidade de guia de anotação.
-- Dispensa a escolha de uma escala.
-J: É mais geral e é adequado a desenhos em que nem todos avaliam todos os itens.
+- Só funciona com dois avaliadores, o que o torna mais rigoroso que o kappa de Cohen.
+- Dispensa rótulos humanos, pois calcula a concordância a partir das respostas do modelo.
+- Elimina a necessidade de um guia de anotação, porque corrige as divergências sozinho.
+- Dispensa a escolha de uma escala, que é inferida automaticamente a partir dos dados.
+J: É mais geral e adequado a desenhos em que nem todos avaliam todos os itens.
 
 MC: Por que a amostra rotulada por humanos, usada para calibrar um juiz, deve ser aleatória?
 = Para que as taxas de erro estimadas representem o comportamento do juiz em todo o conjunto.
-- Para que o juiz acerte mais.
-- Para reduzir o número de rótulos a um.
-- Para evitar o uso de intervalos de confiança.
-- Para eliminar vieses do juiz.
+- Para que o juiz passe a acertar mais, já que aprende com os rótulos da amostra.
+- Para reduzir o número de rótulos a um único caso por categoria, sem perder precisão.
+- Para evitar o cálculo de intervalos de confiança, que não valem em amostras aleatórias.
+- Para eliminar por completo os vieses do juiz, que desaparecem com a amostragem.
 J: Uma amostra enviesada produz sensibilidade e especificidade que não valem para o restante.
 
 MC: Por que um teste pareado é preferível ao comparar dois sistemas nos mesmos casos?
-= Porque usa os resultados dos dois sistemas em cada caso, e só os casos discordantes informam a diferença.
-- Porque exige menos que um caso.
-- Porque ignora a variabilidade.
-- Porque dispensa um conjunto de teste.
-- Porque sempre encontra diferença significativa.
+= Usa os resultados dos dois sistemas em cada caso, e só os casos discordantes informam a diferença.
+- Exige menos de um caso por sistema, o que o torna muito mais barato que os demais.
+- Ignora a variabilidade entre execuções, o que garante conclusões mais estáveis.
+- Dispensa o conjunto de teste, pois a comparação é feita direto entre os modelos.
+- Sempre encontra uma diferença significativa, se os dois sistemas forem diferentes.
 J: Usar os pares remove a variação entre casos fáceis e difíceis.
 
 MC: No teste de McNemar, $b$ e $c$ representam:
 = O número de casos em que só A acerta e o número em que só B acerta.
-- O número de casos fáceis e difíceis.
-- O número de execuções e de sementes.
-- Os parâmetros dos dois modelos.
-- As médias de acerto de A e de B.
+- O número de casos fáceis e o número de casos difíceis do conjunto de teste.
+- O número de execuções e o número de sementes usadas em cada sistema comparado.
+- Os parâmetros dos dois modelos, estimados a partir dos casos de desenvolvimento.
+- As médias de acerto de A e de B, calculadas separadamente em cada estrato.
 J: Sob equivalência, $b$ segue uma binomial com $b+c$ tentativas e probabilidade 1/2.
 
-MC: Ao comparar 100 variantes equivalentes a 5% de nível sem correção, espera-se cerca de:
+MC: Ao comparar 100 variantes equivalentes a 5% de nível, sem correção, espera-se cerca de:
 = 5 falsos positivos.
-- Nenhum falso positivo.
-- 50 falsos positivos.
-- 95 falsos positivos.
-- 100 falsos positivos.
+- Nenhum falso positivo, já que as variantes são realmente equivalentes.
+- 50 falsos positivos, pois metade das comparações tende a dar diferença.
+- 95 falsos positivos, pois o nível de 5% vale para cada acerto individual.
+- 100 falsos positivos, pois todas as comparações ultrapassam o nível fixado.
 J: Cada comparação tem 5% de chance de falso positivo; Holm ou Benjamini-Hochberg corrigem isso.
 
 MC: Por que reportar a temperatura e a semente em uma avaliação?
-= Porque, sem elas, o resultado de um sistema com amostragem não pode ser reproduzido nem comparado.
-- Porque elas aumentam o acerto.
-- Porque dispensam repetir a avaliação.
-- Porque substituem o conjunto de teste.
-- Porque eliminam a variabilidade.
+= Sem elas, o resultado de um sistema com amostragem não pode ser reproduzido nem comparado.
+- Elas aumentam o acerto do sistema, por isso devem aparecer ao lado da nota final.
+- Elas dispensam a repetição da avaliação, pois fixam o resultado de forma definitiva.
+- Elas substituem o conjunto de teste, que passa a ser desnecessário com esses dados.
+- Elas eliminam por completo a variabilidade, mesmo em serviços que mudam de versão.
 J: A temperatura altera a distribuição de saída, e a semente fixa o sorteio.
 
 MC: Qual o limite de usar benchmarks públicos como único teste de uma aplicação?
-= Podem estar saturados ou contaminados e não medem o seu idioma, seus documentos nem seus riscos.
-- São sempre pequenos demais.
-- São proibidos por lei.
-- Não aceitam modelos de linguagem.
-- Nunca incluem perguntas de múltipla escolha.
+= Podem estar saturados ou contaminados e não medem seu idioma, seus documentos nem seus riscos.
+- São sempre pequenos demais para que se calcule qualquer intervalo de confiança.
+- São proibidos por lei em aplicações que lidam com dados de cidadãos brasileiros.
+- Não aceitam modelos de linguagem, pois foram criados antes desse tipo de modelo.
+- Nunca incluem perguntas de múltipla escolha, apenas respostas livres e longas.
 J: Servem para triagem; a decisão exige o teste próprio.
 
 MC: Um portão de regressão com proteção por estrato reprova uma mudança quando:
-= O IC da diferença pareada passa da margem tolerada ou algum estrato importante cai além do limite.
-- Qualquer mudança é feita no código.
-- A média geral sobe um pouco.
-- O número de casos de teste diminui.
-- O modelo usa temperatura zero.
+= O IC da diferença pareada passa da margem tolerada, ou algum estrato importante cai além do limite.
+- Qualquer alteração é feita no código, mesmo que o resultado dos testes se mantenha.
+- A média geral sobe um pouco, pois todo aumento precisa ser investigado antes.
+- O número de casos de teste diminui, ainda que o desempenho continue o mesmo.
+- O modelo usa temperatura zero, que é proibida em ambientes de produção.
 J: A proteção por estrato pega quedas concentradas que a média esconde.
+
+MC: Qual o principal cuidado ao usar um corretor automático de respostas discursivas em uma disciplina?
+= Usá-lo como apoio, com decisão final e possibilidade de revisão por uma pessoa.
+- Usá-lo como nota final, porque a concordância com o professor é sempre alta.
+- Treiná-lo apenas com as respostas de maior nota, para que aprenda o padrão ideal.
+- Esconder dos estudantes que ele foi usado, para evitar contestações da nota.
+- Dispensar o conjunto de testes, já que a rubrica garante a qualidade da correção.
+J: Notas afetam trajetórias, e o erro do corretor pode ser sistemático, como penalizar paráfrases corretas.
 
 DISC[C]: Explique por que uma única execução de um sistema com amostragem não basta para avaliá-lo, e o que fazer.
 R: A saída é uma amostra de um processo aleatório (temperatura, semente, ordem, versão do serviço). Uma execução pode estar acima ou abaixo da média por acaso. É preciso repetir K vezes (ou com várias sementes), na configuração de produção, e relatar média e dispersão, somando a incerteza do conjunto de teste, além de registrar temperatura, semente, modelo e data.
@@ -297,6 +305,11 @@ assert 0.70 < poder < 0.90
 print(n, round(float(poder), 3))
 ENDCODE
 R: Com $\delta=0{,}04$ e $\psi=0{,}15$, $n=\left(1{,}96\sqrt{0{,}15}+0{,}84\sqrt{0{,}15-0{,}0016}\right)^2/0{,}04^2\approx734$ casos. A simulação dá poder empírico de cerca de 0,78, próximo do alvo de 0,80 (um pouco menor, pela correção de continuidade e pela aproximação normal).
+
+DISC[M]: Um sistema acerta 150 de 200 casos. Calcule o erro-padrão e o intervalo de 95% pela aproximação normal e diga se o resultado permite afirmar que o acerto verdadeiro supera 0,70.
+R: $p=0{,}75$; erro-padrão $=\sqrt{0{,}75\times0{,}25/200}\approx0{,}031$; intervalo $0{,}75\pm1{,}96\times0{,}031\approx[0{,}69;\ 0{,}81]$. Como o intervalo inclui 0,70, os dados não permitem afirmar que o acerto verdadeiro supere 0,70; seriam necessários mais casos ou um desempenho mais alto.
+CRIT: Calcula o erro-padrão e o intervalo.
+CRIT: Conclui corretamente sobre 0,70.
 
 DISC[P]: Implemente `f1_macro_micro(y_true, y_pred, classes)` sem scikit-learn e confira com `sklearn.metrics.f1_score`.
 CODE:

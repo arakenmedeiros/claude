@@ -1,0 +1,136 @@
+@@EX 1 | Quanto posto é preciso? Recuperação de uma mudança de posto 5 | básico
+Crie uma camada linear $W$ ($30\times40$) e uma mudança verdadeira $\Delta$ de **posto 5** (produto de matrizes $30\times5$ e $5\times40$). Gere dados $Y=X(W+\Delta)^{\top}$ e treine LoRA (retropropagação manual, Adam, $\alpha=16$) com $r\in\{1,3,5,8\}$. Para cada $r$, informe o número de parâmetros treináveis, o erro quadrático médio de **validação** e o erro relativo em $\Delta W$.
+
+*Pergunta:* a partir de que $r$ a mudança é recuperada? O que acontece com $r$ maior que o posto verdadeiro? Quanto da matriz completa os adaptadores representam?
+@@SOL
+```python
+import numpy as np
+rng = np.random.default_rng(3)
+d_in, d_out, alfa = 40, 30, 16
+W = rng.normal(0, 0.3, (d_out, d_in))
+U = rng.normal(size=(d_out, 5)); V = rng.normal(size=(5, d_in)); D = U @ V / np.sqrt(5) * 0.5
+X = rng.normal(size=(600, d_in)); Y = X @ (W + D).T
+Xv = rng.normal(size=(300, d_in)); Yv = Xv @ (W + D).T
+def treina(r, passos=3000, lr=0.02, seed=0):
+    g = np.random.default_rng(seed); A = g.normal(0, 1 / np.sqrt(d_in), (r, d_in)); B = np.zeros((d_out, r)); s = alfa / r
+    est = [[A, np.zeros_like(A), np.zeros_like(A)], [B, np.zeros_like(B), np.zeros_like(B)]]
+    for t in range(1, passos + 1):
+        Z = X @ A.T; E = X @ W.T + s * Z @ B.T - Y; N = len(X)
+        gB = s * 2 / N * E.T @ Z; gA = (s * 2 / N * E @ B).T @ X
+        for (P, m, v), G in zip(est, (gA, gB)):
+            m *= .9; m += .1 * G; v *= .999; v += .001 * G ** 2
+            P -= lr * (m / (1 - .9 ** t)) / (np.sqrt(v / (1 - .999 ** t)) + 1e-8)
+    dW = s * B @ A
+    return dW, float(np.mean((Xv @ (W + dW).T - Yv) ** 2))
+print(f"posto verdadeiro de ΔW: {np.linalg.matrix_rank(D)} | EQM de validação sem ajuste: {np.mean((Xv @ W.T - Yv) ** 2):.3f}")
+print(f"{'r':>3} {'params':>7} {'EQM val.':>10} {'erro rel. ΔW':>13}")
+for r in (1, 3, 5, 8):
+    dW, e = treina(r); print(f"{r:>3} {r*(d_in+d_out):>7} {e:>10.2e} {np.linalg.norm(dW - D) / np.linalg.norm(D):>13.4f}")
+print(f"matriz completa: {d_in*d_out} parâmetros")
+```
+@@NOTE Sem ajuste, o erro quadrático médio de validação é de 6,977. Com $r=1$ e $r=3$ (menores que o posto verdadeiro, 5), o erro permanece alto (4,35 e 1,19) e a mudança não é recuperada (erro relativo em $\Delta W$ de 0,78 e 0,40). Com $r=5$ o erro cai para cerca de $6\times10^{-6}$ e o erro relativo em $\Delta W$ para 0,0009; com $r=8$ os valores são comparáveis (erro relativo de 0,0029), sem ganho, porém com 560 parâmetros em vez de 350. A matriz completa tem 1 200 parâmetros: com $r=5$, os adaptadores têm 350 (cerca de 29%). O posto necessário é o **posto efetivo da mudança**, que aqui conhecemos por construção; em um modelo real, deve ser encontrado variando $r$ e olhando a validação.
+@@EX 2 | Escala α/r e taxa de aprendizado no MLPLM | intermediário
+Pré-treine o `MLPLM` (como no capítulo) e ajuste-o à tarefa nova com LoRA $r=4$ por 3 épocas, variando a escala $\alpha/r\in\{0{,}25;1;2;8\}$ e a taxa de aprendizado $\in\{0{,}001;0{,}005;0{,}02\}$ (média de 3 sementes). Registre a perplexidade na tarefa nova e na original.
+
+*Pergunta:* como a escala e a taxa de aprendizado interagem? Há configurações em que se aprende menos e se esquece menos?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus, modelos
+from llmdidatico.lora import *
+ant = corpus.frases_lm(3000, seed=0); ant_te = corpus.frases_lm(600, seed=99)
+nov = frases_dominio_novo(1500, seed=1); nov_te = frases_dominio_novo(600, seed=3)
+base = modelos.MLPLM(vocabulario(ant, nov), ctx=3, d=16, h=64, seed=0); base.treinar(ant, epocas=12, lote=64, lr=0.01)
+r = 4
+print(f"base: ppl nova {base.perplexidade(nov_te):.3f} | original {base.perplexidade(ant_te):.3f}")
+print(f"{'alfa/r':>7} {'lr':>7} {'ppl nova':>9} {'ppl original':>13}")
+for esc in (0.25, 1, 2, 8):
+    for lr in (0.001, 0.005, 0.02):
+        res = []
+        for s in range(3):
+            L = MLPLMLoRA(base, r=r, alfa=esc * r, seed=s); L.treinar(nov, epocas=3, lr=lr); res.append((L.perplexidade(nov_te), L.perplexidade(ant_te)))
+        mu = np.mean(res, 0); print(f"{esc:>7} {lr:>7} {mu[0]:>9.3f} {mu[1]:>13.3f}")
+```
+@@NOTE Com escala 0,25 e taxa 0,001, o ajuste é fraco (perplexidade nova de 2,558) e o esquecimento é o menor da tabela (original em 3,160). Com escala e taxa grandes, a tarefa nova chega ao patamar de cerca de 2,18 a 2,29, mas a perplexidade original sobe para 4,3 a 4,8. A mesma perplexidade nova (cerca de 2,18) é obtida por combinações bem diferentes de escala e taxa (por exemplo, 0,25 com 0,005 e 8 com 0,001), o que mostra que $\alpha/r$ e a taxa de aprendizado atuam de forma parecida, como um controle de **intensidade** da correção. Em um modelo real, isso sugere ajustar uma das duas (em geral, a taxa) e manter $\alpha$ proporcional a $r$, e escolher pela validação, sem esquecer a tarefa original. Resultados de um modelo minúsculo, com 3 sementes.
+@@EX 3 | Quanto se pode quantizar? bits e tamanho de bloco | intermediário
+Quantize o `MLPLM` pré-treinado (matrizes $W_1$, $W_2$ e embeddings) com bits $\in\{8,6,4,3\}$ e blocos $\in\{16,64,256\}$ e meça a perplexidade na tarefa original. Calcule o custo em bits por parâmetro (constantes de 32 bits) e escolha a configuração mais barata cuja perplexidade piore menos de 1%.
+
+*Pergunta:* qual é o custo da configuração escolhida? O que acontece com 3 bits e blocos grandes? Por que o tamanho do bloco importa?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus, modelos
+from llmdidatico.lora import *
+ant = corpus.frases_lm(3000, seed=0); ant_te = corpus.frases_lm(600, seed=99)
+nov = frases_dominio_novo(1500, seed=1)
+base = modelos.MLPLM(vocabulario(ant, nov), ctx=3, d=16, h=64, seed=0); base.treinar(ant, epocas=12, lote=64, lr=0.01)
+p0 = base.perplexidade(ant_te); print(f"ppl original sem quantizar: {p0:.4f}")
+print(f"{'bits':>4} {'bloco':>6} {'ppl':>8} {'variação':>9} {'bits/param':>11}")
+ok = []
+for bits in (8, 6, 4, 3):
+    for bl in (16, 64, 256):
+        p = quantizar_modelo(base, bits, bl).perplexidade(ant_te); bpp = bits_por_parametro(bits, bl)
+        print(f"{bits:>4} {bl:>6} {p:>8.4f} {p / p0 - 1:>+9.2%} {bpp:>11.3f}")
+        if p / p0 - 1 < 0.01: ok.append((bpp, bits, bl))
+b = min(ok); print(f"menor custo com degradação < 1%: {b[1]} bits, bloco {b[2]} ({b[0]:.3f} bits/parâmetro)")
+```
+@@NOTE A perplexidade original sem quantizar é de 2,4148. Em 8 e 6 bits a variação é de no máximo 0,3%. Com 4 bits ela vai de +0,65% (bloco 16) a +1,75% (bloco 256), e com 3 bits, de +2,52% (bloco 16) a +56,92% (bloco 64) e +187,71% (bloco 256): a quantização com poucos bits é muito mais sensível ao tamanho do bloco. A configuração mais barata com degradação abaixo de 1% é de 4 bits com bloco 64, a 4,500 bits por parâmetro (4,125 com bloco 256 já passa de 1,7% de degradação). Blocos grandes dão uma única escala a muitos pesos, e valores extremos definem a escala de todos. Resultado de um modelo minúsculo; em modelos reais, meça com os dados e a tarefa de interesse.
+@@ALEM
+- **Hugging Face PEFT e Transformers:** a documentação da biblioteca `peft` explica `LoraConfig`, `get_peft_model` e `merge_and_unload`; verifique a versão instalada e os nomes das camadas do modelo escolhido.
+- **Conjuntos de instruções em português:** procure coleções de pares instrução-resposta em português (confira **licença**, origem e presença de dados pessoais antes de usar).
+- **Leitura:** os artigos de LoRA (Hu et al., 2022) e QLoRA (Dettmers et al., 2023), e a análise "LoRA learns less and forgets less" (Biderman et al., 2024), para os resultados em modelos reais.
+@@PROJ Ajuste com mitigação de esquecimento: quanto dado antigo misturar? | intermediário
+**Contexto.** Você vai decidir **como** adaptar o `MLPLM` à tarefa nova sem estragar a original. Compare **LoRA ($r=4$)** e **ajuste completo**, misturando aos dados novos uma quantidade de dados antigos igual a 0%, 10%, 25% e 50% do número de exemplos novos, e escolha uma configuração segundo um critério definido **antes** de ver os resultados.
+
+**Tarefas.**
+
+1. Pré-treine o modelo base (`frases_lm`, semente 0) e defina a tarefa nova com `frases_dominio_novo`.
+2. Para cada método e fração, treine por 6 épocas (taxa 0,005) com **3 sementes** e registre a média das perplexidades na tarefa nova e na original (e o desvio da original).
+3. Defina o critério: perplexidade original no máximo 15% acima da do modelo base. Entre as configurações que o atendem, escolha a de menor perplexidade na tarefa nova.
+4. Verifique a configuração escolhida: mesclagem numérica (diferença máxima de logits) e, se for LoRA, que desligar o adaptador devolve o base.
+5. Escreva um parágrafo com a recomendação, os limites do experimento (modelo minúsculo, dados sintéticos, 3 sementes) e o que mediria em um LLM real.
+
+**Entregáveis.** Código, tabela e o parágrafo.
+@@RUBRICA
+- Experimento completo com os dois métodos, quatro frações e 3 sementes (4 pontos).
+- Critério definido antes e aplicado corretamente (2 pontos).
+- Verificação da mesclagem e do desligamento do adaptador (2 pontos).
+- Discussão crítica dos limites e do que seria medido em um LLM real (2 pontos).
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus, modelos, avaliacao as av
+from llmdidatico.lora import *
+ant = corpus.frases_lm(3000, seed=0); ant_te = corpus.frases_lm(600, seed=99)
+nov = frases_dominio_novo(1500, seed=1); nov_te = frases_dominio_novo(600, seed=3)
+base = modelos.MLPLM(vocabulario(ant, nov), ctx=3, d=16, h=64, seed=0); base.treinar(ant, epocas=12, lote=64, lr=0.01)
+p_ant, p_nov = base.perplexidade(ant_te), base.perplexidade(nov_te)
+print(f"base: ppl nova {p_nov:.3f} | original {p_ant:.3f}")
+rows = []
+print(f"{'método':<10} {'antigos/novos':>9} {'ppl nova':>9} {'ppl original':>13} {'(desvio original)':>18}")
+for metodo in ("LoRA r=4", "completo"):
+    for frac in (0.0, 0.1, 0.25, 0.5):
+        res = []
+        for s in range(3):
+            dados = nov + ant[:int(frac * len(nov))]
+            if metodo == "completo":
+                m, _ = ajuste_completo(base, dados, epocas=6, lr=0.005, seed=s)
+            else:
+                m = MLPLMLoRA(base, r=4, alfa=8, seed=s); m.treinar(dados, epocas=6, lr=0.005, seed=s)
+            res.append((m.perplexidade(nov_te), m.perplexidade(ant_te)))
+        res = np.array(res); mu = res.mean(0); rows.append((metodo, frac, mu[0], mu[1]))
+        print(f"{metodo:<10} {frac:>9.0%} {mu[0]:>9.3f} {mu[1]:>13.3f} {res[:, 1].std():>18.3f}")
+limite = 1.15 * p_ant
+cand = [r for r in rows if r[3] <= limite]
+print(f"critério: ppl original <= {limite:.3f} (15% acima do base)")
+if cand:
+    b = min(cand, key=lambda r: r[2]); print(f"melhor configuração dentro do critério: {b[0]} com {b[1]:.0%} de dados antigos (nova {b[2]:.3f}, original {b[3]:.3f})")
+else: print("nenhuma configuração atende ao critério")
+L = MLPLMLoRA(base, r=4, alfa=8, seed=0); L.treinar(nov + ant[:int(0.5 * len(nov))], epocas=6, lr=0.005, seed=0)
+Xt = L.dados(nov_te)[0]
+dif = float(np.abs(L.frente(Xt)[2] - L.mesclar().frente(Xt)[2]).max())
+L0 = MLPLMLoRA(base, r=4, alfa=8, seed=0)
+print(f"verificação da escolhida: diferença máxima de logits após mesclar = {dif:.1e} | adaptador desligado devolve o base: {np.isclose(L0.perplexidade(ant_te), p_ant)}")
+```
+@@NOTE
+@@NOTE A perplexidade do base é de 2,415 na tarefa original e 3,826 na nova. Sem dados antigos, os dois métodos esquecem muito (original em 5,147 com LoRA e 5,705 no ajuste completo) e a perplexidade original varia bastante entre sementes no LoRA (desvio de 0,375). Misturar dados antigos reduz o esquecimento de forma expressiva (por exemplo, para 3,326 e 2,701 com 10% e 50% no LoRA), ao custo de uma tarefa nova um pouco pior (de 2,172 para 2,289). Pelo critério (original até 2,777), a escolha foi LoRA com 50% de dados antigos (nova 2,289, original 2,701); o ajuste completo com 50% ficou muito próximo (2,298 e 2,714), de modo que **a diferença entre os métodos é pequena** neste experimento com 3 sementes, e a mistura de dados antigos pesa mais que o método. A verificação da escolhida mostra mesclagem exata (diferença máxima de logits de $1{,}4\times10^{-14}$) e que desligar o adaptador devolve o base. Como as duas tarefas **conflitam** (o mesmo contexto tem respostas diferentes), nenhum modelo único atinge o desempenho do base na original e do ajustado na nova ao mesmo tempo; em um LLM real, a instrução no prompt costuma indicar a tarefa, e a avaliação deveria incluir capacidades gerais e segurança.

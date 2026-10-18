@@ -1,0 +1,435 @@
+MC: Na decodificação com lote pequeno, qual costuma ser o gargalo principal do acelerador?
+= A leitura dos pesos e do cache da memória, pois cada token novo exige poucas operações por byte lido.
+- A capacidade de cálculo, pois cada passo multiplica enormes matrizes de ativações.
+- A velocidade da rede entre o usuário e o servidor, que impede novos passos.
+- O tamanho do vocabulário, que decide a duração de cada operação.
+- A quantidade de tokens do prompt original, mesmo depois de processado.
+J: Com poucas sequências, a intensidade aritmética é baixa; o tempo do passo é dominado por ler a memória, e não por calcular.
+
+MC: Por que o comprimento da saída costuma dominar a latência de uma resposta?
+= Porque os tokens de saída são gerados um a um, cada um ocupando um passo de decodificação.
+- Porque a saída é sempre mais longa que o prompt de entrada.
+- Porque o preenchimento do prompt é sequencial e lento.
+- Porque a saída precisa ser traduzida de números para texto no fim.
+- Porque os tokens de saída ocupam mais bytes que os de entrada.
+J: O prompt entra em paralelo no preenchimento; a saída exige um passo por token.
+
+MC: Ao aumentar o tamanho do lote na decodificação (em um modelo ainda limitado por memória), o que tende a ocorrer?
+= A vazão total aumenta, mas o tempo por token para cada pessoa tende a piorar.
+- A vazão total cai, mas cada pessoa recebe tokens mais rápido.
+- Tanto a vazão total quanto a velocidade individual aumentam sempre.
+- Nada muda, pois os pesos são lidos uma vez por pessoa.
+- Os pesos passam a ocupar menos memória.
+J: Os pesos são lidos uma vez para todos, o que eleva a vazão; o cache de cada sequência adicional aumenta a leitura por passo.
+
+MC: Quanto ocupam só os pesos de um modelo hipotético de 7 bilhões de parâmetros com 4 bits por parâmetro?
+= Cerca de 3,5 GB.
+- Cerca de 14 GB.
+- Cerca de 28 GB.
+- Cerca de 7 GB.
+- Cerca de 0,35 GB.
+J: $7\times10^9\times0{,}5$ byte $=3{,}5\times10^9$ bytes.
+
+MC: Na quantização simétrica com $b$ bits, como se costuma escolher a escala $s$ de um tensor?
+= $s=\max|w|/(2^{b-1}-1)$.
+- $s=\min(w)/b$.
+- $s=2^{b}\cdot\max|w|$.
+- $s=\text{média}(w)/\text{desvio}(w)$.
+- $s=1/\max|w|$, qualquer que seja $b$.
+J: A escala faz o maior valor absoluto corresponder ao maior inteiro representável.
+
+MC: Por que alguns valores muito grandes (outliers) prejudicam a quantização com uma única escala por tensor?
+= Porque a escala é determinada pelo máximo, e um valor grande reduz a resolução com que todos os demais são representados.
+- Porque valores grandes não podem ser representados por inteiros.
+- Porque os outliers aumentam o número de bits de cada parâmetro.
+- Porque a quantização sempre arredonda para cima os valores positivos.
+- Porque os outliers mudam o tamanho do vocabulário do modelo.
+J: Com o máximo grande, o passo da quantização cresce, e os pesos pequenos viram poucos níveis.
+
+MC: Qual o benefício de usar uma escala por coluna (ou por grupo), em vez de uma por tensor?
+= Adaptar o passo aos valores locais, reduzindo o efeito de colunas atípicas, ao custo de guardar mais escalas.
+- Eliminar a necessidade de guardar qualquer escala.
+- Dobrar o número de bits efetivos de cada peso.
+- Evitar que o modelo precise de dados de teste depois.
+- Tornar a quantização reversível, sem nenhum erro.
+J: Escalas mais finas seguem melhor as variações de magnitude entre partes do tensor.
+
+MC: Um modelo quantizado em 4 bits apresentou perplexidade média quase igual à original. Qual a conclusão prudente?
+= Ainda é preciso avaliar na tarefa real e em casos difíceis, pois a média pode esconder degradações em casos raros.
+- O modelo está garantidamente equivalente ao original em todas as tarefas.
+- A quantização não pode ter causado nenhum efeito, em nenhum caso.
+- A perplexidade média substitui qualquer outra avaliação.
+- O modelo agora pode ser considerado seguro contra alucinações.
+J: A perplexidade é uma média; a qualidade na tarefa e em subgrupos precisa ser verificada separadamente.
+
+MC: O que a destilação de conhecimento (Hinton et al., 2015) usa como alvo para treinar o aluno?
+= As saídas, em geral suavizadas por uma temperatura, produzidas por um modelo professor.
+- Apenas os rótulos duros do conjunto original, sem outra informação.
+- Os pesos do professor, copiados diretamente para o aluno.
+- Somente os gradientes do aluno, sem professor.
+- Um conjunto de regras escritas à mão.
+J: As probabilidades suaves informam sobre a semelhança entre classes, o que enriquece o treino do aluno.
+
+MC: Qual o efeito de usar uma temperatura $T>1$ ao calcular as probabilidades do professor na destilação?
+= A distribuição fica mais suave, realçando as probabilidades das classes não vencedoras.
+- A distribuição fica mais concentrada na classe mais provável.
+- O professor passa a escolher sempre a mesma classe.
+- O número de parâmetros do aluno diminui.
+- A perda do aluno deixa de depender das saídas do professor.
+J: Dividir os logits por $T$ achata o softmax, tornando visíveis as relações entre as classes.
+
+MC: O que uma mistura de especialistas (MoE) reduz, em comparação com um modelo denso de mesmo número total de parâmetros?
+= O cálculo por token, pois só alguns especialistas são ativados; a memória ainda precisa guardar todos.
+- A memória necessária para guardar os parâmetros, na mesma proporção.
+- O número total de parâmetros, que fica igual ao de um especialista.
+- A necessidade de um roteador.
+- O desbalanceamento de carga, que desaparece.
+J: Os parâmetros ativos por token são uma fração do total, mas todos os especialistas precisam estar disponíveis.
+
+MC: Qual problema típico surge no roteador de uma mistura de especialistas?
+= O desbalanceamento de carga, com alguns especialistas recebendo muito mais tokens que outros.
+- A impossibilidade de escolher mais de um especialista.
+- O aumento do vocabulário a cada token.
+- A perda da máscara causal na atenção.
+- A necessidade de reiniciar o treino a cada token.
+J: Um especialista sobrecarregado limita a velocidade do conjunto; o treino costuma incluir mecanismos para equilibrar a carga.
+
+MC: Para que o cache de prefixo funcione, o que é necessário?
+= Que o início do prompt seja idêntico entre as requisições, e por isso o texto estável vai antes do variável.
+- Que o final do prompt seja idêntico, com o texto estável depois do variável.
+- Que as perguntas tenham o mesmo significado, ainda que escritas de forma diferente.
+- Que a temperatura seja igual a zero em todas as chamadas.
+- Que o usuário use sempre o mesmo navegador.
+J: O cache KV de um prefixo só é reaproveitável se os tokens do prefixo forem exatamente os mesmos.
+
+MC: Qual a diferença essencial entre o cache de prefixo e o cache semântico de respostas?
+= O de prefixo reaproveita cálculo e mantém o resultado idêntico; o semântico devolve uma resposta pronta a um pedido apenas parecido e pode errar.
+- O de prefixo guarda respostas prontas, e o semântico guarda pesos do modelo.
+- Os dois são idênticos, mudando apenas o nome.
+- O semântico nunca altera a resposta, e o de prefixo sempre altera.
+- O de prefixo só funciona fora de servidores de inferência.
+J: O primeiro apenas evita recalcular; o segundo substitui o cálculo por uma resposta de outro pedido.
+
+MC: Qual o principal risco do cache semântico de respostas?
+= Reaproveitar uma resposta de um pedido parecido, mas que exige resposta diferente (outro plano, outro número, outro usuário).
+- Aumentar sempre a latência de todos os pedidos.
+- Impedir o uso de qualquer outro tipo de cache.
+- Tornar o modelo menos preciso em todas as tarefas.
+- Fazer o modelo esquecer o treinamento.
+J: Embeddings capturam o assunto, mas distinguem mal detalhes como números, nomes e datas.
+
+MC: O que acontece, em geral, ao reduzir o limiar de similaridade $\tau$ de um cache semântico?
+= A taxa de acerto sobe, mas a fração de respostas reaproveitadas erradas também tende a subir.
+- A taxa de acerto cai e a de erro também cai.
+- A taxa de erro cai a zero.
+- Nada muda na taxa de acerto.
+- O cache passa a ser exato.
+J: Um limiar menor aceita pedidos menos parecidos como equivalentes.
+
+MC: Por que o lote estático desperdiça capacidade quando os comprimentos de saída são muito variados?
+= Porque o grupo só termina quando o pedido mais longo termina, e os espaços dos que acabaram antes ficam ociosos.
+- Porque cada pedido do grupo precisa de um modelo diferente.
+- Porque o lote estático sempre usa menos memória.
+- Porque os pedidos curtos são recusados.
+- Porque o lote estático impede o uso do cache KV.
+J: Espaços vazios não podem ser reaproveitados até o grupo inteiro terminar.
+
+MC: O que caracteriza o lote contínuo (continuous batching)?
+= O lote é reavaliado a cada passo, e um novo pedido entra assim que outro termina.
+- Os pedidos esperam um número fixo de segundos antes de cada grupo.
+- O modelo é treinado continuamente durante o atendimento.
+- Todos os pedidos são concatenados em um único prompt.
+- Os pedidos longos são sempre recusados.
+J: Isso mantém o acelerador ocupado, aumentando a utilização e a vazão.
+
+MC: Em uma fila M/M/1 com $\lambda=0{,}8$ pedido/s e $\mu=1$ pedido/s, qual o tempo médio no sistema $W=1/(\mu-\lambda)$?
+= 5 segundos.
+- 0,8 segundo.
+- 1,25 segundo.
+- 4 segundos.
+- 0,2 segundo.
+J: $W=1/(1-0{,}8)=5$ s; a espera cresce rapidamente quando a utilização se aproxima de 1.
+
+MC: O que ocorre com a latência de um sistema de filas quando a utilização $\rho$ se aproxima de 1?
+= Ela cresce muito rapidamente, e a fila pode crescer sem limite se $\rho\ge1$.
+- Ela diminui, pois o sistema fica mais eficiente.
+- Ela permanece constante, qualquer que seja a carga.
+- Ela se torna exatamente igual ao tempo de atendimento.
+- Ela passa a depender apenas do tamanho do vocabulário.
+J: Perto da capacidade, pequenas variações de chegada geram filas longas.
+
+MC: O que a decodificação especulativa (Leviathan et al., 2023) preserva?
+= A distribuição de saída do modelo grande, mudando apenas o tempo gasto.
+- Apenas a média da qualidade, aceitando saídas diferentes.
+- O vocabulário do modelo pequeno, que substitui o do grande.
+- A temperatura, que passa a ser fixa em zero.
+- O cache KV, que deixa de ser necessário.
+J: A regra de aceitação e a amostragem do resíduo garantem que as amostras venham da distribuição do alvo.
+
+MC: Com taxa de aceitação $\alpha=0{,}5$ e $\gamma=2$ tokens propostos, qual o número esperado de tokens por rodada, $(1-\alpha^{\gamma+1})/(1-\alpha)$?
+= 1,75.
+- 1,00.
+- 1,50.
+- 2,00.
+- 3,00.
+J: $(1-0{,}5^{3})/0{,}5=0{,}875/0{,}5=1{,}75$.
+
+MC: Em um roteador entre um modelo barato e um caro, o que decide se um pedido é escalonado?
+= Um sinal de confiança do modelo barato comparado a um limiar escolhido com dados de teste.
+- O tamanho do arquivo de pesos do modelo caro.
+- O horário do dia em que o pedido chega.
+- A preferência do modelo barato por responder sempre.
+- O número de usuários conectados, e nada mais.
+J: Sem um bom sinal de confiança, o roteamento deixa de ser melhor que um sorteio.
+
+MC: Quando uma cascata barato→caro pode custar mais que usar sempre o modelo caro?
+= Quando quase todos os pedidos são escalonados, pois o modelo barato é chamado à toa.
+- Quando o modelo barato tem menos parâmetros que o caro.
+- Quando o limiar é zero e nenhum pedido é escalonado.
+- Nunca, pois o barato custa sempre menos.
+- Quando o modelo caro é quantizado em 8 bits.
+J: O custo é o do barato (sempre) mais o do caro nos escalonados; se a fração é alta, a soma supera o caro.
+
+MC: Qual é a função de um limitador de taxa do tipo balde de fichas?
+= Permitir rajadas curtas, até a capacidade do balde, e limitar a taxa média sustentada.
+- Garantir que nenhum pedido seja jamais recusado.
+- Aumentar a precisão do modelo sob alta carga.
+- Reduzir o número de parâmetros do modelo servido.
+- Trocar o modelo grande pelo pequeno automaticamente.
+J: As fichas são repostas em taxa fixa; esgotadas, os pedidos são recusados ou adiados.
+
+MC: Qual o objetivo de um lançamento canário?
+= Expor uma pequena fração do tráfego à nova versão, monitorando métricas, antes de ampliar.
+- Substituir a versão antiga de uma só vez, sem monitoramento.
+- Treinar o modelo novamente com os dados do canário.
+- Medir apenas a velocidade, sem olhar qualidade.
+- Eliminar a necessidade de reversão.
+J: Limita o impacto de uma versão ruim e permite parar com critérios definidos antes.
+
+MC: O que indica um PSI (índice de estabilidade populacional) alto entre a distribuição de referência e a atual?
+= Que a distribuição das categorias mudou, o que sugere investigar a deriva e reavaliar o sistema.
+- Que o modelo está necessariamente errado em todas as respostas.
+- Que o servidor está sem memória disponível.
+- Que a temperatura de geração deve ser aumentada.
+- Que o preço por token mudou.
+J: O PSI mede deslocamento de distribuição; é um alerta para investigar, não um veredito.
+
+MC: Qual das metas abaixo é um objetivo de nível de serviço (SLO) bem formulado?
+= "99% das requisições respondidas em até 2 segundos, medido em janelas de 30 dias."
+- "O sistema deve ser rápido na maior parte do tempo."
+- "A latência média será boa para todos."
+- "Nunca haverá nenhuma falha, de nenhum tipo."
+- "O modelo deve ser o melhor do mercado."
+J: Um SLO bom define um indicador mensurável, um limite, um percentual e uma janela.
+
+MC: Qual a principal vantagem de implantar um modelo pequeno na borda (no dispositivo)?
+= Menor latência e dados que podem permanecer locais, ao custo de modelos menores e atualização mais difícil.
+- Acesso fácil a modelos muito maiores que os de servidor.
+- Eliminação de qualquer limite de memória ou bateria.
+- Atualização instantânea e centralizada para todos os usuários.
+- Ausência de qualquer necessidade de avaliação.
+J: A borda evita a ida à rede, mas limita o tamanho do modelo e dificulta o controle de versões.
+
+MC: Por que reduzir o tempo de acelerador por pedido (com lote, quantização, cache e respostas mais curtas) também ajuda na sustentabilidade?
+= Porque a energia de um pedido é aproximadamente a potência vezes o tempo em que o acelerador o atende, dividido entre os pedidos que o compartilham.
+- Porque aceleradores consomem menos energia quanto mais ociosos ficam.
+- Porque reduzir tempo elimina o consumo de refrigeração e de rede.
+- Porque a energia depende apenas do número de parâmetros.
+- Porque o consumo de energia é independente da carga de trabalho.
+J: Menos tempo de acelerador por pedido significa menos energia por pedido, sob premissas simples (potência aproximadamente constante).
+
+DISC[C]: Explique por que a decodificação é, em geral, limitada pela memória e o preenchimento (prefill) pelo cálculo, usando a ideia de intensidade aritmética.
+R: No preenchimento, o prompt inteiro entra em paralelo: cada peso lido é usado para muitos tokens, o que dá muitas operações por byte lido (alta intensidade aritmética) e deixa o cálculo como gargalo. Na decodificação, cada passo processa um token por sequência; os pesos (e o cache) precisam ser lidos a cada passo, mas são usados poucas vezes, resultando em baixa intensidade (cerca de $2b/\beta$ operações por byte, para $b$ sequências e $\beta$ bytes por parâmetro). O tempo do passo é então determinado pela leitura da memória. Consequências: quantizar os pesos e usar lotes maiores aceleram a decodificação; o comprimento da saída domina a latência.
+CRIT: Contrasta processamento em paralelo do prompt com um token por passo.
+CRIT: Usa a ideia de operações por byte lido.
+CRIT: Deriva ao menos uma consequência prática (quantização, lote, saída curta).
+
+DISC[C]: Diferencie cache KV, cache de prefixo e cache de respostas (exato e semântico), indicando se o resultado muda e qual o risco principal de cada um.
+R: O cache KV guarda chaves e valores dos tokens já processados na mesma geração; o resultado é idêntico; o custo é memória. O cache de prefixo reaproveita o cache KV de um prefixo idêntico entre requisições; resultado idêntico; riscos: memória retida e inutilidade se o prefixo variar. O cache de respostas devolve respostas prontas: o exato, para pedidos idênticos, é seguro (exceto quando a resposta depende de contexto, usuário ou tempo); o semântico, para pedidos parecidos, pode devolver respostas erradas ou desatualizadas e exige limiar, verificação de entidades, validade e isolamento entre usuários.
+CRIT: Diz que KV e prefixo mantêm o resultado idêntico.
+CRIT: Aponta o risco de erro do cache semântico.
+CRIT: Menciona ao menos uma mitigação.
+
+DISC[C]: Explique por que a média da latência pode enganar e como metas de nível de serviço (SLOs) devem ser formuladas.
+R: A média é puxada para baixo pela maioria rápida e esconde a cauda: uma fração dos usuários pode esperar muito mais. Em filas, a cauda cresce rapidamente com a carga. Por isso se monitoram percentis (p95, p99) e se formulam SLOs com indicador, limite, percentual e janela, por exemplo "99% das requisições em até 2 s em 30 dias". O orçamento de erro (1 menos o SLO) indica quanta falha é tolerável antes de priorizar estabilidade sobre novidades.
+CRIT: Explica que a média esconde a cauda.
+CRIT: Dá um exemplo de SLO com percentil e janela.
+CRIT: Menciona orçamento de erro.
+
+DISC[C]: Compare API gerenciada, servidor próprio e implantação na borda, indicando, para cada uma, uma vantagem e uma desvantagem, e um critério de escolha.
+R: API gerenciada: pouca operação e acesso a modelos grandes; mas custo por token, dependência do provedor, saída de dados e mudanças de versão; adequada para começar e para volumes variáveis. Servidor próprio: controle de dados, versão e custo em volume alto e estável; mas exige equipe, equipamentos e segurança, e capacidade ociosa custa. Borda: baixa latência e dados locais; mas modelos pequenos, bateria e atualização difícil. Critérios: volume, sensibilidade dos dados, latência, equipe e regulação; arquiteturas híbridas são comuns.
+CRIT: Cita vantagem e desvantagem de cada padrão.
+CRIT: Apresenta critérios de escolha.
+CRIT: Reconhece a possibilidade de arquiteturas híbridas.
+
+DISC[M]: Calcule a memória só dos pesos de um modelo hipotético de 13 bilhões de parâmetros em float16, 8 bits e 4 bits. Em um acelerador hipotético de 24 GB, quais configurações cabem apenas com os pesos? Qual o limite superior de tokens por segundo (lote 1, ignorando o cache) com banda de 1 TB/s em 8 e 4 bits?
+R: float16: $13\times10^9\times2=26$ GB (não cabe); 8 bits: 13 GB; 4 bits: 6,5 GB. Cabem 8 e 4 bits (sobra memória para cache e ativações). Limite de velocidade: banda / bytes lidos por token: $1000/13\approx77$ tokens/s com 8 bits e $1000/6{,}5\approx154$ tokens/s com 4 bits.
+CRIT: Calcula as três memórias corretamente.
+CRIT: Usa banda dividida por bytes de pesos como limite.
+
+DISC[M]: Com preços hipotéticos de 1 u.m. por milhão de tokens de entrada e 5 u.m. por milhão de tokens de saída, um assistente recebe 50 000 requisições por dia, cada uma com 500 tokens de entrada e 100 de saída. Calcule o custo diário. Se limitarmos a saída a 60 tokens, qual a economia percentual?
+R: Entrada: $50\,000\times500=25\times10^6$ tokens $\to25$ u.m. Saída: $50\,000\times100=5\times10^6$ tokens $\to25$ u.m. Total: 50 u.m. por dia. Com saída de 60: $50\,000\times60=3\times10^6\to15$ u.m.; total 40 u.m.; economia de $10/50=20\%$.
+CRIT: Calcula entrada e saída separadamente.
+CRIT: Obtém 50 u.m. e economia de 20%.
+
+DISC[M]: Em uma fila M/M/1 com $\mu=1$ pedido/s, calcule, para $\lambda=0{,}6$ e para $\lambda=0{,}9$, a utilização, o tempo médio no sistema $W=1/(\mu-\lambda)$, o tempo médio de espera $W_q=W-1/\mu$ e o número médio no sistema $L=\lambda W$ (lei de Little).
+R: $\lambda=0{,}6$: $\rho=0{,}6$; $W=1/0{,}4=2{,}5$ s; $W_q=1{,}5$ s; $L=0{,}6\times2{,}5=1{,}5$. $\lambda=0{,}9$: $\rho=0{,}9$; $W=10$ s; $W_q=9$ s; $L=9$. Elevar a carga de 0,6 para 0,9 (50% a mais) multiplica o tempo por 4.
+CRIT: Aplica corretamente as fórmulas.
+CRIT: Comenta o crescimento não linear.
+
+DISC[M]: Com $\alpha=0{,}7$, $\gamma=3$ e custo relativo do rascunhador $c=0{,}1$, calcule o número esperado de tokens por rodada e o ganho em tempo da decodificação especulativa.
+R: $\mathbb{E}=(1-0{,}7^{4})/(1-0{,}7)=(1-0{,}2401)/0{,}3\approx2{,}533$. Custo da rodada: $\gamma c+1=1{,}3$. Ganho: $2{,}533/1{,}3\approx1{,}95$.
+CRIT: Calcula a esperança de tokens por rodada.
+CRIT: Divide pelo custo da rodada, $\gamma c+1$.
+
+DISC[M]: Um SLO de disponibilidade de 99,9% em 30 dias permite quantos minutos de indisponibilidade? E um SLO de 99,95%? Comente a diferença.
+R: Janela: $30\times24\times60=43\,200$ min. Para 99,9%: $0{,}001\times43\,200=43{,}2$ min. Para 99,95%: $0{,}0005\times43\,200=21{,}6$ min. Meio décimo de ponto percentual a mais corta o orçamento pela metade, o que exige muito mais investimento em redundância, automação e testes.
+CRIT: Calcula 43,2 e 21,6 minutos.
+CRIT: Comenta o custo de metas mais rígidas.
+
+DISC[A]: Uma equipe quer usar cache semântico em um assistente de atendimento jurídico de um órgão público. Analise os riscos e proponha uma política de uso (limiar, exclusões, validade, isolamento) e como medir se ela é segura.
+R: Riscos: respostas dependentes de números, datas, prazos ou do caso do usuário reaproveitadas indevidamente; respostas desatualizadas após mudança de norma; vazamento de dados entre usuários. Política: limiar escolhido em conjunto rotulado; verificação de entidades (números, datas, nomes) antes de reaproveitar; excluir pedidos que contenham dados pessoais ou dependam do caso; validade curta e invalidação quando a norma mudar; cache isolado por usuário ou sem dados pessoais; registrar origem da resposta. Medição: taxa de erro entre os acertos num conjunto de testes, por categoria, com intervalo de confiança, e revisão amostral em produção.
+CRIT: Identifica riscos de dados desatualizados e de privacidade.
+CRIT: Propõe verificação de entidades, validade e isolamento.
+CRIT: Propõe medir a taxa de erro entre os acertos.
+
+DISC[A]: Um colega afirma que o roteamento entre um modelo barato e um caro "reduziu o custo em 60% sem perda de qualidade". Que informações e verificações você exigiria antes de aceitar a afirmação?
+R: O conjunto de teste (tamanho, origem, se é diferente do usado para ajustar o limiar), as métricas de qualidade e seus intervalos de confiança (comparação pareada com o modelo caro), a fração de pedidos escalonados, o custo do modelo barato (que sempre roda) e do roteador, o desempenho nos subgrupos difíceis, o comportamento em dados novos (deriva), e a comparação com o roteamento por sorteio na mesma fração. Também a latência (escalonar soma tempos) e a taxa de erros silenciosos do barato.
+CRIT: Pergunta sobre conjunto de teste separado e intervalos de confiança.
+CRIT: Considera o custo do barato que sempre roda.
+CRIT: Considera subgrupos e deriva.
+
+DISC[A]: Após quantizar um modelo para 4 bits, a perplexidade em um conjunto de validação subiu apenas 1%, mas usuários reclamam de piora em perguntas com números e nomes próprios. Analise as causas possíveis e como investigar.
+R: A perplexidade média pode ser dominada por tokens fáceis; a degradação pode se concentrar em tokens raros, números ou entidades. Possíveis causas: valores atípicos mal representados; ausência desses casos no conjunto de validação; calibração com dados diferentes. Investigação: construir um conjunto de teste da tarefa real com esses casos, comparar acerto pareado do original e do quantizado com intervalo de confiança, medir perplexidade por categoria de token, testar escalas por grupo, mais bits em camadas sensíveis ou outro método, e decidir com custo e qualidade juntos.
+CRIT: Explica por que a média pode esconder o problema.
+CRIT: Propõe avaliação pareada em casos específicos.
+CRIT: Sugere alternativas de mitigação.
+
+DISC[A]: Durante a abertura de matrículas, a latência de um assistente sobe de 2 s para mais de 30 s. Faça um diagnóstico em termos de filas e proponha medidas de curto e de longo prazo.
+R: Diagnóstico: a taxa de chegada aproximou-se ou superou a capacidade (utilização perto de 1), o que gera filas que crescem; verificar métricas de fila, utilização, tamanho de lote, taxa de acerto de cache e tempos por fase. Curto prazo: limitar taxa e recusar com mensagem clara, priorizar tráfego, ativar ou ampliar cache de respostas seguras, reduzir tamanho de saída, aumentar lote (se a latência permitir), adicionar réplicas. Longo prazo: testes de carga e planejamento de capacidade com folga, escalonamento automático considerando o tempo de carregar pesos, quantização, roteamento para modelo menor, FAQ estático para perguntas frequentes e SLOs com alertas.
+CRIT: Relaciona o problema à utilização próxima de 1.
+CRIT: Propõe medidas de curto e de longo prazo.
+CRIT: Inclui limitação de taxa ou recusa controlada.
+
+DISC[P]: Implemente `quantizar_grupos(W, bits, grupo)` que quantize uma matriz em grupos de valores consecutivos (escala simétrica por grupo) e devolva a matriz reconstruída. Meça o erro relativo para grupos de 256, 64 e 16 em pesos sintéticos com alguns valores atípicos.
+CODE:
+import numpy as np
+
+def quantizar_grupos(W, bits=4, grupo=64):
+    qmax = 2 ** (bits - 1) - 1
+    Wg = W.reshape(-1, grupo)
+    s = np.abs(Wg).max(axis=1, keepdims=True) / qmax
+    s = np.where(s == 0, 1.0, s)
+    q = np.clip(np.round(Wg / s), -qmax, qmax)
+    return (q * s).reshape(W.shape)
+
+rng = np.random.default_rng(0)
+W = rng.normal(0, 0.02, (128, 256))
+W[:, ::50] *= 25
+erros = {}
+for g in (256, 64, 16):
+    Wq = quantizar_grupos(W, 4, g)
+    erros[g] = np.sqrt(np.mean((W - Wq) ** 2)) / np.sqrt(np.mean(W ** 2))
+    print(g, round(float(erros[g]), 4))
+assert erros[16] < erros[64] < erros[256]
+ENDCODE
+CRIT: Reorganiza a matriz em grupos e calcula uma escala por grupo.
+CRIT: Usa o máximo absoluto dividido por $2^{b-1}-1$.
+CRIT: Mostra que grupos menores reduzem o erro.
+
+DISC[P]: Simule uma fila M/M/1 com `numpy` (chegadas de Poisson, serviços exponenciais) para $\mu=1$ e $\lambda\in\{0{,}5; 0{,}8\}$ e compare o tempo médio no sistema com $1/(\mu-\lambda)$.
+CODE:
+import numpy as np
+
+def simular_mm1(lam, mu, n=100000, seed=0):
+    rng = np.random.default_rng(seed)
+    chegada = np.cumsum(rng.exponential(1 / lam, n))
+    servico = rng.exponential(1 / mu, n)
+    saida = np.empty(n)
+    anterior = 0.0
+    for i in range(n):
+        inicio = max(chegada[i], anterior)
+        anterior = inicio + servico[i]
+        saida[i] = anterior
+    lat = saida - chegada
+    return lat[n // 20:].mean()
+
+for lam in (0.5, 0.8):
+    sim = simular_mm1(lam, 1.0)
+    teo = 1 / (1.0 - lam)
+    print(lam, round(float(sim), 2), round(teo, 2))
+    assert abs(sim - teo) / teo < 0.15
+ENDCODE
+CRIT: Usa a recorrência início = max(chegada, saída anterior).
+CRIT: Descarta o aquecimento ou justifica não descartar.
+CRIT: Compara com $1/(\mu-\lambda)$.
+
+DISC[P]: Implemente `melhor_gama(alfa, c, gamas)` que devolva o comprimento de rascunho $\gamma$ que maximiza o ganho em tempo da decodificação especulativa, $\frac{1-\alpha^{\gamma+1}}{(1-\alpha)(\gamma c+1)}$. Verifique a fórmula do número esperado de tokens por simulação de Monte Carlo para um caso.
+CODE:
+import numpy as np
+
+def tokens_esperados(alfa, gama):
+    return (1 - alfa ** (gama + 1)) / (1 - alfa)
+
+def ganho(alfa, gama, c):
+    return tokens_esperados(alfa, gama) / (gama * c + 1)
+
+def melhor_gama(alfa, c, gamas=range(1, 33)):
+    return max(gamas, key=lambda g: ganho(alfa, g, c))
+
+for a in (0.5, 0.8, 0.95):
+    g = melhor_gama(a, 0.05)
+    print(a, g, round(ganho(a, g, 0.05), 2))
+assert melhor_gama(0.5, 0.05) < melhor_gama(0.95, 0.05)
+
+rng = np.random.default_rng(0)
+a, g, n = 0.8, 4, 200000
+aceitos = rng.random((n, g)) < a
+k = np.where(aceitos.all(1), g, np.argmin(aceitos, 1))
+mc = (k + 1).mean()
+print(round(float(mc), 3), round(tokens_esperados(a, g), 3))
+assert abs(mc - tokens_esperados(a, g)) < 0.02
+ENDCODE
+CRIT: Implementa a fórmula do ganho com o custo da rodada.
+CRIT: Busca o máximo sobre $\gamma$.
+CRIT: Verifica a esperança por Monte Carlo.
+
+DISC[P]: Implemente `psi(ref, atual, categorias)` com suavização para proporções zero e use-o para comparar duas amostras de rótulos, uma sem deriva e outra com uma categoria três vezes mais frequente.
+CODE:
+import numpy as np
+
+def psi(ref, atual, categorias, piso=1e-4):
+    ref, atual = np.asarray(ref), np.asarray(atual)
+    e = np.array([max(np.mean(ref == c), piso) for c in categorias])
+    a = np.array([max(np.mean(atual == c), piso) for c in categorias])
+    return float(np.sum((a - e) * np.log(a / e)))
+
+cats = ["a", "b", "c", "d"]
+rng = np.random.default_rng(0)
+ref = rng.choice(cats, 2000)
+sem = rng.choice(cats, 2000)
+com = rng.choice(cats, 2000, p=[0.5, 0.5 / 3, 0.5 / 3, 0.5 / 3])    # 'a' passa de 25% a 50% (o dobro)
+print(round(psi(ref, sem, cats), 4), round(psi(ref, com, cats), 4))
+assert psi(ref, sem, cats) < 0.02 < psi(ref, com, cats)
+ENDCODE
+CRIT: Calcula as proporções por categoria com piso positivo.
+CRIT: Aplica a soma de $(a_i-e_i)\ln(a_i/e_i)$.
+CRIT: Mostra PSI baixo sem deriva e alto com deriva.
+
+DISC[D]: Projete o plano para trocar o modelo de um assistente de atendimento de uma secretaria por uma nova versão, incluindo avaliação, lançamento canário, critérios de parada e reversão.
+R: Antes: conjunto de regressão com casos difíceis e sem resposta; comparação pareada com intervalo de confiança em acerto, formato, abstenção, custo e latência; critérios de aceitação definidos antes. Sombra: nova versão recebe cópias do tráfego, sem impactar usuários, para comparar. Canário: 5% do tráfego, com monitoramento de erros, latência p95, qualidade amostrada por revisão humana, custo e recusas; critérios de parada (por exemplo, piora de qualidade além de um limite, estouro de latência ou erro). Expansão gradual. Reversão: versão antiga disponível e comando único; registro de versões de modelo e prompt nos logs; comunicação e pós-análise.
+CRIT: Inclui avaliação prévia com critérios definidos antes.
+CRIT: Inclui canário com critérios de parada.
+CRIT: Inclui reversão e registro de versões.
+
+DISC[D]: Um assistente tem orçamento mensal fixo e volume crescente. Projete uma estratégia para manter o custo sob controle, ordenando as alavancas deste capítulo, e defina as métricas que acompanhariam o custo e a qualidade.
+R: Primeiro medir: tokens por requisição (entrada, saída), custo por resultado útil, distribuição de perguntas. Alavancas por esforço e risco: limitar e orientar o tamanho da saída; colocar o texto estável no início e usar cache de prefixo; cache exato para perguntas repetidas; cache semântico com verificação de entidades para perguntas seguras; roteamento barato→caro com limiar calibrado; reduzir contexto recuperado; quantização e servidor próprio quando o volume justificar; modelos menores destilados para tarefas estreitas. Métricas: custo por 1 000 requisições, tokens, taxa de acerto de cache e erro entre acertos, fração escalonada, acerto de qualidade com IC, latência p95, satisfação, recusas. Cada mudança com teste A/B ou canário.
+CRIT: Começa por medir o custo antes de otimizar.
+CRIT: Ordena as alavancas considerando risco à qualidade.
+CRIT: Define métricas de custo e de qualidade.
+
+DISC[D]: Projete o plano de observabilidade e alertas de um assistente de informações públicas de uma secretaria de saúde (usando somente dados e documentos públicos), incluindo métricas, logs, rastros, metas de serviço e monitoramento de deriva.
+R: Métricas: vazão, latência p50/p95/p99, TTFT, taxa de erro e de recusa, custo por 1 000 requisições, taxa de acerto de cache, ocupação de memória, taxa de abstenção e de encaminhamento a humano. Logs estruturados com ids de requisição, versões de prompt e de modelo, tokens, tempos e estado, sem texto livre do usuário (ou com anonimização e retenção curta). Rastros: recuperação, modelo, validação e pós-processamento, com tempo de cada etapa. SLOs: por exemplo, 99% das respostas em até 3 s e disponibilidade de 99,5%, com orçamento de erro. Deriva: PSI sobre temas das perguntas, KS sobre o comprimento, e amostra rotulada periódica para qualidade; alertas que acionam revisão humana. Avisos claros de que o assistente não dá aconselhamento clínico e encaminhamento a profissionais.
+CRIT: Cobre métricas, logs e rastros.
+CRIT: Define SLOs com percentil e orçamento de erro.
+CRIT: Inclui monitoramento de deriva e proteção de privacidade.
