@@ -25,3 +25,7 @@ Notas: Consensus esgotado (2 buscas até 01/11); usar WebSearch para verificar. 
 | 06 | ok | ok | ok | Parte II |
 | 07 | ok | ok | ok | |
 | 08 | ok | ok | ok | |
+| 09 | ok | ok | ok | |
+| 10 | ok | ok | ok | Parte II concluída |
+| 11 | ok | ok | ok | Parte III |
+| 12 | ok | ok | ok | |
