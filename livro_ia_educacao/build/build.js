@@ -263,6 +263,8 @@ function parseEx(text, ch) {
       dc.push(q);
     }
   }
+  if (mc.length > 30) { warnings.push(`cap ${ch}: ${mc.length - 30} MC excedentes descartadas (as últimas)`); mc.length = 30; }
+  if (dc.length > 20) { dc.length = 20; }
   // gabarito equilibrado: 6 de cada letra, em sequência embaralhada de modo determinístico
   const n = mc.length;
   const rnd = mulberry32(7000 + ch);
