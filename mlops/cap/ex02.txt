@@ -1,0 +1,269 @@
+MC: Quantas etapas tem o fluxo de trabalho de ML descrito por Amershi et al. (2019)?
+a) Nove.
+b) Três.
+c) Cinco.
+d) Doze.
+R: a | Do levantamento de requisitos ao monitoramento, são nove etapas.
+
+MC: Qual destas etapas vem imediatamente antes do treinamento do modelo no fluxo de nove etapas?
+a) Engenharia de atributos.
+b) Implantação.
+c) Monitoramento.
+d) Avaliação do modelo.
+R: a | A ordem é: requisitos, coleta, limpeza, rotulagem, atributos, treino, avaliação, implantação, monitoramento.
+
+MC: O ciclo de vida de um sistema de ML é melhor descrito como:
+a) um laço, em que o monitoramento alimenta novos requisitos, dados e treinos.
+b) uma linha reta que termina na implantação.
+c) uma sequência executada uma só vez.
+d) um processo sem relação com o negócio.
+R: a | O que se aprende em produção volta para o início do ciclo.
+
+MC: Um atributo (feature) é:
+a) uma característica usada como entrada do modelo.
+b) o resultado final da previsão.
+c) o servidor que hospeda o modelo.
+d) a métrica de avaliação.
+R: a | Por exemplo, "renda mensal" e "idade" em um modelo de crédito.
+
+MC: Antes de escrever código, qual pergunta ajuda a definir o problema de ML?
+a) Qual decisão o modelo vai apoiar?
+b) Qual o nome da biblioteca preferida?
+c) Qual o tamanho do monitor?
+d) Qual linguagem de programação o gerente prefere?
+R: a | Começa-se pela decisão, por quem usa a previsão, pelo critério de sucesso e pelo custo do erro.
+
+MC: Em um problema com 2% de positivos, um modelo que sempre responde "negativo" tem:
+a) acurácia de cerca de 98%, mas é inútil.
+b) acurácia de 2%.
+c) revocação de 100%.
+d) AUC-PR de 100%.
+R: a | Alta acurácia pode ocultar um modelo que não encontra nenhum caso positivo.
+
+MC: A principal função de uma linha de base (baseline) é:
+a) fornecer uma solução simples contra a qual o modelo precisa ganhar.
+b) substituir o conjunto de teste.
+c) aumentar a velocidade de treino.
+d) dispensar a validação.
+R: a | Se o modelo sofisticado não supera a linha de base com folga, não vale a pena produzi-lo.
+
+MC: Qual destes é um requisito não funcional de um serviço de previsão?
+a) Latência máxima de 100 ms.
+b) Escolha do algoritmo de otimização.
+c) Número de camadas da rede neural.
+d) Cor dos gráficos do relatório.
+R: a | Latência, vazão, custo, explicabilidade e privacidade são requisitos não funcionais.
+
+MC: A dívida técnica pode ser comparada a:
+a) comprar a prestação: entrega-se rápido hoje e pagam-se juros depois.
+b) um desconto permanente sobre o custo do projeto.
+c) um seguro contra erros de previsão.
+d) um tipo de imposto sobre dados.
+R: a | Atalhos de hoje viram custo de manutenção, bugs e lentidão amanhã.
+
+MC: Segundo Sculley et al. (2015), a dívida técnica em ML:
+a) inclui os problemas do software comum e outros próprios do nível do sistema.
+b) existe apenas em projetos sem testes.
+c) ocorre somente em redes neurais.
+d) desaparece com o uso de notebooks.
+R: a | Há problemas de emaranhamento, dependências de dados e realimentação, entre outros.
+
+MC: Um ciclo de realimentação escondido acontece quando:
+a) o modelo influencia os dados que ele mesmo usará no futuro.
+b) o servidor reinicia automaticamente.
+c) os dados de treino são duplicados.
+d) o código é copiado de outro projeto.
+R: a | Exemplo: um recomendador que só mostra o popular faz apenas o popular receber cliques.
+
+MC: Consumidores não declarados são:
+a) outros sistemas que passam a usar a saída do seu modelo sem você saber.
+b) usuários que pagam pelo serviço.
+c) analistas que revisam o código.
+d) clientes que cancelam o serviço.
+R: a | Uma mudança no modelo pode quebrar sistemas dependentes que ninguém mapeou.
+
+MC: O que é "código de cola" (glue code)?
+a) Muito código só para conectar bibliotecas e preparar dados, sem estrutura.
+b) Código que une vários modelos em um só.
+c) Código de interface gráfica.
+d) Código gerado automaticamente por um IDE.
+R: a | Ele dificulta testes e manutenção e é uma fonte típica de dívida técnica.
+
+MC: A "dívida de configuração" refere-se a:
+a) muitos parâmetros espalhados, sem revisão ou testes.
+b) à falta de memória no servidor.
+c) a licenças de software vencidas.
+d) à lentidão da rede.
+R: a | Configurações em arquivos, linhas de comando e variáveis sem controle geram erros difíceis de achar.
+
+MC: O ML Test Score propõe uma rubrica com quantos testes e monitoramentos?
+a) 28, organizados em quatro grupos.
+b) 10, em dois grupos.
+c) 50, em cinco grupos.
+d) 100, sem grupos.
+R: a | Dados e atributos, desenvolvimento do modelo, infraestrutura e monitoramento.
+
+MC: Na pontuação do ML Test Score, um teste feito manualmente e documentado vale:
+a) 0,5 ponto.
+b) 0 ponto.
+c) 1 ponto.
+d) 2 pontos.
+R: a | Não feito = 0; manual e documentado = 0,5; automático e recorrente = 1.
+
+MC: A nota final do ML Test Score é calculada como:
+a) o mínimo dos totais dos quatro grupos.
+b) a média dos quatro grupos.
+c) o máximo dos totais.
+d) o total do grupo de monitoramento apenas.
+R: a | A corrente é tão forte quanto o elo mais fraco.
+
+MC: Qual componente de uma arquitetura de MLOps guarda atributos reutilizáveis para treino e serviço?
+a) Armazém de atributos (feature store).
+b) Registro de modelos.
+c) Orquestrador de fluxos.
+d) Painel de monitoramento.
+R: a | Ele evita recalcular os atributos de formas diferentes e reduz o desvio treino–serviço.
+
+MC: O registro de modelos tem por função:
+a) catalogar versões dos modelos, como um livro oficial de receitas.
+b) distribuir o tráfego entre servidores.
+c) executar o treino em GPUs.
+d) validar os dados de entrada.
+R: a | Cada modelo registrado tem versões e metadados.
+
+MC: Qual a função do orquestrador de fluxos de trabalho?
+a) Executar as etapas do pipeline na ordem certa.
+b) Compactar os dados.
+c) Gerar novos atributos aleatórios.
+d) Escolher o melhor hiperparâmetro.
+R: a | Ele é como o gerente de produção que coordena as tarefas e suas dependências.
+
+MC: No nível de maturidade 0 (manual), a dor típica é:
+a) ninguém consegue reproduzir o resultado.
+b) o modelo piora e ninguém vê.
+c) os custos da nuvem estão altos.
+d) a plataforma é complexa demais.
+R: a | O próximo passo é versionar e fixar o ambiente.
+
+MC: No nível 1 (treino automatizado), qual é o próximo passo recomendado?
+a) Testes e CI/CD.
+b) Voltar aos notebooks.
+c) Desligar o monitoramento.
+d) Retreinar manualmente a cada mês.
+R: a | A implantação ainda é manual e arriscada, e a automação com testes é o passo seguinte.
+
+MC: Qual nível de maturidade adiciona monitoramento, alertas e retreino automático?
+a) Operação contínua.
+b) Manual.
+c) Treino automatizado.
+d) Entrega automatizada.
+R: a | É o nível mais alto da escada descrita no capítulo.
+
+MC: Rastreabilidade significa:
+a) saber qual versão de código, dados e configuração gerou cada modelo.
+b) ser capaz de treinar o modelo mais rápido.
+c) ter um modelo com mais parâmetros.
+d) produzir gráficos bonitos.
+R: a | É essencial para auditoria e para responder "por que o sistema decidiu isso?".
+
+MC: Reprodutibilidade significa:
+a) obter o mesmo resultado com o mesmo código e os mesmos dados.
+b) conseguir copiar o modelo de outro projeto.
+c) treinar duas vezes o mesmo modelo com dados diferentes.
+d) atualizar o modelo toda semana.
+R: a | Difere de rastreabilidade (saber a origem) e de linhagem (o caminho completo).
+
+MC: Linhagem (lineage) é:
+a) o caminho completo de um dado ou modelo, da origem ao destino.
+b) a velocidade de treino de um modelo.
+c) a quantidade de memória usada.
+d) a métrica mais importante de um projeto.
+R: a | Permite voltar da decisão ao modelo, aos dados e ao código.
+
+MC: Na simulação do ciclo de realimentação, com exploração zero, o que aconteceu?
+a) Três itens concentraram praticamente todos os cliques.
+b) Todos os itens receberam cliques iguais.
+c) Nenhum item recebeu cliques.
+d) O item mais popular perdeu sempre.
+R: a | Mesmo com qualidade idêntica, o sistema ensinou a si mesmo uma desigualdade.
+
+MC: Uma pergunta útil para decidir o próximo passo de maturidade é:
+a) Qual é a dor mais cara hoje?
+b) Qual a tecnologia mais nova do mercado?
+c) Qual a ferramenta mais famosa?
+d) Quantas pessoas existem na empresa?
+R: a | Resolve-se primeiro o que mais custa: reprodutibilidade, implantação arriscada ou queda de qualidade.
+
+MC: Por que a métrica de negócio difere da métrica do modelo?
+a) Porque um modelo com boa métrica técnica pode não gerar valor para o negócio.
+b) Porque são sempre iguais.
+c) Porque a de negócio é sempre mais fácil de medir.
+d) Porque a do modelo é irrelevante.
+R: a | É preciso conectar a precisão do modelo ao efeito na decisão e no resultado financeiro.
+
+DISC: Descreva as nove etapas do fluxo de trabalho de ML segundo Amershi et al. (2019) e explique por que o ciclo é um laço.
+R: Requisitos, coleta, limpeza, rotulagem, engenharia de atributos, treino, avaliação, implantação e monitoramento. É um laço porque o que se observa no monitoramento (queda de qualidade, novos casos) gera novos requisitos, novos dados e novos treinos.
+
+DISC: Por que se deve construir uma linha de base antes de um modelo complexo? Dê um exemplo.
+R: Para saber se o modelo agrega valor e evitar complexidade desnecessária. Exemplo: em um problema com 3% de positivos, "sempre negativo" tem 97% de acurácia; o modelo só vale se superar essa referência em métricas adequadas, como revocação e AUC-PR.
+
+DISC: Explique a dívida técnica em ML e dê três exemplos de tipos de dívida.
+R: É o custo futuro de atalhos tomados hoje. Exemplos: emaranhamento (CACE), dependências de dados instáveis, ciclos de realimentação escondidos, consumidores não declarados, código de cola, dívida de configuração e mudanças no mundo externo.
+
+DISC: Explique o ciclo de realimentação escondido com um exemplo do cotidiano e diga como mitigá-lo.
+R: Como um aluno que só estuda o que já sabe porque o professor lhe dá mais disso. Em um recomendador, só o popular recebe cliques. Mitiga-se com exploração (mostrar itens variados), experimentos controlados e monitoramento da concentração.
+
+DISC: Descreva como funciona a pontuação do ML Test Score e por que a nota final é o mínimo dos grupos.
+R: Cada teste vale 0 (não feito), 0,5 (manual e documentado) ou 1 (automático e recorrente). Somam-se os pontos por grupo e a nota final é o menor total, porque o sistema é tão confiável quanto seu elo mais fraco: investir só onde já se é bom não melhora a prontidão.
+
+DISC: Cite quatro componentes de uma arquitetura de referência de MLOps e explique a função de cada um.
+R: Armazém de atributos (guarda atributos reutilizáveis); rastreamento de experimentos (registra execuções); registro de modelos (cataloga versões); CI/CD (testa e implanta); orquestração (executa tarefas na ordem); serviço (entrega previsões); monitoramento (vigia qualidade e saúde).
+
+DISC: Descreva os níveis de maturidade do MLOps e dê um exemplo de dor típica em cada um.
+R: Nível 0, manual: ninguém reproduz resultados. Nível 1, treino automatizado: implantação manual e arriscada. Nível 2, entrega automatizada: o modelo piora em produção sem ninguém ver. Nível 3, operação contínua: custos, escala e conformidade.
+
+DISC: Diferencie reprodutibilidade, rastreabilidade e linhagem.
+R: Reprodutibilidade: obter o mesmo resultado com o mesmo código e dados. Rastreabilidade: saber qual código, dados e configuração geraram cada modelo. Linhagem: o caminho completo de um dado ou modelo, da origem ao destino, passando por todas as transformações.
+
+DISC: Quais perguntas devem ser respondidas ao transformar um problema de negócio em um problema de ML?
+R: Qual decisão será apoiada, quem usa a previsão e quando, como saberemos que deu certo (métrica de negócio) e quanto custa errar, inclusive qual tipo de erro custa mais.
+
+DISC: Explique por que um modelo com ótima acurácia pode ser inútil para o negócio.
+R: Porque a acurácia pode ser alta apenas por prever sempre a classe majoritária, sem encontrar os casos que importam, ou porque o erro mais caro (falso negativo) não está sendo reduzido. O valor depende do efeito na decisão e do custo dos erros.
+
+DISC: O que são requisitos não funcionais de um serviço de ML? Dê quatro exemplos.
+R: São exigências além da qualidade das previsões: latência, vazão, custo, explicabilidade, privacidade e conformidade, disponibilidade e segurança.
+
+DISC: Por que é perigoso depender de dados produzidos por outro sistema sem contrato nem monitoramento?
+R: Porque o outro sistema pode mudar formato, unidade ou significado sem aviso (dependência de dados instável), e o modelo passa a receber entradas diferentes das de treino, degradando em silêncio. Contratos de dados e validação reduzem o risco.
+
+DISC: Por que devemos pensar em evoluir por níveis de maturidade em vez de implantar uma plataforma completa de uma vez?
+R: Porque cada passo deve resolver uma dor real, com custo proporcional. Plataformas grandes exigem pessoas e manutenção; muitas vezes uma solução simples e bem automatizada vale mais. A evolução gradual reduz risco e aumenta o aprendizado da equipe.
+
+DISC: Como o conceito de "consumidor não declarado" se relaciona com versionamento e comunicação entre equipes?
+R: Se outros sistemas usam a saída do modelo sem registro, mudanças de versão os quebram. É preciso catalogar os consumidores, versionar os contratos de saída, comunicar mudanças e manter compatibilidade ou prazos de transição.
+
+DISC: Dê um exemplo de como os requisitos de privacidade podem influenciar a arquitetura de um sistema de ML.
+R: Dados pessoais exigem minimização, pseudonimização, controle de acesso, retenção limitada e, possivelmente, treino federado ou privacidade diferencial. Isso afeta o armazenamento, os logs, o pipeline de dados e a forma de servir previsões.
+
+DISC: Por que os testes e o monitoramento fazem parte do mesmo objetivo de prontidão para produção?
+R: Os testes verificam o sistema antes da implantação e o monitoramento o verifica depois. Juntos, reduzem o risco de falhas silenciosas; o ML Test Score inclui ambos como grupos de itens.
+
+DISC: Explique a diferença entre métricas offline e a avaliação em produção, e por que ambas são necessárias.
+R: Métricas offline usam dados históricos antes da implantação; mostram se o modelo é promissor. A avaliação em produção usa dados reais e o efeito no negócio; mostra se continua válido com o mundo mudando. Uma não substitui a outra.
+
+DISC: Dê um exemplo de decisão de projeto que reduza a dívida técnica e explique por quê.
+R: Centralizar a configuração em um arquivo versionado reduz erros de parâmetros espalhados; usar o mesmo pipeline para treino e serviço reduz o desvio treino–serviço; escrever testes automáticos reduz o custo de mudanças futuras.
+
+MC: Quais são as três grandes fases em que se agrupam as etapas do ciclo de vida de ML?
+a) Projeto, desenvolvimento e operação.
+b) Treino, validação e teste.
+c) Entrada, processamento e saída.
+d) Planejamento, compra e descarte.
+R: a | O MLOps costura as três fases em um ciclo contínuo.
+
+DISC: Por que um projeto pequeno pode ser perfeitamente adequado no nível 1 de maturidade? Quando seria hora de subir?
+R: Porque o nível 1 (treino automatizado e experimentos rastreados) já resolve reprodutibilidade, e o custo de uma plataforma maior pode não compensar. Sobe-se quando a dor muda: implantações arriscadas pedem CI/CD; quedas de qualidade pedem monitoramento e retreino.
+
+DISC: Explique a diferença entre "o sistema está no ar" e "o sistema está certo", e como o ML Test Score trata isso.
+R: Estar no ar é disponibilidade; estar certo é qualidade das previsões. O ML Test Score inclui itens de monitoramento da qualidade e dos dados, além de testes de modelo e de infraestrutura, para cobrir os dois aspectos.

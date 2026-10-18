@@ -1,0 +1,269 @@
+MC: Por que dizemos que o modelo "envelhece sozinho"?
+a) O mundo muda e o modelo continua refletindo o passado.
+b) O código se desgasta com o uso.
+c) O disco apaga arquivos antigos.
+d) Os parâmetros diminuem a cada previsão.
+R: a | Como o pão que endurece sem ninguém tocar nele.
+
+MC: A deriva de conceito (concept drift) ocorre quando:
+a) muda a relação entre os atributos e o alvo.
+b) apenas o formato do arquivo muda.
+c) apenas a latência aumenta.
+d) apenas o servidor muda de lugar.
+R: a | O mesmo perfil passa a ter respostas diferentes.
+
+MC: A mudança de covariáveis (covariate shift) é uma mudança na distribuição:
+a) dos atributos de entrada, P(X).
+b) dos rótulos, P(y).
+c) da relação X→y.
+d) do hardware.
+R: a | A relação entre perfil e resposta pode continuar a mesma.
+
+MC: A mudança de rótulos (label shift) é uma mudança:
+a) na proporção das classes, P(y).
+b) na distribuição de X apenas.
+c) no modelo de regressão apenas.
+d) no tamanho do arquivo.
+R: a | Exemplo: em crise, aumenta a fração de inadimplentes.
+
+MC: Uma mudança que vem e volta periodicamente, como a sazonalidade de Natal, é chamada de:
+a) recorrente.
+b) abrupta.
+c) incremental.
+d) inexistente.
+R: a | Outras formas: abrupta, gradual e incremental.
+
+MC: Qual camada de monitoramento NÃO exige rótulos?
+a) Dados de entrada e distribuição das previsões.
+b) Desempenho (F1, AUC).
+c) Efeito no negócio, sempre.
+d) Nenhuma camada exige.
+R: a | Por isso são sinais rápidos, embora indiretos.
+
+MC: O teste de Kolmogorov-Smirnov compara:
+a) as distribuições acumuladas de duas amostras.
+b) a média de três amostras.
+c) a correlação entre colunas.
+d) o tamanho de dois arquivos.
+R: a | Útil para atributos numéricos.
+
+MC: Em amostras muito grandes, o teste KS tende a:
+a) apontar como significativas até diferenças minúsculas.
+b) nunca rejeitar a hipótese nula.
+c) funcionar apenas para categorias.
+d) ficar mais lento sem alterar o resultado.
+R: a | Por isso se deve olhar também o tamanho da diferença.
+
+MC: Uma regra prática para o PSI diz que valores acima de 0,25 indicam:
+a) mudança importante.
+b) estabilidade.
+c) mudança moderada.
+d) erro de cálculo.
+R: a | Abaixo de 0,10 é estável; entre 0,10 e 0,25, moderada.
+
+MC: O PSI compara:
+a) a fração de dados em cada faixa antes e agora.
+b) a média de duas colunas.
+c) o tamanho do modelo em dois momentos.
+d) o tempo de treino em duas máquinas.
+R: a | Quanto mais diferentes as distribuições, maior o PSI.
+
+MC: A distância de Jensen-Shannon é:
+a) uma medida simétrica e limitada, baseada na divergência de Kullback-Leibler.
+b) uma medida que não depende de distribuições.
+c) um teste de normalidade.
+d) uma métrica de regressão.
+R: a | Vai de 0 (iguais) a 1 (muito diferentes, na base 2).
+
+MC: Para atributos categóricos, uma técnica adequada de detecção de mudança é:
+a) comparar frequências com o qui-quadrado ou o PSI.
+b) calcular a média.
+c) aplicar KS diretamente nas categorias nominais.
+d) ignorar categorias novas.
+R: a | Também é essencial vigiar o aparecimento de categorias novas.
+
+MC: O classificador de domínio detecta mudanças porque:
+a) tenta distinguir dados de referência dos atuais; se consegue, as distribuições diferem.
+b) prevê o alvo original.
+c) compara os arquivos byte a byte.
+d) mede a latência.
+R: a | AUC próxima de 0,5 indica distribuições parecidas.
+
+MC: Em qual situação o classificador de domínio é mais útil que testes por atributo?
+a) Quando a relação entre atributos mudou e cada marginal parece normal.
+b) Quando um só atributo mudou muito.
+c) Quando não há dados.
+d) Quando só há uma coluna.
+R: a | Os testes univariados não enxergam mudanças na dependência entre atributos.
+
+MC: Monitorar a distribuição das saídas do modelo é útil porque:
+a) não exige rótulos e pode revelar mudanças rapidamente.
+b) substitui qualquer outro monitoramento.
+c) mede diretamente a acurácia.
+d) elimina a necessidade de dados.
+R: a | Um salto na probabilidade média sugere algo mudou no mundo ou no pipeline.
+
+MC: Rótulos atrasados significam que:
+a) o valor real só é conhecido algum tempo depois da previsão.
+b) o modelo atrasa para responder.
+c) os rótulos são inventados.
+d) o treino demorou.
+R: a | Exemplo: um cliente só cancela meses depois.
+
+MC: O DDM (Gama et al., 2004) monitora:
+a) a taxa de erro e seu desvio, emitindo alerta e deriva.
+b) a memória do servidor.
+c) o tamanho dos lotes.
+d) o número de atributos.
+R: a | Alerta com mínimo + 2 desvios; deriva com mínimo + 3 desvios.
+
+MC: ADWIN (Bifet e Gavaldà, 2007) é:
+a) um método de detecção de mudança com janela adaptativa.
+b) um servidor de modelos.
+c) um formato de arquivo.
+d) um tipo de contêiner.
+R: a | A janela se ajusta conforme a estabilidade dos dados.
+
+MC: Na simulação do capítulo, o PSI disparou antes de a acurácia cair porque:
+a) a mudança nos atributos aparece antes de prejudicar claramente o desempenho.
+b) o PSI usa os rótulos.
+c) a acurácia é calculada no treino.
+d) o modelo estava calibrado.
+R: a | Esse é o valor do alerta antecipado sem rótulos.
+
+MC: Retreinar o modelo imediatamente após qualquer alerta pode ser um erro porque:
+a) a causa pode ser um problema de dados, e retreinar ensinaria o erro ao modelo.
+b) retreinar sempre piora o modelo.
+c) o retreino é proibido.
+d) o alerta nunca é verdadeiro.
+R: a | Deve-se investigar a causa antes de retreinar.
+
+MC: A estratégia de janela deslizante de retreino:
+a) usa só os dados mais recentes.
+b) usa apenas dados antigos.
+c) nunca retreina.
+d) usa dados do futuro.
+R: a | Bom para deriva de conceito; a janela curta dá pouco dado, a longa reage devagar.
+
+MC: Aprendizado incremental com partial_fit é indicado quando:
+a) há fluxo contínuo de dados e se quer atualizar o modelo por lote.
+b) nunca há novos dados.
+c) o modelo deve permanecer idêntico.
+d) os rótulos são ausentes.
+R: a | É sensível a ruído e a dados ruins.
+
+MC: No modo sombra de implantação:
+a) o modelo novo faz previsões que não são usadas, para comparação.
+b) o modelo novo responde a todos.
+c) o modelo antigo é desligado.
+d) só 50% dos clientes veem o novo.
+R: a | Risco nulo para o usuário.
+
+MC: No teste A/B, o tráfego é dividido:
+a) aleatoriamente entre modelo atual e modelo novo.
+b) de acordo com a preferência dos engenheiros.
+c) por ordem alfabética dos clientes.
+d) apenas para clientes novos.
+R: a | A aleatoriedade permite atribuir diferenças ao modelo.
+
+MC: Por que definir o tamanho da amostra de um teste A/B antes de começar?
+a) Evitar parar o teste quando o resultado "ficar bonito", o que gera falsos positivos.
+b) Para reduzir o custo do servidor.
+c) Porque o servidor exige.
+d) Para aumentar o p-valor.
+R: a | Olhar o resultado toda hora e parar cedo distorce a estatística.
+
+MC: Um p-valor pequeno em um teste A/B indica que:
+a) a diferença provavelmente não é acaso, mas não diz que é grande ou importante.
+b) a diferença é enorme.
+c) o modelo é perfeito.
+d) o teste foi inválido.
+R: a | Sempre olhe o tamanho do efeito e o intervalo de confiança.
+
+MC: Qual dos itens abaixo deve constar no registro (log) de cada previsão?
+a) Identificador, horário, versão do modelo, entradas (ou resumo), saída e latência.
+b) A senha do usuário.
+c) O código-fonte inteiro.
+d) O conteúdo do disco.
+R: a | Depois, quando disponível, o rótulo real.
+
+MC: "Fadiga de alertas" ocorre quando:
+a) há alertas demais e as pessoas passam a ignorá-los.
+b) há poucos alertas.
+c) todos os alertas são críticos e corretos.
+d) o painel é bonito.
+R: a | Prefira poucos alertas, bem escolhidos e acionáveis.
+
+MC: Um runbook (plano de resposta) deve dizer:
+a) o que fazer em cada alerta, quem acionar e como reverter.
+b) o histórico de preços da nuvem.
+c) apenas o nome do desenvolvedor.
+d) somente a versão do Python.
+R: a | Planeja a resposta antes que o incidente aconteça.
+
+MC: Qual sinal sem rótulo é mais rápido, mas indireto, para sugerir problema em produção?
+a) A mudança brusca na probabilidade média prevista.
+b) A queda do lucro anual.
+c) O resultado de uma auditoria externa.
+d) O número de linhas de código.
+R: a | Mostra que algo mudou, mas não diz quanto o desempenho piorou.
+
+DISC: Explique por que a falha silenciosa torna o monitoramento indispensável e que camadas de monitoramento você implantaria.
+R: Porque o modelo continua respondendo mesmo piorando. Monitoram-se: serviço (latência, erros), dados de entrada (ausentes, distribuição), previsões (distribuição das saídas), desempenho (com rótulos, muitas vezes atrasados) e negócio.
+
+DISC: Diferencie mudança de covariáveis, mudança de rótulos e deriva de conceito, com um exemplo de cada.
+R: Covariáveis: muda P(X), p. ex., campanha atrai público mais jovem. Rótulos: muda P(y), p. ex., mais inadimplentes em crise. Conceito: muda a relação X→y, p. ex., o mesmo perfil passa a se comportar de modo diferente.
+
+DISC: Descreva três formas de mudança temporal (abrupta, gradual, incremental, recorrente) com exemplos.
+R: Abrupta: uma lei nova de um dia para outro. Gradual: o conceito antigo e o novo convivem por um tempo. Incremental: deslizamento lento e contínuo. Recorrente: volta periodicamente, como a sazonalidade de fim de ano.
+
+DISC: Explique o PSI, como é calculado e como interpretá-lo, com a ressalva sobre seus limiares.
+R: Divide o atributo em faixas (por exemplo, decis da referência) e soma (q−p)·ln(q/p) sobre as faixas. Valores < 0,10 sugerem estabilidade, entre 0,10 e 0,25 mudança moderada e > 0,25 importante. Os limiares são convenções práticas e devem ser ajustados ao contexto.
+
+DISC: Por que um teste estatístico com p-valor pequeno pode não indicar mudança relevante para o modelo?
+R: Com muitos dados, qualquer diferença minúscula fica "significativa". É preciso avaliar o tamanho da diferença (KS, PSI) e o impacto no desempenho, definindo limiares de relevância.
+
+DISC: Como o classificador de domínio funciona e o que se pode aprender de suas importâncias?
+R: Treina-se um modelo para distinguir dados de referência de dados atuais; AUC próxima de 0,5 indica semelhança e AUC alta indica diferença. As importâncias dos atributos apontam quais contribuem mais para a distinção, ajudando a investigar a causa.
+
+DISC: Como monitorar o desempenho de um modelo quando os rótulos demoram a chegar?
+R: Esperar os rótulos e calcular com atraso; amostrar casos para rotulagem rápida; usar indicadores adiantados (cliques, devoluções); acompanhar sinais sem rótulo (dados e previsões); e usar detectores sobre o fluxo de erros quando os rótulos chegam.
+
+DISC: Descreva o DDM e como interpretar seus estados de alerta e deriva.
+R: Acompanha a taxa de erro p e o desvio s, guardando o menor p+s. Se p+s passar de mínimo + 2 desvios, emite alerta; passar de mínimo + 3 desvios, deriva. Indica aumento significativo da taxa de erro.
+
+DISC: Compare as estratégias de retreino estático, periódico, janela deslizante, incremental e por gatilho.
+R: Estático: nunca retreina e envelhece. Periódico: ritmo fixo, com todos os dados. Janela: só dados recentes, bom para deriva. Incremental: atualiza por lote, para fluxos contínuos. Gatilho: retreina quando o monitoramento acusa, economizando recursos.
+
+DISC: Por que é perigoso retreinar automaticamente sem investigar a causa de um alerta?
+R: Porque o alerta pode vir de falha de dados (sensor quebrado, unidade trocada); retreinar com esses dados ensinaria o erro. Deve-se corrigir a origem antes e passar o candidato pelos portões de qualidade.
+
+DISC: Descreva o procedimento de uma implantação progressiva com modo sombra, canário e reversão.
+R: Em sombra, o modelo novo prevê sem afetar usuários e compara-se com o atual. Em canário, atende pequena fração do tráfego e amplia-se se estiver bem. Se métricas pioram, reverte-se movendo o apelido para o modelo anterior.
+
+DISC: Como planejar o tamanho de amostra de um teste A/B e por que não olhar o resultado toda hora?
+R: Define-se a taxa base, o efeito mínimo relevante, o nível de significância e o poder, e calcula-se n por grupo. Olhar toda hora e parar quando "fica bonito" infla falsos positivos.
+
+DISC: O que deve ser registrado em log para cada previsão e quais cuidados de privacidade tomar?
+R: Identificador, horário, versão do modelo, entradas ou resumo, saída, latência e rótulo posterior. Cuidados: minimização, pseudonimização, retenção limitada e controle de acesso.
+
+DISC: Como evitar a fadiga de alertas? Dê três práticas.
+R: Poucos alertas bem escolhidos; níveis de gravidade com destinatários distintos; limiares baseados em dados e revisados; painéis simples; plano de resposta; revisão pós-incidente sem culpados.
+
+DISC: Por que se deve atualizar a referência do monitoramento depois de um retreino bem-sucedido?
+R: Porque o novo modelo foi treinado em um mundo diferente; comparar os dados atuais com a referência antiga manteria o alerta disparado indefinidamente. A nova referência reflete o regime atual.
+
+DISC: Na simulação do capítulo, o que mostra a comparação entre o PSI e a acurácia ao longo do tempo?
+R: Que o PSI sobe muito antes de a acurácia cair de forma clara, mostrando o valor dos sinais sem rótulos como alerta antecipado, enquanto a acurácia só confirma com atraso.
+
+DISC: Explique como uma mudança de covariáveis pode não prejudicar a AUC do modelo, mas ainda assim exigir atenção.
+R: Se a relação X→y permanece, a ordenação das previsões pode continuar boa (AUC estável), mas probabilidades podem ficar descalibradas e o modelo extrapola em regiões pouco vistas. Exige monitoramento e, eventualmente, recalibração.
+
+DISC: Qual a diferença entre monitoramento de dados e monitoramento de desempenho, e por que ambos são necessários?
+R: O de dados vê as entradas e saídas sem rótulos e é rápido; o de desempenho usa rótulos reais e é decisivo, mas atrasado. Juntos, dão alerta precoce e confirmação.
+
+DISC: Por que um alerta sem rótulos pode não enxergar a deriva de conceito?
+R: Porque, na deriva de conceito, a distribuição dos atributos pode permanecer a mesma e só muda a relação com o alvo, visível apenas com rótulos. Por isso é preciso monitorar o desempenho com rótulos e fazer retreinos de segurança.
+
+DISC: Que informações um runbook deve conter para um alerta de queda de F1?
+R: Como confirmar o alerta; quem acionar; verificação de dados e de versão; quando e como reverter para o modelo anterior; critérios para retreinar; comunicação com o negócio e registro do incidente.

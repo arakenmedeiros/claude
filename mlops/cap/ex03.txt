@@ -1,0 +1,269 @@
+MC: A expressão "garbage in, garbage out" significa que:
+a) dados ruins na entrada geram resultados ruins na saída.
+b) todo dado deve ser descartado após o uso.
+c) o modelo corrige sozinho os dados ruins.
+d) lixo eletrônico deve ser reciclado.
+R: a | A qualidade do modelo depende da qualidade dos dados de treino e dos que chegam em produção.
+
+MC: O que são "cascatas de dados" (data cascades) segundo Sambasivan et al. (2021)?
+a) Problemas que nascem cedo nos dados, passam despercebidos e causam danos graves depois.
+b) Tabelas organizadas em cascata no banco de dados.
+c) Fluxos de dados em tempo real.
+d) Backups em camadas.
+R: a | O estudo mostrou que a maioria dos profissionais relatou pelo menos uma cascata.
+
+MC: Qual dimensão da qualidade verifica se há registros duplicados?
+a) Unicidade.
+b) Completude.
+c) Atualidade.
+d) Validade.
+R: a | A unicidade responde se o mesmo registro aparece mais de uma vez.
+
+MC: Idade = −5 é um problema de:
+a) validade.
+b) unicidade.
+c) atualidade.
+d) representatividade.
+R: a | O valor está fora do intervalo permitido.
+
+MC: Uma tabela atualizada pela última vez há seis meses, num processo que exige dados do dia, tem problema de:
+a) atualidade.
+b) unicidade.
+c) validade de formato.
+d) consistência de nomes.
+R: a | Os dados não estão em dia.
+
+MC: Data de saída anterior à data de entrada é exemplo de falha de:
+a) consistência.
+b) completude.
+c) unicidade.
+d) atualidade.
+R: a | Os dados discordam entre si.
+
+MC: Dados de uma única cidade usados para prever o comportamento nacional têm problema de:
+a) representatividade.
+b) completude.
+c) unicidade.
+d) formatação.
+R: a | Os dados não cobrem os casos reais em que o modelo será usado.
+
+MC: Em um validador de dados, o esquema (schema) descreve:
+a) o que é esperado de cada coluna: tipo, intervalo, categorias e ausentes.
+b) a arquitetura da rede neural.
+c) os hiperparâmetros do modelo.
+d) a estrutura de pastas do projeto.
+R: a | É a base para detectar anomalias nos lotes de dados.
+
+MC: O que é desvio treino–serviço (training-serving skew)?
+a) Diferença entre os dados vistos em produção e os usados no treino, ou entre seus processamentos.
+b) A diferença de velocidade entre treino e teste.
+c) O desequilíbrio entre classes.
+d) A diferença de preço entre servidores.
+R: a | Pode vir de dados diferentes ou de código de pré-processamento diferente.
+
+MC: Quando um lote de dados reprova na validação, o pipeline deve:
+a) parar ou desviar o lote para quarentena e avisar alguém.
+b) treinar mesmo assim.
+c) apagar todos os dados.
+d) ignorar o erro.
+R: a | O portão evita que lixo contamine o modelo.
+
+MC: Vazamento de dados (data leakage) ocorre quando:
+a) o modelo vê, no treino, informação que não estaria disponível na hora de prever.
+b) dados pessoais são divulgados por engano.
+c) o servidor perde conexão.
+d) arquivos são apagados sem querer.
+R: a | O desempenho em teste fica bom demais e desaba em produção.
+
+MC: Qual a pergunta de ouro para detectar vazamento em um atributo?
+a) Na hora exata do uso do modelo, eu terei esta informação?
+b) Este atributo é numérico?
+c) Este atributo tem muitos valores diferentes?
+d) Este atributo é fácil de calcular?
+R: a | Se a informação só existe depois do evento, é vazamento.
+
+MC: Normalizar todos os dados antes de dividir em treino e teste é um exemplo de:
+a) contaminação treino–teste.
+b) vazamento de alvo.
+c) boa prática recomendada.
+d) validação cruzada aninhada.
+R: a | Informação do teste participa do cálculo da média e do desvio.
+
+MC: Usar dados do futuro para prever o passado é:
+a) vazamento temporal.
+b) validação cruzada.
+c) amostragem estratificada.
+d) calibração.
+R: a | Em dados com tempo, o treino deve vir do passado e o teste, do futuro.
+
+MC: Uma pista clássica de vazamento é:
+a) um resultado bom demais para ser verdade.
+b) um resultado ligeiramente abaixo do esperado.
+c) um modelo que demora a treinar.
+d) um arquivo muito grande.
+R: a | No experimento do capítulo, a acurácia foi a quase 100% com um atributo vazado.
+
+MC: No experimento com ruído nos rótulos de treino, a floresta aleatória:
+a) manteve a acurácia quase igual com 10% a 20% de ruído aleatório e só caiu visivelmente com 40%.
+b) caiu a zero com 10% de ruído.
+c) melhorou sempre que se acrescentava ruído.
+d) deixou de funcionar com qualquer ruído.
+R: a | O ruído aleatório moderado é bem tolerado, mas erros sistemáticos são mais danosos.
+
+MC: Erros sistemáticos de rotulagem costumam ser:
+a) mais danosos que erros aleatórios.
+b) menos danosos que erros aleatórios.
+c) irrelevantes.
+d) corrigidos sozinhos pelo modelo.
+R: a | Um rotulador que sempre confunde duas classes ensina o erro ao modelo.
+
+MC: Northcutt, Athalye e Mueller (2021) mostraram que:
+a) mesmo conjuntos de teste famosos têm erros de rotulagem que podem alterar a classificação de modelos.
+b) rótulos errados nunca afetam benchmarks.
+c) só dados de treino têm erros.
+d) conjuntos públicos são sempre perfeitos.
+R: a | Rótulos devem ser tratados como dados de primeira classe.
+
+MC: Qual conjunto é usado uma única vez, no final, para estimar o desempenho real?
+a) Teste.
+b) Treino.
+c) Validação.
+d) Reserva de hiperparâmetros.
+R: a | Usar o teste repetidamente para escolher modelos o contamina.
+
+MC: Para dados em que cada cliente aparece em várias linhas, a divisão adequada é:
+a) por grupo (cliente).
+b) aleatória das linhas.
+c) pela ordem alfabética.
+d) apenas pelo tamanho.
+R: a | Assim nenhum cliente aparece no treino e no teste ao mesmo tempo.
+
+MC: Para uma série temporal, a divisão adequada é:
+a) temporal: treina no passado e testa no futuro.
+b) aleatória.
+c) por ordem alfabética.
+d) invertida: treina no futuro e testa no passado.
+R: a | Evita o vazamento temporal.
+
+MC: Um hash (como SHA-256) de um arquivo de dados é útil porque:
+a) muda por completo se um único byte do conteúdo mudar.
+b) comprime o arquivo sem perda.
+c) criptografa os dados para sempre.
+d) acelera a leitura do disco.
+R: a | Serve como impressão digital para identificar versões de dados.
+
+MC: No DVC, o que fica no Git?
+a) Um arquivo pequeno de ponteiro com o hash e o caminho do dado.
+b) O arquivo de dados completo.
+c) Apenas o modelo treinado.
+d) Somente as senhas do armazenamento.
+R: a | Os dados pesados ficam em armazenamento remoto.
+
+MC: O que faz o comando dvc push?
+a) Envia os dados versionados para o armazenamento remoto.
+b) Apaga os dados locais.
+c) Treina o modelo.
+d) Cria uma branch no Git.
+R: a | Já o dvc checkout traz de volta a versão dos dados correspondente ao Git.
+
+MC: A estratégia de "instantâneos" (snapshots) para versionar dados consiste em:
+a) guardar uma cópia completa a cada versão.
+b) guardar apenas as diferenças.
+c) nunca guardar versões.
+d) guardar só os rótulos.
+R: a | É simples, mas ocupa mais espaço.
+
+MC: As datasheets for datasets (Gebru et al., 2021) servem para:
+a) documentar o conjunto de dados: motivação, composição, coleta, usos e manutenção.
+b) acelerar o treinamento.
+c) substituir testes estatísticos.
+d) criptografar os dados.
+R: a | São a "bula" do conjunto de dados.
+
+MC: A pseudonimização de um identificador pessoal consiste em:
+a) trocá-lo por um código que só permite identificar a pessoa com uma informação adicional guardada à parte.
+b) apagar todas as informações da pessoa.
+c) publicar o identificador.
+d) misturar os dados de todas as pessoas.
+R: a | Mantém a capacidade de juntar tabelas sem expor o identificador direto.
+
+MC: O princípio da minimização na proteção de dados diz que se deve:
+a) coletar e guardar apenas o necessário.
+b) coletar o máximo possível para uso futuro.
+c) guardar dados indefinidamente.
+d) compartilhar com todos os parceiros.
+R: a | Menos dados guardados significam menos risco.
+
+MC: Quais destes repositórios públicos de dados são citados no capítulo?
+a) UCI Machine Learning Repository, Kaggle e OpenML.
+b) Apenas bancos de dados privados.
+c) Somente repositórios de código.
+d) Apenas sistemas de arquivos locais.
+R: a | Os conjuntos Iris, Wine, Breast Cancer e Digits do scikit-learn vêm do UCI.
+
+MC: Qual a utilidade de medir a fração de ausentes por coluna em cada lote novo?
+a) Detectar mudanças bruscas na origem dos dados.
+b) Calcular a acurácia.
+c) Reduzir o tamanho do modelo.
+d) Escolher o hiperparâmetro.
+R: a | Um aumento súbito de ausentes costuma indicar falha em um sistema de origem.
+
+DISC: Por que se diz que o trabalho com dados determina a qualidade do modelo? Cite o conceito de cascatas de dados.
+R: Porque o modelo aprende o que os dados mostram; erros nos dados se propagam. Cascatas de dados são problemas que nascem cedo, passam despercebidos e causam danos graves depois, relatados pela maioria dos profissionais estudados por Sambasivan et al. (2021).
+
+DISC: Descreva cinco dimensões da qualidade dos dados e dê um exemplo de problema em cada uma.
+R: Completude (renda vazia), validade (idade −5), unicidade (cliente duplicado), consistência (saída antes da entrada), atualidade (tabela de seis meses atrás). Também exatidão e representatividade.
+
+DISC: Explique o funcionamento de um validador de dados baseado em esquema e onde ele se encaixa no pipeline.
+R: O esquema define tipo, intervalo, categorias e fração máxima de ausentes por coluna. O validador compara cada lote com o esquema e lista as violações. Ele é um portão antes do treino ou da previsão: lotes reprovados vão para quarentena e geram alerta.
+
+DISC: O que é vazamento de dados? Descreva dois tipos e como evitá-los.
+R: É quando o modelo usa informação indisponível na hora de prever. Exemplos: vazamento de alvo (atributo derivado do rótulo) e contaminação treino–teste (normalizar tudo antes de dividir). Evita-se pensando na disponibilidade na hora do uso e ajustando as transformações só no treino, dentro de um pipeline.
+
+DISC: Como você investigaria se um atributo suspeito está vazando o alvo?
+R: Calculando a AUC de cada atributo sozinho e vendo se algum se destaca de modo suspeito; verificando de onde vem e se existiria na hora da previsão; comparando o desempenho com e sem ele; e pedindo à área de negócio a lógica do atributo.
+
+DISC: Explique o efeito do ruído nos rótulos de treino e por que erros sistemáticos preocupam mais.
+R: Rótulos errados ensinam informação falsa. Ruído aleatório moderado é diluído por modelos como florestas. Erros sistemáticos, como um rotulador que sempre confunde duas classes, criam um padrão falso que o modelo aprende. Por isso rótulos devem ser revisados e amostrados.
+
+DISC: Compare as estratégias de divisão aleatória, estratificada, temporal e por grupo, indicando quando usar cada uma.
+R: Aleatória: dados independentes e sem ordem. Estratificada: classes desbalanceadas, mantém proporções. Temporal: dados com tempo, treina no passado e testa no futuro. Por grupo: várias linhas por indivíduo, evitando o mesmo indivíduo nos dois lados.
+
+DISC: Por que o conjunto de teste deve ser usado uma única vez?
+R: Porque, se for usado repetidamente para escolher modelos ou ajustar hiperparâmetros, passa a participar do treino de forma indireta e a estimativa fica otimista. O teste serve para o relatório final honesto.
+
+DISC: Explique o que é um hash de dados e como ele ajuda na rastreabilidade de modelos.
+R: É uma impressão digital do conteúdo: muda totalmente se o conteúdo mudar. Registrando o hash dos dados de treino junto ao modelo, é possível provar com qual versão dos dados ele foi treinado e detectar se algo foi alterado.
+
+DISC: Descreva como o DVC versiona dados grandes sem colocá-los no Git.
+R: Os dados ficam em armazenamento remoto; no Git ficam arquivos pequenos de ponteiro com o hash e o caminho. Ao trocar de versão no Git, o DVC traz os dados correspondentes. Assim, código e dados têm histórico coerente.
+
+DISC: O que deve conter uma datasheet de um conjunto de dados? Dê cinco itens.
+R: Motivação, composição (o que há, quantos exemplos, dados pessoais), processo de coleta e consentimento, pré-processamento, usos indicados e não indicados, distribuição e manutenção, licença.
+
+DISC: Explique minimização e pseudonimização, e como se relacionam com a LGPD.
+R: Minimização é coletar e guardar apenas o necessário; pseudonimização troca identificadores diretos por códigos que não identificam sem informação adicional guardada à parte. Ambas reduzem riscos e apoiam as obrigações da LGPD sobre tratamento de dados pessoais.
+
+DISC: Por que a divisão por grupo é importante quando um mesmo paciente tem várias medições?
+R: Porque medições do mesmo paciente são parecidas. Em uma divisão aleatória, o modelo pode "reconhecer" o paciente no teste e inflar o desempenho, sem aprender o fenômeno geral. Dividir por paciente evita esse vazamento.
+
+DISC: Por que o código de validação deve rodar também em produção, e não só no desenvolvimento?
+R: Porque os dados de produção mudam e podem ter defeitos novos. Validar cada lote que chega evita previsões baseadas em dados corrompidos e dá alerta precoce sobre problemas nas fontes.
+
+DISC: Quais problemas podem surgir ao juntar tabelas sem cuidado com o tempo? Relacione com o vazamento.
+R: Uma junção que usa o valor mais recente do atributo para eventos passados traz informação do futuro para o treino, caracterizando vazamento temporal. A junção deve usar o valor disponível na data do evento.
+
+DISC: Explique o que é uma quarentena de dados e como decidir o que fazer com o lote nela.
+R: É uma área onde lotes reprovados ficam isolados, sem entrar no treino ou na previsão. A equipe investiga a origem, corrige na fonte, reprocessa ou descarta, e registra o motivo.
+
+DISC: Por que o mesmo código de pré-processamento deve ser usado no treino e no serviço?
+R: Para evitar o desvio treino–serviço: se o pré-processamento difere, o modelo recebe na produção entradas diferentes das que viu no treino. O ideal é empacotá-lo no mesmo pipeline.
+
+DISC: Mencione três cuidados éticos e legais no uso de dados pessoais para treinar modelos.
+R: Base legal e finalidade claras; minimização e pseudonimização; controle de acesso e retenção limitada; transparência e possibilidade de revisão de decisões automatizadas; cuidado com atributos sensíveis e vieses.
+
+DISC: Por que a representatividade dos dados é uma dimensão de qualidade importante para modelos em produção?
+R: Porque o modelo só aprende o que os dados cobrem. Se faltam regiões, perfis ou condições que aparecem em produção, ele erra justamente para esses casos, e a média esconde o problema.
+
+DISC: Dê dois exemplos de validações que você incluiria em um esquema de dados de clientes (idade, renda, cidade) e explique o que cada uma evita.
+R: Idade entre 18 e 100 evita valores impossíveis que distorcem o modelo; categorias permitidas de cidade evitam entradas inesperadas ou digitadas de modo diferente; fração máxima de ausentes em renda evita lotes com falha na origem.

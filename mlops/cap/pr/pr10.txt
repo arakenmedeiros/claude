@@ -1,0 +1,222 @@
+@@EX 1 | Cartão do modelo gerado automaticamente | básico
+Treine uma regressão logística no conjunto *Breast Cancer* (UCI) e escreva uma função que gere um cartão do modelo em texto (Markdown) com: nome e versão, uso pretendido e fora do escopo, descrição dos dados, métricas gerais (acurácia, F1, revocação da classe maligna), métricas por faixa de tamanho médio do tumor (`mean radius` abaixo e acima da mediana) e limitações. Salve em arquivo e mostre as primeiras linhas.
+@@SOL
+```python
+import os
+import tempfile
+import pandas as pd
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, f1_score, recall_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+os.chdir(tempfile.mkdtemp())
+d = load_breast_cancer(as_frame=True)
+X, y = d.data, d.target
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+m = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr, ytr)
+prev = pd.Series(m.predict(Xte), index=Xte.index)
+
+def metricas(idx):
+    return (accuracy_score(yte[idx], prev[idx]), f1_score(yte[idx], prev[idx]), recall_score(yte[idx], prev[idx], pos_label=0))
+
+mediana = Xtr["mean radius"].median()
+grupos = {"todos": Xte.index, "tumor menor (<= mediana)": Xte.index[Xte["mean radius"] <= mediana],
+          "tumor maior (> mediana)": Xte.index[Xte["mean radius"] > mediana]}
+
+linhas = ["# Cartão do modelo: triagem_wdbc (v1.0.0)", "",
+          "## Uso pretendido", "Estudo e ensino de classificação binária. Não é um dispositivo médico.", "",
+          "## Fora do escopo", "Apoio a diagnóstico clínico real sem validação médica e regulatória.", "",
+          "## Dados", f"UCI Breast Cancer Wisconsin (Diagnostic): {len(X)} exemplos, {X.shape[1]} atributos; teste com {len(Xte)} exemplos.", "",
+          "## Métricas (acurácia | F1 | revocação da classe maligna)"]
+for nome, idx in grupos.items():
+    a, f, r = metricas(idx)
+    linhas.append(f"- {nome} (n = {len(idx)}): {a:.3f} | {f:.3f} | {r:.3f}")
+linhas += ["", "## Limitações", "- Amostra pequena e de uma única instituição.", "- Sem avaliação por subgrupos demográficos (não disponíveis no conjunto)."]
+texto = "\n".join(linhas)
+open("cartao.md", "w", encoding="utf-8").write(texto)
+print("\n".join(open("cartao.md", encoding="utf-8").read().splitlines()[:16]))
+```
+@@NOTE O cartão mostra o desempenho por faixa de tamanho, e não só o geral. Se uma faixa tiver revocação da classe maligna bem menor, isso precisa aparecer nas limitações. Gerar o cartão por código evita que ele fique desatualizado.
+@@EX 2 | Explicando o modelo: permutação, PDP e a armadilha da correlação | intermediário
+No conjunto *Breast Cancer* (UCI), treine uma floresta aleatória e calcule a importância por permutação dos 5 principais atributos no teste. Depois, acrescente ao conjunto uma cópia quase idêntica do atributo mais importante (com ruído mínimo) e recalcule: o que acontece com a importância dos dois?
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.inspection import permutation_importance
+from sklearn.model_selection import train_test_split
+
+d = load_breast_cancer(as_frame=True)
+X, y = d.data, d.target
+
+def top(X, n=5):
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+    m = RandomForestClassifier(300, random_state=0).fit(Xtr, ytr)
+    r = permutation_importance(m, Xte, yte, n_repeats=20, random_state=0, scoring="f1")
+    return pd.Series(r.importances_mean, index=X.columns).sort_values(ascending=False).head(n)
+
+original = top(X)
+print("Original:\n", original.round(4).to_string())
+mais_importante = original.index[0]
+X2 = X.copy()
+X2[mais_importante + " (cópia)"] = X[mais_importante] + np.random.default_rng(0).normal(0, 1e-3 * X[mais_importante].std(), len(X))
+com_copia = top(X2)
+print("\nCom uma cópia quase idêntica:\n", com_copia.round(4).to_string())
+```
+@@NOTE Com atributos quase duplicados, a importância se divide entre eles, e cada um pode parecer menos relevante do que realmente é. Por isso, explicações devem ser lidas com cuidado e acompanhadas da análise de correlação entre atributos.
+@@EX 3 | Auditoria de justiça e ajuste de limiares | intermediário
+Simule 20.000 candidatos a crédito de dois grupos (A, 70%; B, 30%) com o mesmo mérito real, mas com um atributo medido com viés no grupo B. Treine uma regressão logística **sem** o grupo como entrada e calcule, por grupo, taxa de seleção, revocação (TPR) e precisão. Reporte a razão de impacto. Depois, escolha limiares por grupo que igualem a revocação em 80% e recalcule.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+rng = np.random.default_rng(0)
+n = 20000
+grupo = rng.choice(["A", "B"], n, p=[0.7, 0.3])
+merito = rng.normal(size=n)
+y = (merito + rng.normal(0, 0.8, n) > 0).astype(int)
+x1 = merito + np.where(grupo == "B", -0.6, 0.0) + rng.normal(0, 0.5, n)       # medido com viés no grupo B
+x2 = merito + rng.normal(0, 0.9, n)
+d = pd.DataFrame({"x1": x1, "x2": x2, "grupo": grupo, "y": y})
+tr, te = train_test_split(d, test_size=0.4, random_state=0, stratify=d["grupo"])
+m = LogisticRegression().fit(tr[["x1", "x2"]], tr["y"])
+te = te.assign(p=m.predict_proba(te[["x1", "x2"]])[:, 1])
+
+def relatorio(te, sel):
+    linhas = {}
+    for g, dg in te.assign(sel=sel).groupby("grupo"):
+        linhas[g] = {"taxa_selecao": dg["sel"].mean(), "revocacao": dg.loc[dg["y"] == 1, "sel"].mean(),
+                     "precisao": dg.loc[dg["sel"], "y"].mean()}
+    return pd.DataFrame(linhas).T.round(3)
+
+t1 = relatorio(te, te["p"] >= 0.5)
+print("Limiar único 0,5:\n", t1)
+print("Razão de impacto B/A:", round(t1.loc["B", "taxa_selecao"] / t1.loc["A", "taxa_selecao"], 3))
+
+limiares = {g: float(np.quantile(dg.loc[dg["y"] == 1, "p"], 1 - 0.80)) for g, dg in te.groupby("grupo")}
+sel2 = np.array([p >= limiares[g] for p, g in zip(te["p"], te["grupo"])])
+t2 = relatorio(te, sel2)
+print("\nLimiares por grupo", {g: round(v, 3) for g, v in limiares.items()}, ":\n", t2)
+print("Razão de impacto B/A:", round(t2.loc["B", "taxa_selecao"] / t2.loc["A", "taxa_selecao"], 3))
+```
+@@NOTE Sem usar o grupo, o modelo ainda seleciona menos pessoas do grupo B e encontra menos dos que merecem: o viés entrou pelo atributo medido com erro. Com limiares por grupo, a revocação fica igual (80%), mas a precisão e a taxa de seleção mudam. Escolher o critério de justiça é uma decisão social e jurídica, e não apenas técnica.
+@@EX 4 | Privacidade diferencial: o custo do ruído | avançado
+Considere 1.000 pessoas com a característica de interesse em 300 delas. Divulgue a contagem com o mecanismo de Laplace (sensibilidade 1) para ε = 0,05; 0,5 e 5. Para cada ε, repita 2.000 vezes e informe o erro absoluto médio. Depois, mostre o efeito de repetir a mesma consulta 100 vezes e fazer a média dos resultados (o que acontece com a privacidade?).
+@@SOL
+```python
+import numpy as np
+
+rng = np.random.default_rng(0)
+verdade = 300
+print("Erro absoluto médio de uma resposta (2.000 repetições):")
+for eps in [0.05, 0.5, 5.0]:
+    respostas = verdade + rng.laplace(0, 1 / eps, 2000)
+    print(f"  ε = {eps:4.2f} -> erro médio = {np.abs(respostas - verdade).mean():6.2f} | ex.: resposta divulgada = {respostas[0]:.1f}")
+
+print("\nMédia de 100 consultas repetidas com ε = 0,05 cada:")
+medias = [np.mean(verdade + rng.laplace(0, 1 / 0.05, 100)) for _ in range(2000)]
+print(f"  erro médio da média = {np.abs(np.array(medias) - verdade).mean():.2f}  (privacidade total gasta ≈ 100 × 0,05 = 5,0)")
+```
+@@NOTE Quanto menor o ε, maior o ruído e mais privacidade. Repetir a consulta e tirar a média **recupera a precisão**, mas "gasta" privacidade: os orçamentos de ε somam. Por isso sistemas reais controlam o orçamento total de privacidade.
+@@PROJ Auditoria de um modelo de crédito: documentação, explicação, justiça e privacidade | Cap10
+**Contexto.** Você foi chamado para auditar um modelo de aprovação de crédito antes da implantação. Entregue um dossiê com cartão do modelo, explicações, avaliação de justiça, uma divulgação privada de estatísticas e verificação de correção temporal dos atributos.
+
+**Dados simulados.** Gere 15.000 solicitantes com `renda`, `idade`, `tempo_emprego`, `dividas` e `grupo` (A: 65%, B: 35%). O alvo "bom pagador" depende de renda, dívidas e tempo de emprego, mas a renda é registrada com erro maior e viés para baixo no grupo B. Defina uma semente e documente.
+
+**Tarefas.**
+1. Treine uma floresta aleatória **sem** `grupo` e avalie no teste: AUC-ROC, F1 e revocação dos bons pagadores, no geral e por grupo.
+2. Calcule a razão de impacto (B/A) das aprovações e a diferença de revocação entre os grupos.
+3. Explique o modelo: importância por permutação (global) e, para um solicitante do grupo B reprovado, a variação de probabilidade quando cada atributo é trocado pela mediana (explicação local simples).
+4. Divulgue de forma privada (Laplace, ε = 0,5) o número de aprovados em cada grupo e compare com o valor real.
+5. Faça uma junção temporal correta (`merge_asof`) de um atributo "dívidas_30d" calculado em datas diferentes e compare com a junção ingênua (valor mais recente), mostrando a diferença em pelo menos um caso.
+6. Gere o cartão do modelo e escreva a recomendação (aprovar, aprovar com condições ou não aprovar) com justificativas.
+
+**Entregáveis.** Tabelas de desempenho e justiça, explicações, divulgação privada, demonstração do erro temporal, cartão e recomendação.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.inspection import permutation_importance
+from sklearn.metrics import f1_score, recall_score, roc_auc_score
+from sklearn.model_selection import train_test_split
+
+rng = np.random.default_rng(0)
+n = 15000
+grupo = rng.choice(["A", "B"], n, p=[0.65, 0.35])
+renda_real = rng.lognormal(8.2, 0.5, n)
+idade = rng.integers(21, 70, n).astype(float)
+emprego = rng.integers(0, 30, n).astype(float)
+dividas = rng.lognormal(6.5, 0.8, n)
+escore = 1.2 * np.log(renda_real / 3000) - 0.9 * np.log(dividas / 700) + 0.04 * emprego
+y = (escore + rng.normal(0, 0.6, n) > 0.2).astype(int)                                   # 1 = bom pagador
+renda_obs = renda_real * np.where(grupo == "B", rng.lognormal(-0.35, 0.8, n), rng.lognormal(0, 0.1, n))  # erro maior e viés para baixo no grupo B
+d = pd.DataFrame({"renda": renda_obs, "idade": idade, "tempo_emprego": emprego, "dividas": dividas, "grupo": grupo, "y": y})
+feats = ["renda", "idade", "tempo_emprego", "dividas"]
+tr, te = train_test_split(d, test_size=0.3, random_state=0, stratify=d["y"])
+m = RandomForestClassifier(300, min_samples_leaf=5, random_state=0).fit(tr[feats], tr["y"])
+te = te.assign(p=m.predict_proba(te[feats])[:, 1]); te["aprov"] = te["p"] >= 0.5
+
+# 1-2. desempenho e justiça
+linhas = []
+for nome, dg in [("geral", te)] + list(te.groupby("grupo")):
+    linhas.append({"grupo": nome, "n": len(dg), "AUC": roc_auc_score(dg["y"], dg["p"]), "F1": f1_score(dg["y"], dg["aprov"]),
+                   "revocacao": recall_score(dg["y"], dg["aprov"]), "taxa_aprov": dg["aprov"].mean()})
+tab = pd.DataFrame(linhas).round(3)
+print(tab.to_string(index=False))
+ta, tb = tab.set_index("grupo").loc["A", "taxa_aprov"], tab.set_index("grupo").loc["B", "taxa_aprov"]
+rev = tab.set_index("grupo")["revocacao"]
+print(f"Razão de impacto B/A = {tb / ta:.3f} | diferença de revocação (A − B) = {rev['A'] - rev['B']:+.3f}")
+
+# 3. explicações
+imp = permutation_importance(m, te[feats], te["y"], n_repeats=10, random_state=0, scoring="roc_auc")
+print("Importância por permutação (queda da AUC):", {f: round(float(v), 3) for f, v in zip(feats, imp.importances_mean)})
+reprovados_b = te[(te["grupo"] == "B") & (~te["aprov"]) & (te["y"] == 1)]
+caso = reprovados_b.iloc[0]
+base = m.predict_proba(caso[feats].to_frame().T.astype(float))[0, 1]
+efeito = {}
+for f in feats:
+    alt = caso[feats].copy(); alt[f] = d[f].median()
+    efeito[f] = m.predict_proba(alt.to_frame().T.astype(float))[0, 1] - base
+print(f"Caso reprovado do grupo B (bom pagador real): prob = {base:.2f} | mudança ao trocar cada atributo pela mediana:", {k: round(float(v), 2) for k, v in efeito.items()})
+
+# 4. divulgação privada
+eps = 0.5
+for g in ["A", "B"]:
+    real = int(te.loc[te["grupo"] == g, "aprov"].sum())
+    print(f"Aprovados no grupo {g}: real = {real} | divulgado com ε = {eps}: {real + rng.laplace(0, 1 / eps):.1f}")
+
+# 5. correção temporal
+eventos = pd.DataFrame({"cliente": [1, 1, 2], "data": pd.to_datetime(["2026-03-10", "2026-05-20", "2026-04-15"]), "inadimpliu": [0, 1, 0]}).sort_values("data")
+atributos = pd.DataFrame({"cliente": [1, 1, 1, 2, 2], "data_calculo": pd.to_datetime(["2026-03-01", "2026-04-01", "2026-05-01", "2026-03-15", "2026-04-10"]),
+                          "dividas_30d": [100.0, 80.0, 20.0, 300.0, 310.0]}).sort_values("data_calculo")
+correto = pd.merge_asof(eventos, atributos, left_on="data", right_on="data_calculo", by="cliente")
+ingenuo = eventos.merge(atributos.groupby("cliente")["dividas_30d"].last().rename("mais_recente"), on="cliente")
+print("Cliente 1 em 10/03 -> correto:", float(correto.loc[(correto.cliente == 1) & (correto.data == "2026-03-10"), "dividas_30d"].iloc[0]),
+      "| ingênuo (vaza o futuro):", float(ingenuo.loc[(ingenuo.cliente == 1) & (ingenuo.data == "2026-03-10"), "mais_recente"].iloc[0]))
+
+# 6. cartão do modelo
+print("\n# Cartão do modelo: credito (v1.0.0)")
+print(f"- Uso: apoio à decisão de crédito, com revisão humana. Fora do escopo: decisão totalmente automática.")
+print(f"- AUC geral {tab.loc[0, 'AUC']} | revocação A {rev['A']} / B {rev['B']} | razão de impacto B/A {tb / ta:.2f}")
+print("- Limitação: renda registrada com mais erro no grupo B; recomenda-se corrigir a captação antes de ampliar o uso.")
+```
+@@RUBRICA
+- Modelo treinado sem o atributo sensível e avaliado por grupo, com razão de impacto e diferença de revocação.
+- Explicação global (permutação) e local simples, com cuidado ao interpretar.
+- Divulgação privada com Laplace, comparando valor real e valor divulgado.
+- Demonstração clara do erro temporal da junção ingênua.
+- Cartão do modelo com uso pretendido, métricas por grupo e limitações.
+- Recomendação justificada (por exemplo, aprovar com condições: corrigir a captação da renda e monitorar a razão de impacto).
+@@NOTE O resultado exato depende do computador e das versões. Nesta execução: (i) o desempenho geral é bom (AUC de cerca de 0,87), mas pior no grupo B (AUC de cerca de 0,83, contra cerca de 0,89 no grupo A), e a revocação dos bons pagadores é menor no grupo B (cerca de 0,85, contra cerca de 0,91); (ii) a razão de impacto B/A fica em torno de 0,92, acima da regra prática de 0,8, mas a diferença de revocação merece atenção, pois bons pagadores do grupo B são rejeitados com mais frequência; (iii) as dívidas e a renda são os atributos mais importantes; (iv) a contagem divulgada com ε = 0,5 difere do valor real em poucas unidades; (v) a junção ingênua usa um valor do futuro (20 em vez de 100). A recomendação razoável é aprovar com condições: corrigir a captação da renda do grupo B, monitorar a razão de impacto e a revocação por grupo e revisar o modelo periodicamente.
+@@ALEM
+- **UCI:** *Statlog (German Credit Data)*, *Adult (Census Income)* (atributos sensíveis, ótimo para estudar justiça) e *Default of Credit Card Clients*.
+- **Kaggle:** *Give Me Some Credit* e *Home Credit Default Risk* para repetir a auditoria. Lembre-se de verificar a licença e as condições de uso antes de publicar resultados.

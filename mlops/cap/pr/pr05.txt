@@ -1,0 +1,248 @@
+@@EX 1 | Três modelos, três execuções, uma consulta | básico
+Com o MLflow (banco SQLite temporário), registre três execuções no conjunto *Wine* (UCI): regressão logística, floresta aleatória e SVC. Em cada uma, registre o nome do modelo como parâmetro, a acurácia de teste como métrica e uma tag com o autor. Depois, use `mlflow.search_runs` para listar as execuções em ordem decrescente de acurácia.
+@@SOL
+```python
+import os
+import tempfile
+import warnings
+import mlflow
+from sklearn.datasets import load_wine
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+
+warnings.filterwarnings("ignore")
+os.chdir(tempfile.mkdtemp())
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
+mlflow.set_experiment("wine")
+
+X, y = load_wine(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+modelos = {"logreg": make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)),
+           "floresta": RandomForestClassifier(100, random_state=0),
+           "svc": make_pipeline(StandardScaler(), SVC())}
+for nome, m in modelos.items():
+    with mlflow.start_run(run_name=nome):
+        m.fit(Xtr, ytr)
+        mlflow.log_param("modelo", nome)
+        mlflow.log_metric("acuracia", m.score(Xte, yte))
+        mlflow.set_tag("autor", "turma-mlops")
+
+res = mlflow.search_runs(order_by=["metrics.acuracia DESC", "tags.mlflow.runName ASC"])
+print(res[["tags.mlflow.runName", "params.modelo", "metrics.acuracia", "tags.autor"]].round(4).to_string(index=False))
+```
+@@NOTE Neste teste pequeno (54 exemplos), os três modelos acertam tudo, então a ordem do desempate é apenas alfabética. O ponto do exercício é que o resultado fica salvo em `mlflow.db` e pode ser consultado depois, por qualquer pessoa com acesso, em vez de anotado num papel. Diferenças tão pequenas não devem ser interpretadas sem estatística (Capítulo 6).
+@@EX 2 | Curva de aprendizado como métrica por passo | intermediário
+Treine um `GradientBoostingClassifier` com 150 árvores no conjunto *Breast Cancer* (UCI). Use `staged_predict_proba` para calcular a perda logarítmica (*log loss*) no conjunto de validação a cada árvore adicionada e registre-a no MLflow como métrica com `step`. Recupere o histórico com `MlflowClient().get_metric_history` e informe o número de árvores com a menor perda.
+@@SOL
+```python
+import os
+import tempfile
+import warnings
+import mlflow
+import numpy as np
+from mlflow import MlflowClient
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.metrics import log_loss
+from sklearn.model_selection import train_test_split
+
+warnings.filterwarnings("ignore")
+os.chdir(tempfile.mkdtemp())
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
+mlflow.set_experiment("curva_de_aprendizado")
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xva, ytr, yva = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+gb = GradientBoostingClassifier(n_estimators=150, learning_rate=0.2, max_depth=3, random_state=0).fit(Xtr, ytr)
+
+with mlflow.start_run() as run:
+    mlflow.log_params({"n_estimators": 150, "learning_rate": 0.2})
+    for passo, p in enumerate(gb.staged_predict_proba(Xva), start=1):
+        mlflow.log_metric("perda_validacao", log_loss(yva, p), step=passo)
+
+hist = MlflowClient().get_metric_history(run.info.run_id, "perda_validacao")
+perdas = np.array([h.value for h in sorted(hist, key=lambda h: h.step)])
+print("Pontos registrados:", len(perdas))
+print(f"Menor perda: {perdas.min():.4f} com {int(perdas.argmin()) + 1} árvores | perda com 150 árvores: {perdas[-1]:.4f}")
+```
+@@NOTE Registrar métricas por passo permite ver o ponto em que o modelo começa a piorar na validação (superajuste) e escolher o número de árvores. É a base das curvas que as interfaces de rastreamento desenham.
+@@EX 3 | Versões, apelidos e reversão | intermediário
+Registre duas versões de um modelo no registro do MLflow (v1: regressão logística com `C=0.001`; v2: com `C=10`) no conjunto *Breast Cancer* (UCI). Dê à v2 o apelido `champion`. Carregue o modelo pelo apelido e meça a acurácia no teste. Em seguida, **reverta** movendo o apelido para a v1 e meça novamente, **sem alterar o código de carga**.
+@@SOL
+```python
+import os
+import tempfile
+import warnings
+import mlflow
+import mlflow.sklearn
+from mlflow import MlflowClient
+from mlflow.models import infer_signature
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+warnings.filterwarnings("ignore")
+os.chdir(tempfile.mkdtemp())
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
+mlflow.set_experiment("reversao")
+NOME = "diagnostico"
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+def registrar(C):
+    with mlflow.start_run(run_name=f"C={C}"):
+        m = make_pipeline(StandardScaler(), LogisticRegression(C=C, max_iter=2000)).fit(Xtr, ytr)
+        info = mlflow.sklearn.log_model(m, name="modelo", signature=infer_signature(Xte, m.predict(Xte)))
+    return mlflow.register_model(info.model_uri, NOME).version
+
+cliente = MlflowClient()
+v1, v2 = registrar(0.001), registrar(10)
+cliente.set_registered_model_alias(NOME, "champion", v2)
+
+def acuracia_do_champion():
+    modelo = mlflow.sklearn.load_model(f"models:/{NOME}@champion")            # o código de carga nunca muda
+    return cliente.get_model_version_by_alias(NOME, "champion").version, modelo.score(Xte, yte)
+
+print("Antes:  versão", *[f"{v} | acurácia = {a:.4f}" for v, a in [acuracia_do_champion()]])
+cliente.set_registered_model_alias(NOME, "champion", v1)                          # reversão
+print("Depois: versão", *[f"{v} | acurácia = {a:.4f}" for v, a in [acuracia_do_champion()]])
+```
+@@NOTE O código de produção carrega sempre `models:/diagnostico@champion`. Promover ou reverter é só mover o apelido: nenhuma implantação de código é necessária, e a troca é imediata e auditável.
+@@EX 4 | Promoção só com evidência estatística | avançado
+No conjunto *Digits* (UCI), compare um campeão (regressão logística com `C=1`) e um candidato (SVC com `C=10`) no mesmo conjunto de teste. Calcule, por *bootstrap* com 2.000 reamostragens, o intervalo de confiança de 95% da diferença de acurácia (candidato − campeão). Escreva a regra: promover apenas se o limite inferior do intervalo for maior que zero. Teste a regra também com um candidato quase idêntico ao campeão (regressão logística com `C=0.7`).
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+
+X, y = load_digits(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X / 16, y, test_size=0.4, stratify=y, random_state=0)
+
+campeao = LogisticRegression(C=1, max_iter=3000).fit(Xtr, ytr)
+candidatos = {"SVC (muito diferente)": SVC(C=10).fit(Xtr, ytr),
+              "logreg C=0.7 (quase igual)": LogisticRegression(C=0.7, max_iter=3000).fit(Xtr, ytr)}
+acerto_c = (campeao.predict(Xte) == yte).astype(float)
+
+def decidir(candidato, n_boot=2000, semente=0):
+    acerto_n = (candidato.predict(Xte) == yte).astype(float)
+    rng = np.random.default_rng(semente)
+    dif = [(acerto_n[i] - acerto_c[i]).mean() for i in (rng.integers(0, len(yte), len(yte)) for _ in range(n_boot))]
+    lo, hi = np.percentile(dif, [2.5, 97.5])
+    return acerto_n.mean() - acerto_c.mean(), lo, hi, lo > 0
+
+print(f"Campeão: acurácia = {acerto_c.mean():.4f}")
+for nome, cand in candidatos.items():
+    d, lo, hi, promover = decidir(cand)
+    print(f"{nome:30s} diferença = {d:+.4f} | IC95% = [{lo:+.4f}, {hi:+.4f}] | promover? {promover}")
+```
+@@NOTE O SVC tem ganho pequeno, mas o intervalo fica todo acima de zero, e ele é promovido. O candidato quase idêntico tem intervalo que inclui zero, e a regra o mantém de fora, evitando trocas por ruído. Esta é a lógica de um portão de promoção.
+@@PROJ Central de experimentos com portão e registro | Cap05
+**Contexto.** Sua equipe vai escolher um modelo para o conjunto *Digits* (UCI) e precisa de um processo auditável.
+
+**Tarefas.**
+1. Defina uma grade com pelo menos 12 configurações de duas famílias de modelos (por exemplo, SVC com 6 combinações de `C` e `gamma` e floresta com 6 combinações de `n_estimators` e `max_depth`).
+2. Para cada configuração, abra uma execução do MLflow e registre: parâmetros, F1 macro médio em validação cruzada de 5 dobras (métrica), tempo de treino (métrica), hash dos dados (tag) e o modelo treinado em todo o treino (com assinatura).
+3. Consulte as execuções com `search_runs` e escolha a melhor pelo F1 de validação cruzada.
+4. Aplique um portão: piso de F1 de 0,95 **e** ganho de pelo menos 0,01 sobre uma linha de base de regressão logística (também registrada).
+5. Se aprovado, registre o modelo e dê o apelido `champion`; avalie **uma única vez** no teste.
+6. Mostre que é possível reconstruir o modelo campeão a partir dos parâmetros registrados e obter a mesma acurácia.
+
+**Entregáveis.** Tabela das execuções, decisão do portão, versão registrada e comprovação da reprodução.
+@@SOL
+```python
+import hashlib
+import itertools
+import os
+import tempfile
+import time
+import warnings
+import mlflow
+import mlflow.sklearn
+import numpy as np
+from mlflow import MlflowClient
+from mlflow.models import infer_signature
+from sklearn.datasets import load_digits
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
+from sklearn.svm import SVC
+
+warnings.filterwarnings("ignore")
+os.chdir(tempfile.mkdtemp())
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
+mlflow.set_experiment("central")
+
+X, y = load_digits(return_X_y=True)
+hash_dados = hashlib.sha256(np.c_[X, y].tobytes()).hexdigest()[:12]
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+cv = StratifiedKFold(5, shuffle=True, random_state=0)
+
+configs = [("svc", dict(C=C, gamma=g)) for C, g in itertools.product([1, 10, 100], [0.0005, 0.002])]
+configs += [("floresta", dict(n_estimators=n, max_depth=d)) for n, d in itertools.product([50, 200], [None, 8, 4])]
+fabrica = {"svc": lambda **p: SVC(**p),
+           "floresta": lambda **p: RandomForestClassifier(random_state=0, **p),
+           "baseline": lambda **p: LogisticRegression(max_iter=3000, **p)}
+
+def executar(familia, params):
+    with mlflow.start_run(run_name=f"{familia}_{params}") as run:
+        t0 = time.perf_counter()
+        modelo = fabrica[familia](**params)
+        f1 = cross_val_score(modelo, Xtr, ytr, cv=cv, scoring="f1_macro").mean()
+        modelo.fit(Xtr, ytr)
+        mlflow.log_params({"familia": familia, **{k: str(v) for k, v in params.items()}})
+        mlflow.log_metrics({"f1_cv": f1, "tempo_s": time.perf_counter() - t0})
+        mlflow.set_tag("hash_dados", hash_dados)
+        info = mlflow.sklearn.log_model(modelo, name="modelo", signature=infer_signature(Xte, modelo.predict(Xte)),
+                                        skops_trusted_types=["sklearn.tree._tree.Tree"])
+    return f1, modelo, info.model_uri, run.info.run_id
+
+base_f1 = executar("baseline", {})[0]
+for fam, p in configs:
+    executar(fam, p)
+
+res = mlflow.search_runs(order_by=["metrics.f1_cv DESC"])
+res = res[res["params.familia"] != "baseline"]
+print(res[["params.familia", "params.C", "params.gamma", "params.n_estimators", "params.max_depth", "metrics.f1_cv"]].head(5).round(4).to_string(index=False))
+
+melhor = res.iloc[0]
+f1_melhor = melhor["metrics.f1_cv"]
+aprovado = f1_melhor >= 0.95 and f1_melhor >= base_f1 + 0.01
+print(f"Linha de base F1 = {base_f1:.4f} | melhor F1 = {f1_melhor:.4f} | portão {'APROVADO' if aprovado else 'REPROVADO'}")
+
+if aprovado:
+    uri = f"runs:/{melhor['run_id']}/modelo"
+    versao = mlflow.register_model(uri, "digitos").version
+    MlflowClient().set_registered_model_alias("digitos", "champion", versao)
+    champion = mlflow.sklearn.load_model("models:/digitos@champion")
+    print(f"Registrado como versão {versao}; acurácia de teste (uso único) = {champion.score(Xte, yte):.4f}")
+
+    # reprodução a partir dos parâmetros registrados
+    familia = melhor["params.familia"]
+    params = {k.split(".")[1]: v for k, v in melhor.items()
+              if k.startswith("params.") and k != "params.familia" and v is not None and v == v}
+    conv = {"C": float, "gamma": float, "n_estimators": int, "max_depth": lambda s: None if s == "None" else int(s)}
+    params = {k: conv[k](v) for k, v in params.items()}
+    reproduzido = fabrica[familia](**params).fit(Xtr, ytr)
+    print("Modelo reconstruído dos parâmetros registrados:", familia, params,
+          "| mesma acurácia?", reproduzido.score(Xte, yte) == champion.score(Xte, yte))
+```
+@@RUBRICA
+- Pelo menos 12 execuções registradas, com parâmetros, métricas, tags e modelo com assinatura.
+- Linha de base registrada e usada no portão.
+- Escolha pela validação cruzada, nunca pelo teste; teste usado uma única vez.
+- Portão com piso e margem; registro com apelido `champion`.
+- Reprodução do modelo a partir dos parâmetros registrados, com a mesma acurácia.
+@@NOTE O resultado exato depende do computador e das versões. Nesta execução, o SVC com `C` alto e `gamma` pequeno ficou no topo, a linha de base de regressão logística ficou abaixo e o portão foi aprovado. A reconstrução do modelo a partir dos parâmetros registrados deu a mesma acurácia, o que comprova a rastreabilidade do processo.
+@@ALEM
+- **UCI:** *Optical Recognition of Handwritten Digits* (versão completa), *Wine Quality* e *Bank Marketing*.
+- **Kaggle:** *Telco Customer Churn* e *Digit Recognizer (MNIST)* para repetir o processo com mais dados e mais configurações.

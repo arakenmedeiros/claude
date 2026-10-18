@@ -1,0 +1,269 @@
+MC: O rastreamento de experimentos pode ser comparado a:
+a) um caderno de laboratório em que cada tentativa deixa registro completo.
+b) um depósito de modelos sem organização.
+c) um painel de câmeras de segurança.
+d) um servidor de e-mail.
+R: a | Ele guarda parâmetros, métricas, artefatos e a origem do código e dos dados.
+
+MC: No MLflow, uma execução (run) é:
+a) uma tentativa de treino, do começo ao fim.
+b) um grupo de experimentos.
+c) um arquivo de modelo.
+d) um tipo de métrica.
+R: a | Um experimento agrupa várias execuções.
+
+MC: Qual destes é um parâmetro, e não uma métrica?
+a) n_estimators = 200.
+b) F1 = 0,96.
+c) AUC-PR = 0,78.
+d) Perda = 0,12.
+R: a | Parâmetros são entradas fixas durante a execução; métricas medem o resultado.
+
+MC: Um artefato no MLflow é:
+a) um arquivo produzido pela execução, como um modelo ou gráfico.
+b) um erro de execução.
+c) um tipo de dado numérico.
+d) uma conta de usuário.
+R: a | Por exemplo, a matriz de confusão em PNG.
+
+MC: O comando mlflow.set_tracking_uri("sqlite:///mlflow.db") define:
+a) onde os registros serão guardados (um banco SQLite local).
+b) o endereço do modelo em produção.
+c) a senha do servidor.
+d) o tamanho do conjunto de teste.
+R: a | É o jeito mais simples de começar sem servidor.
+
+MC: O que faz o bloco with mlflow.start_run():?
+a) Abre uma execução; tudo que for registrado dentro dele fica associado a ela.
+b) Apaga o experimento.
+c) Treina o modelo automaticamente.
+d) Envia o modelo para produção.
+R: a | Ao sair do bloco, a execução é encerrada.
+
+MC: A diferença entre log_param e log_metric é que:
+a) a métrica pode ser registrada com passos ao longo do tempo (step).
+b) log_param só aceita arquivos.
+c) log_metric só aceita texto.
+d) não há diferença.
+R: a | Isso permite registrar curvas de aprendizado.
+
+MC: Para que serve registrar o hash dos dados como tag da execução?
+a) Saber com qual versão de dados o modelo foi treinado.
+b) Aumentar a acurácia.
+c) Evitar o uso de sementes.
+d) Reduzir o tempo de treino.
+R: a | Dá rastreabilidade entre dados e modelos.
+
+MC: A assinatura (signature) de um modelo no MLflow descreve:
+a) os nomes e tipos de entrada e saída esperados.
+b) quem escreveu o código.
+c) o número de camadas.
+d) o endereço do servidor.
+R: a | É um contrato: entradas no formato errado geram erro cedo.
+
+MC: Qual comando abre a interface web do MLflow para um banco SQLite?
+a) mlflow ui --backend-store-uri sqlite:///mlflow.db
+b) mlflow train --db
+c) mlflow deploy --all
+d) mlflow delete --ui
+R: a | Depois acessa-se o endereço indicado, normalmente http://127.0.0.1:5000.
+
+MC: Por que o MLflow salva, por padrão, modelos scikit-learn no formato skops?
+a) É um formato mais seguro que o pickle, que exige declarar tipos confiáveis.
+b) Porque é o formato mais antigo.
+c) Porque ocupa mais espaço, o que garante segurança.
+d) Porque dispensa assinatura.
+R: a | Isso reduz o risco de execução de código arbitrário ao carregar o modelo.
+
+MC: O autologging do MLflow:
+a) registra automaticamente parâmetros e métricas de bibliotecas suportadas.
+b) elimina a necessidade de registrar o hash dos dados.
+c) escolhe o melhor modelo sozinho.
+d) implanta o modelo em produção.
+R: a | É prático, mas não substitui o registro consciente das decisões importantes.
+
+MC: O registro de modelos (model registry) guarda:
+a) modelos com versões e apelidos.
+b) apenas métricas.
+c) apenas dados brutos.
+d) apenas logs de acesso.
+R: a | É o catálogo oficial dos modelos aprovados.
+
+MC: Na analogia da biblioteca, a versão de um modelo equivale a:
+a) a edição de um livro.
+b) o título do livro.
+c) o autor do livro.
+d) a estante onde ele fica.
+R: a | O título é o modelo registrado; o apelido é "a edição vigente".
+
+MC: O apelido champion indica:
+a) a versão que está em produção.
+b) a versão mais antiga.
+c) a versão com menos parâmetros.
+d) a versão apagada.
+R: a | O challenger é a candidata.
+
+MC: Qual a vantagem de carregar o modelo por models:/nome@champion?
+a) Trocar ou reverter o modelo exige apenas mover o apelido, sem mudar o código.
+b) O modelo fica mais rápido.
+c) O modelo nunca erra.
+d) Elimina a necessidade de registro.
+R: a | O código de produção permanece o mesmo.
+
+MC: Versões antigas do MLflow usavam estágios (Staging, Production). Hoje se recomenda:
+a) apelidos e tags.
+b) nenhum controle de versão.
+c) apenas nomes de arquivos.
+d) apenas e-mails.
+R: a | São mais flexíveis e a ideia de marcar a versão em cada fase se mantém.
+
+MC: O portão de promoção de modelos deve ser:
+a) conservador, com margem mínima, piso de qualidade e registro da decisão.
+b) sempre aprovado quando a métrica é igual.
+c) manual, sem critérios.
+d) inexistente em ambientes críticos.
+R: a | Evita trocas por ruído e cria rastro de auditoria.
+
+MC: Por que exigir uma margem mínima de ganho para promover um modelo?
+a) Para evitar trocas motivadas por diferenças de ruído.
+b) Para economizar disco.
+c) Para reduzir a latência.
+d) Para esconder resultados.
+R: a | Diferenças muito pequenas podem ser sorte estatística.
+
+MC: Qual a condição para uma comparação justa entre campeão e candidato?
+a) Usar o mesmo conjunto de avaliação para os dois.
+b) Usar conjuntos diferentes para cada um.
+c) Avaliar o campeão no treino e o candidato no teste.
+d) Avaliar só o candidato.
+R: a | Ideal: conjunto fixo e versionado, e comparação de incertezas.
+
+MC: Qual dos itens abaixo NÃO faz parte do cartão de identidade mínimo de um modelo registrado?
+a) A senha do banco de dados de produção.
+b) O hash dos dados de treino.
+c) O commit do código.
+d) As métricas e limitações.
+R: a | Segredos nunca devem ficar em registros de modelos.
+
+MC: O MLflow Projects destina-se a:
+a) empacotar código de forma reprodutível.
+b) catalogar versões de modelos.
+c) registrar métricas por passo.
+d) servir modelos por HTTP, apenas.
+R: a | Os componentes principais citados são Tracking, Models, Model Registry e Projects.
+
+MC: Zaharia et al. (2018) apresentaram o MLflow como:
+a) uma plataforma de código aberto para organizar o ciclo de vida de ML.
+b) um algoritmo de classificação.
+c) um novo tipo de rede neural.
+d) uma linguagem de programação.
+R: a | Foi motivado por dificuldades de acompanhar experimentos e reproduzir e implantar modelos.
+
+MC: No TFX (Baylor et al., 2017), a ideia de metadados de ML aparece como:
+a) o registro da linhagem de cada artefato produzido no pipeline.
+b) o ajuste automático de hiperparâmetros apenas.
+c) a rotulagem manual de dados.
+d) a criptografia de modelos.
+R: a | Isso permite rastrear de onde veio cada artefato.
+
+MC: Qual é uma boa razão para registrar métricas por subgrupo em cada execução?
+a) Permitir avaliar justiça e robustez, e não apenas a média.
+b) Reduzir o espaço em disco.
+c) Evitar o uso do registro de modelos.
+d) Aumentar o número de execuções.
+R: a | A média pode esconder desigualdades.
+
+MC: Se alguém diz "aquele modelo de terça-feira era melhor", o rastreamento permite:
+a) identificar a execução, seus parâmetros, dados e código e recriá-la.
+b) apenas adivinhar a melhor versão.
+c) apagar o histórico.
+d) mudar a data do modelo.
+R: a | Esse é o valor central do caderno de laboratório digital.
+
+MC: Qual a função de log_figure no MLflow?
+a) Salvar uma figura (como a matriz de confusão) como artefato da execução.
+b) Treinar o modelo.
+c) Escolher o melhor hiperparâmetro.
+d) Enviar e-mails.
+R: a | Gráficos ficam associados à execução que os gerou.
+
+MC: Em qual situação o registro de modelos é especialmente útil?
+a) Quando várias pessoas precisam saber qual versão está em produção e voltar a uma anterior se preciso.
+b) Quando há apenas um modelo e uma pessoa, nunca atualizado.
+c) Quando não há dados.
+d) Quando não há métricas.
+R: a | Dá controle de versões e reversão rápida.
+
+MC: Para reconstruir um modelo campeão a partir do que foi registrado, é preciso ter:
+a) parâmetros, semente, dados (por hash) e código versionados.
+b) apenas o nome do modelo.
+c) apenas a acurácia.
+d) apenas a data.
+R: a | Só assim a reprodução é confiável.
+
+MC: Uma alternativa ao MLflow para rastrear experimentos é:
+a) Weights & Biases (entre outras ferramentas).
+b) Microsoft Paint.
+c) Uma planilha sem controle de acesso.
+d) Um editor de vídeo.
+R: a | O princípio é registrar de forma sistemática, comparável e reprodutível, com qualquer ferramenta.
+
+DISC: Explique por que treinar muitos modelos sem rastreamento é um problema e como o rastreamento resolve.
+R: Sem registro, ninguém sabe quais parâmetros, dados e código geraram cada resultado, e o melhor modelo não pode ser reproduzido. O rastreamento guarda, para cada execução, parâmetros, métricas, artefatos, tags e versões, permitindo comparar e reproduzir.
+
+DISC: Defina experimento, execução, parâmetro, métrica, artefato e tag no vocabulário do MLflow.
+R: Experimento: grupo de execuções com um mesmo objetivo. Execução: uma tentativa de treino. Parâmetro: valor de entrada fixo. Métrica: número que mede o resultado, que pode variar com o passo. Artefato: arquivo produzido. Tag: rótulo livre para organizar.
+
+DISC: O que é a assinatura de um modelo e por que ela é útil?
+R: É a descrição dos nomes e tipos de entrada e saída esperados pelo modelo. Funciona como contrato e permite detectar cedo entradas em formato errado, antes de gerarem resultados sem sentido.
+
+DISC: Descreva o fluxo do exemplo do capítulo com três florestas aleatórias registradas no MLflow, incluindo o que foi registrado em cada execução.
+R: Para 5, 50 e 300 árvores, abriu-se uma execução e registraram-se parâmetros, F1 e acurácia, tags com hash dos dados, a matriz de confusão como figura e o modelo com assinatura. Depois, search_runs ordenou as execuções por F1.
+
+DISC: Por que uma diferença pequena de F1 entre modelos pode não significar nada?
+R: Porque, com poucos exemplos de teste, a métrica tem incerteza; diferenças pequenas podem ser ruído. É preciso usar validação cruzada, intervalos de confiança e testes estatísticos para decidir.
+
+DISC: Explique o papel dos apelidos no registro de modelos e por que facilitam a reversão.
+R: Apelidos são nomes móveis que apontam para versões, como champion e challenger. O código de produção carrega sempre o apelido; para trocar ou reverter, basta mover o apelido, sem alterar código ou reimplantar.
+
+DISC: Descreva um portão de promoção automática de modelos e três critérios que ele deve ter.
+R: Função executada ao final do treino que decide se o candidato vira champion. Critérios: piso absoluto de qualidade, ganho mínimo sobre o campeão (margem) e registro da decisão com data, motivo e responsável. Opcionalmente, intervalo de confiança e testes em fatias.
+
+DISC: Por que o formato skops é considerado mais seguro que o pickle?
+R: Porque exige declarar quais tipos de objeto são confiáveis ao carregar, em vez de executar código arbitrário embutido no arquivo. Isso reduz o risco de abrir artefatos maliciosos.
+
+DISC: O que deve constar na ficha mínima de um modelo registrado?
+R: Nome e versão, objetivo e uso indicado, dados de treino (hash, período, fonte), código (commit), parâmetros, métricas (inclusive por grupo), limitações conhecidas, responsável e data e aprovação.
+
+DISC: Qual a diferença entre o autologging e o registro explícito? Quando preferir cada um?
+R: O autologging registra automaticamente parâmetros e métricas padrão, útil para começar. O registro explícito guarda decisões importantes (hash dos dados, semente, métricas de negócio, subgrupos). O ideal é combinar os dois.
+
+DISC: Como o rastreamento de experimentos apoia a rastreabilidade em auditorias?
+R: Porque cada modelo fica ligado a execuções com código, dados, parâmetros e métricas conhecidos. Diante de uma pergunta sobre uma decisão, é possível localizar o modelo e reproduzir seu treino.
+
+DISC: Explique a ideia de regra de promoção que inclui um piso e uma margem sobre uma linha de base.
+R: O piso exige qualidade mínima absoluta (por exemplo, F1 ≥ 0,95); a margem sobre a linha de base exige que o modelo compense o custo de complexidade (por exemplo, +0,01). Só quando ambas são cumpridas o modelo é registrado como champion.
+
+DISC: Dê três exemplos do que mais vale registrar além de parâmetros e métricas.
+R: Commit do código, requirements.txt ou lista de pacotes, hash dos dados, duração e consumo de memória do treino, métricas por subgrupo, comentários sobre a motivação do experimento.
+
+DISC: Como você garantiria uma comparação justa entre o campeão e o candidato?
+R: Usando o mesmo conjunto de avaliação fixo e versionado, não usado no treino de nenhum dos dois, com as mesmas métricas, e comparando com intervalos de confiança e margem mínima.
+
+DISC: Por que o código de produção não deve depender do número da versão do modelo, mas sim do apelido?
+R: Porque trocar a versão exigiria alterar e reimplantar o código. Com o apelido, a mudança de modelo é uma operação de registro, auditável e reversível em segundos.
+
+DISC: Cite quatro componentes principais do MLflow e a função de cada um.
+R: Tracking (registra e consulta execuções), Models (formato padrão de empacotamento), Model Registry (catálogo com versões e apelidos) e Projects (empacotamento de código reprodutível).
+
+DISC: Descreva como o MLflow pode ser usado com um servidor remoto compartilhado e o que muda em relação ao uso local.
+R: Define-se o endereço do servidor de rastreamento e, se preciso, de armazenamento de artefatos, e a equipe passa a ver os mesmos experimentos e modelos. Muda o controle de acesso, a persistência e a necessidade de segurança.
+
+DISC: Por que o registro de modelos deve incluir o responsável e a data de aprovação?
+R: Para dar responsabilização e permitir auditoria: saber quem aprovou, quando e com base em qual evidência. É parte da governança do ciclo de vida do modelo.
+
+DISC: Como você decidiria se um modelo registrado deve ser revertido para uma versão anterior?
+R: Observando métricas em produção, alertas de monitoramento, resultados por fatias e feedback de negócio; se a versão atual piorou além de limites definidos, move-se o apelido champion para a versão anterior validada e investiga-se a causa.
+
+DISC: Explique por que guardar o hash dos dados em cada execução ajuda a detectar erros de comparação entre modelos.
+R: Porque dois modelos só são comparáveis se treinados e avaliados nos mesmos dados. Hashes diferentes denunciam que os dados mudaram entre as execuções, alertando para comparações injustas.

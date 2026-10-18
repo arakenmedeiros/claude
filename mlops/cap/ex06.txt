@@ -1,0 +1,269 @@
+MC: A subespecificação (underspecification), descrita por D'Amour et al. (2022), significa que:
+a) modelos com o mesmo desempenho no teste podem se comportar de modo muito diferente em produção.
+b) o conjunto de teste sempre prevê o comportamento real.
+c) todos os modelos treinados do mesmo jeito são idênticos.
+d) a validação cruzada elimina qualquer incerteza.
+R: a | A nota do teste, sozinha, não garante o comportamento no mundo real.
+
+MC: A precisão (precision) responde à pergunta:
+a) das vezes que o modelo disse "positivo", quantas estavam certas?
+b) dos positivos reais, quantos foram encontrados?
+c) quantos exemplos há no conjunto?
+d) qual a fração de negativos?
+R: a | É VP/(VP+FP): mede a confiabilidade do alarme.
+
+MC: A revocação (recall) responde à pergunta:
+a) dos casos positivos reais, quantos o modelo encontrou?
+b) das previsões positivas, quantas estavam certas?
+c) qual a probabilidade média prevista?
+d) quantos negativos foram descartados?
+R: a | É VP/(VP+FN): mede o quanto o modelo "enxerga".
+
+MC: O F1 é:
+a) a média harmônica entre precisão e revocação.
+b) a média aritmética entre acurácia e AUC.
+c) o produto de VP por VN.
+d) a soma de FP e FN.
+R: a | Só é alto quando precisão e revocação são altas.
+
+MC: Com 5% de fraudes, um modelo que sempre responde "não é fraude" tem:
+a) acurácia de cerca de 95% e revocação zero.
+b) acurácia de 5% e revocação 100%.
+c) acurácia e revocação de 50%.
+d) F1 igual a 1.
+R: a | A acurácia engana em classes desbalanceadas.
+
+MC: Segundo Saito e Rehmsmeier (2015), com classes muito desbalanceadas:
+a) a curva de precisão-revocação costuma ser mais informativa que a ROC.
+b) a curva ROC é sempre melhor.
+c) nenhuma curva pode ser usada.
+d) ambas são idênticas.
+R: a | A ROC pode parecer ótima mesmo com muitos falsos alarmes.
+
+MC: Qual é a AUC-PR de um classificador aleatório em um conjunto com 5% de positivos?
+a) Aproximadamente 0,05.
+b) Aproximadamente 0,50.
+c) Aproximadamente 0,95.
+d) Exatamente 1,00.
+R: a | O piso da AUC-PR é a fração de positivos.
+
+MC: O limiar de decisão padrão de 0,5:
+a) raramente é o ótimo quando os custos dos erros são diferentes.
+b) é sempre o ótimo.
+c) deve ser escolhido no conjunto de teste.
+d) nunca deve ser alterado.
+R: a | O limiar deve refletir o custo dos falsos negativos e positivos.
+
+MC: Se o falso negativo custa muito mais que o falso positivo, o limiar ótimo tende a ser:
+a) menor que 0,5.
+b) maior que 0,5.
+c) exatamente 0,5.
+d) igual a 1.
+R: a | Aceita-se mais falsos alarmes para perder menos casos reais.
+
+MC: Em qual conjunto o limiar deve ser escolhido?
+a) Validação.
+b) Teste.
+c) Em qualquer um, depois de ver os resultados.
+d) No conjunto de produção, sem rótulos.
+R: a | O teste é reservado para o relatório final.
+
+MC: Um modelo é bem calibrado quando:
+a) entre os casos com probabilidade prevista de 80%, cerca de 80% são realmente positivos.
+b) sua acurácia é a maior possível.
+c) todas as probabilidades são 0 ou 1.
+d) tem o menor número de parâmetros.
+R: a | Isso importa quando a probabilidade entra na decisão.
+
+MC: O escore de Brier mede:
+a) o erro quadrático médio das probabilidades previstas.
+b) o número de falsos positivos.
+c) a latência do modelo.
+d) a quantidade de dados.
+R: a | Quanto menor, melhor.
+
+MC: Guo et al. (2017) mostraram que redes neurais modernas tendem a ser:
+a) superconfiantes (mal calibradas).
+b) sempre bem calibradas.
+c) subconfiantes.
+d) imunes à mudança de dados.
+R: a | A calibração pode ser melhorada por métodos como a regressão isotônica.
+
+MC: Na validação cruzada de k dobras, cada dobra é:
+a) usada uma vez como teste e k−1 vezes como treino.
+b) usada somente como treino.
+c) descartada.
+d) usada apenas como validação final.
+R: a | Resume-se por média e desvio dos k resultados.
+
+MC: Por que reportar o desvio padrão da validação cruzada?
+a) Para mostrar a incerteza; diferenças menores que a dispersão podem ser ruído.
+b) Para aumentar a média.
+c) Para reduzir o número de dobras.
+d) Porque é obrigatório por lei.
+R: a | Uma média sem dispersão esconde a variabilidade.
+
+MC: Em séries temporais, a validação cruzada deve:
+a) respeitar a ordem do tempo, treinando no passado e testando no futuro.
+b) embaralhar todas as linhas.
+c) usar o futuro para treinar.
+d) ignorar a data.
+R: a | A classe TimeSeriesSplit faz isso.
+
+MC: O bootstrap consiste em:
+a) sortear exemplos com reposição e recalcular a métrica muitas vezes.
+b) dividir os dados em k partes.
+c) ajustar hiperparâmetros por grade.
+d) remover exemplos atípicos.
+R: a | Permite construir intervalos de confiança.
+
+MC: Se o intervalo de confiança da diferença entre dois modelos inclui zero:
+a) não há evidência clara de que um seja melhor.
+b) o primeiro é certamente melhor.
+c) o segundo é certamente melhor.
+d) os modelos são idênticos.
+R: a | Nesse caso, desempata-se por simplicidade, custo e explicabilidade.
+
+MC: O viés de seleção na busca de hiperparâmetros acontece porque:
+a) a melhor pontuação entre muitas configurações tende a ser otimista.
+b) a busca nunca encontra bons modelos.
+c) o teste é grande demais.
+d) as classes são equilibradas.
+R: a | Parte do bom resultado é sorte de ter escolhido o melhor entre muitos.
+
+MC: A validação cruzada aninhada tem:
+a) um laço interno para escolher hiperparâmetros e um externo para avaliar o procedimento.
+b) dois laços que escolhem os mesmos dados.
+c) apenas um laço.
+d) um laço para treino e outro para tradução.
+R: a | O teste do laço externo não participa da escolha.
+
+MC: Hiperparâmetros são:
+a) escolhas feitas antes do treino, como o número de árvores.
+b) valores aprendidos pelos dados, como os coeficientes.
+c) as previsões do modelo.
+d) rótulos dos dados.
+R: a | Parâmetros são aprendidos; hiperparâmetros são configurados.
+
+MC: Segundo Bergstra e Bengio (2012), a busca aleatória de hiperparâmetros:
+a) costuma ser mais eficiente que a busca em grade.
+b) é sempre pior.
+c) só funciona com poucos hiperparâmetros.
+d) exige o conjunto de teste.
+R: a | Poucos hiperparâmetros importam muito, e a grade repete valores dos que não importam.
+
+MC: O Hyperband (Li et al., 2018) economiza recursos porque:
+a) interrompe cedo as tentativas ruins.
+b) testa todas as combinações até o fim.
+c) usa só o conjunto de teste.
+d) dispensa validação.
+R: a | É uma abordagem de multi-fidelidade.
+
+MC: A otimização bayesiana de hiperparâmetros:
+a) usa resultados anteriores para escolher a próxima tentativa.
+b) escolhe sempre ao acaso.
+c) testa toda a grade.
+d) não usa nenhuma informação.
+R: a | É eficiente quando cada treino é caro.
+
+MC: Avaliar por fatias (slices) é importante porque:
+a) a média geral pode esconder grupos com desempenho muito pior.
+b) reduz o tempo de treino.
+c) elimina a necessidade de teste.
+d) torna o modelo mais simples.
+R: a | Um modelo com 95% de acerto geral pode ter 80% para um grupo.
+
+MC: A métrica RMSE, em regressão:
+a) pune mais os erros grandes.
+b) ignora erros grandes.
+c) é igual à acurácia.
+d) só serve para classificação.
+R: a | Porque eleva os erros ao quadrado antes de tirar a média.
+
+MC: A métrica MAPE pode ser instável quando:
+a) os valores reais estão perto de zero.
+b) os valores são grandes.
+c) há poucos atributos.
+d) o modelo é linear.
+R: a | A divisão por valores próximos de zero amplifica o erro percentual.
+
+MC: Bernardi et al. (2019), com 150 modelos do Booking.com, relatam que:
+a) melhorar métricas do modelo nem sempre se traduz em ganho de negócio.
+b) toda melhoria de métrica gera ganho de negócio.
+c) experimentos online são dispensáveis.
+d) o negócio não depende de modelos.
+R: a | Por isso são essenciais experimentos online.
+
+MC: Qual destes cuidados evita um limiar "ajustado à prova"?
+a) Escolher o limiar na validação e medir o custo final no teste.
+b) Escolher o limiar no teste e reportar o mesmo teste.
+c) Usar sempre 0,5.
+d) Escolher o limiar sem dados.
+R: a | Mantém o teste como estimativa honesta.
+
+MC: Em CalibratedClassifierCV com method="isotonic":
+a) ajusta uma função monotônica que corrige as probabilidades previstas.
+b) treina uma rede neural nova.
+c) escolhe os hiperparâmetros do modelo.
+d) remove atributos redundantes.
+R: a | Costuma reduzir o erro de calibração.
+
+DISC: Explique, com um exemplo, por que a acurácia pode enganar em problemas de classes raras e quais métricas usar em seu lugar.
+R: Com 5% de fraudes, prever sempre "não fraude" dá 95% de acurácia sem encontrar nenhuma fraude. Usam-se precisão, revocação, F1 e AUC-PR, que olham a classe rara, e se escolhem de acordo com o custo dos erros.
+
+DISC: Diferencie precisão e revocação com um exemplo do cotidiano.
+R: Detector de fumaça sensível: apita com torrada queimada (baixa precisão, alta revocação). Detector frouxo: nunca falha em alarme falso, mas pode deixar passar um incêndio (alta precisão, baixa revocação). A escolha depende do custo de cada erro.
+
+DISC: Por que a curva de precisão-revocação pode ser mais informativa que a ROC em classes muito desbalanceadas?
+R: Porque a taxa de falsos positivos da ROC usa os negativos, que são enormes, no denominador, e mesmo muitos falsos alarmes mudam pouco essa taxa. A precisão sofre diretamente com esses falsos alarmes, e a curva PR revela a dificuldade real.
+
+DISC: Descreva um procedimento para escolher o limiar de decisão com base em custos.
+R: Obter as probabilidades no conjunto de validação; definir os custos de falso negativo e falso positivo; calcular o custo total para vários limiares; escolher o que minimiza o custo; aplicar no teste e relatar o custo; versionar e monitorar o limiar.
+
+DISC: O que é calibração e por que ela importa quando a probabilidade entra na decisão?
+R: Um modelo é calibrado se as probabilidades correspondem às frequências reais. Importa para preço de seguro, risco de crédito e priorização, em que o valor numérico da probabilidade (e não só o ranking) é usado.
+
+DISC: Explique a validação cruzada de k dobras e as razões para reportar média e dispersão.
+R: Divide-se o conjunto em k partes; cada uma serve de teste uma vez, treinando nas outras. Resumem-se os k resultados pela média e pelo desvio. A dispersão mostra a incerteza; diferenças menores que ela podem ser ruído.
+
+DISC: Por que embaralhar os dados é incorreto na validação de séries temporais?
+R: Porque o modelo veria o futuro durante o treino, o que é impossível em produção e infla o desempenho. Deve-se treinar no passado e testar no futuro, com divisões que respeitem a ordem.
+
+DISC: Descreva como construir um intervalo de confiança por bootstrap para a diferença de acurácia entre dois modelos.
+R: Sortear com reposição índices do conjunto de teste, calcular a diferença de acurácia em cada reamostra, repetir milhares de vezes e tomar os percentis 2,5% e 97,5%. Se o intervalo inclui zero, não há evidência clara de diferença.
+
+DISC: O que é o viés de seleção na busca de hiperparâmetros e como a validação aninhada o corrige?
+R: É o otimismo da melhor pontuação entre muitas configurações avaliadas pelos mesmos dados. A validação aninhada separa o laço que escolhe (interno) do que avalia (externo), estimando o desempenho do procedimento em dados que a escolha não viu.
+
+DISC: Compare busca em grade, busca aleatória e otimização bayesiana.
+R: A grade testa todas as combinações, é simples mas explode com muitos hiperparâmetros. A aleatória sorteia combinações e explora melhor o que importa. A bayesiana usa resultados anteriores para escolher a próxima tentativa, sendo eficiente quando o treino é caro.
+
+DISC: Por que avaliar por fatias é parte do ML Test Score e como fazê-lo?
+R: Porque a média pode esconder grupos prejudicados. Define-se, com o negócio, fatias críticas (região, faixa de idade etc.), calculam-se as métricas por fatia, compara-se com pisos e acompanha-se em produção.
+
+DISC: Explique o que D'Amour et al. (2022) chamam de subespecificação e uma consequência prática.
+R: Procedimentos de treino que produzem modelos com mesmo desempenho no teste, mas comportamentos diferentes em produção. Consequência: é preciso avaliar de várias formas (fatias, estresse, invariância) e monitorar em produção.
+
+DISC: Qual a diferença entre métricas offline e online, e por que ambas são necessárias?
+R: Offline usam dados históricos antes da implantação; online medem o efeito real em usuários, por experimentos. Melhorar a métrica offline não garante ganho de negócio, então é preciso confirmar online.
+
+DISC: Dê dois exemplos de métricas de regressão e uma limitação de cada.
+R: MAE, fácil de explicar mas trata erros grandes e pequenos igualmente; RMSE, pune erros grandes mas é sensível a atípicos; R², pode enganar fora do treino; MAPE, instável perto de zero.
+
+DISC: Por que o conjunto de teste não deve ser usado para escolher hiperparâmetros?
+R: Porque a escolha se ajusta ao teste e a estimativa final fica otimista. A busca deve usar apenas treino e validação; o teste serve para um único relatório final.
+
+DISC: Quais passos um relatório de avaliação rigorosa deve ter?
+R: Divisão treino/validação/teste; comparação por validação cruzada repetida; calibração; escolha do limiar na validação com custos; métricas finais no teste com intervalo de confiança; análise por fatias; limitações e recomendação.
+
+DISC: Por que o desvio treino–teste em desempenho pode indicar sobreajuste? Como investigar?
+R: Se o desempenho no treino é muito maior que na validação, o modelo memorizou o treino. Investiga-se com curvas de aprendizado, regularização, validação cruzada, mais dados e simplificação do modelo.
+
+DISC: O que são classes desbalanceadas e quais técnicas ajudam a lidar com elas?
+R: Quando uma classe é muito mais rara que outra. Ajudam métricas adequadas (AUC-PR, F1), pesos de classe, reamostragem, ajuste do limiar por custo e validação estratificada.
+
+DISC: Explique por que as probabilidades de uma floresta aleatória costumam precisar de calibração.
+R: A média dos votos das árvores tende a evitar valores extremos, deixando as probabilidades "espremidas" para o meio. Métodos como a regressão isotônica ou de Platt corrigem isso.
+
+DISC: Como você explicaria a um gestor a diferença entre "o modelo é melhor" e "a diferença é estatisticamente clara"?
+R: Que "melhor" na amostra pode ser sorte. Mostra-se a diferença com um intervalo de confiança: se ele exclui zero, há evidência; se inclui, a decisão deve considerar custo, simplicidade e mais dados.

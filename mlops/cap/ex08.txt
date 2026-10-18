@@ -1,0 +1,269 @@
+MC: Por que testar sistemas de ML exige mais que testar código?
+a) O sistema pode estar sem erro de código e ainda assim errado por causa de dados ou do modelo.
+b) Porque ML não tem código.
+c) Porque testes de código são proibidos em ML.
+d) Porque modelos nunca mudam.
+R: a | Por isso testam-se código, dados, modelo e infraestrutura.
+
+MC: As quatro frentes de teste de Breck et al. (2017) incluem:
+a) testes de dados, de modelo, de infraestrutura e de monitoramento.
+b) apenas testes de interface gráfica.
+c) apenas testes manuais.
+d) testes de hardware apenas.
+R: a | O ML Test Score organiza os itens nesses grupos.
+
+MC: Na pirâmide de testes, a base é composta por:
+a) muitos testes rápidos de código.
+b) poucos testes lentos de sistema.
+c) testes de uso por clientes finais.
+d) testes feitos só uma vez por ano.
+R: a | No topo ficam menos testes, mais lentos e mais caros.
+
+MC: No pytest, uma função de teste é identificada por:
+a) um nome que começa com test_.
+b) um nome que termina com _final.
+c) a palavra reservada main.
+d) um comentário especial no início.
+R: a | O pytest descobre automaticamente esses testes.
+
+MC: O que faz assert em um teste?
+a) Afirma uma condição que deve ser verdadeira; se falhar, o teste falha.
+b) Imprime o resultado.
+c) Reinicia o computador.
+d) Cria um arquivo.
+R: a | É a base da verificação automática.
+
+MC: Para que serve @pytest.mark.parametrize?
+a) Rodar o mesmo teste com vários valores de entrada.
+b) Pular os testes.
+c) Salvar o modelo.
+d) Medir a latência.
+R: a | Evita duplicar testes quase iguais.
+
+MC: pytest.raises é usado para:
+a) verificar que um código lança a exceção esperada.
+b) criar exceções aleatórias.
+c) ignorar erros.
+d) medir tempo de execução.
+R: a | Útil para testar casos de entrada inválida.
+
+MC: Um caso de borda é:
+a) um valor extremo ou incomum, como zero, vazio, negativo ou lista de um elemento.
+b) um valor típico e comum.
+c) um erro de digitação do desenvolvedor.
+d) um teste que sempre passa.
+R: a | É onde costumam aparecer erros em produção.
+
+MC: Em teste de dados, é útil verificar propriedades estatísticas como:
+a) a proporção de positivos estar dentro de uma faixa esperada.
+b) a cor do gráfico.
+c) o nome da pasta.
+d) a data do commit.
+R: a | Mudanças bruscas indicam problemas na origem.
+
+MC: O teste de fumaça (smoke test) verifica se:
+a) o pipeline treina e prevê sem quebrar, em dados minúsculos.
+b) o modelo atinge o melhor desempenho possível.
+c) o servidor aguenta milhões de usuários.
+d) o código está bem formatado.
+R: a | É um teste rápido de sanidade.
+
+MC: O teste de invariância verifica que:
+a) mudar algo irrelevante (como a cidade, sem efeito real) altera pouco a previsão.
+b) a previsão nunca muda.
+c) o modelo é igual em todos os dados.
+d) o código não tem erros.
+R: a | Foi sugerido pela metodologia CheckList.
+
+MC: Um teste de expectativa direcional verifica que:
+a) a previsão muda no sentido esperado quando uma entrada muda.
+b) o modelo aponta para o norte.
+c) as previsões são sempre crescentes.
+d) o treino leva menos tempo.
+R: a | Exemplo: mais tempo de cliente não deve aumentar o risco de cancelar.
+
+MC: Um teste de funcionalidade mínima verifica que:
+a) o modelo acerta casos simples e óbvios.
+b) o modelo tem o menor tamanho possível.
+c) o modelo usa o mínimo de atributos.
+d) o modelo roda sem bibliotecas.
+R: a | Por exemplo, cliente antigo e premium deve ter risco menor que cliente novo e básico.
+
+MC: O teste de não regressão compara:
+a) o modelo novo com o campeão atual, aceitando uma tolerância.
+b) o modelo com um modelo aleatório.
+c) o treino com o teste.
+d) a latência com a vazão.
+R: a | Garante que a mudança não piorou o desempenho.
+
+MC: Por que testes com aleatoriedade sem controle são perigosos?
+a) Falham às vezes, e as pessoas passam a ignorá-los.
+b) Passam sempre.
+c) Aceleram o treino.
+d) Impedem a CI.
+R: a | Fixar sementes e usar tolerâncias razoáveis evita o problema.
+
+MC: Um portão de qualidade (quality gate) é:
+a) uma etapa que decide se o modelo pode seguir adiante.
+b) um servidor de arquivos.
+c) uma ferramenta de visualização.
+d) uma forma de compactar o modelo.
+R: a | Se reprovar, o fluxo para.
+
+MC: Em sistemas de CI, o código de saída 0 significa:
+a) sucesso.
+b) falha.
+c) aviso.
+d) tempo esgotado.
+R: a | Qualquer outro valor indica falha.
+
+MC: A sigla CI significa:
+a) integração contínua.
+b) inteligência computacional.
+c) implantação interna.
+d) instrução cíclica.
+R: a | Juntar as mudanças com frequência e verificar cada uma automaticamente.
+
+MC: Qual das etapas costuma vir primeiro em um fluxo de CI?
+a) Baixar o código e instalar dependências em ambiente limpo.
+b) Implantar em produção.
+c) Treinar o modelo completo com todos os dados.
+d) Apagar o histórico.
+R: a | As verificações baratas vêm antes das caras.
+
+MC: A diferença entre entrega contínua e implantação contínua é que:
+a) na entrega, alguém aperta o botão; na implantação, a mudança aprovada vai sozinha para a produção.
+b) são idênticas.
+c) na entrega, nunca se vai à produção.
+d) na implantação, nunca há testes.
+R: a | Em áreas de alto impacto, muitas equipes preferem aprovação humana.
+
+MC: O ambiente de homologação (staging) serve para:
+a) um ensaio geral o mais parecido possível com a produção.
+b) experimentos livres com dados simulados.
+c) atender usuários reais.
+d) guardar backups.
+R: a | O desenvolvimento é para experimentar à vontade.
+
+MC: Forsgren, Humble e Kim (2018) mostram que entregar com frequência e bons testes:
+a) tende a produzir menos falhas, e não mais.
+b) sempre aumenta as falhas.
+c) é incompatível com qualidade.
+d) só funciona em empresas pequenas.
+R: a | Entregar pequeno e sempre é mais seguro que entregar grande e raramente.
+
+MC: Qual destes é um gatilho típico de treinamento contínuo (CT)?
+a) Queda do desempenho em produção abaixo de um limite.
+b) Troca do papel de parede do servidor.
+c) Mudança no tamanho da tela.
+d) Mudança de fuso horário do desenvolvedor.
+R: a | Outros: agendamento, chegada de dados e detecção de deriva.
+
+MC: Qual a vantagem de usar o mesmo comando para rodar os testes localmente e na CI?
+a) Quem roda localmente vê o mesmo resultado que a CI verá.
+b) Elimina a necessidade de testes.
+c) Reduz o número de dependências.
+d) Impede revisões de código.
+R: a | Evita surpresas do tipo "passa aqui, falha lá".
+
+MC: Em CI, segredos como senhas devem ser:
+a) guardados no cofre da ferramenta, nunca no repositório.
+b) escritos no README.
+c) incluídos no Dockerfile.
+d) enviados por e-mail.
+R: a | Segredos vazados em repositórios são um risco comum.
+
+MC: Em uma revisão de código de ML (pull request), deve-se verificar:
+a) o que mudou (código, dados, hiperparâmetros), os testes e o risco de vazamento.
+b) apenas a formatação.
+c) somente o tamanho do arquivo.
+d) apenas o nome do autor.
+R: a | Também o desempenho por fatias e o cartão do modelo.
+
+MC: Teste "frágil" é aquele que:
+a) falha à toa por limites apertados demais.
+b) nunca falha.
+c) é muito rápido.
+d) cobre todo o código.
+R: a | Limites devem ser combinados com o negócio e revisados.
+
+MC: A ferramenta de estilo (lint) como ruff, em CI, serve para:
+a) detectar problemas de estilo e erros comuns no código.
+b) treinar modelos.
+c) compactar dados.
+d) criar APIs.
+R: a | Costuma rodar antes dos testes por ser rápida.
+
+MC: Por que testar a reprodutibilidade (determinismo) do treino na CI?
+a) Para garantir que mudanças inesperadas nos resultados sejam detectadas.
+b) Para reduzir o uso de memória.
+c) Para evitar o uso de sementes.
+d) Para aumentar a acurácia.
+R: a | Dois treinos com a mesma semente devem dar o mesmo resultado.
+
+MC: Qual a principal vantagem de um teste de desempenho mínimo no conjunto de validação?
+a) Impede que um modelo abaixo de um piso combinado com o negócio avance.
+b) Garante que o modelo é perfeito.
+c) Dispensa o monitoramento.
+d) Torna o treino determinístico.
+R: a | O piso é uma decisão de projeto, acordada com o negócio.
+
+DISC: Explique por que um sistema de ML pode estar sem erros de código e ainda assim estar errado, e quais testes ajudam a detectar isso.
+R: Porque o comportamento depende dos dados e do modelo; dados mudados ou modelo piorado não geram exceção. Ajudam testes de dados (esquema, faixas, proporções), de modelo (desempenho, invariância, direção, fatias) e monitoramento em produção.
+
+DISC: Descreva a pirâmide de testes para ML e dê exemplos de testes em cada nível.
+R: Base: testes unitários rápidos de funções e transformadores. Meio: testes de dados e de modelo (desempenho mínimo, invariância). Topo: testes de integração do pipeline e do sistema (API, treino de ponta a ponta). Quanto mais alto, menos testes, mais lentos e caros.
+
+DISC: Quais são os tipos de teste de comportamento do modelo inspirados no CheckList? Dê um exemplo de cada.
+R: Funcionalidade mínima (cliente premium antigo tem risco menor que novo básico); invariância (trocar a cidade, sem efeito, quase não altera a previsão); expectativa direcional (mais tempo de cliente não aumenta o risco).
+
+DISC: O que é um portão de qualidade e como ele se relaciona com o código de saída em CI?
+R: É um passo que decide se o modelo segue adiante, comparando métricas com limites. Sai com código 0 se aprova e diferente de zero se reprova; a ferramenta de CI usa esse código para interromper o fluxo.
+
+DISC: Como evitar testes de modelo que falham "às vezes"?
+R: Fixar sementes, usar conjuntos de teste fixos e versionados, definir tolerâncias razoáveis, repetir com várias sementes quando necessário e exigir desempenho médio acima do limite.
+
+DISC: Descreva as etapas de um fluxo de CI para um projeto de ML.
+R: Baixar o código; instalar dependências em ambiente limpo; estilo e tipos; testes de código e de dados; treino rápido em amostra pequena; portão de qualidade; construção da imagem; relatório do resultado.
+
+DISC: Diferencie entrega contínua e implantação contínua e discuta quando preferir cada uma em ML.
+R: Entrega: mudança aprovada fica pronta e um humano aprova a ida à produção. Implantação: vai sozinha. Em áreas de alto impacto (crédito, saúde), prefere-se a entrega com aprovação humana; em contextos de baixo risco, a implantação contínua.
+
+DISC: Qual o papel dos ambientes de desenvolvimento, homologação e produção?
+R: Desenvolvimento: experimentar com dados simulados ou amostras. Homologação: ensaio geral com dados parecidos com produção. Produção: atender usuários reais. A progressão reduz o risco de problemas chegarem aos usuários.
+
+DISC: O que é treinamento contínuo (CT) e quais cuidados ele exige?
+R: É o retreinamento automático por gatilhos (agenda, dados novos, queda de qualidade, deriva). Exige portão de qualidade, comparação com o campeão, registro do candidato, investigação da causa e capacidade de reverter.
+
+DISC: Por que revisar código e resultados é importante mesmo havendo testes automáticos?
+R: Porque testes cobrem só o que foi previsto; revisores humanos avaliam a lógica, o risco de vazamento, o desempenho por fatias, a documentação e questões éticas que escapam dos testes.
+
+DISC: Explique como parametrizar testes ajuda na cobertura de casos de borda.
+R: Com parametrize, o mesmo teste roda com vários valores (vazio, zero, negativo, muito grande), aumentando a cobertura com pouco código e facilitando adicionar casos novos.
+
+DISC: Como testar que um transformador personalizado não altera a tabela de entrada?
+R: Criar um DataFrame, copiar seu estado, chamar fit_transform e comparar colunas e valores da entrada original; o transformador deve trabalhar sobre uma cópia.
+
+DISC: Por que é importante "quebrar o modelo de propósito" para testar os testes?
+R: Para verificar se a rede de proteção detecta falhas reais, como rótulos embaralhados ou ausência de padronização. Se os testes continuam passando com um modelo quebrado, eles são inúteis ou frouxos.
+
+DISC: O que são limites "apertados demais" e "frouxos demais" em testes de modelo?
+R: Apertados demais fazem os testes falhar à toa (frágeis); frouxos demais não protegem nada. Os limites devem ser combinados com o negócio e baseados em evidências.
+
+DISC: Como a CI pode usar um treino em amostra pequena e ainda assim ser útil?
+R: Para verificar que o pipeline executa de ponta a ponta, que não há erros de código e que as métricas mínimas básicas são atingidas, de forma rápida. O treino completo ocorre em outra etapa.
+
+DISC: Quais verificações extras além de testes e portão uma CI real costuma ter?
+R: Estilo (ruff), tipos (mypy), cobertura de testes, varredura de vulnerabilidades, construção e publicação de imagem, implantação em homologação e testes de integração.
+
+DISC: Por que o desenvolvimento deve ser feito em ramos curtos e com mudanças pequenas?
+R: Mudanças pequenas são mais fáceis de revisar, testar e reverter, geram menos conflitos e diminuem o risco de falhas, conforme a evidência sobre equipes de alto desempenho.
+
+DISC: Explique a relação entre testes de dados em desenvolvimento e validação de dados em produção.
+R: Em desenvolvimento, testam-se o código e a lógica sobre amostras fixas; em produção, valida-se cada lote real que chega. São complementares: o primeiro garante que o código funciona; o segundo, que os dados reais atendem ao esperado.
+
+DISC: Descreva como um defeito introduzido no modelo (por exemplo, regularização exagerada) é detectado pela CI.
+R: O treino rápido gera métricas piores; os testes de desempenho mínimo ou o portão de qualidade falham, a CI sai com código diferente de zero e o fluxo é interrompido, impedindo que o modelo ruim avance.
+
+DISC: Por que testes de modelo devem ser versionados junto do código?
+R: Porque definem o que é aceitável para o projeto e evoluem com ele; versioná-los permite saber quais critérios valiam para cada versão do modelo e reproduzir a decisão de aprovação.

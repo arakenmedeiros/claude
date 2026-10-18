@@ -1,0 +1,95 @@
+A/B (teste): experimento em que o tráfego é dividido aleatoriamente entre duas versões para comparar o efeito no negócio.
+Acurácia: fração de previsões corretas; engana em classes desbalanceadas.
+Alerta (monitoramento): aviso gerado quando uma medida passa de um limite definido.
+ADWIN: método de detecção de mudança com janela adaptativa.
+API: porta de entrada padronizada pela qual programas se comunicam, enviando pedidos e recebendo respostas.
+Apelido (alias): nome móvel que aponta para uma versão de modelo no registro, como champion.
+Armazém de atributos (feature store): sistema que guarda atributos calculados uma só vez e reutilizados no treino e no serviço.
+Artefato: arquivo produzido por uma execução, como um modelo, um gráfico ou um relatório.
+Atributo (feature): característica usada como entrada de um modelo.
+AUC-PR: área sob a curva de precisão-revocação; seu piso é a fração de positivos.
+AUC-ROC: área sob a curva ROC; mede a capacidade de ordenar positivos acima de negativos.
+Azul-verde (implantação): dois ambientes idênticos; o tráfego passa de um para o outro, com reversão rápida.
+Baseline (linha de base): solução simples contra a qual o modelo precisa ganhar.
+Batch (lote): previsão feita em horários marcados sobre muitos registros.
+Bootstrap: reamostragem com reposição para estimar a incerteza de uma métrica.
+Brier (escore de): erro quadrático médio das probabilidades previstas; menor é melhor.
+CACE: "Changing Anything Changes Everything"; mudar um componente pode mudar todo o sistema.
+Calibração: concordância entre probabilidades previstas e frequências observadas.
+Canário (implantação): o modelo novo atende uma pequena fração do tráfego antes de ser liberado a todos.
+Cartão do modelo (model card): documento curto com uso pretendido, dados, métricas, limitações e riscos de um modelo.
+Champion / challenger: modelo em produção / modelo candidato.
+CI (integração contínua): prática de verificar automaticamente cada mudança de código.
+CD (entrega ou implantação contínua): prática de levar mudanças aprovadas à produção de forma automática.
+Classificador de domínio: modelo treinado para distinguir dados de referência de dados atuais; sua AUC mede a diferença.
+Contêiner: pacote leve que leva o programa e tudo de que precisa para rodar.
+Contrato de dados: descrição formal do que um serviço recebe e devolve (campos, tipos e intervalos).
+Covariate shift (mudança de covariáveis): mudança na distribuição dos atributos de entrada.
+CT (treinamento contínuo): retreinamento automático do modelo por gatilhos.
+DAG: grafo acíclico dirigido; tarefas com dependências e sem ciclos.
+Data leakage (vazamento de dados): uso, no treino, de informação indisponível na hora de prever.
+Datasheet: ficha técnica que documenta um conjunto de dados.
+DDM: método de detecção de deriva baseado na taxa de erro e seu desvio.
+Deriva de conceito (concept drift): mudança na relação entre atributos e alvo.
+DevOps: conjunto de práticas que aproxima desenvolvimento e operação de software.
+Dívida técnica: custo futuro de atalhos tomados hoje.
+Docker: ferramenta popular de contêineres.
+DVC: ferramenta que versiona dados guardando ponteiros no Git e os arquivos em armazenamento remoto.
+Dockerfile: receita que descreve como montar uma imagem de contêiner.
+Embarcado (edge): modelo executado no próprio dispositivo.
+Endpoint: endereço específico de uma API, como /previsao.
+Execução (run): uma tentativa de treino registrada no rastreamento de experimentos.
+Experimento (MLflow): grupo de execuções com um mesmo objetivo.
+Explicabilidade: conjunto de técnicas para entender por que um modelo decide como decide.
+F1: média harmônica entre precisão e revocação.
+Falha silenciosa: piora das respostas sem erro de execução.
+FastAPI: biblioteca Python para criar APIs.
+Fatia (slice): subgrupo dos dados usado para avaliar o desempenho em separado.
+Federado (aprendizado): treino em que os dados ficam nos dispositivos e só atualizações do modelo são combinadas.
+Gate (portão de qualidade): etapa que decide se o fluxo pode seguir adiante.
+Hash: impressão digital de um conteúdo; muda por completo se o conteúdo mudar.
+Hiperparâmetro: escolha feita antes do treino, como o número de árvores.
+Idempotência: propriedade de repetir uma operação sem mudar o resultado nem duplicar efeitos.
+Invariância (teste de): verifica que uma mudança irrelevante altera pouco a previsão.
+Jensen-Shannon (distância): medida simétrica e limitada de diferença entre distribuições.
+JSON: formato de texto estruturado em chaves e valores.
+KS (teste de Kolmogorov-Smirnov): compara as distribuições acumuladas de duas amostras.
+Label shift (mudança de rótulos): mudança na proporção das classes.
+Latência: tempo entre o pedido e a resposta.
+Linhagem (lineage): caminho completo de um dado ou modelo, da origem ao destino.
+LGPD: Lei Geral de Proteção de Dados Pessoais (Lei n.º 13.709/2018).
+LLMOps: operação de sistemas baseados em modelos de linguagem de grande porte.
+LoRA: técnica de ajuste leve que treina poucos parâmetros adicionais.
+Métrica: número que mede o resultado de uma execução.
+MLflow: plataforma de código aberto para rastrear experimentos e registrar modelos.
+MLOps: práticas, processos e ferramentas para desenvolver, entregar, operar e melhorar sistemas de ML.
+ML Test Score: rubrica de 28 itens para avaliar a prontidão de um sistema de ML para produção.
+Model registry (registro de modelos): catálogo de modelos com versões, apelidos e metadados.
+Monitoramento: acompanhamento contínuo da saúde, dos dados e da qualidade de um sistema em produção.
+Orquestrador: sistema que executa tarefas na ordem das dependências, repete falhas e guarda o histórico.
+One-hot encoding: transformação de uma coluna categórica em colunas de 0 e 1.
+Parâmetro: no MLflow, valor de entrada fixo durante a execução; em ML, valor aprendido pelo modelo.
+Percentil (p50, p95, p99): valor abaixo do qual está a fração indicada dos casos.
+Pipeline (scikit-learn): objeto que encadeia pré-processamento e modelo.
+Pipeline (MLOps): fluxo que une ingestão, validação, treino, avaliação, registro e implantação.
+Point-in-time (correção temporal): uso dos valores dos atributos como eram na data do evento.
+Precisão: fração de previsões positivas que estavam certas.
+Privacidade diferencial: garantia de que o resultado muda pouco com a presença de uma pessoa nos dados.
+Pseudonimização: troca de identificadores diretos por códigos que só identificam com informação adicional guardada à parte.
+PSI (Population Stability Index): medida de mudança de distribuição entre referência e dados atuais.
+pytest: biblioteca Python para testes automáticos.
+Pydantic: biblioteca Python para validar dados por meio de classes.
+Quarentena (de dados): área onde lotes reprovados ficam isolados.
+RAG: geração com recuperação; busca documentos relevantes e os insere no comando.
+Reprodutibilidade: obter o mesmo resultado com o mesmo código e os mesmos dados.
+Revocação (recall): fração dos casos positivos reais que o modelo encontrou.
+Runbook: plano de resposta com os passos a seguir diante de um alerta.
+Sombra (modo): o modelo novo recebe cópia dos pedidos, mas suas respostas não são usadas.
+Rastreabilidade: capacidade de saber qual código, dados e configuração geraram cada modelo.
+Skew treino–serviço: diferença entre os dados ou o processamento do treino e os da produção.
+Signature (assinatura): descrição dos tipos e nomes de entrada e saída de um modelo.
+Tag: rótulo livre usado para organizar execuções e modelos.
+Throughput (vazão): quantidade de previsões atendidas por unidade de tempo.
+Validação cruzada: repetição de treino e teste em divisões diferentes dos dados.
+Validação aninhada: validação cruzada com laço interno para escolher e externo para avaliar.
+Versionamento: manutenção do histórico de versões de código, dados e modelos.

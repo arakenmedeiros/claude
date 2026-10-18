@@ -1,0 +1,205 @@
+@@EX 1 | Calculando o PSI à mão | básico
+Implemente o PSI com 10 faixas (decis da referência). Use uma referência normal (média 0, desvio 1, 5.000 pontos) e compare com amostras de 2.000 pontos em quatro cenários: sem mudança, média +0,3, média +1 e desvio padrão ×2. Classifique cada resultado com a regra prática (< 0,10 estável; 0,10 a 0,25 moderada; > 0,25 importante).
+@@SOL
+```python
+import numpy as np
+
+def psi(ref, atual, faixas=10):
+    cortes = np.quantile(ref, np.linspace(0, 1, faixas + 1))
+    cortes[0], cortes[-1] = -np.inf, np.inf
+    p = np.clip(np.histogram(ref, cortes)[0] / len(ref), 1e-6, None)
+    q = np.clip(np.histogram(atual, cortes)[0] / len(atual), 1e-6, None)
+    return float(np.sum((q - p) * np.log(q / p)))
+
+def nivel(v):
+    return "estável" if v < 0.10 else "moderada" if v < 0.25 else "importante"
+
+rng = np.random.default_rng(0)
+ref = rng.normal(0, 1, 5000)
+for nome, atual in {"sem mudança": rng.normal(0, 1, 2000), "média +0,3": rng.normal(0.3, 1, 2000),
+                    "média +1": rng.normal(1, 1, 2000), "desvio ×2": rng.normal(0, 2, 2000)}.items():
+    v = psi(ref, atual)
+    print(f"{nome:12s} PSI = {v:.3f} -> {nivel(v)}")
+```
+@@NOTE O PSI cresce com a intensidade da mudança. Os limiares 0,10 e 0,25 são convenções práticas; em cada problema vale calibrá-los observando o histórico de variações normais.
+@@EX 2 | Deriva em atributo categórico | intermediário
+Crie uma distribuição de referência de `plano` (basico 50%, padrao 35%, premium 15%) e três lotes atuais: (a) mesma distribuição, (b) basico 35%, padrao 40%, premium 25%, (c) igual à referência mas com uma categoria nova "familia" em 8% dos casos. Para cada lote, calcule o teste do qui-quadrado (`scipy.stats.chi2_contingency`) e liste categorias novas.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from scipy.stats import chi2_contingency
+
+rng = np.random.default_rng(0)
+ref = pd.Series(rng.choice(["basico", "padrao", "premium"], 5000, p=[0.5, 0.35, 0.15]))
+lotes = {"(a) igual": pd.Series(rng.choice(["basico", "padrao", "premium"], 1500, p=[0.5, 0.35, 0.15])),
+         "(b) mudou": pd.Series(rng.choice(["basico", "padrao", "premium"], 1500, p=[0.35, 0.40, 0.25])),
+         "(c) categoria nova": pd.Series(rng.choice(["basico", "padrao", "premium", "familia"], 1500, p=[0.46, 0.32, 0.14, 0.08]))}
+
+for nome, atual in lotes.items():
+    novas = sorted(set(atual) - set(ref))
+    cats = sorted(set(ref) | set(atual))
+    tabela = np.array([[ (ref == c).sum() for c in cats], [(atual == c).sum() for c in cats]])
+    chi2, p, _, _ = chi2_contingency(tabela)
+    print(f"{nome:20s} qui² = {chi2:7.1f} | p = {p:.3g} | categorias novas: {novas or 'nenhuma'}")
+```
+@@NOTE O teste detecta a mudança nas proporções e também a categoria nova. Em produção, o aparecimento de categorias que o modelo nunca viu deve gerar alerta próprio, porque o encoder pode ignorá-las e o modelo "ficar cego" para elas.
+@@EX 3 | O classificador de domínio acha o que os testes simples perdem | intermediário
+Crie uma referência com 5 atributos normais independentes e um lote atual em que os atributos 0 e 1 passaram a ter correlação 0,8, mantendo médias e desvios iguais. Mostre que o teste KS por atributo não acusa nada e que a AUC de um classificador de domínio (floresta, validação cruzada de 4 dobras) sim. Depois, descubra quais atributos o classificador mais usa.
+@@SOL
+```python
+import numpy as np
+from scipy.stats import ks_2samp
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+rng = np.random.default_rng(0)
+ref = rng.normal(size=(3000, 5))
+atual = rng.normal(size=(3000, 5))
+atual[:, 1] = 0.8 * atual[:, 0] + 0.6 * atual[:, 1]            # correlação 0,8; variância preservada
+
+print("p-valores do KS por atributo:", [round(float(ks_2samp(ref[:, j], atual[:, j]).pvalue), 2) for j in range(5)])
+X = np.vstack([ref, atual]); d = np.r_[np.zeros(3000), np.ones(3000)]
+clf = RandomForestClassifier(150, min_samples_leaf=5, random_state=0)
+print("AUC do classificador de domínio:", round(cross_val_score(clf, X, d, cv=4, scoring="roc_auc").mean(), 3))
+clf.fit(X, d)
+print("Importâncias:", {j: round(float(v), 2) for j, v in enumerate(clf.feature_importances_)})
+```
+@@NOTE Nenhum atributo, olhado sozinho, acusa mudança, mas o classificador distingue os dois conjuntos e aponta os atributos 0 e 1 como os mais importantes, pois foi a relação entre eles que mudou.
+@@EX 4 | Quanto o DDM demora a perceber? | avançado
+Gere um fluxo de 6.000 erros de um modelo: taxa de erro de 10% nos primeiros 3.000 casos e depois uma mudança para 10% (sem mudança), 15%, 20% ou 30% (quatro cenários). Use o detector DDM (com pelo menos 500 amostras antes de decidir; deriva em mínimo + 3 desvios). Repita com 40 sementes e informe, para cada cenário: em quantas sementes houve falso alarme antes da posição 3.000, em quantas a deriva foi detectada depois da mudança e a mediana do atraso (posição da detecção − 3.000).
+@@SOL
+```python
+import numpy as np
+
+class DDM:
+    def __init__(self, min_amostras=500):
+        self.n, self.p, self.pmin, self.smin, self.min_amostras = 0, 1.0, np.inf, np.inf, min_amostras
+    def deriva(self, erro):
+        self.n += 1
+        self.p += (erro - self.p) / self.n
+        s = np.sqrt(self.p * (1 - self.p) / self.n)
+        if self.n < self.min_amostras:
+            return False
+        if self.p + s < self.pmin + self.smin:
+            self.pmin, self.smin = self.p, s
+        return self.p + s >= self.pmin + 3 * self.smin
+
+def avaliar(taxa_depois, semente):
+    rng = np.random.default_rng(semente)
+    erros = np.r_[rng.random(3000) < 0.10, rng.random(3000) < taxa_depois].astype(int)
+    d = DDM()
+    for i, e in enumerate(erros):
+        if d.deriva(e):
+            return ("falso alarme", None) if i < 3000 else ("detectou", i - 3000)
+    return ("nada", None)
+
+print("40 sementes por cenário (mudança na posição 3.000):")
+for depois in [0.10, 0.15, 0.20, 0.30]:
+    r = [avaliar(depois, s) for s in range(40)]
+    falsos = sum(x[0] == "falso alarme" for x in r)
+    atrasos = [x[1] for x in r if x[0] == "detectou"]
+    med = f"{int(np.median(atrasos))}" if atrasos else "-"
+    print(f"taxa depois = {depois:.2f} | falsos alarmes = {falsos:2d} | detectou = {len(atrasos):2d} | mediana do atraso = {med}")
+```
+@@NOTE Quanto maior a piora, mais sementes detectam e menor o atraso. Sem mudança real (0,10), não deve haver detecção depois de 3.000, mas pode haver falsos alarmes: nenhum detector é perfeito. Mudanças pequenas demoram ou nem são percebidas: por isso o monitoramento combina vários sinais.
+@@PROJ Painel de monitoramento de 12 semanas com três tipos de deriva | Cap09
+**Contexto.** Um modelo de classificação foi treinado na semana 0. Nas 12 semanas seguintes, o mundo muda de três maneiras: a partir da semana 3, mudança de covariáveis (o atributo 0 se desloca); a partir da semana 6, mudança de rótulos (a proporção de positivos sobe); e a partir da semana 8, deriva de conceito (a fronteira de decisão gira).
+
+**Dados simulados.** Gere 12 lotes semanais de 1.200 exemplos, com 4 atributos normais e rótulo gerado por uma função logística da combinação linear dos atributos mais um intercepto que controla a proporção de positivos. Documente suas escolhas.
+
+**Tarefas.**
+1. Treine um modelo (regressão logística) na semana 0 e deixe-o estático.
+2. Para cada semana, calcule: PSI do atributo 0, AUC do classificador de domínio, probabilidade média prevista, fração real de positivos e a AUC-ROC do modelo (supondo que o rótulo chegue sem atraso, só para fins de análise).
+3. Defina uma regra de alerta sem rótulos (PSI e AUC de domínio) e informe a semana do primeiro alerta e a semana em que a AUC do modelo estático cai mais de 0,10 em relação à da semana 1. O alerta enxerga todas as mudanças?
+4. Compare três estratégias: (a) estático; (b) retreino periódico, a cada 3 semanas, com as 3 últimas semanas rotuladas; (c) retreino por gatilho (quando a regra de alerta dispara, espera 2 semanas para que cheguem rótulos do regime novo, retreina com as 3 últimas semanas rotuladas e atualiza a referência do monitoramento).
+5. Compare as estratégias pela AUC média e pelo erro médio entre a probabilidade média prevista e a fração real de positivos (calibração global) nas semanas 4 a 12.
+6. Escreva uma recomendação sobre monitoramento e retreinamento, explicando que tipo de mudança prejudica cada métrica.
+
+**Entregáveis.** Tabela semanal, semanas dos alertas, comparação das estratégias e recomendação.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+def semana(s, n=1200):
+    r = np.random.default_rng(500 + s)
+    X = r.normal(size=(n, 4))
+    if s >= 3:
+        X[:, 0] += 0.8                                               # mudança de covariáveis
+    w = np.array([2.0, 1.6, -1.2, 0.0])
+    if s >= 8:
+        ang = np.deg2rad(80)                                         # deriva de conceito: a fronteira gira
+        w = np.array([2.0 * np.cos(ang), 1.6, -1.2, 2.0 * np.sin(ang)])
+    intercepto = -3.4 if s < 6 else -2.6                             # mudança de rótulos
+    y = (r.random(n) < 1 / (1 + np.exp(-(X @ w + intercepto)))).astype(int)
+    return X, y
+
+def psi(ref, atual, faixas=10):
+    cortes = np.quantile(ref, np.linspace(0, 1, faixas + 1)); cortes[0], cortes[-1] = -np.inf, np.inf
+    p = np.clip(np.histogram(ref, cortes)[0] / len(ref), 1e-6, None)
+    q = np.clip(np.histogram(atual, cortes)[0] / len(atual), 1e-6, None)
+    return float(np.sum((q - p) * np.log(q / p)))
+
+def auc_dominio(A, B):
+    Z = np.vstack([A, B]); d = np.r_[np.zeros(len(A)), np.ones(len(B))]
+    return cross_val_score(RandomForestClassifier(60, min_samples_leaf=5, random_state=0, n_jobs=2), Z, d, cv=3, scoring="roc_auc").mean()
+
+fabrica = lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000))
+dados = [semana(s) for s in range(13)]
+Xref, yref = dados[0]
+estatico = fabrica().fit(Xref, yref)
+
+def treinar_com(ini, fim):
+    return fabrica().fit(np.vstack([d[0] for d in dados[ini:fim]]), np.concatenate([d[1] for d in dados[ini:fim]]))
+
+linhas, ref_X = [], Xref
+periodico, gatilho, espera = estatico, estatico, None
+for s in range(1, 13):
+    X, y = dados[s]
+    if s >= 4 and (s - 1) % 3 == 0:                                   # (b) a cada 3 semanas, janela de 3 semanas
+        periodico = treinar_com(s - 3, s)
+    psi0, auc_dom = psi(ref_X[:, 0], X[:, 0]), auc_dominio(ref_X, X)
+    alerta = psi0 > 0.25 or auc_dom > 0.80
+    acao = ""
+    if alerta and espera is None:
+        espera = s                                                    # (c) alerta: espera chegarem rótulos do regime novo
+    if espera is not None and s - espera >= 2:
+        gatilho, espera = treinar_com(s - 3, s), None
+        ref_X = np.vstack([d[0] for d in dados[s - 3:s]])             # nova referência de monitoramento
+        acao = "retreinou"
+    p = {"estatico": estatico, "periodico": periodico, "gatilho": gatilho}
+    linha = {"semana": s, "PSI_x0": psi0, "AUC_dom": auc_dom, "alerta": int(alerta), "acao": acao, "pos_real": y.mean()}
+    for nome, m in p.items():
+        pr = m.predict_proba(X)[:, 1]
+        linha[f"AUC_{nome}"] = roc_auc_score(y, pr)
+        linha[f"dif_prob_{nome}"] = abs(pr.mean() - y.mean())
+    linhas.append(linha)
+tab = pd.DataFrame(linhas)
+cols = ["semana", "PSI_x0", "AUC_dom", "alerta", "acao", "pos_real", "AUC_estatico", "AUC_periodico", "AUC_gatilho"]
+print(tab[cols].round(3).to_string(index=False))
+
+prim_alerta = int(tab.loc[tab["alerta"] == 1, "semana"].min())
+queda = tab.loc[tab["AUC_estatico"] < tab["AUC_estatico"].iloc[0] - 0.10, "semana"]
+print(f"Primeiro alerta sem rótulos: semana {prim_alerta} | AUC do estático cai > 0,10: semana {int(queda.min()) if len(queda) else 'nunca'}")
+r = tab[tab["semana"] >= 4]
+print("AUC média (semanas 4-12):", {k: round(float(r[f"AUC_{k}"].mean()), 3) for k in ["estatico", "periodico", "gatilho"]})
+print("Erro médio de proporção (semanas 4-12):", {k: round(float(r[f"dif_prob_{k}"].mean()), 3) for k in ["estatico", "periodico", "gatilho"]})
+```
+@@RUBRICA
+- Simulação documentada, com três mudanças em semanas distintas.
+- Cálculo semanal de PSI, AUC de domínio, proporção real de positivos, probabilidade média e AUC do modelo.
+- Regra de alerta sem rótulo definida e comparada com a queda da AUC.
+- Comparação das três estratégias com as mesmas métricas e as mesmas semanas.
+- Atualização da referência após o retreino por gatilho.
+- Recomendação que explica que a mudança de covariáveis e a de rótulos nem sempre derrubam a AUC, mas a deriva de conceito sim.
+@@NOTE O resultado exato depende do computador e das versões. Nesta execução: (i) o alerta sem rótulos dispara na semana 3, junto com a mudança de covariáveis, mas a AUC do modelo quase não muda nessa fase (nem toda deriva prejudica o desempenho); (ii) na semana 6 a proporção real de positivos sobe e a probabilidade média prevista passa a diferir da realidade (descalibração), embora a AUC se mantenha; (iii) o alerta sem rótulos não enxerga a deriva de conceito da semana 8, porque a distribuição dos atributos não muda: só o desempenho com rótulos mostra a queda da AUC do modelo estático (de cerca de 0,92 para cerca de 0,75); (iv) por isso, o retreino periódico recupera a AUC (cerca de 0,89 nas semanas 10 a 12), enquanto o retreino por gatilho baseado apenas em sinais sem rótulos não reage. A lição é combinar monitoramento sem rótulos (rápido) com monitoramento de desempenho com rótulos (mais lento, mas decisivo), além de retreinos periódicos de segurança.
+@@ALEM
+- **UCI:** *Bike Sharing Dataset*, *Online Retail* e *Electricity (NSW)*, séries com padrões temporais e mudanças ao longo do tempo.
+- **Kaggle:** *Store Sales (Time Series Forecasting)* e *Rossmann Store Sales* para observar sazonalidade e eventos. Meça a deriva entre períodos.

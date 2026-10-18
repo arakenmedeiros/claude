@@ -1,0 +1,269 @@
+MC: Na analogia do capítulo, um pipeline é como:
+a) uma linha de montagem em que cada etapa recebe a saída da anterior.
+b) uma receita escrita à mão, sem ordem.
+c) um depósito de ingredientes.
+d) um painel de alertas.
+R: a | O mesmo "molde" vale para o treino e para a produção.
+
+MC: Um estimador no scikit-learn é um objeto que:
+a) aprende dos dados com fit(X, y).
+b) apenas desenha gráficos.
+c) só transforma colunas, sem aprender.
+d) só salva arquivos.
+R: a | Transformadores e preditores são tipos de estimadores.
+
+MC: O que um transformador faz em transform(X)?
+a) Usa os parâmetros aprendidos em fit para transformar os dados.
+b) Treina novamente o modelo do zero.
+c) Descarta os dados de treino.
+d) Calcula a acurácia.
+R: a | Por exemplo, o StandardScaler aplica a média e o desvio aprendidos.
+
+MC: Qual a regra de ouro do fit?
+a) fit só pode ver os dados de treino.
+b) fit deve ver treino e teste.
+c) fit deve ser chamado em produção a cada previsão.
+d) fit é opcional em transformadores.
+R: a | No teste e na produção usam-se apenas transform e predict.
+
+MC: Ao chamar fit em um Pipeline, o que acontece?
+a) Cada etapa é treinada em ordem, passando a saída para a seguinte.
+b) Somente a última etapa é treinada.
+c) Somente a primeira etapa é treinada.
+d) Nada é treinado.
+R: a | Uma única chamada treina o pré-processamento e o modelo.
+
+MC: Qual é a vantagem de dar nomes às etapas de um Pipeline?
+a) Permite ajustar hiperparâmetros por nome, como modelo__C.
+b) Acelera o treino.
+c) Dispensa o uso de sementes.
+d) Impede que o pipeline seja salvo.
+R: a | Os nomes ajudam também na leitura e na depuração.
+
+MC: No experimento com dados aleatórios, a seleção de atributos feita fora da validação cruzada produziu:
+a) acurácia falsamente alta, perto de 80% em vez de cerca de 50%.
+b) acurácia exatamente igual ao pipeline correto.
+c) acurácia de 0%.
+d) erro de execução.
+R: a | A seleção olhou os rótulos de todos os dados, inclusive dos dobras de teste.
+
+MC: A seleção de atributos feita dentro do Pipeline:
+a) acontece separadamente em cada dobra, usando só o treino da dobra.
+b) acontece uma vez, com todos os dados.
+c) é ignorada pela validação cruzada.
+d) usa os rótulos do teste.
+R: a | Assim a estimativa de desempenho é honesta.
+
+MC: O que é one-hot encoding?
+a) Converter uma coluna categórica em várias colunas de 0 e 1.
+b) Remover colunas categóricas.
+c) Ordenar as categorias por frequência.
+d) Padronizar colunas numéricas.
+R: a | Cada categoria vira uma coluna "é esta categoria?".
+
+MC: O ColumnTransformer serve para:
+a) aplicar tratamentos diferentes a grupos diferentes de colunas e juntar o resultado.
+b) transformar linhas em colunas.
+c) escolher o melhor modelo.
+d) salvar o modelo em disco.
+R: a | Por exemplo, mediana e padronização nas numéricas, moda e one-hot nas categóricas.
+
+MC: handle_unknown="ignore" no OneHotEncoder é útil porque:
+a) categorias novas em produção não quebram o pipeline.
+b) elimina a necessidade de treinar.
+c) reduz o número de linhas.
+d) impede qualquer erro de dados.
+R: a | O encoder gera zeros para a categoria nunca vista.
+
+MC: Os imputadores de um pipeline aprendem a mediana e a moda:
+a) com os dados de treino e as reutilizam em produção.
+b) com os dados de teste.
+c) a cada nova previsão.
+d) com os dados futuros.
+R: a | Isso evita vazamento e garante consistência.
+
+MC: O que é o desvio treino–serviço?
+a) O pré-processamento de produção ser diferente do usado no treino.
+b) O modelo ser rápido demais.
+c) O número de linhas do teste ser pequeno.
+d) A semente ser fixa.
+R: a | Receber a linha crua e usar o mesmo pipeline elimina boa parte desse problema.
+
+MC: Para criar um transformador personalizado compatível com scikit-learn, a classe deve:
+a) implementar fit e transform (por exemplo, herdando de BaseEstimator e TransformerMixin).
+b) ter apenas um método print.
+c) usar somente variáveis globais.
+d) ser escrita em outra linguagem.
+R: a | Assim ele entra em Pipelines e buscas de hiperparâmetros.
+
+MC: Um número aprendido em fit, como uma média, deve ser guardado:
+a) em um atributo terminado em _, como media_.
+b) em uma variável global.
+c) em um arquivo texto separado.
+d) no código do usuário.
+R: a | É a convenção do scikit-learn para parâmetros aprendidos.
+
+MC: Por que é recomendável separar a configuração do código?
+a) Permite mudar experimentos sem mexer no código e registrar cada configuração.
+b) Aumenta a acurácia.
+c) Evita o uso de sementes.
+d) Impede revisões.
+R: a | Também facilita revisão e rastreabilidade.
+
+MC: Para a reprodutibilidade, quais fontes de aleatoriedade devem ser controladas?
+a) Todas: divisão dos dados, algoritmos aleatórios, validação cruzada embaralhada e geradores do NumPy.
+b) Apenas a divisão dos dados.
+c) Apenas o algoritmo de treino.
+d) Nenhuma, se o código for o mesmo.
+R: a | Qualquer fonte de acaso não controlada pode mudar o resultado.
+
+MC: Para testar a reprodutibilidade do treino, uma boa prática é:
+a) treinar duas vezes e comparar as previsões ou um hash delas.
+b) treinar uma vez e confiar.
+c) mudar a semente a cada execução.
+d) apagar os resultados antigos.
+R: a | Se as assinaturas forem iguais, o procedimento é determinístico.
+
+MC: Qual formato é mais usado para salvar um pipeline do scikit-learn em Python?
+a) joblib.
+b) PNG.
+c) CSV.
+d) MP3.
+R: a | Ele grava objetos Python, inclusive arrays grandes, de forma eficiente.
+
+MC: O principal risco de carregar um arquivo pickle ou joblib de origem desconhecida é:
+a) execução de código arbitrário ao abrir o arquivo.
+b) perda de resolução das imagens.
+c) aumento da latência do disco.
+d) mudança da hora do sistema.
+R: a | Só se devem carregar artefatos de fontes confiáveis.
+
+MC: Por que registrar a versão do scikit-learn junto do modelo salvo?
+a) Um modelo salvo em uma versão pode não funcionar corretamente em outra.
+b) Para aumentar o tamanho do arquivo.
+c) Para impedir o reuso do modelo.
+d) Porque o joblib exige.
+R: a | A verificação evita erros silenciosos por incompatibilidade.
+
+MC: O que se espera de um script de treino de produção?
+a) Rodar de ponta a ponta, sem cliques, com parâmetros por linha de comando.
+b) Depender de células executadas manualmente.
+c) Ser executado apenas em notebooks.
+d) Não salvar nenhum resultado.
+R: a | Isso permite automatizar e repetir o treino.
+
+MC: Qual biblioteca padrão do Python é usada no capítulo para ler argumentos de linha de comando?
+a) argparse.
+b) turtle.
+c) tkinter.
+d) wave.
+R: a | Ela permite passar, por exemplo, --semente 7 --n-arvores 300.
+
+MC: A palavra "pipeline" em MLOps, no sentido mais amplo, designa:
+a) o fluxo que une ingestão, validação, treino, avaliação, registro e implantação.
+b) apenas o objeto Pipeline do scikit-learn.
+c) um cano físico de dados.
+d) o hardware do servidor.
+R: a | É frequentemente organizado como um DAG, com tarefas e dependências.
+
+MC: Em um DAG, as setas indicam:
+a) dependências: quem precisa rodar antes de quem.
+b) a ordem alfabética das tarefas.
+c) a quantidade de memória usada.
+d) a prioridade das tarefas no orçamento.
+R: a | DAG é um grafo acíclico dirigido: não há ciclos.
+
+MC: Qual a utilidade de FunctionTransformer?
+a) Transformar uma função comum em uma etapa de pipeline.
+b) Criar gráficos.
+c) Treinar redes neurais.
+d) Escolher hiperparâmetros.
+R: a | Útil para aplicar transformações simples, como logaritmo, dentro do pipeline.
+
+MC: Qual destas práticas ajuda a evitar vazamento na validação cruzada?
+a) Colocar o pré-processamento dentro do Pipeline avaliado.
+b) Padronizar todos os dados antes de validar.
+c) Selecionar atributos com todos os rótulos.
+d) Usar o teste para ajustar o pré-processamento.
+R: a | A validação cruzada recria o pré-processamento em cada dobra.
+
+MC: Em qual situação padronizar os atributos afeta pouco o resultado?
+a) Em florestas aleatórias, que usam cortes em um atributo por vez.
+b) Em KNN, que usa distâncias.
+c) Em SVC com kernel RBF.
+d) Em regressão logística regularizada.
+R: a | Algoritmos baseados em árvores são pouco sensíveis à escala.
+
+DISC: Explique a regra "fit só vê o treino" e dê um exemplo de erro por violá-la.
+R: Parâmetros aprendidos (média, mediana, seleção de atributos) devem vir apenas do treino; no teste e na produção só se aplica transform. Violá-la, por exemplo padronizando antes de dividir ou selecionando atributos com todos os rótulos, leva a vazamento e a estimativas otimistas.
+
+DISC: Descreva o experimento de dados aleatórios com seleção de atributos e a conclusão sobre vazamento.
+R: Com 100 exemplos e 2.000 atributos aleatórios, selecionar os 20 melhores com todos os dados e depois validar deu acurácia falsamente alta; fazê-lo dentro do pipeline deu cerca de 50%. Conclui-se que a seleção fora da validação vaza informação do rótulo.
+
+DISC: Como o ColumnTransformer ajuda a evitar o desvio treino–serviço?
+R: Ele encapsula, em um único objeto, os tratamentos por tipo de coluna (imputação, escala, codificação). Em produção, a linha crua passa pelo mesmo objeto treinado, sem reimplementação manual do pré-processamento.
+
+DISC: Por que handle_unknown="ignore" é importante em produção? Qual a sua limitação?
+R: Evita que o serviço quebre quando aparece uma categoria nova. A limitação é que o modelo não sabe usar a categoria nova (ela vira zeros), então é preciso monitorar o surgimento de categorias novas e retreinar se forem frequentes.
+
+DISC: Explique o que é um transformador personalizado e quando criá-lo, dando um exemplo.
+R: É uma classe que implementa fit e transform para inserir uma lógica própria no pipeline, por exemplo, criar a razão renda/idade com proteção contra divisão por zero ou cortar valores extremos com limites aprendidos no treino.
+
+DISC: Quais cuidados devem ser tomados com transformadores que aprendem parâmetros?
+R: Calcular os parâmetros em fit apenas com o treino e guardá-los em atributos com sufixo _; não depender de dados externos ao pipeline; testar com tabelas pequenas e valores extremos.
+
+DISC: Liste cinco fontes de aleatoriedade que devem ser controladas para a reprodutibilidade de um treino.
+R: Divisão treino/teste, algoritmos aleatórios (florestas, K-means), validação cruzada embaralhada, geradores do NumPy, ordem dos dados e paralelismo; além das versões das bibliotecas e do hardware.
+
+DISC: Por que não se deve usar pickle com arquivos de origem desconhecida? Que alternativas existem?
+R: Porque desserializar pode executar código malicioso. Alternativas: carregar apenas artefatos de fontes confiáveis, usar formatos mais seguros e portáveis, como skops ou ONNX, e verificar integridade e versão.
+
+DISC: Qual a vantagem de manter a configuração em um arquivo JSON ou YAML?
+R: Permite mudar parâmetros sem alterar código, revisar mudanças, versionar a configuração junto do modelo e registrar exatamente com que valores cada experimento foi rodado.
+
+DISC: Descreva a estrutura de um script de treino de produção e o que ele deve salvar.
+R: Lê a configuração e parâmetros da linha de comando; carrega os dados; divide; monta e treina o pipeline; avalia; salva o pipeline, a versão do scikit-learn, as métricas, a configuração e o hash dos dados.
+
+DISC: Diferencie o pipeline do scikit-learn do pipeline de MLOps.
+R: O primeiro é a sequência dentro do código (pré-processamento e modelo). O segundo é o fluxo maior que liga ingestão, validação, treino, avaliação, registro e implantação, em geral organizado como DAG.
+
+DISC: Por que ordenar as etapas do pré-processamento importa? Dê um exemplo.
+R: Cada etapa depende da saída da anterior. Por exemplo, imputar ausentes antes de padronizar evita que valores faltantes distorçam a média; selecionar atributos antes de escalar pode mudar a seleção.
+
+DISC: O que significa dizer que um pipeline "recebe a linha crua"?
+R: Que ele aceita os dados como vêm da origem, com ausentes, categorias e escalas originais, e cuida de todo o tratamento. Isso elimina código duplicado de pré-processamento na API e reduz erros.
+
+DISC: Quais testes você faria para um transformador que corta valores extremos nos percentis aprendidos no treino?
+R: Verificar que os limites vêm só do treino; que valores extremos do teste são cortados pelos limites do treino; que valores normais não mudam; que não altera a tabela de entrada; e casos de borda como colunas constantes.
+
+DISC: Explique por que fixar a semente do modelo e da divisão resolve apenas parte do problema da reprodutibilidade.
+R: Porque dados, versões de bibliotecas, ordem das linhas, paralelismo e hardware também influenciam os resultados. É preciso versionar dados, fixar dependências e, idealmente, usar contêineres.
+
+DISC: Como o hash das previsões ajuda a testar a reprodutibilidade?
+R: Ao calcular um hash das probabilidades previstas, compara-se rapidamente duas execuções: hashes iguais indicam resultados idênticos; diferentes indicam alguma fonte de variação a investigar.
+
+DISC: Dê um exemplo em que a padronização é essencial e outro em que é dispensável. Justifique.
+R: Essencial em KNN, SVC e regressão regularizada, que dependem de distâncias ou penalidades sensíveis à escala. Dispensável em florestas e árvores de decisão, que usam cortes por atributo e não dependem da escala.
+
+DISC: Por que o código do treino deve ser executável por linha de comando em ambientes de CI?
+R: Porque a CI não tem interface gráfica nem cliques: precisa executar o treino de forma automática, com parâmetros, e usar o código de saída para decidir se segue ou falha.
+
+DISC: Explique por que um pipeline treinado deve ser tratado como um artefato versionado.
+R: Porque é o objeto que vai para a produção e deve ser rastreável: associado ao código, aos dados, à configuração e às métricas, com versão do scikit-learn registrada. Isso permite auditar, reproduzir e reverter.
+
+DISC: Resuma três erros comuns na construção de pipelines e como evitá-los.
+R: Ajustar o pré-processamento fora do pipeline (use Pipeline), reimplementar o tratamento na API (use o mesmo artefato) e esquecer categorias novas (use handle_unknown). Também: não fixar sementes, não registrar versões.
+
+MC: Qual o risco de ajustar um imputador de mediana usando todos os dados antes da divisão?
+a) A mediana inclui informação do teste, o que contamina a avaliação.
+b) O imputador deixa de funcionar.
+c) Os dados ficam criptografados.
+d) O treino fica mais lento sem ganho algum.
+R: a | O imputador deve ser ajustado apenas com o treino, dentro do pipeline.
+
+MC: Em um Pipeline, o que o método predict faz?
+a) Aplica as transformações aprendidas e depois usa o modelo final.
+b) Treina novamente cada etapa.
+c) Salva o pipeline em disco.
+d) Gera um relatório de qualidade.
+R: a | Cada etapa usa apenas o que aprendeu no treino.

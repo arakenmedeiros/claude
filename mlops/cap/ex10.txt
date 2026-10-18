@@ -1,0 +1,269 @@
+MC: Governança de ML é:
+a) o conjunto de políticas, papéis e práticas para uso responsável, transparente, justo, seguro e em conformidade.
+b) a escolha do algoritmo mais rápido.
+c) a compra de servidores.
+d) a formatação do código.
+R: a | Responde a quem é responsável, para que serve, com quais dados e como se fiscaliza.
+
+MC: O cartão do modelo (model card), proposto por Mitchell et al. (2019), contém:
+a) uso pretendido, dados, métricas (inclusive por grupo) e limitações.
+b) apenas o código-fonte.
+c) apenas o preço do projeto.
+d) apenas o nome do autor.
+R: a | É a "bula" do modelo.
+
+MC: Por que gerar o cartão do modelo automaticamente?
+a) Evita que fique desatualizado em relação aos metadados do pipeline.
+b) Torna o modelo mais preciso.
+c) Dispensa a revisão humana.
+d) Reduz o custo do servidor.
+R: a | Pode ser exigido no portão de promoção.
+
+MC: Explicação global de um modelo responde a:
+a) o que, em geral, importa para o modelo.
+b) por que uma previsão específica saiu assim.
+c) qual servidor foi usado.
+d) quem treinou o modelo.
+R: a | A local explica uma previsão individual.
+
+MC: A importância por permutação mede:
+a) a queda de desempenho ao embaralhar um atributo.
+b) o número de vezes que o atributo aparece no código.
+c) a correlação entre o atributo e o tempo.
+d) o custo de coletar o atributo.
+R: a | Foi introduzida por Breiman (2001) no contexto de florestas.
+
+MC: Quando dois atributos são muito correlacionados, a importância por permutação:
+a) tende a se dividir entre eles, subestimando cada um.
+b) fica sempre maior.
+c) torna-se igual a zero para ambos, sempre.
+d) não é afetada.
+R: a | Explicações devem ser acompanhadas da análise de correlações.
+
+MC: A dependência parcial (PDP) mostra:
+a) o efeito médio de um atributo sobre a previsão.
+b) o desempenho em cada grupo.
+c) a latência de cada atributo.
+d) a correlação entre dois modelos.
+R: a | Foi descrita por Friedman (2001) e pode esconder interações.
+
+MC: LIME explica previsões:
+a) aproximando o modelo, perto de um caso, por um modelo simples.
+b) treinando uma rede maior.
+c) removendo atributos do conjunto.
+d) calculando o hash dos dados.
+R: a | É uma explicação local sensível à vizinhança escolhida.
+
+MC: SHAP (Lundberg e Lee, 2017) distribui a previsão entre os atributos com base em:
+a) valores de Shapley.
+b) médias aritméticas simples.
+c) sorteios aleatórios.
+d) ordens alfabéticas.
+R: a | Oferece boa fundamentação teórica, com custo computacional maior.
+
+MC: Explicações de importância e dependência mostram:
+a) o que o modelo usa, e não necessariamente causas no mundo real.
+b) sempre relações causais.
+c) a verdade absoluta sobre o fenômeno.
+d) que o modelo é justo.
+R: a | Servem para investigar e levantar hipóteses.
+
+MC: Uma razão de impacto desproporcional é:
+a) a taxa de seleção do grupo com menos aprovações dividida pela do grupo com mais.
+b) a soma das taxas de seleção.
+c) o número de atributos sensíveis.
+d) o tempo de resposta por grupo.
+R: a | A regra dos quatro quintos usa 0,8 como referência de alerta, não como veredito.
+
+MC: Igualdade de oportunidade (Hardt et al., 2016) significa:
+a) revocação (TPR) semelhante entre os grupos.
+b) taxa de seleção idêntica.
+c) precisão idêntica.
+d) mesmo número de exemplos por grupo.
+R: a | Entre os que "merecem", a fração aprovada é parecida.
+
+MC: Retirar o atributo sensível (grupo) do modelo:
+a) não garante justiça, pois proxies podem carregar o viés.
+b) garante justiça.
+c) elimina a necessidade de auditoria.
+d) aumenta a precisão.
+R: a | Atributos correlacionados, como CEP, podem funcionar como proxies.
+
+MC: Segundo o capítulo, em geral é impossível:
+a) satisfazer simultaneamente todos os critérios de justiça.
+b) calcular métricas por grupo.
+c) treinar modelos justos.
+d) auditar modelos.
+R: a | A escolha do critério é uma decisão social e jurídica.
+
+MC: A LGPD, no Brasil, trata:
+a) do uso de dados pessoais, inclusive da revisão de decisões automatizadas.
+b) da compra de hardware.
+c) da velocidade da internet.
+d) da licença do Python.
+R: a | Lei n.º 13.709/2018.
+
+MC: O Regulamento de IA da União Europeia classifica sistemas:
+a) por nível de risco e impõe obrigações aos de alto risco.
+b) por tamanho do modelo apenas.
+c) pela linguagem de programação.
+d) pelo preço do software.
+R: a | Regulamento (UE) 2024/1689.
+
+MC: A privacidade diferencial garante que:
+a) o resultado da análise seja quase o mesmo, tenha ou não uma pessoa específica nos dados.
+b) todos os dados sejam apagados.
+c) o modelo seja perfeito.
+d) o servidor nunca falhe.
+R: a | Isso é obtido com ruído calibrado.
+
+MC: No parâmetro ε da privacidade diferencial, um ε pequeno significa:
+a) mais privacidade e mais ruído.
+b) menos privacidade e menos ruído.
+c) ausência de ruído.
+d) dados idênticos aos originais.
+R: a | Há um equilíbrio entre privacidade e precisão.
+
+MC: O mecanismo de Laplace para uma contagem soma ao resultado ruído de escala:
+a) 1/ε.
+b) ε².
+c) 100·ε.
+d) zero.
+R: a | Pois uma pessoa altera a contagem em no máximo 1.
+
+MC: Repetir a mesma consulta com privacidade diferencial e tirar a média:
+a) recupera precisão, mas consome o orçamento de privacidade.
+b) preserva a privacidade total.
+c) aumenta o ruído.
+d) é proibido pela LGPD.
+R: a | Os orçamentos de ε se somam.
+
+MC: No aprendizado federado (McMahan et al., 2017):
+a) os dados ficam nos dispositivos e só atualizações do modelo são enviadas.
+b) todos os dados são enviados a um servidor central.
+c) não há modelo.
+d) a privacidade é garantida por completo.
+R: a | Não elimina todos os riscos e costuma ser combinado a outras proteções.
+
+MC: O armazém de atributos (feature store) tem uma face offline e uma online. A online serve para:
+a) fornecer valores recentes em milissegundos ao serviço em tempo real.
+b) guardar histórico gigante para treino.
+c) armazenar o código-fonte.
+d) rodar testes de CI.
+R: a | A offline serve ao treino e à previsão em lote.
+
+MC: Correção temporal (point-in-time) significa:
+a) usar os valores dos atributos como eram na data do evento, sem informação futura.
+b) usar sempre o valor mais recente.
+c) ignorar datas.
+d) usar o valor médio histórico.
+R: a | Errar isso é um vazamento comum.
+
+MC: No pandas, qual função faz a junção pelo valor mais recente disponível até a data do evento?
+a) merge_asof.
+b) concat.
+c) pivot.
+d) get_dummies.
+R: a | Evita usar valores do futuro.
+
+MC: Um DAG de MLOps é:
+a) um grafo de tarefas com dependências e sem ciclos.
+b) um tipo de modelo de regressão.
+c) um arquivo de configuração de rede.
+d) um painel de gráficos.
+R: a | O orquestrador executa na ordem certa e repete falhas.
+
+MC: Qual é uma função do orquestrador além de executar na ordem?
+a) Repetir tarefas que falharem, agendar execuções e guardar histórico.
+b) Escolher a cor dos gráficos.
+c) Treinar o modelo sem dados.
+d) Substituir o monitoramento.
+R: a | Exemplos de ferramentas: Airflow, Prefect, Dagster, Kubeflow.
+
+MC: O que é RAG (Lewis et al., 2020)?
+a) Buscar documentos relevantes e inseri-los no comando antes de gerar a resposta.
+b) Um algoritmo de compressão de imagens.
+c) Um formato de arquivo.
+d) Uma técnica de limpeza de dados.
+R: a | Reduz invenções e permite atualizar o conhecimento sem retreinar.
+
+MC: No LLMOps, o "programa" é composto principalmente de:
+a) prompts, modelo base, ferramentas e contexto.
+b) apenas planilhas.
+c) somente imagens.
+d) apenas código C.
+R: a | Por isso prompts são versionados como código.
+
+MC: Avaliar texto livre é difícil porque:
+a) não há uma resposta única e métricas objetivas simples.
+b) o texto não pode ser lido por computadores.
+c) os modelos de linguagem não geram texto.
+d) não existem conjuntos de teste.
+R: a | Combinam-se testes automáticos, revisão humana e métricas de negócio.
+
+MC: O LoRA (Hu et al., 2022) é uma técnica para:
+a) adaptar modelos treinando poucos parâmetros adicionais.
+b) comprimir imagens.
+c) validar dados.
+d) criar painéis.
+R: a | Diminui custo e tempo de ajuste.
+
+DISC: Descreva os pilares da governança de ML e dê um exemplo de prática em cada um.
+R: Documentação (cartão do modelo); explicabilidade (importância por permutação); justiça (métricas por grupo); privacidade (pseudonimização, privacidade diferencial); segurança (validação de entradas, controle de artefatos); auditoria (registro e rastreabilidade).
+
+DISC: O que deve constar em um cartão do modelo? Por que incluir desempenho por grupo?
+R: Detalhes do modelo, uso pretendido e fora do escopo, fatores, métricas, dados, análises desagregadas, considerações éticas e recomendações. O desempenho por grupo revela desigualdades que a média esconde.
+
+DISC: Diferencie explicação global e local e cite uma técnica de cada tipo.
+R: Global: o que importa em geral, p. ex., importância por permutação e PDP. Local: por que uma previsão específica saiu assim, p. ex., LIME e SHAP.
+
+DISC: Por que explicações não devem ser interpretadas como causas? Dê um exemplo.
+R: Mostram o que o modelo usa. Se um atributo é proxy de outro ou correlacionado com a causa real, ele aparece como importante sem ser causa. Por exemplo, o CEP pode importar por refletir renda, não por causar inadimplência.
+
+DISC: Explique por que remover o atributo sensível não garante justiça e o que se pode fazer em seguida.
+R: Outros atributos podem carregar a informação (proxies) ou ser medidos com viés diferente entre grupos. Deve-se medir desempenho e seleção por grupo, investigar a origem do viés e aplicar remédios em dados, treino ou saída.
+
+DISC: Compare paridade demográfica, igualdade de oportunidade e paridade de precisão.
+R: Paridade demográfica: mesma taxa de seleção. Igualdade de oportunidade: mesma revocação entre os que merecem. Paridade de precisão: mesma precisão quando aprova. Em geral não se satisfazem todas ao mesmo tempo.
+
+DISC: Descreva o ajuste de limiares por grupo para igualar a revocação e discuta suas consequências.
+R: Escolhe-se, para cada grupo, o limiar que captura a mesma fração de positivos reais. Isso melhora a igualdade de oportunidade, mas altera taxas de seleção e precisão, podendo gerar dilemas éticos e legais; a decisão é social, não só técnica.
+
+DISC: Explique o que é privacidade diferencial e o papel de ε.
+R: Garantia matemática de que o resultado de uma análise muda pouco com a presença de uma pessoa. Obtém-se com ruído. ε controla o equilíbrio: menor ε, mais privacidade e mais ruído; maior ε, menos privacidade e mais precisão.
+
+DISC: O que é um ataque de inferência de associação e como mitigá-lo?
+R: O atacante tenta descobrir se um registro estava no treino a partir das saídas do modelo. Mitiga-se limitando detalhes das saídas, regularizando, limitando consultas e usando privacidade diferencial.
+
+DISC: Explique o aprendizado federado e uma limitação.
+R: Os dados ficam nos dispositivos, que treinam localmente e enviam atualizações combinadas por um servidor central. Limitação: não elimina todos os riscos (atualizações podem vazar informação), exigindo proteções adicionais.
+
+DISC: Cite quatro ameaças de segurança específicas de ML e uma mitigação para cada.
+R: Exemplos adversariais (testes de robustez); envenenamento de dados (validação de dados e controle de fontes); roubo de modelo (limitar consultas); cadeia de suprimentos (assinar e verificar artefatos, evitar pickle desconhecido).
+
+DISC: Explique como rastreabilidade e auditoria dependem das peças construídas ao longo do livro.
+R: É preciso ligar hash dos dados, pipeline e configuração versionados, execução e métricas registradas, modelo registrado e aprovado, registro de cada previsão e cartão do modelo para reconstruir qual modelo, dados e código produziram uma decisão.
+
+DISC: Qual o problema que o armazém de atributos resolve e como funciona sua divisão offline/online?
+R: Evita recriar atributos de maneiras diferentes (retrabalho e desvio treino–serviço). O offline guarda o histórico para treino e lote; o online serve valores recentes em milissegundos para tempo real, ambos alimentados pelo mesmo cálculo.
+
+DISC: Explique a armadilha temporal na montagem do conjunto de treino e como merge_asof ajuda.
+R: Usar o valor mais recente do atributo para um evento passado vaza o futuro. merge_asof junta cada evento ao último valor disponível até a data do evento, garantindo a correção temporal.
+
+DISC: Descreva a função de um orquestrador e o que significa uma tarefa depender de outra em um DAG.
+R: Executa as tarefas na ordem das dependências, repete falhas, agenda e guarda o histórico. Depender significa só poder iniciar após a conclusão da outra; tarefas independentes podem rodar em paralelo.
+
+DISC: Discuta a decisão "construir ou comprar" uma plataforma de ML.
+R: Construir dá controle, mas exige equipe e manutenção; comprar economiza tempo, mas gera dependência e custo. Evitar reinventar o que a comunidade mantém, começar pequeno e crescer conforme a necessidade.
+
+DISC: Dê três diferenças entre MLOps clássico e LLMOps.
+R: O "programa" inclui prompts e contexto; a saída é texto livre, difícil de avaliar; o custo é por token e há riscos como alucinação e injeção de prompt. Também: RAG e ajuste leve em vez de treinar do zero.
+
+DISC: Como versionar e testar prompts em um projeto de LLM?
+R: Registrar cada prompt com identificador (hash) e histórico, como código; manter um conjunto de casos de teste com critérios (deve conter, não pode conter), rodar regressão a cada mudança e comparar versões; monitorar em produção.
+
+DISC: Por que o uso de outro LLM como juiz tem limitações?
+R: O juiz também erra, tem vieses e pode favorecer respostas parecidas com as suas; por isso combina-se com testes automáticos, revisão humana por amostragem e métricas de negócio.
+
+DISC: Quais recomendações finais você daria a uma equipe que quer colocar um modelo de crédito em produção com responsabilidade?
+R: Documentar com cartão do modelo, avaliar por grupo e corrigir vieses de dados, explicar decisões, proteger dados pessoais, manter rastreabilidade, ter supervisão humana e plano de reversão, monitorar desempenho e razão de impacto continuamente.

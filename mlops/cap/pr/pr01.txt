@@ -1,0 +1,171 @@
+@@EX 1 | O custo de não fixar a semente | básico
+Treine uma `RandomForestClassifier(n_estimators=20)` 15 vezes no conjunto *Breast Cancer Wisconsin* (UCI), usando a mesma divisão treino/teste (`random_state=0`), mas **sem** fixar a semente do modelo. Repita com a semente fixa. Compare a média e o desvio padrão da acurácia nos dois casos.
+
+*Dica:* a semente do modelo é o parâmetro `random_state` do estimador.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+def acuracia(semente):
+    return RandomForestClassifier(n_estimators=20, random_state=semente).fit(Xtr, ytr).score(Xte, yte)
+
+sem = [acuracia(None) for _ in range(15)]
+com = [acuracia(7) for _ in range(15)]
+print(f"Sem semente: média = {np.mean(sem):.4f} | desvio = {np.std(sem):.4f} | valores distintos = {len(set(sem))}")
+print(f"Com semente: média = {np.mean(com):.4f} | desvio = {np.std(com):.4f} | valores distintos = {len(set(com))}")
+```
+@@NOTE Com a semente fixa, o desvio é zero e todos os resultados são iguais. Sem semente, o resultado oscila de uma execução para outra. Em um relatório, uma diferença de 0,5 ponto entre dois modelos pode ser só essa oscilação.
+@@EX 2 | Salvando o modelo com seus metadados | básico
+Treine um pipeline (`StandardScaler` + `LogisticRegression`) no conjunto *Wine* (UCI). Salve em um único arquivo `joblib` um dicionário com o pipeline, a versão do scikit-learn, a semente, a acurácia de teste e o hash SHA-256 dos dados. Recarregue o arquivo e confirme que as previsões são idênticas.
+@@SOL
+```python
+import hashlib
+import joblib
+import numpy as np
+import sklearn
+from sklearn.datasets import load_wine
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X, y = load_wine(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=1)
+pipe = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)).fit(Xtr, ytr)
+
+artefato = {
+    "pipeline": pipe,
+    "versao_sklearn": sklearn.__version__,
+    "semente": 1,
+    "acuracia_teste": round(pipe.score(Xte, yte), 4),
+    "hash_dados": hashlib.sha256(np.c_[X, y].tobytes()).hexdigest()[:16],
+}
+joblib.dump(artefato, "wine_v1.joblib")
+
+lido = joblib.load("wine_v1.joblib")
+print({k: v for k, v in lido.items() if k != "pipeline"})
+print("Previsões idênticas:", np.array_equal(pipe.predict(Xte), lido["pipeline"].predict(Xte)))
+```
+@@NOTE O hash dos dados permite provar depois com qual versão do conjunto o modelo foi treinado. A versão do scikit-learn avisa quando o arquivo é aberto em um ambiente diferente.
+@@EX 3 | A ordem dos dados também importa | intermediário
+Alguns algoritmos dependem da ordem em que veem os exemplos. Treine um `SGDClassifier` (com `random_state=0`) no conjunto *Digits* (UCI) em três versões: dados na ordem original, dados embaralhados com a semente 1 e dados embaralhados com a semente 2. Mostre a acurácia de teste e quantas previsões diferem entre as versões. Em seguida, treine uma `LogisticRegression` do mesmo modo e compare.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.model_selection import train_test_split
+
+X, y = load_digits(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X / 16.0, y, test_size=0.3, stratify=y, random_state=0)
+
+def treinar(modelo_fn, semente_ordem):
+    idx = np.arange(len(Xtr))
+    if semente_ordem is not None:
+        idx = np.random.default_rng(semente_ordem).permutation(len(Xtr))
+    m = modelo_fn().fit(Xtr[idx], ytr[idx])
+    return m.predict(Xte), m.score(Xte, yte)
+
+for nome, fn in [("SGDClassifier", lambda: SGDClassifier(random_state=0)),
+                 ("LogisticRegression", lambda: LogisticRegression(max_iter=2000))]:
+    resultados = [treinar(fn, s) for s in (None, 1, 2)]
+    prevs = [r[0] for r in resultados]
+    print(f"{nome:19s} acurácias = {[round(r[1], 4) for r in resultados]} | "
+          f"previsões diferentes (orig x emb.1): {(prevs[0] != prevs[1]).sum()}, (emb.1 x emb.2): {(prevs[1] != prevs[2]).sum()}")
+```
+@@NOTE O `SGDClassifier` processa os exemplos em sequência, então a ordem muda o resultado. A regressão logística (que resolve o problema todo de uma vez) é praticamente imune a isso. Moral: reprodutibilidade inclui fixar ou documentar a ordem dos dados.
+@@EX 4 | As quatro medidas do DevOps aplicadas a um modelo | intermediário
+Crie um `DataFrame` com o histórico de 12 implantações de modelos: data do commit, data da implantação, se causou falha (booleano) e, quando houve falha, o tempo de recuperação em horas. Calcule: frequência de implantação por mês, tempo médio de entrega (commit até implantação, em dias), taxa de falha de mudança e tempo médio de recuperação.
+@@SOL
+```python
+import pandas as pd
+
+hist = pd.DataFrame({
+    "commit": pd.to_datetime(["2026-01-03", "2026-01-10", "2026-01-20", "2026-02-02", "2026-02-09", "2026-02-18",
+                              "2026-03-01", "2026-03-08", "2026-03-15", "2026-03-22", "2026-04-02", "2026-04-09"]),
+    "implantacao": pd.to_datetime(["2026-01-08", "2026-01-12", "2026-01-27", "2026-02-04", "2026-02-16", "2026-02-20",
+                                   "2026-03-03", "2026-03-12", "2026-03-16", "2026-03-30", "2026-04-04", "2026-04-15"]),
+    "falhou": [False, False, True, False, True, False, False, False, False, True, False, False],
+    "horas_recuperacao": [0, 0, 6, 0, 2, 0, 0, 0, 0, 12, 0, 0],
+})
+meses = hist["implantacao"].dt.to_period("M").nunique()
+print("Implantações por mês       :", round(len(hist) / meses, 1))
+print("Tempo de entrega (dias)    :", round((hist["implantacao"] - hist["commit"]).dt.days.mean(), 1))
+print("Taxa de falha de mudança   :", f"{hist['falhou'].mean():.0%}")
+print("Tempo de recuperação (h)   :", round(hist.loc[hist["falhou"], "horas_recuperacao"].mean(), 1))
+```
+@@NOTE São as quatro medidas de Forsgren, Humble e Kim (2018). Acompanhe-as ao longo do tempo: o objetivo é entregar com frequência, rapidez, poucas falhas e recuperação rápida.
+@@PROJ Esqueleto de um projeto reprodutível | Cap01
+**Contexto.** Sua equipe vai começar um projeto de classificação com o conjunto *Breast Cancer Wisconsin* (UCI). Antes de qualquer modelagem, o gerente quer ver que o projeto é **reprodutível**.
+
+**Tarefas.**
+1. Crie, em uma pasta temporária, a estrutura `data/`, `src/`, `tests/`, `models/` e um `README.md`.
+2. Gere um `requirements.txt` com as versões instaladas de `numpy`, `pandas`, `scikit-learn` e `joblib` (use `importlib.metadata`).
+3. Escreva em `src/treino.py` um script que treina um pipeline com semente fixa e imprime um **hash** das previsões de probabilidade para todo o conjunto.
+4. Execute o script **duas vezes** em processos separados (`subprocess`) e verifique se os hashes são iguais.
+5. Execute uma terceira vez com outra semente e mostre que o hash muda.
+
+**Entregáveis.** Estrutura criada, `requirements.txt`, saída das três execuções e uma frase concluindo o que garante a reprodutibilidade.
+@@SOL
+```python
+import os
+import subprocess
+import sys
+import tempfile
+import textwrap
+from importlib.metadata import version
+
+raiz = tempfile.mkdtemp()
+for pasta in ["data", "src", "tests", "models"]:
+    os.makedirs(os.path.join(raiz, pasta))
+open(os.path.join(raiz, "README.md"), "w").write("# Projeto reprodutível\nExecute: python src/treino.py --semente 42\n")
+
+with open(os.path.join(raiz, "requirements.txt"), "w") as f:
+    for pacote in ["numpy", "pandas", "scikit-learn", "joblib"]:
+        f.write(f"{pacote}=={version(pacote)}\n")
+print(open(os.path.join(raiz, "requirements.txt")).read().strip())
+
+codigo = textwrap.dedent('''
+    import argparse, hashlib
+    from sklearn.datasets import load_breast_cancer
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--semente", type=int, default=42)
+    args = ap.parse_args()
+    X, y = load_breast_cancer(return_X_y=True)
+    pipe = make_pipeline(StandardScaler(), RandomForestClassifier(n_estimators=100, random_state=args.semente))
+    p = pipe.fit(X, y).predict_proba(X)
+    print(hashlib.sha256(p.tobytes()).hexdigest()[:12])
+''')
+open(os.path.join(raiz, "src", "treino.py"), "w").write(codigo)
+
+def executar(semente):
+    r = subprocess.run([sys.executable, "src/treino.py", "--semente", str(semente)],
+                       cwd=raiz, capture_output=True, text=True)
+    return r.stdout.strip()
+
+h1, h2, h3 = executar(42), executar(42), executar(7)
+print("Execução 1 (semente 42):", h1)
+print("Execução 2 (semente 42):", h2)
+print("Execução 3 (semente  7):", h3)
+print("Reprodutível com a mesma semente?", h1 == h2, "| muda com outra semente?", h1 != h3)
+```
+@@RUBRICA
+- Estrutura de pastas criada corretamente.
+- `requirements.txt` com versões exatas lidas do ambiente (e não escritas à mão).
+- Script parametrizado por linha de comando, com semente fixa.
+- Execuções em processos separados, comparando hashes.
+- Conclusão que cita semente, versões das bibliotecas, dados e ambiente.
+@@NOTE Hashes iguais com a mesma semente mostram que o código é determinístico. Mas reprodutibilidade completa também exige os mesmos dados e as mesmas versões das bibliotecas, por isso o `requirements.txt`. Em outro computador, diferenças de hardware ou de versões ainda podem alterar os números.
+@@ALEM
+- **UCI:** Wine Quality, Heart Disease e Adult (Census Income). Escolha um e repita o projeto, criando a estrutura e testando a reprodutibilidade.
+- **Kaggle:** Titanic e *House Prices*, clássicos para praticar organização de projeto e reprodutibilidade.

@@ -1,0 +1,261 @@
+@@EX 1 | Um contrato gerado a partir dos dados de treino | básico
+Para o conjunto *Wine* (UCI), construa um modelo Pydantic dinamicamente (`pydantic.create_model`) com um campo `float` para cada atributo, limitado entre o mínimo e o máximo observados no treino, com folga de 25%. Teste com uma amostra válida e com duas inválidas (valor fora da faixa e campo faltando).
+@@SOL
+```python
+from pydantic import ValidationError, create_model, Field
+from sklearn.datasets import load_wine
+
+X = load_wine(as_frame=True).data
+campos = {}
+for c in X.columns:
+    folga = 0.25 * (X[c].max() - X[c].min())
+    campos[c] = (float, Field(ge=float(X[c].min() - folga), le=float(X[c].max() + folga)))
+Vinho = create_model("Vinho", **campos)
+
+valida = X.iloc[0].to_dict()
+fora = dict(valida, alcohol=99.0)
+faltando = {k: v for k, v in valida.items() if k != "proline"}
+
+for nome, dados in [("válida", valida), ("álcool fora da faixa", fora), ("campo faltando", faltando)]:
+    try:
+        Vinho(**dados)
+        print(f"{nome:22s} -> aceita")
+    except ValidationError as e:
+        erro = e.errors()[0]
+        print(f"{nome:22s} -> rejeitada ({erro['loc'][0]}: {erro['type']})")
+```
+@@NOTE O contrato nasceu dos próprios dados de treino, então cada campo recebe limites realistas. Pedidos fora da faixa são rejeitados antes de chegar ao modelo, em vez de gerar previsões sem sentido.
+@@EX 2 | Uma API mínima com saúde e previsão | intermediário
+Treine uma regressão logística (com padronização) no conjunto *Iris* (UCI) e crie uma API FastAPI com `GET /saude` e `POST /previsao`, que recebe os quatro atributos e devolve a espécie e a probabilidade. Use o `TestClient` para testar: uma chamada válida, uma com comprimento de sépala negativo e uma sem campos.
+@@SOL
+```python
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from pydantic import BaseModel, Field
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+iris = load_iris()
+modelo = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)).fit(iris.data, iris.target)
+
+class Flor(BaseModel):
+    sepala_comp: float = Field(gt=0, lt=20)
+    sepala_larg: float = Field(gt=0, lt=20)
+    petala_comp: float = Field(gt=0, lt=20)
+    petala_larg: float = Field(gt=0, lt=20)
+
+app = FastAPI()
+
+@app.get("/saude")
+def saude():
+    return {"status": "ok"}
+
+@app.post("/previsao")
+def prever(f: Flor):
+    x = [[f.sepala_comp, f.sepala_larg, f.petala_comp, f.petala_larg]]
+    p = modelo.predict_proba(x)[0]
+    return {"especie": str(iris.target_names[p.argmax()]), "probabilidade": round(float(p.max()), 3)}
+
+cli = TestClient(app)
+print("saúde      :", cli.get("/saude").json())
+ok = cli.post("/previsao", json={"sepala_comp": 5.1, "sepala_larg": 3.5, "petala_comp": 1.4, "petala_larg": 0.2})
+print("válida     :", ok.status_code, ok.json())
+neg = cli.post("/previsao", json={"sepala_comp": -1, "sepala_larg": 3.5, "petala_comp": 1.4, "petala_larg": 0.2})
+print("negativa   :", neg.status_code)
+vazio = cli.post("/previsao", json={})
+print("sem campos :", vazio.status_code, f"({len(vazio.json()['detail'])} erros)")
+```
+@@NOTE O `TestClient` permite testar a API sem subir servidor, o que a torna testável na integração contínua. O código 422 indica que o contrato foi violado.
+@@EX 3 | Percentis de latência e o ganho do lote | intermediário
+Treine uma floresta aleatória (200 árvores) no conjunto *Digits* (UCI). Meça a latência de 300 previsões individuais e informe p50, p95, p99 e a média. Depois, meça o tempo para prever as mesmas 300 imagens de uma vez e calcule a economia por previsão.
+@@SOL
+```python
+import time
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.ensemble import RandomForestClassifier
+
+X, y = load_digits(return_X_y=True)
+m = RandomForestClassifier(200, random_state=0, n_jobs=1).fit(X, y)
+m.predict(X[:5])                                              # aquecimento
+
+tempos = []
+for i in range(300):
+    t0 = time.perf_counter()
+    m.predict(X[i:i + 1])
+    tempos.append((time.perf_counter() - t0) * 1000)
+p50, p95, p99 = np.percentile(tempos, [50, 95, 99])
+print(f"individuais: p50 = {p50:.1f} ms | p95 = {p95:.1f} ms | p99 = {p99:.1f} ms | média = {np.mean(tempos):.1f} ms")
+
+t0 = time.perf_counter(); m.predict(X[:300]); lote = (time.perf_counter() - t0) * 1000
+print(f"lote de 300: {lote:.1f} ms no total = {lote / 300:.3f} ms por previsão")
+print(f"Economia: cerca de {np.mean(tempos) / (lote / 300):.0f} vezes mais rápido por previsão")
+```
+@@NOTE Os valores variam com o computador, mas o padrão se repete: p99 maior que p50 e o lote muito mais eficiente por previsão. Isso justifica agrupar pedidos (*micro-batching*) em serviços de alto volume.
+@@EX 4 | Previsão em lote idempotente com manifesto | intermediário
+Escreva uma função que preveja, em blocos de 200 linhas, as classes dos 1.797 dígitos do *Digits* (UCI), grave um CSV nomeado com a data de referência e um arquivo `manifesto.json` com a versão do modelo, o número de linhas, o hash da entrada e o hash da saída. Execute duas vezes e prove a idempotência comparando os hashes e conferindo que o número de linhas não dobrou.
+@@SOL
+```python
+import hashlib
+import json
+import os
+import tempfile
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_digits
+from sklearn.linear_model import LogisticRegression
+
+os.chdir(tempfile.mkdtemp())
+X, y = load_digits(return_X_y=True)
+modelo = LogisticRegression(max_iter=3000).fit(X[:1200] / 16, y[:1200])
+VERSAO = "1.0.0"
+
+def hash_bytes(b):
+    return hashlib.sha256(b).hexdigest()[:12]
+
+def prever_em_lote(X, data_ref, tam=200):
+    blocos = [pd.DataFrame({"indice": np.arange(i, min(i + tam, len(X))),
+                            "classe": modelo.predict(X[i:i + tam] / 16)}) for i in range(0, len(X), tam)]
+    saida = pd.concat(blocos, ignore_index=True)
+    caminho = f"previsoes_{data_ref}.csv"
+    saida.to_csv(caminho, index=False)                      # sobrescreve: idempotente
+    manifesto = {"data_ref": data_ref, "versao_modelo": VERSAO, "linhas": len(saida),
+                 "hash_entrada": hash_bytes(X.tobytes()), "hash_saida": hash_bytes(open(caminho, "rb").read())}
+    json.dump(manifesto, open("manifesto.json", "w"), indent=1)
+    return manifesto
+
+m1 = prever_em_lote(X, "2026-10-17")
+m2 = prever_em_lote(X, "2026-10-17")
+print("Manifesto:", m1)
+print("Mesmo manifesto na reexecução?", m1 == m2)
+print("Linhas no arquivo:", len(pd.read_csv("previsoes_2026-10-17.csv")))
+```
+@@NOTE Reexecutar o trabalho gera exatamente o mesmo arquivo e o mesmo manifesto (o arquivo é sobrescrito, e não acrescentado). Se o hash da entrada ou a versão do modelo mudarem, o manifesto mostra a diferença, o que facilita a auditoria.
+@@PROJ API completa com tempo real, lote, limites e testes | Cap07
+**Contexto.** Você deve entregar a equipe de operações uma API de previsão de cancelamento de clientes (5 atributos) com endpoints para tempo real e para lote, além de testes.
+
+**Dados simulados.** Use clientes com `idade`, `renda`, `tempo_cliente`, `plano` e `cidade`, como no Capítulo 7 (regra de risco conhecida, `random_state=0`).
+
+**Tarefas.**
+1. Treine e salve um pipeline (`ColumnTransformer` + floresta) com metadados (versão do modelo, colunas, data).
+2. Crie uma API com: `GET /saude` (status e versão), `POST /previsao` (um cliente), `POST /previsao_lote` (lista de até 100 clientes) e `GET /metadados`.
+3. Defina o contrato com Pydantic (faixas e categorias permitidas). Rejeite lotes vazios ou com mais de 100 itens.
+4. Carregue o modelo uma única vez na partida (`lifespan`).
+5. Escreva testes com `TestClient` para: caminho feliz, campos inválidos, lote vazio, lote acima do limite e consistência (a previsão individual deve ser igual à do mesmo cliente dentro do lote).
+6. Meça a latência (p50 e p95) de 200 chamadas individuais e do lote de 100 clientes por requisição.
+7. Liste, em 5 itens, o que ainda faltaria para produção (segurança, observabilidade etc.).
+
+**Entregáveis.** Código da API e dos testes, resultados dos testes, medidas de latência e a lista de pendências.
+@@SOL
+```python
+import os
+import tempfile
+import time
+from contextlib import asynccontextmanager
+from datetime import date
+from typing import Literal
+import joblib
+import numpy as np
+import pandas as pd
+from fastapi import FastAPI, HTTPException
+from fastapi.testclient import TestClient
+from pydantic import BaseModel, Field
+from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+os.chdir(tempfile.mkdtemp())
+rng = np.random.default_rng(0)
+n = 3000
+df = pd.DataFrame({"idade": rng.integers(18, 75, n).astype(float), "renda": rng.lognormal(8, 0.5, n),
+                   "tempo_cliente": rng.integers(1, 120, n).astype(float),
+                   "plano": rng.choice(["basico", "padrao", "premium"], n, p=[0.5, 0.35, 0.15]),
+                   "cidade": rng.choice(["Natal", "Recife", "Fortaleza"], n)})
+risco = 0.03 * (50 - df["idade"]) - 0.02 * df["tempo_cliente"] + (df["plano"] == "basico") * 0.8
+y = (risco + rng.normal(0, 0.8, n) > 0.3).astype(int)
+num, cat = ["idade", "renda", "tempo_cliente"], ["plano", "cidade"]
+prep = ColumnTransformer([("num", Pipeline([("imp", SimpleImputer(strategy="median")), ("esc", StandardScaler())]), num),
+                          ("cat", OneHotEncoder(handle_unknown="ignore"), cat)])
+pipe = Pipeline([("prep", prep), ("m", RandomForestClassifier(100, random_state=0))]).fit(df[num + cat], y)
+joblib.dump({"pipeline": pipe, "versao": "1.2.0", "colunas": num + cat, "data": date(2026, 10, 17).isoformat()}, "modelo.joblib")
+
+class Cliente(BaseModel):
+    idade: float = Field(ge=18, le=100)
+    renda: float = Field(ge=0, le=1_000_000)
+    tempo_cliente: float = Field(ge=0, le=600)
+    plano: Literal["basico", "padrao", "premium"]
+    cidade: Literal["Natal", "Recife", "Fortaleza"]
+
+class Lote(BaseModel):
+    clientes: list[Cliente]
+
+def criar_app():
+    estado = {}
+    @asynccontextmanager
+    async def ciclo(app):
+        estado["a"] = joblib.load("modelo.joblib")
+        yield
+    app = FastAPI(lifespan=ciclo)
+
+    def prever_df(lista):
+        a = estado["a"]
+        X = pd.DataFrame([c.model_dump() for c in lista])[a["colunas"]]
+        return [round(float(p), 4) for p in a["pipeline"].predict_proba(X)[:, 1]]
+
+    @app.get("/saude")
+    def saude():
+        return {"status": "ok", "versao": estado["a"]["versao"]}
+
+    @app.get("/metadados")
+    def metadados():
+        a = estado["a"]
+        return {"versao": a["versao"], "colunas": a["colunas"], "data_treino": a["data"]}
+
+    @app.post("/previsao")
+    def previsao(c: Cliente):
+        return {"probabilidade": prever_df([c])[0], "versao": estado["a"]["versao"]}
+
+    @app.post("/previsao_lote")
+    def previsao_lote(l: Lote):
+        if not 1 <= len(l.clientes) <= 100:
+            raise HTTPException(status_code=422, detail="o lote deve ter de 1 a 100 clientes")
+        return {"probabilidades": prever_df(l.clientes), "versao": estado["a"]["versao"]}
+    return app
+
+ok = {"idade": 33, "renda": 4500, "tempo_cliente": 8, "plano": "basico", "cidade": "Natal"}
+resultados = {}
+with TestClient(criar_app()) as cli:
+    resultados["saúde"] = cli.get("/saude").status_code == 200
+    resultados["caminho feliz"] = cli.post("/previsao", json=ok).status_code == 200
+    resultados["campo inválido"] = cli.post("/previsao", json=dict(ok, plano="ultra")).status_code == 422
+    resultados["lote vazio"] = cli.post("/previsao_lote", json={"clientes": []}).status_code == 422
+    resultados["lote acima do limite"] = cli.post("/previsao_lote", json={"clientes": [ok] * 101}).status_code == 422
+    outro = dict(ok, idade=60, plano="premium")
+    ind = cli.post("/previsao", json=outro).json()["probabilidade"]
+    lot = cli.post("/previsao_lote", json={"clientes": [ok, outro]}).json()["probabilidades"][1]
+    resultados["individual == lote"] = ind == lot
+    for nome, passou in resultados.items():
+        print(f"teste {nome:22s}: {'OK' if passou else 'FALHOU'}")
+
+    ts = []
+    for _ in range(200):
+        t0 = time.perf_counter(); cli.post("/previsao", json=ok); ts.append((time.perf_counter() - t0) * 1000)
+    t0 = time.perf_counter(); cli.post("/previsao_lote", json={"clientes": [ok] * 100}); lote_ms = (time.perf_counter() - t0) * 1000
+    print(f"individual: p50 = {np.percentile(ts, 50):.1f} ms | p95 = {np.percentile(ts, 95):.1f} ms")
+    print(f"lote de 100 em uma requisição: {lote_ms:.1f} ms ({lote_ms / 100:.2f} ms por cliente)")
+```
+@@RUBRICA
+- Endpoints de saúde, metadados, previsão individual e em lote implementados.
+- Contrato com faixas e categorias; limites de tamanho do lote.
+- Modelo carregado uma vez; versão presente nas respostas.
+- Testes de caminho feliz, erros de contrato, limites e consistência entre individual e lote.
+- Medição de latência com percentis e comparação entre individual e lote.
+- Lista realista de pendências: autenticação, limite de taxa, logs estruturados, contêiner e monitoramento.
+@@NOTE Todos os testes passam e o lote de 100 clientes custa muito menos por cliente do que 100 chamadas separadas. Os valores de latência dependem do computador e incluem a camada simulada do `TestClient`. Pendências típicas: autenticação, limite de taxa, logs estruturados com identificador de requisição, empacotamento em contêiner, monitoramento de dados e de desempenho e plano de reversão.
+@@ALEM
+- **UCI:** *Bank Marketing* e *Adult (Census Income)* (para criar APIs com atributos mistos) e *Wine Quality* (regressão ou classificação).
+- **Kaggle:** *Telco Customer Churn* e *Titanic* para treinar um serviço de previsão e escrever seus testes.

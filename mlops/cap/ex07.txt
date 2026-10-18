@@ -1,0 +1,269 @@
+MC: A etapa de serviço (serving) é:
+a) a ponte entre o modelo e quem precisa das previsões.
+b) a etapa de limpeza de dados.
+c) a escolha dos hiperparâmetros.
+d) a escrita do relatório final.
+R: a | Sem serviço, o modelo não gera valor, por melhor que seja.
+
+MC: Qual padrão de entrega de previsões processa muitos registros em horários marcados?
+a) Lote (batch).
+b) Tempo real (online).
+c) Embarcado (edge).
+d) Interativo por voz.
+R: a | Exemplo: lista diária de clientes com risco de cancelar.
+
+MC: Aprovar uma compra no cartão no momento da transação exige:
+a) previsão em tempo real, com latência de milissegundos.
+b) previsão em lote semanal.
+c) previsão manual.
+d) apenas relatório mensal.
+R: a | A decisão não pode esperar.
+
+MC: Um modelo embarcado (edge) é:
+a) executado no próprio dispositivo, sem depender da rede.
+b) executado somente em data centers.
+c) executado em lote noturno.
+d) um modelo sem parâmetros.
+R: a | Exemplo: reconhecimento de voz no celular.
+
+MC: A recomendação sobre o padrão de entrega é:
+a) começar por lote sempre que a decisão puder esperar, por ser mais simples e barato.
+b) usar sempre tempo real.
+c) usar sempre embarcado.
+d) escolher o padrão ao acaso.
+R: a | Tempo real deve ser usado quando a decisão realmente não pode esperar.
+
+MC: Um contrato de entrada e saída de um serviço de previsão define:
+a) campos, tipos, intervalos e formato da resposta.
+b) apenas a cor da interface.
+c) somente os hiperparâmetros.
+d) quem pagou pelo servidor.
+R: a | Dados fora das regras são rejeitados antes de chegarem ao modelo.
+
+MC: A biblioteca Pydantic é usada no capítulo para:
+a) descrever e validar o contrato de dados por meio de classes.
+b) treinar redes neurais.
+c) comprimir arquivos.
+d) criar gráficos.
+R: a | Ela rejeita, por exemplo, idade negativa ou plano desconhecido.
+
+MC: O que é uma API?
+a) Uma porta de entrada padronizada para que programas se comuniquem.
+b) Um tipo de banco de dados.
+c) Um algoritmo de ML.
+d) Um formato de imagem.
+R: a | Outros programas enviam pedidos e recebem respostas.
+
+MC: O formato JSON é:
+a) texto estruturado em chaves e valores usado em APIs.
+b) um tipo de imagem.
+c) uma linguagem de programação.
+d) um algoritmo de compressão.
+R: a | É o formato mais comum de troca de dados em serviços web.
+
+MC: Por que carregar o modelo uma vez, na partida do serviço?
+a) Carregá-lo a cada pedido seria muito lento.
+b) Para economizar espaço em disco.
+c) Porque o modelo muda a cada pedido.
+d) Por exigência do Docker.
+R: a | No FastAPI usa-se o ciclo de vida (lifespan) para isso.
+
+MC: Por que a resposta da API deve incluir a versão do modelo?
+a) Facilita a rastreabilidade de cada previsão.
+b) Reduz a latência.
+c) Substitui os testes.
+d) Impede o uso de lote.
+R: a | Permite saber qual modelo gerou cada resposta.
+
+MC: O código HTTP 422 significa:
+a) o pedido chegou, mas os dados violam o contrato.
+b) o servidor está desligado.
+c) o modelo está com sobreajuste.
+d) a autenticação foi aprovada.
+R: a | O modelo nem chega a ser chamado.
+
+MC: O TestClient do FastAPI permite:
+a) simular pedidos HTTP dentro do próprio programa, sem subir um servidor.
+b) treinar o modelo.
+c) gerar dados sintéticos.
+d) criar contêineres.
+R: a | Assim a API é testada automaticamente a cada mudança.
+
+MC: Latência é:
+a) o tempo entre o pedido e a resposta.
+b) o número de previsões por segundo.
+c) o tamanho do modelo.
+d) o custo mensal do servidor.
+R: a | A vazão (throughput) é a quantidade por segundo.
+
+MC: Por que usar percentis (p95, p99) em vez de apenas a média da latência?
+a) A média esconde os piores casos, que afetam clientes reais.
+b) Percentis são sempre menores que a média.
+c) A média é impossível de calcular.
+d) Percentis dispensam medições.
+R: a | A cauda da distribuição (p99) mostra a pior experiência.
+
+MC: O p95 de latência de 80 ms significa que:
+a) 95% dos pedidos são mais rápidos que 80 ms.
+b) todos os pedidos duram 80 ms.
+c) 5% dos pedidos são mais rápidos que 80 ms.
+d) a média é 95 ms.
+R: a | Metade dos pedidos é mais rápida que o p50.
+
+MC: O ganho de processar previsões em lote, em vez de uma a uma, vem de:
+a) amortizar custos fixos e usar operações vetorizadas.
+b) usar um modelo menor.
+c) reduzir os atributos.
+d) eliminar a validação.
+R: a | Por isso se usa micro-batching em serviços de alto volume.
+
+MC: Uma imagem de contêiner é:
+a) o "molde" somente leitura a partir do qual os contêineres são criados.
+b) um contêiner em execução.
+c) um arquivo de dados.
+d) um servidor físico.
+R: a | O contêiner é a instância em uso.
+
+MC: O Dockerfile é:
+a) a receita que descreve como montar a imagem.
+b) o arquivo de dados de treino.
+c) o arquivo do modelo.
+d) o log de acesso.
+R: a | Contém instruções como FROM, COPY e RUN.
+
+MC: Por que copiar o requirements.txt e instalar as dependências antes de copiar o código no Dockerfile?
+a) A camada de dependências só muda quando o requirements.txt muda, aproveitando o cache.
+b) Porque o Docker exige essa ordem.
+c) Para esconder o código.
+d) Para reduzir o tamanho do modelo.
+R: a | Camadas que mudam pouco ficam embaixo.
+
+MC: Qual é uma boa prática na construção de imagens?
+a) Fixar versões e não colocar segredos na imagem.
+b) Usar a etiqueta latest em produção.
+c) Gravar senhas no Dockerfile.
+d) Rodar sempre como administrador.
+R: a | Além de usar usuário comum e imagem base pequena.
+
+MC: Idempotência em previsão em lote significa:
+a) rodar duas vezes produz o mesmo resultado, sem duplicar registros.
+b) cada execução gera um arquivo novo diferente.
+c) o job só pode rodar uma vez na vida.
+d) os resultados são aleatórios.
+R: a | É essencial quando o trabalho é reexecutado após falhas.
+
+MC: Em implantação azul-verde (blue-green):
+a) dois ambientes idênticos coexistem e o tráfego passa de um para o outro.
+b) todo o tráfego vai para o modelo novo de uma só vez, sem volta.
+c) só 1% do tráfego vai para o novo.
+d) o novo recebe cópia do tráfego, sem uso das respostas.
+R: a | A reversão é rápida.
+
+MC: Na implantação canário (canary):
+a) o modelo novo atende uma pequena fração do tráfego.
+b) o modelo novo substitui o antigo imediatamente.
+c) o modelo antigo é apagado.
+d) nenhum usuário vê o modelo novo.
+R: a | Se tudo estiver bem, aumenta-se gradualmente.
+
+MC: No modo sombra (shadow):
+a) o modelo novo recebe cópia dos pedidos, mas suas respostas não são usadas.
+b) o modelo novo responde a todos os usuários.
+c) o modelo novo roda apenas à noite.
+d) o modelo antigo é desligado.
+R: a | Permite comparar respostas sem risco para o usuário.
+
+MC: Um cuidado de segurança em serviços de modelos é:
+a) validar entradas, autenticar usuários e limitar a taxa de pedidos.
+b) expor todos os detalhes do modelo.
+c) gravar senhas no código.
+d) desligar os logs.
+R: a | Também proteger segredos e atualizar dependências.
+
+MC: Ataques de inferência de associação (Shokri et al., 2017) tentam:
+a) descobrir se uma pessoa estava no conjunto de treino.
+b) quebrar a criptografia do disco.
+c) aumentar a latência do serviço.
+d) alterar o código-fonte.
+R: a | Devolver probabilidades muito detalhadas pode facilitar esses ataques.
+
+MC: Em uma API, por que receber a linha crua e usar o pipeline treinado?
+a) Elimina duplicação do pré-processamento e o desvio treino–serviço.
+b) Aumenta a quantidade de código.
+c) Impede testes.
+d) Obriga o uso de lote.
+R: a | O pipeline cuida de imputação, escala e codificação.
+
+MC: Qual o papel do endpoint GET /saude?
+a) Informar que o serviço está vivo e qual modelo foi carregado.
+b) Treinar o modelo.
+c) Apagar logs.
+d) Receber dados de treino.
+R: a | É útil para orquestradores e balanceadores verificarem o serviço.
+
+MC: O que a vazão (throughput) mede?
+a) A quantidade de previsões atendidas por unidade de tempo.
+b) O tempo de uma única previsão.
+c) O tamanho do modelo em disco.
+d) A quantidade de atributos.
+R: a | Latência e vazão são requisitos não funcionais complementares.
+
+DISC: Compare os quatro padrões de entrega de previsões (lote, tempo real, fluxo contínuo e embarcado) e dê um exemplo de cada.
+R: Lote: lista diária de risco de cancelamento. Tempo real: aprovar compra no cartão. Fluxo contínuo: detectar fraude em sequência de eventos. Embarcado: reconhecimento de voz no celular. Variam em latência, complexidade e dependência de rede.
+
+DISC: Por que um contrato de entrada com validação é a primeira linha de defesa de uma API de ML?
+R: Porque rejeita antes de chegar ao modelo dados com tipos errados, campos faltando ou valores impossíveis, evitando previsões sem sentido e registrando erros claros. Serve também de documentação viva da API.
+
+DISC: Explique o papel do lifespan (ciclo de vida) no FastAPI para modelos de ML.
+R: Permite executar código na partida e no encerramento do serviço. Nele se carrega o modelo uma vez e o mantém em memória para todas as requisições, evitando o custo de carregar o artefato a cada pedido.
+
+DISC: Descreva como testar uma API de previsão com TestClient e quais casos incluir.
+R: Instanciar o TestClient com a aplicação e chamar os endpoints: caminho feliz, campos inválidos (422), campos faltando, valores fora da faixa, lote vazio ou acima do limite, e consistência entre previsão individual e em lote.
+
+DISC: Por que é preciso medir percentis de latência e não apenas a média?
+R: A média esconde a cauda: poucos pedidos muito lentos prejudicam usuários reais. Percentis como p95 e p99 mostram a experiência dos piores casos e permitem definir objetivos de nível de serviço.
+
+DISC: Por que processar previsões em lote é mais eficiente por registro que fazer chamadas individuais?
+R: Porque custos fixos de chamada e de inicialização são amortizados e operações vetorizadas aproveitam melhor o hardware. Em serviços de alto volume, agrupam-se pedidos (micro-batching).
+
+DISC: Explique o que é um contêiner, em que difere de uma máquina virtual e qual problema ele ajuda a resolver.
+R: Contêiner empacota o programa e tudo de que precisa, compartilhando o núcleo do sistema operacional do hospedeiro; é mais leve que uma máquina virtual completa. Resolve o "funciona na minha máquina" ao reproduzir o ambiente.
+
+DISC: Liste cinco boas práticas na construção de imagens de contêiner para modelos.
+R: Imagem base pequena; versões fixas; camadas ordenadas do que muda menos ao que muda mais; sem segredos na imagem; usuário comum; etiquetar com versões de código e modelo; verificar vulnerabilidades.
+
+DISC: O que é idempotência e como garanti-la em uma previsão em lote?
+R: Propriedade de uma operação poder ser repetida sem mudar o resultado nem duplicar efeitos. Garante-se gravando a saída em arquivo/partição nomeada pela data de referência e sobrescrevendo, registrando um manifesto com hashes.
+
+DISC: Compare as estratégias de implantação substituição direta, azul-verde, canário e sombra quanto ao risco.
+R: Substituição direta: risco alto. Azul-verde: baixo, com reversão rápida. Canário: baixo, limita o dano a uma fração. Sombra: muito baixo, pois as respostas do novo modelo não são usadas.
+
+DISC: Cite cinco medidas de segurança para um serviço de modelos e o risco que cada uma reduz.
+R: Validação de entrada (dados maliciosos ou absurdos); autenticação e autorização (acesso indevido); limite de taxa (abuso); cofre de segredos (vazamento de chaves); atualização de dependências (vulnerabilidades); logs de auditoria; limitação de detalhes devolvidos (inferência de associação).
+
+DISC: Explique o ataque de inferência de associação e uma forma de reduzi-lo.
+R: O atacante usa as saídas do modelo para descobrir se um registro estava no treino. Reduz-se limitando detalhes das probabilidades, regularizando o modelo, limitando consultas e usando privacidade diferencial.
+
+DISC: Por que o desvio treino–serviço pode ocorrer mesmo com o mesmo modelo, e como evitá-lo na API?
+R: Se o pré-processamento em produção for reimplementado de forma diferente do treino, as entradas do modelo diferem. Evita-se empacotando o pré-processamento no pipeline e fazendo a API receber a linha crua.
+
+DISC: O que deve ser registrado em uma execução de previsão em lote para auditoria?
+R: Versão do modelo, data de referência, número de linhas, hash da entrada e da saída, horário de início e fim, e eventuais erros.
+
+DISC: Qual a importância do endpoint de metadados (/metadados) em uma API de modelo?
+R: Informa versão, colunas esperadas e data de treino, ajudando clientes a conferir compatibilidade e a depurar problemas, além de apoiar a rastreabilidade.
+
+DISC: Descreva três itens que ainda faltariam para tornar a API didática do capítulo pronta para produção.
+R: Autenticação e autorização, limite de taxa, logs estruturados com identificador de requisição, múltiplos processos, monitoramento de dados e desempenho, plano de reversão e empacotamento em contêiner.
+
+DISC: Por que limitar o tamanho do lote em um endpoint de previsão?
+R: Para evitar consumo excessivo de memória e tempo, ataques de negação de serviço e latências imprevisíveis. Lotes muito grandes devem ir pelo fluxo de previsão em lote assíncrono.
+
+DISC: Como você explicaria a um gestor por que começar por previsões em lote?
+R: É mais simples, barato e seguro de operar, não exige baixa latência nem infraestrutura online complexa; muitas decisões de negócio não precisam de resposta imediata. Quando surgir necessidade real de tempo real, migra-se.
+
+DISC: Qual a relação entre contratos de dados na API e o monitoramento em produção?
+R: O contrato define o que é esperado e rejeita o inválido; o monitoramento acompanha o que passa (distribuições, ausentes, categorias novas). Juntos, protegem o modelo de dados ruins imediatamente e ao longo do tempo.
+
+DISC: Por que é recomendável versionar a imagem do contêiner com a versão do modelo e do código?
+R: Para saber exatamente o que roda em produção, reproduzir ambientes e permitir reversão rápida a uma imagem anterior conhecida.

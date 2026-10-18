@@ -1,0 +1,269 @@
+MC: Na analogia do capítulo, treinar um modelo no notebook equivale a:
+a) fazer um bolo na cozinha de casa.
+b) montar uma fábrica de bolos.
+c) entregar bolos todos os dias a uma padaria.
+d) fiscalizar a qualidade dos bolos vendidos.
+R: a | O notebook é a cozinha de casa; a produção é a cozinha industrial, e o MLOps liga as duas.
+
+MC: MLOps pode ser definido, de forma prática, como:
+a) o conjunto de práticas para desenvolver, entregar, operar e melhorar sistemas de ML de forma confiável e repetível.
+b) uma biblioteca do Python para treinar modelos mais rápido.
+c) uma técnica de redução de dimensionalidade.
+d) o nome de um algoritmo de aprendizado profundo.
+R: a | MLOps é um paradigma de práticas, processos, ferramentas e cultura para todo o ciclo de vida do sistema de ML.
+
+MC: Segundo Sculley et al. (2015), em sistemas reais de ML, o código do modelo é:
+a) uma pequena parte do sistema, cercada por muita infraestrutura.
+b) a parte maior e mais cara do sistema.
+c) a única parte que precisa de testes.
+d) irrelevante para o funcionamento.
+R: a | A figura do "iceberg" mostra que o código do modelo é a ponta visível de um sistema muito maior.
+
+MC: A falha silenciosa em ML significa que:
+a) o sistema continua respondendo, mas as respostas ficam piores sem nenhum erro aparente.
+b) o servidor deixa de responder sem aviso.
+c) o código gera uma exceção que ninguém lê.
+d) o modelo recusa todas as entradas.
+R: a | Diferente de um travamento, o modelo envelhecido continua respondendo normalmente, só que pior.
+
+MC: Qual alternativa descreve melhor a diferença central entre software tradicional e sistema de ML?
+a) No ML, os dados ajudam a definir o comportamento; no software tradicional, o código o define.
+b) No ML não há código.
+c) No software tradicional não há testes.
+d) No ML o comportamento nunca muda.
+R: a | No ML, o comportamento é aprendido dos dados, por isso dados e modelos também precisam ser versionados e testados.
+
+MC: Os três eixos que mudam em um sistema de ML são:
+a) código, dados e modelo.
+b) servidor, rede e banco de dados.
+c) treino, teste e validação.
+d) precisão, revocação e F1.
+R: a | Para reproduzir um resultado é preciso conhecer a versão de código, de dados e de modelo.
+
+MC: O princípio CACE ("Changing Anything Changes Everything") alerta para o fato de que:
+a) mudar um componente pode alterar o comportamento de todo o sistema.
+b) cada componente é independente dos demais.
+c) mudanças só afetam a interface.
+d) apenas mudanças no código são relevantes.
+R: a | Em sistemas de ML os componentes são emaranhados; alterar uma entrada pode mudar o modelo inteiro.
+
+MC: O que significa CI (integração contínua)?
+a) A cada mudança de código, verificações e testes rodam automaticamente.
+b) O modelo é retreinado automaticamente quando os dados mudam.
+c) O modelo é implantado manualmente por um engenheiro.
+d) Os dados são coletados continuamente de sensores.
+R: a | CI integra as mudanças com frequência e verifica cada uma de modo automático.
+
+MC: O CT (treinamento contínuo) é a prática que:
+a) retreina o modelo automaticamente em resposta a dados novos, queda de qualidade ou agendamento.
+b) corrige bugs de código automaticamente.
+c) substitui o monitoramento.
+d) elimina a necessidade de testes.
+R: a | O CT é a peça própria do ML, ao lado de CI e CD.
+
+MC: Entre as quatro medidas de desempenho de entrega de Forsgren, Humble e Kim (2018) está:
+a) a taxa de falha de mudança.
+b) o número de linhas de código.
+c) a quantidade de parâmetros do modelo.
+d) o tamanho do conjunto de teste.
+R: a | As quatro são frequência de implantação, tempo de entrega, taxa de falha de mudança e tempo de recuperação.
+
+MC: Qual dos papéis é responsável principalmente por transformar o modelo em um produto estável e escalável?
+a) Engenheiro de ML.
+b) Responsável pelo produto, apenas.
+c) Auditor externo, apenas.
+d) Analista de planilhas.
+R: a | O engenheiro de ML cuida da passagem do modelo para a produção de modo confiável.
+
+MC: Por que o notebook é inadequado como ambiente final de produção?
+a) Guarda estado escondido, executa células fora de ordem e é difícil de testar.
+b) Não permite usar Python.
+c) Não aceita bibliotecas externas.
+d) Só funciona em computadores antigos.
+R: a | Para produção, o código maduro deve ir para arquivos .py organizados e testáveis.
+
+MC: Em qual arquivo se registram as versões das bibliotecas para recriar o ambiente?
+a) requirements.txt
+b) README.md
+c) config.yaml do modelo
+d) modelo.joblib
+R: a | O requirements.txt registra as versões; instala-se com pip install -r requirements.txt.
+
+MC: Treinar uma floresta aleatória duas vezes sem fixar a semente tende a:
+a) produzir resultados ligeiramente diferentes.
+b) produzir sempre resultados idênticos.
+c) impedir o treinamento.
+d) aumentar sempre a acurácia.
+R: a | Algoritmos aleatórios dependem da semente; sem fixá-la, a execução varia.
+
+MC: Fixar a semente aleatória, por si só, é:
+a) apenas o começo: também é preciso fixar versões, dados e ambiente.
+b) suficiente para garantir reprodutibilidade completa.
+c) desnecessário em qualquer situação.
+d) proibido em produção.
+R: a | A reprodutibilidade completa exige controlar semente, bibliotecas, dados e ambiente.
+
+MC: Qual é a vantagem de salvar metadados junto do modelo?
+a) Permite saber como e com o que o modelo foi feito.
+b) Aumenta automaticamente a acurácia.
+c) Dispensa o versionamento de código.
+d) Reduz o tamanho do conjunto de dados.
+R: a | Metadados (versões, semente, dados, data) dão rastreabilidade ao artefato.
+
+MC: Segundo Amershi et al. (2019), uma das dificuldades do ML em relação ao software tradicional é:
+a) lidar com dados difíceis de descobrir e gerenciar e com modelos difíceis de reutilizar.
+b) a ausência de equipes envolvidas.
+c) a inexistência de bibliotecas.
+d) o fato de não envolver nenhuma engenharia.
+R: a | O estudo da Microsoft destaca dados, modularização e culturas distintas das equipes.
+
+MC: Paleyes, Urma e Lawrence (2022) organizaram os desafios de implantação de ML:
+a) ao longo das etapas do ciclo de vida, de dados a monitoramento.
+b) apenas na etapa de treinamento.
+c) somente na etapa de interface com o usuário.
+d) apenas na escolha do algoritmo.
+R: a | Os problemas aparecem em todas as etapas do ciclo de vida, e não apenas no treino.
+
+MC: Qual das seguintes é uma prática de governança mencionada entre os princípios do MLOps?
+a) Cuidar de privacidade, justiça e conformidade.
+b) Treinar sempre com todos os dados disponíveis.
+c) Evitar qualquer documentação.
+d) Manter o modelo sem versão.
+R: a | A governança envolve responsabilidade, privacidade, justiça e conformidade.
+
+MC: O que o monitoramento em ML precisa medir, além da disponibilidade do servidor?
+a) A qualidade das previsões.
+b) Apenas o consumo de memória.
+c) Somente o número de usuários.
+d) Apenas o tempo de resposta.
+R: a | "Estar no ar" não significa "estar certo"; é preciso acompanhar a qualidade das previsões.
+
+MC: A estrutura de pastas data/raw e data/processed serve para:
+a) separar dados originais (nunca editados à mão) de dados tratados.
+b) guardar apenas modelos.
+c) armazenar senhas.
+d) guardar os testes automáticos.
+R: a | Manter os dados brutos intocados garante reprodutibilidade do tratamento.
+
+MC: O objetivo do MLOps em termos de maturidade é:
+a) avançar passo a passo, resolvendo a dor mais urgente de cada vez.
+b) implantar toda a plataforma no primeiro dia.
+c) evitar qualquer automação.
+d) usar sempre a ferramenta mais cara.
+R: a | Nem todo projeto precisa de uma plataforma completa desde o início.
+
+MC: Em um estágio de maturidade "manual", o que normalmente se observa?
+a) Notebooks, implantação manual e ausência de monitoramento.
+b) Retreino automático e governança integrada.
+c) Entrega totalmente automatizada.
+d) Testes de dados e de modelo em cada mudança.
+R: a | Esse é o ponto de partida; os estágios seguintes automatizam o treino, a entrega e a operação.
+
+MC: Qual a função de um ambiente virtual (venv) em Python?
+a) Isolar as bibliotecas de cada projeto.
+b) Aumentar o desempenho do processador.
+c) Criptografar o modelo.
+d) Armazenar o conjunto de dados.
+R: a | Ambientes virtuais evitam conflitos de versões entre projetos.
+
+MC: Uma sentença como "funciona na minha máquina, mas não na do colega" é sintoma típico de:
+a) falta de reprodutibilidade do ambiente e das dependências.
+b) excesso de testes automáticos.
+c) ausência de modelo.
+d) alta qualidade dos dados.
+R: a | Versões diferentes, dados diferentes ou configurações escondidas causam esse problema.
+
+MC: Qual das alternativas lista corretamente papéis e perguntas?
+a) Engenheiro de dados: "os dados chegam certos e no prazo?"
+b) Auditor jurídico: "qual a melhor taxa de aprendizado?"
+c) Cientista de dados: "qual a latência do servidor de arquivos?"
+d) SRE: "qual a cor do gráfico?"
+R: a | O engenheiro de dados cuida das fontes e dos fluxos de dados.
+
+MC: Qual combinação resume a "automação" no MLOps?
+a) CI, CD e CT.
+b) CPU, GPU e TPU.
+c) SQL, NoSQL e CSV.
+d) HTTP, HTML e CSS.
+R: a | Integração, entrega e treinamento contínuos são as três engrenagens da automação.
+
+MC: Em ML, falhas costumam ser silenciosas porque:
+a) o modelo continua respondendo, ainda que as respostas pioram sem gerar exceção.
+b) todo erro gera um alerta automático.
+c) os dados nunca mudam.
+d) o modelo sempre recusa entradas inválidas.
+R: a | A degradação de qualidade não gera erro de execução, por isso exige monitoramento específico.
+
+MC: O que há de diferente no teste de sistemas de ML em comparação ao software tradicional?
+a) Testa-se desempenho estatístico e comportamentos, além de entradas e saídas exatas.
+b) Não se testa nada.
+c) Só se testa a interface gráfica.
+d) Testam-se apenas dados, nunca o código.
+R: a | Além dos testes de código, há testes de dados e de modelo, que são estatísticos.
+
+MC: Qual a recomendação sobre o código que amadurece em um notebook?
+a) Movê-lo para arquivos .py em src/, onde pode ser testado e automatizado.
+b) Mantê-lo para sempre em células soltas.
+c) Apagá-lo após o primeiro uso.
+d) Convertê-lo em imagem.
+R: a | A modularização em src/ facilita testes, versionamento e automação.
+
+DISC: Explique, com suas palavras e usando a analogia da cozinha, a diferença entre treinar um modelo e operar um sistema de ML em produção.
+R: Treinar é como fazer um bolo em casa: basta a receita certa. Operar é como abastecer uma padaria todos os dias: exige receita registrada, fornecedores confiáveis (dados), testes de cada lote, vigilância da qualidade e equipe com funções claras. MLOps é o conjunto de práticas que leva da cozinha de casa à cozinha industrial.
+
+DISC: Descreva o que a figura do "iceberg" de Sculley et al. (2015) quer transmitir sobre sistemas de ML.
+R: Que o código do modelo é só a parte visível e pequena de um sistema maior. Abaixo estão coleta e verificação de dados, atributos, infraestrutura, ferramentas, serviço e monitoramento. A maior parte do esforço de engenharia está nesse conjunto.
+
+DISC: Por que se diz que, em ML, "os dados definem o comportamento" do sistema? Quais consequências isso traz para versionamento e testes?
+R: Porque o modelo aprende padrões dos dados; mudando os dados, muda o programa resultante. Por isso é preciso versionar dados além do código e do modelo, e testar dados e comportamento do modelo, e não apenas as funções do código.
+
+DISC: O que é uma falha silenciosa? Dê um exemplo e explique como detectá-la.
+R: É a piora das respostas sem erro de execução. Exemplo: um modelo de crédito treinado antes de uma crise continua aprovando como antes e passa a errar mais. Detecta-se monitorando a qualidade das previsões, a distribuição das entradas e das saídas e os indicadores de negócio.
+
+DISC: Explique o princípio CACE e dê um exemplo de como ele aparece em um projeto de ML.
+R: "Mudar qualquer coisa muda tudo": componentes emaranhados fazem uma alteração local afetar o todo. Exemplo: remover ou reescalar um atributo altera os coeficientes ou as árvores e, assim, as importâncias e as previsões dos demais atributos.
+
+DISC: Diferencie CI, CD e CT, indicando qual é próprio do ML.
+R: CI integra e testa cada mudança de código automaticamente. CD entrega ou implanta automaticamente a mudança aprovada. CT retreina o modelo automaticamente por agenda, dados novos ou queda de qualidade. O CT é o específico do ML.
+
+DISC: Quais são os quatro indicadores de desempenho de entrega de Forsgren, Humble e Kim (2018)? Como aplicá-los a um projeto de ML?
+R: Frequência de implantação, tempo de entrega, taxa de falha de mudança e tempo de recuperação. Em ML, medem-se com que frequência novos modelos vão ao ar, quanto tempo da mudança ao ar, que fração causa problemas e quanto leva para reverter ou corrigir.
+
+DISC: Cite três motivos pelos quais fixar a semente aleatória não basta para garantir reprodutibilidade.
+R: Versões diferentes das bibliotecas podem mudar os resultados; os dados podem ter mudado; e o ambiente (sistema, hardware, configurações) pode diferir. Também a ordem dos dados e o paralelismo podem influenciar.
+
+DISC: Por que é importante salvar metadados (versão das bibliotecas, semente, hash dos dados) ao lado do modelo?
+R: Porque permitem reconstruir e auditar o modelo: saber com quais dados, código e ambiente foi produzido, detectar incompatibilidades de versão ao carregá-lo e reproduzir o resultado.
+
+DISC: Proponha uma estrutura de pastas para um projeto de ML e justifique a função de cada pasta.
+R: data/raw e data/processed (dados originais e tratados), src/ (código reutilizável: dados, treino, serviço), tests/ (testes automáticos), models/ (artefatos), notebooks/ (exploração), requirements.txt (versões) e README.md (como rodar). A separação facilita testes, automação e colaboração.
+
+DISC: Descreva três sintomas de um projeto de ML sem práticas de MLOps.
+R: Resultados não reproduzíveis ("funciona na minha máquina"); ninguém sabe qual versão de dados ou código gerou o modelo em produção; demora meses para pôr melhorias no ar; problemas só são percebidos quando o cliente reclama.
+
+DISC: Compare brevemente o papel do cientista de dados e do engenheiro de ML em uma equipe.
+R: O cientista explora os dados e cria e avalia modelos, perguntando se resolvem o problema do negócio. O engenheiro de ML transforma o modelo em produto confiável, escalável e automatizado, perguntando se roda de forma estável. Eles colaboram, e em equipes pequenas podem ser a mesma pessoa.
+
+DISC: Explique o que são estágios de maturidade em MLOps e por que não é necessário alcançar o mais alto em todo projeto.
+R: São níveis que vão do trabalho manual a uma operação contínua com monitoramento e governança. Nem todo projeto precisa do nível mais alto: o custo e a complexidade devem ser proporcionais ao risco e ao valor, e o ideal é resolver a dor mais cara de cada vez.
+
+DISC: Por que o monitoramento de ML não pode se limitar à disponibilidade do servidor?
+R: Porque o servidor pode estar no ar e as previsões erradas. É preciso acompanhar a qualidade dos dados de entrada, a distribuição das previsões, o desempenho (quando há rótulos) e o efeito no negócio.
+
+DISC: Descreva o experimento do capítulo sobre reprodutibilidade e a conclusão que dele se tira.
+R: Treinou-se uma floresta aleatória várias vezes com e sem semente fixa. Sem semente, as acurácias variam ligeiramente a cada execução; com semente fixa, são idênticas. Conclui-se que a reprodutibilidade exige controlar as fontes de aleatoriedade, além de dados e ambiente.
+
+DISC: Qual a importância de um ambiente virtual e de um arquivo de requisitos no trabalho em equipe?
+R: Isolam as dependências do projeto e permitem recriar o mesmo ambiente em qualquer máquina, evitando conflitos de versão e o problema do "funciona na minha máquina".
+
+DISC: Por que as equipes de ML e de engenharia de software precisam de uma linguagem comum? Dê um exemplo prático.
+R: Porque suas culturas e vocabulários diferem, e o sistema depende da colaboração de ambas. Exemplo: o cientista entrega um notebook e o engenheiro precisa de código testável com contrato de entrada e saída; um acordo sobre estrutura de projeto, testes e métricas evita retrabalho.
+
+DISC: Por que um modelo precisa ser avaliado também em produção, e não apenas antes da implantação?
+R: Porque o mundo muda e os dados de produção podem diferir dos de treino; o modelo pode piorar sem avisar. A avaliação contínua, por monitoramento e experimentos, revela o desempenho real e orienta retreinos e reversões.
+
+DISC: Explique por que "colocar o modelo no ar" não encerra o projeto de ML. Que atividades continuam depois da implantação?
+R: Porque o mundo e os dados mudam e o modelo envelhece. Continuam o monitoramento da qualidade e dos dados, a manutenção do pipeline, o retreinamento, a atualização de versões, a governança e o atendimento a incidentes.
+
+DISC: Dê dois exemplos de decisões que podem ser tomadas com previsões em lote e dois que exigem previsões em tempo real, justificando a escolha do padrão em cada caso.
+R: Em lote: lista diária de clientes com risco de cancelar; reposição semanal de estoque, pois a decisão pode esperar. Em tempo real: aprovar uma compra no cartão; recomendar um item enquanto o usuário navega, pois a decisão não pode esperar.

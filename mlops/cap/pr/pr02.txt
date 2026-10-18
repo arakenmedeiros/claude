@@ -1,0 +1,154 @@
+@@EX 1 | Sempre comece pela linha de base | básico
+Gere um problema de cancelamento com 3% de positivos (`make_classification`, 8.000 exemplos, `weights=[0.97]`, `class_sep=1.0`, `random_state=0`). Compare: (a) `DummyClassifier(strategy="most_frequent")`, (b) `DummyClassifier(strategy="stratified")` e (c) uma regressão logística. Mostre acurácia, revocação e AUC-PR no teste.
+@@SOL
+```python
+from sklearn.datasets import make_classification
+from sklearn.dummy import DummyClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, average_precision_score, recall_score
+from sklearn.model_selection import train_test_split
+
+X, y = make_classification(8000, n_features=10, n_informative=4, weights=[0.97], class_sep=1.0, random_state=0)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+
+modelos = {"sempre a maioria": DummyClassifier(strategy="most_frequent"),
+           "sorteio estratificado": DummyClassifier(strategy="stratified", random_state=0),
+           "regressão logística": LogisticRegression(max_iter=1000)}
+print(f"Positivos no teste: {yte.mean():.1%}")
+for nome, m in modelos.items():
+    m.fit(Xtr, ytr)
+    prev, p = m.predict(Xte), m.predict_proba(Xte)[:, 1]
+    print(f"{nome:22s} acurácia = {accuracy_score(yte, prev):.3f} | revocação = {recall_score(yte, prev):.3f} | AUC-PR = {average_precision_score(yte, p):.3f}")
+```
+@@NOTE A linha de base "sempre a maioria" tem acurácia de cerca de 97% e revocação zero. Por isso, a acurácia sozinha não serve aqui. A AUC-PR da linha de base é igual à fração de positivos (cerca de 0,03); a da regressão logística é muito maior, o que mostra que ela ordena bem os clientes, embora, com o limiar padrão de 0,5, encontre poucos positivos (veja o ajuste de limiar no Capítulo 6).
+@@EX 2 | Calculadora de ML Test Score | básico
+Implemente uma função que receba, para cada um dos quatro grupos (dados, modelo, infraestrutura, monitoramento), a lista de pontos (0, 0,5 ou 1) e devolva a nota final (o mínimo dos grupos) e o grupo mais fraco. Aplique a dois projetos fictícios: um "notebook solto" e um "pipeline automatizado", e compare.
+@@SOL
+```python
+def ml_test_score(projeto):
+    totais = {g: sum(pontos) for g, pontos in projeto.items()}
+    mais_fraco = min(totais, key=totais.get)
+    return totais[mais_fraco], mais_fraco, totais
+
+notebook = {"dados": [0, 0.5, 0, 0], "modelo": [0.5, 0, 0, 0], "infraestrutura": [0, 0, 0, 0], "monitoramento": [0, 0, 0, 0]}
+pipeline = {"dados": [1, 1, 0.5, 1], "modelo": [1, 0.5, 1, 1], "infraestrutura": [1, 1, 0.5, 1], "monitoramento": [0.5, 0, 0.5, 0]}
+
+for nome, proj in [("notebook solto", notebook), ("pipeline automatizado", pipeline)]:
+    nota, fraco, totais = ml_test_score(proj)
+    print(f"{nome:22s} nota = {nota:.1f} | elo mais fraco = {fraco} | totais = {totais}")
+```
+@@NOTE Mesmo o pipeline automatizado tem nota baixa porque o monitoramento é o elo mais fraco. Como a nota é o mínimo, não adianta investir só onde já se é bom.
+@@EX 3 | Quebrando o ciclo de realimentação | intermediário
+Reutilize a simulação do ciclo de realimentação (10 itens de qualidade igual, 5.000 visitas, 3 itens exibidos por visita), mas, a cada exibição, com probabilidade `epsilon` troque um dos três itens por um item sorteado ao acaso (exploração). Meça a participação do item mais clicado e quantos itens receberam pelo menos 50 cliques para `epsilon` em 0, 0,1 e 0,3.
+@@SOL
+```python
+import numpy as np
+
+def simular(epsilon, semente=0, n_itens=10, n_visitas=5000):
+    rng = np.random.default_rng(semente)
+    cliques = np.ones(n_itens)
+    for _ in range(n_visitas):
+        exibidos = list(np.argsort(-cliques)[:3])
+        for k in range(3):
+            if rng.random() < epsilon:
+                exibidos[k] = int(rng.integers(n_itens))        # exploração
+        for item in set(exibidos):
+            if rng.random() < 0.10:
+                cliques[item] += 1
+    return cliques
+
+for eps in [0.0, 0.1, 0.3]:
+    c = simular(eps)
+    print(f"epsilon = {eps:.1f} | participação do mais clicado = {c.max() / c.sum():.2f} | itens com ≥ 50 cliques = {(c >= 50).sum()}")
+```
+@@NOTE Sem exploração, só 3 itens recebem cliques. Com exploração pequena (0,1) o efeito é discreto; com 0,3, mais itens passam de 50 cliques e a concentração cai. Este é o princípio das estratégias de exploração usadas em recomendadores: pagar um pequeno custo agora para continuar aprendendo sobre todos os itens.
+@@EX 4 | "Mudar qualquer coisa muda tudo" (CACE) | intermediário
+No conjunto *Breast Cancer* (UCI), padronize os atributos e treine uma regressão logística com todos os 30 atributos e outra sem o atributo `mean radius`. Mostre como os coeficientes dos atributos correlacionados com ele (`mean perimeter`, `mean area`) mudam e quantas previsões de teste diferem entre os dois modelos.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+d = load_breast_cancer(as_frame=True)
+X, y = d.data, d.target
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+esc = StandardScaler().fit(Xtr)
+Z = pd.DataFrame(esc.transform(Xtr), columns=X.columns)
+Zt = pd.DataFrame(esc.transform(Xte), columns=X.columns)
+
+completo = LogisticRegression(max_iter=5000).fit(Z, ytr)
+sem = LogisticRegression(max_iter=5000).fit(Z.drop(columns="mean radius"), ytr)
+
+coef_c = pd.Series(completo.coef_[0], index=X.columns)
+coef_s = pd.Series(sem.coef_[0], index=Z.drop(columns="mean radius").columns)
+tab = pd.DataFrame({"com mean radius": coef_c, "sem mean radius": coef_s}).loc[["mean perimeter", "mean area", "mean texture"]]
+print(tab.round(3))
+dif = (completo.predict(Zt) != sem.predict(Zt.drop(columns="mean radius"))).sum()
+print("Previsões de teste que mudaram:", int(dif), "de", len(yte))
+print("Correlação entre mean radius e mean perimeter:", round(X["mean radius"].corr(X["mean perimeter"]), 3))
+```
+@@NOTE Retirar um único atributo altera os coeficientes de vários outros, principalmente dos correlacionados. É o princípio CACE: os componentes de um modelo estão emaranhados. As previsões podem mudar pouco, mas a interpretação dos coeficientes muda bastante.
+@@PROJ Planejando um projeto de retenção de clientes | Cap02
+**Contexto.** Uma empresa de assinaturas quer reduzir o cancelamento. Uma campanha de retenção custa R$ 20 por cliente contatado e, se o cliente era mesmo um cancelador, o contato evita o cancelamento em 40% dos casos, o que preserva R$ 300 de receita. Você precisa decidir **se vale a pena** usar um modelo e a quem contatar.
+
+**Dados simulados.** Gere 10.000 clientes com `make_classification` (8 atributos, 8% de cancelamento, `random_state=3`, `class_sep=0.9`).
+
+**Tarefas.**
+1. Defina a métrica de negócio: lucro líquido da campanha = (cancelamentos evitados × R$ 300) − (contatos × R$ 20).
+2. Calcule o lucro de três políticas no conjunto de teste: (a) não contatar ninguém; (b) contatar todos; (c) contatar os clientes cujo risco previsto supera um limiar.
+3. Para a política (c), use uma regressão logística e escolha o limiar na **validação** (e não no teste) pelo lucro esperado.
+4. Compare com uma linha de base: contatar a mesma quantidade de clientes escolhidos ao acaso.
+5. Escreva em 3 frases a recomendação para a diretoria, apontando riscos (por exemplo, o efeito de 40% ser incerto).
+
+**Entregáveis.** Tabela com o lucro de cada política, o limiar escolhido e a recomendação.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import make_classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+CUSTO, EFEITO, VALOR = 20.0, 0.40, 300.0
+X, y = make_classification(10000, n_features=8, n_informative=5, weights=[0.92], class_sep=0.9, random_state=3)
+Xtr, Xtmp, ytr, ytmp = train_test_split(X, y, test_size=0.5, stratify=y, random_state=0)
+Xva, Xte, yva, yte = train_test_split(Xtmp, ytmp, test_size=0.5, stratify=ytmp, random_state=0)
+
+def lucro(contatar, y_real):
+    evitados = EFEITO * (contatar & (y_real == 1)).sum()          # valor esperado de cancelamentos evitados
+    return evitados * VALOR - contatar.sum() * CUSTO
+
+modelo = LogisticRegression(max_iter=1000).fit(Xtr, ytr)
+p_va, p_te = modelo.predict_proba(Xva)[:, 1], modelo.predict_proba(Xte)[:, 1]
+
+limiares = np.linspace(0.02, 0.8, 40)
+lucros_va = [lucro(p_va >= t, yva) for t in limiares]
+t_otimo = limiares[int(np.argmax(lucros_va))]
+
+rng = np.random.default_rng(0)
+contatar_modelo = p_te >= t_otimo
+aleatorio = np.zeros(len(yte), bool)
+aleatorio[rng.choice(len(yte), contatar_modelo.sum(), replace=False)] = True
+
+tab = pd.DataFrame({
+    "política": ["não contatar", "contatar todos", f"modelo (limiar {t_otimo:.2f})", "ao acaso (mesmo volume)"],
+    "contatos": [0, len(yte), contatar_modelo.sum(), aleatorio.sum()],
+    "lucro (R$)": [0.0, lucro(np.ones(len(yte), bool), yte), lucro(contatar_modelo, yte), lucro(aleatorio, yte)],
+})
+print(tab.round(0).to_string(index=False))
+print(f"Cancelamento no teste: {yte.mean():.1%}")
+```
+@@RUBRICA
+- Métrica de negócio definida e calculada corretamente (receita preservada menos custo de contato).
+- Limiar escolhido na validação, nunca no teste.
+- Comparação com "não contatar", "contatar todos" e "ao acaso" com o mesmo volume.
+- Recomendação clara, mencionando incerteza do efeito da campanha e o risco de depender de um único cenário.
+- Discussão de que o modelo só vale se o lucro superar as linhas de base de forma consistente.
+@@NOTE O resultado exato varia, mas o padrão esperado é: contatar todos gera prejuízo (o custo de contato supera o ganho), não contatar dá zero, e contatar os clientes de maior risco gera lucro positivo, muito acima do contato ao acaso com o mesmo volume. Como o efeito de 40% é uma suposição, convém refazer a conta com 20% e 60% (análise de sensibilidade) antes de decidir.
+@@ALEM
+- **UCI:** *Bank Marketing* (resposta a campanhas) e *Default of Credit Card Clients* servem para repetir o raciocínio de custo e benefício.
+- **Kaggle:** *Telco Customer Churn* e *Credit Card Fraud Detection* (muito desbalanceado) para praticar linha de base e métricas de negócio.

@@ -1,0 +1,209 @@
+@@EX 1 | Relatório de qualidade de dados | básico
+Crie um `DataFrame` de 500 pacientes simulados com `idade`, `peso_kg`, `pressao`, `cidade`. Injete: 10% de `peso_kg` ausente, 5 idades negativas, 20 linhas duplicadas e uma cidade escrita de duas formas ("Natal" e "natal "). Escreva uma função que devolva um relatório com a fração de ausentes por coluna, valores fora de intervalo, linhas duplicadas e categorias que só diferem por caixa ou espaços.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+
+rng = np.random.default_rng(0)
+n = 500
+df = pd.DataFrame({"idade": rng.integers(18, 90, n).astype(float),
+                   "peso_kg": rng.normal(75, 12, n).round(1),
+                   "pressao": rng.normal(120, 15, n).round(0),
+                   "cidade": rng.choice(["Natal", "Recife", "Fortaleza"], n)})
+df.loc[rng.choice(n, 50, replace=False), "peso_kg"] = np.nan
+df.loc[rng.choice(n, 5, replace=False), "idade"] = -3
+df.loc[rng.choice(n, 25, replace=False), "cidade"] = "natal "
+df = pd.concat([df, df.sample(20, random_state=0)], ignore_index=True)
+
+def relatorio(df, intervalos):
+    rel = {"ausentes (%)": (df.isna().mean() * 100).round(1).to_dict(),
+           "linhas duplicadas": int(df.duplicated().sum())}
+    rel["fora do intervalo"] = {c: int((~df[c].dropna().between(lo, hi)).sum()) for c, (lo, hi) in intervalos.items()}
+    norm = df["cidade"].str.strip().str.lower()
+    rel["categorias de cidade (bruto)"] = sorted(df["cidade"].unique())
+    rel["categorias de cidade (normalizado)"] = sorted(norm.unique())
+    return rel
+
+for k, v in relatorio(df, {"idade": (0, 120), "peso_kg": (30, 250), "pressao": (50, 250)}).items():
+    print(f"{k}: {v}")
+```
+@@NOTE O relatório revela os quatro problemas. Repare que "Natal" e "natal " aparecem como categorias diferentes; normalizar (tirar espaços e caixa) é uma correção simples, mas deve ser feita **dentro do pipeline**, para valer também em produção.
+@@EX 2 | Um validador de esquema que para o pipeline | intermediário
+Escreva um esquema (tipo, mínimo, máximo, fração máxima de ausentes, categorias permitidas) para os atributos do conjunto *Wine* (UCI), baseado nos valores observados no treino com uma folga de 20%. Valide: (a) um lote saudável (amostra do próprio conjunto) e (b) um lote corrompido (álcool multiplicado por 10 e 30% de ausentes em `proline`). O programa deve lançar uma exceção para o lote reprovado.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_wine
+
+X = load_wine(as_frame=True).data
+esquema = {c: {"min": X[c].min() - 0.2 * (X[c].max() - X[c].min()),
+               "max": X[c].max() + 0.2 * (X[c].max() - X[c].min()),
+               "max_ausentes": 0.05} for c in X.columns}
+
+class LoteInvalido(Exception):
+    pass
+
+def validar(lote, esquema):
+    erros = []
+    for c, r in esquema.items():
+        if c not in lote:
+            erros.append(f"coluna ausente: {c}")
+            continue
+        if lote[c].isna().mean() > r["max_ausentes"]:
+            erros.append(f"{c}: {lote[c].isna().mean():.0%} de ausentes")
+        v = lote[c].dropna()
+        fora = int(((v < r["min"]) | (v > r["max"])).sum())
+        if fora:
+            erros.append(f"{c}: {fora} valores fora de [{r['min']:.2f}, {r['max']:.2f}]")
+    if erros:
+        raise LoteInvalido("; ".join(erros))
+    return True
+
+saudavel = X.sample(60, random_state=0)
+ruim = X.sample(60, random_state=1).copy()
+ruim["alcohol"] *= 10
+ruim.loc[ruim.sample(frac=0.3, random_state=0).index, "proline"] = np.nan
+
+for nome, lote in [("saudável", saudavel), ("corrompido", ruim)]:
+    try:
+        print(nome, "->", validar(lote, esquema))
+    except LoteInvalido as e:
+        print(nome, "-> REPROVADO:", e)
+```
+@@NOTE Ao lançar uma exceção, o pipeline para antes do treino ou da previsão. Em produção, o lote reprovado iria para uma área de quarentena e geraria um alerta.
+@@EX 3 | Caçando um atributo vazado | intermediário
+No conjunto *Breast Cancer* (UCI), crie um atributo `vazado` que seja uma versão ruidosa do alvo. Para **cada atributo**, calcule a AUC que ele obtém sozinho (como se fosse uma pontuação) e liste os cinco maiores. Mostre que o atributo vazado se destaca de forma suspeita. Depois, treine um modelo com e sem ele e compare as acurácias.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+
+d = load_breast_cancer(as_frame=True)
+X, y = d.data.copy(), d.target
+rng = np.random.default_rng(0)
+X["vazado"] = y + rng.normal(0, 0.1, len(y))
+
+auc = {c: roc_auc_score(y, X[c]) for c in X.columns}
+auc = pd.Series({c: max(a, 1 - a) for c, a in auc.items()}).sort_values(ascending=False)
+print("AUC de cada atributo sozinho (cinco maiores):")
+print(auc.head(5).round(3).to_string())
+
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+com = RandomForestClassifier(100, random_state=0).fit(Xtr, ytr).score(Xte, yte)
+sem = RandomForestClassifier(100, random_state=0).fit(Xtr.drop(columns="vazado"), ytr).score(Xte.drop(columns="vazado"), yte)
+print(f"Acurácia com o atributo vazado: {com:.3f} | sem ele: {sem:.3f}")
+```
+@@NOTE O atributo vazado tem AUC individual de quase 1,0, acima de todos os demais. Um atributo que sozinho "prevê quase tudo" é suspeito e deve ser investigado: de onde ele vem? Estará disponível na hora da previsão? Este é um bom teste automático para rodar no pipeline.
+@@EX 4 | Divisão aleatória versus divisão por grupo | avançado
+Simule 100 pacientes com 10 medições cada. Cada paciente tem um "efeito individual" fixo que influencia o alvo, e as medições do mesmo paciente são parecidas entre si. Treine uma floresta usando (a) divisão aleatória das linhas e (b) divisão por paciente (`GroupShuffleSplit`). Compare as acurácias e explique a diferença.
+@@SOL
+```python
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GroupShuffleSplit, train_test_split
+
+rng = np.random.default_rng(0)
+n_pac, n_med = 100, 10
+efeito = rng.normal(0, 3, (n_pac, 5))                                  # "impressão digital" de cada paciente
+alvo_pac = rng.integers(0, 2, n_pac)                                   # o alvo é fixo por paciente e independe das medições
+X = np.repeat(efeito, n_med, axis=0) + rng.normal(0, 0.3, (n_pac * n_med, 5))
+y = np.repeat(alvo_pac, n_med)
+grupos = np.repeat(np.arange(n_pac), n_med)
+
+def acc(tr, te):
+    return RandomForestClassifier(100, random_state=0).fit(X[tr], y[tr]).score(X[te], y[te])
+
+tr, te = train_test_split(np.arange(len(y)), test_size=0.3, random_state=0)
+print(f"(a) divisão aleatória das linhas: acurácia = {acc(tr, te):.3f}")
+tr, te = next(GroupShuffleSplit(1, test_size=0.3, random_state=0).split(X, y, grupos))
+print(f"(b) divisão por paciente      : acurácia = {acc(tr, te):.3f}")
+```
+@@NOTE Na divisão aleatória, o modelo "reconhece" o paciente pelas medições parecidas e acerta quase tudo, embora o alvo não dependa das medições. Na divisão por paciente, a acurácia cai para a faixa de 40% a 50% (o acaso), que é a verdade. É um vazamento causado por dependência entre linhas.
+@@PROJ Portão de dados com quarentena e versionamento | Cap03
+**Contexto.** Todo dia chega um lote de clientes de uma loja. Sua equipe precisa impedir que lotes ruins cheguem ao treino e manter um registro de versões.
+
+**Dados simulados.** Gere 6 lotes diários de 300 clientes (`idade`, `renda`, `cidade`, `compras_30d`). Injete defeitos em alguns lotes: no lote 2, 20% de ausentes em `renda`; no lote 4, idades negativas; no lote 5, uma cidade nova ("Salvador"); no lote 6, valores de `renda` 100 vezes maiores (erro de unidade).
+
+**Tarefas.**
+1. Defina um esquema com tipo, intervalos, ausentes máximos e categorias permitidas, a partir do lote 1 (que é saudável).
+2. Valide cada lote. Se reprovar, envie-o para uma lista de "quarentena" com os motivos; se aprovar, acrescente-o ao conjunto acumulado.
+3. Para cada lote aprovado, registre em um manifesto: número do lote, hash SHA-256, linhas e data.
+4. Mostre uma tabela com o resultado de cada lote (aprovado/quarentena, motivos).
+5. Verifique que o hash do conjunto acumulado muda a cada lote aprovado, e que reaprovar o mesmo lote duas vezes produz o mesmo hash do lote.
+
+**Entregáveis.** Tabela por lote, manifesto de versões e uma frase sobre o que faria com os lotes em quarentena.
+@@SOL
+```python
+import hashlib
+import numpy as np
+import pandas as pd
+
+rng = np.random.default_rng(0)
+CIDADES = ["Natal", "Recife", "Fortaleza"]
+
+def gerar_lote(i):
+    r = np.random.default_rng(100 + i)
+    df = pd.DataFrame({"idade": r.integers(18, 80, 300).astype(float),
+                       "renda": r.lognormal(8, 0.5, 300).round(2),
+                       "cidade": r.choice(CIDADES, 300),
+                       "compras_30d": r.poisson(3, 300).astype(float)})
+    if i == 2: df.loc[df.sample(frac=0.2, random_state=0).index, "renda"] = np.nan
+    if i == 4: df.loc[df.index[:10], "idade"] = -5
+    if i == 5: df.loc[df.index[:15], "cidade"] = "Salvador"
+    if i == 6: df["renda"] *= 100
+    return df
+
+lotes = {i: gerar_lote(i) for i in range(1, 7)}
+base = lotes[1]
+esquema = {c: {"min": base[c].min() * 0.5, "max": base[c].max() * 2, "max_ausentes": 0.02}
+           for c in ["idade", "renda", "compras_30d"]}
+esquema["idade"].update(min=0, max=120)
+permitidas = set(base["cidade"].unique())
+
+def validar(df):
+    erros = []
+    for c, r in esquema.items():
+        if df[c].isna().mean() > r["max_ausentes"]:
+            erros.append(f"{c}: {df[c].isna().mean():.0%} ausentes")
+        v = df[c].dropna()
+        if ((v < r["min"]) | (v > r["max"])).any():
+            erros.append(f"{c}: {int(((v < r['min']) | (v > r['max'])).sum())} fora do intervalo")
+    novas = set(df["cidade"]) - permitidas
+    if novas:
+        erros.append(f"cidades novas: {sorted(novas)}")
+    return erros
+
+def hash_df(df):
+    return hashlib.sha256(df.to_csv(index=False).encode()).hexdigest()[:10]
+
+acumulado, manifesto, quarentena, linhas = None, [], {}, []
+for i, lote in lotes.items():
+    erros = validar(lote)
+    if erros:
+        quarentena[i] = erros
+        linhas.append((i, "QUARENTENA", "; ".join(erros)))
+        continue
+    acumulado = lote if acumulado is None else pd.concat([acumulado, lote], ignore_index=True)
+    manifesto.append({"lote": i, "hash_lote": hash_df(lote), "linhas": len(lote), "hash_acumulado": hash_df(acumulado)})
+    linhas.append((i, "aprovado", ""))
+
+print(pd.DataFrame(linhas, columns=["lote", "situação", "motivos"]).to_string(index=False))
+print(pd.DataFrame(manifesto).to_string(index=False))
+print("Mesmo lote, mesmo hash?", hash_df(lotes[3]) == hash_df(gerar_lote(3)))
+```
+@@RUBRICA
+- Esquema derivado de um lote saudável, com tipos, intervalos, ausentes e categorias.
+- Lotes reprovados isolados em quarentena com motivos legíveis; nenhum entra no conjunto acumulado.
+- Manifesto de versões com hash do lote e do acumulado.
+- Verificação de que os hashes são determinísticos.
+- Proposta realista para a quarentena (investigar a origem, corrigir na fonte, reprocessar).
+@@NOTE Os lotes 2, 4, 5 e 6 vão para a quarentena, cada um por um motivo diferente, e os lotes 1 e 3 são aprovados. O hash acumulado muda quando um lote é aprovado. Corrigir a fonte (por exemplo, a unidade da renda) e reprocessar é melhor do que "consertar" os dados à mão no treino.
+@@ALEM
+- **UCI:** *Adult (Census Income)* e *Bank Marketing* têm colunas categóricas, ausentes e valores atípicos, ótimos para exercitar validação de dados.
+- **Kaggle:** *Titanic* (muitos ausentes) e *House Prices* (muitas colunas categóricas) para praticar relatórios de qualidade.

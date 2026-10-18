@@ -1,0 +1,269 @@
+MC: Qual é a pergunta central do projeto final?
+a) Como colocar o modelo em produção de modo que seja confiável hoje e continue confiável nos próximos meses?
+b) Qual algoritmo tem mais parâmetros?
+c) Como treinar o modelo mais rápido possível?
+d) Qual a melhor cor para os gráficos do relatório?
+R: a | A pergunta fala de confiança ao longo do tempo, e não de algoritmos.
+
+MC: No projeto, os dados reais vêm de:
+a) o conjunto Digits (UCI Optical Recognition of Handwritten Digits), embutido no scikit-learn.
+b) um banco de dados de clientes reais.
+c) imagens de câmeras da empresa.
+d) uma base paga do Kaggle.
+R: a | A produção e a deriva são simuladas.
+
+MC: O que se simula para representar a deriva em produção no projeto?
+a) Desfoque da câmera e desbotamento da tinta, crescentes por quatro semanas e depois estáveis.
+b) A troca do algoritmo por outro.
+c) A remoção de classes do conjunto de dados.
+d) A queda de energia do servidor.
+R: a | O mundo entra em um novo regime.
+
+MC: A primeira etapa do projeto é:
+a) validar os dados, calcular o hash e separar desenvolvimento e "futuro".
+b) implantar em produção.
+c) escrever o relatório final.
+d) retreinar o modelo.
+R: a | Sem dados validados e versionados, nada mais é confiável.
+
+MC: Por que reservar 40% dos dados como "futuro"?
+a) Para simular lotes semanais de produção que o modelo nunca viu.
+b) Para treinar o modelo com mais dados.
+c) Para escolher os hiperparâmetros.
+d) Para calibrar o limiar.
+R: a | Esses dados alimentam as 8 semanas de produção simulada.
+
+MC: A métrica principal para comparar candidatos no projeto é:
+a) F1 macro em validação cruzada.
+b) apenas a acurácia no teste.
+c) a latência do servidor.
+d) o número de parâmetros.
+R: a | O F1 macro trata as dez classes com igual importância.
+
+MC: Quais candidatos o projeto compara?
+a) Linha de base, regressão logística, floresta aleatória e SVC com busca aleatória.
+b) Somente uma rede neural.
+c) Apenas modelos de agrupamento.
+d) Somente a linha de base.
+R: a | Todos são registrados no MLflow.
+
+MC: Por que o projeto evita padronizar os pixels?
+a) Padronizar colunas quase constantes pode amplificar ruído, e os pixels já têm a mesma unidade.
+b) Porque padronizar é proibido.
+c) Porque aumenta o tamanho do modelo.
+d) Porque o SVC não aceita padronização.
+R: a | A decisão deve se basear no problema, e não no hábito.
+
+MC: O portão de qualidade do projeto exige:
+a) piso de F1 macro e ganho mínimo sobre a linha de base.
+b) apenas o menor tempo de treino.
+c) que o modelo seja o mais simples possível.
+d) aprovação sem critérios.
+R: a | Aprovado, o modelo é registrado como champion.
+
+MC: O apelido champion é usado pela API para:
+a) carregar o modelo vigente sem mudar o código quando a versão muda.
+b) guardar a senha.
+c) desligar o servidor.
+d) escolher a cor dos gráficos.
+R: a | Promover é mover o apelido.
+
+MC: O contrato da API do projeto rejeita:
+a) tamanho diferente de 64 pixels e valores fora de 0 a 16.
+b) qualquer imagem.
+c) apenas imagens em cores.
+d) nenhum dado.
+R: a | Retorna 422 para dados inválidos.
+
+MC: Os testes em pytest do projeto verificam:
+a) desempenho mínimo, invariância a ruído, cobertura de classes e determinismo.
+b) apenas se o servidor está ligado.
+c) apenas a formatação.
+d) somente a latência.
+R: a | Rodam sobre o artefato exportado do champion.
+
+MC: Na simulação, os rótulos de cada semana chegam:
+a) com uma semana de atraso.
+b) imediatamente.
+c) nunca.
+d) antes dos dados.
+R: a | Isso limita quais lotes podem ser usados no retreino.
+
+MC: O que o PSI do contraste das imagens mede no projeto?
+a) A mudança na distribuição do desvio padrão dos pixels de cada imagem em relação à referência.
+b) A taxa de erro do modelo.
+c) A latência da API.
+d) O número de classes.
+R: a | O desfoque reduz o contraste e muda essa distribuição.
+
+MC: Uma regra de alerta sem rótulos do projeto é:
+a) PSI do contraste acima de 0,25 ou AUC do classificador de domínio acima de 0,80.
+b) acurácia abaixo de 50%.
+c) latência acima de 1 s.
+d) mais de 10 acessos por minuto.
+R: a | Não depende de rótulos, por isso é rápida.
+
+MC: No treinamento contínuo, o candidato é comparado ao campeão:
+a) no lote rotulado mais recente, que o candidato não viu.
+b) no mesmo lote usado para treiná-lo.
+c) no conjunto de teste original, repetidamente.
+d) em dados de treino apenas.
+R: a | Evita avaliar no que treinou e vazamento temporal.
+
+MC: A promoção só ocorre se o candidato superar o campeão por:
+a) uma margem mínima de F1 no lote recente.
+b) qualquer valor, mesmo zero.
+c) um valor negativo.
+d) uma margem de 100 pontos.
+R: a | Evita trocar o modelo por ruído.
+
+MC: Depois de promover o novo modelo, o projeto:
+a) atualiza a referência do monitoramento com os dados recentes.
+b) apaga o registro de modelos.
+c) desliga o monitoramento.
+d) volta ao modelo inicial.
+R: a | Assim os alertas passam a comparar com o mundo novo.
+
+MC: Qual a lição principal da comparação entre "sem CT" e "com CT"?
+a) Sem retreino, a acurácia cai muito; com treinamento contínuo, ela se recupera.
+b) Retreinar sempre piora o modelo.
+c) Não há diferença entre as estratégias.
+d) Só o modelo inicial importa.
+R: a | O resultado é uma simulação, mas ilustra o valor do CT bem controlado.
+
+MC: Qual cuidado é essencial para evitar vazamento temporal no retreino simulado?
+a) Nunca usar rótulos de semanas que ainda não chegaram.
+b) Usar todos os dados futuros.
+c) Treinar com o teste.
+d) Embaralhar as semanas.
+R: a | Os rótulos da semana s só estão disponíveis na semana seguinte.
+
+MC: O cartão do modelo do projeto inclui:
+a) versão, dados, métricas gerais e por classe, limitações e uso indicado.
+b) apenas o nome do autor.
+c) as senhas de acesso.
+d) a lista de bibliotecas instaladas apenas.
+R: a | Desempenho por classe evita que a média esconda dígitos mal reconhecidos.
+
+MC: Qual a utilidade de olhar o desempenho por classe (dígito)?
+a) Descobrir classes que o modelo reconhece mal, apesar de boa média.
+b) Reduzir o número de classes.
+c) Evitar o uso de validação cruzada.
+d) Calcular o hash.
+R: a | A média pode esconder desigualdades.
+
+MC: Retreinar quando o PSI dispara por uma imagem corrompida:
+a) ensinaria o erro ao modelo; deve-se investigar a causa antes.
+b) é sempre a melhor solução.
+c) é proibido pela API.
+d) não tem consequências.
+R: a | Olhar as imagens antes de retreinar é parte do processo.
+
+MC: Qual o papel do conjunto de teste original no projeto?
+a) Ser usado uma única vez, para o relatório final.
+b) Ser usado para escolher hiperparâmetros.
+c) Ser misturado ao treino.
+d) Ser apagado.
+R: a | Preserva a estimativa honesta.
+
+MC: Por que a produção é simulada de forma controlada?
+a) Para que os resultados possam ser repetidos e estudados.
+b) Para economizar disco.
+c) Porque a produção real é proibida.
+d) Para evitar o uso de modelos.
+R: a | A simulação permite experimentar sem risco, mas exige cuidado ao generalizar.
+
+MC: O relatório final deve incluir, entre outros:
+a) resumo para a diretoria, dados, modelos, operação, monitoramento, governança e recomendações.
+b) apenas o código.
+c) apenas gráficos.
+d) somente a lista de bibliotecas.
+R: a | Escreve-se para públicos diferentes.
+
+MC: Que extensões o capítulo sugere para tornar o projeto mais próximo da vida real?
+a) Contêiner para a API, fluxo de CI, DAG de orquestração e repetir em outro conjunto de dados.
+b) Remover todos os testes.
+c) Trocar o conjunto por dados aleatórios.
+d) Desligar o monitoramento.
+R: a | Também experimentar outros repositórios (UCI, Kaggle).
+
+MC: Qual das ideias de fechamento resume o livro?
+a) Modelo bom não é sistema bom; o mundo muda; comece simples e evolua.
+b) Basta treinar o modelo uma vez.
+c) Testes são opcionais.
+d) A governança só importa em empresas grandes.
+R: a | MLOps é uma cultura de responsabilidade sobre o que colocamos no mundo.
+
+MC: Qual alternativa descreve o fluxo resumido do projeto?
+a) Dados validados → candidatos registrados → portão e champion → API → monitoramento → CT com portão → nova versão servida.
+b) Treino → fim.
+c) API → dados → modelo → relatório.
+d) Monitoramento → deleção do modelo.
+R: a | Cada passagem é protegida por um portão.
+
+MC: Qual a vantagem de registrar cada candidato do projeto como uma execução do MLflow?
+a) Permite comparar, auditar e reproduzir as escolhas feitas.
+b) Torna os modelos mais rápidos.
+c) Elimina a necessidade de dados.
+d) Dispensa o portão de qualidade.
+R: a | Execuções guardam parâmetros, métricas, tags e o modelo.
+
+DISC: Descreva, em linhas gerais, as nove etapas do projeto final e os capítulos que as sustentam.
+R: Dados (Cap. 3); candidatos (4 e 6); rastreamento e registro (5); serviço (7); testes (8); produção simulada e monitoramento (9); treinamento contínuo (5, 8 e 9); governança e relatório (10).
+
+DISC: Explique como funcionam os portões no projeto (dados, qualidade e promoção) e qual risco cada um reduz.
+R: Portão de dados: evita treinar com lotes ruins. Portão de qualidade: impede registrar modelo abaixo do piso ou sem ganho sobre a linha de base. Portão de promoção: evita trocar o campeão por ruído. Juntos, protegem o sistema em cada passagem.
+
+DISC: Por que o projeto separa desenvolvimento e "futuro" e usa o teste original uma única vez?
+R: O "futuro" simula a produção com dados nunca vistos, e o teste original dá uma estimativa honesta no fim. Usá-los para escolhas contaminaria a avaliação.
+
+DISC: Descreva o contrato de entrada da API do projeto e as respostas esperadas para entradas válidas e inválidas.
+R: A entrada tem 64 números entre 0 e 16. Válida: 200 com dígito previsto e versão do modelo. Inválida (tamanho errado ou valores fora da faixa): 422, sem chamar o modelo.
+
+DISC: Quais testes automáticos o projeto inclui e por que cada um é útil?
+R: Desempenho mínimo (impede modelo ruim); invariância a ruído (robustez); cobertura de classes (nenhuma classe esquecida); determinismo (reprodutibilidade).
+
+DISC: Como a simulação de produção introduz a deriva e por que a estabilização após quatro semanas é útil para o experimento?
+R: O desfoque e o desbotamento crescem nas quatro primeiras semanas e depois se estabilizam. A estabilização cria um novo regime, no qual o retreino com rótulos recentes pode, de fato, recuperar o desempenho.
+
+DISC: Explique por que os sinais sem rótulo (PSI e AUC de domínio) disparam antes da queda de acurácia visível.
+R: Porque a mudança nas entradas é perceptível imediatamente, enquanto o impacto no desempenho depende da sensibilidade do modelo e só é confirmado quando os rótulos chegam. Os sinais sem rótulo são alerta antecipado.
+
+DISC: Descreva a lógica do treinamento contínuo implementado no projeto, incluindo a espera de rótulos e a atualização da referência.
+R: Ao haver alerta e rótulos de semanas anteriores, treina-se um candidato com os dados originais e os lotes rotulados; compara-se com o campeão no lote rotulado mais recente; se ganhar por margem, promove-se o apelido; atualiza-se a referência do monitoramento.
+
+DISC: Por que o candidato é avaliado no lote mais recente que ele não viu, e não no conjunto de teste original?
+R: O lote recente representa o mundo atual, que é o que importa; o teste original representa o passado e deve ser reservado. Além disso, o candidato não treinou nesse lote, evitando avaliação otimista.
+
+DISC: Que informações devem constar no cartão do modelo final do projeto?
+R: Versão e dados de treino (hash), métricas gerais e por classe, desempenho na última semana de produção, limitações (imagens 8×8; câmera desfocada exige retreino) e uso indicado (triagem com revisão humana).
+
+DISC: Por que as métricas por classe são importantes no projeto, mesmo com boa acurácia geral?
+R: Porque dígitos específicos podem ser mal reconhecidos, e a média esconde. Identificar a pior classe orienta correções, coleta de dados e supervisão humana.
+
+DISC: Cite três armadilhas do projeto e como evitá-las.
+R: Vazamento temporal (usar só rótulos já chegados); avaliar no que treinou (comparar em dados inéditos para os dois modelos); retreinar sem investigar (olhar a causa do alerta antes); usar o teste para escolher (reservá-lo ao relatório).
+
+DISC: Como você explicaria o projeto para a diretoria em cinco linhas?
+R: O sistema lê dígitos de formulários com alta qualidade hoje; foi construído com dados validados, testes e registro; monitora a qualidade das imagens e o desempenho; reage a mudanças da câmera retreinando com portões; recomenda-se manter revisão humana por amostragem e plano de reversão.
+
+DISC: Qual a diferença entre uma simulação como a do projeto e a produção real? Cite três limitações.
+R: Na simulação, a deriva é controlada e conhecida, os rótulos têm atraso fixo e o ambiente é simples. Na realidade, as causas são variadas e desconhecidas, os rótulos são ruidosos e incompletos, e há restrições de custo, equipe e conformidade.
+
+DISC: Como o projeto aplica o princípio de reversão rápida usando o registro de modelos?
+R: O código carrega o modelo pelo apelido champion; para reverter, move-se o apelido para uma versão anterior validada, sem alterar o código nem reimplantar a API.
+
+DISC: Que mudanças você faria para adaptar o projeto a um problema de dados tabulares, como churn de clientes?
+R: Trocar o conjunto de dados; usar ColumnTransformer com imputação e codificação; escolher métricas de negócio e limiar por custo; criar atributos temporais; definir o tipo de deriva esperado (covariáveis e rótulos); adaptar os testes e as fatias (regiões, planos).
+
+DISC: Explique por que o monitoramento da qualidade dos dados de entrada é parte do projeto, mesmo havendo um modelo robusto.
+R: Porque um modelo robusto também falha com dados corrompidos ou muito diferentes do treino; o monitoramento dá alerta precoce, ajuda a distinguir problema de dados de mudança do mundo e evita retreinar com lixo.
+
+DISC: Descreva como incluir uma etapa de CI e um contêiner no projeto.
+R: Escrever um fluxo de CI que instale dependências, rode estilo e testes, treine em amostra, aplique o portão e construa a imagem; criar um Dockerfile com imagem base pequena, versões fixas, código e modelo, usuário comum e comando para iniciar a API.
+
+DISC: Que aprendizados do livro você levaria para um projeto real no seu trabalho? Justifique.
+R: Resposta pessoal. Exemplos: versionar dados e fixar o ambiente; validar dados; usar pipelines; rastrear experimentos; testar código, dados e modelo; monitorar em camadas; retreinar com portões; documentar com cartão do modelo e considerar justiça e privacidade.
+
+DISC: Por que o projeto usa um classificador de domínio além do PSI?
+R: O PSI olha um atributo (ou uma estatística) por vez; o classificador de domínio detecta diferenças multivariadas entre referência e lote, inclusive mudanças na relação entre atributos, e indica a existência de deriva mesmo quando cada marginal parece normal.
