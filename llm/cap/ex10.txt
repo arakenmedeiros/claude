@@ -1,0 +1,374 @@
+MC: O que é um embedding de texto, no sentido deste capítulo?
+= Um vetor de números que representa um trecho de texto, de modo que textos usados em contextos parecidos fiquem próximos.
+- Uma tradução automática do texto para outro idioma.
+- Uma lista das palavras mais frequentes de um documento.
+- Um resumo escrito pelo modelo de linguagem.
+- Um código de barras que identifica o arquivo.
+J: O embedding é um vetor cuja proximidade reflete semelhança de uso, e não identidade de significado.
+
+MC: Qual a diferença entre uma representação esparsa e uma densa?
+= A esparsa tem uma dimensão por palavra, quase toda zerada; a densa tem poucas dimensões aprendidas, sem zeros.
+- A esparsa é sempre mais precisa; a densa nunca reconhece sinônimos.
+- A esparsa usa números negativos; a densa usa só positivos.
+- A esparsa guarda apenas imagens; a densa guarda apenas texto.
+- Não há diferença; são nomes de duas marcas.
+J: Contagens e TF-IDF são esparsos (626 dimensões na base, 97% de zeros); a LSA e os codificadores neurais são densos.
+
+MC: Como a análise semântica latente (LSA) obtém vetores densos?
+= Aplica uma decomposição em valores singulares à matriz de TF-IDF e mantém poucas dimensões.
+- Treina uma rede que gera texto palavra por palavra.
+- Traduz cada documento para vetores de imagem.
+- Ordena os documentos pelo tamanho do arquivo.
+- Pede a um usuário que classifique cada documento.
+J: A SVD truncada agrupa palavras que aparecem nos mesmos documentos, aproximando textos com vocabulários diferentes.
+
+MC: O que o cosseno entre dois vetores mede?
+= O ângulo entre eles, isto é, a semelhança de direção, independentemente do comprimento.
+- A diferença entre as somas de suas coordenadas.
+- A distância entre as pontas dos vetores.
+- O número de palavras em comum, sempre.
+- O tamanho do documento maior.
+J: O cosseno divide o produto interno pelo produto das normas, eliminando o efeito do comprimento.
+
+MC: Por que o produto interno pode favorecer um documento longo em vetores não normalizados?
+= Porque o valor cresce com a norma do vetor, e um texto longo tende a ter contagens maiores.
+- Porque o produto interno ignora as palavras da consulta.
+- Porque documentos longos têm menos palavras.
+- Porque o produto interno só funciona com números negativos.
+- Porque documentos longos são sempre mais relevantes.
+J: Sem normalizar, a magnitude entra no valor; no experimento, o documento artificial longo ficou no topo.
+
+MC: Se todos os vetores têm norma 1, o que se pode afirmar sobre as três medidas de similaridade?
+= Produto interno, cosseno e distância euclidiana produzem a mesma ordem de documentos.
+- O produto interno passa a ser sempre zero.
+- A distância euclidiana passa a ser sempre 1.
+- O cosseno deixa de poder ser calculado.
+- As três medidas ficam em ordem inversa umas das outras.
+J: Com norma 1, a distância ao quadrado vale 2 menos 2 vezes o cosseno, e o produto interno é o cosseno.
+
+MC: Qual é o erro silencioso mais típico ao usar embeddings em produção?
+= Indexar com um modelo ou medida e consultar com outro, produzindo comparações sem sentido.
+- Guardar os vetores em arquivo.
+- Calcular o cosseno com NumPy.
+- Dividir os documentos em pedaços.
+- Usar mais de uma consulta de teste.
+J: Espaços de modelos diferentes não são comparáveis; a mistura não gera erro, só resultados ruins.
+
+MC: O que significa hit@3 igual a 0,913 em um conjunto de consultas?
+= Em 91,3% das consultas, ao menos um documento relevante aparece entre os três primeiros.
+- Em 91,3% das consultas, os três primeiros são todos relevantes.
+- O sistema demora 0,913 segundo para responder.
+- Em 91,3% dos documentos, há três consultas.
+- O terceiro colocado é relevante em todas as consultas.
+J: O hit@k é binário por consulta: há ou não há algum relevante nos k primeiros.
+
+MC: Em que o recall@k difere do hit@k?
+= O recall@k mede a fração dos relevantes recuperados nos k primeiros; o hit@k só verifica se há algum.
+- O recall@k considera só o primeiro colocado.
+- O recall@k é sempre igual ao hit@k.
+- O hit@k usa a ordem alfabética dos documentos.
+- O recall@k mede o tempo de resposta.
+J: Com vários relevantes, recuperar um de dois dá recall de 0,5 e hit igual a 1.
+
+MC: O que o MRR (rank recíproco médio) recompensa?
+= Colocar o primeiro documento relevante o mais perto possível do topo da lista.
+- Recuperar todos os relevantes, onde quer que estejam.
+- Usar o menor número possível de dimensões.
+- Responder sem consultar o índice.
+- Ter documentos curtos.
+J: Para cada consulta vale 1 dividido pela posição do primeiro relevante; depois se faz a média.
+
+MC: Por que o nDCG usa um desconto logarítmico pela posição?
+= Para valorizar mais os relevantes nas primeiras posições do que os que aparecem no fim da lista.
+- Para eliminar os documentos relevantes.
+- Para tornar a métrica igual ao recall.
+- Para ordenar os documentos alfabeticamente.
+- Para medir a memória do índice.
+J: Cada relevante contribui com 1/log2(posição+1), e o total é dividido pelo valor do ranking ideal.
+
+MC: O que o bootstrap sobre as consultas permite estimar?
+= A incerteza da métrica média, reamostrando as consultas com reposição e observando a variação da média.
+- A velocidade do índice vetorial.
+- A quantidade de memória da coleção.
+- O número de palavras do vocabulário.
+- O melhor valor de k para o RRF, sem dados.
+J: Os quantis das médias reamostradas formam o intervalo de confiança; com 46 consultas, ele é largo.
+
+MC: Por que comparar dois métodos pela diferença pareada, com reamostragem das mesmas consultas?
+= Porque as consultas são as mesmas nos dois métodos, e a diferença por consulta captura essa dependência.
+- Porque assim o intervalo fica sempre mais estreito, qualquer que seja o resultado.
+- Porque dispensa o uso de consultas de teste.
+- Porque elimina a necessidade de calcular métricas.
+- Porque garante que o método novo é melhor.
+J: Reamostrar a diferença por consulta respeita o pareamento; se o intervalo inclui zero, não há evidência de diferença.
+
+MC: O que significa dizer que o BM25 "satura" a frequência dos termos?
+= Que a contribuição de um termo cresce cada vez menos a cada nova ocorrência no documento.
+- Que o termo deixa de ser considerado depois de aparecer uma vez.
+- Que documentos curtos recebem pontuação zero.
+- Que a pontuação diminui à medida que o termo aparece mais vezes.
+- Que o BM25 exige vetores de norma 1.
+J: A fração f(k1+1)/(f+k1(...)) tem limite quando f cresce.
+
+MC: Em qual situação a busca lexical tende a falhar?
+= Quando a consulta usa palavras diferentes das do documento, como em uma paráfrase.
+- Quando a consulta repete as palavras do documento.
+- Quando o documento tem um título.
+- Quando há muitos documentos curtos.
+- Quando a consulta contém um número.
+J: Sem palavras em comum, a pontuação é zero, mesmo que o sentido coincida.
+
+MC: O que o RRF calcula para cada documento?
+= A soma, sobre os métodos, de 1 dividido por (k mais a posição do documento no ranking do método).
+- A média das pontuações brutas dos métodos.
+- O maior cosseno entre todos os métodos.
+- O número de palavras em comum com a consulta.
+- A diferença entre a primeira e a última posição.
+J: Só usa posições, e portanto dispensa calibrar escalas de pontuação diferentes.
+
+MC: Qual o efeito de usar um k pequeno no RRF?
+= O topo dos rankings pesa muito mais do que as posições seguintes.
+- Todas as posições passam a valer exatamente o mesmo.
+- Os documentos do fim da lista passam a valer mais.
+- O RRF deixa de poder ser calculado.
+- A fusão passa a depender de escalas de pontuação.
+J: Com k pequeno, 1/(k+1) é bem maior que 1/(k+2); com k grande, o desconto é suave.
+
+MC: O que o experimento do capítulo mostrou sobre a busca híbrida na base de 60 documentos?
+= O RRF não superou o BM25 de forma conclusiva, e a diferença ficou dentro da incerteza.
+- O RRF superou o BM25 em todas as métricas, com folga.
+- A busca híbrida deixou de funcionar com 60 documentos.
+- O RRF só funciona com índices aproximados.
+- O BM25 teve acerto zero nas paráfrases.
+J: A diferença pareada de MRR foi de -0,012, com intervalo que inclui o zero; híbrido é hipótese a testar.
+
+MC: Qual o compromisso central ao escolher o tamanho dos pedaços (chunks)?
+= Pedaços pequenos são precisos, mas podem separar a resposta do contexto; grandes carregam a resposta, mas custam mais tokens.
+- Pedaços pequenos sempre contêm a resposta inteira.
+- Pedaços grandes reduzem o custo de contexto.
+- O tamanho não influencia o resultado.
+- Pedaços pequenos exigem mais dimensões nos vetores.
+J: No experimento, 10 palavras contiveram a resposta em 43,5% dos casos; 160 palavras, em 95,7%, com contexto de 464 palavras.
+
+MC: Para que serve a sobreposição entre pedaços vizinhos?
+= Evitar que uma resposta caia exatamente na fronteira entre dois pedaços e fique dividida.
+- Reduzir o número de pedaços no índice.
+- Diminuir a memória dos vetores.
+- Eliminar a necessidade de metadados.
+- Garantir que a busca seja exata.
+J: A repetição de parte do texto aumenta a chance de a passagem inteira estar em algum pedaço, ao custo de mais pedaços.
+
+MC: Por que cada pedaço indexado deve carregar metadados?
+= Para citar a fonte, aplicar filtros e permissões, e preservar o contexto do trecho, como a seção e a versão.
+- Para aumentar o número de dimensões do embedding.
+- Para substituir o texto do pedaço.
+- Para dispensar o modelo de embeddings.
+- Para tornar a busca aproximada exata.
+J: Sem metadados, "o prazo é de 10 dias" não diz de qual prazo se trata, e a fonte não pode ser citada.
+
+MC: Como funciona, em essência, o índice IVF?
+= Agrupa os vetores com k-means e, na consulta, examina só os grupos de centroide mais próximo da consulta.
+- Compara a consulta com todos os vetores, sem exceção.
+- Ordena os documentos por tamanho de arquivo.
+- Sorteia documentos ao acaso.
+- Guarda apenas os vetores de maior norma.
+J: O parâmetro nprobe controla quantos grupos são examinados e, assim, o equilíbrio entre recall e esforço.
+
+MC: Qual a ideia do LSH com hiperplanos aleatórios?
+= Vetores próximos tendem a cair dos mesmos lados dos hiperplanos, gerando o mesmo código e colidindo na mesma tabela.
+- Vetores próximos recebem códigos sempre opostos.
+- Os vetores são ordenados pelo comprimento.
+- Os hiperplanos são escolhidos para separar as palavras.
+- Os vetores são convertidos em texto.
+J: Os sinais das projeções formam o código; os candidatos são os vetores com o mesmo código da consulta em alguma tabela.
+
+MC: Como se mede a qualidade de um índice aproximado?
+= Pelo recall@k contra a busca exata, junto com a fração da coleção examinada.
+- Apenas pelo número de vetores guardados.
+- Pelo tamanho do arquivo do índice, somente.
+- Pelo número de palavras da consulta.
+- Pelo idioma dos documentos.
+J: A busca exaustiva é o padrão-ouro: dos k vizinhos verdadeiros, vê-se quantos o índice devolveu.
+
+MC: Qual a memória dos vetores de 2 milhões de pedaços com 768 dimensões em float32?
+= Cerca de 6,1 GB, pois 2e6 x 768 x 4 bytes.
+- Cerca de 1,5 GB, pois cada número ocupa 1 byte.
+- Cerca de 61 GB, pois cada número ocupa 40 bytes.
+- Cerca de 600 MB, pois só se guarda a norma.
+- Zero, pois o índice não guarda vetores.
+J: M = N d b = 2e6 x 768 x 4 = 6,14e9 bytes.
+
+MC: Qual a principal diferença entre um bi-encoder e um cross-encoder?
+= O bi-encoder codifica consulta e documento separadamente; o cross-encoder processa o par junto, com mais precisão e mais custo.
+- O cross-encoder usa vetores pré-calculados dos documentos; o bi-encoder, não.
+- O bi-encoder processa o par junto; o cross-encoder, separados.
+- Os dois são idênticos, mas têm nomes diferentes.
+- O cross-encoder só funciona com imagens.
+J: Por exigir uma passagem do modelo por par, o cross-encoder costuma reordenar poucos candidatos de uma primeira etapa.
+
+MC: Para que serve um limiar de similaridade em um sistema de busca?
+= Recusar a resposta quando o melhor documento é fraco demais, evitando apoiar a resposta em um documento irrelevante.
+- Garantir que toda consulta tenha exatamente uma resposta.
+- Aumentar o número de dimensões do embedding.
+- Trocar o modelo de embeddings automaticamente.
+- Eliminar a necessidade de avaliar o sistema.
+J: Mas as distribuições de consultas com e sem resposta se sobrepõem; nenhum limiar é perfeito e ele deve ser calibrado e avaliado.
+
+MC: Qual o risco do pós-filtro por metadados?
+= Os k melhores podem não passar no filtro, e o sistema devolve menos de k resultados, ou nenhum.
+- Ele permite que usuários vejam documentos que não deveriam ver.
+- Ele sempre devolve mais de k resultados.
+- Ele exige reindexar a coleção a cada consulta.
+- Ele altera os vetores dos documentos.
+J: No exemplo, o pós-filtro por "Campus" devolveu 1 documento; o pré-filtro, 3.
+
+MC: O que deve ser feito ao trocar o modelo de embeddings de uma coleção?
+= Reindexar toda a coleção, porque espaços vetoriais de modelos diferentes não são comparáveis.
+- Reindexar apenas os documentos mais recentes.
+- Manter os vetores antigos e codificar só as consultas com o novo modelo.
+- Nada, pois os vetores são intercambiáveis.
+- Apagar os metadados.
+J: Consultas e documentos precisam estar no mesmo espaço; misturar espaços destrói a comparação.
+
+MC: Por que a negação é uma armadilha para a busca por embeddings?
+= Porque "posso trancar" e "não posso trancar" usam palavras e contextos quase idênticos e ficam com vetores muito próximos.
+- Porque a negação elimina o documento do índice.
+- Porque a negação aumenta a dimensão do vetor.
+- Porque a negação só existe em inglês.
+- Porque a negação torna o cosseno negativo, sempre.
+J: No experimento, o cosseno entre afirmação e negação foi 0,779; a verificação no texto recuperado é necessária.
+
+DISC[C]: Explique por que, na prática, normalizam-se os embeddings antes de indexar, e o que muda se isso não for feito.
+R: Com vetores de norma 1, produto interno, cosseno e distância euclidiana dão a mesma ordem (a distância ao quadrado vale 2 menos 2 vezes o cosseno), e o produto interno é a operação mais barata. Sem normalizar, as medidas divergem: o produto interno favorece vetores longos e a distância pode favorecer vetores curtos, perto da origem. Além disso, misturar medidas ou normalizações entre indexação e consulta produz resultados ruins sem gerar erro.
+CRIT: Cita a identidade entre distância e cosseno para norma 1.
+CRIT: Menciona o efeito do comprimento no produto interno.
+
+DISC[C]: Descreva a diferença entre bi-encoder e cross-encoder e explique por que se usam em dois estágios.
+R: O bi-encoder codifica consulta e documento separadamente; os vetores dos documentos são pré-calculados e a busca é rápida, mas a comparação final é só um cosseno. O cross-encoder recebe o par junto e produz uma nota de relevância, capturando relações finas (negações, números), mas exige uma passagem do modelo por par, sem pré-cálculo. Por isso o bi-encoder (ou o BM25) recupera dezenas ou centenas de candidatos com alto recall, e o cross-encoder reordena só os melhores, equilibrando custo e precisão.
+
+DISC[C]: Por que não se indexa, em geral, um documento longo como um único vetor? Que decisões envolve a segmentação em pedaços?
+R: Um único vetor dilui assuntos diferentes, e o contexto enviado ao modelo é limitado e custa tokens. Segmentar exige decidir: tamanho (pequeno é preciso, mas pode separar pergunta e resposta; grande carrega a resposta, mas dilui e encarece), sobreposição (evita respostas cortadas na fronteira, ao custo de mais pedaços) e critério (por tamanho fixo ou por estrutura, como seções e parágrafos). Cada pedaço deve guardar metadados para citação e filtros.
+
+DISC[C]: Explique por que a busca híbrida pode ajudar e por que, ainda assim, não deve ser adotada sem teste.
+R: A busca lexical falha em paráfrases; a densa pode falhar com siglas, números e nomes raros. Se os métodos erram em consultas diferentes, a fusão (por exemplo, o RRF) pode cobrir ambos. Mas, se os métodos concordam, ou se um é muito mais fraco, a fusão não ajuda e pode piorar; na base do capítulo, o RRF teve MRR ligeiramente abaixo do BM25, dentro da incerteza. Deve-se medir com métricas e intervalos de confiança pareados, na base real.
+
+DISC[M]: Dados $q=(1;\,2)$, $a=(2;\,4)$ e $b=(3;\,0)$, calcule produto interno, cosseno e distância euclidiana de $q$ com $a$ e com $b$. Qual documento ganha em cada medida?
+R: Com $a$: produto $=2+8=10$; $\lVert q\rVert=\sqrt5$, $\lVert a\rVert=\sqrt{20}$, cosseno $=10/\sqrt{100}=1$; distância $=\sqrt{1+4}=\sqrt5\approx2{,}24$. Com $b$: produto $=3$; $\lVert b\rVert=3$, cosseno $=3/(\sqrt5\cdot3)\approx0{,}447$; distância $=\sqrt{4+4}\approx2{,}83$. O vetor $a$ ganha nas três medidas (produto 10 contra 3, cosseno 1 contra 0,447, distância 2,24 contra 2,83). Aqui, as medidas concordam porque $a$ aponta exatamente na direção de $q$ e não está longe.
+
+DISC[M]: Calcule o RRF com $k=60$ para $A=[\mathrm{X},\mathrm{Y},\mathrm{Z}]$ e $B=[\mathrm{Z},\mathrm{X},\mathrm{W}]$ e dê o ranking fundido.
+R: X: posições 1 e 2: $1/61+1/62=0{,}01639+0{,}01613=0{,}03252$. Z: posições 3 e 1: $1/63+1/61=0{,}01587+0{,}01639=0{,}03226$. Y (só em A, posição 2): $1/62=0{,}01613$. W (só em B, posição 3): $1/63=0{,}01587$. Ranking: X, Z, Y, W.
+
+DISC[M]: O ranking devolvido é $[\mathrm{D2},\mathrm{D9},\mathrm{D4},\mathrm{D7}]$ e os relevantes são $\{\mathrm{D4},\mathrm{D7}\}$. Calcule recall@3, MRR e nDCG@4.
+R: Nos 3 primeiros há D4: recall@3 $=1/2$. O primeiro relevante está na posição 3: MRR $=1/3$. $\mathrm{DCG@4}=1/\log_2 4+1/\log_2 5=0{,}5+0{,}4307=0{,}9307$; $\mathrm{IDCG}=1+1/\log_2 3=1{,}6309$; $\mathrm{nDCG@4}=0{,}9307/1{,}6309\approx0{,}571$.
+
+DISC[M]: Um índice terá 40 milhões de pedaços com embeddings de 1 024 dimensões. Calcule a memória dos vetores em float32, float16 e int8, e discuta o que mais precisa caber na memória.
+R: $M=N\,d\,b$ com $N\,d=4{,}096\times10^{10}$. Em float32 ($b=4$): $163{,}84$ GB; em float16 ($b=2$): $81{,}92$ GB; em int8 ($b=1$): $40{,}96$ GB. Além dos vetores, é preciso espaço para as estruturas do índice (listas ou grafos), os textos e os metadados, e para o cache e o processamento das consultas. A quantização reduz a memória, mas deve ser validada com recall contra a busca exata em float32, em dados reais.
+
+DISC[M]: Um sistema acerta o hit@3 em 42 de 46 consultas. Calcule o hit@3 e um intervalo aproximado de 95% pela fórmula normal. Compare com a largura que se teria com 460 consultas e a mesma proporção.
+R: $p=42/46\approx0{,}913$. Erro-padrão $=\sqrt{0{,}913\times0{,}087/46}\approx0{,}0416$; intervalo $\approx0{,}913\pm1{,}96\times0{,}0416=0{,}913\pm0{,}081$, isto é, $[0{,}83;\ 0{,}99]$. Com 460 consultas, o erro-padrão cai para $\approx0{,}0131$ e a margem para $\pm0{,}026$: a largura cai por um fator $\sqrt{10}\approx3{,}2$. A aproximação normal é imperfeita perto de 1; o bootstrap dá um intervalo semelhante.
+
+DISC[P]: Implemente `knn_cosseno(q, D, k)` em NumPy, que devolva os índices dos k documentos de maior cosseno com a consulta, em ordem decrescente. Teste com quatro vetores.
+CODE:
+import numpy as np
+
+def knn_cosseno(q, D, k):
+    q = np.asarray(q, float); D = np.asarray(D, float)
+    nq = np.linalg.norm(q); nD = np.linalg.norm(D, axis=1)
+    cos = (D @ q) / np.where(nD * nq == 0, 1.0, nD * nq)
+    return list(np.argsort(-cos, kind="stable")[:k])
+
+D = np.array([[1.0, 0.0], [0.6, 0.8], [0.0, 1.0], [5.0, 5.0]])
+q = np.array([0.8, 0.6])
+res = knn_cosseno(q, D, 2)
+assert res == [3, 1]
+print(res)
+ENDCODE
+CRIT: Normaliza os dois lados (ou divide pelo produto das normas).
+CRIT: Trata norma zero sem divisão por zero.
+CRIT: Ordena em ordem decrescente de cosseno.
+
+DISC[P]: Implemente `rrf(rankings, k=60)` que receba listas de identificadores e devolva a lista fundida, com desempate pela ordem alfabética. Verifique com o exemplo $A=[\mathrm{D1},\mathrm{D2},\mathrm{D3},\mathrm{D4}]$ e $B=[\mathrm{D3},\mathrm{D1},\mathrm{D5},\mathrm{D2}]$.
+CODE:
+def rrf(rankings, k=60):
+    pont = {}
+    for rk in rankings:
+        for pos, d in enumerate(rk, 1):
+            pont[d] = pont.get(d, 0.0) + 1.0 / (k + pos)
+    return sorted(pont, key=lambda d: (-pont[d], d)), pont
+
+A = ["D1", "D2", "D3", "D4"]
+B = ["D3", "D1", "D5", "D2"]
+ordem, pont = rrf([A, B])
+assert ordem == ["D1", "D3", "D2", "D5", "D4"]
+print(ordem, round(pont["D1"], 5))
+ENDCODE
+CRIT: Usa posições começando em 1.
+CRIT: Soma as contribuições de todos os rankings.
+CRIT: Define um critério de desempate explícito.
+
+DISC[P]: Implemente `dividir(texto, tamanho, sobreposicao)` que devolva janelas de palavras com sobreposição, sem laço infinito e sem janelas vazias. Teste com um texto de 10 palavras.
+CODE:
+def dividir(texto, tamanho, sobreposicao=0):
+    if sobreposicao >= tamanho:
+        raise ValueError("a sobreposição deve ser menor que o tamanho")
+    palavras = texto.split()
+    passo = tamanho - sobreposicao
+    janelas = []
+    for i in range(0, len(palavras), passo):
+        janelas.append(" ".join(palavras[i:i + tamanho]))
+        if i + tamanho >= len(palavras):
+            break
+    return janelas
+
+texto = "a b c d e f g h i j"
+j = dividir(texto, 4, 2)
+assert j == ["a b c d", "c d e f", "e f g h", "g h i j"]
+assert dividir(texto, 4, 0) == ["a b c d", "e f g h", "i j"]
+print(j)
+ENDCODE
+CRIT: Rejeita sobreposição maior ou igual ao tamanho.
+CRIT: Para ao alcançar o fim do texto.
+CRIT: A última janela pode ser mais curta, mas nunca vazia.
+
+DISC[P]: Implemente `a_reindexar(registro, documentos)` que compare o hash (SHA-256) do conteúdo de cada documento com o registro anterior e devolva os identificadores novos, alterados e removidos.
+CODE:
+import hashlib
+
+def sha(t):
+    return hashlib.sha256(t.encode("utf-8")).hexdigest()
+
+def a_reindexar(registro, documentos):
+    novos = [d for d in documentos if d not in registro]
+    alterados = [d for d, t in documentos.items() if d in registro and registro[d] != sha(t)]
+    removidos = [d for d in registro if d not in documentos]
+    return novos, alterados, removidos
+
+antigo = {"D1": sha("texto um"), "D2": sha("texto dois"), "D3": sha("texto tres")}
+atual = {"D1": "texto um", "D2": "texto dois revisado", "D4": "texto quatro"}
+n, a, r = a_reindexar(antigo, atual)
+assert n == ["D4"] and a == ["D2"] and r == ["D3"]
+print(n, a, r)
+ENDCODE
+CRIT: Compara hashes, e não os textos completos guardados.
+CRIT: Distingue novos, alterados e removidos.
+
+DISC[A]: Uma secretaria quer um assistente que responda sobre normas, e a equipe nota que consultas sem resposta ("Qual o telefone do reitor?") recebem documentos irrelevantes. Proponha um tratamento e como validá-lo.
+R: Adotar um limiar de similaridade (ou da pontuação BM25) abaixo do qual o sistema responde "não encontrei" e encaminha a uma pessoa; instruir o modelo a abster-se quando o contexto não contiver a resposta. Validar com um conjunto que inclua consultas com e sem resposta, medindo a fração de sem resposta recusadas e a de com resposta barradas, para vários limiares; calibrar em uma parte dos dados e testar em outra; reportar incertezas; reavaliar quando o modelo, a base ou o tamanho dos pedaços mudarem.
+
+DISC[A]: Uma universidade tem regulamentos longos, com seções e artigos. Descreva como segmentar, quais metadados guardar e como avaliar a escolha.
+R: Segmentar por estrutura (artigos e parágrafos), com limite máximo de tamanho e alguma sobreposição quando um artigo for dividido; prefixar cada pedaço com título da seção e do documento. Guardar metadados: documento, seção, versão, data de vigência, público e permissões. Avaliar com consultas reais anotadas com a passagem que responde, medindo se os k melhores pedaços contêm a passagem inteira, junto do custo em tokens, variando tamanho e sobreposição, com intervalos de confiança.
+
+DISC[A]: Um sistema de busca interna mostra, a um estudante, trechos de documentos restritos a servidores, porque a permissão foi aplicada depois da busca. Explique o problema e a correção.
+R: A permissão foi aplicada no pós-filtro, ou no prompt, e não na busca: os documentos restritos entram no contexto antes do descarte e podem vazar por erro de implementação ou por instruções ignoradas. A correção é aplicar o filtro de permissões como pré-filtro (ou no próprio índice), garantindo que o usuário só recupere documentos que pode ver, e testar o filtro com casos de acesso negado. Isso vale também para logs e caches.
+
+DISC[A]: Uma consulta em um portal público é "Posso fazer o estágio antes do 5º semestre?". O sistema recupera o documento do estágio obrigatório e responde "sim". Analise as falhas possíveis na recuperação e na resposta e proponha verificações.
+R: Pode ter havido erro de negação ou de número: a regra pode dizer que só se pode começar depois do 5º semestre, e a resposta ignorou a condição. Embeddings e BM25 recuperam o documento, mas não verificam a lógica. Verificações: exigir citação literal do trecho que sustenta a resposta e conferir por busca de texto; checar números e condições com regras; testar consultas com negações e valores limite; abster-se ou encaminhar quando a citação não confirmar a resposta.
+
+DISC[D]: Projete o pipeline de busca para a base de 60 documentos e uma base futura de 60 000 documentos, indicando em que ponto deixaria de usar busca exaustiva e como mediria a mudança.
+R: Com 60 documentos, busca exaustiva em NumPy, BM25 e embeddings, avaliados em 46 consultas. Para 60 000 pedaços de 768 dimensões, os vetores ocupam cerca de 184 MB em float32, e a busca exaustiva ainda é viável; a decisão por um índice aproximado depende da latência-alvo, do número de consultas e do crescimento esperado. Ao adotá-lo, medir o recall@k contra a busca exata e a fração examinada em consultas reais, escolher o menor esforço que atinja o recall mínimo, e monitorar a qualidade após cada atualização.
+
+DISC[D]: Planeje a avaliação de um buscador para decidir entre BM25, embeddings densos e híbrido, incluindo conjunto de consultas, métricas, incerteza e critérios de decisão.
+R: Reunir consultas reais, com paráfrases, siglas, números e negações, e consultas sem resposta; anotar os documentos relevantes (de preferência por mais de uma pessoa). Medir hit@k, recall@k, MRR e nDCG, e a taxa de recusa correta. Calcular intervalos por bootstrap e diferenças pareadas. Definir critérios de decisão antes (por exemplo, melhoria mínima relevante e custo máximo); só concluir quando o intervalo da diferença exceder a melhoria mínima. Analisar os erros por tipo de consulta, e repetir a avaliação a cada mudança de modelo ou de base.
+
+DISC[D]: A equipe quer trocar o modelo de embeddings por outro, supostamente melhor. Descreva o processo de migração com segurança, incluindo avaliação e reindexação.
+R: Avaliar o novo modelo em um conjunto fixo de consultas, comparando com o atual com diferenças pareadas e intervalos; checar licença, idioma, custo e tamanho. Construir um novo índice em paralelo, reindexando toda a coleção com o novo modelo (os espaços não são comparáveis), com as mesmas regras de segmentação e normalização. Recalibrar limiares. Implantar gradualmente (por exemplo, para uma fração do tráfego), monitorando métricas e amostras revisadas por pessoas, com plano de reversão para o índice antigo, e registrar o nome e a versão do modelo e a data.

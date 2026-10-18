@@ -1,0 +1,394 @@
+MC: Qual é a melhor definição de geração aumentada por recuperação (RAG)?
+= Recuperar trechos de uma base de documentos e inseri-los no prompt para que a resposta se apoie neles.
+- Treinar o modelo de novo, a cada pergunta, com todos os documentos da base.
+- Trocar o modelo de linguagem por um mecanismo de busca por palavras-chave.
+- Comprimir os pesos do modelo para que caibam documentos adicionais.
+- Gerar documentos sintéticos para ampliar o conjunto de treinamento.
+J: O RAG não altera os pesos: ele traz texto relevante para o contexto no momento da pergunta.
+
+MC: Qual destas é uma motivação legítima para usar RAG?
+= Responder com base em normas internas e atuais que não estavam no treinamento do modelo.
+- Garantir que nenhuma resposta jamais contenha erros factuais.
+- Garantir que nenhuma resposta contenha erros factuais, já que os documentos recuperados sempre estão corretos e atualizados.
+- Fazer o modelo esquecer o que aprendeu durante o treinamento.
+- Reduzir a zero o custo por consulta em relação ao modelo sozinho.
+J: Conhecimento privado ou posterior ao corte do treinamento é a motivação típica; o RAG não garante correção nem dispensa avaliação.
+
+MC: Por que o RAG facilita a rastreabilidade das respostas?
+= Porque cada afirmação pode citar o documento recuperado de onde veio, e a citação pode ser conferida.
+- Porque o modelo passa a explicar fielmente, passo a passo, como calculou internamente cada palavra da resposta que produziu.
+- Porque os documentos são gravados nos pesos e podem ser lidos depois.
+- Porque a busca elimina qualquer chance de documento desatualizado.
+- Porque o modelo deixa de produzir texto livre e só copia a pergunta.
+J: A rastreabilidade vem das fontes identificadas no contexto, e não de uma visão interna do modelo.
+
+MC: Em qual ordem ocorrem as etapas de um pipeline RAG?
+= Indexação, recuperação, montagem do prompt, geração e verificação.
+- Geração, indexação, verificação, recuperação e montagem do prompt.
+- Recuperação, geração, indexação, montagem do prompt e verificação.
+- Montagem do prompt, indexação, geração, recuperação e verificação.
+- Verificação, geração, montagem do prompt, indexação e recuperação.
+J: A indexação ocorre antes (offline); em cada pergunta recupera-se, monta-se o prompt, gera-se e verifica-se.
+
+MC: Por que é importante avaliar a recuperação e a geração separadamente?
+= Porque a causa de uma resposta ruim pode estar na busca ou no gerador, e cada caso exige uma correção diferente.
+- Porque a avaliação da geração dispensa documentos de referência.
+- Porque a recuperação nunca influencia a qualidade da resposta final.
+- Porque medir as duas juntas é matematicamente impossível.
+- Porque o gerador sempre corrige os erros da busca.
+J: Se o documento certo não chegou ao contexto, melhorar o prompt não ajuda; e vice-versa.
+
+MC: O que é um metadado de fragmento em um índice RAG?
+= Uma informação sobre o fragmento, como documento de origem, título, data, versão, vigência ou permissão de acesso.
+- O vetor numérico calculado a partir do texto do fragmento e usado pelo índice para medir a similaridade com a consulta.
+- A lista de palavras proibidas que o modelo não pode usar.
+- O número de parâmetros do modelo que gerou o fragmento.
+- A temperatura usada na geração da resposta.
+J: Metadados permitem citar, filtrar por vigência ou permissão, auditar e excluir.
+
+MC: Em geral, qual o problema de usar fragmentos muito pequenos (uma frase)?
+= Eles podem separar a pergunta da sua resposta, e o trecho com a informação pode não chegar ao contexto.
+- Eles aumentam muito o número de tokens enviados ao modelo, porque cada frase precisa repetir todo o texto do documento.
+- Eles impedem o uso de qualquer metadado de permissão.
+- Eles tornam impossível o uso de busca lexical.
+- Eles obrigam o uso de um modelo de linguagem maior.
+J: No experimento do capítulo, com 1 frase por fragmento o trecho da resposta aparecia no contexto em apenas 28% dos casos com k=1.
+
+MC: Qual o problema típico de fragmentos muito grandes?
+= Eles trazem texto irrelevante, consomem tokens e diluem a relevância do que foi recuperado.
+- Eles impedem que haja citações no formato [D12].
+- Eles impedem que haja citações no formato [D12], porque o identificador do documento só pode ser incluído em textos longos.
+- Eles garantem que o modelo ignore o contexto.
+- Eles reduzem o custo, mas diminuem a cobertura.
+J: O custo e o ruído crescem sem ganho proporcional de cobertura (925 tokens com o regulamento inteiro e k=3 no experimento).
+
+MC: Como escolher o tamanho do fragmento de um novo corpus?
+= Medir, no próprio corpus e com consultas representativas, a cobertura da resposta e o custo para tamanhos diferentes.
+- Usar sempre 512 tokens, pois é o valor universalmente ótimo.
+- Escolher o maior tamanho que caiba na janela de contexto.
+- Usar sempre uma frase, por ser o menor tamanho possível.
+- Copiar o valor de um tutorial, sem testar.
+J: Não há tamanho universal; o compromisso depende dos documentos e das perguntas.
+
+MC: Qual a função do índice híbrido (BM25 + busca semântica) apresentado no Capítulo 10, quando usado em RAG?
+= Combinar a correspondência de palavras com a similaridade semântica, para aumentar a chance de recuperar o documento certo.
+- Substituir o gerador por um mecanismo de busca.
+- Garantir que o documento recuperado seja sempre o primeiro da lista, qualquer que seja a consulta feita pelo usuário do sistema.
+- Eliminar a necessidade de fragmentar os documentos.
+- Impedir que o gerador cite as fontes.
+J: Os dois métodos falham em casos diferentes; a fusão tenta aproveitar ambos, mas isso deve ser medido (nesta base, não superou os isolados).
+
+MC: No experimento do capítulo, qual conclusão é justificada sobre as 8 consultas de paráfrase?
+= Os intervalos de confiança são largos, e as diferenças entre métodos não permitem conclusões firmes.
+- O método híbrido é comprovadamente o melhor, em qualquer corpus e para qualquer tipo de consulta, com base nesses resultados.
+- A busca lexical é inútil para paráfrases em qualquer idioma.
+- Com 8 consultas, o IC é mais estreito do que com 38.
+- O recall nas paráfrases é igual ao das consultas diretas.
+J: Com 8 casos, uma consulta muda a taxa em 12,5 pontos percentuais; o bootstrap reflete a incerteza.
+
+MC: Para que servem os delimitadores no prompt de um sistema RAG?
+= Para separar documentos e instruções, identificar as fontes e servir como primeira camada, insuficiente, contra injeção.
+- Para garantir que o conteúdo dos documentos seja verdadeiro.
+- Para impedir que o modelo produza qualquer citação, já que as fontes não podem aparecer dentro do texto da resposta final.
+- Para reduzir a zero o número de tokens do contexto.
+- Para eliminar a necessidade de validar a saída.
+J: Delimitar ajuda a distinguir dados de instruções, mas pode ser contornado (por exemplo, por um texto que finge fechar o bloco).
+
+MC: O que significa o requisito de citação no formato [D12]?
+= A resposta deve apontar os documentos usados, e o identificador citado precisa estar entre os que foram fornecidos.
+- A resposta deve conter o texto completo do documento D12.
+- O modelo deve citar documentos mesmo que não os tenha recebido.
+- A citação só é válida se o documento for o primeiro da lista.
+- A citação dispensa a conferência do conteúdo da afirmação.
+J: Uma citação é verificável por código: o identificador deve existir no contexto e o trecho deve estar no documento citado.
+
+MC: Quando o limite de tokens do contexto é atingido, qual prática é preferível?
+= Cortar fragmentos inteiros menos relevantes, em vez de pedaços de um fragmento, cuidando de não perder a melhor evidência.
+- Cortar sempre o primeiro fragmento da lista, por ser o mais antigo, e manter os demais fragmentos até o fim do limite de tokens.
+- Cortar pedaços aleatórios de cada fragmento.
+- Ignorar o limite e deixar o serviço truncar o prompt.
+- Remover as instruções do sistema para abrir espaço.
+J: Cortes cegos podem remover justamente a melhor evidência; como no exemplo do capítulo, com 50 tokens o documento certo não coube.
+
+MC: Por que o orçamento de tokens deve reservar espaço para a resposta?
+= Porque a janela de contexto comporta entrada e saída, e sem reserva a resposta pode ser cortada no meio.
+- Porque a resposta é tokenizada antes da pergunta.
+- Porque os documentos precisam ser apagados do índice logo depois da geração, para liberar espaço na janela do próximo usuário.
+- Porque a janela só vale para a entrada.
+- Porque a reserva elimina a necessidade de limitar o contexto.
+J: Entrada e saída dividem o orçamento da janela de contexto.
+
+MC: Para que serve a instrução de abstenção em um prompt RAG?
+= Dar ao modelo uma saída legítima ("não consta") quando os documentos não trazem a resposta, reduzindo respostas inventadas.
+- Obrigar o modelo a nunca responder com base nos documentos.
+- Apenas o número de tokens por resposta e a velocidade de geração, que são as únicas medidas relevantes em sistemas RAG hoje.
+- Impedir que o usuário faça perguntas fora do assunto.
+- Aumentar o tamanho médio das respostas.
+J: A instrução ajuda, mas não garante: é preciso medir a abstenção correta e a indevida.
+
+MC: Em uma avaliação de abstenção, qual par de taxas deve ser acompanhado?
+= A abstenção correta (perguntas sem resposta) e a abstenção indevida (perguntas que tinham resposta).
+- Para que o TESTE tenha sempre mais consultas que o DEV e o intervalo de confiança possa ser calculado com maior precisão.
+- Apenas o número de tokens por resposta.
+- A abstenção correta, ignorando as perguntas com resposta.
+- A latência média e o custo por consulta.
+J: Há um compromisso: aumentar a abstenção reduz respostas inventadas, mas também recusa perguntas respondíveis.
+
+MC: Por que o limiar de abstenção foi escolhido em uma metade das consultas (DEV) e medido na outra (TESTE)?
+= Para não ajustar o limiar nos mesmos dados em que se mede o desempenho, o que tornaria o resultado otimista.
+- Para que o TESTE tenha sempre mais consultas que o DEV.
+- Para eliminar a necessidade de intervalos de confiança.
+- Para garantir que o desempenho seja igual nas duas metades.
+- Porque o gerador simulado só aceita metade das consultas.
+J: Ajustar e medir no mesmo conjunto superestima o desempenho; a separação dá uma estimativa mais honesta.
+
+MC: No capítulo, a fidelidade de 1,00 do gerador simulado deve ser interpretada como:
+= Uma consequência da construção (o gerador só copia frases do contexto), sem relação com o comportamento de LLMs reais.
+- Prova de que RAG elimina a alucinação em qualquer modelo.
+- Fiel significa que a resposta é curta e direta; correta significa que a resposta é longa e traz muitos detalhes do texto citado.
+- Um resultado típico de qualquer LLM com contexto.
+- Uma medida da qualidade do índice de busca.
+J: O simulador não parafraseia; um LLM real pode ser infiel, e a checagem literal falharia até para paráfrases corretas.
+
+MC: Qual a diferença entre uma resposta fiel ao contexto e uma resposta correta?
+= Fiel significa apoiada no contexto fornecido; correta exige também que o contexto seja certo e atual.
+- São sinônimos; toda resposta fiel é correta.
+- Fiel significa curta; correta significa longa.
+- Fiel exige citação; correta dispensa fontes.
+- O gerador simulado se absteve nos dois casos, pois a presença de duas versões o impede de produzir qualquer resposta ao usuário.
+J: Uma resposta fiel a um documento desatualizado ou falso continua errada.
+
+MC: No experimento com duas versões da norma de trancamento no índice, o que se observou?
+= A resposta citou a versão nova ou a antiga conforme a ordem do contexto, e a checagem de fidelidade aprovou ambas.
+- O sistema sempre citou a versão mais recente, por ser mais longa.
+- A checagem de fidelidade reprovou as duas respostas.
+- A recuperação deixou de encontrar ambos os documentos.
+- O gerador simulado se absteve nos dois casos.
+J: Sem metadados de vigência, a escolha fica arbitrária; fidelidade não mede atualidade.
+
+MC: O que a literatura (Liu et al., 2024) descreve sobre a posição da informação no contexto?
+= Em modelos testados, o desempenho tende a ser maior com a informação no início ou no fim do contexto e menor no meio.
+- Que a posição não tem nenhum efeito em qualquer modelo de linguagem.
+- Porque a ordem dos documentos nunca muda o prompt enviado ao modelo, já que o prompt é montado sempre em ordem alfabética.
+- Que o efeito foi eliminado por todos os modelos de contexto longo.
+- Que a posição só afeta modelos com menos de um bilhão de parâmetros.
+J: O resultado vale para os modelos testados e pode variar entre modelos e versões; por isso, mede-se no seu sistema.
+
+MC: Por que os resultados idênticos para as três ordens de contexto no capítulo não refutam o efeito "perdido no meio"?
+= Porque o gerador simulado lê todas as frases do mesmo modo e é incapaz de exibir esse viés.
+- Melhorou a recuperação para 100% das consultas, pois os termos acrescentados sempre pertencem ao documento relevante da consulta.
+- Porque a ordem dos documentos nunca muda o prompt.
+- Porque o experimento usou k=1.
+- Porque o efeito só ocorre com contexto vazio.
+J: Ausência de efeito num simulador sem esse mecanismo não diz nada sobre modelos reais.
+
+MC: Qual foi o resultado da reescrita por realimentação de pseudo-relevância (PRF) nas consultas diretas, com k=1?
+= Piorou a recuperação, pois acrescentou termos de resultados iniciais que nem sempre eram úteis.
+- Melhorou a recuperação para 100%.
+- Não teve nenhum efeito, em nenhum k.
+- Multiplica as pontuações brutas de cada método e ordena os documentos pelo produto, sem usar as posições nas listas.
+- Reduziu o custo de tokens por consulta.
+J: Técnicas avançadas nem sempre ajudam; a reescrita depende da qualidade dos primeiros resultados.
+
+MC: Como funciona a fusão de posições recíprocas (RRF) em uma recuperação multiconsulta?
+= Soma, para cada documento, 1/(c + posição) em cada lista em que ele aparece, e reordena pela soma.
+- Escolhe a lista com o maior número de documentos e ignora as demais.
+- Multiplica as pontuações brutas de cada método.
+- Descarta os documentos que aparecem em mais de uma lista.
+- Ordena os documentos por tamanho do texto.
+J: A RRF usa só as posições, e não precisa que as pontuações dos métodos estejam na mesma escala.
+
+MC: Por que o filtro de permissões deve ser aplicado antes da busca (ou ao menos antes do modelo), e não pelo próprio modelo?
+= Porque um documento restrito que entrou no prompt pode vazar na resposta; o controle deve ser feito em código.
+- Porque o modelo reconhece sempre quais usuários têm acesso.
+- Porque instruir o modelo no prompt a não revelar o documento restrito é uma garantia suficiente contra qualquer vazamento.
+- Porque o filtro só funciona se aplicado depois da geração.
+- Porque filtrar antes aumenta o vazamento.
+J: Instruções ao modelo não são controles de segurança; o que não pode ser visto não deve chegar ao prompt.
+
+MC: Qual a vantagem de filtrar por permissão antes da busca, em comparação com filtrar depois?
+= Os k melhores são escolhidos entre os documentos permitidos, evitando contexto com menos de k itens, ou vazio.
+- Evita a necessidade de metadados de permissão.
+- Garante que o vazamento por caches, registros e respostas guardadas seja nulo, pois o controle de acesso cobre todos eles.
+- Torna o gerador imune à injeção de prompt.
+- Aumenta o recall em qualquer corpus.
+J: O filtro depois pode descartar justamente os documentos mais bem classificados, e deixa menos itens.
+
+MC: O que é injeção de prompt indireta em um sistema RAG?
+= Um documento recuperado contém texto que tenta dar ordens ao modelo, que pode tratá-lo como instrução.
+- O usuário digita uma pergunta muito longa.
+- O modelo altera os próprios pesos durante a conversa.
+- O índice de busca fica sem memória.
+- O prompt do sistema é apagado do servidor.
+J: Instruções e dados chegam ao modelo como texto; documentos não confiáveis podem conter instruções.
+
+MC: Qual conclusão é correta sobre as defesas contra injeção testadas no capítulo?
+= Delimitar não barrou o ataque que finge fechar o bloco; sanitização e validação o barraram, sem eliminar o risco.
+- A delimitação sozinha bloqueou todos os ataques testados, de modo que as demais camadas se mostraram dispensáveis.
+- A validação da saída detecta qualquer documento com fato falso.
+- Com as defesas ligadas, o risco de injeção passa a ser nulo.
+- A sanitização dispensa o controle de quem escreve no índice.
+J: Há ataques que nenhuma camada pega, como o envenenamento de conteúdo; defesas reduzem, mas não eliminam, o risco.
+
+MC: Quando RAG, ajuste fino e contexto longo devem ser comparados?
+= Quando o conhecimento muda, há exigência de citação, permissões ou limite de custo; comparando-os com medidas próprias.
+- Nunca, pois um deles é sempre superior em qualquer cenário.
+- Apenas quando o corpus tem menos de dez documentos.
+- Apenas depois de colocar o sistema em produção, quando já houver usuários reais e dados suficientes para comparar as três alternativas.
+- Somente quando o ajuste fino é gratuito.
+J: Cada técnica atende a necessidades diferentes e pode ser combinada; a decisão deve ser apoiada por medidas.
+
+DISC[C]: Explique por que o RAG ajuda a ancorar respostas, mas não garante a correção. Dê pelo menos três mecanismos de falha.
+R: O RAG fornece texto-fonte e permite citar, o que reduz respostas inventadas e facilita a conferência. Mas pode falhar porque: (1) a recuperação traz o documento errado ou não traz o certo; (2) o modelo ignora, distorce ou mistura o contexto; (3) o documento está desatualizado, é conflitante ou foi envenenado; (4) o contexto é cortado pelo limite de tokens; (5) a informação está em posição desfavorável no contexto. Por isso se avalia cada etapa e se verifica a saída.
+CRIT: Distingue ancorar de garantir.
+CRIT: Cita ao menos três mecanismos de falha distintos.
+
+DISC[C]: Descreva as cinco etapas do pipeline RAG e, para cada uma, uma métrica ou verificação de avaliação.
+R: Indexação (cobertura e qualidade dos fragmentos e metadados); recuperação (recall do documento relevante em k); montagem do prompt (cabe no limite? a melhor evidência foi incluída?); geração (resposta correta, abstenção correta e indevida); verificação (citações válidas, trecho literal, números apoiados no contexto). Medir cada etapa separadamente localiza a causa das falhas.
+
+DISC[C]: Compare fragmentos pequenos e grandes quanto a precisão, cobertura, custo e risco de ruído. Que método você usaria para escolher o tamanho?
+R: Pequenos: precisos e baratos, mas podem separar a pergunta da resposta (menor cobertura). Grandes: preservam contexto, mas consomem tokens e diluem a relevância. Escolher medindo, no próprio corpus, a fração de consultas com o trecho da resposta no contexto e o número de tokens para diferentes tamanhos (como no experimento do capítulo), de preferência respeitando a estrutura do documento e com sobreposição entre janelas.
+
+DISC[C]: Explique o que é a abstenção em um sistema RAG, por que ela exige medição própria e qual compromisso existe entre abstenção correta e indevida.
+R: Abstenção é responder que os documentos não trazem a resposta. É preciso medir porque a instrução no prompt não garante o comportamento. O compromisso: um limiar mais exigente (ou um prompt mais restritivo) aumenta a abstenção correta, mas também recusa perguntas que tinham resposta (abstenção indevida). O ponto de operação depende do custo relativo de uma resposta inventada e de uma recusa indevida.
+
+DISC[C]: Explique por que injeção de prompt via documentos recuperados é um risco específico de RAG e liste camadas de defesa, indicando por que nenhuma elimina o risco.
+R: Em RAG, textos não confiáveis (documentos, páginas, e-mails) entram no prompt, e o modelo recebe instruções e dados como texto. Camadas: controle de quem escreve no índice, sanitização e delimitação, validação da saída (citação, trecho literal, formato), menor privilégio. Nenhuma elimina o risco: a delimitação pode ser contornada, a validação não detecta fatos falsos coerentes com o documento (envenenamento), e ataques novos surgem.
+CRIT: Menciona que dados e instruções se misturam como texto.
+CRIT: Reconhece o envenenamento de conteúdo.
+
+DISC[M]: Em 200 perguntas respondíveis, o documento relevante está no contexto em 170 e a resposta está correta em 136. Calcule o recall do documento, o acerto da geração condicional ao documento presente e o acerto total. Qual o ganho máximo de aperfeiçoar o prompt?
+R: Recall: 170/200 = 0,85. Acerto condicional: 136/170 = 0,80. Acerto total: 136/200 = 0,68. Um gerador perfeito corrigiria os 34 erros com o documento presente: o acerto iria a 170/200 = 0,85, o teto dado pelo recall.
+
+DISC[M]: Um prompt tem 90 tokens fixos, a pergunta tem 30, a resposta reserva 200 e a janela é de 2 000 tokens. Cada fragmento (com delimitadores) tem em média 150 tokens. Quantos fragmentos cabem? Se o preço de entrada é 3 e o de saída 12 (unidades por milhão de tokens) e a resposta tem 200 tokens, qual o custo de uma consulta com esse número de fragmentos?
+R: Disponível: 2 000 - 90 - 30 - 200 = 1 680; 1 680/150 = 11,2, logo 11 fragmentos (1 650 tokens). Entrada: 90 + 30 + 1 650 = 1 770 tokens. Custo: (1 770 x 3 + 200 x 12)/10^6 = (5 310 + 2 400)/10^6 = 7 710/10^6 = 7,71 x 10^-3 unidades.
+
+DISC[M]: Duas listas de documentos: A = [D1, D2, D3] e B = [D3, D1, D4]. Calcule a pontuação RRF (c = 60) de cada documento e a lista fundida.
+R: D1: 1/61 + 1/62 = 0,01639 + 0,01613 = 0,03252. D2: 1/62 = 0,01613. D3: 1/63 + 1/61 = 0,01587 + 0,01639 = 0,03226. D4: 1/63 = 0,01587. Lista fundida: D1, D3, D2, D4. Note que D1 e D3 aparecem nas duas listas.
+
+DISC[M]: Um sistema de 56 consultas tem 10 sem resposta. O gerador se absteve em 8 delas e, nas 46 respondíveis, absteve-se em 6. Calcule a abstenção correta e a indevida, e o que acontece com cada taxa se o limiar for elevado.
+R: Abstenção correta: 8/10 = 0,80. Abstenção indevida: 6/46 = 0,130. Elevando o limiar, o gerador se abstém mais: a abstenção correta tende a subir (até 1,0), mas a indevida também sobe, pois mais perguntas respondíveis passam a ser recusadas.
+
+DISC[P]: Implemente `hit_at_k(ranking, relevantes, k)` (1 se algum relevante está entre os k primeiros) e `recall_do_documento(rankings, consultas_relevantes, k)` (média, ignorando consultas sem relevantes). Teste com quatro consultas, uma delas sem resposta.
+CODE:
+def hit_at_k(ranking, relevantes, k):
+    return float(len(set(ranking[:k]) & set(relevantes)) > 0)
+
+def recall_do_documento(rankings, relevantes_por_consulta, k):
+    v = [hit_at_k(r, rel, k) for r, rel in zip(rankings, relevantes_por_consulta) if rel]
+    return sum(v) / len(v) if v else None
+
+rankings = [["D2", "D1", "D3"], ["D5", "D4", "D9"], ["D7", "D8", "D1"], ["D1", "D2", "D3"]]
+relevantes = [["D2"], ["D9"], [], ["D3", "D4"]]
+r1 = recall_do_documento(rankings, relevantes, 1)
+r3 = recall_do_documento(rankings, relevantes, 3)
+assert abs(r1 - 1 / 3) < 1e-9 and r3 == 1.0
+print("recall@1 =", round(r1, 3), "| recall@3 =", r3)
+ENDCODE
+CRIT: Ignora consultas sem documentos relevantes.
+CRIT: Trata o caso de lista vazia sem divisão por zero.
+
+DISC[P]: Implemente `montar_orcamento(fragmentos, limite)`, em que cada fragmento é uma tupla (id, texto), o custo é o número de palavras do texto mais 10 (delimitadores) e os fragmentos entram na ordem de relevância, pulando os que não cabem. Devolva os incluídos e os cortados.
+CODE:
+def custo(texto):
+    return len(texto.split()) + 10
+
+def montar_orcamento(fragmentos, limite):
+    incluidos, cortados, usado = [], [], 0
+    for fid, texto in fragmentos:
+        c = custo(texto)
+        if usado + c <= limite:
+            incluidos.append(fid); usado += c
+        else:
+            cortados.append(fid)
+    return incluidos, cortados, usado
+
+frs = [("D10", "palavra " * 60), ("D60", "palavra " * 12), ("D59", "palavra " * 5), ("D45", "palavra " * 3)]
+inc, cort, usado = montar_orcamento(frs, 50)
+assert inc == ["D60", "D59", "D45"] and cort == ["D10"] and usado == 22 + 15 + 13
+print(inc, cort, usado)
+ENDCODE
+CRIT: Reserva custo para delimitadores.
+CRIT: Percorre na ordem de relevância e pula o que não cabe.
+
+DISC[P]: Implemente `fundir_rrf(listas, k, c=60)` e verifique com o exemplo A = [D1, D2, D3] e B = [D3, D1, D4] que a lista fundida é [D1, D3, D2, D4]. Teste também que um documento ausente de uma lista continua participando.
+CODE:
+def fundir_rrf(listas, k, c=60):
+    s = {}
+    for L in listas:
+        for pos, d in enumerate(L, 1):
+            s[d] = s.get(d, 0.0) + 1.0 / (c + pos)
+    return [d for d, _ in sorted(s.items(), key=lambda x: (-x[1], x[0]))][:k]
+
+A, B = ["D1", "D2", "D3"], ["D3", "D1", "D4"]
+fund = fundir_rrf([A, B], 4)
+assert fund == ["D1", "D3", "D2", "D4"], fund
+assert fundir_rrf([["D1"], ["D2", "D1"]], 2)[0] == "D1"
+print(fund)
+ENDCODE
+CRIT: Usa apenas posições, e não pontuações.
+CRIT: Desempata de forma determinística.
+
+DISC[P]: Implemente `verificar_citacoes(resposta, ids_contexto, textos_contexto)`: extraia identificadores no formato [Dnn], confira se existem no contexto, e se a afirmação (sem citação) é subcadeia, sem diferença de caixa ou espaços, de algum documento citado. Devolva um dicionário com `validas` e `literal`. Teste com uma resposta correta, uma com identificador inexistente e uma sem citação.
+CODE:
+import re
+
+def norm(s):
+    return re.sub(r"\s+", " ", s.lower()).strip()
+
+def verificar_citacoes(resposta, ids_contexto, textos_contexto):
+    cit = re.findall(r"\[(D\d+)\]", resposta)
+    validas = bool(cit) and all(c in ids_contexto for c in cit)
+    afirm = norm(re.sub(r"\s*\[D\d+\]", "", resposta))
+    literal = validas and any(afirm in norm(textos_contexto[c]) for c in cit)
+    return {"validas": validas, "literal": bool(literal)}
+
+ctx = {"D12": "O atraso na devolução gera multa de R$ 1,50 por dia e por exemplar."}
+ok = verificar_citacoes("multa de R$ 1,50  por dia [D12]", list(ctx), ctx)
+mau_id = verificar_citacoes("multa de R$ 1,50 por dia [D99]", list(ctx), ctx)
+sem = verificar_citacoes("multa de R$ 1,50 por dia", list(ctx), ctx)
+assert ok == {"validas": True, "literal": True}
+assert mau_id == {"validas": False, "literal": False} and sem == {"validas": False, "literal": False}
+print(ok, mau_id, sem)
+ENDCODE
+CRIT: Verifica a existência do identificador no contexto.
+CRIT: Compara a afirmação com o texto do documento citado.
+
+DISC[P]: Implemente a recuperação com filtro de permissão antes e depois da busca. Dada uma lista ordenada de (id, papeis_permitidos) e um papel, devolva os k primeiros documentos permitidos (filtro antes) e os documentos permitidos entre os k primeiros (filtro depois). Mostre um caso em que o filtro depois devolve menos de k itens.
+CODE:
+def filtro_antes(ranking, papel, k):
+    return [d for d, papeis in ranking if papel in papeis][:k]
+
+def filtro_depois(ranking, papel, k):
+    return [d for d, papeis in ranking[:k] if papel in papeis]
+
+ranking = [("D31", {"pos"}), ("D01", {"grad", "pos"}), ("D33", {"pos"}), ("D02", {"grad", "pos"}), ("D03", {"grad", "pos"})]
+a = filtro_antes(ranking, "grad", 3)
+d = filtro_depois(ranking, "grad", 3)
+assert a == ["D01", "D02", "D03"] and d == ["D01"]
+print("antes:", a, "| depois:", d)
+ENDCODE
+CRIT: Aplica o filtro antes de truncar em k.
+CRIT: Mostra que o filtro depois pode devolver menos de k itens.
+
+DISC[A]: Um assistente RAG de normas passou a responder "não consta" para muitas perguntas respondíveis após a equipe elevar o limiar de abstenção. Analise as causas e proponha como ajustar o limiar de forma defensável.
+R: Elevar o limiar aumenta a abstenção indevida (o compromisso com a abstenção correta). A equipe provavelmente ajustou o limiar olhando só as perguntas sem resposta. Proposta: reunir consultas respondíveis e sem resposta; dividir em DEV e TESTE; varrer o limiar no DEV acompanhando as duas taxas; definir o critério pelo custo relativo dos dois erros; reportar no TESTE, com IC; reavaliar quando a base ou o modelo mudar.
+CRIT: Reconhece o compromisso entre as duas taxas.
+CRIT: Propõe ajuste em dados separados do teste.
+
+DISC[A]: Um sistema RAG tem recall de 0,92 no documento relevante, mas só 0,60 de respostas corretas. Analise onde investigar e quais métricas adicionais coletar.
+R: O teto de acerto é o recall (0,92); a diferença sugere problemas após a recuperação. Investigar: o documento chega ao contexto (cortes por limite de tokens?), a ordem e a posição, ambiguidade de frases, instruções do prompt, abstenção indevida, e o gerador ignorando o contexto. Métricas: acerto condicional ao documento presente, abstenção indevida, fidelidade, tipos de erro por categoria de consulta, e leitura manual de uma amostra de falhas.
+
+DISC[A]: Um usuário de graduação recebeu, em uma resposta, informação de um documento restrito à pós-graduação, embora o filtro de acesso estivesse ativo na busca. Liste caminhos de vazamento possíveis e como testá-los.
+R: Caminhos: cache de respostas compartilhado entre usuários; filtro aplicado só em parte dos componentes (por exemplo, na busca lexical e não na semântica); títulos ou trechos exibidos em sugestões; registros de conversas; índice de uma versão anterior; metadados de permissão desatualizados. Testes: consultas de teste feitas por papéis diferentes verificando se algum identificador restrito aparece em contexto, resposta, cache ou log; auditar permissões ao reindexar.
+
+DISC[A]: Uma norma foi alterada, mas o assistente continua citando a versão antiga em algumas respostas. Analise as causas e a correção, e explique por que a verificação de fidelidade não detecta o problema.
+R: Causas: versão antiga ainda no índice, sem metadados de vigência; caches; reindexação parcial; a recuperação traz ambas e a escolha depende da ordem. Correção: marcar a antiga como não vigente ou removê-la, reindexar, invalidar caches, adicionar detecção de conflito e testes de regressão. A verificação de fidelidade só confere se a resposta é apoiada pelo documento citado; a versão antiga apoia a resposta antiga, portanto passa na checagem.
+
+DISC[D]: Projete o assistente de normas acadêmicas de uma universidade, descrevendo indexação, metadados, recuperação, prompt, verificação, avaliação e governança. Indique como cada decisão seria medida e quais riscos permanecem.
+R: Indexação por seções com metadados de fonte, versão, vigência e permissão; busca híbrida com filtros antes da busca; prompt com delimitadores, citações e abstenção; verificação de citações, trecho literal e números; avaliação separada de recuperação (recall) e geração (correção, fidelidade, abstenção correta e indevida) por tipo de consulta, com IC e divisão DEV/TESTE; governança: processo de atualização, exclusão com teste, auditoria de fontes, LGPD. Riscos que permanecem: erros de geração, paráfrases não recuperadas, documentos envenenados, ataques novos, deriva da base; mitigados por monitoramento, revisão por amostragem e escalonamento a humano.
+CRIT: Cobre as etapas do pipeline e a avaliação separada.
+CRIT: Inclui governança e riscos residuais.
+
+DISC[D]: Elabore um plano para decidir entre RAG, ajuste fino e contexto longo para um assistente de atendimento de uma empresa com 5 000 documentos que mudam semanalmente e têm permissões por departamento. Indique critérios, experimentos e custos.
+R: Critérios: frequência de mudança (favorece RAG), necessidade de citação, permissões por usuário (RAG com filtros), tamanho da base (5 000 documentos inviabiliza contexto longo), necessidade de estilo ou formato fixos (ajuste fino, possivelmente combinado). Experimentos: conjunto de consultas com respondíveis e sem resposta, DEV/TESTE; comparar RAG com k diferentes, RAG com ajuste fino leve para formato e, em um subconjunto, contexto longo; medir correção, fidelidade, abstenção e vazamento. Custos: tokens de entrada por consulta, custo de reindexação semanal, custo de ajuste e de reajuste, latência, manutenção. Decidir com os números e reavaliar periodicamente.

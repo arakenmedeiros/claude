@@ -1,0 +1,173 @@
+@@EX 1 | Normalização e a ordem dos resultados | básico
+Com a base de 60 documentos e o `LSAEmbedder` (40 dimensões), construa duas versões da matriz de documentos: a **normalizada** (a original, de norma 1) e uma **não normalizada**, em que cada vetor é multiplicado pelo número de palavras do documento (para simular vetores cujo comprimento cresce com o texto). Para as 46 consultas com resposta, calcule o MRR com **produto interno**, **cosseno** e **distância euclidiana**, nas duas versões (use `llmdidatico.indices.pontuar`), com IC de 95% por bootstrap.
+
+*Pergunta:* o que acontece com as três medidas nas duas versões? Qual a implicação para quem indexa vetores?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import DOCS, CONSULTAS, modelos, avaliacao as av
+from llmdidatico.indices import pontuar
+
+ids = [d[0] for d in DOCS]; textos = [d[2] + ". " + d[3] for d in DOCS]
+lsa = modelos.LSAEmbedder(dim=40).ajustar(textos); Dn = lsa.transformar(textos)
+compr = np.array([len(modelos.tokenizar_sem_stop(t)) for t in textos], float)
+Du = Dn * compr[:, None]
+COM = [c for c in CONSULTAS if c[1]]
+Q = lsa.transformar([c[0] for c in COM])
+
+print(f"{'versão':<16}{'medida':<12}{'MRR':>7}{'IC95%':>20}")
+for nome, D in (("normalizada", Dn), ("não normalizada", Du)):
+    for metrica in ("produto", "cosseno", "euclidiana"):
+        S = pontuar(Q, D, metrica)
+        mrrs = [av.mrr([ids[j] for j in np.argsort(-S[i], kind="stable")], c[1]) for i, c in enumerate(COM)]
+        m, lo, hi = av.bootstrap_ic(mrrs, n=2000, seed=0)
+        print(f"{nome:<16}{metrica:<12}{m:>7.3f}{f'[{lo:.3f}; {hi:.3f}]':>20}")
+```
+@@NOTE Com os vetores **normalizados**, as três medidas dão praticamente o mesmo MRR (0,899, 0,899 e 0,898; a diferença de 0,001 só pode vir de empates ou de erro numérico), como a identidade $\lVert\mathbf{a}-\mathbf{b}\rVert^2=2-2\cos$ prevê para vetores de norma 1 (a consulta também é normalizada). Com os documentos **não normalizados**, o cosseno continua em 0,899, pois ignora o comprimento; o produto interno cai um pouco, para 0,884, porque documentos longos ganham pontuação extra; e a distância euclidiana **colapsa** para 0,081, pois passa a preferir documentos de vetor curto, perto da origem, independentemente do assunto. Os intervalos do produto e do cosseno se sobrepõem muito, então a queda do produto interno, sozinha, **não** é conclusiva; o colapso da distância, sim, é grande demais para ser acaso. Implicação: normalize ao indexar, ou use o cosseno, e confira se a medida do índice é a que o modelo de embeddings recomenda. O exemplo é um cenário construído (o comprimento foi multiplicado de propósito), e **não** descreve um modelo real.
+@@EX 2 | Segmentação e o método de recuperação | intermediário
+Monte um "manual" com os 60 documentos em sequência e localize, para cada consulta com resposta, o intervalo de palavras da resposta (procure `ans` no texto do documento relevante). Para tamanhos de 20, 40 e 80 palavras, com sobreposição de 50% (`chunk_palavras`), compare a recuperação por **BM25** com a por **LSA** (ajustada nos próprios pedaços, com 40 dimensões): o hit@3 é 1 se algum dos 3 melhores pedaços contém a resposta **inteira**. Dê o IC de 95% do hit@3 por bootstrap.
+
+*Pergunta:* o método ou o tamanho do pedaço pesa mais? Há diferença entre BM25 e LSA que os intervalos sustentem?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import DOCS, CONSULTAS, modelos, avaliacao as av
+from llmdidatico.indices import chunk_palavras
+
+ids = [d[0] for d in DOCS]; textos = [d[2] + ". " + d[3] for d in DOCS]; tok = modelos.tokenizar_sem_stop
+inicio, pos = [], 0
+for t in textos:
+    n = len(t.split()); inicio.append((pos, pos + n)); pos += n
+manual = " ".join(textos)
+COM = [c for c in CONSULTAS if c[1]]
+alvo = {}
+for q, rel, ans, _ in COM:
+    i = ids.index(rel[0]); k = textos[i].find(ans)
+    w0 = inicio[i][0] + len(textos[i][:k].split()); alvo[q] = (w0, w0 + len(ans.split()))
+
+print(f"{'tamanho':>8}{'pedaços':>9}{'método':>8}{'hit@3':>8}{'IC95%':>20}")
+for tam in (20, 40, 80):
+    ped = chunk_palavras(manual, tam, tam // 2)
+    bm = modelos.BM25([tok(p[2]) for p in ped])
+    lsa = modelos.LSAEmbedder(dim=40).ajustar([p[2] for p in ped]); E = lsa.transformar([p[2] for p in ped])
+    for nome in ("BM25", "LSA"):
+        acertos = []
+        for q, (a0, a1) in alvo.items():
+            s = bm.pontuar(tok(q)) if nome == "BM25" else E @ lsa.transformar([q])[0]
+            top = np.argsort(-s, kind="stable")[:3]
+            acertos.append(float(any(ped[j][0] <= a0 and ped[j][1] >= a1 for j in top)))
+        m, lo, hi = av.bootstrap_ic(acertos, n=2000, seed=0)
+        print(f"{tam:>8}{len(ped):>9}{nome:>8}{m:>8.3f}{f'[{lo:.3f}; {hi:.3f}]':>20}")
+```
+@@NOTE O tamanho do pedaço pesa mais que o método. Com 20 palavras, BM25 e LSA acertam 0,717 e 0,696; com 40, 0,891 e 0,870; com 80, ambos 0,913. A diferença entre BM25 e LSA é de no máximo dois pontos percentuais e os intervalos se sobrepõem quase totalmente (por exemplo, [0,804; 0,978] contra [0,761; 0,957] com 40 palavras): **nenhuma diferença é sustentada**. Já passar de 20 para 80 palavras eleva o acerto em cerca de 20 pontos, ao custo de enviar mais texto ao modelo (Seção 10.11). Lembre que o critério (resposta inteira dentro dos 3 melhores pedaços) favorece pedaços maiores, e que a base tem só 46 consultas e documentos curtos.
+@@EX 3 | O valor de k no RRF e o peso da fusão | intermediário
+Avalie, nas 46 consultas com resposta, o RRF de BM25 e LSA para $k\in\{1,5,10,30,60,120\}$ e a fusão por soma normalizada (min-max) com pesos $\alpha\in\{0;\,0{,}25;\,0{,}5;\,0{,}75;\,1\}$ para o BM25. Para cada configuração, dê o MRR e o IC de 95% da **diferença pareada** em relação ao BM25 isolado.
+
+*Pergunta:* algum $k$ ou $\alpha$ supera o BM25 de modo que o intervalo sustente? Que cuidado se deve ter ao escolher a melhor configuração depois de olhar tantas?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import DOCS, CONSULTAS, modelos, avaliacao as av
+from llmdidatico.indices import rrf
+
+ids = [d[0] for d in DOCS]; textos = [d[2] + ". " + d[3] for d in DOCS]; tok = modelos.tokenizar_sem_stop
+bm = modelos.BM25([tok(t) for t in textos]); lsa = modelos.LSAEmbedder(dim=40).ajustar(textos); Dl = lsa.transformar(textos)
+COM = [c for c in CONSULTAS if c[1]]
+rk = lambda s: [ids[i] for i in np.argsort(-s, kind="stable")]
+sb = {c[0]: bm.pontuar(tok(c[0])) for c in COM}; sl = {c[0]: Dl @ lsa.transformar([c[0]])[0] for c in COM}
+nz = lambda s: (s - s.min()) / (s.max() - s.min() + 1e-12)
+mrr_de = lambda f: np.array([av.mrr(f(c[0]), c[1]) for c in COM])
+
+def dif(a, b, n=5000, seed=0):
+    d = b - a; rng = np.random.default_rng(seed)
+    med = [d[rng.integers(0, len(d), len(d))].mean() for _ in range(n)]
+    return d.mean(), np.quantile(med, 0.025), np.quantile(med, 0.975)
+
+base = mrr_de(lambda q: rk(sb[q]))
+print(f"BM25 isolado: MRR = {base.mean():.3f}")
+print(f"{'configuração':<16}{'MRR':>7}{'dif. vs BM25':>14}{'IC95% da dif.':>20}")
+for k in (1, 5, 10, 30, 60, 120):
+    v = mrr_de(lambda q, k=k: rrf([rk(sb[q]), rk(sl[q])], k=k)[0]); d, lo, hi = dif(base, v)
+    print(f"{f'RRF k={k}':<16}{v.mean():>7.3f}{d:>+14.3f}{f'[{lo:+.3f}; {hi:+.3f}]':>20}")
+for a in (0.0, 0.25, 0.5, 0.75, 1.0):
+    v = mrr_de(lambda q, a=a: rk(a * nz(sb[q]) + (1 - a) * nz(sl[q]))); d, lo, hi = dif(base, v)
+    print(f"{f'soma alfa={a}':<16}{v.mean():>7.3f}{d:>+14.3f}{f'[{lo:+.3f}; {hi:+.3f}]':>20}")
+```
+@@NOTE Nenhuma configuração do RRF supera o BM25: todas ficam em torno de 0,884 a 0,885 de MRR, com diferença de cerca de $-0{,}013$ e intervalo que vai de aproximadamente $-0{,}037$ a $+0{,}002$; o valor de $k$ praticamente não altera o resultado. Na soma normalizada, $\alpha=0{,}25$ e $\alpha=0{,}5$ chegam a 0,907 (diferença de $+0{,}010$), mas o intervalo, $[-0{,}005;\ +0{,}034]$, inclui o zero: ganho **não sustentado**. Com $\alpha=1$ a soma reproduz o BM25 (diferença zero) e com $\alpha=0$ a LSA (diferença $+0{,}002$). Cuidado: ao testar 11 configurações e destacar a de maior MRR, o resultado sofre de **comparações múltiplas** (a melhor de várias é otimista por acaso); a escolha deveria ser feita em uma parte das consultas e confirmada em outra.
+@@ALEM
+- **Biblioteca FAISS e similares:** a documentação oficial descreve índices exatos e aproximados (como o IVF) e como medir recall; confira a documentação vigente.
+- **sentence-transformers:** a documentação mostra como carregar codificadores e reordenadores e como avaliar recuperação; escolha modelos para o português e confira licenças.
+- **BEIR e MTEB:** conjuntos e painéis de avaliação de recuperação e de embeddings (verifique versões, idiomas e licenças); servem de referência para desenhar a sua própria avaliação.
+@@PROJ Buscador com recusa calibrada, reranqueamento e relatório com incerteza | intermediário
+**Contexto.** A secretaria da universidade quer um buscador sobre os 60 documentos que (1) recupere os documentos relevantes, (2) **recuse** consultas sem resposta e (3) reporte seu desempenho com incerteza. Você vai combinar RRF, um reranqueador didático e um limiar, e avaliar tudo sem vazamento: o limiar e o reranqueador são ajustados em uma parte das consultas e avaliados na outra.
+
+**Tarefas.**
+
+1. Divida as 56 consultas em duas metades estratificadas por "tem resposta ou não" (semente fixa). Faça as duas direções: ajustar em A e testar em B, e vice-versa; relate a média das duas.
+2. Construa o recuperador: RRF de BM25 e LSA (40 dimensões), com os 10 primeiros candidatos.
+3. Treine, **só nas consultas de ajuste com resposta**, um reranqueador por regressão logística com características do par (BM25 normalizado, cosseno LSA, fração dos termos no título, fração no texto), e reordene os candidatos.
+4. Escolha o limiar de recusa sobre a **pontuação BM25 do primeiro colocado** que maximize a acurácia da decisão "responder ou recusar" nas consultas de ajuste.
+5. No teste, reporte: acerto da decisão (responder/recusar), taxa de recusa das sem resposta, taxa de resposta das com resposta, e MRR das consultas com resposta aceitas, **com e sem** reranqueamento, com IC de 95% por bootstrap.
+6. Escreva um parágrafo crítico: o que os intervalos permitem concluir, o que não permitem e quais limites têm a base e os métodos.
+
+**Entregáveis.** Código, tabela e o parágrafo.
+@@RUBRICA
+- Separação ajuste/teste sem vazamento nas duas direções (3 pontos).
+- Recuperador, reranqueador e limiar implementados (3 pontos).
+- Métricas de decisão e de ranking com IC (2 pontos).
+- Discussão crítica, reconhecendo as incertezas e os limites (2 pontos).
+@@SOL
+```python
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from llmdidatico import DOCS, CONSULTAS, modelos, avaliacao as av
+from llmdidatico.indices import rrf
+
+ids = [d[0] for d in DOCS]; textos = [d[2] + ". " + d[3] for d in DOCS]; tok = modelos.tokenizar_sem_stop
+bm = modelos.BM25([tok(t) for t in textos]); lsa = modelos.LSAEmbedder(dim=40).ajustar(textos); Dl = lsa.transformar(textos)
+titulos = [set(tok(d[2])) for d in DOCS]; vocab = [set(tok(t)) for t in textos]
+
+def candidatos(q, K=10):
+    sb = bm.pontuar(tok(q)); sl = Dl @ lsa.transformar([q])[0]
+    rb = [ids[i] for i in np.argsort(-sb, kind="stable")]; rl = [ids[i] for i in np.argsort(-sl, kind="stable")]
+    top = [ids.index(d) for d in rrf([rb, rl])[0][:K]]; qt = set(tok(q))
+    F = [[sb[j] / (sb.max() + 1e-9), sl[j], len(qt & titulos[j]) / max(1, len(qt)), len(qt & vocab[j]) / max(1, len(qt))] for j in top]
+    return top, np.array(F), float(sb.max())
+
+info = [candidatos(c[0]) for c in CONSULTAS]
+tem = np.array([bool(c[1]) for c in CONSULTAS])
+rng = np.random.default_rng(0)
+metade = np.zeros(len(CONSULTAS), int)
+for grupo in (np.where(tem)[0], np.where(~tem)[0]):
+    p = rng.permutation(grupo); metade[p[::2]] = 0; metade[p[1::2]] = 1
+
+linhas = {"decisao": [], "recusa_sem": [], "resp_com": [], "mrr_rrf": [], "mrr_rerank": []}
+for ajuste_id in (0, 1):
+    aj = np.where(metade == ajuste_id)[0]; te = np.where(metade != ajuste_id)[0]
+    aj_com = [i for i in aj if tem[i]]
+    X = np.vstack([info[i][1] for i in aj_com]); y = np.concatenate([[ids[j] in CONSULTAS[i][1] for j in info[i][0]] for i in aj_com]).astype(int)
+    modelo = LogisticRegression(max_iter=1000).fit(X, y)
+    grade = np.arange(0, 12, 0.1)
+    lim = max(grade, key=lambda l: (np.mean([(info[i][2] > l) == tem[i] for i in aj]), -l))
+    for i in te:
+        aceita = info[i][2] > lim
+        linhas["decisao"].append(float(aceita == tem[i]))
+        if not tem[i]:
+            linhas["recusa_sem"].append(float(not aceita))
+        else:
+            linhas["resp_com"].append(float(aceita))
+            if aceita:
+                top, F, _ = info[i]; rel = CONSULTAS[i][1]
+                linhas["mrr_rrf"].append(av.mrr([ids[j] for j in top], rel))
+                ordem = np.argsort(-modelo.decision_function(F), kind="stable")
+                linhas["mrr_rerank"].append(av.mrr([ids[top[j]] for j in ordem], rel))
+    print(f"ajuste na metade {ajuste_id}: limiar escolhido = {lim:.1f}")
+
+nomes = {"decisao": "acerto da decisão (56)", "recusa_sem": "recusa das sem resposta", "resp_com": "resposta das com resposta",
+         "mrr_rrf": "MRR aceitas, RRF", "mrr_rerank": "MRR aceitas, reranqueado"}
+print(f"{'métrica':<28}{'n':>4}{'valor':>8}{'IC95%':>20}")
+for k, nome in nomes.items():
+    m, lo, hi = av.bootstrap_ic(linhas[k], n=2000, seed=0)
+    print(f"{nome:<28}{len(linhas[k]):>4}{m:>8.3f}{f'[{lo:.3f}; {hi:.3f}]':>20}")
+```
+@@NOTE Em cada direção, o limiar escolhido foi 3,4 e 3,3 sobre a pontuação BM25. No teste (cada consulta é testada uma vez, com o limiar escolhido na outra metade), o acerto da decisão responder/recusar é de 0,875 (IC [0,786; 0,946]); o sistema responde 97,8% das consultas com resposta (IC [0,935; 1,000]), mas recusa só 40% das sem resposta (IC [0,100; 0,700], intervalo enorme porque são apenas 10 consultas). O limiar protege pouco contra as consultas sem resposta, porque várias delas têm pontuação alta (palavras como "restaurante universitário" e "colação de grau" existem na base). Entre as 45 consultas com resposta aceitas, o MRR é 0,901 com o RRF e 0,923 com o reranqueador didático; os intervalos ([0,816; 0,970] e [0,843; 0,983]) se sobrepõem fortemente e a diferença **não** é demonstrada. O limite principal é o tamanho da base: 56 consultas e documentos fictícios curtos; os números ilustram o **método** de avaliação, não o desempenho de um sistema real.
