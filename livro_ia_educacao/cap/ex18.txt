@@ -1,0 +1,349 @@
+#1
+MC: Uma professora pede a um assistente de IA "um plano de aula sobre frações" e recebe um texto bem organizado. Qual é o primeiro passo mais adequado antes de aproveitá-lo?
++ Compará-lo com os objetivos, as evidências de aprendizagem e os recursos reais que ela já definiu para a turma.
+- Entregá-lo aos estudantes, pois a organização do texto indica que está correto. || Fluência e organização não indicam exatidão nem adequação à turma; planos gerados podem trazer erros e atividades inviáveis.
+- Descartá-lo integralmente, porque todo plano gerado por IA é inútil. || Rascunhos podem ser pontos de partida úteis quando revisados; descartar tudo ignora esse potencial.
+- Pedir ao mesmo sistema que declare se o plano está certo e confiar na resposta. || O sistema pode confirmar com segurança o que está errado; a verificação precisa de fonte e de critério externos.
+- Publicá-lo no mural da escola como modelo para outros professores. || Divulgar sem revisão replica possíveis erros e ignora que o plano não considerou o contexto de ninguém.
+R: O plano gerado é o mais provável, não o mais adequado; só o professor conhece turma, tempo e recursos.
+
+#2
+MC: No planejamento "para trás" (backward design), qual é a ordem correta das decisões?
++ Resultados desejados, evidências aceitáveis de aprendizagem e, por último, as atividades.
+- Atividades, resultados desejados e, por último, a avaliação. || Inverte a lógica: escolher atividades primeiro leva a aulas atraentes que podem não conduzir ao objetivo.
+- Materiais, atividades e, depois, os objetivos que as justificam. || Define objetivos a posteriori, como justificativa, e não como orientação do que será feito.
+- Avaliação final, sorteio de atividades e escolha de objetivos. || O sorteio de atividades não tem relação com a lógica de partir dos resultados que se deseja alcançar.
+- Tempo de aula, conteúdos do livro e, enfim, a avaliação. || Parte do tempo e do conteúdo disponível, sem perguntar o que os estudantes devem ser capazes de fazer.
+R: O planejamento para trás começa pelo que se quer que aprendam e por como se saberá que aprenderam.
+
+#3
+MC: O que o conceito de alinhamento construtivo afirma sobre objetivos, atividades e avaliação?
++ Que os três precisam apontar na mesma direção, de modo que a atividade e a avaliação exijam o que o objetivo declara.
+- Que devem ser decididos por pessoas diferentes para garantir imparcialidade. || Não é exigência do conceito; a coerência vem de quem os planeja de modo articulado.
+- Que a avaliação deve ser independente dos objetivos para ser objetiva. || Uma avaliação desligada do objetivo mede outra coisa e rompe justamente o alinhamento.
+- Que as atividades podem variar livremente, desde que o objetivo seja bonito. || Atividades desalinhadas não levam ao que o objetivo declara, por mais bem escrito que ele esteja.
+- Que basta alinhar o texto do plano às margens e à formatação da escola. || Confunde alinhamento pedagógico com formatação gráfica do documento.
+R: Quando atividade e avaliação cobram algo diferente do objetivo, o planejamento perde coerência.
+
+#4
+MC: Ao pedir apoio de IA para trabalhar uma habilidade da Base Nacional Comum Curricular, por que convém informar o código e o texto da habilidade?
++ Porque o sistema pode citar códigos inexistentes ou descrever habilidades de forma imprecisa, e o professor confere no documento oficial.
+- Porque o sistema só funciona se receber códigos numéricos no pedido. || Sistemas de linguagem aceitam texto livre; o código serve para reduzir imprecisão, não é requisito técnico.
+- Porque a lei obriga a citar o código em todo pedido feito a um assistente. || Não há tal obrigação; trata-se de boa prática de precisão.
+- Porque o sistema memoriza o currículo de cada escola e só precisa do código para localizá-lo. || Ele não conhece o currículo da escola nem o consulta automaticamente; pode errar o que "lembra".
+- Porque informar o código dispensa a conferência do plano. || A informação reduz erros, mas não os elimina; a conferência continua necessária.
+R: Informar a habilidade orienta o rascunho, mas a conferência no documento oficial segue sendo do professor.
+
+#5
+MC: Qual tarefa de planejamento está entre as que devem ser reservadas ao professor?
++ Definir adaptações para um estudante específico, com base no que se conhece dele e do contexto.
+- Reformatar em tabela um roteiro que o próprio professor escreveu. || É tarefa de baixo risco, em que o conteúdo é do professor, e pode ser delegada com revisão rápida.
+- Sugerir títulos alternativos para uma atividade já definida. || É escolha criativa de baixo impacto, na qual o professor decide o que fica.
+- Variar os contextos de exemplos em uma lista de exercícios. || Pode ser feita em parceria, desde que se resolvam todos os itens depois.
+- Organizar em ordem alfabética uma lista de termos do glossário. || É tarefa mecânica, sem decisão pedagógica, e não exige reserva.
+R: Adaptações individuais dependem de conhecimento do estudante que o sistema não tem.
+
+#6
+MC: Qual conjunto de informações torna um pedido de planejamento mais útil?
++ Etapa e turma, tempo, recursos reais, objetivo, conhecimentos prévios, restrições e formato desejado.
+- Apenas o tema da aula, para não limitar a criatividade do sistema. || Sem contexto, o resultado tende a ser genérico e a ignorar o que importa à turma.
+- Os nomes e os laudos dos estudantes, para personalizar ao máximo. || Expõe dados pessoais e sensíveis desnecessariamente; basta descrever a turma em termos gerais.
+- O pedido de que o sistema escolha os objetivos mais adequados. || Delega a decisão central do planejamento a quem não conhece a turma.
+- Somente a duração da aula, pois o resto o sistema deduz. || O sistema não pode deduzir conhecimentos prévios, recursos ou dificuldades específicas.
+R: Quanto mais o pedido traz do que só o professor sabe, mais útil e adequado tende a ser o rascunho.
+
+#7
+MC: Por que descrever a turma "em termos gerais" ao pedir ajuda para planejar é uma boa prática?
++ Porque o planejamento não exige dados identificáveis, e isso protege estudantes e atende à legislação de proteção de dados.
+- Porque descrições gerais fazem o sistema acertar sempre mais. || Não há garantia de acerto; o ponto é a proteção, não a precisão.
+- Porque o sistema recusa pedidos que mencionem estudantes. || Não é esse o motivo; a recomendação decorre do cuidado com dados pessoais.
+- Porque nomes próprios deixam o texto gerado mais longo. || O tamanho do texto não é a razão; o risco está em expor pessoas.
+- Porque dados de estudantes só podem ser usados após a aprovação do diretor, em qualquer situação. || Exagera e distorce a regra; a prática relevante é evitar inserir dados identificáveis.
+R: Dizer "vários estudantes confundem numerador e denominador" informa sem identificar ninguém.
+
+#8
+MC: Em um estudo de caso qualitativo sobre um plano de aula de ciências gerado por IA, quais problemas foram relatados nas versões iniciais?
++ Componentes questionáveis, lacunas de detalhe e um recurso inexistente, apesar de o plano chegar a alinhar-se ao currículo.
+- Nenhum problema, pois o plano ficou perfeito na primeira tentativa. || Contraria o relato de versões iniciais com falhas que exigiram refinamento.
+- Recusa do sistema em gerar planos para o ensino fundamental. || O estudo descreve a geração de um plano, não uma recusa.
+- Excesso de atividades manuais que tornaram o plano caro demais. || Não é um problema relatado; o foco foi em conteúdo questionável, lacunas e recurso falso.
+- Uso obrigatório de imagens de marcas comerciais nas atividades. || Não se trata do problema documentado e não corresponde ao relato.
+R: O caso mostra utilidade como ponto de partida e necessidade de revisão, mas não mede a qualidade média dos sistemas.
+
+#9
+MC: Qual é a regra mais simples para reduzir o risco de erro em textos de apoio criados com IA?
++ Partir de conteúdo que o professor domina e usar a IA para reorganizar ou simplificar, em vez de criar informação nova que ele não conferirá.
+- Pedir textos longos, pois quanto mais extenso, mais completo e correto. || Extensão não implica correção, e textos longos tornam a conferência mais difícil.
+- Pedir que o sistema cite fontes e aceitar as citações sem consulta. || Referências podem ser inventadas; é preciso conferi-las.
+- Usar apenas textos sobre assuntos que o professor desconhece. || Aumenta o risco, pois não haveria como perceber erros.
+- Pedir o texto duas vezes e escolher o que soar mais seguro. || Segurança no tom não indica exatidão; ambos podem estar errados.
+R: Quem domina a fonte consegue perceber quando a adaptação distorce o conteúdo.
+
+#10
+MC: Qual é o cuidado essencial ao usar IA para gerar listas de exercícios e gabaritos?
++ Resolver cada item como se fosse o estudante e conferir o gabarito antes de entregar.
+- Confiar no gabarito gerado, pois o sistema calcula sem erros. || Sistemas de linguagem podem errar contas e apresentar respostas incorretas com segurança.
+- Entregar a lista sem gabarito para que os estudantes encontrem os erros. || Transfere ao estudante a responsabilidade de detectar erros do material.
+- Gerar o máximo possível de itens para compensar os incorretos. || Mais itens ampliam o trabalho de verificação e não sanam os erros.
+- Pedir que outro assistente de IA aprove a lista, sem conferência humana. || Dois sistemas podem repetir o mesmo erro; falta conferência independente.
+R: O professor que resolve os itens percebe ambiguidades, respostas duplicadas e números que não conferem.
+
+#11
+MC: O que propõe o desenho universal para a aprendizagem em relação aos materiais didáticos?
++ Oferecer múltiplas formas de engajamento, de representação do conteúdo e de ação e expressão dos estudantes.
+- Criar um único material padronizado, que sirva a todos do mesmo modo. || Contraria a proposta, que parte da variabilidade e das múltiplas opções.
+- Dividir a turma em grupos fixos de acordo com um rótulo de perfil. || Rotular estudantes não faz parte da proposta e pode gerar profecias autorrealizáveis.
+- Substituir o professor por materiais autoinstrucionais. || O desenho universal não propõe substituir a mediação docente.
+- Adotar apenas recursos digitais, por serem mais flexíveis. || A flexibilidade não depende de tecnologia digital; materiais impressos também podem oferecer opções.
+R: A ideia é planejar desde o início alternativas, em vez de adaptar apenas depois do problema.
+
+#12
+MC: Um professor pede a um assistente de IA para reescrever em linguagem simples um texto seu para o 6º ano. Qual verificação é indispensável?
++ Conferir se os conceitos e a precisão foram preservados e se termos técnicos não foram trocados por outros imprecisos.
+- Verificar apenas se o texto ficou mais curto que o original. || Brevidade não mede preservação de sentido; um texto curto pode estar impreciso.
+- Verificar se o texto usa palavras iguais às do original. || O objetivo da adaptação é justamente mudar palavras mantendo o conteúdo.
+- Verificar se o texto contém a palavra "simples". || A presença de uma palavra não indica adequação de nível nem preservação do conteúdo.
+- Nada, pois a simplificação é uma tarefa que o sistema faz sem alterar o sentido. || Simplificações podem introduzir erros ou suprimir nuances sem aviso.
+R: A adaptação ajuda o acesso, mas só vale se o conteúdo permanecer exato.
+
+#13
+MC: Qual das práticas abaixo é adequada para imagens e materiais de terceiros no planejamento?
++ Respeitar licenças e políticas de uso, e não enviar a sistemas externos obras protegidas que o professor não tenha direito de compartilhar.
+- Enviar a um assistente qualquer livro didático inteiro para obter resumos. || Pode violar direitos autorais e as condições de uso das obras e das ferramentas.
+- Supor que imagens geradas por IA sempre têm uso livre e são neutras. || O regime de uso nem sempre é claro e imagens podem reproduzir estereótipos.
+- Copiar imagens da internet porque o uso escolar dispensa qualquer licença. || O uso escolar não dispensa, em geral, a verificação de licenças e permissões.
+- Evitar qualquer imagem, pois todas violam direitos. || É exagero; há acervos abertos, fotografias próprias e produções dos estudantes.
+R: Direitos autorais e licenças fazem parte do planejamento responsável de materiais.
+
+#14
+MC: Uma sequência didática planejada com apoio de IA só se torna boa, segundo o capítulo, quando:
++ É testada com a turma, observada e ajustada a partir do que acontece.
+- É longa e inclui muitas atividades diferentes. || Quantidade de atividades não garante qualidade nem adequação à turma.
+- É gerada em uma única tentativa, sem alterações. || A ausência de ajuste ignora o contexto e as evidências de aprendizagem.
+- É aprovada por outro sistema de IA. || A aprovação automática não substitui observar a turma real.
+- É idêntica à de outros professores da mesma rede. || A padronização não considera diferenças entre turmas e pode ignorar a cultura local.
+R: O ciclo planejar, aplicar, observar e ajustar torna a sequência adequada ao contexto.
+
+#15
+MC: Por que ter uma versão desplugada de atividades que dependem de internet ou projetor é prudente?
++ Porque o objetivo de aprendizagem não deve depender de um único caminho que pode falhar.
+- Porque atividades com tecnologia são inferiores às sem tecnologia. || Não é essa a tese; o ponto é a segurança do plano, não a hierarquia de métodos.
+- Porque a lei proíbe o uso de tecnologia em sala. || Não há proibição geral; a prudência é de planejamento.
+- Porque estudantes aprendem melhor sempre sem telas. || Generaliza sem evidência; depende do objetivo e do contexto.
+- Porque a versão desplugada dispensa a avaliação. || Qualquer versão da atividade continua exigindo evidências de aprendizagem.
+R: Planejar alternativas é prática profissional comum, com ou sem IA.
+
+#16
+MC: Qual afirmação descreve com cautela o que a pesquisa permite afirmar sobre planos de aula gerados por IA?
++ Há relatos de utilidade como ponto de partida e de problemas que exigem revisão, mas poucas evidências de efeito sobre a aprendizagem.
+- Estudos comprovam que planos gerados por IA melhoram o desempenho dos estudantes. || Não há evidências robustas desse efeito; o capítulo registra essa lacuna.
+- Estudos comprovam que esses planos prejudicam sistematicamente a aprendizagem. || Também não há evidência sólida de dano sistemático; faltam estudos.
+- Há consenso científico de que professores não devem usar IA para planejar. || O que há são cautelas e condições, não consenso de proibição.
+- As pesquisas brasileiras já medem o impacto do planejamento com IA em larga escala. || O capítulo indica que não há estudos de eficácia desse tipo no Brasil.
+R: As recomendações derivam de princípios de planejamento e de evidências sobre erros, não de estudos de eficácia.
+
+#17
+MC: Em um experimento com profissionais adultos, o uso de IA em tarefas curtas de escrita foi associado a ganhos de tempo e qualidade. Que leitura é adequada para o planejamento docente?
++ O achado mostra possibilidade de ajuda em tarefas delimitadas, mas não se transfere automaticamente ao planejamento pedagógico.
+- Prova que qualquer professor planejará melhor com IA. || Extrapola de adultos em tarefas curtas para professores em planejamento, que envolve outros critérios.
+- Mostra que o planejamento docente é uma tarefa simples e mecânica. || O planejamento envolve saberes profissionais e decisões contextuais, que o experimento não mediu.
+- Demonstra que a revisão do texto gerado é desnecessária. || O experimento não eliminou a necessidade de revisão; esse não era o foco.
+- Prova que a IA beneficia apenas profissionais com mais experiência. || O estudo relatou maior benefício para quem tinha menor desempenho inicial, não o contrário.
+R: Evidências de um contexto não se transferem sem justificativa para outro.
+
+#18
+MC: Qual das alternativas descreve um risco de homogeneização no uso de IA para planejar?
++ Aulas e materiais muito parecidos entre si e distantes da cultura e das necessidades locais.
+- Aumento do número de professores com formação em tecnologia. || É um efeito possivelmente positivo, não uma homogeneização.
+- Maior diversidade de exemplos regionais em todos os materiais. || Descreve o contrário: diversidade, não padronização.
+- Redução automática dos custos de impressão. || É questão de custo, sem relação com a padronização dos materiais.
+- Melhora do desempenho dos estudantes em avaliações externas. || Não se trata de um risco de homogeneização, e o capítulo não afirma esse efeito.
+R: Sistemas tendem a produzir o plano mais provável, o que pode padronizar materiais.
+
+#19
+MC: Qual situação indica que é melhor dispensar a IA no planejamento?
++ Quando o professor ainda não sabe o que quer ensinar e precisa primeiro definir os objetivos.
+- Quando precisa reformatar em tópicos um texto que ele mesmo escreveu. || É tarefa de baixo risco em que a IA pode ajudar com revisão rápida.
+- Quando quer variar os contextos dos exemplos de uma lista que ele resolverá depois. || É uso possível em parceria, com conferência dos itens.
+- Quando deseja um rascunho de tabela de tempo para uma aula cujos objetivos já definiu. || É uso apropriado, com revisão pelo professor.
+- Quando quer gerar uma versão em tópicos de um conteúdo que domina. || A IA pode apoiar, pois o professor domina o conteúdo e conferirá o resultado.
+R: Sem objetivos próprios, o professor aceita os do sistema, que podem não servir à turma.
+
+#20
+MC: Por que o professor que resolve uma lista de exercícios antes de entregá-la está agindo corretamente?
++ Porque, ao resolver, ele percebe erros de conta, ambiguidades, respostas duplicadas e dificuldade desalinhada ao objetivo.
+- Porque estudantes só aprendem com exercícios que o professor já tenha feito pessoalmente em outro ano. || Exagera e não é razão pedagógica nem de verificação.
+- Porque a lei exige que todo exercício seja resolvido por um professor. || Não há tal exigência; é boa prática profissional.
+- Porque resolver exercícios dispensa a elaboração do gabarito. || Resolver serve justamente para elaborar e conferir o gabarito.
+- Porque exercícios gerados por IA são sempre mais fáceis que os escritos à mão. || Não há relação sistemática entre a origem do exercício e sua dificuldade.
+R: A resolução prévia é a verificação mais simples e eficiente de um exercício.
+
+#21
+MC: Qual é a função de registrar, ao final de cada aula, o que funcionou e o que não funcionou?
++ Fornecer evidências para ajustar a sequência e para contextualizar pedidos futuros, sem identificar estudantes.
+- Substituir a observação direta da turma por dados do sistema. || O registro é feito pelo professor a partir da observação; não a substitui.
+- Treinar publicamente o assistente com dados de estudantes. || Não se trata de treinar o sistema e dados de estudantes não devem ser expostos.
+- Cumprir uma exigência legal de todo plano de aula. || Não é uma obrigação legal geral; é prática de melhoria.
+- Eliminar a necessidade de replanejar as próximas aulas. || O registro alimenta o replanejamento, não o substitui.
+R: O registro transforma a experiência em critério para decisões futuras.
+
+#22
+MC: Como a IA pode apoiar a criação de rubricas de avaliação de modo adequado?
++ Rascunhando critérios e níveis que o professor ajusta à sua tarefa e, idealmente, discute com a turma.
+- Definindo sozinha a nota final de cada estudante. || Avaliar o desempenho é decisão docente e exige observação.
+- Substituindo a discussão dos critérios com os estudantes. || A discussão dos critérios é parte formativa que não deve ser eliminada.
+- Fornecendo uma rubrica universal que dispensa adaptação. || Rubricas precisam refletir a tarefa e o objetivo específicos.
+- Classificando automaticamente estudantes em perfis fixos. || Rotular perfis pode produzir profecias autorrealizáveis e não é função de rubricas.
+R: A rubrica é instrumento do professor; a IA oferece rascunho para ser revisado.
+
+#23
+MC: Qual é uma verificação de acessibilidade simples para materiais?
++ Garantir títulos e listas estruturados, descrição de imagens, contraste suficiente, instruções curtas e formato alternativo.
+- Usar apenas cores para diferenciar categorias de informação. || Depender só de cor exclui quem não a percebe bem.
+- Incluir imagens sem descrição, para que o estudante descubra o sentido. || Sem descrição, a imagem fica inacessível a quem não a vê.
+- Escrever instruções longas em um único parágrafo. || Instruções longas e densas dificultam a compreensão; é melhor um passo por vez.
+- Usar fonte decorativa em tamanho reduzido para economizar papel. || Prejudica a legibilidade, o oposto do que se busca.
+R: Verificações simples ampliam o acesso para muitos estudantes.
+
+#24
+MC: Qual descrição de uma divisão de papéis entre professor e IA no planejamento está de acordo com o capítulo?
++ O professor define objetivos e evidências e revisa; a IA oferece rascunhos e variações que ele aceita, altera ou rejeita.
+- A IA define objetivos e o professor apenas imprime os planos. || Inverte a responsabilidade pedagógica, que cabe ao professor.
+- O professor deve evitar qualquer contato com rascunhos de IA. || O capítulo admite o uso como apoio, com cuidados.
+- A IA decide as adaptações individuais com base nos laudos enviados. || Envolve dados sensíveis e decisões que cabem à equipe e ao professor.
+- A IA avalia o que a turma compreendeu e dispensa a observação docente. || A avaliação do que a turma compreendeu depende de observação e de evidências do professor.
+R: A IA apoia; a decisão pedagógica continua com quem conhece a turma.
+
+#25
+MC: O que significa pedir ao sistema que "liste o que você supôs e o que eu devo conferir"?
++ Tornar visíveis as suposições do rascunho e orientar a verificação, sem tomá-las por garantia.
+- Garantir que o sistema só faça afirmações verdadeiras. || O pedido não garante veracidade; apenas ajuda a localizar pontos de conferência.
+- Transferir ao sistema a responsabilidade pela correção do plano. || A responsabilidade permanece com o professor.
+- Impedir que o sistema produza referências inventadas. || Não impede; o professor ainda precisa conferir as referências.
+- Substituir a leitura crítica do plano pelo professor. || A lista orienta a leitura, mas não a substitui.
+R: É uma estratégia de transparência que ajuda a revisão, sem eliminá-la.
+
+#26
+MC: Por que o ganho de tempo com IA no planejamento pode ser ilusório?
++ Porque o tempo economizado pode ser consumido pela revisão de muito material gerado, de modo que mais material não significa melhor planejamento.
+- Porque os sistemas de IA sempre demoram mais que o trabalho manual. || Não é regra; em tarefas de formatação o ganho pode ser real.
+- Porque o professor perde o direito de editar o que foi gerado. || O professor pode editar livremente; não há perda desse direito.
+- Porque a legislação limita o número de planos por semana. || Não há tal limite; o problema é de sobrecarga e de revisão.
+- Porque planos gerados por IA são sempre invalidados pela direção. || Não é regra geral nem a razão discutida no capítulo.
+R: O ganho depende de pedir o necessário e de revisar com critério.
+
+#27
+MC: O que o capítulo sugere sobre o banco de materiais do professor?
++ Organizá-lo com nomes padronizados, versões, indicação do que mudou e de como foi conferido, para reuso.
+- Guardá-lo apenas na memória do assistente de IA. || Torna o acervo dependente de sistema externo, sem controle do professor.
+- Deixá-lo sem identificação, para evitar burocracia. || Sem identificação e versão, o reuso e a conferência ficam difíceis.
+- Publicá-lo sem revisão para que outros o testem. || Publicar sem revisão replica possíveis erros.
+- Incluir nele os dados de estudantes para personalizar os materiais. || Dados de estudantes não devem compor o banco compartilhável.
+R: Um banco versionado torna o trabalho acumulável e auditável.
+
+#28
+MC: Quando o conteúdo é especializado e o professor não consegue conferi-lo, qual é a conduta mais prudente?
++ Dispensar a IA para gerar esse conteúdo ou recorrer a fontes confiáveis e a colegas especialistas para verificar.
+- Aceitar o texto, já que a IA conhece mais do que o professor. || Sistemas de linguagem também erram e o professor não teria como perceber.
+- Incluir o texto no material sem que ninguém o leia. || Disseminaria possíveis erros sem controle.
+- Pedir ao sistema que garanta a veracidade e confiar na garantia. || O sistema não tem como garantir; a garantia teria o mesmo problema.
+- Ocultar dos estudantes que o texto foi gerado por IA. || A ocultação não resolve o problema de exatidão e prejudica a transparência.
+R: Sem como verificar, o risco recai sobre os estudantes.
+
+#29
+MC: Qual das afirmações abaixo sobre planejar é uma ideia central do capítulo?
++ A IA entra depois que o professor definiu objetivos, evidências e conhecimentos prévios.
+- A IA deve ser o primeiro passo, pois fornece os objetivos mais adequados. || Inverte a ordem; objetivos dependem de currículo e turma.
+- O planejamento é tarefa automatizável e pode ser eliminado do trabalho docente. || O planejamento é parte do saber profissional e não deve ser desvalorizado.
+- Planejar com IA é sempre mais eficiente do que planejar com colegas. || Não há evidência disso; a troca entre colegas é um recurso valioso.
+- Quanto mais detalhado o plano gerado, menor a necessidade de revisão. || Detalhe não substitui revisão; pode até esconder erros.
+R: A ordem importa: primeiro pensar o objetivo, depois pedir apoio.
+
+#30
+MC: Em um contexto com poucos recursos tecnológicos, qual é uma alternativa coerente com o capítulo para planejar bem?
++ Planejar em duplas ou trios com colegas, manter um caderno de planos e trocar materiais entre professores.
+- Adiar o planejamento até que haja acesso a um assistente de IA. || Interrompe o trabalho sem necessidade; o planejamento sempre foi feito sem IA.
+- Copiar planos antigos sem revisão e sem observar a turma. || Ignora o ciclo de testar e ajustar e o contexto da turma atual.
+- Reduzir as aulas a exposições longas, que exigem menos planejamento. || Empobrece a prática e não é recomendação do capítulo.
+- Pedir aos estudantes que planejem as aulas no lugar do professor. || Transfere ao estudante uma responsabilidade profissional e não é o que o capítulo propõe.
+R: A reunião pedagógica e o caderno de planos cumprem funções do banco digital.
+
+DISC: Explique por que o planejamento deve começar pelos objetivos e pelas evidências de aprendizagem, e não pelo pedido a um assistente de IA.
+R: Porque o sistema devolve o plano mais provável, sem conhecer turma, conhecimentos prévios e tempo. Objetivos e evidências dão a direção; o plano gerado só serve se alinhado a eles.
+C: Menciona planejamento para trás; reconhece limites do sistema; liga objetivo, evidência e atividade.
+
+DISC: Descreva as três categorias de decisão de planejamento (delegar, parceria, reservar) e dê um exemplo de cada.
+R: Delegar: reformatar um texto próprio. Parceria: propor sequência a partir de objetivos definidos, com testes. Reservar: adaptações individuais e avaliação da compreensão da turma.
+C: Três categorias distintas; exemplos coerentes; critério (dependência do conhecimento da turma).
+
+DISC: Escreva um pedido (prompt) para planejar uma aula de sua área, incluindo contexto, objetivo, restrições e formato, e explique cada elemento.
+R: Resposta pessoal: deve informar etapa, tempo, recursos, objetivo, evidência, restrições e formato, e pedir que indique suposições.
+C: Elementos completos; ausência de dados pessoais; coerência com o objetivo.
+
+DISC: Aponte seis perguntas para revisar um plano de aula recebido e explique por que a fluência do texto não deve tranquilizar o revisor.
+R: Perguntas sobre objetivos, evidência, viabilidade, progressão, correção e participação de todos. A fluência não indica correção, pois o sistema gera texto plausível.
+C: Perguntas pertinentes; explicação sobre alucinação; atitude crítica.
+
+DISC: Um colega afirma que "como o plano gerado está bem organizado, pode ir direto para a sala". Argumente com base no capítulo.
+R: Organização não é exatidão nem adequação. É preciso conferir fatos, resolver exercícios, testar tempo e recursos e prever alternativa sem tecnologia.
+C: Argumentação respeitosa; verificações específicas; sem generalizar.
+
+DISC: Descreva um procedimento para verificar uma lista de exercícios gerada por IA antes de entregá-la.
+R: Resolver todos os itens, comparar com o gabarito, checar ambiguidades, número de respostas corretas, adequação ao objetivo e nível.
+C: Procedimento claro; inclui resolução própria; avalia alinhamento.
+
+DISC: Como adaptar o nível de leitura de um texto próprio com apoio de IA sem perder a precisão do conteúdo?
+R: Partir do texto original, pedir manutenção de conceitos e termos técnicos, comparar linha a linha, solicitar que indique dúvidas, revisar com outra pessoa.
+C: Fidelidade ao conteúdo; método de comparação; cuidado com termos técnicos.
+
+DISC: Relacione o desenho universal para a aprendizagem à produção de versões alternativas de um material.
+R: Múltiplas formas de engajamento, representação e expressão; versões alternativas respondem a necessidades reais, com revisão docente e sem rotular estudantes.
+C: Cita os três princípios; evita rótulos; menciona revisão.
+
+DISC: Que cuidados com direitos autorais e imagens um professor deve ter ao criar materiais com apoio de IA?
+R: Respeitar licenças; não enviar obras protegidas sem direito; considerar estereótipos em imagens geradas; usar acervos abertos ou produção própria.
+C: Menciona licenças, envio de obras e estereótipos; propõe alternativas.
+
+DISC: Por que descrever a turma em termos gerais é suficiente para planejar com apoio de IA? Dê um exemplo.
+R: Planejar exige conhecer padrões da turma, não identificar pessoas. Ex.: "vários estudantes confundem numerador e denominador".
+C: Argumento de proteção de dados; exemplo sem identificação.
+
+DISC: Resuma o que o estudo de caso sobre plano de aula de ciências gerado por IA permite e não permite concluir.
+R: Permite: um plano alinhado pode ser obtido rapidamente e exige revisão por conter problemas. Não permite: concluir sobre a qualidade média dos sistemas ou sobre efeitos na aprendizagem.
+C: Distingue achado e limite; evita generalização.
+
+DISC: Explique por que um experimento com adultos em tarefas curtas de escrita não permite concluir que a IA melhora o planejamento docente.
+R: Tarefa, população e critérios diferentes; planejamento envolve decisões contextuais e saberes profissionais; transferência exige justificativa.
+C: Reconhece diferenças de contexto; evita extrapolação.
+
+DISC: Descreva o ciclo planejar, aplicar, observar e ajustar e o papel do registro docente.
+R: A sequência é testada com a turma; evidências orientam ajustes; o registro, sem identificar estudantes, guarda o aprendizado e contextualiza pedidos futuros.
+C: Quatro etapas; função do registro; cuidado com dados.
+
+DISC: Dê três exemplos de riscos do uso de IA no planejamento e uma medida de mitigação para cada.
+R: Ex.: erro de conteúdo (conferir em fonte), plano genérico (informar contexto), exposição de dados (descrever em termos gerais), homogeneização (adaptar à cultura local).
+C: Riscos pertinentes; medidas específicas.
+
+DISC: Em que situações você dispensaria a IA no seu planejamento? Justifique.
+R: Resposta pessoal: objetivos indefinidos, conteúdo não verificável, adaptações individuais, dados pessoais ou obras protegidas, quando o planejamento em conjunto for mais proveitoso.
+C: Situações coerentes com o capítulo; justificativas fundamentadas.
+
+DISC: Como um professor com acesso limitado à internet pode manter um planejamento de qualidade e um banco de materiais?
+R: Planejamento em duplas, caderno de planos, banco em papel organizado, troca entre colegas, uso pontual de um único dispositivo.
+C: Viabilidade; valorização do trabalho coletivo; organização.
+
+DISC: Elabore uma ficha de banco de materiais com cinco campos e justifique cada campo.
+R: Ex.: tema e ano, versão e data, objetivo, o que mudou, como foi conferido. Cada campo apoia reuso e verificação.
+C: Campos pertinentes; justificativas; coerência.
+
+DISC: Discuta o risco de desvalorização do trabalho docente quando o planejamento é tratado como tarefa automatizável.
+R: Planejar mobiliza saberes sobre conteúdo, estudantes e contexto; reduzir a rascunho padronizado empobrece a prática e a autonomia profissional.
+C: Reconhece saberes docentes; articula autonomia; evita posições absolutas.
+
+DISC: Proponha um critério para decidir se um material produzido com IA foi mesmo útil em uma sequência de aulas.
+R: Comparar o tempo gasto com o ganho, observar se os estudantes atingiram o objetivo e registrar ajustes necessários.
+C: Critério observável; ligação com evidências; honestidade sobre limites.
+
+DISC: Como você explicaria a um colega iniciante a diferença entre um rascunho gerado por IA e um plano pronto para uso?
+R: O rascunho é ponto de partida; o plano pronto passou por alinhamento, verificação, adaptação à turma e teste de tempo e recursos.
+C: Distinção clara; etapas de revisão; linguagem acolhedora.

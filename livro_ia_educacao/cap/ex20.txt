@@ -1,0 +1,349 @@
+#1
+MC: Um estudante entrega uma solução com passos bem escritos, mas a resposta não satisfaz a equação original. O que isso ilustra sobre respostas de sistemas de IA?
++ Que a fluência e a aparência de rigor não garantem correção, por isso a resposta deve ser verificada.
+- Que todo erro de matemática vem do estudante, nunca do sistema. || Sistemas de linguagem também erram e podem apresentar passos convincentes para resultados incorretos.
+- Que equações do primeiro grau não podem ser resolvidas com apoio de nenhum recurso. || Podem ser resolvidas com diversos recursos; o ponto é verificar o resultado.
+- Que respostas longas são sempre mais confiáveis que as curtas. || Extensão e detalhamento não indicam correção.
+- Que apenas professores devem verificar resultados de equações. || A verificação é competência a ser desenvolvida pelos estudantes.
+R: Substituir o resultado na equação original é a verificação mais direta e deve ser hábito.
+
+#2
+MC: Por que modelos de linguagem podem errar contas mesmo em problemas simples?
++ Porque geram sequências plausíveis a partir de padrões, e não executam o cálculo exato como uma calculadora.
+- Porque são programados para errar de propósito. || Não há intenção de errar; o erro decorre da forma como geram respostas.
+- Porque não conseguem ler números. || Leem números como parte do texto; o problema é o modo de gerar a resposta.
+- Porque só funcionam em línguas estrangeiras. || Funcionam em várias línguas, inclusive o português, com qualidade variável.
+- Porque o cálculo exige acesso à internet. || O erro não depende de conexão.
+R: Uma calculadora segue regras exatas; um modelo de linguagem produz texto provável.
+
+#3
+MC: Em um estudo com variantes de problemas de nível fundamental, o que aconteceu quando se acrescentou uma informação aparentemente relevante, mas irrelevante para a resposta?
++ O desempenho dos modelos caiu de modo expressivo, o que indica sensibilidade à formulação.
+- O desempenho subiu em todos os modelos. || Contraria o achado de queda.
+- O desempenho permaneceu idêntico em todos os modelos. || O estudo encontrou queda e oscilação.
+- Os modelos recusaram-se a responder. || O estudo relata queda de acerto, não recusa.
+- Os modelos passaram a reconhecer a informação como irrelevante. || O resultado foi o oposto: a informação extra atrapalhou.
+R: A sensibilidade à formulação é motivo adicional para testar e verificar.
+
+#4
+MC: Qual é a ressalva importante ao citar estudos sobre erros de sistemas de IA em matemática?
++ Os sistemas evoluem rápido, e os estudos têm datas e versões; vale testar na sua tarefa e verificar sempre.
+- Os estudos valem para todas as versões futuras. || Novas versões podem se comportar de modo diferente.
+- Os estudos são irrelevantes, porque os sistemas nunca erram. || Os estudos documentam erros reais.
+- Os estudos só se aplicam a estudantes universitários. || Há estudos com problemas de nível fundamental e médio.
+- Os estudos eliminam a necessidade de ensinar verificação. || Tornam a verificação ainda mais necessária.
+R: A conclusão estável é a necessidade de verificação, não uma lista fixa de erros.
+
+#5
+MC: Qual conjunto descreve a divisão de papéis entre ferramentas determinísticas, modelos de linguagem e pessoas?
++ Ferramentas calculam por regras exatas; modelos de linguagem geram explicações e perguntas plausíveis; pessoas decidem, interpretam e validam.
+- Modelos de linguagem calculam com exatidão, e calculadoras apenas conversam. || Inverte os papéis.
+- Pessoas apenas copiam resultados das ferramentas. || Retira das pessoas o papel de decidir e validar.
+- Ferramentas determinísticas substituem a interpretação humana. || Calcular não equivale a interpretar o resultado.
+- Modelos de linguagem validam por si sós qualquer cálculo. || Não validam com segurança os próprios resultados.
+R: Cada recurso tem um papel; a validação final cabe a quem responde pelo resultado.
+
+#6
+MC: Segundo o modelo clássico de resolução de problemas, qual é a sequência de etapas?
++ Compreender o enunciado, elaborar um plano, executá-lo e examinar o resultado.
+- Copiar a resposta, conferir o gabarito e entregar. || Não envolve compreensão nem plano.
+- Executar contas, escolher a resposta mais longa e entregar. || A extensão da resposta não é critério e não há plano.
+- Memorizar fórmulas, aplicá-las e não revisar. || Dispensa a compreensão e o exame do resultado.
+- Perguntar ao professor antes de ler o enunciado. || Pular a leitura impede compreender o problema.
+R: Entregar a elaboração do plano a um sistema retira a parte mais formativa.
+
+#7
+MC: O que sugere um estudo de campo com estudantes do ensino médio sobre o acesso a um assistente de IA sem salvaguardas pedagógicas?
++ Que o desempenho melhorou durante a prática, mas piorou em prova sem o recurso; uma versão com dicas mitigou o problema.
+- Que o desempenho melhorou em todas as condições, inclusive na prova sem recurso. || Contraria a piora na prova sem o recurso.
+- Que o recurso é proibido em qualquer contexto escolar. || O estudo não sustenta proibição geral; indica que o desenho importa.
+- Que o assistente elevou o interesse, mas não mediu desempenho. || O estudo mediu desempenho em prática e prova.
+- Que estudantes que usam IA sempre aprendem menos. || A versão com salvaguardas mitigou o dano, e o estudo é contextual.
+R: O desenho da interação (dicas em vez de respostas) pesa na aprendizagem.
+
+#8
+MC: O que os resultados de um ensaio com estudantes universitários de física, que usaram um tutor de IA com desenho pedagógico, permitem concluir?
++ Que, em um tópico específico e com amostra delimitada, houve ganhos maiores que em uma aula ativa presencial, sem permitir generalização.
+- Que tutores de IA superam qualquer aula em qualquer disciplina. || Generaliza para além do contexto estudado.
+- Que professores se tornam desnecessários em todas as etapas. || O estudo não trata de substituir professores nem de outras etapas.
+- Que o resultado vale automaticamente para a educação infantil. || Transfere o achado para outra faixa etária sem justificativa.
+- Que a aula ativa deve ser abandonada. || O estudo compara em um contexto, e não recomenda abandonar a aula ativa.
+R: É um resultado promissor, mas restrito pelo contexto, pelo conteúdo e pela amostra.
+
+#9
+MC: Qual é o primeiro passo da rotina de verificação de cinco passos?
++ Estimar a ordem de grandeza ou o sinal esperados antes de aceitar o resultado.
+- Registrar a conclusão antes de calcular. || O registro é o último passo, depois das checagens.
+- Trocar de ferramenta até o resultado coincidir. || Forçar coincidência não é verificação.
+- Pedir ao sistema para confirmar a própria resposta. || Confirmação pelo mesmo sistema não é verificação independente.
+- Descartar qualquer resposta que contenha decimais. || Decimais são perfeitamente válidos; a estimativa é que orienta a checagem.
+R: Estimar cria uma expectativa contra a qual o resultado é comparado.
+
+#10
+MC: Uma resposta indica 5000 como a massa de um lápis comum. Que passo da rotina detectaria o problema de forma mais direta?
++ Estimativa e checagem de unidades e sentido, pois o valor é implausível para a grandeza.
+- Registrar o resultado sem conferir. || Registrar sem checar não detecta o erro.
+- Reescrever a frase em outro formato. || Mudar a forma não altera um valor implausível.
+- Pedir uma resposta mais longa. || Comprimento não corrige valores.
+- Usar uma fonte maior no texto. || Formatação não tem relação com a exatidão.
+R: A ordem de grandeza é filtro rápido para erros grosseiros.
+
+#11
+MC: Por que testar uma fórmula com casos simples ou extremos é útil na verificação?
++ Porque casos fáceis ou limites (como zero) revelam erros que passam despercebidos em valores comuns.
+- Porque casos extremos nunca ocorrem na realidade. || Ocorrem, e justamente por isso servem como teste.
+- Porque dispensam qualquer conferência adicional. || São um dos passos, e não substituem os demais.
+- Porque o sistema só aceita números pequenos. || Não é restrição do sistema.
+- Porque deixam o problema mais bonito. || A estética não é critério de verificação.
+R: Se a fórmula falha com um número fácil, o problema está nela.
+
+#12
+MC: Na modelagem matemática, qual é o papel da validação?
++ Comparar as previsões do modelo com medidas novas e discutir onde ele funciona e onde falha.
+- Confirmar o modelo com a opinião do sistema de IA. || A validação é feita com dados, e não com opinião.
+- Provar que o modelo é perfeito e dispensa críticas. || Modelos simplificam e têm limites.
+- Escolher o gráfico mais bonito. || A estética não valida um modelo.
+- Substituir a coleta de dados por números inventados. || Dados devem ser coletados; inventá-los é desonesto.
+R: Modelar envolve ir e voltar entre a situação real e o modelo.
+
+#13
+MC: Por que, em estatística escolar, é preferível usar dados reais e anônimos coletados pela turma?
++ Porque dão sentido à investigação, permitem comparar o que o sistema diz com o que os dados mostram e protegem a privacidade.
+- Porque dados inventados são proibidos em qualquer exemplo. || Podem ser usados como exemplo declarado como fictício; o cuidado é não apresentá-los como reais.
+- Porque dados pessoais de estudantes tornam a atividade mais interessante. || Dados pessoais exigem cautela e proteção, não são recomendados.
+- Porque gráficos só podem ser feitos com dados públicos. || Podem ser feitos com dados coletados pela turma.
+- Porque sistemas de IA só aceitam dados de escolas. || Não há essa restrição.
+R: Dados reais e anônimos unem relevância, honestidade e proteção.
+
+#14
+MC: Qual das atitudes abaixo é recomendada para código gerado por IA usado em modelagem?
++ Ler o código, testá-lo com casos conhecidos e saber explicar o que ele faz.
+- Executar o código e aceitar qualquer saída. || Programas que rodam podem estar errados.
+- Evitar qualquer teste, para não atrasar a aula. || Sem testes, erros passam despercebidos.
+- Considerar o código correto por ter sido gerado rapidamente. || A rapidez não indica correção.
+- Apagar os comentários para evitar confusão. || Comentários ajudam a explicar e revisar.
+R: O código também precisa de verificação independente.
+
+#15
+MC: O que o capítulo recomenda sobre procedimentos de laboratório e atividades com risco?
++ Não basear procedimentos de segurança em respostas de IA e seguir protocolos da escola, manuais confiáveis e o profissional responsável.
+- Pedir ao sistema que defina doses e misturas para a aula. || Esse tipo de informação não deve vir de respostas de IA.
+- Dispensar os protocolos quando a atividade for simples. || Protocolos valem para atividades com risco, mesmo simples.
+- Delegar aos estudantes a escolha de procedimentos de risco. || Responsabilidade por segurança é do professor e da instituição.
+- Substituir a supervisão presencial por vídeos gerados. || Não substitui a supervisão responsável.
+R: Segurança exige fontes confiáveis e responsabilidade humana.
+
+#16
+MC: Qual é a estratégia "preveja, investigue e explique" e por que ela ajuda com concepções alternativas?
++ O estudante prevê, observa o fenômeno e explica a diferença, de modo que a observação, e não a fala do sistema, decide.
+- O estudante lê a resposta de um sistema e a decora. || Aceita a explicação sem confrontá-la com a observação.
+- O professor explica antes de qualquer previsão. || Retira a previsão que revela as ideias prévias.
+- O estudante registra apenas o resultado esperado. || Não confronta previsão com observação.
+- O grupo escolhe a explicação mais popular. || Popularidade não é evidência.
+R: A previsão expõe ideias prévias, e a observação permite revisá-las.
+
+#17
+MC: Por que dados de "experimentos" gerados por um sistema não devem ser apresentados como resultados reais?
++ Porque resultados que nunca ocorreram não são evidência e configuram fabricação de dados.
+- Porque números gerados são sempre muito grandes. || Não há relação com o tamanho dos números.
+- Porque o sistema recusa-se a gerar números. || Gera, mas isso não os torna dados observados.
+- Porque dados só podem ser coletados por professores. || Estudantes também coletam dados.
+- Porque apenas dados de laboratório universitário são válidos. || Dados de atividades escolares podem ser válidos se coletados com cuidado.
+R: Dados gerados só servem como exemplo declarado e rotulado como fictício.
+
+#18
+MC: Em um plano de aula de ciências gerado por IA, qual problema já foi relatado em um estudo de caso?
++ A presença de um recurso inexistente, além de componentes questionáveis e lacunas.
+- A recusa em gerar qualquer atividade experimental. || Não é o problema relatado.
+- A ausência total de referência ao currículo. || O plano chegou a alinhar-se ao currículo, mas continha outros problemas.
+- O uso excessivo de equipamentos de laboratório sofisticados. || Não é o problema documentado.
+- A exigência de que os estudantes tivessem celular. || Não é o problema documentado.
+R: Recursos e fontes citados em planos gerados devem ser conferidos.
+
+#19
+MC: Qual afirmação sobre esforço produtivo e aprendizagem está de acordo com o capítulo?
++ Esforço, recuperação da memória e prática distribuída favorecem a aprendizagem, e soluções prontas podem reduzir esse esforço.
+- Quanto menos esforço o estudante faz, mais aprende. || Contraria a literatura sobre dificuldades desejáveis.
+- Receber a solução pronta equivale a resolver o problema. || Pode produzir ilusão de compreensão.
+- Testes de recuperação prejudicam a retenção. || A pesquisa indica o contrário.
+- Estudar tudo em uma única sessão longa é sempre o melhor. || A prática distribuída é favorecida.
+R: O risco é a ilusão de compreensão: "entendi quando vi".
+
+#20
+MC: Como configurar o pedido a um assistente para favorecer a aprendizagem em matemática?
++ Pedir uma dica ou uma pergunta que ajude a avançar, sem resolver o problema, depois de o estudante tentar.
+- Pedir a solução completa para depois estudá-la. || Antecipa a resposta e reduz o esforço produtivo.
+- Pedir que o sistema faça a lista inteira de exercícios. || Retira a prática do estudante.
+- Pedir só a resposta final, sem passos. || Impede de analisar raciocínio e verificar.
+- Pedir que invente dados para completar o problema. || Introduz dados fictícios sem necessidade.
+R: Dicas e perguntas mantêm o estudante como agente do raciocínio.
+
+#21
+MC: Qual é o objetivo de uma coleção de erros interessantes?
++ Usar soluções incorretas anônimas, com a causa anotada, para aquecimentos, revisões e para mostrar que corrigir faz parte do trabalho.
+- Expor estudantes que erram com frequência. || O uso é anônimo e não deve expor.
+- Substituir toda a avaliação por análise de erros. || É apoio, e não substitui a avaliação.
+- Ocultar os erros do professor. || Inclui erros de várias origens, inclusive do livro e de sistemas.
+- Criar competição entre turmas. || Não é o objetivo.
+R: Erros bem analisados são material de aprendizagem.
+
+#22
+MC: Qual é a diferença entre verificar com exemplos e demonstrar em matemática?
++ Exemplos aumentam a confiança, mas a prova mostra que algo vale sempre.
+- Não há diferença, pois muitos exemplos já são prova. || Exemplos não cobrem todos os casos.
+- Demonstrar é copiar um exemplo bem escolhido. || A prova exige argumento geral.
+- Verificar com exemplos é mais rigoroso que demonstrar. || Inverte a hierarquia.
+- Sistemas de IA sempre fazem demonstrações corretas. || Podem gerar demonstrações com passos inválidos.
+R: Questionar onde a demonstração usa a hipótese treina o olhar crítico.
+
+#23
+MC: Quando é adequado dispensar a IA em matemática e ciências?
++ Para calcular (usando ferramentas de cálculo), definir procedimentos de segurança, gerar dados de pesquisa apresentados como reais e quando o objetivo é desenvolver fluência em um procedimento.
+- Quando se deseja criar variações de exemplos que o professor conferirá. || É um uso possível, com conferência.
+- Quando se quer discutir alternativas de variáveis em um plano de experimento. || É um uso possível como interlocução.
+- Quando se pretende gerar descrições textuais de gráficos para acessibilidade. || Pode ser útil, com revisão.
+- Quando se busca uma explicação alternativa para um conceito que será validada. || É um uso possível, com validação docente.
+R: Algumas tarefas pedem fluência, segurança ou dados reais, que a IA não deve substituir.
+
+#24
+MC: Qual é uma adaptação coerente para escolas com poucos recursos tecnológicos?
++ Usar papel, lápis, réguas, garrafas, relógios e colegas para modelar, medir e validar, mantendo a rotina de cinco passos.
+- Suspender as aulas de ciências até haver computadores. || Interrompe a aprendizagem sem necessidade.
+- Substituir investigações por leitura silenciosa. || Elimina a prática de investigação.
+- Pedir que estudantes comprem equipamentos sofisticados. || Cria barreiras de acesso.
+- Trabalhar apenas com problemas sem unidades. || Não ajuda e descaracteriza a verificação.
+R: Materiais simples sustentam modelagem e investigação de qualidade.
+
+#25
+MC: Na atividade "Detetives do erro", qual é o objetivo principal?
++ Aprender a verificar soluções, reconhecer tipos de erro e entender que fluência não prova correção.
+- Descobrir quais estudantes cometeram erros. || As soluções são anônimas e o foco não é expor.
+- Provar que a IA é inútil. || O foco é a verificação, e não a rejeição.
+- Mostrar que todas as soluções estão corretas. || Algumas contêm erros propositais.
+- Ensinar a copiar soluções com mais rapidez. || Ensina o contrário: examinar criticamente.
+R: O tom é de investigação, não de pegadinha.
+
+#26
+MC: Na atividade de modelagem com garrafas, o que significa "validar" o modelo?
++ Prever um valor ainda não medido, medir e comparar, discutindo o erro e os limites.
+- Perguntar a um assistente se o modelo está certo. || A validação é feita com dados observados.
+- Ajustar o modelo até que ele pareça agradável. || Aparência não é validação.
+- Repetir exatamente as mesmas medidas já usadas no ajuste. || Não testa o modelo com informação nova.
+- Eliminar todas as medidas discrepantes sem justificar. || Descartar sem critério distorce o modelo.
+R: A comparação com novas medidas mostra onde o modelo funciona.
+
+#27
+MC: Qual é a relação entre estudos pontuais sobre IA em matemática e ciências e as recomendações do capítulo?
++ As recomendações ancoram-se em princípios do ensino dessas áreas e em estudos pontuais, e não em estudos nacionais de eficácia.
+- Todas as recomendações derivam de estudos nacionais com milhares de estudantes. || O capítulo informa que não há tais estudos.
+- As recomendações são opiniões sem relação com a literatura. || Apoiam-se em princípios e estudos.
+- Os estudos eliminam a necessidade de decisão docente. || Evidências pontuais não substituem a decisão sobre o contexto.
+- As recomendações valem apenas para o ensino superior. || São discutidas para diferentes etapas, com cautela.
+R: É preciso explicitar os limites das evidências ao recomendar práticas.
+
+#28
+MC: Por que o desenho da interação é considerado mais determinante do que a mera presença da IA, segundo os estudos discutidos?
++ Porque versões que dão dicas e perguntas se associaram a melhores resultados do que versões que entregam respostas, em contextos delimitados.
+- Porque o aspecto visual da interface é o que determina a aprendizagem. || Os estudos tratam do tipo de apoio, não da aparência.
+- Porque a duração da sessão é o único fator relevante. || Não é o que se discute.
+- Porque a interação não importa quando a IA é poderosa. || Contraria os achados.
+- Porque as respostas devem ser longas para ensinar. || Extensão não é o fator discutido.
+R: O tipo de apoio oferecido ao estudante pesa mais do que o simples uso.
+
+#29
+MC: Em simulações usadas em ciências, qual conhecimento o estudante deve ter?
++ O que o modelo simplifica e quais são seus limites de validade.
+- Que a simulação reproduz a realidade sem nenhuma simplificação. || Toda simulação simplifica.
+- Que simulações dispensam observação de fenômenos reais. || Complementam, mas não substituem totalmente a observação.
+- Que simulações só funcionam com internet. || Há simulações que funcionam sem conexão.
+- Que o resultado da simulação é sempre inquestionável. || Deve ser interpretado criticamente.
+R: Compreender o modelo é parte do aprender com simulações.
+
+#30
+MC: Por que praticar um procedimento sem apoio, como a tabuada ou a manipulação algébrica básica, continua importante?
++ Porque a fluência libera atenção para problemas mais complexos e só se desenvolve com prática do próprio estudante.
+- Porque ferramentas de cálculo são proibidas na escola. || Não há tal proibição; o argumento é sobre fluência.
+- Porque procedimentos básicos nunca aparecem em problemas reais. || Aparecem como componentes de problemas maiores.
+- Porque a prática elimina a necessidade de compreender conceitos. || Prática e compreensão se complementam.
+- Porque a fluência pode ser transferida a um sistema sem perda. || Entregar a prática impede que a fluência se desenvolva.
+R: Quando o objetivo é a fluência, delegar o procedimento contraria o próprio objetivo.
+
+DISC: Escreva um parágrafo convidando colegas de área a trocarem erros interessantes e atividades de verificação, destacando o trabalho coletivo.
+R: Resposta pessoal: propõe um repositório compartilhado, critérios de anonimato, revisão por pares e encontros periódicos.
+C: Tom acolhedor; propostas viáveis; foco no coletivo.
+
+DISC: Explique, para uma turma, por que uma resposta bem escrita de um sistema de IA pode estar matematicamente errada.
+R: Modelos geram texto plausível por padrões, e não calculam como calculadoras; a fluência e os passos bem escritos não garantem correção; é preciso verificar.
+C: Linguagem acessível; distinção entre plausibilidade e exatidão.
+
+DISC: Distinga ferramentas determinísticas, modelos de linguagem e papel humano, dando exemplos de tarefas de cada um.
+R: Calcular: calculadora ou planilha. Propor exemplos e perguntas: modelo de linguagem. Decidir, interpretar e validar: pessoas.
+C: Papéis claros; exemplos coerentes.
+
+DISC: Descreva a rotina de verificação de cinco passos aplicada a um problema de sua disciplina.
+R: Estimar, checar unidades e sentido, testar casos simples e extremos, resolver por segunda via, registrar.
+C: Aplicação ao problema; todos os passos.
+
+DISC: Escreva um pedido a um assistente que solicite dica e não solução em um problema de Matemática, e explique a escolha.
+R: Ex.: "Tentei assim [tentativa]. Dê uma pergunta que me ajude a avançar, sem resolver". Mantém esforço produtivo e o estudante como agente.
+C: Prompt coerente; justificativa baseada em aprendizagem.
+
+DISC: Explique o risco de ilusão de compreensão ao receber soluções prontas e proponha duas medidas para reduzi-lo.
+R: "Entendi quando vi" não é domínio. Medidas: primeiro tentar; explicar com as próprias palavras; momentos sem recurso.
+C: Conceito correto; medidas viáveis.
+
+DISC: Resuma, com cautela, o que um estudo de campo em matemática no ensino médio sugere sobre o desenho da interação.
+R: Acesso sem salvaguardas melhorou a prática e piorou a prova sem o recurso; dicas mitigaram. Resultado contextual, sem generalização.
+C: Fidelidade ao achado; ressalvas.
+
+DISC: Compare um tutor de IA com desenho pedagógico em física no ensino superior com a aula ativa e explique por que não se pode generalizar o resultado.
+R: Houve ganhos maiores em um tópico e amostra específicos; outras etapas, disciplinas e contextos podem diferir.
+C: Distingue achado e generalização.
+
+DISC: Por que a validação com dados reais é central na modelagem e como ela difere de pedir a opinião de um sistema de IA?
+R: Dados observados testam previsões; a opinião do sistema não é evidência. A validação mostra limites do modelo.
+C: Valoriza evidência empírica; distingue opinião e dado.
+
+DISC: Planeje uma atividade de estatística com dados reais e anônimos da turma, indicando cuidados éticos.
+R: Escolher variável não sensível, coletar anonimamente, analisar, comparar com o que um sistema afirmaria, proteger identidades.
+C: Atividade viável; cuidados com privacidade.
+
+DISC: Descreva como você trataria um erro conceitual de ciências que apareceu em uma explicação gerada por IA.
+R: Pedir previsão, observar o fenômeno, comparar com a explicação, identificar o erro, reescrever e registrar.
+C: Uso da observação; estratégia pedagógica.
+
+DISC: Explique por que procedimentos de segurança em laboratório não devem ser definidos com base em respostas de IA.
+R: Erros podem causar acidentes; segurança exige protocolos, manuais confiáveis e responsabilidade de profissional habilitado.
+C: Argumento claro; indica fontes adequadas.
+
+DISC: O que é fabricação de dados em atividades escolares de ciências e como evitá-la?
+R: Apresentar como reais dados que não foram coletados. Evitar coletando dados, registrando o método e rotulando exemplos fictícios.
+C: Conceito correto; medidas concretas.
+
+DISC: Elabore três perguntas que um estudante pode usar para auditar uma demonstração gerada por IA.
+R: Ex.: onde a hipótese é usada? o que acontece se a hipótese for removida? o passo seguinte decorre do anterior?
+C: Perguntas pertinentes; foco em argumento.
+
+DISC: Proponha uma atividade de modelagem de baixo custo e indique como validar o modelo.
+R: Ex.: nível de água e tempo; coletar oito pontos; ajustar relação; prever e medir novo ponto; criticar.
+C: Atividade viável; validação clara.
+
+DISC: Que decisões docentes não devem ser delegadas ao sistema em uma aula de Matemática ou Ciências?
+R: Objetivos, critérios, avaliação do raciocínio, segurança, interpretação dos resultados e adaptações individuais.
+C: Decisões coerentes com o capítulo.
+
+DISC: Como adaptar uma atividade do capítulo a uma escola com um único computador e sem conectividade estável?
+R: Papel e materiais simples; uso do computador para testar previsões feitas no papel; trabalho em rodízio; demonstrações pelo professor.
+C: Viabilidade; preservação do objetivo.
+
+DISC: Discuta o risco de reforçar a ideia de que matemática e ciências são para poucos quando se usa IA.
+R: Respostas prontas podem diminuir confiança e esforço; cuidado com estereótipos em exemplos; valorizar o raciocínio de todos.
+C: Reconhece equidade; propõe práticas inclusivas.
+
+DISC: Como você avaliaria o raciocínio de um estudante que usou IA em uma tarefa de matemática?
+R: Pedir explicação oral, solução de variante sem recurso, registro das verificações e rascunhos.
+C: Evidências de processo; combinação de instrumentos.
+
+DISC: Escreva um combinado de turma com cinco regras sobre uso de IA em matemática e ciências.
+R: Ex.: tentar primeiro; verificar sempre; declarar o uso; dados coletados e reais; segurança com protocolos humanos.
+C: Regras claras e viáveis; coerência com o capítulo.

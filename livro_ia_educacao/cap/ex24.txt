@@ -1,0 +1,349 @@
+#1
+MC: O que é um prompt, no contexto de sistemas de IA generativa?
++ O conjunto de instruções, perguntas e materiais que o usuário fornece para que o sistema produza uma resposta.
+- Um defeito de programação que faz o sistema travar. || Confunde prompt com falha técnica; prompt é a entrada fornecida pelo usuário.
+- A resposta final já verificada pelo sistema. || Inverte a relação: o prompt é o pedido, e a resposta é a saída, que ainda precisa ser conferida.
+- O banco de dados em que o sistema foi treinado. || Confunde pedido com dados de treinamento, que são anteriores e externos à conversa.
+- Um tipo de licença para uso em escolas. || Prompt não tem relação com licenciamento; é o texto de entrada.
+R: Prompt é a entrada: tudo o que se escreve ou anexa para orientar a resposta.
+
+#2
+MC: Quais são os cinco componentes de um pedido bem formulado apresentados no capítulo?
++ Papel, contexto, tarefa, formato e critérios.
+- Título, autor, data, local e assinatura. || São elementos de um documento formal, e não de um pedido a um sistema.
+- Pergunta, resposta, prova, nota e recurso. || Descrevem um ciclo avaliativo, e não a estrutura de um pedido.
+- Tema, extensão, fonte, cor e margem. || Misturam tema com aspectos gráficos e omitem a tarefa e os critérios.
+- Saudação, elogio, insistência, urgência e agradecimento. || Cortesia e urgência não definem o que o sistema deve produzir.
+R: A estrutura é papel, contexto, tarefa, formato e critérios.
+
+#3
+MC: Um professor escreve apenas "Faça uma prova de ciências". Qual é o principal problema do pedido?
++ Faltam série, objetivos, conteúdo, formato e critérios, de modo que o sistema preencherá as lacunas com o que é mais comum.
+- O verbo "fazer" é proibido em pedidos educacionais. || Não existe verbo proibido; o problema é a ausência de informações, e não o verbo.
+- O pedido é curto demais para ser lido pelo sistema. || Pedidos curtos são lidos normalmente; o problema é o que falta dizer.
+- Provas só podem ser elaboradas por professores, nunca com apoio de IA. || Há usos possíveis de apoio a rascunhos, com revisão; o problema do pedido é outro.
+- O pedido deveria conter o nome dos estudantes para personalizar a prova. || Incluir nomes seria um risco à privacidade e não melhoraria o pedido.
+R: Sem contexto, o sistema devolve algo genérico e desalinhado.
+
+#4
+MC: Qual componente do pedido define a ação a ser realizada, como "compare", "liste" ou "reescreva"?
++ A tarefa.
+- O papel, que define apenas a perspectiva e o público. || O papel indica quem fala e para quem; a ação é definida pela tarefa.
+- O formato, que define só a estrutura da entrega. || O formato diz como entregar (tabela, tamanho), e não o que fazer.
+- Os critérios, que indicam o padrão de qualidade. || Critérios dizem como julgar o resultado, e não qual ação executar.
+- O contexto, que descreve a turma e o objetivo. || O contexto informa a situação, e não a ação pedida.
+R: A tarefa é o verbo principal do pedido.
+
+#5
+MC: Qual das informações abaixo mais contribui para que um rascunho de atividade seja útil a uma turma específica?
++ O objetivo de aprendizagem, o tempo disponível, os conhecimentos prévios e os recursos da sala.
+- O nome completo e o histórico de cada estudante. || Dados pessoais não devem ser inseridos e não são necessários; basta descrever a turma em termos gerais.
+- O número de páginas que o texto deverá ter. || Extensão é formato; sozinha, não torna a atividade adequada à turma.
+- A marca do computador usado pelo professor. || A marca do equipamento é irrelevante para o alinhamento pedagógico.
+- A cor preferida da turma. || Preferência de cor não influencia a adequação didática.
+R: Contexto pedagógico real, sem dados pessoais, melhora a utilidade.
+
+#6
+MC: Por que o capítulo recomenda iniciar o pedido pelo objetivo de aprendizagem, e não apenas pelo tema?
++ Porque o objetivo orienta a atividade e a avaliação, produzindo material alinhado ao que os estudantes devem aprender a fazer.
+- Porque o tema é secundário e pode ser omitido. || O tema continua importante; o ponto é que, sozinho, ele gera material apenas "sobre" o assunto.
+- Porque sistemas de IA só aceitam objetivos como entrada. || Sistemas aceitam textos variados; o argumento é pedagógico, e não técnico.
+- Porque o objetivo dispensa a verificação do resultado. || Nenhum pedido dispensa a verificação, nem mesmo o mais alinhado.
+- Porque objetivos mais longos produzem respostas mais verdadeiras. || A extensão do objetivo não garante veracidade.
+R: Alinhamento construtivo: objetivo, atividade e avaliação andam juntos.
+
+#7
+MC: Estudo com várias famílias de modelos e centenas de papéis testou personas como "você é um especialista" em perguntas factuais. O que mostrou?
++ Acrescentar uma persona não melhorou a precisão de modo consistente, e o efeito variou entre papéis.
+- Qualquer persona de especialista aumentou muito a precisão. || Contraria o resultado: não houve melhora consistente.
+- Personas pioraram sempre o desempenho em todos os modelos. || O resultado não foi de piora sistemática, mas de efeito incerto e variável.
+- Personas só funcionam com crianças pequenas. || O estudo não tratou de crianças nem de faixas etárias.
+- Personas tornam a verificação desnecessária. || Nada nos achados dispensa a verificação; ao contrário, a precisão não ficou garantida.
+R: O papel serve para ajustar perspectiva e tom, e não para garantir exatidão.
+
+#8
+MC: Para que serve, principalmente, definir o papel em um pedido?
++ Para orientar a perspectiva, o público e o tom da resposta.
+- Para garantir que a resposta esteja factualmente correta. || Papel não assegura correção; os estudos mostram efeito incerto sobre a precisão.
+- Para identificar o usuário perante o sistema. || O papel não é autenticação; é parte do texto do pedido.
+- Para impedir que o sistema armazene o pedido. || O papel não altera política de armazenamento de dados.
+- Para aumentar a janela de contexto disponível. || A janela de contexto é limite técnico do sistema e não depende do papel.
+R: Papel ajusta voz e público.
+
+#9
+MC: O que é a janela de contexto de um sistema de linguagem?
++ O limite de texto que o sistema consegue considerar de uma só vez.
+- A tela em que a resposta aparece para o usuário. || Confunde um limite técnico de processamento com a interface visual.
+- O horário em que o sistema responde mais rápido. || Não tem relação com horários.
+- O conjunto de professores autorizados a usar a ferramenta. || Não é controle de acesso; é limite de texto processado.
+- O prazo de validade de uma resposta. || Respostas não têm validade associada à janela de contexto.
+R: É um limite de quantidade de texto considerado de uma vez.
+
+#10
+MC: Estudos sobre entradas longas indicam que alguns modelos usam pior as informações no meio do texto. Que prática resulta disso?
++ Colocar o essencial no início do pedido e repeti-lo brevemente ao final.
+- Colocar todo o conteúdo importante no meio, para destacá-lo. || Seria o oposto do indicado: o meio é a posição em que o desempenho tende a cair.
+- Escrever sempre o pedido em letras maiúsculas. || A caixa das letras não resolve o problema de posição das informações.
+- Evitar qualquer texto de apoio. || Textos de apoio são úteis; o cuidado é com a posição e a extensão.
+- Repetir o pedido dez vezes seguidas. || A repetição excessiva ocupa espaço e confunde, sem sanar a limitação.
+R: O início e o fim do texto tendem a ser mais bem aproveitados.
+
+#11
+MC: Por que o mesmo pedido pode gerar respostas diferentes em momentos ou ferramentas distintas?
++ Porque os sistemas geram texto com variação, dependem da versão e podem ter instruções internas diferentes.
+- Porque o professor mudou de turma entre as tentativas. || A turma não altera o comportamento do sistema; o pedido é o mesmo.
+- Porque o sistema memoriza e pune pedidos repetidos. || Não há mecanismo de punição de repetições; a variação decorre da geração.
+- Porque respostas diferentes indicam que a primeira estava correta. || Variação não indica correção de nenhuma das respostas.
+- Porque a ferramenta sempre consulta a internet em tempo real. || Muitos sistemas não consultam fontes externas, e isso não explica a variação.
+R: Variação, versões e instruções internas explicam diferenças.
+
+#12
+MC: Um professor cola, no pedido, o trecho do seu próprio material e escreve "use apenas este texto". O que se pode esperar?
++ Redução da invenção de informações, sem eliminação total do risco de erros.
+- Eliminação completa de qualquer erro ou invenção. || Mesmo com material fornecido, o sistema pode distorcer ou acrescentar informações.
+- Aumento do risco de plágio por parte do professor. || Usar o próprio material não configura plágio; o problema indicado seria outro.
+- Impossibilidade de o sistema produzir qualquer resposta. || O sistema responde normalmente a partir do material fornecido.
+- Garantia de que o texto está pedagogicamente adequado. || Fornecer material não assegura adequação pedagógica, que depende do julgamento docente.
+R: Material de apoio reduz, mas não elimina, a invenção.
+
+#13
+MC: Qual é o papel do critério em um pedido?
++ Explicitar o padrão de qualidade e o que evitar, funcionando como lista de verificação para o professor.
+- Definir o preço do serviço de IA. || Critérios de qualidade não têm relação com custo do serviço.
+- Substituir a verificação posterior do professor. || Critérios orientam a conferência, mas não a substituem.
+- Limitar o número de estudantes da turma. || Não é função do critério.
+- Informar ao sistema o nome do professor. || Identificar o professor não define padrão de qualidade.
+R: Critérios tornam explícito o que é um bom resultado.
+
+#14
+MC: Por que é útil escrever os critérios antes de ler a resposta do sistema?
++ Para não ajustar o padrão de qualidade ao que o sistema entregou.
+- Porque o sistema só funciona se os critérios forem escritos antes. || O sistema funciona sem critérios; a vantagem é de julgamento do professor.
+- Porque critérios escritos depois são proibidos por lei. || Não há lei nesse sentido; a razão é de rigor na avaliação.
+- Porque critérios aceleram a resposta do sistema. || Os critérios não alteram a velocidade da resposta.
+- Porque dispensa a leitura da resposta. || A resposta continua precisando de leitura crítica.
+R: Evita a racionalização a posteriori.
+
+#15
+MC: Qual instrução de pedido ajuda a tornar visíveis lacunas que o sistema preencheu por conta própria?
++ "Liste o que você supôs sobre a turma e o que devo conferir."
+- "Responda sempre com certeza absoluta." || Exigir certeza estimula tom seguro, sem melhorar a correção, e esconde incertezas.
+- "Ignore tudo o que eu disse antes." || Apaga o contexto útil e não revela suposições.
+- "Escreva mais rápido." || A velocidade não torna explícitas as suposições.
+- "Não use tabelas." || É uma instrução de formato, sem relação com a explicitação de suposições.
+R: Pedir as suposições expõe o que foi preenchido pelo sistema.
+
+#16
+MC: Qual é a limitação de pedir "marque com [verificar] o que devo conferir"?
++ O sistema pode errar ao indicar o que é incerto, de modo que a instrução orienta, mas não substitui a conferência completa.
+- Ela é proibida em ferramentas de uso educacional. || Não há proibição; é uma prática possível.
+- Ela faz o sistema apagar suas respostas anteriores. || Não tem esse efeito.
+- Ela garante que todos os erros serão identificados. || Nenhuma instrução garante a identificação de todos os erros.
+- Ela só funciona para textos em inglês. || Não há restrição de língua nesse tipo de instrução.
+R: A marcação ajuda, mas a verificação continua sendo do professor.
+
+#17
+MC: Qual pedido é mais adequado para um rascunho de sequência didática?
++ "Papel: assistente de planejamento. Contexto: 6º ano, 30 estudantes, 50 minutos, objetivo X, sem computador. Tarefa: três atividades. Formato: tabela. Critérios: baixo custo e suposições listadas."
+- "Planeje tudo para mim." || Não traz objetivo, contexto, formato nem critérios.
+- "Sequência didática, rápido, por favor." || Cortesia e urgência não substituem informação sobre turma e objetivo.
+- "Quero a melhor aula do mundo sobre qualquer tema." || Superlativos e ausência de tema, objetivo e contexto resultam em material genérico.
+- "Copie a aula do ano passado." || O sistema não tem acesso ao arquivo do professor, e o pedido não define tarefa nem contexto.
+R: O pedido completo contém os cinco componentes.
+
+#18
+MC: Um pedido contém nomes e dificuldades de estudantes de uma turma. Qual é a conduta mais adequada?
++ Reescrevê-lo descrevendo a turma em termos gerais, sem dados que identifiquem estudantes.
+- Mantê-lo, pois nomes ajudam o sistema a personalizar melhor. || A personalização não justifica expor dados pessoais, que exigem base legal e proteção.
+- Enviá-lo apenas se for fora do horário de aula. || O horário não altera o risco de exposição de dados.
+- Trocar apenas os sobrenomes por apelidos. || Apelidos com contexto ainda podem identificar crianças.
+- Pedir ao sistema que apague os nomes depois. || O dado já foi enviado; apagar depois não desfaz a exposição.
+R: A descrição geral basta para o planejamento e protege os estudantes.
+
+#19
+MC: Em um pedido de educação infantil, quem é, no modelo do capítulo, o destinatário do texto gerado?
++ O professor, que usa as ideias para planejar, sem contato direto das crianças com o sistema.
+- A criança, que digita livremente seus pedidos. || O modelo prevê uso pelo professor, e o contato direto de crianças pequenas exige cuidados específicos.
+- A família, que recebe a resposta sem revisão. || O texto é de planejamento docente e exige revisão antes de qualquer circulação.
+- O fabricante da ferramenta. || O fabricante não é destinatário pedagógico.
+- O coordenador, que assina a resposta no lugar do professor. || O professor continua responsável por decidir e usar o conteúdo.
+R: Na educação infantil, a IA fica nos bastidores do planejamento.
+
+#20
+MC: Um professor obtém uma resposta ruim. Qual atitude está mais de acordo com o capítulo?
++ Reescrever o pedido de outra forma, conferindo componentes ausentes, antes de concluir que a IA não serve.
+- Concluir que a IA nunca serve e abandonar o planejamento. || É uma generalização apressada a partir de uma tentativa.
+- Repetir o mesmo pedido idêntico muitas vezes até acertar. || Repetir sem mudar não resolve lacunas do pedido.
+- Aceitar a resposta sem conferir, por ser fluente. || Fluência não indica correção.
+- Pedir ao sistema que avalie sozinho se o professor errou. || A decisão sobre adequação pedagógica é do professor.
+R: A resposta depende da forma do pedido, que pode ser ajustada.
+
+#21
+MC: Qual é uma conclusão prudente sobre os estudos de prompts citados no capítulo?
++ São em geral estudos de laboratório; não demonstram eficácia de um formato único de pedido na aprendizagem em sala de aula.
+- Provam que um formato único de pedido é melhor para todos os modelos. || Os estudos mostram sensibilidade e variação, e não um formato universal.
+- Mostram que ensinar técnicas de prompt melhora as notas dos estudantes. || Não há evidência conclusiva desse efeito em contextos reais.
+- Demonstram que professores nunca precisam revisar respostas. || Nenhum estudo citado sustenta dispensar a revisão.
+- Indicam que pedidos longos sempre superam os curtos. || Extensão não garante qualidade.
+R: As evidências são de laboratório e limitadas quanto à sala de aula.
+
+#22
+MC: Qual risco decorre de copiar pedidos prontos sem adaptação à turma?
++ Homogeneização de materiais, com resultados parecidos para realidades diferentes.
+- Aumento automático da precisão das respostas. || Sem adaptação, não há ganho de precisão garantido.
+- Eliminação do risco de viés. || Pedidos genéricos podem reproduzir estereótipos do mesmo modo.
+- Proibição de uso da ferramenta pelo fabricante. || Não existe tal consequência.
+- Redução da necessidade de planejamento prévio. || Ao contrário, a falta de adaptação evidencia lacuna de planejamento.
+R: Pedidos copiados geram materiais semelhantes e pouco alinhados.
+
+#23
+MC: Em que situação a IA deve ser dispensada ao formular pedidos de planejamento?
++ Quando o pedido exigiria dados pessoais ou sigilosos, ou quando o professor ainda não sabe o que quer.
+- Sempre que o professor tiver experiência. || A experiência não impede usos adequados e verificados.
+- Sempre que o texto tiver mais de uma página. || A extensão do texto não é critério de dispensa.
+- Quando o tema for conhecido pelos estudantes. || Conhecimento do tema pelos estudantes não é critério de dispensa.
+- Quando a escola tiver internet estável. || Boa conectividade não é razão para dispensar.
+R: Dados sigilosos e falta de planejamento são razões para dispensar.
+
+#24
+MC: Qual é o objetivo de uma biblioteca pessoal de modelos de pedido?
++ Reutilizar pedidos bem construídos, com listas de verificação e registro de limitações, adaptando-os a cada situação.
+- Substituir o planejamento do professor. || Modelos apoiam o planejamento, mas não o substituem.
+- Evitar a conferência das respostas. || Cada modelo deve trazer sua lista de verificação.
+- Armazenar dados dos estudantes para uso futuro. || Os modelos não devem conter dados pessoais.
+- Tornar iguais todas as aulas da escola. || O objetivo é adaptar, e não uniformizar.
+R: Modelos são pontos de partida adaptáveis.
+
+#25
+MC: Por que pedir alternativas ("duas abordagens, com indicação de quando usar cada uma") ajuda o professor?
++ Porque devolve a escolha ao professor, que decide com base no que conhece da turma.
+- Porque o sistema sabe qual alternativa é a correta para a turma. || O sistema não conhece a turma além do que foi informado.
+- Porque dobra automaticamente a precisão factual. || Duas respostas não equivalem a mais precisão.
+- Porque elimina a necessidade de objetivos. || Alternativas continuam dependendo de objetivos claros.
+- Porque assegura que cada alternativa apresentada seja inclusiva. || Inclusão precisa ser verificada pelo professor em cada alternativa.
+R: Alternativas preservam a autonomia docente.
+
+#26
+MC: Um pedido instrui: "Seja preciso e não erre". O que se pode afirmar sobre essa instrução?
++ Ela não impede erros, pois sistemas de linguagem podem gerar afirmações plausíveis e falsas mesmo assim.
+- Ela garante a eliminação de erros factuais. || Nenhuma instrução desse tipo garante ausência de erros.
+- Ela aumenta a velocidade de resposta. || Não tem relação com velocidade.
+- Ela dispensa o uso de fontes confiáveis. || A conferência em fontes continua necessária.
+- Ela transforma o sistema em autoridade científica. || O sistema continua gerando texto a partir de padrões, sem autoridade própria.
+R: A instrução de precisão não substitui a verificação.
+
+#27
+MC: Em um modelo de pedido para o ensino superior, por que se escreve "não invente referências" e "use apenas as leituras que listei"?
++ Porque sistemas podem gerar referências inexistentes, e limitar as fontes reduz esse risco.
+- Porque referências são proibidas em seminários. || Referências são parte esperada do trabalho acadêmico.
+- Porque o sistema só reconhece textos em português. || Não é uma limitação de língua; trata-se do risco de referências inexistentes.
+- Porque a lista de leituras nunca precisa de conferência. || A conferência continua necessária, mesmo com a lista fornecida.
+- Porque a regra torna o pedido mais curto. || O objetivo é reduzir invenção, e não encurtar o pedido.
+R: A restrição de fontes é uma salvaguarda, ainda que imperfeita.
+
+#28
+MC: Qual associação entre pedido e planejamento é correta?
++ Se o professor não sabe responder às perguntas de objetivo e turma, o problema talvez seja de planejamento, e não da ferramenta.
+- O pedido substitui o planejamento, pois o sistema decide por ele. || Quem decide é o professor; o pedido expressa decisões já tomadas.
+- O planejamento só é necessário quando não se usa IA. || Com IA, o planejamento é ainda mais importante para guiar o pedido.
+- Planejar atrapalha, porque restringe o sistema. || Restringir com clareza é justamente o que melhora a utilidade.
+- O planejamento deve ser feito pelo sistema, e o professor apenas aprova. || Delegar o planejamento inverte a autonomia docente.
+R: Pedir bem pressupõe saber o que se quer.
+
+DISC: Explique o que é um prompt e por que a qualidade do pedido influencia a utilidade, mas não a verdade, da resposta.
+R: Prompt: instruções e materiais fornecidos ao sistema. Pedido claro orienta o rascunho e reduz lacunas; mas o sistema gera texto plausível a partir de padrões, de modo que a correção factual exige verificação.
+C: Define prompt; relaciona clareza e utilidade; distingue utilidade de verdade; cita verificação.
+
+DISC: Descreva os cinco componentes de um pedido (papel, contexto, tarefa, formato e critérios) e dê um exemplo de cada para a sua área de atuação.
+R: Papel: perspectiva e público. Contexto: turma, objetivo, tempo, recursos. Tarefa: ação em verbo claro. Formato: estrutura, extensão, tom. Critérios: padrão de qualidade e o que evitar. Exemplos coerentes com a área.
+C: Cinco componentes corretos; exemplos pertinentes e concretos; ausência de dados pessoais.
+
+DISC: Reescreva o pedido vago "Crie uma atividade sobre fotossíntese" em um pedido estruturado para uma turma real ou imaginária e justifique cada escolha.
+R: Esperado: objetivo observável, ano, tempo, recursos, conhecimentos prévios, formato e critérios; solicitação de suposições. Justificativas ligadas ao planejamento.
+C: Presença dos cinco componentes; objetivo observável; justificativas; sem dados pessoais.
+
+DISC: Por que o contexto é o componente que mais diferencia um rascunho genérico de um útil? Que informações de contexto você incluiria e quais evitaria?
+R: Sem contexto o sistema preenche lacunas com o mais comum. Incluir: ano, objetivo, conhecimentos prévios, tempo, recursos, necessidades. Evitar: nomes, laudos, dados que identifiquem estudantes.
+C: Explicação do papel do contexto; lista coerente; distinção do que evitar por privacidade.
+
+DISC: O que a pesquisa permite afirmar sobre o efeito de personas ("aja como um especialista") nas respostas? Que implicação isso tem para o uso do papel no pedido?
+R: Em perguntas factuais, personas não melhoraram de modo consistente a precisão e tiveram efeitos variáveis. O papel serve para ajustar perspectiva e tom, e a verificação continua necessária.
+C: Apresenta o achado com cautela; deriva a implicação; distingue tom de exatidão.
+
+DISC: Explique por que se recomenda partir do objetivo de aprendizagem, e não do tema, ao pedir material a um sistema de IA. Dê um exemplo.
+R: O objetivo orienta atividade e avaliação; o tema isolado gera material "sobre" o assunto. Exemplo: transformar "atividade sobre ciclo da água" em objetivo observável com tempo e recursos.
+C: Relaciona com alinhamento; exemplo adequado; objetivo observável.
+
+DISC: Discuta a afirmação: "Um bom prompt garante uma boa resposta". Em que ela é falsa e em que há uma parte de verdade?
+R: Parte de verdade: pedido claro melhora utilidade. Falsa: não garante correção, adequação pedagógica, segurança nem proteção de dados. Sistemas geram erros plausíveis.
+C: Equilíbrio; referência a erros plausíveis; menção a verificação e julgamento docente.
+
+DISC: Descreva como você pediria a um sistema de IA que sinalizasse suas incertezas e suposições, e discuta os limites dessa estratégia.
+R: Instrução: "liste o que supôs e marque o que devo conferir". Limites: o sistema pode errar ao indicar a incerteza; não substitui verificação completa.
+C: Instrução concreta; reconhece limites; mantém a conferência.
+
+DISC: O que é janela de contexto e que cuidado prático ela sugere na elaboração de pedidos longos?
+R: É o limite de texto considerado de uma vez. Em entradas longas, informações no meio podem ser menos bem aproveitadas; colocar o essencial no início e retomá-lo ao final; evitar excesso de material.
+C: Define corretamente; cuidado prático coerente; evita certeza excessiva.
+
+DISC: Por que o mesmo pedido pode produzir respostas diferentes? Que consequência isso tem para o registro e a reprodução do trabalho docente?
+R: Variação na geração, versões, instruções internas. Consequência: registrar pedido, data e ferramenta; tratar resultado como rascunho; não esperar reprodução exata.
+C: Explica causas; relaciona com registro; postura prudente.
+
+DISC: Elabore um modelo de pedido para adaptar um texto do próprio professor para estudantes com dificuldades de leitura, incluindo critérios e verificações.
+R: Esperado: papel, contexto (ano, necessidades gerais), tarefa (simplificar mantendo o conteúdo), formato, critérios (não alterar o sentido, marcar mudanças), verificação pelo professor.
+C: Cinco componentes; preserva conteúdo; sem dados pessoais; verificação.
+
+DISC: Compare um pedido vago, um pedido com lacunas e um pedido estruturado, descrevendo o que se espera de cada resultado.
+R: Vago: genérico; com lacunas: tema bom, pouco alinhado, várias rodadas; estruturado: rascunho útil para ajustar. Em todos, a decisão é docente.
+C: Compara os três; coerência; ressalta a verificação.
+
+DISC: Escolha uma tarefa que você NÃO delegaria a um sistema de IA e justifique com base nos limites do capítulo.
+R: Exemplos: avaliar a aprendizagem individual, decidir sobre casos com dados pessoais, redigir feedback sem ler a produção. Justificativas: responsabilidade, privacidade, julgamento.
+C: Escolha coerente; fundamentação; reconhece o papel docente.
+
+DISC: Como você explicaria a um colega o risco de dados pessoais em pedidos? Dê duas formas de reescrever um pedido para evitar o problema.
+R: Risco: exposição e uso indevido de dados. Reescritas: descrever a turma em termos gerais; substituir casos reais por situações fictícias; remover identificadores.
+C: Clareza do risco; duas reescritas práticas; ética.
+
+DISC: Analise criticamente o uso de modelos de pedido compartilhados entre colegas. Que vantagens e que cuidados você destacaria?
+R: Vantagens: economia, padronização de qualidade, aprendizado coletivo. Cuidados: adaptar à turma, evitar homogeneização, incluir verificação, não copiar sem ler.
+C: Equilibra vantagens e riscos; cuidados concretos.
+
+DISC: Explique por que a formulação do pedido pode alterar as respostas e o que isso sugere sobre a postura diante de uma resposta insatisfatória.
+R: Estudos mostram sensibilidade a formatação e formulação. Postura: reescrever e testar variações antes de concluir; tratar a resposta como rascunho.
+C: Relaciona sensibilidade e postura; evita generalizações.
+
+DISC: Elabore um pequeno roteiro de formação de colegas sobre como escrever pedidos, indicando atividades e como avaliar o aprendizado.
+R: Roteiro: diagnóstico de pedidos vagos, reescrita com cinco componentes, comparação de resultados, lista de verificação, biblioteca de modelos. Avaliação: produto e reflexão.
+C: Estrutura coerente; atividades práticas; avaliação do processo.
+
+DISC: Em que situações de ensino a atividade de escrever o pedido pode ser, ela mesma, o objetivo pedagógico para os estudantes? Dê um exemplo.
+R: Quando se quer desenvolver precisão ao especificar, planejar e comunicar; exemplo: dupla que dá instruções a outra para desenhar uma figura, discutindo o que faltou.
+C: Relaciona pedido e habilidades de comunicação; exemplo viável.
+
+DISC: Discuta o que a pesquisa sobre prompts ainda não permite afirmar para a sala de aula.
+R: Não há evidência conclusiva de que ensinar técnicas de prompt melhore aprendizagem ou trabalho docente em contextos reais; estudos são laboratoriais; sistemas mudam; não há formato único.
+C: Distingue laboratório e sala de aula; cautela; sem generalizar.
+
+DISC: Redija um modelo de pedido para a educação infantil (uso exclusivo do professor) e explique os cuidados incluídos.
+R: Esperado: papel, contexto (idade, espaço, materiais), tarefa, formato, critérios (segurança, sem telas pelas crianças, baixo custo); cuidados com alergias e peças pequenas.
+C: Cinco componentes; adequação à faixa etária; cuidados de segurança e privacidade.
+
+#29
+MC: Qual destas práticas faz parte da estrutura de critérios de um pedido de planejamento adotada no capítulo?
++ Pedir uso de materiais de baixo custo, ausência de marcas comerciais e indicação do que o professor deve conferir.
+- Exigir que a resposta tenha o maior número possível de páginas. || Quantidade de páginas não é critério de qualidade e tende a gerar texto prolixo.
+- Pedir que o sistema decida sozinho qual é o objetivo da turma. || O objetivo é decisão do professor e deve estar no contexto do pedido.
+- Solicitar que o sistema use apenas linguagem técnica. || Linguagem técnica pode ser inadequada ao ano; o critério deve adequar a linguagem ao público.
+- Pedir que a resposta venha sem nenhuma indicação de limites. || Omitir limites esconde incertezas que o professor precisa conhecer.
+R: Critérios explicitam padrão de qualidade e orientam a verificação.
+
+#30
+MC: Uma professora pede a um sistema: "Aja como especialista e garanta que tudo esteja correto." Qual leitura é mais prudente?
++ A instrução pode ajustar o tom, mas não garante correção; o conteúdo factual precisa ser conferido em fontes confiáveis.
+- O sistema passa a ser incapaz de errar enquanto a instrução estiver no pedido. || Estudos mostram que personas não melhoram de modo consistente a precisão, e erros plausíveis continuam possíveis.
+- A conferência só é necessária se a resposta for curta. || O tamanho da resposta não determina a necessidade de conferir.
+- O sistema passa a consultar automaticamente livros didáticos aprovados. || Nada na instrução ativa consulta a fontes específicas.
+- A professora fica isenta de responsabilidade sobre o conteúdo usado. || A responsabilidade pelo que é usado com estudantes permanece com o professor.
+R: Papel e pedido de correção não substituem a verificação.

@@ -1,0 +1,349 @@
+#1
+MC: Um professor escreve "melhore" após a primeira resposta do sistema. Qual é o principal problema dessa instrução?
++ Não diz o que mudar, de modo que o resultado tende a ser quase aleatório.
+- A palavra "melhore" é bloqueada por sistemas de IA. || Não há bloqueio dessa palavra; o problema é a falta de especificação.
+- Instruções curtas são sempre ignoradas. || Instruções curtas são lidas; o que falta é indicar o aspecto a alterar.
+- O sistema só aceita melhorias pedidas no primeiro pedido. || Sistemas aceitam ajustes ao longo da conversa.
+- Pedidos de melhoria violam os direitos autorais do texto. || Pedir melhoria de um texto próprio não gera esse problema.
+R: Ajustes eficazes nomeiam o problema e o que mudar.
+
+#2
+MC: Qual é a sequência do ciclo de refinamento descrita no capítulo?
++ Pedir, ler com critério, diagnosticar, ajustar e registrar.
+- Pedir, aceitar, publicar, esquecer e repetir. || Omite a leitura crítica, o diagnóstico e o registro.
+- Registrar, pedir, apagar, aceitar e publicar. || Inverte a lógica e elimina a avaliação.
+- Diagnosticar, publicar, pedir, ajustar e arquivar. || Coloca a publicação antes da avaliação do resultado.
+- Ajustar, repetir, repetir, repetir e parar. || Não inclui diagnóstico nem registro e leva a tentativas ao acaso.
+R: O ciclo é pedir, ler com critério, diagnosticar, ajustar e registrar.
+
+#3
+MC: Por que se recomenda alterar uma coisa por vez ao refinar um pedido?
++ Porque, mudando várias coisas juntas, não se sabe qual alteração melhorou ou piorou o resultado.
+- Porque o sistema só consegue processar uma instrução por conversa. || Sistemas processam várias instruções; a razão é de diagnóstico.
+- Porque mudanças múltiplas são proibidas pelos fabricantes. || Não há tal proibição.
+- Porque uma única mudança sempre resolve o problema. || Nem sempre; a prática serve para identificar efeitos, e não para garantir solução.
+- Porque assim o sistema deixa de errar fatos. || Alterar uma variável não elimina erros factuais.
+R: É a lógica do experimento simples.
+
+#4
+MC: Qual instrução ajuda a perceber alterações indesejadas em edições sucessivas?
++ "Ao final, liste o que você modificou."
+- "Reescreva tudo do zero." || Reescrever tudo dificulta comparar e pode perder partes já aprovadas.
+- "Mude o que achar melhor." || Dá liberdade total e torna as alterações imprevisíveis.
+- "Seja breve." || É uma instrução de formato, sem relação com a rastreabilidade de mudanças.
+- "Não mostre as alterações." || Esconde justamente o que o professor precisa conferir.
+R: A lista de mudanças torna as alterações visíveis.
+
+#5
+MC: O que significa encadear pedidos?
++ Dividir uma tarefa em etapas curtas, revisando o resultado de cada uma antes de passar à seguinte.
+- Enviar todas as tarefas em um único pedido muito longo. || É o oposto de encadear; tende a gerar respostas rasas.
+- Pedir ao sistema que encaminhe o pedido a outros usuários. || Não é um recurso descrito nem tem relação com o conceito.
+- Repetir o mesmo pedido até obter a resposta desejada. || Repetição idêntica não divide a tarefa nem permite revisão por etapa.
+- Concatenar respostas de vários sistemas sem revisá-las. || Sem revisão, erros se propagam, o que o encadeamento deve evitar.
+R: Encadear é dividir e revisar entre as etapas.
+
+#6
+MC: Por que a revisão entre as etapas de um encadeamento é essencial?
++ Porque um erro de uma etapa pode se propagar, de modo convincente, para as etapas seguintes.
+- Porque cada etapa muda a língua em que o sistema responde. || Não há mudança de língua entre as etapas.
+- Porque a revisão reduz o custo de uso da ferramenta. || A revisão não tem relação com custo; trata-se de qualidade.
+- Porque as etapas seguintes corrigem automaticamente as anteriores. || Sistemas não corrigem de forma garantida erros anteriores; tendem a incorporá-los.
+- Porque a revisão é exigida pela LGPD em todo pedido. || A LGPD trata de dados pessoais, e não exige revisão por etapas.
+R: Erros iniciais se propagam em cadeias sem revisão.
+
+#7
+MC: O que o termo few-shot prompting designa?
++ Incluir no pedido um ou poucos exemplos do que se deseja.
+- Fazer poucos pedidos por dia. || Confunde com frequência de uso; o termo refere-se aos exemplos no pedido.
+- Usar poucas palavras em cada instrução. || Não se trata de extensão das instruções.
+- Limitar o sistema a poucos estudantes. || Não tem relação com número de usuários.
+- Treinar um novo modelo com poucos dados. || No few-shot, o modelo não é retreinado; os exemplos vão no pedido.
+R: Few-shot é dar poucos exemplos no próprio pedido.
+
+#8
+MC: Qual é um risco do uso de exemplos em pedidos?
++ O sistema tende a imitar o exemplo, produzindo materiais muito parecidos e propagando eventuais erros nele contidos.
+- O exemplo sempre elimina a necessidade de critérios. || Exemplos não substituem critérios explícitos.
+- O exemplo torna o sistema incapaz de seguir outras instruções. || Não há essa incapacidade geral.
+- O exemplo garante que o conteúdo é correto. || Exemplos transmitem formato, e não validam conteúdo.
+- O exemplo impede qualquer variação de formato. || Pode padronizar, mas não impede toda variação, e a questão central é a imitação.
+R: Exemplos padronizam e podem propagar erros.
+
+#9
+MC: O que é um contraexemplo em um pedido?
++ Um exemplo do que não se quer, usado para delimitar o resultado.
+- Uma resposta que o sistema devolve como contraprova. || O contraexemplo é fornecido pelo professor no pedido.
+- Um exemplo com dados pessoais verdadeiros. || Dados pessoais verdadeiros não devem ser usados em pedidos.
+- Um exemplo copiado de outro sistema sem revisão. || A origem não define o contraexemplo; sua função é mostrar o que evitar.
+- Uma resposta incorreta aceita para economizar tempo. || Aceitar resposta incorreta não tem relação com o conceito.
+R: Contraexemplo mostra o que evitar.
+
+#10
+MC: Estudos sobre exemplos em pedidos sugerem que, em certas tarefas de classificação, os exemplos influenciam sobretudo:
++ O formato e o tipo de entrada e saída, mais do que a correção de cada rótulo.
+- A verdade factual de cada resposta futura. || Os exemplos não garantem veracidade futura.
+- O consentimento dos usuários. || Consentimento não é efeito dos exemplos.
+- A velocidade do processamento do modelo. || Os estudos tratam de desempenho, e não de velocidade.
+- O número de estudantes beneficiados. || Os estudos são de laboratório, sem medir estudantes.
+R: O exemplo ensina o formato, mas não valida o conteúdo.
+
+#11
+MC: Por que colar textos de terceiros como exemplo exige cautela?
++ Pode violar direitos autorais ou políticas de uso e expor material a sistemas externos.
+- Porque textos de terceiros são sempre falsos. || A origem do texto não o torna falso.
+- Porque o sistema só aceita textos escritos pelo próprio usuário. || Sistemas aceitam textos de qualquer autoria; a cautela é legal e ética.
+- Porque textos longos são proibidos em qualquer ferramenta. || Não há proibição geral de textos longos.
+- Porque o texto de terceiros reduz a janela de contexto a zero. || Isso não ocorre; a cautela refere-se a direitos e políticas.
+R: Prefira textos próprios, de domínio público ou licenciados.
+
+#12
+MC: Qual é a função de uma lista de verificação construída antes da leitura da resposta?
++ Evitar que o padrão de qualidade se ajuste ao que o sistema entregou e orientar a avaliação.
+- Impedir que o sistema responda. || A lista é um instrumento do professor, e não um bloqueio.
+- Substituir a leitura do texto. || Orienta a leitura, mas não a dispensa.
+- Registrar os nomes dos estudantes. || Não deve conter dados pessoais e não tem esse fim.
+- Dar nota automática ao sistema. || A lista apoia o julgamento docente, e não atribui nota automática.
+R: Critérios prévios previnem a racionalização.
+
+#13
+MC: Qual é uma limitação de pedir ao sistema que avalie um rascunho com base em critérios do professor?
++ Ele pode atribuir "atende" a um item que não atende, sobretudo em erros sutis, de modo que a decisão continua sendo do professor.
+- Ele não consegue ler listas de critérios. || Consegue ler listas; a limitação é de confiabilidade.
+- Ele só aceita critérios em inglês. || Não há restrição desse tipo.
+- Ele sempre rejeita rascunhos escritos por professores. || Não há esse comportamento sistemático.
+- Ele garante imparcialidade absoluta na avaliação. || Nenhum sistema garante isso; pode haver vieses e erros.
+R: A avaliação do sistema é apoio, e não substituto do julgamento.
+
+#14
+MC: O que um estudo sobre tarefas de raciocínio concluiu a respeito da autocorreção sem feedback externo?
++ Em geral, os modelos não melhoraram, e às vezes pioraram, ao tentar se autocorrigir.
+- Os modelos sempre melhoram ao revisar a própria resposta. || Contraria a conclusão do estudo.
+- A autocorreção elimina todos os erros factuais. || Não há essa eliminação.
+- A autocorreção só funciona com crianças. || O estudo não trata de crianças.
+- A autocorreção é proibida pelas normas educacionais. || Não é questão normativa, e sim de desempenho.
+R: A conferência deve vir de fora do sistema.
+
+#15
+MC: Após apontar um erro, o sistema responde: "Você tem razão, peço desculpas" e entrega uma nova versão. Qual conduta é mais prudente?
++ Comparar as versões e conferir o trecho corrigido em uma fonte externa.
+- Aceitar a nova versão, pois o pedido de desculpas prova que ela está correta. || O pedido de desculpas não comprova correção.
+- Descartar a nova versão sem lê-la. || Descartar sem ler perde material que pode estar certo.
+- Pedir ao sistema que garanta que agora está certo. || Garantias verbais do sistema não substituem a verificação externa.
+- Publicar a nova versão para ver se alguém percebe erros. || Expõe estudantes ao erro e desrespeita a responsabilidade docente.
+R: A correção apresentada não é automaticamente correta.
+
+#16
+MC: O que é bajulação (sycophancy) em assistentes de IA?
++ A tendência de concordar com o usuário ou de ajustar a resposta ao que ele parece querer ouvir.
+- A tendência de recusar qualquer pedido do professor. || É o oposto da concordância excessiva.
+- O uso de linguagem muito formal em todas as respostas. || Refere-se ao tom, e não à concordância com o usuário.
+- A repetição de um mesmo erro de digitação. || Não tem relação com o fenômeno.
+- A divulgação de respostas a outros usuários. || É um problema de privacidade, e não de bajulação.
+R: Sistemas treinados com retorno humano podem tender a concordar.
+
+#17
+MC: Qual pergunta é mais neutra para avaliar uma afirmação do sistema?
++ "Que evidências sustentam esta afirmação e quais a contrariam?"
+- "Isso está errado, não é?" || É indutora: sugere a resposta esperada.
+- "Você concorda que está certo, certo?" || Também induz a confirmação.
+- "Diga que sim se eu estiver certo." || Condiciona a resposta à opinião do usuário.
+- "Admita que errou." || Impõe a conclusão antes da análise.
+R: Perguntas neutras reduzem o risco de concordância excessiva.
+
+#18
+MC: Ao apontar um erro de conteúdo ao sistema, o que é mais adequado?
++ Indicar o trecho, o que está errado e a fonte que permite a correção.
+- Escrever apenas "está errado". || Não indica onde nem por quê.
+- Dizer que o texto inteiro é inaceitável. || Generaliza e não permite a correção específica.
+- Pedir que o sistema descubra sozinho o erro, sem pista. || Sem feedback externo, a autocorreção é limitada.
+- Corrigir o erro e ocultar a fonte. || Sem a fonte, perde-se a possibilidade de verificar a correção.
+R: A correção específica e verificável é a mais eficaz.
+
+#19
+MC: Em que consiste a revisão em duas passagens?
++ Uma leitura voltada ao conteúdo (erros factuais e conceituais) e outra voltada ao uso pedagógico com a turma.
+- Ler duas vezes o mesmo parágrafo na mesma ordem. || Não distingue os focos de cada passagem.
+- Pedir a duas ferramentas que escrevam o texto. || Não trata de revisão pelo professor.
+- Revisar na segunda-feira e na sexta-feira. || Refere-se a datas, e não a focos de leitura.
+- Corrigir a gramática e depois publicar. || Omite as dimensões de conteúdo e pedagógica.
+R: Separar conteúdo e adequação pedagógica evita que a fluência esconda erros.
+
+#20
+MC: Por que a fluência do texto gerado exige atenção na revisão?
++ Porque um texto fluente pode mascarar erros de conteúdo e favorecer a confiança excessiva.
+- Porque textos fluentes são sempre plágio. || Fluência não implica plágio.
+- Porque a fluência prova que o texto foi revisado. || Fluência não é prova de revisão ou de correção.
+- Porque textos fluentes têm, por definição, menos palavras. || Fluência não tem relação com a quantidade de palavras.
+- Porque textos fluentes são ilegais em contexto escolar. || Não há essa ilegalidade.
+R: Fluência não indica correção.
+
+#21
+MC: Qual é um sinal de que é hora de parar de refinar e escrever o texto diretamente?
++ Estar corrigindo mais da metade do texto ou gastando mais tempo do que gastaria escrevendo sozinho.
+- A primeira resposta ter tido uma frase fraca. || Uma frase fraca pode ser ajustada; não justifica interromper.
+- O sistema ter respondido rápido. || A rapidez não é sinal de que se deva parar.
+- O pedido conter cinco componentes. || Ter os cinco componentes é boa prática, e não motivo de parada.
+- O texto ter muitos parágrafos. || A quantidade de parágrafos não é critério.
+R: Saber parar é uma decisão profissional.
+
+#22
+MC: Em que situação a IA deve ser dispensada na correção de produções dos estudantes?
++ Quando o feedback depende de conhecer a trajetória individual do estudante, ou exigir dados pessoais.
+- Quando o texto do estudante for curto. || O tamanho do texto não é critério de dispensa.
+- Quando o professor tiver acesso à internet. || O acesso não é motivo para dispensar.
+- Quando o estudante tiver bom desempenho. || O desempenho não define a dispensa.
+- Quando o texto estiver escrito à mão, por qualquer motivo. || A forma de registro não define a dispensa por si só.
+R: Feedback individual e dados pessoais pedem cautela ou dispensa.
+
+#23
+MC: Pedidos com etapas intermediárias podem melhorar o desempenho em certas tarefas de raciocínio. Que cuidado decorre disso?
++ As etapas escritas pelo sistema são texto gerado e precisam ser conferidas como qualquer outro.
+- As etapas são sempre corretas e dispensam conferência. || Etapas geradas podem conter erros.
+- As etapas provam que o sistema compreende como um humano. || A apresentação em etapas não prova compreensão humana.
+- As etapas só funcionam em matemática. || Os estudos incluem outras tarefas além da matemática.
+- As etapas tornam desnecessário o objetivo de aprendizagem. || Continua sendo necessário definir o objetivo.
+R: Raciocínio apresentado também precisa ser verificado.
+
+#24
+MC: Um professor muda três elementos do pedido de uma vez e a resposta piora. Qual é o problema metodológico?
++ Não é possível saber qual das mudanças causou a piora.
+- O sistema está proibido de receber três mudanças. || Não há essa proibição.
+- A piora prova que o primeiro pedido era perfeito. || A piora não prova que o pedido inicial estava correto.
+- A piora ocorre apenas quando o professor está cansado. || Não há base para essa afirmação.
+- Três mudanças sempre melhoram o resultado. || Contraria a situação descrita.
+R: Sem isolar variáveis, o diagnóstico fica comprometido.
+
+#25
+MC: A forma de escrever o pedido (pontuação, ordem dos itens) pode alterar a resposta? O que a pesquisa indica?
++ Sim, estudos mostraram diferenças relevantes em modelos com mudanças pequenas de formatação, de modo que testar variações é razoável.
+- Não, pois só o conteúdo semântico importa. || Estudos mostraram sensibilidade à formatação.
+- Sim, mas apenas em pedidos escritos em maiúsculas. || Não é restrito a letras maiúsculas.
+- Não, desde que o pedido tenha mais de 100 palavras. || A extensão não elimina a sensibilidade.
+- Sim, e por isso nunca se deve reescrever o pedido. || Conclusão oposta à recomendação de testar variações.
+R: Pedidos reescritos podem produzir respostas distintas.
+
+#26
+MC: O que o diário de refinamento deve registrar a cada ciclo?
++ A versão do pedido, o resultado, o diagnóstico, o ajuste feito e a decisão.
+- Os dados pessoais dos estudantes da turma. || Dados pessoais não devem constar.
+- Apenas a resposta final do sistema. || Sem o percurso, não se reconstitui o processo.
+- O nome do fabricante da ferramenta e nada mais. || É insuficiente para entender o que funcionou.
+- Somente os erros do sistema, sem os acertos. || O registro deve incluir o que melhorou e o que piorou.
+R: O registro permite reaproveitar o que funcionou.
+
+#27
+MC: Qual é uma forma de revisão do próprio texto com apoio de IA coerente com a autoria docente?
++ Pedir que o sistema aponte trechos ambíguos e lacunas, mantendo as decisões de reescrita com o professor.
+- Pedir que reescreva o texto inteiro e assinar sem leitura. || Abre mão da autoria e da responsabilidade.
+- Colar o texto com dados de estudantes para melhor revisão. || Expõe dados pessoais.
+- Aceitar todas as sugestões automaticamente. || Retira a decisão do professor.
+- Pedir que invente referências para fortalecer o texto. || Referências inventadas são um risco, e não um reforço.
+R: A IA pode ser leitora crítica, com decisão humana.
+
+#28
+MC: O jogo de revisão proposto no capítulo visa desenvolver qual hábito?
++ Não confiar numa correção apenas porque ela é apresentada com segurança, e sim justificá-la com fontes.
+- Aceitar a primeira resposta de qualquer sistema. || É o oposto do objetivo.
+- Memorizar os erros mais comuns dos sistemas. || O foco é o procedimento de verificação, e não a memorização.
+- Competir para ver quem digita mais rápido. || Velocidade de digitação não é o objetivo.
+- Substituir a leitura do livro didático por respostas do sistema. || O livro e outras fontes são parte da conferência.
+R: O hábito é verificar com base em fontes.
+
+#29
+MC: Qual é a relação entre os critérios do professor e a avaliação feita por IA em um rascunho?
++ Os critérios pertencem ao professor, e a avaliação do sistema é apoio que ele deve conferir.
+- Os critérios passam a ser definidos pelo sistema. || Perderia a autonomia docente.
+- A avaliação do sistema tem sempre precedência sobre a do professor. || Não há base para dar precedência ao sistema.
+- Os critérios deixam de ser necessários. || Seguem necessários e anteriores à leitura.
+- A avaliação do sistema é válida só quando concorda com o professor. || Isso ignora que o sistema pode errar mesmo quando concorda.
+R: Critérios e decisão permanecem com o professor.
+
+DISC: Descreva o ciclo de refinamento e explique por que cada etapa é importante.
+R: Pedir, ler com critério, diagnosticar, ajustar, registrar. Importância: evitar tentativas ao acaso, identificar causas, reaproveitar o que funciona.
+C: Cinco etapas; justificativa de cada uma; coerência.
+
+DISC: Diagnostique e proponha um ajuste específico para cada sintoma: texto genérico, formato difícil de usar e afirmação duvidosa.
+R: Genérico: contexto (turma, objetivo, tempo); formato: tabela, limite, linguagem; afirmação duvidosa: apontar trecho e conferir em fonte externa.
+C: Associação correta sintoma-ajuste; especificidade; verificação externa.
+
+DISC: Por que "melhore" e "mais criativo" são instruções fracas? Reescreva ambas de modo específico.
+R: Não dizem o que mudar. Reescritas: especificar elemento, extensão, nível de linguagem, formatos alternativos com vantagem e dificuldade.
+C: Reconhece a falta de especificação; reescritas operacionais.
+
+DISC: Explique a regra "uma mudança por vez" e relacione-a à lógica do experimento simples.
+R: Isolar variáveis permite saber o que melhorou ou piorou; ajuda a documentar e compartilhar.
+C: Relaciona isolamento de variáveis; exemplo; aplicação prática.
+
+DISC: Elabore uma sequência de cinco pedidos encadeados para planejar uma unidade, indicando a revisão do professor em cada etapa.
+R: Alinhar objetivo e suposições; estrutura; detalhar atividade; verificação de aprendizagem; adaptações. Revisão entre etapas.
+C: Sequência coerente; revisão entre etapas; autonomia docente.
+
+DISC: Discuta vantagens e riscos de usar exemplos e contraexemplos nos pedidos.
+R: Vantagens: formato, tom, nível. Riscos: padronização, propagação de erros, direitos autorais, dados pessoais.
+C: Equilíbrio; riscos concretos; cuidados.
+
+DISC: Escreva um pedido com exemplo e contraexemplo para criar questões na sua área, indicando critérios de verificação.
+R: Pedido com exemplo do desejado, contraexemplo, tarefa, formato, critérios e indicação do que conferir.
+C: Estrutura adequada; critérios claros; ausência de dados pessoais.
+
+DISC: Construa uma lista de cinco critérios para avaliar uma atividade gerada com apoio de IA, justificando cada um.
+R: Alinhamento ao objetivo; adequação à idade; correção; ausência de estereótipos; viabilidade e acessibilidade.
+C: Critérios observáveis; justificativas; alinhamento pedagógico.
+
+DISC: Por que a autoavaliação do sistema é insuficiente como única forma de revisão? Que alternativas de conferência você usaria?
+R: Sem feedback externo, a autocorreção é limitada. Alternativas: fontes confiáveis, colegas, currículo, conhecimento do professor.
+C: Cita limitação; alternativas externas; postura prudente.
+
+DISC: Explique o que é bajulação em assistentes de IA e como adaptar perguntas para reduzir seu efeito.
+R: Tendência a concordar com o usuário; usar perguntas neutras, pedir evidências a favor e contra.
+C: Define o fenômeno; propõe formulações; mantém a conferência.
+
+DISC: Descreva a revisão em duas passagens e aplique-a a um texto gerado por IA da sua área.
+R: Passagem de conteúdo e passagem pedagógica; exemplo com conferência de dados e leitura imaginando a turma.
+C: Distingue as passagens; exemplo coerente.
+
+DISC: Analise o que significa dizer que "o exemplo ensina o formato, mas não valida o conteúdo".
+R: Exemplos orientam estrutura e tom; o conteúdo pode estar errado e ser replicado; a verificação continua necessária.
+C: Distingue formato de conteúdo; implicação prática.
+
+DISC: Discuta as situações em que parar de refinar é a melhor decisão e como justificá-la.
+R: Corrigir mais da metade; respostas oscilantes; conteúdo não verificável; tempo maior que escrever; dados sensíveis.
+C: Sinais pertinentes; justificativa profissional.
+
+DISC: Elabore um modelo de diário de refinamento e explique como usá-lo para compartilhar aprendizados com colegas.
+R: Tabela com versão, pedido, resultado, diagnóstico, ajuste, decisão e tempo; análise coletiva dos ajustes mais úteis.
+C: Campos adequados; uso coletivo; sem dados pessoais.
+
+DISC: Como você corrigiria um erro de data em uma resposta do sistema, de modo específico e verificável?
+R: Indicar o trecho, a data conferida e a fonte; pedir que marque afirmações dependentes; conferir de novo externamente.
+C: Especificidade; fonte; verificação posterior.
+
+DISC: Discuta o que a pesquisa permite e não permite afirmar sobre exemplos, etapas intermediárias e refinamento em contextos escolares.
+R: Há evidências laboratoriais de efeitos em tarefas específicas; não há evidência conclusiva de efeitos na aprendizagem em sala; sistemas mudam.
+C: Distingue laboratório e escola; cautela; sem generalização.
+
+DISC: Proponha uma atividade para ensinar estudantes do ensino médio a avaliar criticamente uma correção apresentada por IA.
+R: Texto com erros, resposta corrigida do sistema, conferência em fontes, justificativa e discussão.
+C: Atividade viável; fontes; avaliação do processo.
+
+DISC: Que cuidados de privacidade devem orientar a escolha de exemplos e textos a colar em um pedido?
+R: Evitar dados pessoais; usar textos próprios, fictícios ou autorizados; respeitar direitos autorais; considerar a política da ferramenta.
+C: Cuidados concretos; referência a direitos e privacidade.
+
+DISC: Compare os papéis do professor e do sistema em cada etapa do ciclo de refinamento.
+R: Professor: objetivo, critérios, diagnóstico, decisão. Sistema: rascunhos, alternativas, apoio de revisão. Verificação externa.
+C: Distribuição clara de papéis; autonomia docente.
+
+DISC: Reflita: em que situações a atividade de revisar e reescrever deve permanecer com os estudantes, sem apoio de IA?
+R: Quando o objetivo é desenvolver revisão, escrita e raciocínio; avaliação de domínio individual; etapas iniciais de aprendizagem.
+C: Relaciona com objetivos; exemplos; justificativa pedagógica.
+
+#30
+MC: Um professor deseja que o sistema produza questões no mesmo formato de uma questão bem elaborada que ele já possui. Qual estratégia é mais adequada?
++ Incluir a questão como exemplo, pedir novas questões sobre outro conteúdo e conferir se o conteúdo gerado está correto.
+- Descrever o formato apenas com a palavra "boa", sem exemplo. || "Boa" não informa estrutura, tom nem nível de dificuldade ao sistema.
+- Pedir que o sistema copie a questão e a entregue aos estudantes. || Copiar não gera questões novas e dispensa a revisão docente.
+- Aceitar as questões geradas sem leitura, já que há exemplo. || O exemplo ensina formato, e não garante conteúdo correto.
+- Incluir na questão-exemplo os nomes dos estudantes que erraram. || Expõe dados pessoais sem necessidade pedagógica.
+R: O exemplo orienta o formato, e a conferência do conteúdo continua com o professor.

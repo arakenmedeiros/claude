@@ -1,0 +1,349 @@
+#1
+MC: Em uma escola, a atividade de pesquisa com IA exige acesso à internet em casa, e alguns estudantes só têm acesso limitado. Qual é a ação mais coerente com a equidade?
++ Reorganizar a atividade para que seja feita na escola ou em versão alternativa, sem prejudicar quem não tem acesso em casa.
+- Manter a atividade como está, pois quem se esforça dá um jeito. || Transfere o problema ao estudante e ignora que a diferença decorre de condições de acesso, não de esforço.
+- Excluir da avaliação quem não conseguiu realizar a atividade. || Penaliza o estudante por uma condição que não depende dele.
+- Pedir que os estudantes comprem pacotes de dados. || Cria um custo financeiro para famílias que já têm menos recursos.
+- Proibir qualquer tarefa que use tecnologia. || É uma medida desproporcional que elimina também as oportunidades que poderiam ser ofertadas na escola.
+R: Equidade é dar as condições de que cada estudante precisa; atividades devem prever alternativas de acesso.
+
+#2
+MC: O que distingue a dimensão "uso" da dimensão "acesso" na análise de equidade?
++ Mesmo com o mesmo equipamento, o proveito pode variar com letramento, orientação, tempo e repertório.
+- Acesso trata de quanto o estudante gosta da tecnologia. || Acesso refere-se a condições materiais e de formato, e não a preferências.
+- Uso refere-se apenas ao preço do plano de dados. || O preço é questão de acesso; uso envolve o que se faz com o recurso.
+- Não há diferença, pois ter equipamento garante o aproveito. || Ter o equipamento não assegura saber usá-lo bem, nem apoio para isso.
+- Uso é medido somente pelas notas finais. || Notas mostram resultados, que são outra dimensão.
+R: Acesso, uso e resultados são dimensões distintas, e cada uma pode produzir desigualdades.
+
+#3
+MC: Um professor quer saber se a IA beneficiou todos os grupos de estudantes. Qual é a conduta mais adequada?
++ Acompanhar resultados por grupos relevantes, com cuidado para não expor estudantes individualmente.
+- Calcular apenas a média geral da turma. || A média pode esconder que um grupo melhorou e outro piorou.
+- Publicar o desempenho de cada estudante em mural, por grupo. || Expõe os estudantes e pode gerar constrangimento e estigma.
+- Presumir que, se a média subiu, todos foram beneficiados. || É um raciocínio falho; médias não revelam distribuição.
+- Perguntar apenas aos estudantes que mais usaram a ferramenta. || Ouvir só quem usa mais gera viés de seleção e ignora quem ficou de fora.
+R: Resultados devem ser analisados por grupos, preservando o respeito e a privacidade dos estudantes.
+
+#4
+MC: Qual das alternativas define melhor viés em um sistema de IA?
++ Desvio sistemático que favorece ou prejudica certos grupos, podendo entrar nos dados, nas medidas, no projeto ou no uso.
+- Qualquer erro aleatório de digitação nas respostas. || Erros aleatórios não têm direção sistemática contra um grupo.
+- A intenção consciente do programador de discriminar. || O viés pode existir sem intenção e vir de dados e medidas.
+- A lentidão do sistema em dias de muito uso. || Desempenho técnico não se confunde com desvio contra grupos.
+- A preferência do usuário por uma ferramenta. || Preferência individual não é desvio sistemático do sistema.
+R: Vieses são regularidades de desvio que afetam grupos de modo desigual e têm múltiplas origens.
+
+#5
+MC: O algoritmo de saúde que usava gasto com cuidados como indicador de necessidade subestimou a necessidade de pacientes negros. O que esse caso ilustra?
++ O risco de usar como indicador uma medida conveniente que reflete desigualdades de acesso, e não a necessidade real.
+- Que algoritmos de saúde nunca devem ser usados. || O caso mostra um problema de desenho do indicador, que pode ser corrigido, e não uma proibição geral.
+- Que o viés só ocorre por má-fé dos desenvolvedores. || O problema surgiu de uma escolha de medida, sem necessidade de intenção discriminatória.
+- Que dados de gasto são sempre precisos. || O caso mostra justamente que o gasto era um retrato distorcido da necessidade.
+- Que o problema se restringe a hospitais e não se aplica à educação. || Indicadores substitutos (notas, frequência, tempo em plataforma) podem gerar distorção análoga na escola.
+R: O proxy escolhido pode incorporar desigualdades e levar a decisões injustas; na educação, notas e frequência pedem a mesma cautela.
+
+#6
+MC: Por que uma ferramenta de correção automática pode penalizar estudantes que escrevem com marcas de variedades regionais?
++ Porque os modelos aprendem padrões de dados em que certas variedades são menos representadas ou mais associadas a juízos negativos.
+- Porque variedades regionais não são línguas reais. || Falsa: variações regionais e sociais são legítimas e fazem parte da língua.
+- Porque o sistema só reconhece palavras de dicionário impresso. || Modelos aprendem com textos diversos, e a causa é a distribuição e as associações dos dados.
+- Porque a ferramenta tem preconceito intencional. || Sistemas não têm intenção; o desvio emerge de dados, medidas e projeto.
+- Porque estudantes que usam variação não sabem escrever. || Confunde variação linguística com falta de domínio da escrita.
+R: Variedades pouco representadas ou estigmatizadas nos dados podem receber avaliação pior; por isso a correção deve ter revisão humana.
+
+#7
+MC: Em um teste de pares, qual cuidado de desenho é essencial?
++ Mudar apenas um aspecto entre os pedidos comparados, mantendo o restante idêntico.
+- Mudar vários aspectos ao mesmo tempo para obter diferenças maiores. || Com várias mudanças não se sabe qual delas explica a diferença.
+- Aplicar cada pedido uma única vez e tirar conclusões definitivas. || As respostas variam; é preciso repetir e registrar.
+- Usar nomes e dados de estudantes reais para maior realismo. || Expõe dados pessoais e não é necessário; devem-se usar nomes fictícios.
+- Escolher pedidos distintos em dificuldade para cada grupo. || Compromete a comparação, pois a diferença pode vir da dificuldade.
+R: O controle de variáveis permite atribuir a diferença ao aspecto alterado, ainda que o teste seja pequeno.
+
+#8
+MC: Um teste de pares não mostrou diferenças nas respostas. Qual conclusão é prudente?
++ Que não foi observada diferença naquele teste, o que não prova que o sistema seja imparcial.
+- Que o sistema está livre de qualquer viés. || Um teste pequeno não esgota as formas de viés possíveis.
+- Que o teste foi inútil e deve ser apagado. || Registrar um resultado nulo também é informação útil.
+- Que deve-se aumentar a confiança na ferramenta para avaliações disciplinares. || Decisões com consequência não devem ser apoiadas em saída automática isolada.
+- Que o professor errou ao realizar o teste. || A ausência de diferença não indica erro do professor.
+R: A ausência de diferença em um teste limitado não demonstra ausência de viés; a vigilância deve continuar.
+
+#9
+MC: Por que ferramentas de detecção de texto gerado por IA não devem ser usadas como prova isolada contra um estudante?
++ Porque podem errar e já foram observadas classificações incorretas, sobretudo de textos de quem escreve em segunda língua.
+- Porque detectores só funcionam em português. || Não há tal restrição; o problema é a falta de confiabilidade.
+- Porque são ilegais em qualquer circunstância. || Não é uma questão de ilegalidade; é de confiabilidade e justiça da decisão.
+- Porque sempre acertam, o que desmotiva os estudantes. || Contradiz as pesquisas, que mostram erros relevantes.
+- Porque estudantes têm direito de usar IA sem limites. || O argumento é sobre a base probatória, não sobre direito irrestrito de uso.
+R: Falsos positivos e viés contra certos grupos tornam o detector inadequado como prova única.
+
+#10
+MC: O que é "bajulação" (sycophancy) em modelos de linguagem?
++ A tendência de concordar com o interlocutor ou de ajustar a resposta ao que ele parece querer, mesmo quando está errado.
+- A capacidade de elogiar apenas textos em inglês. || A bajulação não depende da língua, mas da tendência a concordar.
+- Um erro de formatação nas respostas. || Não é questão de forma, e sim de conteúdo que acompanha o desejo do usuário.
+- A recusa sistemática de responder perguntas. || É o oposto: o sistema responde concordando.
+- O bloqueio de conteúdo impróprio por filtros. || Filtros de segurança são outro mecanismo.
+R: Na educação, a bajulação pode reforçar concepções equivocadas dos estudantes.
+
+#11
+MC: Por que o risco de informação incorreta apresentada com segurança é maior para crianças e adolescentes?
++ Porque ainda estão desenvolvendo critérios de verificação e tendem a confiar no que parece fluente e confiante.
+- Porque crianças leem mais lentamente e erram a digitação. || A questão não é velocidade de leitura, mas a capacidade crítica de avaliar a fonte.
+- Porque sistemas de IA erram mais quando o usuário é menor de idade. || Não há base para afirmar que o sistema erre mais por causa da idade; o dano potencial é que é maior.
+- Porque adolescentes sempre rejeitam informações de máquinas. || Muitos tendem a confiar; generalização falsa.
+- Porque erros só ocorrem em temas escolares. || Erros ocorrem em qualquer tema, inclusive saúde e relações sociais.
+R: Menor repertório e experiência para checar fontes aumentam o risco de aceitar erros plausíveis.
+
+#12
+MC: Qual é o principal problema de depender apenas de filtros de conteúdo para proteger estudantes?
++ Filtros são imperfeitos: podem deixar passar conteúdo inadequado e bloquear temas legítimos, exigindo camadas complementares.
+- Filtros são sempre perfeitos e dispensam supervisão. || É falso e levaria a uma falsa sensação de segurança.
+- Filtros impedem qualquer aprendizagem de língua. || Exagero sem base; o problema é a imprecisão.
+- Filtros funcionam apenas em computadores antigos. || Não há relação com a idade do equipamento.
+- Filtros são proibidos nas escolas. || Não há tal proibição; são úteis, mas insuficientes sozinhos.
+R: A proteção exige combinação de escolha do sistema, configuração, mediação, letramento e acolhimento.
+
+#13
+MC: Um estudante cria, com IA, uma imagem falsa e humilhante de um colega. Qual é a resposta escolar mais adequada?
++ Acolher a vítima, seguir o protocolo de incidentes, comunicar as famílias, aplicar medidas educativas e acionar a rede de proteção quando necessário.
+- Ignorar o caso, por ter ocorrido fora da sala de aula. || O impacto sobre a convivência escolar exige resposta institucional.
+- Divulgar a imagem à turma para fins de alerta. || Amplia a exposição da vítima e viola sua dignidade.
+- Proibir toda e qualquer tecnologia por tempo indeterminado. || Medida genérica que não protege a vítima nem educa o autor.
+- Responsabilizar a vítima por ter sido fotografada. || Inverte a responsabilidade e revitimiza.
+R: Conteúdo sintético usado contra colegas é questão de convivência e proteção, com acolhimento e medidas formativas.
+
+#14
+MC: Por que a escola deve ter cautela com assistentes que simulam ser "amigos" de crianças?
++ Porque podem estimular vínculos e uso prolongado, e os efeitos de longo prazo ainda são pouco conhecidos.
+- Porque assistentes nunca conseguem conversar em português. || Falso e irrelevante ao risco de vínculo.
+- Porque a amizade com pessoas reais é proibida pela lei. || Nada disso existe na legislação.
+- Porque crianças não têm interesse em conversar. || Ao contrário, o interesse é motivo de preocupação.
+- Porque o custo da assinatura é alto. || O argumento central é de proteção e de desenvolvimento, não de preço.
+R: A precaução é recomendada onde há vínculo simulado e evidências insuficientes sobre efeitos de longo prazo.
+
+#15
+MC: Segundo o ECA Digital (Lei nº 15.211/2025), conforme descrito em fontes secundárias, que tipo de exigência se aplica a serviços digitais acessíveis a menores?
++ Mecanismos de verificação de idade que não se limitem à autodeclaração e ferramentas de supervisão parental.
+- A proibição de qualquer uso de internet por menores de 18 anos. || A lei trata de proteção e regras para os serviços, e não de proibição geral.
+- A isenção de qualquer obrigação para serviços que se declarem educacionais. || Não há isenção automática por autodefinição; a lei exige medidas dos provedores.
+- A obrigação de que escolas fabriquem suas próprias ferramentas. || A obrigação recai sobre provedores e serviços, não sobre a fabricação pelas escolas.
+- A dispensa de verificação de idade para qualquer plataforma. || Contradiz a exigência de mecanismos confiáveis descrita nas fontes consultadas.
+R: As informações aqui vêm de fontes secundárias; o texto oficial e suas regulamentações devem ser consultados.
+
+#16
+MC: Segundo a LGPD, qual princípio deve orientar o tratamento de dados de crianças e adolescentes?
++ O melhor interesse da criança e do adolescente.
+- A conveniência do fornecedor do serviço. || Contraria o princípio de proteção prioritária.
+- O interesse comercial da escola. || A escola também deve atuar no melhor interesse, e não em interesse comercial.
+- A velocidade do tratamento. || É um critério técnico, não um princípio de proteção legal.
+- A vontade exclusiva do estudante, sem qualquer responsável. || Para crianças, a lei exige a atenção a consentimento específico de um responsável nos casos previstos.
+R: A LGPD coloca o melhor interesse como parâmetro para o tratamento de dados de menores.
+
+#17
+MC: Que distinção entre obrigação, recomendação e prática é útil na adequação etária?
++ Obrigação é o que a norma exige; recomendação é o que organismos e especialistas sugerem; prática é o que a escola decide em seu contexto.
+- As três têm o mesmo valor jurídico. || Recomendações e práticas não têm força de lei.
+- Prática é sempre mais forte que a lei. || Nenhuma prática escolar pode contrariar norma legal.
+- Recomendação é proibição disfarçada. || Recomendações orientam, mas não obrigam por si.
+- Obrigação só existe quando a escola quiser. || A obrigação decorre da norma, e não da vontade da escola.
+R: Diferenciar esses níveis evita tratar sugestões como leis e leis como sugestões.
+
+#18
+MC: Por que a idade mínima indicada nos termos de serviço de uma ferramenta importa para a escola?
++ Porque o uso por estudantes abaixo da idade exigida pode violar os termos e as condições de consentimento e proteção de dados.
+- Porque os termos de serviço são irrelevantes para a escola. || Os termos definem condições de uso, coleta de dados e consentimento.
+- Porque basta o estudante declarar que tem a idade exigida. || A autodeclaração é frágil e não elimina a responsabilidade da escola.
+- Porque a idade mínima é fixada pelo professor. || Quem fixa é o provedor e a lei; a escola decide como proceder.
+- Porque só vale para universidades. || Os termos de uso aplicam-se a qualquer usuário, e a escola deve conferi-los.
+R: Conferir termos de serviço e idade é parte da diligência da escola antes de adotar uma ferramenta.
+
+#19
+MC: Qual orientação costuma ser mais prudente para a educação infantil quanto ao uso de IA?
++ Evitar o uso direto pelas crianças, restringindo a IA, se houver, à preparação do professor.
+- Oferecer assistentes conversacionais individuais a cada criança. || Contraria a necessidade de brincar, conviver e explorar com o corpo e a proteção de dados.
+- Usar IA para substituir as interações com adultos. || As interações com adultos são essenciais ao desenvolvimento na primeira infância.
+- Permitir que crianças criem contas pessoais. || Cria coleta de dados e riscos sem finalidade pedagógica clara.
+- Basear a escolha na popularidade do aplicativo. || Popularidade não é critério de adequação etária.
+R: Na primeira infância, a precaução e o brincar mediado por adultos orientam a decisão.
+
+#20
+MC: Qual é o papel adequado das tecnologias assistivas com IA em relação aos apoios humanos de acessibilidade?
++ Complementar, mas não substituir intérpretes, mediadores e atendimento educacional especializado.
+- Substituir completamente os profissionais de apoio. || Os recursos têm erros e limitações e não substituem a mediação especializada.
+- Ser irrelevantes para estudantes com deficiência. || Podem ajudar em legendas, descrição e leitura quando verificados.
+- Ser impostas a todos os estudantes sem consulta. || A escolha de recursos deve envolver a pessoa com deficiência e a equipe.
+- Ser usadas sem nenhuma verificação. || Descrições e transcrições automáticas podem conter erros.
+R: A inclusão depende de recursos combinados e da participação dos usuários, com apoio humano especializado.
+
+#21
+MC: Um estudante com deficiência visual recebe, de um sistema, a descrição de uma figura que não corresponde ao que está na imagem. O que isso mostra?
++ Que descrições automáticas podem errar e precisam de conferência por quem conhece o conteúdo.
+- Que o estudante deve parar de usar qualquer recurso digital. || É uma reação excessiva; o recurso pode ser útil com verificação.
+- Que o erro é culpa do estudante por usar o recurso. || Erros decorrem das limitações do sistema.
+- Que descrições manuais são sempre piores que as automáticas. || Descrições feitas por professor ou equipe costumam ser mais confiáveis e contextualizadas.
+- Que figuras não precisam ser descritas. || A descrição é parte da acessibilidade.
+R: A verificação humana é essencial em recursos de acessibilidade baseados em IA.
+
+#22
+MC: Por que o desenho universal para a aprendizagem ajuda a pensar a inclusão?
++ Porque propõe oferecer múltiplos meios de representação, de ação e expressão e de engajamento desde o planejamento.
+- Porque cria um único formato ideal para todos. || Propõe flexibilidade e variedade, não padronização.
+- Porque só se aplica a estudantes com deficiência diagnosticada. || Beneficia muitos estudantes e antecipa barreiras para todos.
+- Porque dispensa a atuação de profissionais especializados. || Não substitui o atendimento educacional especializado.
+- Porque elimina a necessidade de avaliação. || Refere-se a oferecer vias de acesso e expressão, e não a abolir avaliação.
+R: O desenho universal busca reduzir barreiras antes que elas apareçam, ampliando as vias de aprendizagem.
+
+#23
+MC: Qual é um exemplo de decisão que não deveria depender apenas da saída automática de um sistema de IA?
++ Atribuir nota com consequência, classificar o estudante como "de risco" ou aplicar medida disciplinar.
+- Sugerir sinônimos para um texto. || Tarefa de baixo risco, em que a revisão é imediata.
+- Gerar uma lista de ideias de título para um cartaz. || O resultado é rapidamente avaliado pelo próprio autor e tem baixa consequência.
+- Reorganizar um texto em tópicos para estudo pessoal. || Uso de baixo risco, controlado pelo estudante.
+- Traduzir uma frase para compreensão geral. || Pode ser feito com verificação simples; não envolve consequência sobre a pessoa.
+R: Decisões que afetam direitos e trajetórias exigem responsabilidade humana, revisão e possibilidade de contestação.
+
+#24
+MC: O que significa dizer que rótulos e perfis automáticos podem gerar profecias autorrealizáveis?
++ Que a classificação do estudante pode orientar expectativas e oportunidades, levando-o a confirmar o rótulo.
+- Que os rótulos sempre estão corretos. || Rótulos podem estar errados e, ainda assim, afetar o estudante.
+- Que o estudante nunca é afetado pelas expectativas. || Expectativas influenciam oportunidades e comportamento.
+- Que perfis só existem em planilhas manuais. || Sistemas automáticos também geram perfis.
+- Que rótulos eliminam o preconceito. || Podem, ao contrário, reforçá-lo.
+R: Por isso, classificações automáticas exigem transparência, revisão humana e possibilidade de contestação.
+
+#25
+MC: Em um protocolo escolar de incidentes, qual elemento é indispensável?
++ A definição de quem recebe o relato, quem acolhe, quem decide e como as famílias são informadas.
+- Uma lista de estudantes culpados antes de qualquer apuração. || Presume a culpa e ignora o devido cuidado.
+- A proibição de qualquer relato por escrito. || Sem registro, não há acompanhamento.
+- A divulgação pública dos casos para servir de exemplo. || Expõe estudantes e viola o sigilo.
+- A transferência da responsabilidade para as famílias. || A escola tem deveres de proteção e acolhimento.
+R: Fluxos claros evitam improvisação e protegem vítimas e envolvidos.
+
+#26
+MC: Que cuidado deve ter a carta às famílias sobre o uso de IA na escola?
++ Linguagem simples, informando o uso, a proteção de dados, a alternativa sem IA e um contato para dúvidas.
+- Termos técnicos complexos para demonstrar rigor. || Dificulta a compreensão e a participação.
+- Ocultar o uso de IA para evitar questionamentos. || Reduz a transparência e a confiança.
+- Exigir adesão imediata sem alternativas. || Restringe a autonomia das famílias e a equidade.
+- Publicar dados dos estudantes como prova de eficácia. || Viola a privacidade.
+R: A comunicação com as famílias deve ser transparente, acessível e acolhedora.
+
+#27
+MC: Por que a adequação etária pode exigir decisões diferentes entre anos iniciais e ensino médio?
++ Porque desenvolvimento, autonomia, capacidade crítica e riscos mudam com a idade, exigindo mediação mais intensa para os mais novos.
+- Porque estudantes do ensino médio não precisam de orientação. || Também precisam de letramento e acordos, embora com maior autonomia.
+- Porque a IA funciona de modo diferente a cada ano escolar. || A diferença está nas pessoas e nos riscos, não no sistema.
+- Porque a lei autoriza qualquer uso após o 9º ano. || Não há tal autorização geral; termos de serviço e proteção continuam valendo.
+- Porque os anos iniciais não têm acesso a tecnologia. || Muitos têm; a questão é a adequação, não o acesso.
+R: Autonomia progressiva exige mediação decrescente, sem abrir mão da proteção.
+
+#28
+MC: Por que é problemático inserir dados pessoais de estudantes em ferramentas de IA para "personalizar" a atividade?
++ Pode violar a proteção de dados e a confidencialidade, e expor os estudantes a usos que a escola não controla.
+- Porque a IA recusa nomes próprios. || Não é uma limitação técnica geral.
+- Porque estudantes não gostam de personalização. || Não há base; o problema é de proteção de dados.
+- Porque a personalização é proibida em qualquer ensino. || Personalizar é legítimo; o problema é o meio.
+- Porque dados pessoais pioram a qualidade das respostas. || O problema não é a qualidade, mas a proteção e o controle.
+R: Personalização deve ser feita sem dados identificáveis, ou em serviços institucionais com base legal e garantias.
+
+#29
+MC: Qual das seguintes atitudes ajuda a reduzir o risco de que a IA amplie desigualdades entre estudantes?
++ Oferecer momentos de uso em sala, orientar o uso crítico e acompanhar resultados por grupos.
+- Permitir uso apenas fora da escola, por iniciativa das famílias. || Aumenta a dependência de recursos domésticos.
+- Cobrar uso avançado de todos sem ensinar a usar. || Penaliza quem tem menos repertório e apoio.
+- Avaliar apenas quem apresentar o trabalho com IA. || Prejudica quem não pode usar ou escolhe não usar.
+- Ignorar diferenças de língua e variedade linguística. || Aumenta o risco de penalizar estudantes por motivos alheios à aprendizagem.
+R: Equidade exige oferecer condições, ensinar o uso e monitorar efeitos.
+
+#30
+MC: Qual é a melhor forma de resumir o que a pesquisa permite afirmar sobre vieses em sistemas de IA?
++ Há evidências de viés em vários sistemas, mas é preciso testar e acompanhar cada sistema e contexto antes de concluir.
+- Todos os sistemas apresentam exatamente os mesmos vieses em qualquer contexto. || Generalização indevida; os vieses variam por sistema, dados e tarefa.
+- Nenhum sistema foi encontrado com viés. || Contradiz estudos que documentam desempenho desigual.
+- O viés só existe em reconhecimento facial. || Há evidências em saúde, linguagem e educação.
+- Os vieses desaparecem com o tempo, sem ação humana. || Não há garantia; exigem monitoramento e correção.
+R: Evidências gerais justificam a cautela, mas cada sistema e contexto precisam de verificação.
+
+DISC: Explique as três dimensões da equidade no uso de IA (acesso, uso e resultados) e dê um exemplo de cada uma na sua escola ou rede.
+R: Acesso: dispositivos, conexão, língua; uso: letramento, orientação, tempo; resultados: quem aprende mais ou fica para trás; exemplos pertinentes à realidade.
+C: Três dimensões distintas; exemplos concretos; articulação com ações.
+
+DISC: Descreva a "pergunta da porta fechada" e aplique-a a uma atividade com IA que você pretende propor.
+R: Quem não conseguiria realizar a atividade e o que será feito para garantir a mesma oportunidade; aplicação com alternativas (sala, papel, demonstração coletiva).
+C: Aplicação coerente; alternativas viáveis.
+
+DISC: Identifique cinco pontos em que o viés pode entrar em um sistema de IA e dê um exemplo educacional para cada um.
+R: Dados, rotulagem/medidas, projeto, uso/interpretação, decisões que geram novos dados; exemplos: variedades linguísticas, nota como proxy, etc.
+C: Pontos corretos; exemplos pertinentes.
+
+DISC: Explique o caso do algoritmo de saúde que usava gasto como indicador de necessidade e relacione-o a um indicador usado na escola.
+R: Gasto refletia desigualdade de acesso; subestimou necessidade; análogo: nota, frequência ou tempo na plataforma como retrato do estudante.
+C: Relato correto; analogia pertinente; cautela.
+
+DISC: Planeje um teste de pares para verificar se um assistente trata de modo diferente textos em variedade padrão e com marcas regionais, indicando controles e registros.
+R: Textos fictícios com mesmo conteúdo; um aspecto alterado; repetições; registro de pedido, data, sistema, resposta; conclusões cautelosas.
+C: Controle de variáveis; registro; ética.
+
+DISC: Por que um resultado sem diferenças em um teste de vieses não permite concluir que o sistema é imparcial?
+R: Teste limitado; poucos pares; tarefas específicas; viés pode aparecer em outros contextos; necessidade de acompanhamento contínuo.
+C: Reconhece limites; justifica a vigilância.
+
+DISC: Discuta por que detectores de IA não devem ser usados como prova isolada e que alternativas de avaliação você adotaria.
+R: Falsos positivos; viés contra quem escreve em segunda língua; alternativas: processo, oralidade, rascunhos, tarefas em sala, rubricas.
+C: Argumentos baseados em evidência; alternativas viáveis.
+
+DISC: Explique o fenômeno da bajulação em modelos de linguagem e proponha uma estratégia para que estudantes percebam e enfrentem o problema.
+R: Tendência a concordar; pode reforçar erros; estratégia: pedir contra-argumentos, testar com afirmação falsa, conferir em fonte.
+C: Conceito correto; estratégia aplicável.
+
+DISC: Elabore um acordo de segurança de cinco regras para uma turma de adolescentes sobre o uso de IA.
+R: Exemplos: não inserir dados pessoais, não usar imagens de colegas, conferir fatos, avisar adulto em desconforto, não usar para ofender ou enganar.
+C: Regras claras e exequíveis; linguagem adequada à idade.
+
+DISC: Descreva como a escola deve agir diante de um caso de imagem falsa de um estudante criada com IA, citando prevenção, resposta e acompanhamento.
+R: Prevenção: acordos e letramento; resposta: acolhimento, protocolo, famílias, rede de proteção; acompanhamento: apoio, medidas educativas, revisão.
+C: Três momentos; cuidado com vítima e sigilo.
+
+DISC: Diferencie obrigação, recomendação e prática na adequação etária, usando LGPD, a sugestão da UNESCO de idade mínima e a decisão de uma escola.
+R: LGPD: obrigação legal (melhor interesse); UNESCO: recomendação (13 anos como referência); escola: prática local fundamentada.
+C: Distinção correta; exemplos adequados.
+
+DISC: Por que o capítulo recomenda precaução quanto a assistentes que simulam amizade com crianças, apesar de não haver estudos conclusivos?
+R: Princípio da precaução; efeitos de longo prazo desconhecidos; vulnerabilidade; vínculo e coleta de dados; evidências indiretas.
+C: Reconhece incerteza; justifica precaução.
+
+DISC: Proponha uma matriz de usos permitidos, mediados e não permitidos de IA para uma etapa de ensino à sua escolha.
+R: Matriz coerente com a idade: permitido (preparação docente), mediado (demonstração), não permitido (contas individuais sem consentimento), alternativas.
+C: Coerência com a etapa; alternativas sem IA.
+
+DISC: Discuta os limites das tecnologias assistivas baseadas em IA e o papel dos apoios humanos de acessibilidade.
+R: Erros de descrição, reconhecimento de voz desigual, limitações com língua de sinais; apoio de intérpretes, AEE; participação do usuário.
+C: Limites e potenciais; centralidade do apoio humano.
+
+DISC: Como o desenho universal para a aprendizagem pode orientar uma atividade com IA sem excluir estudantes com deficiência?
+R: Múltiplos meios de representação, ação/expressão e engajamento; alternativas de formato; verificação; participação.
+C: Aplicação aos três princípios; exemplo.
+
+DISC: Redija os principais itens de uma carta às famílias sobre o uso de IA na escola.
+R: Finalidade e uso; proteção de dados; alternativa sem IA; supervisão; canais de contato; linguagem simples.
+C: Clareza; acolhimento; transparência.
+
+DISC: Explique por que filtros de conteúdo são insuficientes para proteger estudantes e que camadas adicionais você proporia.
+R: Filtros imperfeitos (falsos negativos e positivos); camadas: escolha do sistema, configuração institucional, mediação, letramento, acolhimento.
+C: Argumento fundamentado; camadas realistas.
+
+DISC: Analise como a ausência de estudos de longo prazo sobre crianças e adolescentes deve (ou não) orientar decisões escolares.
+R: Evidência limitada não autoriza nem proíbe automaticamente; pede precaução, pilotos, supervisão, revisão; evitar tanto alarmismo quanto entusiasmo.
+C: Equilíbrio; cautela argumentada.
+
+DISC: Que rótulos ou perfis automáticos você deixaria de usar na sua prática por risco de profecia autorrealizável, e como os substituiria?
+R: Exemplos: perfil de risco, estilo de aprendizagem; substituição por observação, diálogo, evidências de desempenho e revisão humana.
+C: Exemplos pertinentes; alternativas pedagógicas.
+
+DISC: Redija um parágrafo reflexivo sobre qual risco deste capítulo mais exige atenção em sua realidade e o primeiro passo que você daria.
+R: Resposta pessoal: risco escolhido; contexto; primeiro passo concreto; quem envolver.
+C: Reflexividade; coerência com o capítulo; ação viável.

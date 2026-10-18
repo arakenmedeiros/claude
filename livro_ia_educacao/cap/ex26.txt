@@ -1,0 +1,349 @@
+#1
+MC: Qual é a melhor definição de verificação em cadeia de uma afirmação gerada por IA?
++ Localizar a fonte primária, ler o trecho e conferir se ele sustenta exatamente o que foi afirmado, registrando a decisão.
+- Perguntar ao mesmo sistema se a resposta está correta. || Não é independente: o sistema pode repetir o erro ou concordar por tendência.
+- Contar quantas vezes a afirmação aparece em respostas do sistema. || Repetição de respostas não é evidência; pode repetir o mesmo erro.
+- Ler apenas o título da fonte. || O título não demonstra que o trecho sustenta a afirmação.
+- Confiar nas afirmações escritas em tom seguro. || O tom seguro não indica correção.
+R: A cadeia liga afirmação, fonte primária, trecho lido e registro.
+
+#2
+MC: Uma professora pede a um assistente de IA que confirme se a lei citada por ele existe, e ele responde que sim. O que isso comprova?
++ Nada de modo independente: a lei precisa ser localizada em fonte oficial.
+- Que a lei existe, porque o sistema confirmou. || A confirmação vem do mesmo sistema que pode ter inventado a citação.
+- Que a lei está vigente, porque o sistema citou o número. || Número citado não prova existência nem vigência.
+- Que a lei se aplica à escola, pois o sistema leu o contexto. || Aplicabilidade exige análise de fonte e, quando necessário, de pessoa habilitada.
+- Que o sistema tem acesso às bases jurídicas em tempo real. || Muitos sistemas não consultam bases externas, e isso não foi demonstrado.
+R: Confirmação interna não é verificação.
+
+#3
+MC: Quais tipos de conteúdo gerado por IA merecem atenção prioritária na verificação?
++ Citações, leis, normas, referências, números e datas.
+- Apenas as saudações e despedidas. || Não carregam risco factual relevante.
+- Somente o título do texto. || O título raramente concentra os riscos factuais.
+- Apenas a formatação do texto. || A formatação é secundária diante de erros factuais.
+- Nenhum, se o texto estiver fluente. || Fluência não indica correção.
+R: Pontos verificáveis concentram o risco de erro.
+
+#4
+MC: O que é a leitura lateral?
++ Sair da página e consultar outras fontes sobre quem produziu a informação e se fontes confiáveis a confirmam.
+- Ler o texto apenas de lado, em velocidade maior. || Confunde o termo com uma técnica de velocidade de leitura.
+- Ler o mesmo texto em dois idiomas. || A leitura lateral trata de fontes externas, e não de tradução.
+- Reler várias vezes o mesmo parágrafo. || Reler não acrescenta fontes independentes.
+- Ler somente os comentários de outros leitores. || Comentários não substituem a avaliação de fontes confiáveis.
+R: É uma prática de checar a fonte e a confirmação fora da página.
+
+#5
+MC: Por que a verificação deve ser proporcional ao risco do uso?
++ Porque verificar tudo com a mesma intensidade é inviável, e usos de risco alto (documentos, saúde, direito) exigem mais rigor.
+- Porque usos de baixo risco dispensam qualquer leitura. || Mesmo no risco baixo, a leitura crítica é necessária.
+- Porque o risco é definido pelo sistema de IA. || O professor avalia o risco com base no uso e nas consequências.
+- Porque apenas usos de risco alto envolvem estudantes. || Estudantes podem estar envolvidos em qualquer nível de risco.
+- Porque a lei fixa o mesmo procedimento para todos os usos. || Não há procedimento único fixado; o capítulo propõe graduação prática.
+R: Graduar o esforço pelo risco é uma regra prática.
+
+#6
+MC: Um professor quer usar um gabarito gerado por IA com a turma. Qual verificação mínima é adequada?
++ Resolver os exercícios, conferir cada resposta e os conceitos em fonte confiável, e pedir leitura de um colega quando possível.
+- Conferir apenas a primeira resposta. || Um gabarito errado em qualquer questão prejudica estudantes.
+- Confiar no gabarito por ter vindo com explicação. || Explicações também podem conter erros.
+- Pedir ao sistema que confirme o gabarito. || Confirmação do próprio sistema não é independente.
+- Distribuir o gabarito e esperar que os estudantes encontrem erros. || Transfere ao estudante a responsabilidade do professor.
+R: Gabaritos têm risco médio a alto e exigem conferência completa.
+
+#7
+MC: O que é viés de automação?
++ A tendência de aceitar sugestões de sistemas automatizados e deixar de procurar informações que as contrariem.
+- A tendência de desconfiar de tudo o que vem de máquinas. || É o oposto: excesso de confiança.
+- A prática de automatizar todas as tarefas docentes. || Refere-se a um viés de julgamento, e não à automatização em si.
+- A preferência por professores a sistemas. || Não descreve o fenômeno.
+- Um erro de programação que repete respostas. || É um fenômeno humano, e não um defeito de código.
+R: Pressa e cansaço aumentam o risco desse viés.
+
+#8
+MC: De acordo com a LGPD, o que são dados pessoais?
++ Informações relacionadas a pessoa natural identificada ou identificável.
+- Apenas o nome completo e o CPF. || A definição é mais ampla, incluindo informações que tornam a pessoa identificável.
+- Somente informações secretas. || Dados pessoais não precisam ser secretos para serem protegidos.
+- Apenas dados de pessoas jurídicas. || A LGPD trata de pessoas naturais.
+- Somente dados armazenados em papel. || A lei alcança dados em meios físicos e digitais.
+R: Identificável inclui combinação de informações.
+
+#9
+MC: Qual dos princípios da LGPD orienta usar apenas o mínimo indispensável de dados para uma finalidade?
++ O princípio da necessidade.
+- O princípio da publicidade irrestrita. || Não existe esse princípio, que contrariaria a proteção de dados.
+- O princípio da ampliação progressiva. || Não consta como princípio; o oposto da minimização.
+- O princípio da conveniência do controlador. || A lei exige finalidade legítima, e não apenas conveniência.
+- O princípio da retenção indefinida. || Não existe; a lei prevê eliminação após o fim do tratamento, em regra.
+R: Necessidade significa limitar o tratamento ao mínimo para a finalidade.
+
+#10
+MC: Por que o tratamento de dados de crianças e adolescentes exige atenção especial?
++ Porque a lei determina que seja realizado em seu melhor interesse, com cuidados específicos.
+- Porque crianças não têm direito à privacidade. || Têm; é justamente a razão de proteção especial.
+- Porque o uso de dados de crianças é proibido em qualquer circunstância. || A lei prevê regras e condições, e não uma proibição absoluta.
+- Porque crianças digitam mais devagar. || Irrelevante para a proteção de dados.
+- Porque as escolas não guardam dados de estudantes. || Escolas guardam muitos dados de estudantes.
+R: Crianças e adolescentes têm proteção reforçada.
+
+#11
+MC: Uma professora retira o nome de um estudante de um relatório, mas mantém a idade, a série, o bairro e uma condição rara. O que se pode afirmar?
++ A combinação de informações ainda pode identificar o estudante em uma comunidade pequena.
+- O estudante está anonimizado, pois o nome foi removido. || Remover o nome não basta quando a combinação identifica.
+- O relatório pode ser colado em qualquer sistema. || A decisão depende de se há identificação possível e de base adequada.
+- Qualquer dado, sem o nome, deixa de ser pessoal. || Dados que permitem identificação continuam pessoais.
+- O risco existe apenas para estudantes do ensino médio. || O risco existe em qualquer etapa e é maior para crianças.
+R: A combinação de dados pode reidentificar.
+
+#12
+MC: Qual pedido protege melhor os dados de um estudante?
++ "Liste elementos que costumam compor um parecer descritivo de leitura nos anos iniciais; eu preencherei com minhas observações."
+- "Resuma o relatório de [nome], 9 anos, com laudo de [condição], que colo abaixo." || Expõe nome, idade e dado de saúde.
+- "Escreva o parecer do estudante da turma 4º B com todas as notas dele." || Expõe nota individual e turma, e delega o parecer.
+- "Analise a foto do estudante e diga seu perfil." || Envolve imagem de criança e inferências inadequadas.
+- "Compare os laudos de três colegas de turma." || Envolve dados sensíveis de várias crianças.
+R: Descrever a tarefa em termos gerais preserva a utilidade e protege a criança.
+
+#13
+MC: Qual dos itens pertence ao grupo de dados que não devem ser inseridos em sistemas externos?
++ Nomes, laudos, notas individuais e imagens de crianças.
+- Planos de aula escritos pelo próprio professor. || Textos próprios sem dados pessoais são, em geral, aceitáveis.
+- Situações fictícias criadas para a atividade. || Casos fictícios são uma forma de proteger dados.
+- Conteúdo curricular público. || É informação pública e sem dados pessoais.
+- Perguntas gerais sobre estratégias didáticas. || Não envolvem dados pessoais.
+R: O semáforo vermelho reúne dados identificáveis e sensíveis.
+
+#14
+MC: Por que o capítulo recomenda cautela ao colar um capítulo inteiro de livro didático em um sistema externo?
++ Porque materiais de terceiros têm direitos autorais e termos de uso que podem ser violados.
+- Porque livros didáticos são sempre incorretos. || Não é um problema de correção do livro.
+- Porque o sistema só aceita textos com menos de uma página. || A cautela é jurídica, e não de capacidade técnica.
+- Porque capítulos inteiros reduzem a qualidade do ensino. || Não está em questão.
+- Porque o MEC proíbe qualquer uso de livros didáticos digitais. || Não há tal proibição geral; trata-se de direitos autorais.
+R: Prefira trechos curtos, materiais abertos ou textos próprios.
+
+#15
+MC: Em pesquisa, que orientação as recomendações internacionais mencionadas no livro dão sobre autoria e IA?
++ Sistemas de IA não devem ser listados como autores, e o uso deve ser declarado.
+- A IA deve ser listada como coautora principal. || Contraria a recomendação: IA não responde pelo trabalho.
+- O uso de IA nunca deve ser mencionado. || A transparência é recomendada.
+- Somente estudantes precisam declarar o uso. || As recomendações se dirigem aos autores em geral.
+- A declaração só é necessária se a IA errou. || Refere-se ao uso, e não ao erro.
+R: Autoria exige responsabilidade, que a IA não assume.
+
+#16
+MC: Que pergunta ajuda a avaliar se uma ferramenta de IA é adequada para determinado uso?
++ Os dados inseridos são guardados e podem ser reutilizados, e qual é a política de privacidade?
+- Qual é a cor da interface? || A cor não tem relação com a proteção de dados.
+- Quantos colegas já usaram a ferramenta? || A popularidade não informa sobre privacidade.
+- Se o nome da ferramenta é fácil de lembrar. || Irrelevante para a decisão.
+- Se a ferramenta tem versão em vários idiomas, apenas. || Idiomas não resolvem as questões de proteção.
+R: Retenção, reutilização e contrato são pontos centrais.
+
+#17
+MC: Uma escola adota uma ferramenta institucional. Qual postura é adequada?
++ Manter a minimização e a verificação, pois a ferramenta institucional não elimina esses cuidados.
+- Inserir todos os dados dos estudantes, por ser institucional. || Contradiz o princípio de necessidade.
+- Dispensar a verificação das respostas. || A ferramenta institucional também pode errar.
+- Abolir o registro de uso. || O registro continua útil.
+- Informar famílias somente se houver incidente. || A transparência prévia faz parte dos combinados.
+R: Ferramentas institucionais reduzem certas exposições, mas não dispensam cuidados.
+
+#18
+MC: Por que registrar o uso de IA?
++ Para prestar contas, explicar o que foi feito e aprender com o que funcionou, protegendo o professor e favorecendo a transparência.
+- Para substituir a verificação das respostas. || Registrar não verifica; as práticas são complementares.
+- Para identificar estudantes que usam IA. || O registro docente trata do uso do professor e não de vigilância de estudantes.
+- Para comprovar a autoria do sistema. || IA não é autora.
+- Para evitar qualquer conversa com famílias. || O registro apoia a conversa, e não a substitui.
+R: Registro é prestação de contas e aprendizagem.
+
+#19
+MC: Qual dos campos abaixo é essencial em uma ficha de registro de uso de IA?
++ Finalidade, resumo do pedido sem dados pessoais, verificações feitas e decisão.
+- Nome e laudo dos estudantes envolvidos. || A ficha não deve conter dados pessoais.
+- Apenas a resposta completa do sistema. || Sem finalidade e verificações, a ficha não permite avaliar o uso.
+- Somente a data. || É insuficiente para reconstituir o uso.
+- A senha de acesso da ferramenta. || Credenciais jamais devem ser registradas.
+R: A ficha deve ser simples e sem dados pessoais.
+
+#20
+MC: O que uma declaração curta de uso de IA deve informar?
++ A ferramenta, a finalidade, o que foi revisado e conferido, e que a responsabilidade é do autor.
+- O nome de todos os estudantes da turma. || Seria exposição desnecessária.
+- Apenas que foi usada "uma tecnologia". || É vaga demais para ser transparente.
+- Que o sistema é o autor do material. || A autoria e a responsabilidade permanecem humanas.
+- A íntegra de todos os pedidos, com dados pessoais. || Expõe dados e não é necessária.
+R: A declaração é curta, informa o essencial e preserva dados.
+
+#21
+MC: Que combinado com famílias é coerente com o capítulo?
++ Informar para que a IA será usada, que dados não serão inseridos e que o professor continua responsável pelas decisões.
+- Informar que famílias não podem fazer perguntas sobre o assunto. || Famílias devem poder pedir informações.
+- Garantir que a IA nunca erra. || Nenhum sistema assegura isso.
+- Delegar à IA a avaliação final dos estudantes. || A avaliação permanece docente.
+- Compartilhar os pedidos de todos os professores publicamente. || Não é necessário e pode expor dados.
+R: Transparência e responsabilidade docente são centrais.
+
+#22
+MC: O que pesquisas indicam sobre detectores de texto gerado por IA?
++ São pouco confiáveis como prova isolada e podem prejudicar desproporcionalmente falantes não nativos.
+- São perfeitos e dispensam outras evidências. || Contraria os estudos.
+- Só funcionam em textos escritos à mão. || Não há base para essa afirmação.
+- Eliminam a necessidade de conversar com estudantes. || A conversa e a avaliação do processo continuam importantes.
+- São exigidos por lei em todas as escolas. || Não há essa exigência geral.
+R: Detectores não devem ser prova única.
+
+#23
+MC: Qual das alternativas descreve uma verificação circular?
++ Pedir ao mesmo sistema que confirme as informações que ele mesmo produziu.
+- Conferir uma lei no diário oficial. || É verificação em fonte primária.
+- Pedir a um colega que leia o material. || É revisão independente.
+- Refazer um cálculo com calculadora. || Usa outro caminho de verificação.
+- Consultar o livro didático para checar uma definição. || É consulta a fonte independente.
+R: Circularidade ocorre quando a verificação depende da mesma fonte.
+
+#24
+MC: Qual é uma limitação das fichas de registro?
++ Se forem longas demais, podem ser abandonadas, e se incluírem dados pessoais, expõem as pessoas.
+- Elas impedem o uso de IA. || Não impedem; registram o uso.
+- Elas só podem ser preenchidas por gestores. || Podem ser usadas pelos próprios professores.
+- Elas garantem a correção do conteúdo. || Registro não verifica.
+- Elas substituem políticas institucionais. || Apoiam, mas não substituem políticas.
+R: Mantenha o registro simples e sem dados pessoais.
+
+#25
+MC: Em que situação o capítulo recomenda dispensar a IA?
++ Ao lidar com dados identificáveis de estudantes, documentos sigilosos, pareceres individuais ou quando não se sabe para onde vão os dados.
+- Ao pedir ideias gerais de atividade para uma turma descrita em termos gerais. || Esse uso, com verificação, é possível.
+- Ao revisar a linguagem de um texto próprio sem dados pessoais. || É um uso aceitável com a devida revisão.
+- Ao criar um caso fictício para uma atividade. || Casos fictícios protegem dados.
+- Ao listar afirmações verificáveis de um texto sem dados pessoais. || É um apoio possível à verificação.
+R: Dados identificáveis e documentos sigilosos pedem dispensa.
+
+#26
+MC: O que a pesquisa citada indica sobre dados inseridos em modelos de linguagem?
++ Modelos podem reproduzir trechos de dados de treinamento, o que justifica a postura de minimização.
+- Que todo dado inserido será divulgado a todos. || Não há essa demonstração geral.
+- Que modelos nunca reproduzem dados de treinamento. || Contraria a pesquisa.
+- Que apenas imagens, e não textos, podem ser reproduzidas. || O estudo tratou de textos.
+- Que a minimização é inútil. || É justamente a conclusão prática recomendada.
+R: O risco justifica inserir apenas o necessário.
+
+#27
+MC: Uma escola pequena resolve descrever uma situação de conflito sem nomes, mas com série, horário e acontecimento específico. Qual é o risco?
++ Os envolvidos podem ser reconhecidos pela comunidade a partir do conjunto de detalhes.
+- Nenhum, pois sem nomes não há identificação. || A combinação de detalhes pode identificar.
+- O sistema se recusará a responder. || Não é o risco relevante.
+- A resposta será necessariamente mais curta. || Não tem relação com o risco.
+- Haverá violação de direitos autorais. || O risco aqui é de identificação, e não de direitos autorais.
+R: Detalhes específicos podem reidentificar em comunidades pequenas.
+
+#28
+MC: Qual é a relação entre verificar, proteger e registrar?
++ São hábitos complementares: a verificação reduz o dano do erro, a proteção evita danos irreversíveis e o registro permite explicar e aprender.
+- São alternativas: basta praticar um deles. || Cada um cobre um aspecto diferente do risco.
+- O registro dispensa a verificação. || Registrar não confere o conteúdo.
+- A proteção de dados dispensa o registro. || Proteger não permite prestar contas do uso.
+- A verificação torna desnecessária a proteção. || Um dado exposto não é desfeito por conferir o conteúdo.
+R: Os três hábitos se reforçam.
+
+#29
+MC: Um professor sem acesso a ferramentas institucionais quer usar IA com segurança. Qual regra simples é mais robusta?
++ Não inserir dados pessoais em sistemas externos, descrevendo a turma em termos gerais.
+- Inserir os dados e rezar para que nada aconteça. || Não é uma medida de proteção.
+- Trocar o nome do estudante por um apelido e manter o restante. || Os demais dados ainda podem identificar.
+- Pedir ao sistema que prometa sigilo. || Promessa do sistema não é garantia.
+- Usar qualquer ferramenta gratuita sem ler política alguma. || Desconhecer a política aumenta o risco.
+R: A regra de não inserir dados pessoais é simples e robusta.
+
+#30
+MC: Ao registrar o uso de IA em planilha compartilhada, o que se deve evitar?
++ Incluir nomes ou dados de estudantes nos resumos dos pedidos.
+- Registrar a data do uso. || A data é um campo útil.
+- Registrar a finalidade em linguagem geral. || É um campo recomendado.
+- Registrar as fontes usadas para conferir. || É parte da ficha.
+- Registrar a decisão final tomada. || Deve constar na ficha.
+R: O registro não pode virar uma nova exposição de dados.
+
+DISC: Explique o que é verificação em cadeia e aplique as cinco etapas a uma afirmação de um texto gerado por IA da sua área.
+R: Separar; localizar fonte primária; ler o trecho; registrar; decidir. Exemplo coerente com data ou conceito.
+C: Cinco etapas; exemplo; fonte primária; registro.
+
+DISC: Por que pedir ao próprio sistema que confirme suas respostas não é verificação independente?
+R: O sistema pode repetir ou concordar por tendência; a verificação exige fonte externa, colega ou conhecimento próprio.
+C: Argumento sobre circularidade; alternativas externas.
+
+DISC: Construa uma tabela de verificação proporcional ao risco com quatro usos de IA na sua rotina.
+R: Quatro usos classificados por risco com verificação mínima (ex.: ideias, exercício, gabarito, comunicado).
+C: Classificação coerente; verificações adequadas.
+
+DISC: Descreva o viés de automação e proponha duas estratégias para reduzi-lo na prática docente.
+R: Aceitar sugestões automatizadas sem buscar contraevidência. Estratégias: coluna de conferência, leitura cruzada, pausa antes de usar, checklist.
+C: Define; estratégias viáveis.
+
+DISC: Explique por que remover o nome de um estudante nem sempre anonimiza um relatório. Dê um exemplo.
+R: A combinação de idade, série, bairro, condição pode identificar. Exemplo em escola pequena.
+C: Explica reidentificação; exemplo.
+
+DISC: Reescreva um pedido que continha dados identificáveis de um estudante para uma versão que protege os dados e mantém a utilidade.
+R: Descrever perfil geral ou pedir roteiro de parecer; sem nome, idade exata, laudo; professor completa.
+C: Dados removidos; utilidade; autoria docente.
+
+DISC: Discuta como os princípios de finalidade, necessidade e segurança orientam o uso de IA na escola.
+R: Finalidade: propósito claro; necessidade: mínimo de dados; segurança: proteção contra acesso e vazamento. Exemplos.
+C: Relaciona os princípios; exemplos escolares.
+
+DISC: Que perguntas você faria para decidir se uma ferramenta de IA é adequada para uso na sua escola?
+R: Quem é responsável; retenção; reutilização; contrato; idade; versão local; política de privacidade.
+C: Perguntas pertinentes; foco em dados.
+
+DISC: Compare ferramentas institucionais ou locais com ferramentas abertas quanto à proteção de dados, e explique por que a minimização continua necessária.
+R: Podem reduzir certas exposições; não eliminam riscos, erros ou necessidade de políticas; minimização é regra básica.
+C: Comparação equilibrada; manutenção de cuidados.
+
+DISC: Elabore uma ficha de registro de uso de IA e preencha-a com um exemplo fictício.
+R: Campos: data, ferramenta, finalidade, resumo sem dados pessoais, verificações, alterações, cuidados, decisão.
+C: Campos adequados; exemplo sem dados pessoais.
+
+DISC: Redija uma declaração curta de uso de IA para um material didático seu.
+R: Ferramenta, finalidade, revisão e conferência, ausência de dados pessoais, responsabilidade.
+C: Clareza; completude; objetividade.
+
+DISC: Explique por que detectores de texto gerado por IA não devem ser usados como prova isolada e que alternativas você usaria.
+R: Falsos positivos e negativos; viés contra não nativos; alternativas: conversa, processo, oralidade, versões.
+C: Cita limitações; alternativas; justiça.
+
+DISC: Proponha cinco combinados com estudantes e famílias sobre o uso de IA na turma.
+R: Finalidade; dados não inseridos; declaração de uso; responsabilidade docente; canal de dúvidas.
+C: Combinados exequíveis; transparência.
+
+DISC: Discuta os cuidados com direitos autorais ao usar materiais de terceiros e produções de estudantes em sistemas de IA.
+R: Licenças e termos; trechos curtos ou materiais abertos; produções de estudantes exigem base adequada e cautela.
+C: Cuidados concretos; respeito à autoria.
+
+DISC: Analise o caso: uma professora cola o relatório de um estudante e recebe uma lei inexistente. Que erros ocorreram e como evitá-los?
+R: Exposição de dados; ausência de verificação; ausência de registro. Evitar: minimizar, conferir fonte oficial, registrar.
+C: Identifica as três falhas; propõe correções.
+
+DISC: Como você usaria o semáforo de dados com uma equipe docente? Dê exemplos de cada cor.
+R: Verde: planos próprios; amarelo: produções sem identificação, dados agregados; vermelho: nomes, laudos, imagens de crianças.
+C: Exemplos adequados; uso formativo.
+
+DISC: Que dificuldades de uma escola com poucos recursos podem surgir ao proteger dados e registrar o uso, e como superá-las?
+R: Falta de apoio jurídico; sem ferramentas institucionais; superar: regra de não inserir dados, caderno de registro, leitura cruzada.
+C: Realismo; soluções de baixo custo.
+
+DISC: Discuta o que a pesquisa permite e não permite afirmar sobre registro de uso e declarações de transparência na educação básica.
+R: Base: princípios de transparência e integridade; não há ensaios conclusivos sobre eficácia na educação básica.
+C: Distingue princípio e evidência; cautela.
+
+DISC: Explique por que verificar, proteger e registrar são hábitos complementares e dê um exemplo em que a falta de um deles compromete os outros.
+R: Verificar reduz erro; proteger evita dano irreversível; registrar permite explicar. Exemplo: sem registro, não se sabe o que conferir ou corrigir.
+C: Relaciona os três; exemplo coerente.
+
+DISC: Escreva um breve roteiro de conversa com uma família que pergunta se a escola usa IA, destacando transparência, proteção de dados e responsabilidade docente.
+R: Informar para que se usa e para que não; que dados não são inseridos; que o professor decide e avalia; canal para dúvidas; revisão periódica dos combinados.
+C: Clareza e acolhimento; transparência; proteção de dados; responsabilidade docente.
