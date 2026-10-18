@@ -801,7 +801,7 @@
  },
  {
   "level": 3,
-  "text": "6.3 Implementação de RPROP em Python e contextualização da função trainrp do MATLAB",
+  "text": "6.3 Implementação de RPROP em Python e uso com o scikit-learn",
   "id": "h161"
  },
  {
@@ -811,7 +811,7 @@
  },
  {
   "level": 4,
-  "text": "A função trainrp do MATLAB",
+  "text": "O RPROP e o scikit-learn",
   "id": "h163"
  },
  {
@@ -961,7 +961,7 @@
  },
  {
   "level": 3,
-  "text": "7.4 Implementação em Python e contextualização da função trainlm do MATLAB",
+  "text": "7.4 Implementação em Python e uso com o scikit-learn e o SciPy",
   "id": "h193"
  },
  {
@@ -971,7 +971,7 @@
  },
  {
   "level": 4,
-  "text": "A função trainlm do MATLAB",
+  "text": "O LM no ecossistema Python",
   "id": "h195"
  },
  {
@@ -1091,7 +1091,7 @@
  },
  {
   "level": 4,
-  "text": "Correspondência com o MATLAB",
+  "text": "Correspondência com o scikit-learn",
   "id": "h219"
  },
  {
@@ -1361,277 +1361,282 @@
  },
  {
   "level": 1,
-  "text": "Apêndice I — Correspondência MATLAB ↔ Python",
+  "text": "Apêndice I — Correspondência entre o pacote do livro, o scikit-learn e o SciPy",
   "id": "h273"
  },
  {
   "level": 3,
-  "text": "I.1 Diferenças práticas importantes",
+  "text": "I.1 Solvers do scikit-learn e o que os distingue",
   "id": "h274"
+ },
+ {
+  "level": 3,
+  "text": "I.2 Diferenças práticas importantes",
+  "id": "h275"
  },
  {
   "level": 1,
   "text": "Apêndice J — Soluções dos exercícios práticos",
-  "id": "h275"
+  "id": "h276"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Introdução",
-  "id": "h276"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 1.1 — Primeira rede com MLPRegressor",
   "id": "h277"
  },
  {
   "level": 3,
-  "text": "Exercício prático 1.2 — Classificando flores com MLPClassifier",
+  "text": "Exercício prático 1.1 — Primeira rede com MLPRegressor",
   "id": "h278"
  },
  {
   "level": 3,
-  "text": "Exercício prático 1.3 — Abrindo a rede: dimensões e parâmetros",
+  "text": "Exercício prático 1.2 — Classificando flores com MLPClassifier",
   "id": "h279"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 1.3 — Abrindo a rede: dimensões e parâmetros",
+  "id": "h280"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — Fundamentos matemáticos e Python/scikit-learn",
-  "id": "h280"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 2.1 — Conferindo derivadas das ativações",
   "id": "h281"
  },
  {
   "level": 3,
-  "text": "Exercício prático 2.2 — Mínimos quadrados de quatro maneiras",
+  "text": "Exercício prático 2.1 — Conferindo derivadas das ativações",
   "id": "h282"
  },
  {
   "level": 3,
-  "text": "Exercício prático 2.3 — Um neurônio sigmoide é uma regressão logística",
+  "text": "Exercício prático 2.2 — Mínimos quadrados de quatro maneiras",
   "id": "h283"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 2.3 — Um neurônio sigmoide é uma regressão logística",
+  "id": "h284"
  },
  {
   "level": 2,
   "text": "Capítulo 3 — Perceptron",
-  "id": "h284"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 3.1 — Seu próprio perceptron nas portas lógicas",
   "id": "h285"
  },
  {
   "level": 3,
-  "text": "Exercício prático 3.2 — Seu perceptron contra o do scikit-learn",
+  "text": "Exercício prático 3.1 — Seu próprio perceptron nas portas lógicas",
   "id": "h286"
  },
  {
   "level": 3,
-  "text": "Exercício prático 3.3 — Esta base é linearmente separável?",
+  "text": "Exercício prático 3.2 — Seu perceptron contra o do scikit-learn",
   "id": "h287"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 3.3 — Esta base é linearmente separável?",
+  "id": "h288"
  },
  {
   "level": 2,
   "text": "Capítulo 4 — Backpropagation e perceptrons de múltiplas camadas — MLP",
-  "id": "h288"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 4.1 — Backpropagation vetorizado em 20 linhas",
   "id": "h289"
  },
  {
   "level": 3,
-  "text": "Exercício prático 4.2 — XOR com MLPClassifier: depende da semente?",
+  "text": "Exercício prático 4.1 — Backpropagation vetorizado em 20 linhas",
   "id": "h290"
  },
  {
   "level": 3,
-  "text": "Exercício prático 4.3 — Regressão com MLP: ele supera um modelo linear?",
+  "text": "Exercício prático 4.2 — XOR com MLPClassifier: depende da semente?",
   "id": "h291"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 4.3 — Regressão com MLP: ele supera um modelo linear?",
+  "id": "h292"
  },
  {
   "level": 2,
   "text": "Capítulo 5 — Quick Propagation — QPROP",
-  "id": "h292"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 5.1 — O passo do Quickprop para um peso",
   "id": "h293"
  },
  {
   "level": 3,
-  "text": "Exercício prático 5.2 — Quickprop contra os otimizadores do scikit-learn",
+  "text": "Exercício prático 5.1 — O passo do Quickprop para um peso",
   "id": "h294"
  },
  {
   "level": 3,
-  "text": "Exercício prático 5.3 — Sensibilidade do Quickprop a $\\varepsilon$ e $\\mu$",
+  "text": "Exercício prático 5.2 — Quickprop contra os otimizadores do scikit-learn",
   "id": "h295"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 5.3 — Sensibilidade do Quickprop a $\\varepsilon$ e $\\mu$",
+  "id": "h296"
  },
  {
   "level": 2,
   "text": "Capítulo 6 — Propagação resiliente — RPROP",
-  "id": "h296"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 6.1 — Um RPROP vetorizado, do zero",
   "id": "h297"
  },
  {
   "level": 3,
-  "text": "Exercício prático 6.2 — Parada antecipada no scikit-learn",
+  "text": "Exercício prático 6.1 — Um RPROP vetorizado, do zero",
   "id": "h298"
  },
  {
   "level": 3,
-  "text": "Exercício prático 6.3 — As quatro variantes na base Breast Cancer",
+  "text": "Exercício prático 6.2 — Parada antecipada no scikit-learn",
   "id": "h299"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 6.3 — As quatro variantes na base Breast Cancer",
+  "id": "h300"
  },
  {
   "level": 2,
   "text": "Capítulo 7 — Levenberg–Marquardt e backpropagation — LMBP",
-  "id": "h300"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 7.1 — Ajuste de curva por mínimos quadrados não lineares",
   "id": "h301"
  },
  {
   "level": 3,
-  "text": "Exercício prático 7.2 — LM com parada antecipada contra o lbfgs do scikit-learn",
+  "text": "Exercício prático 7.1 — Ajuste de curva por mínimos quadrados não lineares",
   "id": "h302"
  },
  {
   "level": 3,
-  "text": "Exercício prático 7.3 — O preço do LM: memória e tempo em função de $P$",
+  "text": "Exercício prático 7.2 — LM com parada antecipada contra o lbfgs do scikit-learn",
   "id": "h303"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 7.3 — O preço do LM: memória e tempo em função de $P$",
+  "id": "h304"
  },
  {
   "level": 2,
   "text": "Capítulo 8 — Delta-Bar-Delta e Delta-Bar-Delta Estendido",
-  "id": "h304"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 8.1 — O Delta-Bar-Delta vetorizado, do zero",
   "id": "h305"
  },
  {
   "level": 3,
-  "text": "Exercício prático 8.2 — Escala do erro: a delta-delta sofre, o DBD menos",
+  "text": "Exercício prático 8.1 — O Delta-Bar-Delta vetorizado, do zero",
   "id": "h306"
  },
  {
   "level": 3,
-  "text": "Exercício prático 8.3 — DBD e EDBD na base Breast Cancer, com validação",
+  "text": "Exercício prático 8.2 — Escala do erro: a delta-delta sofre, o DBD menos",
   "id": "h307"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 8.3 — DBD e EDBD na base Breast Cancer, com validação",
+  "id": "h308"
  },
  {
   "level": 1,
   "text": "Apêndice K — Projetos: soluções de referência",
-  "id": "h308"
+  "id": "h309"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Introdução",
-  "id": "h309"
+  "id": "h310"
  },
  {
   "level": 3,
   "text": "Quanto a arquitetura importa? Explorando larguras de uma camada oculta",
-  "id": "h310"
+  "id": "h311"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — Fundamentos matemáticos e Python/scikit-learn",
-  "id": "h311"
+  "id": "h312"
  },
  {
   "level": 3,
   "text": "O custo da má escala: padronização e condicionamento",
-  "id": "h312"
+  "id": "h313"
  },
  {
   "level": 2,
   "text": "Capítulo 3 — Perceptron",
-  "id": "h313"
+  "id": "h314"
  },
  {
   "level": 3,
   "text": "Quando o perceptron funciona (e quando não)? Separabilidade em bases reais",
-  "id": "h314"
+  "id": "h315"
  },
  {
   "level": 2,
   "text": "Capítulo 4 — Backpropagation e perceptrons de múltiplas camadas — MLP",
-  "id": "h315"
+  "id": "h316"
  },
  {
   "level": 3,
   "text": "Reconhecendo dígitos: arquitetura, otimizador e generalização",
-  "id": "h316"
+  "id": "h317"
  },
  {
   "level": 2,
   "text": "Capítulo 5 — Quick Propagation — QPROP",
-  "id": "h317"
+  "id": "h318"
  },
  {
   "level": 3,
   "text": "Orçamento igual: Quickprop, gradiente descendente e L-BFGS em dois problemas",
-  "id": "h318"
+  "id": "h319"
  },
  {
   "level": 2,
   "text": "Capítulo 6 — Propagação resiliente — RPROP",
-  "id": "h319"
+  "id": "h320"
  },
  {
   "level": 3,
   "text": "RPROP com parada antecipada em dígitos manuscritos",
-  "id": "h320"
+  "id": "h321"
  },
  {
   "level": 2,
   "text": "Capítulo 7 — Levenberg–Marquardt e backpropagation — LMBP",
-  "id": "h321"
+  "id": "h322"
  },
  {
   "level": 3,
   "text": "LM em dígitos manuscritos: quanto custa e quanto rende?",
-  "id": "h322"
+  "id": "h323"
  },
  {
   "level": 2,
   "text": "Capítulo 8 — Delta-Bar-Delta e Delta-Bar-Delta Estendido",
-  "id": "h323"
+  "id": "h324"
  },
  {
   "level": 3,
   "text": "Otimizadores adaptativos em regressão: Friedman #1",
-  "id": "h324"
+  "id": "h325"
  },
  {
   "level": 2,
   "text": "Projeto integrador final",
-  "id": "h325"
+  "id": "h326"
  },
  {
   "level": 3,
   "text": "Comparação de treinadores em classificação e regressão",
-  "id": "h326"
+  "id": "h327"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h327"
+  "id": "h328"
  }
 ]

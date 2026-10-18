@@ -3,7 +3,7 @@
 Todos recebem o vetor inicial theta0 e funções de perda/gradiente (ou resíduo/
 Jacobiana, no caso de Levenberg-Marquardt). Backpropagation CALCULA o gradiente;
 estes algoritmos o USAM para atualizar theta. São implementações didáticas do
-livro, não funções do scikit-learn nem do MATLAB.
+livro, não funções do scikit-learn.
 
 Retorno comum: objeto Resultado com theta, theta_melhor, historico (dict de
 listas), n_iter e motivo da parada.

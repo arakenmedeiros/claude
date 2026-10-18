@@ -206,13 +206,13 @@ d) o momento ser negativo.
 e) a taxa ser sempre limitada por $\alpha_{\max}$.
 R: c | Sem limites, a redução multiplicativa congela pesos e o aumento aditivo pode ser grande para pesos de gradiente pequeno.
 
-MC: Qual a relação do `traingdx` do MATLAB com o DBD?
+MC: Qual a relação entre o `learning_rate='adaptive'` do `solver='sgd'` do scikit-learn e o DBD?
 a) É a mesma regra, com nome diferente.
 b) Usa a Hessiana, como o Levenberg–Marquardt.
-c) Aplica momento e taxa global adaptativa pelo erro; o DBD adapta uma taxa por peso pelo sinal do gradiente.
+c) A taxa adaptativa do scikit-learn é global e reage ao erro (é dividida por 5 quando não há melhora); o DBD adapta uma taxa por peso pelo sinal do gradiente.
 d) Usa só o sinal do gradiente, como o RPROP.
 e) Implementa o EDBD de Minai e Williams.
-R: c | A adaptação do `traingdx` é global (sobre o erro), enquanto a do DBD é individual (sobre o gradiente).
+R: c | A adaptação do scikit-learn é global (sobre o erro), enquanto a do DBD é individual (sobre o sinal do gradiente).
 
 MC: Sobre a comparação entre o DBD e o Adam, este capítulo
 a) não avalia o Adam e não afirma equivalência nem superioridade.

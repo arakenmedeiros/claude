@@ -177,7 +177,7 @@ R: Botões são os pesos; a mistura desejada é o alvo; o gradiente indica como 
 MC: Neste livro, o termo "implementação didática do livro" indica
 + uma função própria, escrita para aprendizagem, e não uma função nativa de uma biblioteca.
 - uma função do scikit-learn com otimização para produção.
-- uma função do MATLAB traduzida para Python.
+- uma função do NumPy escrita em C.
 - um código que não foi testado.
 - um código proprietário que não pode ser lido.
 R: O pacote `rnbook` reúne implementações legíveis e testadas, usadas para aprender os algoritmos.

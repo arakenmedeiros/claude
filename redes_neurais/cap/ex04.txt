@@ -201,18 +201,18 @@ R: d | `coefs_[l]` tem forma $(n_{l-1},n_l)$, a transposta de $W^{(l)}$ da nota�
 MC: Entre os valores de `solver` das classes MLP do scikit-learn (versão 1.9.1) estão
 a) `'rprop'`, `'quickprop'` e `'lm'`.
 b) `'lbfgs'`, `'sgd'` e `'adam'`.
-c) `'trainlm'`, `'trainrp'` e `'sgd'`.
+c) `'qprop'`, `'lbfgs'` e `'sgd'`.
 d) `'newton'`, `'adam'` e `'rprop'`.
 e) `'dbd'`, `'lbfgs'` e `'adam'`.
 R: b | RPROP, Quickprop, LM e DBD não são solvers do scikit-learn e precisam ser implementados à parte.
 
-MC: `feedforwardnet` é
-a) uma classe do scikit-learn.
-b) um solver do `MLPClassifier`.
-c) uma função do NumPy.
-d) uma função do MATLAB (Deep Learning Toolbox) para criar redes feedforward.
-e) uma função do SciPy.
-R: d | As classes do scikit-learn não reproduzem essa API.
+MC: No `MLPClassifier`, o argumento `hidden_layer_sizes=(10, 5)` define
+a) uma camada oculta com 15 neurônios.
+b) 10 amostras por lote e 5 épocas.
+c) dez camadas ocultas de 5 neurônios.
+d) duas camadas ocultas, com 10 e 5 neurônios.
+e) a taxa de aprendizagem e o momento.
+R: d | Cada elemento da tupla é o número de neurônios de uma camada oculta; as camadas de entrada e de saída são inferidas dos dados.
 
 MC: Para evitar vazamento de informação, o `StandardScaler` deve ser
 a) ajustado com todos os dados antes da divisão.

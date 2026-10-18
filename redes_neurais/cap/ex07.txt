@@ -190,13 +190,13 @@ d) Igel e Hüsken (2003).
 e) Jacobs (1988).
 R: b | *IEEE Transactions on Neural Networks*, 5(6).
 
-MC: Nos valores padrão do `trainlm` do MATLAB (documentação atual), o parâmetro inicial de amortecimento é
-a) $\mu=0{,}001$
-b) $\mu=1$
-c) $\mu=10$
-d) $\mu=0{,}1$
-e) $\mu=10^{10}$
-R: a | `mu`$=0{,}001$, `mu_dec`$=0{,}1$, `mu_inc`$=10$ e `mu_max`$=10^{10}$ (conferir na versão utilizada).
+MC: No pacote `rnbook`, o valor padrão do amortecimento inicial `mu0` de `levenberg_marquardt` é
+a) $\mu_0=0{,}001$
+b) $\mu_0=1$
+c) $\mu_0=10$
+d) $\mu_0=0{,}1$
+e) $\mu_0=10^{10}$
+R: a | Os padrões são `mu0`$=10^{-3}$, `mu_dec`$=0{,}1$, `mu_inc`$=10$ e `mu_max`$=10^{10}$; relate sempre os valores usados.
 
 MC: Para $P=10^4$ parâmetros, a matriz $J^TJ$ (em dupla precisão) ocupa cerca de
 a) $800$ kB

@@ -1,6 +1,6 @@
 """Rede MLP didática: forward, backpropagation vetorizado, resíduos e Jacobiana.
 
-Implementação didática do livro (não é a API do scikit-learn nem do MATLAB).
+Implementação didática do livro (não é a API do scikit-learn).
 
 Convenções (usadas em todo o livro):
   * amostras nas LINHAS: X tem forma (N, n0); alvos T têm forma (N, m).

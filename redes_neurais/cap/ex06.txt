@@ -134,29 +134,29 @@ d) Minai e Williams (1990).
 e) Riedmiller e Braun (1993).
 R: e | IEEE International Conference on Neural Networks, 1993.
 
-MC: Nos valores padrão do `trainrp` do MATLAB (documentação atual), o passo inicial `delta0` é
-a) $0{,}1$
+MC: No pacote `rnbook`, o valor padrão do passo inicial `delta0` da função `rprop` é
+a) $0{,}07$
 b) $0{,}5$
 c) $1{,}0$
 d) $0{,}01$
-e) $0{,}07$
-R: e | `delt_inc`$=1{,}2$, `delt_dec`$=0{,}5$, `delta0`$=0{,}07$ e `deltamax`$=50$ (conferir na versão utilizada).
+e) $0{,}1$
+R: e | Os padrões são `eta_mais`$=1{,}2$, `eta_menos`$=0{,}5$, `delta0`$=0{,}1$, `delta_min`$=10^{-6}$ e `delta_max`$=50$; relate sempre os valores usados.
 
-MC: No MATLAB, os dados de entrada e alvo de `train` têm
-a) as amostras nas linhas.
-b) as amostras nas colunas.
+MC: No scikit-learn e neste livro, a matriz de atributos `X` tem
+a) as amostras nas colunas e os atributos nas linhas.
+b) as amostras nas linhas e os atributos nas colunas.
 c) uma amostra por arquivo.
 d) apenas uma amostra.
-e) amostras e atributos misturados.
-R: b | Diferentemente do NumPy e do scikit-learn, o MATLAB usa colunas para amostras.
+e) amostras e atributos misturados na mesma coluna.
+R: b | Convenção adotada em todo o livro: $X\in\mathbb{R}^{N\times n_0}$; `coefs_[l]` tem forma $(n_{l-1},n_l)$.
 
-MC: A documentação do `trainrp` do MATLAB
-a) afirma que implementa o iRPROP+.
-b) afirma que implementa o RPROP+ sempre.
-c) implementa o Quickprop.
-d) usa o método de Newton.
-e) não discrimina qual das quatro variantes é implementada; não se deve assumir equivalência.
-R: e | Por isso o livro recomenda relatar a variante e os parâmetros em qualquer comparação.
+MC: O scikit-learn (versão 1.9.1) oferece o RPROP?
+a) Sim, com `solver='rprop'`.
+b) Sim, com `learning_rate='rprop'`.
+c) Sim, apenas a variante iRPROP+.
+d) Sim, na classe `RPROPClassifier`.
+e) Não: os solvers de `MLPClassifier` são `'lbfgs'`, `'sgd'` e `'adam'`, e o RPROP precisa ser implementado à parte.
+R: e | Por isso o livro usa o pacote `rnbook` e recomenda relatar a variante e os parâmetros em qualquer comparação.
 
 MC: A parada antecipada com paciência $p=3$ interrompe o treinamento quando
 a) a perda de validação não melhora por 3 épocas consecutivas.
@@ -265,8 +265,8 @@ R: **RPROP+:** reduz $\Delta$, desfaz o último passo, $g\leftarrow0$; move (par
 DISC: Um colega relata "treinei com RPROP e obtive erro de 0,02". Que informações essenciais estão faltando para que o resultado seja reprodutível e comparável?
 R: Variante (RPROP+, RPROP−, iRPROP+ ou iRPROP−); parâmetros $\eta^{\pm}$, $\Delta_0$, $\Delta_{\min}$, $\Delta_{\max}$; definição da perda (soma ou média; fator $\tfrac12$); arquitetura e ativações; inicialização e semente; pré-processamento (ajustado só no treino); divisão dos dados; critério de parada (épocas, validação, paciência); em qual conjunto o erro foi medido; versões das bibliotecas; e a variabilidade entre sementes.
 
-DISC: Traduza para o pacote `rnbook` (ou scikit-learn, quando possível) a configuração do MATLAB `net = feedforwardnet(10,'trainrp'); net.trainParam.delt_inc=1.2; net.trainParam.delt_dec=0.5; net.trainParam.delta0=0.07; net.trainParam.deltamax=50;` e comente o que não se traduz diretamente.
-R: Em `rnbook`: `MLP([n_entradas, 10, n_saidas], ["tanh", "identidade"])` e `O.rprop(theta0, fun, grad, variante="irprop-", eta_mais=1.2, eta_menos=0.5, delta0=0.07, delta_max=50.0)`. Não se traduz diretamente: (i) a **variante** (o MATLAB não a discrimina); (ii) a **divisão de dados** e o **pré-processamento** automáticos do MATLAB (aqui são explícitos); (iii) `max_fail` e `min_grad` (aqui `paciencia` e `tol_grad`); (iv) a orientação dos dados (colunas no MATLAB); (v) a perda padrão (média no MATLAB); (vi) o scikit-learn não oferece RPROP (`solver` só tem `lbfgs`, `sgd` e `adam`).
+DISC: Escreva, com o pacote `rnbook`, a configuração de um iRPROP− para uma rede com 10 neurônios ocultos, $\eta^+=1{,}2$, $\eta^-=0{,}5$, $\Delta_0=0{,}07$, $\Delta_{\max}=50$ e parada antecipada com paciência 6, e comente o que o scikit-learn oferece como controle análogo.
+R: Em `rnbook`: `MLP([n_entradas, 10, n_saidas], ["tanh", "identidade"])` e `O.rprop(theta0, fun, grad, variante="irprop-", eta_mais=1.2, eta_menos=0.5, delta0=0.07, delta_max=50.0, val=fun_val, paciencia=6)`. O scikit-learn **não** oferece RPROP (os solvers são `lbfgs`, `sgd` e `adam`); o controle análogo da parada antecipada é `early_stopping=True` com `n_iter_no_change` (e `validation_fraction`), e o de uma taxa que se adapta é `learning_rate='adaptive'` no `solver='sgd'`, que é **global** e não por peso. Também diferem: o RPROP é de lote inteiro, enquanto `sgd` e `adam` usam minilotes por padrão, e a perda do scikit-learn é $E_{\text{sse}}/(Nm)$ mais a penalidade $\alpha$.
 
 DISC: As perdas de validação por época são $(0{,}50;\,0{,}40;\,0{,}35;\,0{,}36;\,0{,}34;\,0{,}37;\,0{,}38;\,0{,}39;\,0{,}40)$. Com paciência $p=3$, em que época o treino para e qual época é restaurada?
 R: Épocas 1 a 3 melhoram (melhor $=0{,}35$ na época 3). Época 4 ($0{,}36$): não melhora (contador 1). Época 5 ($0{,}34$): melhora; novo melhor, contador zerado. Épocas 6 ($0{,}37$), 7 ($0{,}38$) e 8 ($0{,}39$): três épocas sem melhora (contador 3): **o treino para na época 8**. A época **restaurada é a 5** ($0{,}34$).

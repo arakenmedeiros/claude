@@ -1,23 +1,34 @@
-# Apêndice I — Correspondência MATLAB ↔ Python
+# Apêndice I — Correspondência entre o pacote do livro, o scikit-learn e o SciPy
 
 :::atencao Nota de verificação
-A tabela abaixo resume correspondências **conceituais**. Os valores padrão e o comportamento exato das funções do MATLAB **não foram verificados** diretamente na documentação para esta edição; confira-os na documentação da sua versão (Deep Learning Toolbox).
+As classes e parâmetros do scikit-learn citados foram conferidos na versão **1.9.1** (assinaturas e solvers disponíveis); o comportamento numérico não foi comparado, algoritmo a algoritmo, com o do pacote `rnbook`.
 :::
 
-| MATLAB | Função | Equivalente neste livro / Python |
+| Pacote `rnbook` | Papel | Equivalente ou análogo em Python |
 |---|---|---|
-| `feedforwardnet(h)` | cria uma rede de alimentação direta (padrão: uma camada oculta de 10 neurônios e `trainlm`) | `MLP([n0, h, m], [...])` do `rnbook`; `MLPRegressor(hidden_layer_sizes=(h,))` |
-| `train(net, X, T)` | treina a rede (no MATLAB, as amostras ficam nas **colunas**) | `rnbook.otimizadores.*` ou `.fit(X, y)` do scikit-learn (amostras nas **linhas**) |
-| `trainlm` | Levenberg–Marquardt; parâmetros `mu`, `mu_dec`, `mu_inc`, `mu_max` (valores usuais: $10^{-3}$, $0{,}1$, $10$, $10^{10}$) | `levenberg_marquardt`; `scipy.optimize.least_squares(method="lm")` |
-| `trainrp` | RPROP; `delt_inc`, `delt_dec`, `delta0`, `deltamax` (valores usuais: $1{,}2$; $0{,}5$; $0{,}07$; $50$) | `rprop(variante=...)` |
-| `traingdx` | gradiente descendente com momento e taxa global adaptativa | `gradiente_descendente(taxa, momento)`; não há equivalente direto de DBD |
-| `mse`, `sse` | funções de desempenho | `perda` da `MLP` com $c=1/(Nm)$ ou $c=\tfrac12$ |
-| `dividerand` | divisão aleatória treino/validação/teste | `sklearn.model_selection.train_test_split` (duas chamadas) |
-| `mapminmax`, `mapstd` | normalização das entradas | `MinMaxScaler`, `StandardScaler` (ajustados **só no treino**) |
+| `MLP([n0, h, m], ativacoes)` | rede de múltiplas camadas | `MLPClassifier` / `MLPRegressor` (`hidden_layer_sizes=(h,)`, `activation`) |
+| `gradiente_descendente(taxa, momento)` | gradiente descendente com momento (lote) | `solver='sgd'` (`learning_rate_init`, `momentum`; minilotes por padrão) |
+| `gd_estocastico` | gradiente por amostra ou minilote | `solver='sgd'` com `batch_size` |
+| `quickprop` | Quickprop | sem equivalente no scikit-learn |
+| `rprop(variante=...)` | RPROP e três variantes | sem equivalente no scikit-learn |
+| `levenberg_marquardt` | Levenberg–Marquardt | `scipy.optimize.least_squares(method='lm')` (com a mesma função de resíduos e Jacobiana) |
+| `delta_delta`, `delta_bar_delta`, `delta_bar_delta_estendido` | taxas por peso | sem equivalente; `learning_rate='adaptive'` adapta uma taxa **global** |
+| `paciencia` (com `val=`) | parada antecipada | `early_stopping=True`, `n_iter_no_change`, `validation_fraction` |
+| `perda` (com fator escolhido) | erro | `loss_` = $E_{\text{sse}}/(Nm)$ mais a penalidade $\alpha$ |
+| `grad_numerico` | verificação do gradiente | `scipy.optimize.approx_fprime` |
+| (fora do `rnbook`) | divisão e pré-processamento | `train_test_split`, `StandardScaler`, `MinMaxScaler` (ajustados **só no treino**) |
+| (fora do `rnbook`) | métricas | `accuracy_score`, `r2_score`, `mean_squared_error` |
 
-## I.1 Diferenças práticas importantes
+## I.1 Solvers do scikit-learn e o que os distingue
 
-1. **Orientação dos dados.** No MATLAB, cada **coluna** é uma amostra; no Python (e neste livro), cada **linha**.
-2. **Pré-processamento e divisão.** O MATLAB aplica, por padrão, normalização e divisão aleatória dentro do `train`; em Python, ambas devem ser feitas explicitamente (e sem vazamento).
-3. **Perda.** O desempenho padrão do MATLAB é o erro quadrático médio; o `loss_` do scikit-learn para regressão é $E_{\text{sse}}/(N\cdot m)$, com o fator $\tfrac12$ do erro quadrático (verificado no Capítulo 4).
-4. **Resultados.** Mesmo com os mesmos hiperparâmetros, as duas plataformas **não** dão resultados idênticos (inicialização, pré-processamento, critérios de parada).
+- **`lbfgs`**: quase-Newton de memória limitada, em lote; é o mais indicado para bases pequenas e é a referência externa usada nos Capítulos 6 e 7.
+- **`sgd`**: gradiente descendente em minilotes, com `momentum` (e `nesterovs_momentum`) e três políticas de taxa: `'constant'`, `'invscaling'` e `'adaptive'`.
+- **`adam`**: taxas individuais por normalização com estimativas de momentos do gradiente, em minilotes; **não** é avaliado neste livro.
+
+## I.2 Diferenças práticas importantes
+
+1. **Convenção de dados.** Amostras nas **linhas** (`X` com forma $(N,n_0)$); `coefs_[l]` tem forma $(n_{l-1},n_l)$, a transposta de $W^{(l)}$.
+2. **Pré-processamento e divisão.** O scikit-learn não padroniza nem divide os dados por conta própria (a divisão só ocorre, para parada antecipada, com `early_stopping=True`): faça ambos explicitamente e sem vazamento.
+3. **Perda.** `loss_` equivale a $E_{\text{sse}}/(Nm)$ (mais penalidade) neste livro (verificado no Capítulo 4); converta antes de comparar valores de erro.
+4. **Lote e minilote.** Os algoritmos dos Capítulos 5 a 8 são de **lote inteiro**; `sgd` e `adam` usam minilotes por padrão (`batch_size='auto'`).
+5. **Resultados.** Mesmo com hiperparâmetros parecidos, implementações diferentes não dão resultados idênticos (inicialização, critérios de parada, números de iterações).
