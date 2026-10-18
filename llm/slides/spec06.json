@@ -1,0 +1,320 @@
+{
+ "capitulo": 6,
+ "titulo": "Geração de texto e inferência",
+ "parte": "Parte II — Treinamento, adaptação e geração",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Descrever o laço autorregressivo e o papel da distribuição a cada passo",
+    "Comparar decodificação gulosa, feixe, temperatura, top-k e top-p",
+    "Calcular o orçamento de uma janela de contexto",
+    "Distinguir preenchimento (prefill) e decodificação e estimar a latência",
+    "Explicar o cache KV, estimar sua memória e entender a variabilidade da geração"
+   ],
+   "notas": "Abra com a cena da professora que pede três vezes a mesma frase de abertura e recebe três respostas diferentes; com temperatura zero, recebe a mesma nas três. Pergunte se o modelo mudou de ideia. Diga que o capítulo explica isso e mais: por que a conta de uso oscila e por que respostas longas demoram. Percorra os cinco objetivos. Avise que os experimentos usam um modelo de trigramas e um corpus sintético, nunca um LLM real, e que valores de latência e de memória são hipotéticos. Pergunta à turma: quem já notou que o mesmo pedido gera respostas diferentes em um assistente? Anote as hipóteses para retomar no fim."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Três pedidos, três respostas",
+   "itens": [
+    "Mesma pergunta, três frases diferentes",
+    "Temperatura em zero: a mesma frase nas três vezes",
+    "A conta de uso variou, com número de pedidos parecido",
+    "Respostas longas demoram mais, mesmo com a mesma entrada",
+    "Origem comum: como probabilidades viram texto, um token por vez"
+   ],
+   "notas": "Apresente a situação inicial do capítulo. Três fenômenos aparentemente sem relação: variação de respostas, variação de custo e variação de tempo. Todos nascem do mesmo mecanismo: o modelo devolve uma distribuição de probabilidade para o próximo token, algo escolhe um token, e o processo se repete. A escolha explica variação e repetição; a repetição, token a token, explica o tempo; o tamanho do que é reprocessado explica o custo e a memória. Pergunta guia do capítulo: dada a distribuição do próximo token, como escolhemos o token, por que a escolha muda a qualidade, e o que determina custo e variabilidade? Deixe a pergunta no quadro durante toda a aula."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a história contada em roda",
+   "texto": "Gerar texto é como contar uma história em roda: cada pessoa ouve tudo o que já foi dito e acrescenta só a próxima palavra.",
+   "detalhe": "Se alguém solta uma palavra estranha, todo o resto da história se ajusta a ela. Por isso, em modelos de linguagem, erros se propagam.",
+   "notas": "Proponha uma brincadeira rápida: a turma conta uma história em roda, uma palavra por vez. Cada um ouve tudo o que já foi dito e acrescenta a próxima. Veja o que acontece quando alguém diz algo inesperado: a história inteira se desvia. É o laço autorregressivo: a saída de cada passo vira entrada do passo seguinte. Dois fatos decorrem: erros se propagam e a geração é sequencial, porque você não pode dizer a palavra dez antes da nove. Limite da analogia: o modelo escolhe por probabilidades calculadas, e não por criatividade ou intenção. Pergunta à turma: que palavra, solta no começo, mudaria mais o rumo da história?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O laço autorregressivo",
+   "fig": "f06_loop",
+   "legenda": "O token escolhido é acrescentado ao contexto, e o ciclo continua até um critério de parada.",
+   "itens": [
+    "1. Lê o contexto",
+    "2. Calcula a distribuição",
+    "3. Escolhe um token",
+    "4. Acrescenta ao contexto",
+    "5. Para ou repete"
+   ],
+   "notas": "Siga a figura. O contexto é o prompt mais o que já foi gerado. O modelo calcula logits, um número por token do vocabulário, e o softmax os converte em probabilidades. Uma estratégia de decodificação escolhe um token. Esse token é acrescentado ao contexto, e o ciclo recomeça, até aparecer o token de fim de sequência ou atingir o limite de tokens. Destaque que o modelo só sabe fazer uma coisa: devolver a distribuição do próximo token. Tudo mais, como estilo e variedade, vem da regra de escolha. Pergunta à turma: se o limite de tokens for atingido no meio de uma frase, o que o usuário vê? Uma resposta cortada, tema que voltará adiante."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Gulosa e feixe: escolher o melhor",
+   "itens": [
+    "Gulosa: sempre o token mais provável; determinística",
+    "É míope: melhores tokens isolados não dão a melhor sequência",
+    "Feixe: mantém as B melhores sequências parciais a cada passo",
+    "Com B = 1, o feixe equivale à gulosa",
+    "Em texto aberto, ambas tendem a repetição e respostas genéricas"
+   ],
+   "notas": "Explique que a estratégia de decodificação é a regra que transforma a distribuição em um token e é independente do treinamento: o mesmo modelo gera textos bem diferentes conforme a regra. A gulosa escolhe o mais provável a cada passo: simples e determinística, mas míope. A busca em feixe guarda as B melhores sequências parciais, comparando a soma dos logaritmos das probabilidades. Com B igual a 1, vira a gulosa. Funciona bem quando a saída é bem determinada, como na tradução; em geração aberta, favorece texto repetitivo, como mostraram Holtzman e colaboradores. Pergunta à turma: se você sempre escolhe a palavra mais provável, seu texto fica criativo? Provavelmente genérico."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o GPS e a rua mais curta",
+   "texto": "Decodificação gulosa é como escolher, em cada esquina, a rua que parece mais curta; o feixe é testar alguns caminhos ao mesmo tempo.",
+   "detalhe": "A melhor escolha de cada esquina nem sempre leva ao melhor trajeto total. Mas o trajeto mais provável também não é o mais interessante.",
+   "notas": "Use o GPS como imagem. Um motorista que, em cada esquina, pega a rua que parece mais curta pode acabar em um caminho pior no total; é a miopia da gulosa. A busca em feixe é como testar vários trajetos em paralelo e comparar. Mais adiante veremos em código que o feixe com B igual a 3 encontrou uma frase com log-probabilidade total maior que a da gulosa. Limite da analogia: em um GPS, o melhor trajeto é claro; em linguagem, maior probabilidade não significa mais útil. Em geração aberta, o texto mais provável é seguro demais e repetitivo. Pergunta à turma: o caminho mais provável é sempre o mais interessante?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Temperatura: o botão da ousadia",
+   "tex": "p(i; T) = exp(zᵢ/T) / Σⱼ exp(zⱼ/T)",
+   "explicacao": [
+    "z são os logits; T é a temperatura",
+    "T < 1: escolha concentrada nos tokens mais prováveis",
+    "T > 1: tokens improváveis ganham chance",
+    "T → 0 aproxima a decodificação gulosa"
+   ],
+   "notas": "Leia a fórmula: dividimos os logits por T antes do softmax. Com T igual a 1, sorteamos da distribuição original do modelo. Com T menor que 1, as diferenças entre os logits são ampliadas e a distribuição concentra-se nos mais prováveis. Com T maior que 1, a distribuição se achata e dá chance a tokens improváveis. No limite, T tendendo a zero aproxima a gulosa. Mencione o problema da amostragem pura: a cauda longa, em que muitos tokens individualmente improváveis somam massa grande e, se sorteados, geram texto incoerente. Pergunta à turma: para extrair um CPF de um documento você usaria temperatura alta ou baixa? Baixa, porque a tarefa pede precisão."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a roleta com fatias desiguais",
+   "texto": "Amostrar é girar uma roleta cujas fatias têm o tamanho das probabilidades; a temperatura aumenta a fatia grande ou nivela todas.",
+   "detalhe": "Temperatura baixa: a roleta quase sempre para na fatia gigante. Temperatura alta: todas as fatias ficam parecidas e qualquer palavra pode sair.",
+   "notas": "Desenhe uma roleta no quadro: cada token é uma fatia, e o tamanho é a probabilidade dada pelo modelo. Girar a roleta é amostrar. Temperatura baixa faz a fatia maior crescer e as outras encolherem: quase sempre sai o token mais provável. Temperatura alta nivela as fatias: tokens improváveis passam a sair. Com a temperatura em um, a roleta é a distribuição original. No limite, temperatura zero é sempre apostar na maior fatia. Pergunta à turma: se a roleta tem 100 fatias minúsculas e uma fatia grande, e você gira muitas vezes, o que acontece? Eventualmente sai uma fatia minúscula, e isso explica o problema da cauda longa."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Top-k e top-p: cortar a cauda",
+   "itens": [
+    "Top-k: mantém os k mais prováveis e renormaliza; k é fixo",
+    "Top-p: menor conjunto cuja soma atinge p; tamanho adaptativo",
+    "Exemplo p = (0,50; 0,30; 0,10; 0,05; 0,05)",
+    "Top-k com k = 2 dá (0,625; 0,375)",
+    "Top-p com p = 0,9 mantém A, B, C: (0,556; 0,333; 0,111)"
+   ],
+   "notas": "Resolva o exemplo na lousa. Distribuição para A, B, C, D, E: 0,50; 0,30; 0,10; 0,05; 0,05. No top-k com k igual a 2, mantemos A e B, cuja soma é 0,80, e renormalizamos: 0,625 e 0,375. No top-p com p igual a 0,9, acumulamos: A dá 0,50; A mais B dá 0,80; com C chega a 0,90, e paramos. Mantemos A, B e C, e renormalizamos dividindo por 0,9: 0,556; 0,333; 0,111. D e E nunca serão sorteados. A diferença-chave: o k é fixo, e o p se adapta à incerteza do modelo, mantendo poucos tokens quando ele está seguro e muitos quando está em dúvida. Pergunta: por que renormalizar é necessário? Porque as probabilidades precisam somar um."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Efeito sobre a distribuição",
+   "fig": "f06_decod",
+   "legenda": "Distribuição original e efeito da temperatura, do top-k e do top-p sobre cinco tokens do exemplo.",
+   "itens": [
+    "Temperatura reescala todos os tokens",
+    "Top-k corta em posição fixa",
+    "Top-p corta pela massa acumulada",
+    "Nenhum garante correção factual"
+   ],
+   "notas": "Compare as barras. A temperatura muda a altura de todas, sem eliminar nenhum token. O top-k zera os que ficam além da posição k, e o top-p zera os que ficam além da massa acumulada p. Depois do corte, renormaliza-se. Há outras ferramentas: penalidades de repetição, sequências de parada, restrições de formato e logit bias; todas atuam sobre os logits ou sobre a escolha. Reforce o aviso: nenhuma delas garante correção factual, só mudam como a distribuição é amostrada. Armadilha: combinar muitas técnicas sem entender o efeito conjunto. Pergunta à turma: se aplicarmos temperatura alta e depois top-p pequeno, o que domina? Discuta, sem uma resposta única."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: qualidade e diversidade (modelo de trigramas)",
+   "codigo": "lm = modelos.NgramaLM(n=3, k=0.05).ajustar(frases[:2400])\nconfigs = {\"gulosa\": dict(guloso=True), \"T=0,5\": dict(T=0.5),\n           \"T=1,0\": dict(T=1.0), \"T=2,0\": dict(T=2.0),\n           \"top-k=3\": dict(top_k=3), \"top-p=0,9\": dict(top_p=0.9)}\nfor nome, c in configs.items():\n    amostras = [gerar(lm, rng, **c) for _ in range(300)]\n    validas = np.mean([corpus.frase_valida(s) for s in amostras])\n    distintas = len({\" \".join(s) for s in amostras}) / 300",
+   "saida": "estratégia   válidas  distintas  lnP/token\ngulosa          1.00       0.00      -0.91\nT=1,0           0.90       0.85      -1.10\nT=2,0           0.04       1.00      -3.38\ntop-k=3         1.00       0.45      -0.89\ntop-p=0,9       1.00       0.81      -0.87",
+   "notas": "Cada linha resume 300 frases geradas. A gulosa é 100% válida, mas com diversidade zero: sempre a mesma frase. Com T igual a 1, 90% válidas e 85% distintas. Com T igual a 2, só 4% das frases são válidas, pois a cauda é sorteada, embora a diversidade seja total. O top-k igual a 3 e o top-p de 0,9 ficam em um bom meio-termo neste corpus. Mostramos seis das sete configurações. A validade é checada por uma gramática sintética, que não existe para texto real; modelo de trigramas, não LLM. Em texto real, avaliar qualidade exige métricas por tarefa e juízo humano. Pergunta: qual estratégia você usaria para extração de dados e qual para escrita criativa? Justifique com os números."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O compromisso entre validade e diversidade",
+   "fig": "f06_qualidade",
+   "legenda": "Cada ponto resume 300 frases geradas por um modelo de trigramas no corpus sintético.",
+   "itens": [
+    "Mais diversidade custa validade",
+    "Top-p e T moderada: bom meio-termo",
+    "A forma vale; os números não se transferem"
+   ],
+   "notas": "Este gráfico transforma a tabela em um mapa: no eixo de validade e no de diversidade, cada ponto é uma estratégia. A gulosa fica no canto de máxima validade e diversidade nula; as temperaturas altas migram para o canto oposto. Procure a fronteira das melhores opções: as que não podem melhorar uma medida sem piorar a outra. Faça a ressalva do capítulo: o experimento usa trigramas e uma gramática sintética que verifica validade automaticamente; em texto real não há verificador tão simples. Não extrapole os números, só a forma do compromisso. Pergunta à turma: que tarefa do seu dia a dia pede alta validade e que tarefa pede alta diversidade?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: feixe contra gulosa",
+   "codigo": "guloso = gerar(lm, np.random.default_rng(0), guloso=True)\nprint(\"gulosa:\", \" \".join(guloso), f\"| lnP total = {lm.logprob_frase(guloso):.2f}\")\nfor B in (1, 3, 5):\n    melhor = busca_feixe(lm, B=B)[0]\n    print(f\"feixe B={B}:\", \" \".join(melhor[0]), f\"| lnP total = {melhor[1]:.2f}\")",
+   "saida": "gulosa: o professor prepara a aula . | lnP total = -5.47\nfeixe B=1: o professor prepara a aula . | lnP total = -5.47\nfeixe B=3: o bibliotecário empresta o livro . | lnP total = -4.68\nfeixe B=5: o bibliotecário empresta o livro . | lnP total = -4.68",
+   "notas": "A gulosa produz 'o professor prepara a aula' com log-probabilidade total de menos 5,47. O feixe com B igual a 1 coincide com ela, como previsto. Com B igual a 3 e a 5, aparece outra frase, 'o bibliotecário empresta o livro', com log-probabilidade total maior, menos 4,68. Isso confirma que escolher o melhor token a cada passo não leva necessariamente à melhor sequência. Mas maior probabilidade não é sinônimo de mais útil: em linguagem real, o feixe ajuda em tradução, mas em geração aberta produz textos seguros demais e repetitivos. Pergunta à turma: por que a gulosa começou com 'professor' e o feixe com 'bibliotecário'? Porque um primeiro token menos provável abriu uma sequência melhor no total."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Janela de contexto: entrada e saída dividem o espaço",
+   "itens": [
+    "Janela = máximo de tokens considerados de uma vez",
+    "Entrada + saída ≤ janela",
+    "Truncar sem critério pode cortar a parte essencial, em silêncio",
+    "Se o limite de saída chega antes do fim, a resposta é cortada",
+    "Liu et al.: o meio de contextos longos tende a ser pior aproveitado"
+   ],
+   "notas": "A janela inclui, juntos, instruções, documentos, histórico e a resposta gerada. Compare com uma mala de viagem: tudo precisa caber, e o que você leva para a viagem de ida reduz o espaço para as compras. Serviços também impõem um limite de saída, menor que a janela. Consequências: o histórico de conversa cresce e consome a janela; o truncamento pode eliminar o trecho essencial e deve ser decidido conscientemente, e não em silêncio; respostas terminam no meio da frase quando o limite de saída é atingido. E ter espaço não significa usar bem: Liu e colegas mostraram que o desempenho tende a piorar quando a informação relevante está no meio de contextos longos. Pergunta: onde você colocaria a informação mais importante do prompt?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: orçamento da janela de contexto",
+   "codigo": "def orcamento(janela, instrucoes, historico, documentos, saida_max):\n    usado = instrucoes + historico + documentos\n    livre = janela - usado\n    return {\"entrada\": usado, \"livre\": livre, \"cabe_saida\": livre >= saida_max,\n            \"saida_possivel\": max(0, min(livre, saida_max))}\n\nprint(orcamento(8192, 300, 2500, 4000, 1000))\nprint(orcamento(8192, 300, 2500, 5200, 1000))",
+   "saida": "{'entrada': 6800, 'livre': 1392, 'cabe_saida': True, 'saida_possivel': 1000}\n{'entrada': 8000, 'livre': 192, 'cabe_saida': False, 'saida_possivel': 192}",
+   "notas": "Dois cenários com janela de 8192 tokens. No primeiro, instruções de 300, histórico de 2500 e documentos de 4000 somam 6800; sobram 1392, e uma resposta de até 1000 tokens cabe. No segundo, os documentos crescem para 5200; a entrada vai a 8000, sobram apenas 192 tokens, e a resposta provavelmente será cortada. A lição é prática: meça os tokens antes de montar o prompt e reserve explicitamente espaço para a saída. Os valores de janela são exemplos didáticos, não de um modelo real. Pergunta à turma: se for preciso cortar algo, o que você cortaria primeiro, o histórico antigo ou os documentos? Discuta critérios e o registro do corte."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Duas fases: preenchimento e decodificação",
+   "itens": [
+    "Preenchimento (prefill): lê todo o prompt de uma vez, em paralelo",
+    "Decodificação: um token por vez, lendo pesos e cache da memória",
+    "Prefill é limitado por cálculo; decodificação, por banda de memória",
+    "t_total ≈ t_prefill(L_entrada) + L_saída · t_token",
+    "Exemplo hipotético: prompt 1 000 + resposta 200 dá 0,2 s + 6,0 s = 6,2 s"
+   ],
+   "notas": "Diferencie as duas fases. No preenchimento, o modelo processa o prompt inteiro em paralelo, graças à máscara causal, e produz o primeiro token e o cache de chaves e valores. Na decodificação, gera um token por vez; cada passo calcula pouco, mas precisa ler todos os pesos e o cache da memória, por isso é limitado pela largura de banda de memória. Faça a conta hipotética: preenchimento de 5000 tokens por segundo e 30 milissegundos por token gerado. Prompt de 1000 tokens: 0,2 s. Resposta de 200 tokens: 6,0 s. Total: 6,2 s. Dobrar o prompt acrescenta só 0,2 s; dobrar a resposta acrescenta 6 s. Moral: a saída costuma dominar a latência. Pergunta: por que pedir respostas concisas reduz tempo e custo?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: anotar para não reler o livro",
+   "texto": "O cache KV é como fazer anotações enquanto lê: a cada página nova, você consulta o resumo em vez de reler o livro inteiro.",
+   "detalhe": "Os tokens anteriores não mudam, então suas chaves e valores continuam válidos. Guardá-los evita recalcular tudo, e o resultado é idêntico.",
+   "notas": "Imagine ler um livro e responder uma pergunta a cada página. Sem anotações, você releria desde a primeira página a cada pergunta; com anotações, só lê a página nova e consulta o resumo. O cache KV guarda as chaves e os valores de cada camada para todos os tokens já processados. Como os tokens passados não dependem dos futuros, por causa da máscara causal, esses valores não mudam. A cada passo calculamos só a consulta, a chave e o valor do token novo. O resultado é idêntico ao do cálculo sem cache, apenas muito mais barato. Limite da analogia: o resumo ocupa memória, e a atenção ainda lê o cache inteiro a cada passo. Pergunta: qual é o custo de guardar as anotações?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Sem cache e com cache",
+   "fig": "f06_cache",
+   "legenda": "Sem cache recalcula chaves e valores de todo o prefixo; com cache calcula só os do token novo.",
+   "itens": [
+    "Sem cache: trabalho quadrático",
+    "Com cache: projeções lineares",
+    "Saída idêntica",
+    "A atenção ainda lê o cache inteiro"
+   ],
+   "notas": "Mostre a diferença na figura. Sem cache, em cada passo recalculamos chaves e valores de todo o prefixo, de modo que o trabalho total cresce de forma quadrática com o número de tokens. Com cache, calculamos apenas os do token novo e reaproveitamos os anteriores, e o trabalho nas projeções cresce de forma linear. A atenção do token novo continua precisando ler o cache inteiro. É por isso que a economia cresce com o comprimento. O cache é por sequência: cada usuário atendido simultaneamente tem o seu. Pergunta à turma: se dez usuários conversam ao mesmo tempo, quantos caches existem? Dez, e isso introduz o problema de memória da próxima tela. Mantenha em mente que a figura é conceitual."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: o cache dá o mesmo resultado, mais barato",
+   "codigo": "def com_cache(X):\n    Kc, Vc, saidas = [], [], []\n    for x in X:\n        Kc.append(x @ WK); Vc.append(x @ WV)      # só o token novo\n        q = x @ WQ\n        a = softmax(q @ np.array(Kc).T / np.sqrt(d))\n        saidas.append(a @ np.array(Vc))\n    return np.array(saidas)\n\nA = sem_cache(X); B = com_cache(X)   # 256 tokens, d = 64",
+   "saida": "saídas idênticas (sem x com cache): True\ntempo sem cache: 23.6 ms | com cache: 13.9 ms | razão: 1.7x",
+   "notas": "Uma atenção de uma cabeça em NumPy, com 256 tokens e dimensão 64. Duas funções: uma recalcula tudo a cada passo, a outra guarda chaves e valores. A saída confirma as duas afirmações: os resultados são idênticos, e o tempo cai de 23,6 para 13,9 milissegundos, uma razão de 1,7 vez. Atenção: esse tempo depende da máquina e muda a cada execução; o que importa é a tendência. O experimento é de uma cabeça e uma camada, sem otimizações reais como paginação ou quantização. A economia cresce com o comprimento da sequência. Pergunta à turma: por que a razão é de apenas 1,7 e não de 256? Porque a atenção continua lendo o cache inteiro e o experimento é pequeno."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Quanto o cache ocupa?",
+   "tex": "memória_KV = 2 · N_camadas · T · n_kv · d_cab · b",
+   "explicacao": [
+    "Fator 2: guarda chaves e valores; T = tokens; b = bytes por número",
+    "Modelo hipotético (32 camadas, 128 dim., float16), T = 4 096: 2,15 GB por sequência",
+    "Com 8 cabeças KV (agrupamento): 0,54 GB; com T = 32 768: 17,18 GB",
+    "10 usuários simultâneos, T = 4 096: 21,5 GB só de cache"
+   ],
+   "notas": "Explique cada termo: camadas, tokens no contexto, cabeças de chaves e valores, dimensão de cada cabeça e bytes por número; o fator 2 vem de guardar chaves e valores. Os números são de um modelo hipotético com 32 camadas e 32 cabeças de 128 dimensões em float16: 2,15 GB por sequência com 4096 tokens; com agrupamento de consultas e apenas 8 cabeças de chaves e valores, 0,54 GB, um quarto; com 32768 tokens, 17,18 GB. Dez usuários simultâneos exigem 21,5 GB só de cache. Por isso existem técnicas como agrupamento, quantização do cache, paginação e decodificação especulativa, que veremos no Capítulo 15. Pergunta: o que limita o número de usuários simultâneos, cálculo ou memória? Frequentemente, a memória do cache."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: por que a mesma conta dá resultados diferentes",
+   "codigo": "a, b = np.float32(1e8), np.float32(5.0)\nprint(\"(a + b) + b =\", (a + b) + b, \"| a + (b + b) =\", a + (b + b))\ndef amostrar_frase(semente):\n    return \" \".join(gerar(lm, np.random.default_rng(semente), T=1.0))\nprint(\"mesma semente  :\", amostrar_frase(7) == amostrar_frase(7))",
+   "saida": "(a + b) + b = 1.0000002e+08 | a + (b + b) = 1.0000001e+08\nmesma semente  : True",
+   "notas": "Dois pontos sobre reprodutibilidade. Primeiro, a soma em ponto flutuante não é associativa: somar na ordem (a mais b) mais b dá 1,0000002 vezes dez elevado a 8, e a mais (b mais b) dá 1,0000001 vezes dez elevado a 8, embora sejam iguais em matemática exata. Tamanhos de lote, GPUs e implementações diferentes mudam a ordem das operações, e uma diferença minúscula pode inverter a escolha entre dois tokens de probabilidades quase iguais; daí o texto diverge. Segundo, fixar a semente torna o sorteio reprodutível, se o serviço a expõe e a respeita. Registre modelo e versão, data, prompt, parâmetros e saída. Pergunta: por que a temperatura zero não garante resultado idêntico em um serviço externo?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes",
+   "itens": [
+    "Achar que temperatura zero garante resultados idênticos em serviços externos",
+    "Usar temperatura alta em tarefas que exigem precisão",
+    "Combinar temperatura, top-k e top-p sem entender o efeito conjunto",
+    "Esquecer que a janela inclui a saída e ter respostas cortadas",
+    "Ignorar que cada rodada reenvia e reprocessa o histórico",
+    "Não registrar parâmetros e depois não conseguir reproduzir"
+   ],
+   "notas": "Revise como lista de checagem. Temperatura zero tende a ser determinística, mas diferenças numéricas, de lote, de hardware ou atualizações do serviço podem alterar a escolha. Temperatura alta em extração, cálculo ou classificação é pedir erros. Combinar muitas técnicas de truncagem dificulta entender o efeito. Esquecer que a janela inclui a saída leva a respostas cortadas. O histórico de uma conversa é reenviado e reprocessado a cada rodada, o que afeta custo e latência. Confundir tokens de entrada, de saída e de contexto total estraga a estimativa de custo. E sem registrar os parâmetros, a reprodução é impossível. Pergunta à turma: qual desses erros o setor financeiro da escola, da situação inicial, estaria cometendo ao estranhar a conta?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Limitações e cuidados",
+   "itens": [
+    "Trigramas e corpus sintético: vale a forma do compromisso, não os números",
+    "Latência (5 000 tokens/s; 30 ms/token) e configurações do cache são hipotéticas",
+    "O cache do experimento é de uma cabeça e uma camada, sem otimizações reais",
+    "Temperatura zero e sementes dependem do provedor e podem mudar sem aviso",
+    "Preços e limites de tokens mudam: confira a documentação vigente"
+   ],
+   "notas": "Seja claro sobre o que os experimentos mostram. Os de decodificação usam um modelo de trigramas e um corpus sintético, com verificador de validade que não existe para texto real; mostram a forma do compromisso entre qualidade e diversidade, e não números transferíveis. Os valores de latência e as configurações de modelo no cálculo de memória são hipotéticos. O cache KV do código tem uma cabeça e uma camada, sem paginação nem quantização, e a razão de tempo depende da máquina. O comportamento de temperatura zero e de sementes em serviços externos depende do provedor. Preços e limites mudam com frequência. Pergunta à turma: onde você consultaria hoje o limite de tokens do serviço que usa? Na documentação oficial vigente."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "compare estratégias de decodificação",
+   "passos": [
+    "Treine um modelo de trigramas com 2 400 frases do corpus sintético",
+    "Implemente geração com temperatura, top-k e top-p",
+    "Para seis ou mais configurações, gere 300 frases e meça validade, diversidade e lnP médio",
+    "Plote validade versus diversidade e identifique a fronteira",
+    "Repita com outra semente e verifique a estabilidade",
+    "Recomende uma estratégia para extração de dados e outra para texto criativo"
+   ],
+   "notas": "Apresente a atividade como uma replicação guiada do experimento da aula. Os passos seguem o capítulo: treinar trigramas, implementar a geração, medir validade com corpus.frase_valida, diversidade pelo número de frases distintas e log-probabilidade média. O passo quatro pede a fronteira: as estratégias que não são superadas nas duas medidas. O passo cinco testa estabilidade com outra semente: as conclusões se mantêm? O parágrafo final é o produto: recomende, com seus números, uma estratégia para extração e outra para escrita criativa. Armadilha: comparar estratégias com poucas amostras; use as 300 frases. O Exercício prático 6.1 guia a atividade e a solução está no Apêndice D. Combine formato de entrega."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "top-p",
+   "pergunta": "Para p = (0,5; 0,3; 0,15; 0,05) e top-p com p = 0,8, qual a distribuição após renormalizar?",
+   "opcoes": [
+    "(0,5; 0,3; 0,2; 0)",
+    "(0,625; 0,375; 0; 0)",
+    "(0,8; 0,2; 0; 0)",
+    "(0,625; 0,375; 0,15; 0)"
+   ],
+   "resposta": "B",
+   "explicacao": "Acumulado atinge 0,8 com dois tokens; 0,5/0,8 = 0,625 e 0,3/0,8 = 0,375.",
+   "notas": "Peça que façam a conta: acumulado 0,5, depois 0,8, que atinge o limiar; mantêm-se dois tokens. Renormalizando, dividimos por 0,8: 0,625 e 0,375. Quem marcou a opção com 0,8 e 0,2 confundiu o limiar p com uma probabilidade; quem manteve o 0,15 esqueceu de zerar a cauda; quem somou 0,2 inventou massa. Reforce que após o corte a soma precisa ser 1. Pergunta extra: se a distribuição fosse mais concentrada, como (0,9; 0,05; 0,03; 0,02), quantos tokens ficariam? Apenas um, ilustrando a adaptação do top-p."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "janela",
+   "pergunta": "Qual afirmação sobre a janela de contexto está correta?",
+   "opcoes": [
+    "Refere-se apenas ao texto de saída",
+    "Refere-se apenas ao texto de entrada",
+    "É dividida entre os tokens de entrada e os de saída gerados",
+    "É medida em palavras, nunca em tokens"
+   ],
+   "resposta": "C",
+   "explicacao": "A soma de entrada e saída precisa caber na janela.",
+   "notas": "Retome o código de orçamento: 6800 tokens de entrada deixaram 1392 livres, e 8000 deixaram 192. A janela é compartilhada entre tudo que o modelo lê e tudo que escreve. As alternativas A e B esquecem uma das metades; D confunde a unidade, que é o token. Pergunte à turma o que acontece se o prompt já usar toda a janela: não sobra espaço para a resposta, ou o sistema trunca em silêncio. Reforce a recomendação: medir tokens antes e reservar espaço para a saída. Mencione que o limite de saída costuma ser menor que a janela e que isso depende do serviço."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "latência",
+   "pergunta": "Com preenchimento a 5 000 tokens/s e 30 ms por token gerado, qual a latência para prompt de 2 000 tokens e resposta de 100 tokens?",
+   "opcoes": [
+    "0,4 s",
+    "3,0 s",
+    "3,4 s",
+    "6,4 s"
+   ],
+   "resposta": "C",
+   "explicacao": "Preenchimento: 2 000/5 000 = 0,4 s; decodificação: 100 × 0,03 = 3,0 s; total 3,4 s.",
+   "notas": "Dê um minuto para a conta. Preenchimento: 2000 dividido por 5000 dá 0,4 s. Decodificação: 100 vezes 30 ms dá 3,0 s. Total 3,4 s. A opção de 0,4 s esquece a decodificação; a de 3,0 s esquece o preenchimento; a de 6,4 s corresponde a outra combinação de valores. Lembre que os valores de velocidade são hipotéticos. Conecte com a moral do capítulo: o número de tokens gerados costuma dominar a latência. Pergunta extra: o que muda se a resposta dobrar para 200 tokens? A decodificação vai a 6,0 s e o total a 6,4 s."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Gerar texto: distribuição, escolha, acrescenta ao contexto, repete; erros se propagam",
+    "Gulosa, feixe, amostragem com temperatura, top-k (fixo) e top-p (adaptativo)",
+    "Temperatura alta: mais diversidade, menos validade; depende da tarefa",
+    "Janela = entrada + saída; reserve espaço para a resposta",
+    "Prefill é paralelo; decode é token a token; a saída domina a latência",
+    "Cache KV: mesmo resultado, menos cálculo, mais memória; registre tudo para reproduzir"
+   ],
+   "notas": "Volte à cena inicial. A professora recebe frases diferentes porque a escolha é um sorteio; com temperatura zero, a escolha é quase sempre a gulosa. A conta variou porque tokens de entrada e de saída têm custos diferentes e o histórico é reprocessado. As respostas longas demoram porque a decodificação é sequencial. Percorra os seis pontos como resumo de um minuto. Peça que cada aluno diga qual estratégia escolheria para um assistente que responde dúvidas administrativas e por quê. Anuncie a continuação: o Capítulo 7 trata de adaptar o modelo, com ajuste fino e alinhamento. Lembre os exercícios e o projeto."
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "HOLTZMAN, A. et al. The curious case of neural text degeneration. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 8., 2020. Proceedings [...]. 2020.",
+    "FAN, A.; LEWIS, M.; DAUPHIN, Y. Hierarchical neural story generation. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 56., 2018, Melbourne. Proceedings [...]. Stroudsburg: ACL, 2018. p. 889-898.",
+    "LIU, N. F. et al. Lost in the middle: how language models use long contexts. Transactions of the Association for Computational Linguistics, v. 12, p. 157-173, 2024.",
+    "KWON, W. et al. Efficient memory management for large language model serving with PagedAttention. In: ACM SYMPOSIUM ON OPERATING SYSTEMS PRINCIPLES (SOSP), 29., 2023, Koblenz. Proceedings [...]. New York: ACM, 2023. p. 611-626.",
+    "LEVIATHAN, Y.; KALMAN, M.; MATIAS, Y. Fast inference from transformers via speculative decoding. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 40., 2023. Proceedings of Machine Learning Research, v. 202, 2023.",
+    "AINSLIE, J. et al. GQA: training generalized multi-query transformer models from multi-head checkpoints. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING, 2023. Proceedings [...]. Stroudsburg: ACL, 2023."
+   ]
+  }
+ ]
+}

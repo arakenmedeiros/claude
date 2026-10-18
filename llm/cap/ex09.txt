@@ -1,0 +1,407 @@
+MC: Qual é o principal objetivo de fazer a lógica da aplicação depender de uma interface de provedor, e não de um serviço específico?
+= Trocar de provedor, ou usar um simulado nos testes, sem alterar a lógica da aplicação.
+- Aumentar o número de parâmetros do modelo usado pela aplicação em produção.
+- Dispensar a validação das respostas, pois a interface já garante o conteúdo.
+- Garantir que o modelo escolhido nunca produza respostas incorretas ou inventadas.
+- Eliminar a necessidade de configurar credenciais para cada provedor usado.
+J: A interface isola o que muda (o provedor) do que permanece (a lógica); os adaptadores traduzem a interface para cada serviço ou modelo local.
+
+MC: Em uma aplicação com LLM, qual é a ordem típica das cinco etapas descritas no capítulo?
+= Preparar a entrada, chamar o modelo, validar a saída, tratar falhas e registrar.
+- Registrar, validar a saída, chamar o modelo, preparar a entrada e tratar falhas.
+- Chamar o modelo, preparar a entrada, registrar, tratar falhas e validar a saída.
+- Tratar falhas, registrar, preparar a entrada, chamar o modelo e validar a saída.
+- Validar a saída, preparar a entrada, tratar falhas, chamar o modelo e registrar.
+J: A entrada precisa estar limpa e mascarada antes da chamada; a saída é validada antes de ser usada; falhas e registro cercam o processo.
+
+MC: Qual é o papel de um adaptador na arquitetura em camadas?
+= Traduzir a interface comum da aplicação para as convenções de um serviço específico.
+- Armazenar os pesos do modelo na memória da própria aplicação durante a execução.
+- Substituir o tokenizador do modelo por outro com vocabulário maior e mais rápido.
+- Treinar o modelo com os dados da aplicação para melhorar as respostas futuras.
+- Cobrar o uso do serviço de cada usuário e emitir os respectivos relatórios.
+J: Campos, formato de mensagens e parâmetros variam entre provedores; o adaptador concentra essas diferenças em um único lugar.
+
+MC: Um serviço devolve o código 429. Como esse erro deve ser tratado?
+= Como transitório: repetir com recuo exponencial, respeitando a espera indicada pelo serviço.
+- Como permanente: abandonar a requisição e não registrar nenhuma informação sobre ela.
+- Como erro de credencial: trocar a chave de acesso imediatamente e reenviar a chamada.
+- Como requisição inválida: reenviar o mesmo corpo da chamada sem esperar nenhum tempo.
+- Como sucesso parcial: usar o texto recebido até então como se fosse a resposta final.
+J: O 429 indica limite de taxa excedido; ele costuma passar com o tempo, e repetir imediatamente só agravaria a carga.
+
+MC: Qual dos erros abaixo NÃO deve ser repetido automaticamente?
+= Credencial inválida (401).
+- Tempo esgotado na chamada.
+- Indisponibilidade temporária do servidor (5xx).
+- Falha de rede momentânea.
+- Limite de taxa (429).
+J: Repetir um erro permanente gasta tempo e dinheiro sem chance de sucesso; é preciso corrigir a causa.
+
+MC: Qual é a função do jitter (a parcela aleatória) no recuo exponencial?
+= Evitar que muitos clientes repitam as tentativas no mesmo instante e sobrecarreguem o serviço.
+- Aumentar o teto máximo de espera para além do valor que foi configurado na aplicação.
+- Transformar erros permanentes em transitórios para que possam ser repetidos depois.
+- Reduzir a zero o tempo total de espera acumulado entre todas as tentativas feitas.
+- Substituir o tempo limite da chamada, que deixa de ser necessário com o jitter.
+J: Sem aleatoriedade, clientes sincronizados voltariam todos juntos; o jitter espalha as tentativas no tempo.
+
+MC: Com $t_0=1$ s, teto de 30 s e sem jitter, quais são as quatro primeiras esperas do recuo exponencial?
+= 1 s, 2 s, 4 s e 8 s.
+- 1 s, 2 s, 3 s e 4 s.
+- 1 s, 1 s, 1 s e 1 s.
+- 2 s, 4 s, 8 s e 16 s.
+- 1 s, 3 s, 9 s e 27 s.
+J: A espera dobra a cada falha: $t_k = \min(t_{\max}, t_0\cdot 2^k)$, com $k=0,1,2,3$.
+
+MC: Por que o capítulo recomenda tornar a função de espera (`dormir`) injetável?
+= Para testar a repetição sem esperar de fato e conferir os tempos calculados.
+- Para que o código de repetição funcione somente em produção e nunca em ambiente de teste.
+- Para impedir que o tempo limite da chamada seja respeitado quando o serviço demorar.
+- Para que o jitter seja sempre igual a zero em produção, tornando as esperas fixas.
+- Para evitar o uso de exceções no código, já que a espera passa a devolver o erro.
+J: Em produção, `dormir` é `time.sleep`; nos testes, é uma função que apenas registra os valores pedidos, e os testes rodam instantaneamente.
+
+MC: Qual é o risco de usar um SDK que já repete chamadas e, além disso, escrever um laço próprio de novas tentativas?
+= Empilhar duas camadas de repetição, multiplicando a espera e a carga sobre o serviço.
+- O SDK deixa de aceitar a credencial configurada, pois detecta o laço próprio de repetição.
+- O modelo passa a gerar textos mais curtos, porque as chamadas ocorrem em sequência rápida.
+- O tempo limite deixa de existir, pois a segunda camada o substitui automaticamente.
+- A aplicação perde a capacidade de registrar as chamadas feitas, mesmo as bem-sucedidas.
+J: Se o SDK tenta 3 vezes e o seu laço também, uma única falha pode gerar até 9 chamadas; leia a documentação e escolha uma camada.
+
+MC: Qual é a vantagem de definir um tempo limite em cada chamada ao provedor?
+= Evitar que a aplicação fique bloqueada indefinidamente se o serviço não responder.
+- Garantir que o modelo responda corretamente a qualquer pergunta enviada pelo usuário final.
+- Reduzir o preço por token cobrado pelo provedor em todas as chamadas da aplicação.
+- Aumentar a janela de contexto disponível para cada requisição feita ao serviço remoto.
+- Permitir que as credenciais sejam escritas no código sem risco de vazamento posterior.
+J: Sem tempo limite, um serviço lento pode travar processos e acumular requisições pendentes.
+
+MC: Qual das afirmações sobre execução local de modelos é a mais adequada?
+= Mantém os dados no ambiente e dá custo previsível, mas exige hardware e costuma ter qualidade menor.
+- Dispensa qualquer avaliação, pois todo modelo local equivale a um modelo comercial grande.
+- Não permite o uso de interfaces HTTP, sendo acessível somente por bibliotecas internas.
+- Sempre custa menos que um serviço remoto, em qualquer escala e para qualquer volume de uso.
+- Elimina todos os riscos de segurança da aplicação, pois nada passa pela internet pública.
+J: Há vantagens e custos; a decisão depende de privacidade, escala, hardware e qualidade exigida, e deve ser baseada em medições.
+
+MC: O que significa dizer que um modelo tem "pesos disponíveis"?
+= Que os parâmetros podem ser baixados e executados, sem definir por si só os usos permitidos.
+- Que o modelo é efetivamente aberto, com código e dados de treinamento publicados por completo.
+- Que a licença do modelo permite qualquer uso comercial, em qualquer escala e sem condições.
+- Que o modelo foi treinado sem dados protegidos por direitos autorais ou por privacidade.
+- Que o modelo não tem restrições de redistribuição, podendo ser reenviado a terceiros.
+J: A licença do modelo e da versão específica define o que se pode fazer; pesos disponíveis não equivalem a modelo aberto.
+
+MC: Qual conjunto de itens caracteriza um modelo "efetivamente aberto" em sentido forte, segundo o capítulo?
+= Pesos, código de treinamento, descrição dos dados e licença que permita estudar e redistribuir.
+- Apenas os pesos do modelo, publicados com uma licença de uso restrito a pesquisa.
+- Apenas uma API gratuita, com limite de uso mensal e sem acesso aos parâmetros do modelo.
+- Apenas o tokenizador e o arquivo de configuração, sem os pesos nem a descrição dos dados.
+- Apenas o relatório técnico em formato de artigo, descrevendo a arquitetura e os resultados.
+J: Poucos modelos grandes atendem a todos os itens; a maioria divulga pesos, mas não os dados de treinamento.
+
+MC: Qual é a memória mínima aproximada apenas para os pesos de um modelo hipotético de 70 bilhões de parâmetros em 4 bits?
+= Cerca de 35 GB.
+- Cerca de 4 GB.
+- Cerca de 70 GB.
+- Cerca de 140 GB.
+- Cerca de 280 GB.
+J: $N\times b/8 = 70\times10^9\times4/8 = 35\times10^9$ bytes, ou 35 GB, sem contar o cache KV e as ativações.
+
+MC: Por que, ao dimensionar a memória para muitos usuários simultâneos, não basta somar apenas o tamanho dos pesos?
+= Porque cada usuário ativo ocupa um cache KV próprio, que cresce com o contexto e pode superar os pesos.
+- Porque os pesos são copiados para cada usuário simultâneo, em precisão total, durante a geração.
+- Porque o tokenizador consome mais memória que o modelo quando há muitos usuários ativos.
+- Porque a quantização aumenta o número de parâmetros do modelo à medida que chegam usuários.
+- Porque o cache KV só existe durante o treinamento e desaparece quando o modelo é servido.
+J: O cache KV é proporcional a camadas, comprimento, cabeças KV, dimensão e número de usuários simultâneos.
+
+MC: O que a quantização faz com um modelo para execução local?
+= Reduz a memória dos pesos, ao custo de possível perda de qualidade que deve ser medida.
+- Aumenta o número de parâmetros do modelo para melhorar a qualidade das respostas geradas.
+- Remove a necessidade de cache KV, pois os pesos passam a ser recalculados a cada token.
+- Garante qualidade idêntica à da precisão total em todas as tarefas e em todos os idiomas.
+- Substitui o tokenizador por outro mais eficiente, que gera menos tokens para o mesmo texto.
+J: Menos bits por peso economizam memória, mas o efeito na qualidade é desigual entre tarefas.
+
+MC: Qual é o objetivo de mascarar dados pessoais antes de enviar o texto a um provedor externo?
+= Reduzir a exposição de informações sensíveis, trocando CPF, e-mail e telefone por marcadores.
+- Aumentar a criatividade e a variedade das respostas produzidas pelo modelo de linguagem.
+- Diminuir o número de tokens da entrada a zero, o que torna a chamada mais barata.
+- Substituir a validação da saída, já que os dados protegidos deixam de ser um problema.
+- Garantir que a resposta gerada pelo modelo será correta e adequada ao caso do usuário.
+J: O mascaramento é uma medida de minimização de dados; ele não torna a resposta correta, e padrões simples podem deixar passar casos incomuns.
+
+MC: Por que o mascaramento por expressões regulares não deve ser tratado como proteção completa?
+= Porque os padrões cobrem só formatos previstos e deixam passar dados escritos de outras formas.
+- Porque expressões regulares não funcionam com textos escritos em português do Brasil.
+- Porque o mascaramento muda o significado de todas as palavras que aparecem no texto.
+- Porque o provedor desfaz o mascaramento automaticamente ao receber o texto da entrada.
+- Porque o mascaramento só vale para números e ignora qualquer outro tipo de informação.
+J: Nomes, endereços e números em formatos atípicos escapam de padrões simples; o risco residual precisa ser reconhecido e, se necessário, tratado com outras camadas.
+
+MC: Ao aparar o histórico de uma conversa para respeitar um limite de tokens, qual estratégia simples o capítulo adota?
+= Manter as mensagens mais recentes que cabem no limite e descartar as mais antigas.
+- Manter apenas a primeira mensagem da conversa e descartar todas as demais mensagens.
+- Descartar sempre as mensagens mais recentes, que costumam ser as menos relevantes.
+- Embaralhar as mensagens da conversa para variar o contexto oferecido ao modelo.
+- Duplicar as mensagens curtas da conversa até completar o limite de tokens permitido.
+J: As mensagens recentes costumam ser as mais relevantes para a próxima resposta; mensagens essenciais podem ser fixadas à parte.
+
+MC: O que a validação com um esquema (por exemplo, com pydantic) garante sobre a saída do modelo?
+= Que estrutura, tipos e restrições declaradas foram respeitados, não que o conteúdo está correto.
+- Que todas as informações presentes na resposta do modelo são verdadeiras e atualizadas.
+- Que a resposta foi baseada em fontes confiáveis e verificadas pelo próprio esquema.
+- Que o modelo não precisa mais de testes, pois o formato já foi totalmente validado.
+- Que a resposta não contém dados pessoais, qualquer que seja o esquema que foi escrito.
+J: Formato válido e conteúdo correto são coisas diferentes; é preciso verificar também regras de negócio, citações e abstenção.
+
+MC: Em qual situação uma regra de validação de saída, como a que bloqueia dados pessoais na resposta, é mais útil?
+= Quando o modelo pode repetir ou inventar informações que não deveriam chegar ao usuário.
+- Quando se deseja aumentar a temperatura de geração para obter respostas mais variadas.
+- Quando a resposta já foi aprovada por uma revisão humana completa e individual.
+- Quando o provedor utilizado é sempre simulado e devolve textos previamente conhecidos.
+- Quando a pergunta do usuário é sobre a quantidade de memória usada pelo próprio modelo.
+J: A validação é uma barreira de saída; ela detecta problemas independentemente da qualidade da entrada.
+
+MC: O que faz um orçamento de tokens em uma aplicação?
+= Limita o consumo total e bloqueia novas chamadas quando o limite é excedido.
+- Aumenta a janela de contexto do modelo para comportar conversas mais longas.
+- Reduz o número de erros transitórios que o serviço remoto devolve à aplicação.
+- Define o idioma e o tom das respostas que serão devolvidas aos usuários finais.
+- Substitui o registro de chamadas, pois guarda todos os detalhes de cada uso.
+J: No exemplo do capítulo, com limite de 500 tokens, a terceira chamada de 200 tokens é bloqueada, porque o total (600) excederia o orçamento.
+
+MC: Qual é a ideia do disjuntor (circuit breaker) em uma aplicação com LLM?
+= Após falhas repetidas, parar de chamar o serviço por um tempo e usar um plano B.
+- Cortar a energia do servidor sempre que o modelo produzir uma resposta incorreta.
+- Repetir a chamada sem limite de tentativas até que o serviço volte a responder.
+- Desativar a validação das saídas quando houver muitas falhas consecutivas no serviço.
+- Trocar a credencial de acesso a cada falha, para evitar que o serviço bloqueie a chave.
+J: O disjuntor aberto devolve imediatamente a resposta alternativa, poupando tempo e carga até que o serviço se recupere.
+
+MC: Qual é a forma mais adequada de fornecer a chave de acesso a uma aplicação?
+= Ler de uma variável de ambiente ou de um gerenciador de segredos, fora do código versionado.
+- Escrever a chave diretamente no código-fonte, para que fique junto da chamada que a usa.
+- Gravar a chave em um arquivo de configuração incluído no repositório compartilhado.
+- Enviar a chave dentro das mensagens do prompt, para que o provedor a reconheça melhor.
+- Imprimir a chave no log a cada chamada, para facilitar a conferência durante os testes.
+J: Segredos no código acabam em repositórios e cópias; a variável de ambiente (ou um gerenciador) mantém a chave fora do versionamento.
+
+MC: Uma chave de API foi enviada por engano a um repositório privado. Qual é o primeiro passo mais importante?
+= Revogar ou rotacionar a chave no provedor, assumindo que ela foi exposta.
+- Apagar o arquivo do repositório e continuar usando a mesma chave nas chamadas atuais.
+- Esperar alguns dias para ver se alguém usa a chave antes de tomar qualquer providência.
+- Reescrever o histórico do repositório e manter a mesma chave ativa no provedor.
+- Trocar apenas o nome da variável no código, mantendo o valor da chave sem alteração.
+J: Remover do histórico não substitui a revogação, pois cópias podem existir; o custo de rotacionar é pequeno.
+
+MC: O que é adequado registrar em cada chamada, segundo as boas práticas do capítulo?
+= Versão do prompt, modelo, parâmetros, tokens, latência, status e hash da entrada.
+- Apenas a chave de acesso e o texto integral digitado pelo usuário em cada chamada.
+- Somente o horário do servidor, sem outros detalhes sobre a chamada que foi feita.
+- Nada, porque qualquer registro viola a privacidade e deve ser evitado em todos os casos.
+- Apenas as respostas devolvidas, sem nenhum metadado sobre o modelo, o prompt ou o custo.
+J: Esses campos permitem reproduzir e auditar o que ocorreu sem guardar o texto sensível; o hash permite correlacionar sem expor.
+
+MC: Qual é a vantagem do formato JSON Lines para o registro de chamadas?
+= Cada chamada é uma linha independente, fácil de acrescentar e de processar depois.
+- Impede que o arquivo seja lido por outros programas, aumentando a segurança dos dados.
+- Obriga a guardar o texto integral das mensagens, o que facilita a auditoria posterior.
+- Substitui a necessidade de calcular métricas, pois o formato já resume os resultados.
+- Só funciona com bancos de dados relacionais, que precisam estar instalados na aplicação.
+J: Acrescentar uma linha por evento é simples e robusto, e cada linha é um objeto JSON que ferramentas comuns leem.
+
+MC: Qual a principal razão para testar a aplicação com um provedor simulado?
+= Os testes ficam rápidos, baratos, reproduzíveis e independentes de rede e de credenciais.
+- Provedores simulados produzem sempre respostas melhores do que as dos serviços reais.
+- Os testes com o serviço real deixam de ser necessários em qualquer fase do projeto.
+- Um provedor simulado dispensa a definição de uma interface entre a lógica e o serviço.
+- Os testes passam a medir diretamente a qualidade do modelo real usado em produção.
+J: O simulador valida a lógica da aplicação; a qualidade do modelo real exige avaliação própria com dados representativos.
+
+MC: Dois provedores simulados diferentes passam nos mesmos testes de abstenção e de citação de fonte. O que isso mostra?
+= Que a lógica funciona com qualquer provedor que cumpra a interface e se comporta como esperado.
+- Que os dois provedores têm a mesma qualidade de resposta quando usados em produção.
+- Que os testes automáticos são desnecessários para os próximos provedores adaptados.
+- Que o modelo real não precisa ser avaliado, pois os simulados já foram aprovados.
+- Que a interface entre a lógica e o provedor pode ser removida do código da aplicação.
+J: Testes escritos contra a interface valem para qualquer implementação; eles não substituem avaliação com modelos reais.
+
+MC: Por que o nome do modelo deve vir de configuração externa e ser registrado em cada chamada?
+= Para trocar e comparar modelos sem mudar o código e saber qual modelo gerou cada resposta.
+- Para que o modelo seja treinado de novo a cada chamada com os dados mais recentes.
+- Para impedir que o provedor consiga identificar qual aplicação está fazendo as chamadas.
+- Para evitar que seja necessário definir um tempo limite nas chamadas ao serviço.
+- Para que a validação da saída possa ser dispensada nas respostas de modelos recentes.
+J: Modelos mudam e são descontinuados; configuração externa mais registro dão flexibilidade e rastreabilidade.
+
+DISC[C]: Explique, com suas palavras, por que os problemas descritos na situação inicial (chave no repositório, travamento, troca de provedor, falta de rastreabilidade) são problemas de engenharia de software, e não de inteligência artificial.
+R: Todos decorrem de práticas de engenharia: segredos mal geridos, ausência de tempo limite, repetição e plano B, acoplamento forte a um provedor e falta de registro de versões e parâmetros. O componente de IA os agrava por ser caro, externo, probabilístico e sujeito a mudanças, mas as soluções são arquiteturais: interface e adaptadores, recuo e tempo limite, credenciais no ambiente, registro e testes com provedores simulados.
+CRIT: Relaciona cada problema a uma prática de engenharia.
+CRIT: Explica por que o componente LLM aumenta o impacto desses problemas.
+
+DISC[C]: Diferencie erros transitórios de erros permanentes em chamadas a um serviço de LLM, dê dois exemplos de cada um e explique por que o tratamento é oposto.
+R: Transitórios podem passar com o tempo: tempo esgotado, falha de rede, 5xx e limite de taxa (429). Devem ser repetidos com recuo. Permanentes não passam: requisição inválida (400), credencial inválida (401), sem permissão (403), modelo inexistente (404). Repetir é inútil e custoso; é preciso corrigir a causa, registrar e alertar. Não repetir transitórios deixa o sistema frágil.
+
+DISC[C]: Explique o que é um modelo com pesos disponíveis, o que é um modelo efetivamente aberto e por que a diferença importa para quem vai usar o modelo em uma empresa.
+R: Pesos disponíveis significa que os parâmetros podem ser baixados e executados; nada se afirma sobre usos permitidos. Efetivamente aberto, em sentido forte, exige também código de treinamento, descrição dos dados e licença que permita estudar, modificar e redistribuir. Para a empresa, importa porque a licença pode restringir uso comercial, escala ou certos usos, e pode mudar entre versões; é preciso ler a licença vigente do modelo específico e consultar o jurídico.
+
+DISC[C]: Por que um registro de chamadas deve guardar, por exemplo, um hash da entrada, e não o texto integral? Que informações ainda permitem responder "qual prompt e qual modelo geraram aquela resposta?"
+R: O texto integral pode conter dados pessoais ou sigilosos; guardá-lo amplia o risco e as obrigações de proteção. O hash permite correlacionar chamadas iguais e localizar uma entrada específica sem expô-la. Para reconstruir o contexto bastam o identificador e a versão do prompt, o modelo, os parâmetros, as contagens de tokens, a data/hora, o status e a latência. Se for necessário guardar texto, deve ser sob política explícita de retenção e acesso.
+
+DISC[M]: Um serviço falha três vezes seguidas com 429 e responde na quarta tentativa. Com $t_0 = 1$ s, teto de 30 s e sem jitter, calcule as esperas e o tempo total de espera. Qual seria a sexta espera, e qual o total de seis esperas?
+R: As esperas são 1, 2 e 4 s, total de 7 s antes da quarta tentativa bem-sucedida. A sexta espera ($k=5$) seria $\min(30, 32)=30$ s, e as seis primeiras somam $1+2+4+8+16+30=61$ s. O teto evita esperas enormes, mas o tempo total deve caber no limite tolerado pelo usuário.
+
+DISC[M]: Calcule a memória aproximada dos pesos de um modelo hipotético de 13 bilhões de parâmetros em 16 bits, em 8 bits e em 4 bits. Em quais configurações ele caberia em uma GPU de 16 GB, considerando só os pesos?
+R: $N\times b/8$: em 16 bits, $13\times10^9\times2=26$ GB; em 8 bits, 13 GB; em 4 bits, 6,5 GB. Só os pesos caberiam em 16 GB em 8 e em 4 bits, mas 13 GB deixa pouca margem para cache KV e ativações; em 16 bits não cabe. Em uma estimativa realista, é preciso somar o cache KV e uma margem.
+
+DISC[M]: Para um modelo com 32 camadas, 8 cabeças KV de dimensão 128 e cache em `float16`, calcule o cache KV de uma conversa de 4 096 tokens e de 20 conversas simultâneas. Compare com o tamanho de pesos de 3,5 GB.
+R: Por conversa: $2\times32\times4096\times8\times128\times2\approx0{,}54$ GB. Para 20 conversas: cerca de 10,7 GB, aproximadamente três vezes os 3,5 GB dos pesos. Dimensionar só pelos pesos subestima muito a memória necessária; o total (cerca de 14,2 GB) ainda não inclui ativações.
+
+DISC[M]: Um orçamento permite 500 tokens no total. Chamadas de 200, 200 e 200 tokens são registradas em sequência. Em que chamada o orçamento é excedido e qual seria o custo hipotético das duas primeiras com preço de 2,0 por mil tokens?
+R: Após duas chamadas há 400 tokens usados; a terceira elevaria o total a 600, que excede 500, e é bloqueada. O custo hipotético das duas primeiras é $400/1000\times2{,}0=0{,}8$ unidades monetárias. O preço é fictício; preços reais devem ser conferidos na documentação do provedor.
+
+DISC[A]: Uma equipe valida as respostas com um esquema e conclui que "a qualidade está garantida". Analise a conclusão e indique o que mais deveria ser verificado.
+R: O esquema garante formato, tipos e restrições, mas não a correção do conteúdo. Deve-se medir acurácia contra um gabarito, validar regras de negócio, exigir citações verificáveis no contexto, tratar abstenção e dados pessoais na saída, e amostrar casos para revisão humana. Também se avaliam resistência a entradas adversariais e comportamento em casos sem resposta.
+
+DISC[A]: Uma aplicação usa um SDK que já repete chamadas três vezes e, por cima, um laço próprio de três tentativas. Analise o efeito sobre o tempo e a carga e proponha uma solução.
+R: Uma falha persistente pode gerar até 3 × 3 = 9 chamadas e esperas multiplicadas, o que agrava a carga justamente quando o serviço está sobrecarregado e prolonga a latência percebida pelo usuário. Soluções: configurar o SDK para zero tentativas e manter a política em uma camada só, ou manter a do SDK e implementar apenas o plano B e o disjuntor na aplicação; definir tempo limite global; registrar o número total de tentativas.
+
+DISC[A]: Um desenvolvedor propõe fixar o nome do modelo e a chave no código "para simplificar". Avalie a proposta e indique as consequências de longo prazo.
+R: A proposta cria riscos e rigidez. A chave no código tende a vazar para repositórios e cópias; o nome do modelo fixo dificulta trocas, testes e comparações, e modelos são descontinuados ou mudam. Consequências: incidentes de segurança, dificuldade de reproduzir resultados e de auditar qual modelo gerou cada resposta. Solução: configuração externa (variáveis de ambiente), registro do modelo em cada chamada e adaptadores trocáveis.
+
+DISC[A]: Um sistema passou nos testes com o provedor simulado e foi para produção com um modelo real, onde o desempenho caiu muito. Isso significa que os testes foram inúteis? Discuta o que os testes cobrem e o que não cobrem.
+R: Não foram inúteis: os testes com simulado verificam a lógica da aplicação (montagem do prompt, recuo, mascaramento, validação, registro, troca de provedor). Eles não medem a qualidade do modelo real, a distribuição de entradas reais, latência, custos ou limites do serviço. É preciso uma avaliação separada com dados representativos, medida de métricas e monitoramento em produção.
+
+DISC[P]: Implemente `esperas_recuo(n, t0, teto)`, que devolva a lista das n primeiras esperas do recuo exponencial sem jitter e o total. Confira com $t_0=2$ e teto 20 (valores do Exemplo 1 do capítulo).
+CODE:
+def esperas_recuo(n, t0=1.0, teto=30.0):
+    esperas = [min(teto, t0 * 2 ** k) for k in range(n)]
+    return esperas, sum(esperas)
+
+esperas, total = esperas_recuo(5, t0=2, teto=20)
+assert esperas == [2, 4, 8, 16, 20] and total == 50
+esperas6, total6 = esperas_recuo(6, t0=1, teto=30)
+assert esperas6[-1] == 30 and total6 == 61
+print(esperas, total, total6)
+ENDCODE
+CRIT: Aplica o teto com min.
+CRIT: Usa potência de 2 em função do índice da tentativa.
+CRIT: Retorna também o total de espera.
+
+DISC[P]: Implemente `classificar_status(codigo)` que devolva "transitorio" para 408, 429 e 5xx e "permanente" para os demais códigos de erro (400, 401, 403, 404...), e uma função `deve_repetir(codigo, tentativa, max_tentativas)`. Teste com seis códigos.
+CODE:
+def classificar_status(codigo):
+    if codigo in (408, 429) or 500 <= codigo <= 599:
+        return "transitorio"
+    return "permanente"
+
+def deve_repetir(codigo, tentativa, max_tentativas):
+    return classificar_status(codigo) == "transitorio" and tentativa < max_tentativas
+
+casos = [429, 503, 408, 401, 404, 400]
+classes = [classificar_status(c) for c in casos]
+assert classes == ["transitorio", "transitorio", "transitorio", "permanente", "permanente", "permanente"]
+assert deve_repetir(429, 1, 3) and not deve_repetir(429, 3, 3) and not deve_repetir(401, 1, 3)
+print(dict(zip(casos, classes)))
+ENDCODE
+CRIT: Separa transitórios de permanentes conforme a tabela do capítulo.
+CRIT: Respeita o limite de tentativas.
+CRIT: Não repete erros permanentes.
+
+DISC[P]: Implemente `mascarar(texto)` que troque e-mail, CPF e telefone por marcadores e devolva também a contagem de itens mascarados por tipo. Mostre que mascarar duas vezes dá o mesmo resultado (idempotência) e que um texto sem dados pessoais não é alterado.
+CODE:
+import re
+
+PADROES = [
+    ("EMAIL", re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")),
+    ("CPF", re.compile(r"\b\d{3}\.\d{3}\.\d{3}-\d{2}\b")),
+    ("TELEFONE", re.compile(r"\(?\b\d{2}\)?\s?9?\d{4}-\d{4}\b")),
+]
+
+def mascarar(texto):
+    achados = {}
+    for nome, rx in PADROES:
+        def troca(m, nome=nome):
+            achados[nome] = achados.get(nome, 0) + 1
+            return f"[{nome}]"
+        texto = rx.sub(troca, texto)
+    return texto, achados
+
+entrada = "Contato: ana@exemplo.com, CPF 111.222.333-44, tel (61) 98888-7777."
+saida, achados = mascarar(entrada)
+assert "@" not in saida and "111.222" not in saida and "98888" not in saida
+assert achados == {"EMAIL": 1, "CPF": 1, "TELEFONE": 1}
+assert mascarar(saida) == (saida, {})
+neutro = "A multa é de R$ 1,50 por dia."
+assert mascarar(neutro) == (neutro, {})
+print(saida, achados)
+ENDCODE
+CRIT: Usa expressões regulares para os três tipos.
+CRIT: Conta os itens mascarados por tipo.
+CRIT: Verifica idempotência e texto neutro.
+
+DISC[P]: Implemente `max_usuarios(n_params, bits, camadas, T, n_kv, d_cab, gb, margem)` que calcule quantos usuários simultâneos, cada um com contexto de T tokens (cache em 2 bytes por número), cabem na memória disponível. Teste com 7 bilhões de parâmetros, 4 bits, 32 camadas, T=4096, 8 cabeças KV de 128 dimensões e 24 GB.
+CODE:
+def memoria_pesos_gb(n_params, bits):
+    return n_params * bits / 8 / 1e9
+
+def memoria_kv_gb(camadas, T, n_kv, d_cab, bytes_num=2):
+    return 2 * camadas * T * n_kv * d_cab * bytes_num / 1e9
+
+def max_usuarios(n_params, bits, camadas, T, n_kv, d_cab, gb, margem=0.15):
+    livre = gb * (1 - margem) - memoria_pesos_gb(n_params, bits)
+    if livre <= 0:
+        return 0
+    return int(livre // memoria_kv_gb(camadas, T, n_kv, d_cab))
+
+u24 = max_usuarios(7e9, 4, 32, 4096, 8, 128, 24)
+u16 = max_usuarios(7e9, 4, 32, 4096, 8, 128, 16)
+assert u24 == 31 and u16 == 18
+assert max_usuarios(70e9, 16, 80, 4096, 8, 128, 24) == 0
+print(u24, u16)
+ENDCODE
+CRIT: Desconta a margem de segurança e os pesos antes de contar usuários.
+CRIT: Calcula o cache KV por usuário com a fórmula do capítulo.
+CRIT: Devolve zero quando os pesos não cabem.
+
+DISC[P]: Implemente `resumir_log(linhas_jsonl)` que receba linhas JSON Lines de registro de chamadas (campos `status`, `latencia_s`, `tokens_saida`) e devolva o número de chamadas, a taxa de sucesso, a latência mediana e a soma de tokens de saída. Teste com cinco linhas, uma delas com falha, e confirme que uma linha vazia é ignorada.
+CODE:
+import json
+import statistics
+
+def resumir_log(linhas):
+    regs = [json.loads(l) for l in linhas if l.strip()]
+    if not regs:
+        return {"chamadas": 0, "taxa_sucesso": None, "latencia_mediana_s": None, "tokens_saida": 0}
+    return {
+        "chamadas": len(regs),
+        "taxa_sucesso": sum(r["status"] == "ok" for r in regs) / len(regs),
+        "latencia_mediana_s": statistics.median(r["latencia_s"] for r in regs),
+        "tokens_saida": sum(r["tokens_saida"] for r in regs),
+    }
+
+linhas = [json.dumps({"status": s, "latencia_s": l, "tokens_saida": t})
+          for s, l, t in [("ok", 0.4, 20), ("ok", 0.6, 30), ("ok", 0.5, 25), ("erro", 2.0, 0), ("ok", 0.3, 15)]]
+linhas.append("")
+r = resumir_log(linhas)
+assert r["chamadas"] == 5 and r["taxa_sucesso"] == 0.8
+assert r["latencia_mediana_s"] == 0.5 and r["tokens_saida"] == 90
+assert resumir_log([])["chamadas"] == 0
+print(r)
+ENDCODE
+CRIT: Ignora linhas vazias e trata log vazio.
+CRIT: Calcula taxa de sucesso e mediana corretamente.
+CRIT: Não exige o texto das mensagens, apenas metadados.
+
+DISC[D]: Projete a arquitetura em camadas de um assistente de atendimento ao cliente de uma operadora, indicando as camadas, a interface com o provedor, as proteções de entrada e de saída e o que seria registrado.
+R: Camadas: interface de atendimento (API), lógica da aplicação (recuperação de contexto, montagem do prompt, validação), interface `ProvedorLLM` e adaptadores (serviço remoto, modelo local, simulado), módulos de apoio (mascaramento, orçamento, registro, credenciais). Entrada: limpeza, mascaramento de CPF, e-mail e telefone, limite de tokens e aparo do histórico. Saída: validação de esquema, bloqueio de dados pessoais, verificação de fonte e abstenção, encaminhamento a humano em casos de risco. Robustez: tempo limite, recuo com jitter, disjuntor, plano B. Registro: versão do prompt, modelo, parâmetros, tokens, latência, status e hash da entrada, sem texto integral.
+
+DISC[D]: Descreva uma estratégia de testes para a aplicação do exercício anterior que não dependa de rede, indicando ao menos cinco testes e o que cada um verifica.
+R: (1) Provedor simulado que falha duas vezes e acerta na terceira: verifica repetição e esperas usando `dormir` injetável. (2) Provedor que devolve erro permanente: verifica que não há repetição. (3) Entrada com CPF, e-mail e telefone: verifica que o prompt enviado ao provedor está mascarado. (4) Saída com dado pessoal ou vazia: verifica que a validação rejeita. (5) Pergunta sem resposta no contexto: verifica a abstenção. (6) Log: verifica que cada chamada gera uma linha sem texto integral. (7) Troca entre dois provedores simulados passando nos mesmos testes. Testes com serviços reais ficam em outra suíte, executada com cuidado e custo controlado.
+
+DISC[D]: Sua equipe precisa decidir entre usar um serviço remoto e executar um modelo local para um sistema que processa documentos internos sensíveis. Estruture a decisão, indicando critérios, estimativas a fazer e riscos.
+R: Critérios: sensibilidade e requisitos legais dos dados (política de retenção e contratos do provedor, ou dados que não saem do ambiente), qualidade necessária (medida em conjunto de teste próprio), custo total (tokens e infraestrutura, hardware, operação), latência e volume, disponibilidade e dependência de um fornecedor, licença do modelo local (pesos disponíveis não é modelo aberto). Estimativas: memória de pesos e cache KV para o número de usuários simultâneos, custos por volume, qualidade com quantização. Riscos: qualidade menor, manutenção e segurança do ambiente local, mudanças de licença e de versão. A arquitetura em camadas permite começar com um e migrar para o outro trocando o adaptador, e os testes com simulados protegem a lógica.

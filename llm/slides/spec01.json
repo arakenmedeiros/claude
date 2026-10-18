@@ -1,0 +1,343 @@
+{
+ "capitulo": 1,
+ "titulo": "Introdução aos Grandes Modelos de Linguagem",
+ "parte": "Parte I — Fundamentos dos modelos de linguagem",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Definir modelo de linguagem, token e distribuição do próximo token",
+    "Calcular probabilidade, log e perplexidade de uma frase simples",
+    "Situar LLMs em relação a IA, aprendizado de máquina e PLN",
+    "Descrever marcos da história, de n-gramas ao Transformer",
+    "Distinguir modelo, aplicação, interface e sistema completo",
+    "Avaliar com três perguntas se um LLM é a escolha certa"
+   ],
+   "notas": "Boas-vindas ao primeiro capítulo. Diga que ele constrói o vocabulário e o mapa mental dos demais, sem exigir matemática avançada. Leia os seis objetivos em voz alta e peça que a turma marque qual lhe parece mais difícil; volte a essa marcação no fim da aula. Destaque que o último objetivo é o mais prático: decidir quando usar ou não um LLM. Pergunte: quem já usou um assistente de conversação para resumir um texto? Armadilha: não prometa que vão ver LLMs reais; os experimentos do capítulo usam um corpus sintético e n-gramas, que ilustram o conceito sem medir o desempenho de modelos reais."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Situação inicial: o resumo com um erro",
+   "itens": [
+    "Domingo, 23h: você cola dois artigos e pede cinco linhas de resumo",
+    "O resumo sai fluente, com tom de especialista",
+    "Mas a terceira linha cita um número que não existe no artigo",
+    "Fluência não é garantia de correção",
+    "Pergunta-guia: o que o modelo estava fazendo ao escrever aquela linha?"
+   ],
+   "notas": "Conte a cena como uma pequena história: a pessoa está cansada, confia no texto bonito e só percebe o erro por acaso. Esse é o retrato do que torna os LLMs fascinantes e perigosos ao mesmo tempo: texto de alta qualidade, em escala, com pouco esforço, mas sem garantia de correção. Faça a pergunta-guia à turma e anote as respostas no quadro; ao final do capítulo, compare com o que aprenderam. Mencione que o livro ensina a entender o funcionamento interno, construir aplicações e medir com método se o resultado é bom o bastante. Armadilha: não culpar só o modelo; o erro pode nascer em outras camadas, assunto da seção sobre sistemas."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Parâmetros são botões de uma mesa de som",
+   "texto": "Treinar um modelo é girar milhões (ou bilhões) de botões, aos poucos, até a saída soar bem.",
+   "detalhe": "Cada botão é um parâmetro: um número interno do modelo. O aprendizado de máquina ajusta esses números a partir de exemplos, em vez de depender de regras escritas à mão.",
+   "notas": "Use a imagem da mesa de som de um estúdio: o som final depende da posição de cada botão, e ninguém ajusta milhões de botões à mão. No treinamento, um programa gira os botões aos poucos, comparando a saída com exemplos, até errar menos. Explique que parâmetro é simplesmente um número interno que o modelo guarda. Pergunta à turma: se uma mesa tivesse um bilhão de botões, o que seria difícil para um técnico humano? Armadilha: a analogia não diz que cada botão tem um significado individual; o comportamento emerge do conjunto. Isso será retomado nos capítulos sobre treinamento."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Completar frases: um jogo de expectativas",
+   "texto": "\"Hoje à noite vou estudar para a ______\" — você pensou em prova, aula ou reunião. Dificilmente em geladeira.",
+   "detalhe": "Sem perceber, você deu graus de expectativa a cada palavra possível. Um modelo de linguagem faz exatamente isso: diz o quanto cada continuação é plausível.",
+   "notas": "Faça o jogo com a turma: escreva a frase no quadro e peça sugestões. Provavelmente aparecerão prova, aula e reunião; ninguém dirá geladeira. Mostre que cada pessoa atribuiu, sem perceber, graus de expectativa às palavras. É isso que um modelo de linguagem faz: uma máquina de expectativas sobre texto. Escrever uma frase inteira é repetir o passo: prever, escolher, acrescentar, prever de novo. Pergunta: o que muda na expectativa se a frase começar com Ontem, na feira? Armadilha: expectativa não é certeza nem verdade; é plausibilidade segundo padrões do texto."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "O que é um modelo de linguagem",
+   "itens": [
+    "Token: unidade de texto, palavra ou pedaço de palavra",
+    "Modelo de linguagem: atribui probabilidade a sequências de tokens",
+    "Equivale a estimar o próximo token dado o contexto anterior",
+    "Escrever um texto é repetir: prever, escolher, acrescentar"
+   ],
+   "notas": "Defina os dois termos antes de qualquer fórmula. Token é a unidade que o modelo manipula; por ora, palavra ou pedaço de palavra, e o Capítulo 3 detalha a divisão do texto. Modelo de linguagem é aquele que dá probabilidade a sequências de tokens ou, de forma equivalente, estima a probabilidade do próximo token dado o contexto. Dê um exemplo oral com a frase do slide anterior. Pergunta à turma: por que os dois jeitos de dizer são equivalentes? A resposta aparece no próximo slide com a regra da cadeia. Armadilha: não confundir token com palavra; muitas vezes é menor que uma palavra."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Probabilidade do próximo token",
+   "tex": "P( wₜ | w₁, …, wₜ₋₁ )",
+   "explicacao": [
+    "Lê-se: probabilidade de wₜ na posição t, dado o que veio antes",
+    "A barra vertical significa \"dado que\"",
+    "O contexto anterior muda a distribuição do próximo token"
+   ],
+   "notas": "Leia a fórmula em voz alta, símbolo por símbolo: probabilidade de o token w na posição t, dado que os tokens anteriores foram w1 até w t menos um. A barra vertical é o dado que. Exemplo oral: a probabilidade de prova depois de estudar para a é alta; depois de colocar o leite na, é baixa. O contexto muda a distribuição. Pergunta: em que ponto da frase a incerteza é maior, no começo ou no fim? Armadilha: a probabilidade é sobre todo o vocabulário, não sobre uma única palavra; o modelo devolve uma distribuição inteira, cujas probabilidades somam 1."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Regra da cadeia: probabilidade de uma frase",
+   "tex": "P(w₁,…,wₙ) = ∏ₜ P(wₜ | w₁,…,wₜ₋₁)",
+   "explicacao": [
+    "O símbolo ∏ significa produto: multiplique todos os termos",
+    "A probabilidade da frase é o produto das probabilidades de cada passo",
+    "É por isso que prever o próximo token basta para avaliar frases inteiras"
+   ],
+   "notas": "Mostre que a regra da cadeia liga as duas definições do slide anterior: a probabilidade de uma frase inteira é o produto das probabilidades de cada passo. O símbolo de produto é apenas multiplicar de t igual a 1 até n. Dê a ideia de que cada palavra paga um pedágio de probabilidade: quanto mais improvável a escolha, maior o pedágio. Pergunta à turma: se um passo tiver probabilidade quase zero, o que acontece com o produto todo? Resposta: a frase inteira fica improvável. Armadilha: a regra é uma identidade da probabilidade; o difícil é estimar cada fator, e é aí que modelos diferem."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Exemplo: \"o estudante lê o livro\"",
+   "itens": [
+    "Valores hipotéticos, só para ilustrar",
+    "P(o) = 0,30  ·  P(estudante | o) = 0,40",
+    "P(lê | o estudante) = 0,25  ·  P(o | o estudante lê) = 0,50",
+    "Produto: 0,30 × 0,40 × 0,25 × 0,50 = 0,015",
+    "A probabilidade da frase é 1,5%"
+   ],
+   "notas": "Faça a conta no quadro, multiplicando passo a passo. Repita que os valores são hipotéticos e servem só para ilustrar o mecanismo; não vêm de nenhum modelo real. Chame atenção para o resultado: mesmo uma frase perfeitamente natural tem probabilidade pequena, 1,5%, porque cada passo desconta um pouco. Pergunta: o que aconteceria com o produto numa frase de cem palavras? Fica minúsculo, e isso motiva o uso de logaritmos no slide seguinte. Armadilha: probabilidade baixa de uma frase não significa que ela seja errada ou estranha; frases longas têm probabilidade baixa quase sempre."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Logaritmos e perplexidade",
+   "tex": "ln P = Σₜ ln P(wₜ | …)     PPL = exp( −ln P / n )",
+   "explicacao": [
+    "Multiplicar muitos números pequenos estoura a precisão do computador",
+    "Logaritmo transforma produto em soma",
+    "No exemplo: ln 0,015 ≈ −4,20; por token, −1,05",
+    "Perplexidade: e^1,05 ≈ 2,86 opções igualmente prováveis por passo"
+   ],
+   "notas": "Explique o problema prático: multiplicar muitos números pequenos gera um número tão minúsculo que o computador o representa mal, então trabalhamos com logaritmos, que viram soma. No exemplo, o logaritmo natural de 0,015 é cerca de menos 4,20; dividindo por quatro passos, menos 1,05 por token; elevando e ao oposto, cerca de 2,86. Leia a perplexidade como a incerteza média: como se o modelo escolhesse entre cerca de 2,9 opções igualmente prováveis a cada passo. Pergunta: perplexidade menor é melhor ou pior? Menor é melhor. Armadilha: perplexidade não mede verdade, só surpresa."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Perplexidade é um dado com N faces",
+   "texto": "Perplexidade 2,86 é como lançar, a cada passo, um dado justo de cerca de 3 faces e ter de adivinhar o resultado.",
+   "detalhe": "Quanto menos faces, menos incerteza: o modelo está mais seguro. Um modelo muito incerto equivale a um dado com muitas faces.",
+   "notas": "Use o dado como imagem: um dado justo de seis faces dá seis resultados igualmente prováveis, um de duas faces é uma moeda. Dizer que a perplexidade é cerca de 2,9 equivale a dizer que o modelo, em média, está tão incerto quanto estaria ao sortear entre pouco menos de três opções. Menos faces significa menos incerteza. Pergunta à turma: um modelo que sempre acerta com certeza total teria um dado de quantas faces? Uma. Armadilha: a analogia vale para a média; em passos específicos a incerteza varia muito. E perplexidade menor não garante texto verdadeiro, só que o modelo se surpreende menos com o texto."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Plausível não é o mesmo que verdadeiro",
+   "itens": [
+    "Probabilidade alta mede plausibilidade segundo os textos de treino",
+    "\"A capital da Austrália é Sydney\" pode receber probabilidade considerável",
+    "Erros comuns nos textos também são aprendidos",
+    "Fluência e probabilidade alta não substituem verificação"
+   ],
+   "notas": "Este é o primeiro grande alerta do livro. Probabilidade alta diz que a frase é plausível segundo os padrões do texto com que o modelo aprendeu, e não que seja verdadeira. O exemplo da capital da Austrália funciona bem: o erro é comum em textos, então pode ter probabilidade considerável. Pergunte à turma que outros erros populares eles conhecem. Relacione com a situação inicial: o resumo fluente com número inventado. Armadilha: dizer que o modelo mente; ele não tem intenção, apenas produz o que é estatisticamente plausível. O remédio é verificar, medir e documentar, temas dos capítulos finais."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "N-gramas: a ideia de contar",
+   "itens": [
+    "Corpus: grande conjunto de textos",
+    "N-grama: sequência de n tokens consecutivos",
+    "Bigrama olha só o token anterior; trigrama olha dois",
+    "P(wₜ | wₜ₋₁) ≈ contagem(wₜ₋₁, wₜ) / contagem(wₜ₋₁)",
+    "Ideia antiga: Shannon (1948) já gerava texto aproximado assim"
+   ],
+   "notas": "Explique que a forma mais antiga de estimar probabilidades é contar. Num corpus, conta-se quantas vezes cada sequência aparece. Bigrama usa o token anterior; trigrama, os dois anteriores. A fórmula do slide é uma razão de contagens: quantas vezes o par apareceu dividido por quantas vezes o primeiro token apareceu. Exemplo oral: se depois de o aparece estudante em 100 de 500 ocorrências, a estimativa é 0,2. Mencione que Shannon, em 1948, já aproximava a língua por sequências estatísticas. Pergunta: que informação um bigrama ignora? Tudo que veio antes do token anterior. Armadilha: o modelo não sabe o que é um estudante; só resume contagens."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Um modelo de trigramas em ação",
+   "codigo": "from llmdidatico import corpus, modelos\nfrases = corpus.frases_lm(n=3000, seed=0)\ntreino, teste = frases[:2400], frases[2400:]\nlm = modelos.NgramaLM(n=3, k=0.05).ajustar(treino)\ncontexto = [\"o\", \"estudante\"]\ndist = lm.distribuicao(contexto)\ntop = sorted(zip(lm.vocab, dist), key=lambda x: -x[1])[:5]\nfor tok, p in top:\n    print(f\"  {tok:<12s} {p:.3f}\")\nprint(\"Soma:\", round(float(dist.sum()), 6))",
+   "saida": "Próximo token após 'o estudante':\n  estuda       0.172\n  empresta     0.165\n  escreve      0.165\n  devolve      0.154\n  lê           0.123\nSoma das probabilidades: 1.0",
+   "notas": "Corpus sintético em português, escrito por regras para o livro; é pequeno de propósito, para enxergar o mecanismo. O código treina um modelo de trigramas com suavização aditiva e pede a distribuição do próximo token depois de o estudante. Chame atenção para três coisas: o modelo devolve uma distribuição sobre todo o vocabulário, as probabilidades somam 1 e os verbos prováveis são só os que aparecem naquele corpus. O vocabulário tem 44 tokens. Pergunta: por que estuda e empresta têm valores tão próximos? Porque o corpus sintético é regular. Armadilha: isto não é um LLM e não mede o desempenho de modelos reais."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Esparsidade: decorar todas as combinações",
+   "texto": "É como tentar decorar o cardápio de todas as refeições possíveis: quase nenhuma combinação você já comeu.",
+   "detalhe": "Com 50 mil tokens, há 50.000³ = 1,25 × 10¹⁴ trigramas possíveis. Nenhum corpus os cobre; a maioria tem contagem zero.",
+   "notas": "Imagine um restaurante que anota todas as combinações de entrada, prato e sobremesa que já serviu. As possíveis são incontáveis e as servidas são poucas; para a maioria, a tabela está vazia. Com um vocabulário de 50 mil tokens, os trigramas possíveis chegam a 1,25 vezes dez elevado a 14, e nenhum corpus cobre isso. Esse problema se chama esparsidade dos dados. Pergunta à turma: o que um modelo de contagem faz diante de uma combinação nunca vista? Dá probabilidade zero ou, com suavização, uma pequena massa. Armadilha: aumentar n parece melhorar o contexto, mas piora a esparsidade."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Modelos neurais e embeddings",
+   "itens": [
+    "Em vez de tabelar contagens, aprendem representações numéricas",
+    "Embeddings: palavras parecidas ficam próximas (Capítulo 3)",
+    "O que se aprende sobre \"estudante\" ajuda a prever frases sobre \"aluno\"",
+    "Ideia proposta para linguagem por Bengio et al. (2003)"
+   ],
+   "notas": "Apresente a saída para a esparsidade: modelos neurais não tabelam contagens, aprendem representações numéricas chamadas embeddings, em que palavras parecidas ficam próximas. Assim, o aprendizado sobre estudante também ajuda frases sobre aluno, o que a tabela de contagens não faz. Cite Bengio e colaboradores, 2003, como a proposta que virou base do que veio depois. Os embeddings serão detalhados no Capítulo 3. Pergunta: que ganho há em palavras parecidas ficarem próximas? Generalização. Armadilha: proximidade no espaço aprendido não prova que os significados sejam idênticos; o Capítulo 3 discute essa limitação."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Perplexidade de n-gramas no corpus sintético",
+   "fig": "f01_ppl",
+   "legenda": "Dados reais calculados: n=1, 26,96; n=2, 3,17; n=3, 2,40. Corpus artificial, muito mais regular que a língua real.",
+   "itens": [
+    "Menor perplexidade é melhor",
+    "Unigrama ignora o contexto",
+    "Bigrama e trigrama reduzem muito a perplexidade"
+   ],
+   "notas": "Mostre o gráfico e leia os três números, que vêm da execução real do código: 26,96 para unigramas, 3,17 para bigramas e 2,40 para trigramas, medidos em frases de teste que o modelo não viu. O unigrama ignora o contexto e acerta pouco; bigrama e trigrama usam o contexto e reduzem muito a perplexidade. A diferença entre os dois últimos é pequena porque a estrutura do corpus é simples. Pergunta: o que esperar em textos reais? O ganho de aumentar n esbarra na esparsidade. Armadilha: não generalizar estes valores para a língua real nem para LLMs; o corpus é sintético e artificialmente regular."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Comparando unigrama, bigrama e trigrama",
+   "codigo": "for n in (1, 2, 3):\n    m = modelos.NgramaLM(n=n, k=0.05).ajustar(treino)\n    print(f\"n={n}: perplexidade no teste = \"\n          f\"{m.perplexidade(teste):.2f}\")",
+   "saida": "n=1: perplexidade no teste = 26.96\nn=2: perplexidade no teste = 3.17\nn=3: perplexidade no teste = 2.40",
+   "notas": "Este é o Exemplo 1 resolvido do capítulo. O laço treina três modelos no mesmo corpus e mede a perplexidade nas frases de teste. Peça que a turma preveja a ordem dos resultados antes de revelar a saída; a maioria acerta que o trigrama vai melhor. Leia os números: 26,96, 3,17 e 2,40. Interprete: o contexto reduz muito a surpresa, mas o ganho do bigrama para o trigrama é pequeno neste corpus simples. Pergunta: por que, em textos reais, não basta aumentar n indefinidamente? Esparsidade. Armadilha: perplexidade é medida em dados de teste; medir no treino esconderia o problema."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "O que torna um modelo \"grande\"?",
+   "itens": [
+    "LLM: modelo de linguagem neural, tipicamente Transformer, em grande escala",
+    "Três ingredientes crescem juntos: parâmetros, dados e computação",
+    "Não há limiar oficial entre pequeno e grande; o termo é relativo",
+    "Kaplan et al. (2020): a perda cai de forma previsível com a escala",
+    "Hoffmann et al. (2022): parâmetros e dados devem crescer em equilíbrio"
+   ],
+   "notas": "Defina LLM: um modelo de linguagem neural, tipicamente baseado no Transformer, treinado com enorme quantidade de texto e muitos parâmetros, de centenas de milhões a centenas de bilhões. Não existe limiar oficial, e o termo mudou com o tempo. Os três ingredientes são parâmetros, dados e computação. Cite Kaplan e colegas, que mostraram leis de potência para a perda, e Hoffmann e colegas, que argumentaram por crescimento equilibrado de parâmetros e dados. Diga que o Capítulo 5 retoma esses resultados com ressalvas. Pergunta: o que significa previsível aqui? Segue uma lei de potência. Armadilha: emergência de capacidades é hipótese em debate, não fato geral."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "IA, aprendizado de máquina, aprendizado profundo e PLN",
+   "fig": "f01_aninhados",
+   "legenda": "Figura conceitual: os tamanhos não representam proporções reais.",
+   "itens": [
+    "IA ⊃ AM ⊃ AP",
+    "PLN cruza esses conjuntos",
+    "LLMs ficam na interseção de aprendizado profundo e PLN"
+   ],
+   "notas": "Os termos IA, aprendizado de máquina, aprendizado profundo e PLN costumam ser usados como sinônimos, mas se encaixam como bonecas russas, com uma sobreposição importante. Use exemplos do cotidiano: o corretor do celular é PLN; o filtro de spam é aprendizado de máquina; um robô aspirador que desvia de móveis é IA. Nem tudo que é IA aprende; nem tudo que aprende é profundo. Os LLMs ficam na interseção entre aprendizado profundo e PLN. Pergunta: um sistema de regras gramaticais manuais é IA? É PLN e pode ser considerado IA, mas não é aprendizado de máquina. Armadilha: a figura é conceitual, sem proporções reais."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Uma linha do tempo seletiva",
+   "fig": "f01_historia",
+   "legenda": "Marcos citados no livro; seleção nossa, não uma lista completa.",
+   "itens": [
+    "1948 Shannon; 2003 modelo neural",
+    "2013 word2vec; 2017 Transformer",
+    "2018 ELMo e BERT; 2020 GPT-3 (175 bilhões de parâmetros)",
+    "2022 ajuste por preferências humanas"
+   ],
+   "notas": "Percorra a linha do tempo mostrando que cada passo respondeu a uma limitação do anterior. Shannon, em 1948, propõe aproximar a língua por sequências estatísticas; Bengio e colegas, em 2003, aprendem embeddings e previsão juntos; word2vec, em 2013; sequência a sequência e atenção, em 2014 e 2015; Transformer, em 2017; ELMo e BERT, em 2018; GPT-2 e GPT-3, este com 175 bilhões de parâmetros, em 2019 e 2020; e, em 2022, o ajuste com preferências humanas. Pergunta: qual desses marcos vocês já ouviram citar? Armadilha: a seleção é nossa e simplifica uma história com muitos autores; outros marcos importantes foram omitidos."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Um restaurante, quatro camadas",
+   "texto": "Modelo é o cozinheiro; aplicação é a receita e a cozinha; interface é o garçom e o cardápio; sistema é o restaurante inteiro.",
+   "detalhe": "Se o prato chega errado, a falha pode estar no cozinheiro, na receita, no pedido anotado ou no estoque. Sem separar as camadas, não se sabe onde consertar.",
+   "notas": "Use o restaurante para separar as quatro camadas: modelo, aplicação, interface de conversação e sistema completo. Se o prato chega errado, a causa pode estar no cozinheiro, que é o modelo; na receita ou na cozinha, que é a aplicação; no garçom que anotou mal o pedido, que é a interface; ou no estoque de ingredientes, que é a recuperação de documentos do sistema. Reforce que um nome de chatbot é um produto, e não um modelo. Pergunta: quando uma resposta está errada, em que camada vocês procurariam primeiro? Armadilha: nunca usar ChatGPT como sinônimo de LLM; o nome designa um produto e os modelos por trás mudam."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Modelo, aplicação, interface e sistema",
+   "fig": "f01_camadas",
+   "legenda": "A mesma pergunta atravessa as quatro camadas; cada uma pode introduzir ganhos ou erros.",
+   "itens": [
+    "Modelo: parâmetros treinados",
+    "Aplicação: monta o prompt, chama o modelo, trata a saída",
+    "Interface: chat, voz ou API",
+    "Sistema: tudo ao redor, inclusive recuperação e supervisão"
+   ],
+   "notas": "Mostre a figura e associe cada camada à analogia do restaurante. O modelo transforma tokens em probabilidades do próximo token. A aplicação é o código que prepara a entrada, chama o modelo e trata a saída. A interface é a forma de interação: janela de chat, voz ou ponto de acesso de API. O sistema completo soma recuperação de documentos, ferramentas, filtros, registros e supervisão humana. Uma resposta errada pode vir do modelo, da aplicação, da recuperação ou de uma instrução oculta da interface. Pergunta: qual camada vocês controlam ao usar um chat público? Muito pouco. Armadilha: esquecer que a qualidade final depende do sistema, e não só do modelo."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "As camadas em código: do modelo ao sistema",
+   "codigo": "# modelo_brinquedo e aplicacao definidos antes (NÃO é um LLM)\ndef sistema(pergunta):\n    bm = modelos.BM25([modelos.tokenizar_sem_stop(d[3]) for d in DOCS])\n    s = bm.pontuar(modelos.tokenizar_sem_stop(pergunta))\n    melhor = int(s.argmax())\n    resposta = aplicacao(pergunta, DOCS[melhor][3])\n    return {\"resposta\": resposta,\n            \"fonte\": DOCS[melhor][0] + \" — \" + DOCS[melhor][2]}\n\npergunta = \"Qual o valor da multa por atraso na devolução de livros?\"\nprint(aplicacao(pergunta))                    # só o modelo\nprint(sistema(pergunta)[\"resposta\"])",
+   "saida": "1) só o modelo, sem contexto  : Não encontrei informação para responder.\n3) sistema com recuperação    : O atraso na devolução gera multa de R$ 1,50 por dia e por exemplar.\n   fonte registrada           : D12 — Multas da biblioteca",
+   "notas": "O modelo de brinquedo é uma função determinística que escolhe, dentro do texto recebido, a frase mais parecida com a pergunta. Ela não é um LLM e foi escrita só para tornar as camadas visíveis; a base consultada é a da Universidade Federal Aurora, fictícia. A mesma pergunta tem três destinos: sem contexto, nada a dizer; com contexto irrelevante, uma frase irrelevante com a mesma confiança; só no sistema, com recuperação, aparece a resposta correta, com a fonte D12 registrada. Esse padrão é o tema do Capítulo 11. Aqui mostramos o trecho do sistema e duas das três saídas. Armadilha: recuperar ajuda a ancorar, mas não garante correção."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Três perguntas antes de adotar um LLM",
+   "itens": [
+    "1. Existe uma solução mais simples? Regras, busca ou classificador pequeno",
+    "2. Como saberei que a resposta está certa?",
+    "3. Qual o custo de um erro?",
+    "Rascunho de e-mail: erro barato. Dosagem de remédio: erro caro",
+    "A decisão se baseia em risco e verificabilidade, não em modismo"
+   ],
+   "notas": "Apresente as três perguntas como um checklist que a turma pode levar para o trabalho. Primeira: existe solução mais simples? Uma página de perguntas frequentes com busca, regras ou um classificador pequeno podem bastar. Segunda: como saberei que a resposta está certa? Sem forma de verificar, o risco é maior. Terceira: qual o custo de um erro? Contraste um rascunho de e-mail com uma dosagem de remédio. Use o exemplo do capítulo: para responder sobre prazo de trancamento, recuperação mais LLM com citação da fonte costuma equilibrar utilidade e controle, desde que haja avaliação e supervisão. Armadilha: cinco acertos em testes próprios não provam confiabilidade; o Capítulo 16 ensina a medir."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limitações",
+   "itens": [
+    "Tratar \"ChatGPT\" como sinônimo de LLM",
+    "Confiar na fluência ou julgar por cinco exemplos",
+    "Ignorar a data de corte dos dados de treinamento",
+    "Exemplos do capítulo usam corpus sintético e n-gramas, não LLMs reais",
+    "Em saúde, direito e finanças: apoiar profissionais, nunca substituí-los"
+   ],
+   "notas": "Resuma os erros mais comuns do capítulo. Primeiro, tratar o nome de um produto como sinônimo de LLM. Segundo, confiar na fluência e julgar por poucos exemplos: cinco acertos escolhidos por quem testa são amostra pequena. Terceiro, ignorar a data de corte: o modelo não sabe o que veio depois dos dados de treinamento. Quarto, lembrar a limitação do próprio capítulo: os números vêm de um corpus sintético e de n-gramas, e o modelo de brinquedo não é um LLM. Quinto, em saúde, direito e finanças, o LLM apoia e não substitui profissionais. Pergunta: qual desses erros vocês já cometeram? Armadilha: tratar a cronologia como lista completa."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Plausibilidade versus verdade",
+   "passos": [
+    "Escolha uma interface de conversação e anote nome, versão e data do teste",
+    "Prepare cinco perguntas que você consegue verificar em fonte confiável",
+    "Em duas delas, embuta um erro na premissa; veja se o modelo corrige",
+    "Preencha tabela: pergunta, resposta, correta (sim/não/parcial), como verificou",
+    "Repita a pergunta mais difícil três vezes e compare",
+    "Escreva um parágrafo: em que casos a fluência escondeu um erro?"
+   ],
+   "notas": "Apresente a atividade como um experimento pequeno e reprodutível. O ponto central é registrar qual serviço, qual versão e qual data, porque serviços de conversação mudam de modelo, de instruções ocultas e de políticas sem aviso; sem registro, nem você consegue repetir o teste meses depois. Sugira o exemplo da Lei Geral de Proteção de Dados aprovada em 2008 como premissa errada embutida. O entregável é uma tabela e um parágrafo de conclusão. Pergunta à turma: repetir a mesma pergunta três vezes dá sempre a mesma resposta? Armadilha: não coloque dados pessoais ou confidenciais no serviço externo."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "probabilidade de uma frase",
+   "pergunta": "Uma frase recebe probabilidade alta de um modelo de linguagem. O que se pode concluir?",
+   "opcoes": [
+    "Que a frase é verdadeira, pois o modelo foi treinado com muitos dados",
+    "Que ela é plausível segundo os textos de treino; não que seja verdadeira",
+    "Que a frase foi vista literalmente no treinamento",
+    "Que a frase pode ser usada sem verificação em contextos jurídicos"
+   ],
+   "resposta": "B",
+   "explicacao": "Probabilidade mede plausibilidade estatística. Erros comuns em textos de treinamento também recebem probabilidade considerável.",
+   "notas": "Dê um minuto para a turma pensar e peça que votem por mão levantada antes da resposta. A alternativa correta é a B: probabilidade alta indica plausibilidade segundo os padrões dos textos de treinamento, não verdade. Comente por que as outras falham: verdade não decorre do volume de dados; alta probabilidade não exige que a frase tenha sido vista literalmente; e em contextos jurídicos a verificação é indispensável. Ligue ao exemplo da capital da Austrália. Pergunta: quem escolheu A, por que a ideia de muitos dados parece convincente? Armadilha: confundir fluência, probabilidade e correção."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "somar logaritmos",
+   "pergunta": "Por que se somam logaritmos de probabilidades em vez de multiplicar as probabilidades?",
+   "opcoes": [
+    "Porque a regra da cadeia só vale com logaritmos",
+    "Porque logaritmos tornam as probabilidades maiores que 1",
+    "Porque o produto de muitos números pequenos fica minúsculo e é mal representado",
+    "Porque logaritmos eliminam a necessidade de treinar o modelo"
+   ],
+   "resposta": "C",
+   "explicacao": "O motivo é numérico (underflow). O logaritmo transforma produto em soma e mantém a ordem das probabilidades.",
+   "notas": "Peça que a turma recorde o exemplo da frase de quatro palavras com 0,015 e imagine cem palavras. A resposta é a C: o produto de muitos números pequenos fica tão minúsculo que o computador o representa mal; somar logaritmos evita isso. Desmonte as outras: a regra da cadeia vale sem logaritmos; logaritmos de probabilidades são negativos ou zero, não maiores que 1; e nada tem a ver com treinar o modelo. Mencione que o logaritmo preserva a ordem, então comparar frases continua válido. Pergunta: qual a vantagem adicional de trabalhar com somas? Elas são numericamente estáveis. Armadilha: achar que o logaritmo muda o resultado; ele só muda a representação."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "qual camada?",
+   "pergunta": "Um assistente acerta ao consultar a base de políticas e erra sem consultá-la. Isso mostra que:",
+   "opcoes": [
+    "O modelo foi treinado com dados incorretos",
+    "O tokenizador está corrompido",
+    "Modelos nunca devem ser combinados com bases de dados",
+    "A qualidade final depende do sistema completo, não só do modelo"
+   ],
+   "resposta": "D",
+   "explicacao": "A diferença está no acesso à evidência: a recuperação muda a resposta mesmo mantendo o mesmo modelo.",
+   "notas": "Relembre a demonstração com o modelo de brinquedo: sem contexto não havia resposta; com recuperação, a multa de R$ 1,50 por dia apareceu com a fonte. A resposta correta é a D: o mesmo modelo, com acesso à evidência, produz outro resultado, logo a qualidade depende do sistema completo. As outras alternativas inventam causas sem apoio no cenário. Pergunta à turma: se o assistente ainda errasse mesmo com a base, onde procurariam o problema? Na recuperação, no prompt ou na validação. Armadilha: lembrar que recuperar ajuda a ancorar respostas, mas não garante correção."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Modelo de linguagem: estima o próximo token dado o contexto",
+    "Probabilidade de frase = produto; na prática, soma de logaritmos",
+    "Perplexidade: incerteza média; menor é melhor, mas não mede verdade",
+    "N-gramas contam; modelos neurais aprendem representações",
+    "LLM: modelo neural, em geral Transformer, em grande escala",
+    "Separe modelo, aplicação, interface e sistema; fluência não é correção"
+   ],
+   "notas": "Revise os pontos principais e volte à pergunta-guia do começo: o que o modelo estava fazendo ao escrever aquela linha? Estava escolhendo tokens plausíveis, um passo de cada vez, sem verificar contra a fonte. Retome o marcador que a turma fez nos objetivos: qual ficou mais claro? Reforce a mensagem final do capítulo: fluência não é correção; verifique, meça e documente. Pergunta: se tivessem de explicar a um colega em trinta segundos o que é um LLM, o que diriam? Ouça duas respostas. Armadilha: sair da aula achando que perplexidade baixa significa modelo confiável. Anuncie que o próximo capítulo dá a base matemática para tudo que vem depois."
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "BROWN, T. B. et al. Language models are few-shot learners. In: NeurIPS, 33., 2020.",
+    "KAPLAN, J. et al. Scaling laws for neural language models. arXiv:2001.08361, 2020.",
+    "HOFFMANN, J. et al. Training compute-optimal large language models. arXiv:2203.15556, 2022.",
+    "VASWANI, A. et al. Attention is all you need. In: NeurIPS, 30., 2017.",
+    "BENGIO, Y. et al. A neural probabilistic language model. JMLR, v. 3, p. 1137-1155, 2003.",
+    "SHANNON, C. E. A mathematical theory of communication. Bell System Technical Journal, v. 27, n. 3, 1948.",
+    "JURAFSKY, D.; MARTIN, J. H. Speech and language processing. 3. ed. (rascunho). Stanford, 2024."
+   ]
+  }
+ ]
+}

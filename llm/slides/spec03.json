@@ -1,0 +1,356 @@
+{
+ "capitulo": 3,
+ "titulo": "Texto, tokens e embeddings",
+ "parte": "Parte I — Fundamentos dos modelos de linguagem",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Entender como um texto vira uma sequência de números",
+    "Comparar tokenização por palavras, letras e subpalavras (BPE)",
+    "Calcular TF-IDF e diferenciar vetor esparso de embedding denso",
+    "Distinguir embeddings estáticos e contextuais",
+    "Montar uma busca semântica simples e medi-la",
+    "Reconhecer as particularidades do português e os limites das distâncias vetoriais"
+   ],
+   "notas": "Bem-vindos ao Capítulo 3. Hoje seguimos o caminho que o texto percorre até virar números que o modelo consegue processar: normalização, tokens, identificadores e embeddings. Ao final, vocês devem conseguir executar à mão o algoritmo BPE, calcular um TF-IDF e montar uma busca por similaridade de cosseno. Também vamos falar do que se perde nesse caminho, sobretudo em português. Pergunta à turma: quando vocês digitam uma palavra com acento num buscador, o que acham que o computador vê? Deixe respostas livres; voltaremos a ela quando falarmos de bytes. Dica: avise que todo o código dos slides foi executado de verdade, mas em corpora minúsculos e fictícios, apenas para mostrar o mecanismo."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Três problemas, uma mesma raiz",
+   "itens": [
+    "Buscar \"ação\" e não achar \"acao\", sem o acento",
+    "Uma palavra longa cortada em pedaços estranhos",
+    "\"Manga\" devolve fruta e camisa misturadas",
+    "Raiz comum: computadores não leem palavras, leem números",
+    "Entre o texto e os números há decisões de projeto"
+   ],
+   "notas": "Comece com os três exemplos do capítulo: a busca que não encontra a palavra sem acento, a palavra enorme cortada em seis pedaços e o caso da manga. Conte como se fossem situações que a turma já viveu. Depois revele a raiz comum: o computador não lê palavras, lê números. Entre o texto escrito e os números recebidos pelo modelo existe um caminho com várias decisões: como dividir o texto, que vocabulário usar e como representar cada pedaço. Essas decisões afetam custo, qualidade e até a justiça de um sistema. Pergunta à turma: já aconteceu de vocês pesquisarem algo e o resultado ignorar um acento? Armadilha: não dizer que o modelo entende letras; ele recebe identificadores."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O mapa do capítulo",
+   "fig": "f03_mapa",
+   "legenda": "Texto normalizado, dividido em tokens, convertido em identificadores e depois em vetores; com vetores medimos similaridade e fazemos busca.",
+   "notas": "Mostre o mapa conceitual como roteiro da aula. O texto é primeiro normalizado, depois dividido em tokens, cada token vira um número inteiro (identificador) e cada identificador vira um vetor, o embedding. Com vetores podemos medir similaridade e montar uma busca semântica. Percorra o mapa com o dedo, da esquerda para a direita, dizendo que cada seta é uma decisão que pode ajudar ou atrapalhar. Pergunta à turma: em qual dessas etapas vocês acham que um erro passaria mais despercebido? Resposta provável: na tokenização, porque não gera mensagem de erro. Vamos retomar essa ideia ao falar do tokenizador errado."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Texto vira número: a tabela de códigos",
+   "texto": "Como um telegrama em código Morse: cada letra vira um sinal, e quem recebe só trabalha com os sinais.",
+   "detalhe": "O modelo nunca vê letras. Vê identificadores, números inteiros definidos por uma tabela, o vocabulário. Trocar a tabela é trocar o significado dos números.",
+   "notas": "Analogia do cotidiano: o telegrama em Morse. Quem transmite troca letras por sinais; quem recebe só vê sinais e depende de uma tabela combinada para decodificar. Com o modelo é parecido: ele recebe identificadores inteiros, e o vocabulário é a tabela combinada. Se alguém trocar a tabela sem avisar, os mesmos números passam a significar outra coisa e nada avisa do erro. É por isso que cada modelo tem o seu tokenizador e que usar o tokenizador errado é um erro silencioso e grave. Aviso honesto: a analogia é apenas uma ajuda; o vocabulário real tem milhares de entradas e pedaços de palavras, não só letras. Pergunta: o que aconteceria se dois telegrafistas usassem tabelas diferentes?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Caracteres, Unicode e bytes",
+   "itens": [
+    "Unicode dá um número a cada caractere de quase todas as línguas",
+    "UTF-8 guarda cada caractere em 1 a 4 bytes",
+    "Letra sem acento: 1 byte; \"ã\": 2 bytes",
+    "O mesmo \"ã\" pode ser 1 caractere (NFC) ou 2 (NFD)",
+    "Por isso o texto é normalizado antes de tudo"
+   ],
+   "notas": "Explique os termos ao introduzir. Unicode é o padrão que atribui um número, chamado ponto de código, a cada caractere. UTF-8 é a codificação mais comum que transforma esses números em bytes, usando de 1 a 4 por caractere. Letras sem acento ocupam 1 byte; o ã ocupa 2. O detalhe traiçoeiro: o ã pode ser um único caractere, forma composta NFC, ou o a seguido de um til combinante, forma decomposta NFD. Visualmente idênticos, mas diferentes para o computador. Pergunta à turma: se um serviço cobra por tamanho, contar caracteres e contar bytes dá o mesmo resultado em português? Não dá. Armadilha comum: assumir que uma letra é sempre um byte."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: bytes, caracteres e normalização",
+   "codigo": "import unicodedata\n\nfor w in [\"ação\", \"coração\", \"pão\", \"Brasil\"]:\n    nfc = unicodedata.normalize(\"NFC\", w)\n    nfd = unicodedata.normalize(\"NFD\", w)\n    print(f\"{w:<8} NFC: {len(nfc)} caracteres, {len(nfc.encode('utf-8'))} bytes | NFD: {len(nfd)} caracteres, {len(nfd.encode('utf-8'))} bytes\")\n\na, b = \"ação\", unicodedata.normalize(\"NFD\", \"ação\")\nprint(\"Parecem iguais:\", a, b, \"| são iguais para o Python?\", a == b)\nprint(\"Iguais após normalizar:\", unicodedata.normalize(\"NFC\", a) == unicodedata.normalize(\"NFC\", b))",
+   "saida": "ação     NFC: 4 caracteres, 6 bytes | NFD: 6 caracteres, 8 bytes\ncoração  NFC: 7 caracteres, 9 bytes | NFD: 9 caracteres, 11 bytes\nParecem iguais: ação ação | são iguais para o Python? False\nIguais após normalizar: True",
+   "notas": "Este é o código do capítulo, resumido para caber no slide; a saída mostrada é a real. Leia a primeira linha: ação tem 4 caracteres e 6 bytes na forma NFC; na forma NFD tem 6 caracteres e 8 bytes. Brasil, sem acento, tem 6 e 6. Depois, as duas versões de ação parecem iguais na tela, mas o Python diz que são diferentes; após normalizar para NFC, passam a ser iguais. Duas lições: contar bytes e caracteres dá resultados diferentes em português, o que afeta qualquer cálculo de custo baseado em tamanho; e sem normalização duas grafias visualmente idênticas viram palavras distintas. Pergunta: em que tipo de sistema essa diferença causaria uma falha de busca?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "TF-IDF: a palavra rara é a pista",
+   "texto": "Numa sala cheia, dizer \"o\" não ajuda a achar ninguém; dizer \"o de jaleco amarelo\" ajuda.",
+   "detalhe": "Palavras muito comuns (\"o\", \"de\") quase não distinguem documentos. Palavras raras são pistas fortes. O TF-IDF dá mais peso ao que é raro na coleção.",
+   "notas": "Antes da fórmula, a intuição. Imagine procurar uma pessoa numa festa. Dizer que ela usa roupa não ajuda, todos usam; dizer que usa jaleco amarelo ajuda muito, porque é raro. Com documentos acontece o mesmo: palavras como o e de aparecem em quase todos e quase não distinguem um documento do outro; palavras raras funcionam como pistas. O saco de palavras apenas conta as ocorrências e descarta a ordem; o TF-IDF corrige a contagem dando mais peso ao que é raro na coleção. Pergunta à turma: no seu curso, qual palavra seria uma boa pista para encontrar o regulamento de trancamento de matrícula? Observe que a analogia ilustra a ideia, não a fórmula exata."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "TF-IDF",
+   "tex": "tfidf(t, d) = tf(t, d) · ( ln(N / df(t)) + 1 )",
+   "explicacao": [
+    "tf: quantas vezes o termo t aparece no documento d",
+    "df: em quantos documentos da coleção o termo aparece",
+    "N: total de documentos; o fator entre parênteses é o IDF",
+    "Depois, o vetor é normalizado para norma 1: produto escalar vira cosseno"
+   ],
+   "notas": "Apresente cada símbolo antes de falar da conta. tf é a contagem do termo no documento; df é o número de documentos que contêm o termo; N é o total de documentos da coleção. O fator entre parênteses, o IDF, frequência inversa de documentos, cresce quando o termo é raro. Em seguida normaliza-se o vetor para norma 1, de modo que o produto escalar entre dois documentos seja o cosseno. Nota de honestidade do capítulo: esta é a variante sem suavização do scikit-learn; a variante padrão da biblioteca usa ln de (1+N)/(1+df) mais 1. Pergunta: o que acontece com o IDF de um termo que aparece em todos os documentos? Vale ln 1 + 1, igual a 1."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: TF-IDF de três documentos",
+   "codigo": "from sklearn.feature_extraction.text import TfidfVectorizer\n\ndocs = [\"um gato dorme\", \"um cachorro dorme\", \"um gato corre\"]\nvec = TfidfVectorizer(smooth_idf=False, norm=\"l2\")\nX = vec.fit_transform(docs)\nprint(\"vocabulário:\", list(vec.get_feature_names_out()))\nprint(\"idf:\", dict(zip(vec.get_feature_names_out(), vec.idf_.round(3).tolist())))\nprint(\"vetor de d2:\", dict(zip(vec.get_feature_names_out(), X[1].toarray()[0].round(3).tolist())))\nS = (X @ X.T).toarray()\nprint(S.round(3))",
+   "saida": "idf: {'cachorro': 2.099, 'corre': 2.099, 'dorme': 1.405, 'gato': 1.405, 'um': 1.0}\nvetor de d2: {'cachorro': 0.773, 'corre': 0.0, 'dorme': 0.517, 'gato': 0.0, 'um': 0.368}\n [[1.    0.492 0.492]\n [0.492 1.    0.136]\n [0.492 0.136 1.   ]]",
+   "notas": "Este exemplo resolvido tem N igual a 3. A palavra um aparece nos três documentos e recebe IDF 1,0; gato e dorme aparecem em dois e recebem 1,405; cachorro e corre aparecem em um só e recebem 2,099. No documento 2, depois de normalizar, cachorro, a palavra mais rara, pesa 0,773, dorme 0,517 e um apenas 0,368. A matriz de similaridades mostra, por exemplo, 0,136 entre os documentos 2 e 3, que só compartilham o um. Faça a conta à mão no quadro: a norma de d2 antes de normalizar vale cerca de 2,717. Pergunta: por que d1 e d2 têm 0,492 com d3 e não mais? Fecha a ideia: vetores TF-IDF são esparsos e interpretáveis, mas carro e automóvel ocupam posições diferentes, com similaridade zero."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "O que é tokenizar",
+   "itens": [
+    "Dividir o texto em pedaços, os tokens",
+    "Mapear cada token a um número inteiro, via vocabulário",
+    "Exemplo ilustrativo: \"A matrícula foi trancada.\" vira 5 tokens",
+    "Cada modelo tem o seu vocabulário e o seu tokenizador",
+    "Tokenizador errado: erro silencioso e grave"
+   ],
+   "fig": "f03_pipeline",
+   "notas": "Defina tokenizar como dividir o texto em unidades, os tokens, e mapear cada uma a um número inteiro, o identificador, por meio de um vocabulário, que é uma tabela com V entradas. O exemplo do capítulo divide A matrícula foi trancada em cinco pedaços; os números são ilustrativos, cada modelo tem os seus. A figura mostra o caminho do texto até as linhas da matriz de embeddings, com a ressalva de que os pedaços e os números são apenas ilustração. Enfatize: usar o tokenizador errado com um modelo faz o modelo receber números que significam outra coisa, e não há mensagem de erro. Pergunta à turma: como vocês detectariam esse problema? Resposta: comparando a tokenização com a documentação do modelo."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Três estratégias de tokenização",
+   "cabecalho": [
+    "Estratégia",
+    "Vantagem",
+    "Desvantagem"
+   ],
+   "linhas": [
+    [
+     "Palavras",
+     "Sequências curtas, unidades com sentido",
+     "Vocabulário enorme; palavras novas ficam de fora"
+    ],
+    [
+     "Caracteres",
+     "Vocabulário minúsculo; nada fica de fora",
+     "Sequências muito longas; unidades sem sentido"
+    ],
+    [
+     "Subpalavras",
+     "Equilíbrio entre vocabulário e comprimento",
+     "Pedaços podem não coincidir com morfemas"
+    ]
+   ],
+   "notas": "A tabela resume o compromisso. Por palavras, as sequências são curtas e as unidades têm sentido, mas o vocabulário é enorme e palavras novas ficam fora do vocabulário. Por caracteres, o vocabulário é minúsculo e nada fica de fora, porém as sequências ficam muito longas e as unidades quase não têm sentido. Subpalavras equilibram: palavras frequentes ficam inteiras, as raras são montadas com pedaços; no pior caso, a palavra vira letras. Exemplo do capítulo: inconstitucional pode ser in mais constitucional. Pergunta: por que o problema do vocabulário aberto favoreceu as subpalavras? Porque nada fica de fora. Armadilha: os pedaços não são necessariamente morfemas."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Subpalavras: peças de Lego",
+   "texto": "Peças minúsculas montam tudo, com muito trabalho. Peças gigantes montam rápido, mas só o que a caixa permite.",
+   "detalhe": "Subpalavras são peças de tamanhos variados, escolhidas para as construções mais comuns: palavras frequentes ficam inteiras; as raras são montadas.",
+   "notas": "Use a analogia do próprio capítulo: peças de Lego. Com peças muito pequenas, as letras, você monta qualquer coisa, mas dá muito trabalho; com peças gigantes, palavras inteiras, monta rápido, mas só o que a caixa permite. Subpalavras são peças de tamanhos variados, escolhidas para as construções mais comuns. Peça à turma que pense em uma palavra longa de seu cotidiano profissional e proponha como a dividiria. Observe que uma divisão natural para humanos pode diferir da divisão aprendida por frequência. A analogia tem um limite: no Lego, você escolhe as peças; no tokenizador, as peças vêm do algoritmo e dos dados de treino, e não há garantia de que correspondam a partes com sentido gramatical."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "BPE: funda o par mais frequente",
+   "itens": [
+    "Comece com letras e um marcador de fim de palavra",
+    "Conte os pares de símbolos vizinhos",
+    "Funda o par mais frequente em um símbolo novo",
+    "Repita; cada fusão acrescenta uma entrada ao vocabulário",
+    "Proposto como compressão (Gage, 1994); adaptado por Sennrich et al. (2016)"
+   ],
+   "notas": "BPE significa byte pair encoding. A ideia é simples: comece com letras e funda repetidamente o par de símbolos vizinhos mais frequente. Marca-se o fim de cada palavra com um símbolo especial. Foi proposto como algoritmo de compressão por Gage, em 1994, e adaptado à tradução automática por Sennrich, Haddow e Birch, em 2016. Para tokenizar uma palavra nova, aplicam-se as mesmas fusões, na mesma ordem aprendida. Mencione variantes sem aprofundar: WordPiece, usado no BERT; Unigram e SentencePiece, que tratam o texto como fluxo contínuo; e o BPE em nível de bytes, que parte dos 256 valores de byte e por isso nunca deixa texto fora do vocabulário. Pergunta: o que significa frequência alta virar símbolo único?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Exemplo resolvido: duas fusões de BPE",
+   "itens": [
+    "Corpus: \"casa\" (6), \"casas\" (3), \"caso\" (2)",
+    "Par (a, s): 6 + 6 + 2 = 14 ocorrências, o maior",
+    "Primeira fusão cria \"as\"; depois (c, as) tem 11 e cria \"cas\"",
+    "Resultado: cas a, cas as, cas o",
+    "O BPE achou o radical só por frequência"
+   ],
+   "notas": "Faça no quadro. O corpus tem casa com frequência 6, casas com 3 e caso com 2. Contamos pares por ocorrência. O par c,a aparece 6 mais 3 mais 2, igual a 11. O par a,s aparece 6 em casa, 6 em casas, porque há dois a-s e a frequência é 3, e 2 em caso, total 14. Já s,a vale 9. O maior é a,s, e a primeira fusão cria o símbolo as. Agora o par c,as soma 11 e é o maior: a segunda fusão cria cas. Resultado final: cas a, cas as, cas o. Interpretação: o algoritmo descobriu o radical comum sem conhecer gramática. Pergunta à turma: e se o corpus tivesse mais palavras com cas? Cuidado com a contagem dupla por ocorrência."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: BPE no corpus fictício",
+   "codigo": "import re\nfrom llmdidatico import DOCS, modelos\n\ntexto = \" \".join(d[2] + \" \" + d[3] for d in DOCS).lower()\npalavras = re.findall(r\"[a-zçáàâãéêíóôõú]+\", texto)\nfusoes = modelos.treinar_bpe(palavras, n_fusoes=200)\n\nfor w in [\"trancamento\", \"estudante\", \"inconstitucionalmente\", \"xyz\", \"desligamentos\"]:\n    print(f\"{w:<22} -> {modelos.codificar_bpe(w, fusoes)}\")",
+   "saida": "trancamento            -> ['tran', 'c', 'amento</w>']\nestudante              -> ['estudante</w>']\ninconstitucionalmente  -> ['in', 'con', 'stitu', 'cion', 'al', 'm', 'ente</w>']\nxyz                    -> ['x', 'y', 'z', '</w>']\ndesligamentos          -> ['d', 'es', 'li', 'g', 'am', 'ent', 'os</w>']",
+   "notas": "Rótulo importante: este é um BPE didático treinado na base fictícia da universidade, com 1.846 palavras no corpus e 608 distintas; não é o tokenizador de nenhum modelo real. Mostre as saídas reais. Estudante, palavra frequente, virou um único símbolo. Inconstitucionalmente foi montada com sete pedaços. A palavra inventada xyz caiu em letras, o que ilustra que nada fica de fora. Atenção ao cuidado do capítulo: desligamentos virou d, es, li, g, am, ent, os, e não des, lig, amento, s. Os pedaços aprendidos por BPE não são morfemas, e mesmo com corpora enormes não há garantia de coincidir com a gramática. Pergunta: por que este resultado não vale para o tokenizador de um modelo grande?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Mais fusões: vocabulário maior, sequência menor",
+   "itens": [
+    "Fusões 0, 50, 100, 200, 400: 6,03; 3,62; 3,05; 2,48; 1,92 tokens por palavra",
+    "Cada fusão acrescenta uma entrada ao vocabulário",
+    "Limites e custo são medidos em tokens, não em palavras",
+    "Equidade: línguas pouco vistas no vocabulário saem mais fragmentadas",
+    "Meça com o tokenizador do modelo que você usará"
+   ],
+   "fig": "f03_fertilidade",
+   "notas": "A figura e os números vêm do mesmo experimento: com zero fusões, cada palavra vira em média 6,03 símbolos, contando o marcador de fim; com 400 fusões, 1,92. É o compromisso central: sequências mais curtas, vocabulário maior. Conecte à prática: a janela de contexto e o custo de uso em serviços são medidos em tokens; duas línguas podem gastar quantidades diferentes de tokens para o mesmo conteúdo. Exemplo hipotético do capítulo: 3.000 palavras a 1,4 token por palavra dão 4.200 tokens; a 1,1 dariam 3.300, cerca de 21 por cento a menos. Reforce que 1,4 e 1,1 são valores hipotéticos. O português tende a gastar mais tokens por palavra que o inglês em muitos vocabulários, mas meça, em vez de supor."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Tabela de embeddings",
+   "tex": "e_i = E[i, :] ,   E ∈ ℝ^(V×d)",
+   "explicacao": [
+    "Embedding: vetor denso e de poucas dimensões para um token, sentença ou documento",
+    "Buscar o vetor de um token é selecionar uma linha da matriz E",
+    "Com V = 50.000 e d = 768: 38,4 milhões de números",
+    "Os valores são aprendidos no treinamento"
+   ],
+   "notas": "Introduza embedding como um vetor denso, de dezenas a milhares de números, que representa um token, uma sentença ou um documento. Em um modelo de linguagem, a tabela de embeddings é uma matriz E com V linhas, uma por token do vocabulário, e d colunas. Buscar o embedding do token de identificador i é só selecionar a linha i. Faça a conta: 50.000 vezes 768 dá 38,4 milhões de números, uma configuração do próprio capítulo. Os valores são aprendidos: tokens em contextos parecidos acabam com vetores parecidos. Contraste com o TF-IDF: lá o vetor é esparso, quase tudo zero, e cada posição é uma palavra; aqui é denso e cada dimensão não tem rótulo próprio. Pergunta: quantos números tem a tabela se d for 1.536 e V for 50.000?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Diga-me com quem andas",
+   "texto": "Você conhece uma palavra pela companhia que ela mantém, dizia a frase atribuída ao linguista J. R. Firth.",
+   "detalhe": "Se \"gato\" e \"cachorro\" aparecem com \"dorme\", \"come\" e \"corre\", seus vetores ficam próximos. É a hipótese distribucional: o significado se revela pelo contexto.",
+   "notas": "Compare com o ditado popular: diga-me com quem andas e te direi quem és. A hipótese distribucional diz que o significado de uma palavra se revela pelos contextos em que ela aparece; a frase é atribuída ao linguista J. R. Firth. Se gato e cachorro aparecem com dorme, come e corre, seus vetores devem ficar próximos. O word2vec, de Mikolov e colaboradores, treina embeddings fazendo o modelo prever palavras vizinhas. No livro usamos uma alternativa mais simples: contar coocorrências, transformar em PPMI e comprimir com SVD. Pergunta à turma: se duas palavras aparecem exatamente nos mesmos contextos, mas têm sentidos opostos, o que acontece com seus vetores? Guarde a pergunta; o próximo código responde."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: embeddings por coocorrência (PPMI + SVD)",
+   "codigo": "# coocorrências numa janela de 2 tokens -> PMI positivo -> SVD\nppmi = np.where(np.isfinite(pmi), np.maximum(pmi, 0), 0.0)\nU, S, Vt = np.linalg.svd(ppmi, full_matrices=False)\nd = 8\nE = U[:, :d] * np.sqrt(S[:d])               # embeddings de dimensão 8\nEn = E / np.linalg.norm(E, axis=1, keepdims=True)\n\ndef vizinhos(palavra, k=4):\n    sim = En @ En[ix[palavra]]\n    ordem = np.argsort(-sim)\n    return [(vocab[i], round(float(sim[i]), 2)) for i in ordem[1:k + 1]]\n\nprint(E.shape)\nfor w in [\"professor\", \"lê\", \"hoje\"]:\n    print(w, \"->\", vizinhos(w))",
+   "saida": "formato da tabela de embeddings: (44, 8)\nprofessor  -> [('professora', 0.99), ('coordenadora', 0.82), ('a', 0.79), ('prova', 0.71)]\nlê         -> [('assina', 0.98), ('escreve', 0.98), ('entrega', 0.97), ('explica', 0.93)]\nhoje       -> [('ontem', 1.0), ('atenção', 0.93), ('laboratório', 0.93), ('casa', 0.92)]",
+   "notas": "O código está abreviado: as etapas de contagem e PMI estão no capítulo. Corpus sintético de 3.000 frases, vocabulário de 44 palavras e 8 dimensões; é um embedding didático, não um modelo real. Mostre os vizinhos: professor fica ao lado de professora, com 0,99; lê fica ao lado de assina e escreve; hoje fica ao lado de ontem, com similaridade 1,0. Isto mostra o que similar significa aqui: mesma função nas frases, e não mesmo significado. Hoje e ontem ocorrem exatamente nos mesmos contextos e, no entanto, são opostos no tempo. Pergunta à turma: o que isso diz sobre confiar cegamente em palavras vizinhas? Voltaremos a esse ponto nos limites de interpretação."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Estáticos, contextuais e de sentença",
+   "itens": [
+    "Estático: um vetor fixo por token, qualquer que seja a frase",
+    "Contextual: o vetor depende da frase inteira (ELMo, BERT)",
+    "\"Manga\" de fruta e \"manga\" de camisa pedem vetores diferentes",
+    "Sentença ou documento: média, LSA ou Sentence-BERT",
+    "Os experimentos do livro usam LSA, uma aproximação didática"
+   ],
+   "notas": "Embeddings estáticos dão um vetor fixo por token; manga fruta e manga de camisa compartilham o mesmo vetor, o que mistura sentidos. Embeddings contextuais, popularizados por ELMo, de Peters e colaboradores, e sobretudo pelo BERT, de Devlin e colaboradores, calculam o vetor de cada token a partir da frase inteira; os LLMs atuais produzem representações contextuais em suas camadas internas, tema do Capítulo 4. Para buscar documentos precisamos de um vetor por sentença ou documento, com três abordagens: média dos vetores dos tokens, redução do TF-IDF com SVD, chamada LSA, e modelos treinados para similaridade, como o Sentence-BERT. Honestidade: aqui usamos LSA por rodar em CPU sem internet; os modelos neurais não foram executados."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Busca semântica em quatro passos",
+   "itens": [
+    "1. Converter cada documento em vetor",
+    "2. Converter a consulta com o mesmo modelo",
+    "3. Calcular a similaridade com cada documento",
+    "4. Devolver os de maior similaridade",
+    "Exemplo: q = (0,8; 0,6) dá 0,96 com d2, 0,80 com d1 e 0,60 com d3"
+   ],
+   "notas": "A receita da busca semântica: vetorizar os documentos, vetorizar a consulta com o mesmo modelo, calcular a similaridade e devolver os maiores. Exemplo numérico do capítulo, com vetores normalizados em duas dimensões: d1 igual a 1 e 0, d2 igual a 0,6 e 0,8, d3 igual a 0 e 1, consulta 0,8 e 0,6. Produtos: 0,80 com d1, 0,96 com d2, 0,60 com d3. Ranking: d2, d1, d3. Como os vetores têm norma 1, produto escalar e cosseno coincidem. Para vetores normalizados, cosseno, produto escalar e distância euclidiana dão a mesma ordenação; sem normalização, divergem, e é preciso seguir a recomendação do modelo. Armadilha: misturar consulta de um modelo com documentos de outro. Pergunta: quem seria o segundo resultado?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: TF-IDF contra LSA na base da universidade",
+   "codigo": "tfidf = TfidfVectorizer(tokenizer=modelos.tokenizar_sem_stop, lowercase=False, token_pattern=None, sublinear_tf=True)\nXd = tfidf.fit_transform(textos)\nlsa = modelos.LSAEmbedder(dim=40).ajustar(textos)\nDl = lsa.transformar(textos)\n\ndef rank_tfidf(q):\n    return np.argsort(-(Xd @ tfidf.transform([q]).T).toarray().ravel(), kind=\"stable\")\ndef rank_lsa(q):\n    return np.argsort(-(Dl @ lsa.transformar([q])[0]), kind=\"stable\")\n# hit@1 e hit@3 por tipo de consulta, com avaliacao.hit_at_k",
+   "saida": "método  tipo         n   hit@1   hit@3\nTF-IDF  direta      38    0.97    0.97\nTF-IDF  parafrase    8    0.38    0.50\nLSA     direta      38    0.95    0.97\nLSA     parafrase    8    0.50    0.62",
+   "notas": "Rótulo: base fictícia da Universidade Federal Aurora, 60 documentos, e LSA de 40 dimensões; é uma avaliação em escala pequena. Hit@1 é a fração de consultas em que o documento certo aparece em primeiro lugar. Para consultas diretas, 38 delas, os dois métodos acertam quase sempre, 0,97 e 0,95, porque a pergunta repete palavras do documento. Para as 8 paráfrases, ambos caem: TF-IDF 0,38 e LSA 0,50 no hit@1. Com apenas 8 consultas, cada uma vale 12,5 pontos percentuais, então não dá para declarar vencedor. O LSA treinado em 60 documentos não tem dados para aprender sinônimos. Prometer não é medir: avalie com os seus dados. Pergunta: por que a diferença de 0,12 não é conclusiva?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Particularidades do português",
+   "itens": [
+    "Acentos e cedilha: \"ação\", \"Ação\" e \"acao\" são formas diferentes",
+    "Morfologia rica: dezenas de formas para cada verbo",
+    "Contrações: \"do\" = \"de\" + \"o\"; \"na\" = \"em\" + \"a\"",
+    "Ambiguidade: \"manga\", \"banco\", \"cabo\", \"pena\"",
+    "Para busca, normalize acentos; para geração, preserve-os"
+   ],
+   "notas": "Percorra as particularidades do português com os exemplos do capítulo. Acentos e cedilha: ação, Ação e acao são formas diferentes para o computador; em busca costuma-se remover acentos e passar para minúsculas, aceitando a perda de distinções como pais e país; em geração de texto o acento deve ser preservado. Morfologia rica: um verbo regular tem dezenas de formas, o que multiplica o vocabulário em tokenização por palavras. Contrações como do e na não são separadas por um tokenizador que só usa espaços. Ambiguidade: manga, banco, cabo e pena. No código do capítulo, a busca por matricula sem acento não achou nada no texto original e achou cinco documentos após normalizar. Pergunta: quando remover acentos é uma má ideia?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Cuidado: distância vetorial não é significado",
+   "itens": [
+    "\"hoje\" ~ \"ontem\": similaridade 1,0, mas sentidos opostos",
+    "\"lê\" ~ \"escreve\": 0,98; \"lê\" ~ \"prova\": −0,016",
+    "Mede semelhança de uso, não equivalência de sentido",
+    "Embeddings herdam vieses do corpus (Bender et al., 2021)",
+    "Projeções 2D distorcem distâncias; cosseno 0,8 de um modelo não vale em outro"
+   ],
+   "fig": "f03_embeddings",
+   "notas": "Este é o princípio-chave da seção: distância vetorial mede semelhança de uso, não equivalência de significado. Saídas reais do experimento: hoje e ontem têm similaridade 1,0; lê e escreve, 0,98; lê e prova, menos 0,016. Outros cuidados do capítulo: embeddings herdam vieses do corpus, como discutem Bender e colaboradores; distâncias dependem do modelo e da métrica, então um cosseno de 0,8 em um modelo não equivale a 0,8 em outro e não existe limiar universal; projeções em duas dimensões, como a da figura, distorcem distâncias e servem para exploração, não como prova. Nunca apresente similaridade ao usuário como grau de relevância ou probabilidade de acerto. Pergunta: por que a projeção PCA na figura não prova proximidade?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limitações",
+   "itens": [
+    "Usar o tokenizador errado para o modelo",
+    "Não normalizar, ou normalizar demais, o texto",
+    "Medir tamanho em palavras quando o custo é em tokens",
+    "Misturar embeddings de modelos diferentes",
+    "Corpora minúsculos: os experimentos mostram o mecanismo, não o desempenho real"
+   ],
+   "notas": "Resuma os erros frequentes do capítulo. Usar o tokenizador errado; não normalizar o texto, ou normalizar demais quando a aplicação precisa dos acentos; medir tamanho em caracteres ou palavras quando limites e custos são em tokens; interpretar o cosseno como probabilidade; misturar embeddings de modelos diferentes; tratar projeções 2D como mapa fiel; e esquecer que alguns modelos de embeddings exigem prefixos ou instruções específicas, o que deve ser conferido na documentação. Limitações dos nossos experimentos: BPE e embeddings foram treinados em corpora minúsculos; a busca usa LSA, não modelos neurais pré-treinados, que não foram executados; e a avaliação tem só 8 consultas parafraseadas. Pergunta: qual desses erros vocês acham mais difícil de detectar?"
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "medir a fertilidade em português",
+   "passos": [
+    "Escolha um parágrafo seu de 100 a 200 palavras, sem dados sensíveis",
+    "Treine o BPE didático com 50, 200 e 800 fusões em outro corpus",
+    "Tokenize seu parágrafo e calcule tokens por palavra",
+    "Se tiver acesso, repita com o tokenizador de um modelo e documente nome e versão",
+    "Liste cinco palavras muito fragmentadas e procure um padrão",
+    "Discuta se a fragmentação poderia prejudicar seu domínio"
+   ],
+   "notas": "Atividade prática do capítulo, com versão guiada no Exercício prático 3.1. Peça que a turma escolha um parágrafo próprio, sem dados sensíveis, de 100 a 200 palavras. Com o BPE didático, eles treinam com 50, 200 e 800 fusões usando outro corpus, por exemplo a base fictícia, e calculam tokens por palavra no parágrafo. Se tiverem acesso ao tokenizador de um modelo, devem repeti-lo e registrar nome e versão. Depois listam cinco palavras muito fragmentadas e procuram padrões: palavras técnicas, nomes próprios, formas verbais. Fechamento em texto: se a fragmentação poderia prejudicar a compreensão do modelo no domínio deles. Armadilha: comparar números de tokenizadores diferentes sem mencionar o vocabulário. Dê 15 minutos e peça relatos orais."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "BPE",
+   "pergunta": "Aumentar o número de fusões do BPE tende a:",
+   "opcoes": [
+    "Diminuir o vocabulário e aumentar os tokens por palavra",
+    "Aumentar o vocabulário e diminuir o número médio de tokens por palavra",
+    "Aumentar o vocabulário e também os tokens por palavra",
+    "Não alterar nenhuma das duas medidas"
+   ],
+   "resposta": "B",
+   "explicacao": "Cada fusão acrescenta um símbolo ao vocabulário e encurta, em média, as sequências.",
+   "notas": "Dê um minuto para a turma pensar e peça um voto por alternativa levantando a mão. Retome o resultado do experimento: com zero fusões, 6,03 tokens por palavra; com 400 fusões, 1,92. Cada fusão cria uma entrada nova no vocabulário, então o vocabulário só cresce. Se alguém escolheu A ou C, peça que explique o raciocínio e use a figura de fertilidade para corrigir. Pergunta adicional: se mais fusões encurtam as sequências, por que não fazer milhões de fusões? Conduza para o compromisso: vocabulário e tabela de embeddings maiores, e símbolos muito raros com poucos exemplos para aprender."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "TF-IDF",
+   "pergunta": "Qual a principal limitação de vetores TF-IDF para busca por significado?",
+   "opcoes": [
+    "Exigem GPU para o cálculo",
+    "Palavras diferentes ocupam dimensões diferentes, então sinônimos sem palavras em comum têm similaridade zero",
+    "Não permitem calcular similaridade",
+    "Só funcionam com textos em inglês"
+   ],
+   "resposta": "B",
+   "explicacao": "A representação é lexical: carro e automóvel são dimensões distintas e não se relacionam.",
+   "notas": "Peça à turma que responda individualmente e depois compare com o vizinho. A resposta certa é B: a representação é lexical, cada dimensão é uma palavra concreta, então carro e automóvel não se relacionam. Conecte ao experimento: nas consultas parafraseadas, o TF-IDF teve hit@1 de 0,38 contra 0,97 nas diretas. As demais alternativas são falsas: o cálculo é barato e feito em CPU, a similaridade pode ser calculada, e a técnica funciona em qualquer língua, desde que se tokenize o texto. Pergunta final: que tipo de consulta de usuário real tende a ser parafraseada? Perguntas em linguagem natural, como Sou surdo e preciso de ajuda para acompanhar as aulas."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "Tokenizador",
+   "pergunta": "Por que usar o tokenizador errado com um modelo é um problema grave?",
+   "opcoes": [
+    "Porque o modelo se recusa a funcionar",
+    "Porque os identificadores significam outra coisa para aquele modelo, e o resultado degrada sem erro explícito",
+    "Porque só altera a cor da interface",
+    "Porque aumenta a precisão do modelo"
+   ],
+   "resposta": "B",
+   "explicacao": "O vocabulário define o significado de cada identificador; trocar o tokenizador troca a tabela de correspondência.",
+   "notas": "Retome a analogia do telegrama: duas tabelas de código diferentes para os mesmos sinais. A resposta é B. O vocabulário define o significado de cada identificador; trocar de tokenizador equivale a trocar a tabela de correspondência, e o modelo recebe números que significam outra coisa, sem avisar. A alternativa A é tentadora porque esperamos erro explícito, mas o ponto é justamente a ausência de erro. Peça exemplos de como evitar o problema: usar o tokenizador distribuído com o modelo e conferir a documentação. Pergunta à turma: em que situação prática alguém trocaria o tokenizador por engano? Por exemplo, ao substituir o modelo em um sistema e reaproveitar código antigo."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Modelo recebe identificadores de tokens: texto, normalização, tokens, ids, embeddings",
+    "Bytes não são caracteres; normalize o Unicode",
+    "TF-IDF pondera palavras raras, mas não liga sinônimos",
+    "Subpalavras (BPE) equilibram vocabulário e comprimento",
+    "Embedding é vetor denso aprendido; tabela V × d",
+    "Busca semântica: mesmo modelo para consulta e documentos, ranking por cosseno",
+    "Distância vetorial mede semelhança de uso, não equivalência de sentido"
+   ],
+   "notas": "Revise o capítulo com a turma, pedindo que cada item seja completado por um aluno. O modelo recebe identificadores de tokens, e o caminho é texto, normalização, tokens, identificadores e embeddings. Bytes e caracteres são coisas diferentes, e acentos e cedilha pedem atenção em português. O TF-IDF pondera palavras raras e gera vetores esparsos interpretáveis, mas não liga sinônimos. Subpalavras equilibram vocabulário e comprimento. O embedding é um vetor denso aprendido, e a tabela tem formato V por d. Na busca semântica, consulta e documentos usam o mesmo modelo. Distâncias medem semelhança de uso, e projeções em duas dimensões distorcem. Adiante: o Capítulo 4 mostra como a atenção processa esses vetores. Pergunta de fechamento: o que mais surpreendeu vocês?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "GAGE, P. A new algorithm for data compression. The C Users Journal, v. 12, n. 2, p. 23-38, 1994.",
+    "SENNRICH, R.; HADDOW, B.; BIRCH, A. Neural machine translation of rare words with subword units. ACL, 2016. p. 1715-1725.",
+    "KUDO, T.; RICHARDSON, J. SentencePiece. EMNLP: System Demonstrations, 2018. p. 66-71.",
+    "MIKOLOV, T. et al. Distributed representations of words and phrases and their compositionality. NeurIPS, 2013.",
+    "REIMERS, N.; GUREVYCH, I. Sentence-BERT. EMNLP-IJCNLP, 2019. p. 3982-3992.",
+    "BENDER, E. M. et al. On the dangers of stochastic parrots. FAccT, 2021. p. 610-623.",
+    "JURAFSKY, D.; MARTIN, J. H. Speech and language processing. 3. ed. (rascunho). Stanford, 2024."
+   ],
+   "notas": ""
+  }
+ ]
+}

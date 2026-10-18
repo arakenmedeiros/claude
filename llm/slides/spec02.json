@@ -1,0 +1,327 @@
+{
+ "capitulo": 2,
+ "titulo": "Fundamentos matemáticos e computacionais",
+ "parte": "Parte I — Fundamentos dos modelos de linguagem",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Operar com vetores, matrizes e tensores, controlando os formatos",
+    "Calcular produto escalar, norma e similaridade de cosseno",
+    "Usar probabilidade condicional, softmax estável e temperatura",
+    "Calcular surpresa, entropia, entropia cruzada e KL",
+    "Explicar gradiente e descida do gradiente; deduzir p − y",
+    "Estimar memória de um modelo e organizar experimentos reprodutíveis"
+   ],
+   "notas": "Abra dizendo que este capítulo desmonta a matemática dos modelos de linguagem em poucas ideias que se repetem o tempo todo. Promessa: cada símbolo será definido, cada fórmula virá com um exemplo numérico pequeno e tudo será conferido em Python com NumPy. Leia os seis objetivos e destaque o quinto, a dedução de que o gradiente é p menos y, que é o ponto alto. Pergunta à turma: quem sente receio de matemática? Tranquilize: o pré-requisito é álgebra do ensino médio. Armadilha: não pular as contas pequenas; elas são o treino para ler artigos depois. Lembre também que os números do capítulo foram executados e conferidos."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Situação inicial: três números misteriosos",
+   "itens": [
+    "Saída do modelo: 2,0  1,0  0,1 (são os logits)",
+    "\"Passa no softmax e vira probabilidade\"",
+    "\"A perda é a entropia cruzada\"",
+    "\"O gradiente dela é só p menos y\"",
+    "Meta: explicar cada frase, calcular à mão e conferir no computador"
+   ],
+   "notas": "Encene o diálogo da colega com três números e quatro frases cheias de termos técnicos. Você concorda com a cabeça, mas não entendeu quase nada. Isso é normal: a matemática dos modelos usa poucas ideias, mas elas aparecem todas juntas, com notação compacta. Diga que ao final do capítulo cada frase da colega fará sentido. Pergunta-guia: por que o gradiente da perda é simplesmente a probabilidade prevista menos a resposta correta, e o que isso significa para o treinamento? Anote as hipóteses da turma. Armadilha: não tentar entender tudo de uma vez; vamos em ordem, de vetores até gradientes."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Vetor: coordenadas de um ponto no mapa",
+   "texto": "Um vetor é uma lista ordenada de números, como latitude e longitude, mas com muito mais direções.",
+   "detalhe": "Em linguagem, um vetor pode representar uma palavra (embedding), uma frase ou o estado interno do modelo. Não vemos 768 dimensões, mas as contas funcionam igual.",
+   "notas": "Compare o vetor com as coordenadas de um endereço: dois números localizam um ponto no mapa; um vetor de dimensão d localiza um ponto num espaço com d direções. Em modelos de linguagem, um vetor pode representar uma palavra, uma frase ou o estado interno. Admita o limite da analogia: não conseguimos visualizar 768 dimensões, mas as contas são as mesmas que em duas. Pergunta à turma: quantos números precisamos para descrever a posição de um drone no ar? Três. Armadilha: dimensão é o número de elementos da lista, não algo físico. Os embeddings serão tratados no Capítulo 3."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Produto escalar",
+   "tex": "a · b = Σᵢ aᵢ bᵢ",
+   "explicacao": [
+    "Multiplique posição a posição e some",
+    "a = (1, 2, 3) e b = (4, 5, 6): 4 + 10 + 18 = 32",
+    "Mede o quanto dois vetores apontam para o mesmo lado",
+    "Norma: ‖a‖ = √(a · a); para a, √14 ≈ 3,742"
+   ],
+   "notas": "Faça a conta no quadro com a igual a 1, 2, 3 e b igual a 4, 5, 6: um vezes quatro, dois vezes cinco, três vezes seis, que dão 4, 10 e 18, somando 32. Em seguida defina norma como o comprimento do vetor, a raiz do produto escalar dele consigo mesmo; para a, raiz de 14, cerca de 3,742, e para b, raiz de 77, cerca de 8,775. O produto escalar mede alinhamento, mas depende também dos comprimentos, o que motiva o cosseno. Pergunta: o que dá o produto escalar de dois vetores perpendiculares? Zero. Armadilha: os dois vetores precisam ter a mesma dimensão."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Similaridade de cosseno",
+   "tex": "cos(a, b) = (a · b) / (‖a‖ ‖b‖)",
+   "explicacao": [
+    "Compara só a direção, ignorando o comprimento",
+    "Vai de −1 (opostos) a 1 (mesmo sentido); 0 é perpendicular",
+    "No exemplo: 32 / (3,742 × 8,775) ≈ 0,975",
+    "Cosseno alto não prova que os textos significam o mesmo"
+   ],
+   "notas": "O cosseno divide o produto escalar pelos comprimentos, de modo que só a direção importa. O resultado fica entre menos 1, sentidos opostos, e 1, mesmo sentido; zero indica vetores perpendiculares, sem relação linear. No exemplo, 32 dividido por 3,742 vezes 8,775 dá cerca de 0,975: quase paralelos. Pergunta à turma: dois documentos, um curto e um longo, sobre o mesmo assunto, teriam cosseno alto ou baixo? Alto, porque o comprimento não influencia. Armadilha: cosseno alto indica direções parecidas naquele espaço aprendido; não prova que os textos significam a mesma coisa. O Capítulo 3 discute essa limitação."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O cosseno é o ângulo entre vetores",
+   "fig": "f02_cosseno",
+   "legenda": "Figura conceitual em duas dimensões; vetores de exemplo arbitrários.",
+   "itens": [
+    "Menor ângulo, cosseno maior",
+    "O comprimento não influencia",
+    "Ângulo reto: cosseno 0"
+   ],
+   "notas": "Mostre a figura e peça que a turma imagine dois ponteiros de relógio: quanto menor o ângulo entre eles, mais parecidos em direção, e o tamanho de cada ponteiro não muda isso. Relacione com a conta anterior: se b é igual a 3 vezes a, o cosseno é 1, porque multiplicar por um número positivo muda o comprimento e não a direção. Pergunta: qual o cosseno entre o vetor 1,0 e o vetor 0,1? Zero. Armadilha: a figura é em duas dimensões e os vetores são arbitrários; em modelos reais as dimensões são centenas ou milhares, mas o raciocínio é o mesmo."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Vetores e matrizes em NumPy",
+   "codigo": "import numpy as np\na = np.array([1.0, 2.0, 3.0]); b = np.array([4.0, 5.0, 6.0])\nprint(\"produto escalar:\", a @ b)\nprint(\"normas:\", np.linalg.norm(a).round(3), np.linalg.norm(b).round(3))\ndef cosseno(u, v):\n    return float(u @ v / (np.linalg.norm(u) * np.linalg.norm(v)))\nprint(\"cosseno(a, b):\", round(cosseno(a, b), 4))\nprint(\"cosseno(a, -a):\", round(cosseno(a, -a), 4))\nprint(\"cosseno((1,0), (0,1)):\", cosseno(np.array([1.0, 0.0]), np.array([0.0, 1.0])))\nW = np.array([[1, 2], [3, 4], [5, 6]], dtype=float); x = np.array([10.0, 1.0])\nprint(\"W @ x =\", W @ x, \"| formato:\", (W @ x).shape)",
+   "saida": "produto escalar: 32.0\nnormas: 3.742 8.775\ncosseno(a, b): 0.9746\ncosseno(a, -a): -1.0\ncosseno((1,0), (0,1)): 0.0\nW @ x = [12. 34. 56.] | formato: (3,)",
+   "notas": "Este código reproduz as contas feitas à mão, e a saída confere: 32 de produto escalar, normas 3,742 e 8,775, cosseno 0,9746. Mostre os dois casos extremos: um vetor e seu oposto têm cosseno menos 1; vetores perpendiculares, zero. O operador arroba é o produto de matrizes em NumPy. A última linha antecipa a próxima seção: uma matriz 3 por 2 vezes um vetor de dimensão 2 resulta num vetor de dimensão 3, 12, 34, 56. Pergunta: por que o NumPy emitir erro quando as dimensões não combinam é uma vantagem? Descobre-se o erro cedo. Armadilha: o código omite a criação do tensor, que está no capítulo."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Matriz: um conversor de dimensões",
+   "texto": "Entram n números, saem m números: uma matriz é como uma máquina de troca com m guichês, cada um olhando os n valores de entrada.",
+   "detalhe": "Cada guichê (linha de W) faz um produto escalar com a entrada. Uma camada linear faz exatamente isso, às vezes somando um viés b: y = Wx + b.",
+   "notas": "Imagine uma casa de câmbio com m guichês. Cada guichê recebe a mesma lista de n valores e aplica a sua própria combinação, entregando um número. Juntos, os m guichês produzem um vetor de dimensão m. Essa é a ideia de uma matriz W de formato m por n multiplicando um vetor x: cada componente do resultado é o produto escalar de uma linha de W com x. Uma camada linear de rede neural é exatamente isso, às vezes com um viés somado. Pergunta à turma: se W tem 5 linhas e 3 colunas, qual deve ser a dimensão de x? Três, e a saída tem dimensão 5. Armadilha: matrizes guardam dados ou parâmetros; é preciso saber qual dos dois."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Formatos: a regra de ouro e os tensores",
+   "itens": [
+    "(m × n)(n × p) = (m × p): colunas de A = linhas de B",
+    "Transposta Aᵀ troca linhas por colunas",
+    "Tensor: arranjo com qualquer número de eixos",
+    "Formato comum: (B, T, d) = lote, tokens, dimensão",
+    "Escreva os formatos ao lado de cada fórmula"
+   ],
+   "fig": "f02_formas",
+   "notas": "Ensine o hábito mais útil do capítulo: escrever os formatos ao lado de cada fórmula. Na multiplicação AB, o número de colunas de A precisa ser igual ao de linhas de B, e o resultado tem as linhas de A e as colunas de B. A transposta troca linhas por colunas e aparecerá no Capítulo 4, em Q vezes K transposta. Um tensor generaliza vetor e matriz; em modelos de linguagem é comum o formato lote, tokens, dimensão. Pergunta: se A é 4 por 6 e B é 6 por 2, qual o formato de AB? 4 por 2. Armadilha: metade dos erros de implementação de Transformers é de formato; os tamanhos da figura são só exemplos."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Softmax: de logits para probabilidades",
+   "tex": "softmax(z)ᵢ = e^zᵢ / Σⱼ e^zⱼ",
+   "explicacao": [
+    "Logit: pontuação bruta, pode ser negativa e não soma 1",
+    "z = (2,0; 1,0; 0,1): exponenciais 7,389; 2,718; 1,105; soma 11,212",
+    "Resultado: (0,659; 0,242; 0,099), que soma 1",
+    "Preserva a ordem: maior logit, maior probabilidade"
+   ],
+   "notas": "Comece lembrando o que é distribuição: números não negativos que somam 1. A última camada do modelo entrega um número qualquer por token, o logit, que precisa virar probabilidade. O softmax faz isso em três passos: exponencial para tornar tudo positivo, soma, e divisão. Refaça o exemplo com 2,0; 1,0; 0,1: as exponenciais valem cerca de 7,389, 2,718 e 1,105, a soma é 11,212 e as probabilidades são 0,659, 0,242 e 0,099. Pergunta: se somarmos 5 a todos os logits, o resultado muda? Não, e isso é a base do truque de estabilidade. Armadilha: confundir logit com probabilidade."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Softmax estável e temperatura",
+   "codigo": "def softmax_ingenuo(z):\n    e = np.exp(z); return e / e.sum()\n\ndef softmax(z, T=1.0):\n    z = np.asarray(z, dtype=float) / T\n    z = z - z.max()                  # estabilidade numérica\n    e = np.exp(z); return e / e.sum()\n\nz = np.array([2.0, 1.0, 0.1])\nprint(\"softmax(z)       :\", softmax(z).round(4), \"| soma =\", softmax(z).sum().round(6))\nfor T in (0.5, 1.0, 2.0):\n    print(f\"temperatura {T:>3}:\", softmax(z, T).round(4))\ngrandes = np.array([1000.0, 999.0, 998.0])\nprint(\"ingênuo:\", softmax_ingenuo(grandes), \"estável:\", softmax(grandes).round(4))",
+   "saida": "softmax(z)       : [0.659  0.2424 0.0986] | soma = 1.0\ntemperatura 0.5: [0.8638 0.1169 0.0193]\ntemperatura 1.0: [0.659  0.2424 0.0986]\ntemperatura 2.0: [0.5017 0.3043 0.194 ]\ningênuo com logits grandes: [nan nan nan]\nestável com logits grandes: [0.6652 0.2447 0.09  ]",
+   "notas": "Mostre o problema: com logits como 1000, a exponencial estoura a capacidade do computador e o resultado é nan. A solução é subtrair o máximo de todos os logits, o que não altera o softmax porque a constante se cancela entre numerador e denominador. A saída real confirma: o ingênuo devolve nan e o estável devolve 0,6652, 0,2447 e 0,09. Depois, mostre a temperatura: com T igual a 0,5 o primeiro token vai a 0,8638; com T igual a 2, cai para 0,5017. Pergunta: o que acontece quando T tende ao infinito? Distribuição uniforme. Armadilha: o código exibido omite a linha de impressão do ingênuo isolada, mas a saída é a real."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Temperatura: nitidez da distribuição",
+   "itens": [
+    "softmax(z / T), com T > 0",
+    "T < 1: distribuição mais concentrada no token líder",
+    "T > 1: distribuição mais espalhada",
+    "Com z = (2,0; 1,0; 0,1): T=0,5 dá 0,864; T=2 dá 0,502 ao primeiro",
+    "Uso na geração: Capítulo 6"
+   ],
+   "fig": "f02_softmax",
+   "notas": "Use a figura, calculada no código com os mesmos três logits, para visualizar o efeito. Dividir os logits por T antes do softmax muda a nitidez: com T menor que 1, a massa se concentra no token líder; com T maior que 1, se espalha. Os valores vêm da execução real: para o primeiro token, 0,8638 com T igual a 0,5, 0,659 com T igual a 1 e 0,5017 com T igual a 2. O papel da temperatura na geração será estudado no Capítulo 6. Pergunta: qual temperatura daria respostas mais previsíveis? A menor. Armadilha: temperatura não muda a ordem dos tokens, só a diferença entre eles; os três tokens são hipotéticos."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Surpresa: a notícia que ninguém esperava",
+   "texto": "\"Fez calor em Manaus\" não surpreende. \"Nevou em Manaus\" surpreende muito. Surpresa = −ln p.",
+   "detalhe": "Evento quase certo (p ≈ 1): surpresa perto de zero. Evento improvável: surpresa grande. Com p = 0,5, a surpresa é 0,693 nats, ou 1 bit.",
+   "notas": "A surpresa formaliza algo intuitivo: quanto mais improvável o evento, mais ele nos surpreende. Shannon, em 1948, definiu a surpresa como menos o logaritmo natural de p. Se p vale 1, a surpresa é zero; se vale 0,5, é 0,693 nats, que equivale a 1 bit quando se usa o logaritmo na base 2. Nats e bits só diferem pela base do logaritmo. Pergunta à turma: qual é mais surpreendente, tirar cara numa moeda justa ou tirar um específico número num dado de seis faces? O dado. Armadilha: misturar logaritmo natural e na base 2 ao comparar entropias e perplexidades; declare sempre a unidade."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Entropia: a surpresa média",
+   "tex": "H(p) = − Σᵢ pᵢ ln pᵢ",
+   "explicacao": [
+    "Mede a incerteza de uma distribuição",
+    "Máxima (ln V) quando todas as opções são igualmente prováveis",
+    "Zero quando uma opção tem probabilidade 1",
+    "Para (0,659; 0,242; 0,099): H ≈ 0,847 nats; máximo ln 3 ≈ 1,099"
+   ],
+   "notas": "A entropia é a surpresa média, ponderada pelas probabilidades. Mede a incerteza de uma distribuição: máxima, igual a ln V, quando as V opções são igualmente prováveis, e zero quando uma opção tem probabilidade 1. Para a distribuição do softmax anterior, a entropia é cerca de 0,847 nats, abaixo do máximo, ln 3, cerca de 1,099, porque o primeiro token domina. Pergunta: qual a entropia de uma moeda viciada que sempre dá cara? Zero. Armadilha: entropia alta não é sinal de erro nem de acerto, só de incerteza; e é preciso declarar se a unidade é nats ou bits."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Entropia cruzada: a perda dos modelos",
+   "tex": "L = − Σᵢ yᵢ ln pᵢ = − ln p_k",
+   "explicacao": [
+    "y é one-hot: vale 1 no token correto k",
+    "A perda é a surpresa do modelo diante da resposta certa",
+    "Com p = (0,659; 0,242; 0,099): token 1 → 0,417; token 3 → 2,313",
+    "Perplexidade = exp(perda média); e^0,417 ≈ 1,52"
+   ],
+   "notas": "Aqui está a perda dos modelos de linguagem. O vetor y é one-hot: vale 1 na posição do token correto e zero nas demais. Na prática, a perda é a surpresa do modelo diante da resposta correta: se ele deu probabilidade alta ao token certo, a perda é pequena. Com as probabilidades do exemplo, se o correto é o primeiro token, a perda é cerca de 0,417; se fosse o terceiro, cerca de 2,313. Em várias posições, tira-se a média e a perplexidade é a exponencial dessa média, no exemplo cerca de 1,52. Pergunta: o que significa perplexidade 1? Certeza total. Armadilha: perda baixa não significa verdade, só probabilidade alta ao alvo."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Entropia, entropia cruzada, KL e perplexidade",
+   "codigo": "def entropia(p):\n    p = np.asarray(p, float); return float(-(p[p > 0] * np.log(p[p > 0])).sum())\ndef entropia_cruzada(p, q):\n    return float(-(np.asarray(p, float) * np.log(np.asarray(q, float))).sum())\ndef kl(p, q): return entropia_cruzada(p, q) - entropia(p)\n\np_mod = softmax(np.array([2.0, 1.0, 0.1]))\nprint(\"surpresa por token (nats):\", (-np.log(p_mod)).round(3))\nprint(\"H(p_mod) =\", round(entropia(p_mod), 3), \"| máximo ln 3 =\", round(np.log(3), 3))\np = np.array([0.7, 0.2, 0.1]); q = np.array([0.5, 0.3, 0.2])\nprint(\"H(p) =\", round(entropia(p), 3), \"| H(p,q) =\", round(entropia_cruzada(p, q), 3),\n      \"| KL(p||q) =\", round(kl(p, q), 3), \"| KL(q||p) =\", round(kl(q, p), 3))\nperda = -np.log(p_mod[0]); print(\"perda =\", round(float(perda), 3), \"| ppl =\", round(float(np.exp(perda)), 3))",
+   "saida": "surpresa por token (nats): [0.417 1.417 2.317]\nH(p_mod) = 0.847 | máximo ln 3 = 1.099\nH(p) = 0.802 | H(p,q) = 0.887 | KL(p||q) = 0.085 | KL(q||p) = 0.092\nperda = 0.417 | perplexidade = exp(perda) = 1.517",
+   "notas": "Confira as contas feitas à mão. A surpresa por token é 0,417, 1,417 e 2,317 nats; note que o texto do capítulo arredonda a última para 2,313 na conta manual, e o computador dá 2,317 com mais casas decimais, uma diferença de arredondamento esperada. A entropia 0,847 está abaixo do máximo 1,099. Para p e q do exemplo, a entropia de p é 0,802, a entropia cruzada 0,887 e a KL 0,085; a KL na outra direção é 0,092, diferente, o que mostra a assimetria. Perda 0,417 e perplexidade 1,517. Pergunta: por que a KL não é uma distância? Não é simétrica. Armadilha: o código aqui está condensado em relação ao capítulo."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Divergência KL: o custo extra de errar a distribuição",
+   "itens": [
+    "D_KL(p ‖ q) = H(p, q) − H(p)",
+    "É o custo extra por token de usar q no lugar de p",
+    "Sempre ≥ 0; vale 0 só se p = q",
+    "Não é simétrica: 0,085 contra 0,092 no exemplo; não é distância",
+    "Reaparece no ajuste por preferências (Capítulo 7)"
+   ],
+   "notas": "A divergência de Kullback-Leibler compara duas distribuições completas: p, a verdadeira, e q, a do modelo. Ela é a entropia cruzada menos a entropia de p, ou seja, o custo extra por token de usar q no lugar de p. No exemplo, 0,887 menos 0,802 dá cerca de 0,085 nats. A KL é sempre maior ou igual a zero e só vale zero quando as distribuições são iguais. Reaparece no Capítulo 7, no ajuste por preferências, para impedir que o modelo ajustado se afaste demais do original. Pergunta: qual das duas direções você usaria? Depende do problema; elas dão valores diferentes. Armadilha: chamar a KL de distância; a assimetria impede."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Descida do gradiente: descer a montanha na neblina",
+   "texto": "Sem enxergar o vale, você sente a inclinação sob os pés e dá um passo na direção que desce mais.",
+   "detalhe": "O gradiente aponta para onde a perda mais cresce; por isso andamos no sentido oposto. A taxa de aprendizado é o tamanho do passo: pequeno demais, lento; grande demais, você pula o vale.",
+   "notas": "Peça que a turma imagine estar numa montanha em plena neblina. Você não vê o vale, mas sente a inclinação do chão e dá um passo morro abaixo; repete. É a descida do gradiente. O gradiente reúne as derivadas parciais da perda em relação a todos os parâmetros e aponta para a direção de maior aumento, por isso andamos no sentido oposto. A taxa de aprendizado é o tamanho do passo. Pergunta: o que acontece se o passo for enorme? Você pode pular o vale e a perda oscilar ou divergir. Armadilha: no treino real o gradiente é estimado com um minilote, mais barato e aproximadamente na direção certa; é a descida estocástica, SGD."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Descida do gradiente",
+   "tex": "θ ← θ − η ∇θ L",
+   "explicacao": [
+    "η é a taxa de aprendizado, o tamanho do passo",
+    "Exemplo f(x) = (x − 3)², η = 0,1, x₀ = 0",
+    "x₁ = 0,6; x₂ = 1,08; x₃ = 1,464: aproxima-se de 3",
+    "Os passos encolhem junto com o gradiente"
+   ],
+   "notas": "A atualização é uma linha: o novo valor do parâmetro é o antigo menos eta vezes o gradiente. Faça o exemplo no quadro com f de x igual a x menos 3, ao quadrado. A derivada é 2 vezes x menos 3. Partindo de zero, a derivada vale menos 6, e o novo x é 0,6; depois 1,08; depois 1,464. Os valores se aproximam de 3, e os passos diminuem à medida que o gradiente encolhe. Mencione Adam e AdamW como variantes muito usadas em Transformers, sem entrar em detalhes. Pergunta: o que ocorre com eta igual a 1 neste exemplo? O passo vai direto a x igual a 6 e oscila; vale testar. Armadilha: uma taxa boa em um problema pode divergir em outro."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "O gradiente do softmax com entropia cruzada",
+   "tex": "∂L/∂zᵢ = pᵢ − yᵢ",
+   "explicacao": [
+    "L = −z_k + ln Σⱼ e^zⱼ",
+    "O primeiro termo contribui −yᵢ; o segundo, pᵢ",
+    "Token correto: gradiente negativo, o logit sobe",
+    "Demais tokens: gradiente positivo, os logits descem",
+    "Exemplo: (−0,341; 0,242; 0,099)"
+   ],
+   "notas": "Chegamos à fala da colega. Escreva a perda como menos o logit do token correto mais o logaritmo da soma das exponenciais. Derive em relação a z i: o primeiro termo contribui menos 1 se i é o token correto e zero caso contrário, isto é, menos y i; o segundo, pela regra da cadeia, contribui p i. Somando, o gradiente é p i menos y i. Em palavras: a probabilidade que o modelo deu menos a que deveria dar. Para o token correto o gradiente é negativo, então a descida aumenta o logit. Pergunta: por que o resultado é elegante? Não depende de contas complicadas. Armadilha: este é o gradiente em relação aos logits, ponto de partida da retropropagação, não o gradiente completo em relação aos pesos."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Conferindo o gradiente: analítico contra numérico",
+   "codigo": "def perda_ce(z, k): return -np.log(softmax(z)[k])\nz = np.array([2.0, 1.0, 0.1]); k = 0; y = np.eye(3)[k]\ngrad_analitico = softmax(z) - y\n\ndef grad_numerico(f, z, h=1e-6):\n    g = np.zeros_like(z)\n    for i in range(len(z)):\n        zp, zm = z.copy(), z.copy(); zp[i] += h; zm[i] -= h\n        g[i] = (f(zp) - f(zm)) / (2 * h)\n    return g\n\ngrad_num = grad_numerico(lambda zz: perda_ce(zz, k), z)\nprint(\"p - y   :\", grad_analitico.round(4)); print(\"numérico:\", grad_num.round(4))\nzt = z.copy()\nfor passo in range(3):\n    zt = zt - 0.5 * (softmax(zt) - y)\n    print(f\"passo {passo+1}: p[k] = {softmax(zt)[k]:.3f} | perda = {perda_ce(zt, k):.3f}\")",
+   "saida": "gradiente p - y      : [-0.341  0.2424  0.0986]\ngradiente numérico   : [-0.341  0.2424  0.0986]\ndiferença máxima     : 1.0478695688931339e-10\npasso 1: p[k] = 0.717 | perda = 0.333\npasso 2: p[k] = 0.760 | perda = 0.275\npasso 3: p[k] = 0.793 | perda = 0.233",
+   "notas": "A conferência numérica do gradiente, o gradient check, é um hábito valioso: aproxima-se a derivada por diferenças finitas e compara-se com a fórmula analítica. A saída real mostra os dois gradientes iguais a menos 0,341, 0,2424 e 0,0986, com diferença máxima da ordem de 10 elevado a menos 10. Depois, a descida do gradiente nos próprios logits: a cada passo, a probabilidade do token correto sobe, 0,717, 0,760, 0,793, e a perda cai, 0,333, 0,275, 0,233. O código da tela está condensado; a execução original tem quatro passos. Pergunta: ao implementar uma nova camada, o que fazer antes de confiar nela? Comparar os gradientes. Armadilha: usar h muito pequeno pode introduzir erro de arredondamento."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Memória dos pesos de um modelo hipotético",
+   "codigo": "def memoria_gb(n_parametros, bytes_por_parametro):\n    return n_parametros * bytes_por_parametro / 1e9\n\nN = 7e9   # modelo hipotético de 7 bilhões de parâmetros\nfor nome, b in [(\"float32\", 4), (\"float16\", 2), (\"int8\", 1), (\"4 bits\", 0.5)]:\n    print(f\"{nome:<8}: {memoria_gb(N, b):6.1f} GB só para os pesos\")",
+   "saida": "float32 :   28.0 GB só para os pesos\nfloat16 :   14.0 GB só para os pesos\nint8    :    7.0 GB só para os pesos\n4 bits  :    3.5 GB só para os pesos",
+   "notas": "A memória mínima para guardar os parâmetros é o número de parâmetros vezes os bytes por parâmetro. Para um modelo hipotético de 7 bilhões de parâmetros: 28 GB em float32, 14 GB em float16, 7 GB em int8 e 3,5 GB com 4 bits. Deixe claro que o modelo é hipotético e não corresponde a nenhum produto real. Esses valores contam apenas os pesos; para executar há também ativações e cache de atenção, e para treinar, gradientes e estados do otimizador, então as necessidades reais são maiores. Pergunta: por que reduzir os bits ajuda a rodar localmente? Menos memória por parâmetro. Armadilha: tratar a estimativa como a necessidade real; ela é um piso."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Reprodutibilidade: o caderno de laboratório",
+   "texto": "Um experimento sem registro é como uma receita sem quantidades: ninguém, nem você, consegue repetir.",
+   "detalhe": "Quatro hábitos: ambiente isolado com versões, sementes fixas, registro de cada execução e pastas organizadas (dados, código, resultados, notebooks).",
+   "notas": "Compare com um cientista que anota tudo no caderno de laboratório. Resultados que ninguém consegue reproduzir valem pouco. Ensine os quatro hábitos: ambiente virtual com arquivo de versões das bibliotecas; sementes aleatórias fixas, por exemplo com default rng de semente zero; registro de execução com data, código, parâmetros e métricas, em um arquivo como JSON; e pastas separadas para dados, código, resultados e notebooks, sem alterar dados brutos. No exemplo do capítulo, a mesma semente gerou exatamente a mesma amostra de cinco números, confirmado por código. Pergunta: o que registrar além da semente? Versões, hiperparâmetros e divisão dos dados. Armadilha: não fixar a semente e depois não conseguir reproduzir o resultado."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e cuidados",
+   "itens": [
+    "Trocar a ordem das dimensões: escreva o formato de cada array",
+    "Esquecer a estabilidade numérica; log(0) é −∞",
+    "Confundir logit com probabilidade, ou cosseno com distância",
+    "Misturar log natural e base 2: declare nats ou bits",
+    "Exemplos são pequenos; memória estimada é apenas um piso"
+   ],
+   "notas": "Faça um resumo dos erros que mais custam tempo. Primeiro, as dimensões: escreva o formato esperado ao lado de cada array. Segundo, a estabilidade numérica do softmax e do logaritmo, já que log de zero é menos infinito. Terceiro, confundir logit com probabilidade, ou ler cosseno alto como proximidade euclidiana. Quarto, misturar o logaritmo natural com o da base 2 ao comparar entropias e perplexidades. Reforce as limitações do capítulo: contas manuais usam poucas casas decimais; os exemplos são pequenos, enquanto modelos reais têm vocabulários de dezenas de milhares de tokens e dimensões de milhares. Pergunta: qual erro vocês já viram em código? Armadilha: taxa de aprendizado única para tudo."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Regressão logística multiclasse com NumPy",
+   "passos": [
+    "Gere 300 pontos 2D de 3 grupos com np.random.default_rng(0)",
+    "Inicialize W (2×3) e b (3) com zeros",
+    "Em cada época: logits Z = XW + b, softmax, perda média",
+    "Gradientes: X^T(P − Y)/N para W; média de (P − Y) para b",
+    "Atualize e registre a perda; repita com η = 0,01; 0,1; 1,0; 10",
+    "Compare: qual converge, qual é lenta e qual oscila?"
+   ],
+   "notas": "Apresente a atividade como um modelo de próximo token de um passo, treinado do zero e só com NumPy. Os passos usam tudo que vimos: formatos, softmax, perda de entropia cruzada e o gradiente p menos y, agora em forma matricial. Peça que a turma escreva os formatos de cada matriz antes de codificar: X é 300 por 2, W é 2 por 3, Z é 300 por 3. Teste as quatro taxas de aprendizado e compare as curvas de perda. Pergunta: qual taxa vocês acham que vai oscilar? Peça palpites antes de rodar. O Exercício prático 2.3 pede exatamente isso. Armadilha: lembrar de dividir o gradiente por N e de fixar a semente para reproduzir."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "formato de Wx",
+   "pergunta": "Uma matriz W de formato 5×3 multiplica um vetor x de dimensão 3. Qual o formato de Wx?",
+   "opcoes": [
+    "Um vetor de dimensão 3",
+    "Uma matriz de formato 5×3",
+    "Um vetor de dimensão 5",
+    "A operação é inválida: os formatos são incompatíveis"
+   ],
+   "resposta": "C",
+   "explicacao": "Cada uma das 5 linhas de W faz produto escalar com x (dimensão 3), produzindo 5 números.",
+   "notas": "Dê alguns segundos e peça que escrevam os formatos lado a lado, 5 por 3 vezes 3: as dimensões internas coincidem, então a operação é válida, e o resultado fica com as dimensões externas, 5. A resposta correta é a C: um vetor de dimensão 5. Cada linha de W faz um produto escalar com x e gera um número, e há cinco linhas. Desmonte as demais: a dimensão 3 seria o tamanho da entrada; a matriz 5 por 3 não resulta de multiplicar por um vetor; e a operação não é inválida porque o número de colunas de W é igual à dimensão de x. Pergunta: e se x tivesse dimensão 4? Seria inválida. Armadilha: ler os formatos na ordem errada."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "softmax estável",
+   "pergunta": "Qual propriedade do softmax justifica subtrair o máximo dos logits antes de calcular?",
+   "opcoes": [
+    "O softmax só funciona com logits negativos",
+    "Somar ou subtrair a mesma constante dos logits não altera as probabilidades",
+    "A subtração torna a soma das probabilidades igual a 2",
+    "A subtração aumenta a precisão do modelo"
+   ],
+   "resposta": "B",
+   "explicacao": "A constante se cancela entre numerador e denominador. Subtrair o máximo evita overflow na exponencial.",
+   "notas": "Retome o exemplo dos logits 1000, 999 e 998, em que o cálculo ingênuo devolveu nan. A resposta correta é a B: somar ou subtrair a mesma constante de todos os logits não altera o softmax, porque e elevado a z menos m dividido pela soma se cancela. Subtrair o máximo faz o maior expoente virar zero e evita overflow. As outras alternativas são falsas: o softmax funciona com qualquer logit; a soma continua sendo 1, nunca 2; e a subtração não altera o modelo, só viabiliza o cálculo. Pergunta: por que isso não muda as probabilidades? Constante se cancela. Armadilha: achar que o truque é uma aproximação; ele é exato."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "temperatura alta",
+   "pergunta": "O que ocorre com softmax(z/T) quando T tende ao infinito?",
+   "opcoes": [
+    "A distribuição tende a um vetor one-hot",
+    "Os logits tornam-se infinitos",
+    "A distribuição tende à uniforme",
+    "O token de menor logit passa a ser o mais provável"
+   ],
+   "resposta": "C",
+   "explicacao": "Com T muito grande, todos os z/T tendem a 0, e e^0 = 1 para todos os tokens.",
+   "notas": "Relacione com a figura da temperatura: com T maior que 1 a distribuição se espalha; no limite, todas as opções ficam igualmente prováveis. A resposta correta é a C: a distribuição tende à uniforme, porque todos os z sobre T tendem a zero e a exponencial de zero é 1 para todos. A alternativa A descreve o limite oposto, T tendendo a zero. Os logits não ficam infinitos e a ordem dos tokens não se inverte. Pergunta à turma: qual a entropia nesse limite? A máxima, ln V. Armadilha: confundir os dois extremos da temperatura; guarde que baixa temperatura é nítida e alta temperatura é espalhada."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Vetor, matriz, tensor: confira sempre os formatos",
+    "Cosseno mede direção; produto escalar mede alinhamento",
+    "Softmax estável (subtraia o máximo); temperatura controla a nitidez",
+    "Surpresa −ln p; entropia cruzada é a perda; perplexidade = e^perda",
+    "Gradiente aponta o aumento da perda; andamos no sentido oposto",
+    "Softmax + entropia cruzada: gradiente nos logits é p − y"
+   ],
+   "notas": "Retome a fala da colega no começo: passa no softmax, a perda é a entropia cruzada, o gradiente é só p menos y. Agora cada termo tem significado e a turma pode calcular os números à mão. Revise os seis pontos do slide e acrescente os dois que ficaram de fora: KL como custo extra, não simétrica, e a memória dos pesos como parâmetros vezes bytes por parâmetro, um piso. Pergunta final: o que significa para o treinamento o gradiente ser p menos y? Cada passo aumenta o logit do token correto e diminui os demais, proporcionalmente ao erro. Armadilha: lembrar que p menos y vale para os logits, não para todos os pesos. Anuncie o Capítulo 3, sobre tokens e embeddings."
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "GOODFELLOW, I.; BENGIO, Y.; COURVILLE, A. Deep learning. Cambridge: MIT Press, 2016.",
+    "BISHOP, C. M. Pattern recognition and machine learning. New York: Springer, 2006.",
+    "MURPHY, K. P. Probabilistic machine learning: an introduction. Cambridge: MIT Press, 2022.",
+    "SHANNON, C. E. A mathematical theory of communication. Bell System Technical Journal, v. 27, n. 3, 1948.",
+    "RUMELHART, D. E.; HINTON, G. E.; WILLIAMS, R. J. Learning representations by back-propagating errors. Nature, v. 323, p. 533-536, 1986.",
+    "KINGMA, D. P.; BA, J. Adam: a method for stochastic optimization. In: ICLR, 3., 2015.",
+    "HARRIS, C. R. et al. Array programming with NumPy. Nature, v. 585, p. 357-362, 2020."
+   ]
+  }
+ ]
+}

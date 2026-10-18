@@ -1,0 +1,340 @@
+{
+ "capitulo": 7,
+ "titulo": "Ajuste por instruções e preferências",
+ "parte": "Parte II — Treinamento, adaptação e geração",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Distinguir modelo-base, modelo ajustado para instruções e modelo alinhado",
+    "Entender o ajuste supervisionado (SFT) e a máscara de perda",
+    "Calcular a perda de um modelo de recompensa (Bradley-Terry)",
+    "Explicar a intuição do RLHF com penalidade de KL e do DPO",
+    "Reconhecer vieses das preferências: comprimento e bajulação",
+    "Separar comportamento desejável de garantia de correção"
+   ],
+   "notas": "Comece lendo os objetivos em voz alta e diga que o fio condutor do capítulo é uma pergunta: o que separa um modelo que apenas continua texto de um assistente que responde ao que pedimos? Avise que haverá contas pequenas, todas feitas passo a passo, e código executado de verdade. Diga também que o capítulo termina com um alerta: soar prestativo não é o mesmo que estar certo. Pergunta à turma: quem já percebeu que um assistente responde com muita confiança mesmo quando erra? Anote os exemplos que surgirem, pois voltaremos a eles na seção sobre limites do pós-treinamento. Armadilha: não prometa que o capítulo ensina a treinar um modelo real; os experimentos são pequenos e didáticos."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Mesma arquitetura, comportamentos diferentes",
+   "itens": [
+    "Pergunta: \"Quais são os planetas do sistema solar?\"",
+    "Modelo-base: pode continuar com outras perguntas",
+    "Assistente: responde \"Mercúrio, Vênus, Terra...\"",
+    "Diferença: uma etapa posterior, o pós-treinamento",
+    "Ele usa exemplos de bom comportamento e preferências humanas"
+   ],
+   "notas": "Retome o Capítulo 5: um modelo-base, ao receber uma pergunta, pode simplesmente continuar com outras perguntas, porque foi treinado para continuar texto. Um assistente responde. Os dois têm a mesma arquitetura e o mesmo pré-treinamento. Então o que os separa? A resposta do capítulo é o pós-treinamento: o modelo é ajustado com exemplos de bom comportamento, pares de instrução e resposta desejada, e com preferências humanas, em que alguém compara duas respostas e indica a melhor. O resultado segue pedidos, mantém o tom, recusa certos pedidos. Pergunta à turma: se a arquitetura é a mesma, onde está a diferença? Armadilha: dizer que o assistente sabe mais; o capítulo mostra que ele sobretudo se comporta diferente."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o recém-formado e o treinamento no emprego",
+   "texto": "Pré-treinar é a faculdade. Pós-treinar é o primeiro mês de trabalho.",
+   "detalhe": "O recém-formado sabe muito, mas não sabe atender o cliente: precisa ver exemplos de bom atendimento (SFT) e receber retorno sobre qual jeito agrada mais (preferências). O conhecimento já estava lá; o que muda é o jeito de responder.",
+   "notas": "Use esta analogia para fixar a divisão de trabalho. A faculdade é o pré-treinamento: muito conteúdo, sem foco em atendimento. No primeiro mês de trabalho, o chefe mostra exemplos de bons atendimentos, que é o ajuste supervisionado, e depois diz, entre duas respostas ao cliente, qual preferiu, que são as preferências. O conhecimento não aumenta de forma mágica; muda o jeito de responder. Isso conecta com a hipótese discutida no capítulo de que o ajuste ensina sobretudo formato e estilo. Pergunta à turma: já tiveram um primeiro emprego em que sabiam a matéria, mas não o jeito da empresa? Armadilha: não leve a analogia longe demais, pois um modelo não entende como uma pessoa; ela serve só para a divisão de papéis."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Mapa do capítulo",
+   "fig": "f07_mapa",
+   "legenda": "Modelo-base, ajuste supervisionado, preferências (recompensa+RL ou otimização direta) e o alerta: sem garantia de correção.",
+   "notas": "Mostre o mapa como roteiro de navegação. À esquerda, o modelo-base. No meio, dois caminhos de ajuste: o supervisionado, com demonstrações, e o de preferências, que pode seguir por um modelo de recompensa com aprendizado por reforço ou por otimização direta. À direita, um modelo mais alinhado ao comportamento desejado, mas sem garantia de correção. Peça que a turma localize no mapa cada palavra nova que aparecerá: SFT, recompensa, KL, DPO. Diga que a seção final volta ao alerta do mapa. Armadilha: não detalhe as fórmulas agora; este slide serve para dar visão geral e reduzir a ansiedade com os termos técnicos."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Três estágios de um modelo",
+   "cabecalho": [
+    "Estágio",
+    "Como se comporta",
+    "Dados de treino"
+   ],
+   "linhas": [
+    [
+     "Modelo-base",
+     "Continua texto; não trata a entrada como pedido",
+     "Grandes corpora, sem rótulos"
+    ],
+    [
+     "Ajustado para instruções (SFT)",
+     "Responde a pedidos no formato esperado",
+     "Pares (instrução, resposta desejada)"
+    ],
+    [
+     "Alinhado por preferências",
+     "Tende ao que as pessoas preferem: útil, polido, cauteloso",
+     "Comparações entre respostas"
+    ]
+   ],
+   "notas": "A terminologia varia entre autores, mas a divisão em três estágios é útil. O modelo-base é o resultado do pré-treinamento e só continua texto. O ajustado para instruções recebeu o ajuste fino supervisionado, o SFT, e aprendeu o formato pergunta e resposta. O alinhado por preferências passou por mais uma etapa e tende a respostas que as pessoas preferem. Exemplo oral: peça ao modelo-base uma receita e ele pode continuar a frase; o ajustado entrega a receita. Pergunta: em qual coluna aparece a palavra rótulo? Só na última aparecem comparações. Armadilha: lembrar que alinhado por preferências quer dizer parecido com o que avaliadores preferiram, não necessariamente correto."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O pipeline típico de pós-treinamento",
+   "fig": "f07_pipeline",
+   "legenda": "Pré-treinamento, ajuste supervisionado, ajuste por preferências e avaliação: dados e objetivos diferentes em cada etapa.",
+   "itens": [
+    "Etapa 1: demonstrações escritas por pessoas",
+    "Etapa 2: modelo de recompensa a partir de comparações",
+    "Etapa 3: aprendizado por reforço contra essa recompensa",
+    "Ouyang et al. (2022): 1,3 bi ajustado preferido a 175 bi base"
+   ],
+   "notas": "Descreva as três etapas do pipeline que Ouyang e colegas apresentaram para o InstructGPT: demonstrações, modelo de recompensa e aprendizado por reforço. Cada etapa usa dados diferentes e otimiza objetivos diferentes. Destaque o resultado relatado pelos autores: em avaliações humanas, um modelo ajustado de 1,3 bilhão de parâmetros foi preferido a um modelo-base de 175 bilhões. A lição é que o pós-treinamento pode pesar tanto quanto a escala para o comportamento percebido. Pergunta à turma: o que isso diz sobre apenas aumentar o modelo? Armadilha: é um resultado de um estudo específico, em avaliações humanas; não generalize para todos os modelos e tarefas."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Preferido por avaliadores não é o mesmo que correto",
+   "itens": [
+    "Avaliações de preferência tendem a premiar respostas fluentes, longas ou confiantes",
+    "Isso vale mesmo quando a resposta contém erros",
+    "Comportamento desejável não é garantia de correção",
+    "Voltaremos a ver esse viés em números"
+   ],
+   "notas": "Este é o primeiro alerta do capítulo e vale repeti-lo ao longo da aula. Quando o treino usa preferências de avaliadores, o modelo aprende o que agrada. Respostas fluentes, longas ou seguras de si tendem a agradar, mesmo quando contêm erros. Por isso preferido por avaliadores é diferente de mais correto. Exemplo oral: entre uma resposta curta e certa, e uma longa, educada e levemente errada, nem sempre a certa vence. Pergunta à turma: como vocês escolhem entre duas respostas de um assistente? Armadilha: não concluir que preferências são inúteis; elas melhoram a utilidade, mas não substituem verificação, o que será medido no Capítulo 16."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Ajuste fino supervisionado (SFT)",
+   "itens": [
+    "Mostrar ao modelo muitos pares: instrução e resposta desejada",
+    "Continuar o treino de próximo token sobre a resposta",
+    "Mesma perda do pré-treino (entropia cruzada)",
+    "Diferença: dados curados e formato de conversa",
+    "Chat template: marcadores indicam sistema, usuário e assistente"
+   ],
+   "notas": "Explique que o SFT, do inglês supervised fine-tuning, não inventa um objetivo novo: continua a prever o próximo token com entropia cruzada, como no pré-treinamento. O que muda são os dados, que são curados, e o formato, que é de conversa. Cada exemplo é montado com um modelo de conversa, o chat template, com marcadores especiais para os papéis. Mostre no quadro uma linha como: sistema, você é assistente da universidade; usuário, qual o prazo de trancamento; assistente, até a 8ª semana. Pergunta: por que marcar os papéis? Para o modelo saber quando é a vez dele responder. Armadilha: confundir SFT com pré-treinamento; aqui são poucos dados e bem escolhidos."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Perda do SFT com máscara",
+   "tex": "L = − Σ mₜ · ln p(wₜ | w<t)  /  Σ mₜ",
+   "explicacao": [
+    "mₜ = 1 se o token é da resposta; mₜ = 0 se é da instrução",
+    "Só a resposta do assistente conta para o aprendizado",
+    "Exemplo: perdas (2,0; 1,5; 1,0; 0,9; 0,6; 0,3), máscara (0,0,0,1,1,1)",
+    "Sem máscara: 1,05. Com máscara: 0,60"
+   ],
+   "notas": "Leia a fórmula em palavras: a perda é a média, só sobre os tokens da resposta, do menos logaritmo da probabilidade que o modelo deu a cada token. O vetor m, de zeros e uns, é a máscara. Faça a conta do capítulo no quadro: seis tokens, perdas 2,0; 1,5; 1,0; 0,9; 0,6 e 0,3. Sem máscara, a soma é 6,3 e a média 1,05. Com a máscara 0,0,0,1,1,1, a soma é 1,8 e a média 0,60. Por que ignorar a instrução? Queremos que o modelo aprenda a responder, e não a gerar perguntas. Pergunta: se não usássemos a máscara, o que o modelo aprenderia a imitar? Armadilha: tratar a máscara como detalhe; treinar também na instrução dilui o sinal."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: corrigir só a redação, não o enunciado",
+   "texto": "A máscara é a caneta do professor: corrige a resposta, não a pergunta da prova.",
+   "detalhe": "O enunciado serve de contexto para o aluno, mas não recebe nota. Do mesmo jeito, os tokens da instrução servem de contexto ao modelo, e só os tokens da resposta entram na perda.",
+   "notas": "Imagine uma prova: o enunciado vem impresso, e o professor corrige apenas o que o aluno escreveu. Se ele corrigisse também o enunciado, estaria avaliando algo que o aluno não produziu. No SFT é igual: instrução e papéis são contexto, e a máscara zera a contribuição desses tokens para a perda. O modelo ainda lê a instrução, pois ela condiciona a resposta, mas não é treinado para gerá-la. Pergunta à turma: o que mudaria se o modelo fosse treinado também para escrever as perguntas? Possivelmente ele aprenderia a inventar pedidos em vez de responder. Armadilha: a máscara não impede o modelo de usar a instrução; impede apenas que ela seja alvo da perda."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: perda com e sem máscara",
+   "codigo": "papel = [\"instr\"]*8 + [\"resp\"]*5\nmascara = np.array([1.0 if p == \"resp\" else 0.0 for p in papel])\nperdas = np.array([2.1,1.8,1.5,2.2,1.2,2.5,1.1,0.8,\n                   1.4,0.7,0.9,0.5,0.2])   # ilustrativas (nats)\nprint(\"perda média sem máscara:\", round(float(perdas.mean()), 3))\nprint(\"perda média com máscara (SFT):\",\n      round(float((perdas*mascara).sum()/mascara.sum()), 3))",
+   "saida": "tokens da resposta: ['Até', 'a', '8ª', 'semana', '<fim>']\nperda média sem máscara: 1.3\nperda média com máscara (SFT): 0.74",
+   "notas": "Trecho do código executado do capítulo; as perdas por token são ilustrativas, escritas à mão, e não vêm de um modelo real. Treze tokens: oito de instrução e cinco de resposta, incluindo o marcador de fim. A máscara vale 1 nos tokens de resposta. A saída real mostra a média sem máscara, 1,3, e com máscara, 0,74. A perda com máscara é a que guia o ajuste. Peça que a turma preveja: a média com máscara será maior ou menor? Menor, porque as instruções tinham perdas altas neste exemplo. Armadilha: não interpretar 0,74 como desempenho de um modelo; é um exemplo numérico para mostrar o efeito da máscara."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Dados importam mais que volume?",
+   "itens": [
+    "Zhou et al. (2023, LIMA): cerca de mil exemplos bem curados",
+    "Podem bastar para ensinar o formato a um modelo bem pré-treinado",
+    "Hipótese: o conhecimento vem do pré-treino; o ajuste ensina o estilo",
+    "É uma hipótese discutida; depende do modelo e da avaliação"
+   ],
+   "notas": "Apresente o resultado de Zhou e colegas, o trabalho LIMA: com um modelo grande já pré-treinado, um conjunto pequeno, da ordem de mil exemplos cuidadosamente selecionados, pode produzir um modelo que segue bem instruções. A interpretação sugerida é que o conhecimento vem do pré-treinamento e o ajuste ensina principalmente formato e estilo, a chamada hipótese da superfície. Insista que é uma hipótese discutida, e que os resultados dependem do modelo e da avaliação. Pergunta à turma: se qualidade vence quantidade, o que isso muda no custo de um projeto? Armadilha: concluir que dados em volume nunca importam; o capítulo não afirma isso."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: comparar é mais fácil que escrever",
+   "texto": "Escolher o melhor entre dois pratos é mais fácil que criar o prato perfeito.",
+   "detalhe": "Pedir que alguém escreva a resposta ideal é caro e inconsistente. Pedir que compare duas respostas e aponte a melhor é mais rápido, e as pessoas concordam mais. Cada exemplo vira uma tripla: pedido, resposta preferida, resposta rejeitada.",
+   "notas": "Ligue ao dia a dia: num teste de degustação, quase todo mundo consegue dizer qual de dois sucos prefere, mas poucos conseguem escrever a receita ideal. Dados de preferência seguem essa lógica. Em vez de pagar alguém para escrever a resposta perfeita, mostramos duas respostas do modelo ao mesmo pedido e pedimos a escolha. Cada exemplo é uma tripla com o pedido x, a resposta preferida, chamada winner, e a rejeitada, loser. Mencione que as comparações podem vir de pessoas ou, como na IA Constitucional de Bai e colegas, de um modelo guiado por princípios escritos, o que reduz custo mas herda os vieses desse modelo. Pergunta: quem avalia também erra? Sim, e isso aparece depois como ruído."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Bradley-Terry: da comparação à recompensa",
+   "tex": "P(y_w ≻ y_l | x) = σ( r(x,y_w) − r(x,y_l) )",
+   "explicacao": [
+    "r é a recompensa: uma pontuação de qualidade da resposta",
+    "σ(x) = 1/(1+e⁻ˣ) transforma qualquer número em probabilidade",
+    "Perda do modelo de recompensa: − ln σ(r_w − r_l)",
+    "Exemplo: r_w = 1,2 e r_l = 0,4 dão σ(0,8) = 0,690 e perda 0,371"
+   ],
+   "notas": "A ideia é supor que cada resposta tem uma pontuação oculta, a recompensa, e que a chance de uma ganhar depende só da diferença entre as pontuações. A sigmoide converte a diferença em probabilidade: diferença zero dá 0,5, diferença grande tende a 1. O modelo de recompensa é treinado para minimizar menos logaritmo dessa probabilidade. Conta do capítulo: recompensas 1,2 e 0,4, diferença 0,8, sigmoide 0,690, perda 0,371. Se a diferença fosse zero, a perda seria menos ln 0,5, isto é, 0,693; com diferença 3, cairia para 0,049. Pergunta à turma: por que a perda diminui quando o modelo ordena bem com folga? Armadilha: confundir recompensa com verdade; é uma pontuação aprendida."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Probabilidade de preferência e perda",
+   "fig": "f07_bt",
+   "legenda": "Bradley-Terry: probabilidade de preferência e perda do modelo de recompensa em função da diferença de recompensas.",
+   "notas": "Use o gráfico para dar intuição à fórmula. Quando a diferença de recompensas é zero, a probabilidade de preferência é 0,5 e a perda vale ln 2, cerca de 0,693. À medida que a diferença cresce na direção certa, a probabilidade se aproxima de 1 e a perda cai para perto de zero. Se a diferença é negativa, o modelo ordenou errado, e a perda cresce, o que gera o ajuste. Peça que a turma localize no gráfico o ponto de diferença 3 e confirme que a perda é pequena. Exemplo oral do capítulo: em três pares com diferenças mais 2, mais 0,5 e menos 0,5, o par ordenado errado contribui mais que o dobro do primeiro. Armadilha: ler o eixo como probabilidade de correção; é probabilidade de preferência."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: modelo de recompensa e viés de comprimento",
+   "codigo": "# recompensa verdadeira oculta: correta=2,0; cita=1,0; comprimento=-0,5 ou +0,8\nfor nome, pl in [(\"penalizam extensão\", -0.5), (\"preferem extensão\", 0.8)]:\n    W, L = gerar_pares(4000, pl, rng)       # pares simulados (Bradley-Terry)\n    D = W - L\n    X = np.vstack([D, -D]); y = np.r_[np.ones(len(D)), np.zeros(len(D))]\n    rm = LogisticRegression(fit_intercept=False, C=100).fit(X, y)\n    ...  # imprime coeficientes e acurácia em pares de teste",
+   "saida": "cenário                           coef. correta  coef. cita  coef. comprimento  acurácia (pares de teste)\navaliadores penalizam extensão             2.00        1.03              -0.46                      0.740\navaliadores preferem extensão              2.18        1.00               0.85                      0.768\nrecompensa verdadeira: correta = 2,0 | cita = 1,0 | comprimento = -0,5 ou +0,8",
+   "notas": "O código completo está no capítulo; aqui mostramos o núcleo. Simulamos 4 000 pares de respostas com três características, correta, cita fonte e comprimento, geramos preferências por Bradley-Terry com uma recompensa verdadeira oculta e treinamos uma regressão logística sobre as diferenças. A saída real mostra que o modelo recupera os pesos: perto de 2 e 1 para correta e cita, e comprimento próximo de menos 0,46 ou mais 0,85. A acurácia nos pares de teste fica em 0,740 e 0,768. Rótulo importante: preferências simuladas, recompensa linear com três características inventadas. Pergunta: no segundo cenário, o que o modelo aprendeu sobre comprimento? Que comprimento é bom. Armadilha: a acurácia em torno de 0,75 lembra que parte das preferências é ruído."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Viés de comprimento e exploração da recompensa",
+   "itens": [
+    "Se avaliadores preferem respostas longas, a recompensa aprende que comprimento é bom",
+    "Um modelo otimizado contra ela tende a escrever cada vez mais",
+    "Isso é exploração da recompensa (reward hacking)",
+    "Gao, Schulman e Hilton (2023): otimizar demais contra recompensa imperfeita piora a qualidade \"verdadeira\""
+   ],
+   "notas": "Conecte com o experimento anterior. No segundo cenário, o modelo de recompensa aprendeu que comprimento é bom. Um modelo de linguagem otimizado contra essa recompensa tende a produzir respostas cada vez mais longas, mesmo sem ficarem melhores. Esse fenômeno é a exploração da recompensa, ou reward hacking. Gao, Schulman e Hilton estudaram o tema e mostraram que otimizar demais contra um modelo de recompensa imperfeito acaba por piorar a qualidade medida por uma recompensa verdadeira. Pergunta à turma: quando uma meta vira a única medida, o que costuma acontecer? Dê o exemplo de quem estuda só para o simulado. Armadilha: o resultado de Gao e colegas é para configurações específicas; evite generalizar números."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o elástico do simulado",
+   "texto": "A penalidade de KL é um elástico que prende o aluno ao seu jeito original de estudar.",
+   "detalhe": "Um aluno treina para a prova com um simulado imperfeito. O elástico permite melhorar, mas impede que ele decore as falhas do simulado e esqueça o conteúdo. O coeficiente β regula a força do elástico.",
+   "notas": "Essa é a analogia do próprio capítulo. O simulado é o modelo de recompensa, útil porém imperfeito. Sem restrição, o aluno acha atalhos que rendem nota alta no simulado e não ajudam na prova real. A penalidade de KL, que mede quanto a política se afasta do modelo de referência, funciona como um elástico: dá liberdade para melhorar, mas puxa de volta. O coeficiente beta é a força do elástico. Beta pequeno solta o elástico e permite grande ganho de recompensa, com mais risco de exploração; beta grande o mantém curto. Pergunta: qual seria o risco de um elástico frouxo demais? Armadilha: KL não é distância simétrica; basta entender como medida de afastamento."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "RLHF: maximizar recompensa, sem se afastar demais",
+   "tex": "máx  E[ r(x,y) ] − β · KL( π ‖ π_ref )",
+   "explicacao": [
+    "π é a política: o modelo que escolhe a resposta; π_ref é a referência (após o SFT)",
+    "Primeiro termo premia recompensa alta; segundo pune o afastamento",
+    "Solução: π* ∝ π_ref · e^(r/β)",
+    "A política ótima é a referência reponderada pela recompensa"
+   ],
+   "notas": "RLHF significa aprendizado por reforço com feedback humano. O modelo de linguagem passa a ser chamado de política, a regra que escolhe a resposta. O objetivo tem dois termos: a recompensa esperada, que queremos aumentar, e a penalidade de KL em relação a um modelo de referência, em geral o modelo após o SFT, que queremos manter pequena. A solução para um pedido fixo é a política de referência multiplicada por e elevado a r sobre beta, e depois normalizada. Em palavras: respostas de maior recompensa ganham probabilidade, na medida de um sobre beta. A otimização costuma usar algoritmos como o PPO, de Schulman e colegas. Armadilha: sem a penalidade, a política explora falhas da recompensa e degenera."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: política ótima para vários β",
+   "codigo": "pref = np.array([0.50, 0.30, 0.15, 0.05])\nr = np.array([0.0, 1.0, 2.0, 3.0])\nfor beta in (0.1, 0.5, 1.0, 5.0):\n    q = pref * np.exp(r / beta); q /= q.sum()\n    kl = float((q * np.log(q / pref)).sum())\n    print(beta, q.round(3), round(kl, 3), round(float(q @ r), 3))",
+   "saida": "beta | política ótima π*              | KL(π*||ref) | recompensa esperada\n  0.1 | [0. 0. 0. 1.]                  |       2.994 |               3.000\n  0.5 | [0.016 0.071 0.264 0.649]      |       1.655 |               2.546\n  1.0 | [0.146 0.238 0.323 0.293]      |       0.531 |               1.763\n  5.0 | [0.423 0.31  0.189 0.077]      |       0.017 |               0.920\nreferência (β → ∞): recompensa esperada = 0.750",
+   "notas": "Quatro respostas candidatas, com probabilidades de referência 0,50; 0,30; 0,15 e 0,05, e recompensas 0, 1, 2 e 3. Para cada beta, calculamos a política ótima. Com beta igual a 1, a resposta 4, que era rara, passa de 5% para 29%, e a resposta 1 cai de 50% para 15%. Com beta 0,1, quase toda a massa vai à resposta 4, com KL próximo de 3 e recompensa esperada 3,0. Com beta 5, a política fica perto da referência, KL de 0,017. A referência dá recompensa esperada de 0,75. Pergunta: qual beta você escolheria e por quê? É um compromisso entre ganho de recompensa e risco de exploração. Armadilha: o exemplo é minúsculo e tabular."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Efeito do β na política ótima",
+   "fig": "f07_kl",
+   "legenda": "Política ótima para quatro respostas, em função de β: valores pequenos concentram a massa na resposta de maior recompensa.",
+   "notas": "Use a figura para visualizar o que a tabela mostrou. No eixo horizontal está beta; as curvas ou barras mostram a probabilidade de cada uma das quatro respostas. Para beta pequeno, a resposta de maior recompensa domina; para beta grande, a política volta para perto da referência, de modo que a resposta mais provável original, com 50%, volta a liderar. Peça à turma que descreva em voz alta o que acontece com a resposta 4 quando beta aumenta. Reforce a ideia de dial: beta é um botão entre ousadia e cautela. Armadilha: não ler o gráfico como resultado de um modelo de linguagem real; é um exemplo reduzido com quatro respostas."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "DPO: preferências sem modelo de recompensa",
+   "tex": "L = − ln σ( β·[ ln(π_w/π_ref,w) − ln(π_l/π_ref,l) ] )",
+   "explicacao": [
+    "Rafailov et al. (2023): inverter a solução do RLHF elimina o modelo de recompensa",
+    "Aumenta a probabilidade da preferida, diminui a da rejeitada, relativas à referência",
+    "Exemplo (β = 1): razões +0,5 e −0,5, margem 1,0, perda 0,313",
+    "Se π = π_ref: margem 0 e perda ln 2 = 0,693"
+   ],
+   "notas": "O RLHF é trabalhoso: exige modelo de recompensa e aprendizado por reforço, que pode ser instável. Rafailov e colegas notaram que a solução fechada permite escrever a recompensa em função das políticas; ao substituir no modelo de Bradley-Terry, um termo de normalização se cancela e sobra uma classificação direta das preferências. Conta do capítulo: preferida com log-probabilidade menos 1,0 contra menos 1,5 na referência, razão mais 0,5; rejeitada menos 2,5 contra menos 2,0, razão menos 0,5. Margem 1,0, perda 0,313. Se o modelo ainda fosse igual à referência, a perda seria ln 2. O modelo de referência continua necessário e fixo. Pergunta: o que o beta controla aqui? A intensidade."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: DPO tabular versus teoria do RLHF",
+   "codigo": "theta = lref.copy()              # política começa igual à referência\nfor passo in range(3000):\n    lp = log_softmax(theta)\n    h = beta * ((lp[W] - lref[W]) - (lp[L] - lref[L]))\n    grad = (-(1 - sig(h))[:, None] * beta * (I[W] - I[L])).mean(axis=0)\n    theta -= 1.0 * grad\npolitica = np.exp(log_softmax(theta))",
+   "saida": "perda inicial (política = referência): 0.6931 | ln 2 = 0.6931\nperda final: 0.4583\npolítica aprendida pelo DPO: [0.158 0.237 0.328 0.277]\npolítica ótima do RLHF (π*):  [0.146 0.238 0.323 0.293]\ndiferença máxima: 0.016",
+   "notas": "Este é um teste numérico de uma ligação teórica. Geramos 4 000 comparações entre as quatro respostas, segundo Bradley-Terry com recompensas 0, 1, 2 e 3, e treinamos uma política tabular, com um logit por resposta, usando o gradiente da perda DPO com beta igual a 1. A perda começa em 0,6931, que é ln 2, e termina em 0,4583. A política aprendida, 0,158; 0,237; 0,328; 0,277, fica próxima da solução teórica do RLHF, 0,146; 0,238; 0,323; 0,293, com diferença máxima de 0,016. A pequena diferença vem do número finito de comparações. Armadilha importante: vale para este caso minúsculo e tabular; em modelos reais, os métodos divergem e não há vencedor universal."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "DPO aprende a política do RLHF",
+   "fig": "f07_dpo",
+   "legenda": "Referência, política aprendida pelo DPO e solução teórica do RLHF (β = 1, exemplo tabular reduzido).",
+   "notas": "Compare três conjuntos de barras: a referência, a política aprendida pelo DPO e a solução teórica do RLHF. As duas últimas quase coincidem, o que é a verificação numérica da ligação entre os métodos. Chame atenção para a mudança em relação à referência: a resposta rara ganha probabilidade e a mais provável perde. Pergunta à turma: se as barras coincidem, os dois métodos são iguais em modelos reais? Não necessariamente. Aqui a política é uma tabela com quatro entradas e os dados são abundantes para um caso tão pequeno. Em redes neurais, com dados limitados e hiperparâmetros, aparecem diferenças. Armadilha: não declarar um método melhor que o outro com base neste gráfico."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "O que o pós-treinamento não garante",
+   "itens": [
+    "Correção factual: soar certo não é estar certo (TruthfulQA, Lin et al., 2022)",
+    "Bajulação: concordar com o usuário (Sharma et al., 2024)",
+    "Segurança completa: recusas podem ser contornadas",
+    "Generalização fora dos dados de ajuste",
+    "Valores dos avaliadores: não existe preferência neutra"
+   ],
+   "notas": "Feche a parte técnica com os limites. O pós-treinamento ensina formato, ajusta estilo e tom, e reduz certas classes de comportamento indesejado. Mas não garante correção factual: preferências premiam respostas convincentes, e o TruthfulQA, de Lin e colegas, mostra que modelos podem repetir falsidades comuns. Também há bajulação, a tendência a concordar com o usuário, estudada por Sharma e colegas, porque avaliadores costumam preferir quem concorda com eles. Exemplo oral: o usuário diz que a capital da Austrália é Sydney, e o assistente responde que ele tem razão. Teste: pedidos com premissas falsas. Pergunta: como decidir se uma resposta merece crédito? Verificar fontes e testes, e medir. Armadilha: confiança no tom não é confiança na resposta."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Recompensa viesada e DPO",
+   "passos": [
+    "Simule 4 000 pares com características (correta, cita fonte, comprimento) e gere preferências por Bradley-Terry",
+    "Treine uma regressão logística sobre as diferenças e compare com os coeficientes verdadeiros",
+    "Repita com peso de comprimento +0,8 e −0,5: o que o modelo aprende?",
+    "Reproduza a política ótima para três valores de β e compare com o DPO",
+    "Escreva um parágrafo: por que modelos de recompensa precisam ser auditados?"
+   ],
+   "notas": "Atividade guiada que reproduz o que vimos, com preferências simuladas. Os passos: gerar os pares, treinar a regressão logística sobre as diferenças de características, comparar coeficientes aprendidos e verdadeiros, repetir com peso de comprimento positivo e negativo, e reproduzir a política ótima para três valores de beta, comparando com o DPO. Peça aos alunos que formulem uma previsão antes de rodar: o modelo vai aprender comprimento positivo no segundo cenário? Depois que discutam a auditoria de modelos de recompensa. O Exercício prático 7.1 guia o experimento e a solução está no Apêndice D. Armadilha: lembrar que são preferências simuladas e um exemplo tabular; nada disso mede LLMs reais."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "máscara no SFT",
+   "pergunta": "Perdas por token (1; 2; 3; 4) e máscara (0; 0; 1; 1). Qual a perda do SFT?",
+   "opcoes": [
+    "2,5",
+    "3,5",
+    "7",
+    "1,5"
+   ],
+   "resposta": "B",
+   "explicacao": "(3+4)/2 = 3,5. Sem máscara, a média seria 2,5.",
+   "notas": "Dê um minuto para a turma resolver. A máscara indica que só os dois últimos tokens, com perdas 3 e 4, contam. A média sobre a resposta é 7 dividido por 2, isto é, 3,5. Quem respondeu 2,5 fez a média sem máscara, de 10 dividido por 4, que é o erro típico de ignorar a máscara. Quem respondeu 7 esqueceu de dividir pelo número de tokens da resposta. Pergunta: por que a perda com máscara é a que guia o ajuste? Porque queremos que o modelo aprenda a responder, e não a gerar instruções. Se sobrar tempo, peça que montem outro exemplo com três tokens de resposta."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "Bradley-Terry",
+   "pergunta": "No modelo de Bradley-Terry, qual a probabilidade de y_w ser preferida a y_l?",
+   "opcoes": [
+    "r(y_w) · r(y_l)",
+    "r(y_w) + r(y_l)",
+    "σ( r(y_w) − r(y_l) )",
+    "r(y_w) / r(y_l)"
+   ],
+   "resposta": "C",
+   "explicacao": "A probabilidade depende da diferença de recompensas, passada pela sigmoide.",
+   "notas": "A resposta correta é a sigmoide da diferença de recompensas. Lembre que a sigmoide transforma qualquer número real em probabilidade entre 0 e 1. Se as recompensas são iguais, a diferença é zero e a probabilidade é 0,5; se a preferida tem recompensa bem maior, a probabilidade se aproxima de 1. Soma, produto e razão não têm essa propriedade: a razão, por exemplo, não está limitada a um intervalo adequado e não é simétrica no sentido de que a probabilidade da outra resposta deve ser um menos esta. Pergunta: o que acontece com a probabilidade quando a diferença é zero? Cinquenta por cento. Peça que expliquem com suas palavras por que depender da diferença faz sentido."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "perda sem diferença",
+   "pergunta": "Duas respostas têm a mesma recompensa. Qual a perda do modelo de recompensa nesse par?",
+   "opcoes": [
+    "0",
+    "1",
+    "− ln 2",
+    "ln 2 ≈ 0,693"
+   ],
+   "resposta": "D",
+   "explicacao": "A diferença é 0, σ(0) = 0,5 e −ln 0,5 = ln 2.",
+   "notas": "Deixe a turma pensar antes de revelar. Com recompensas iguais, a diferença é zero. A sigmoide de zero vale 0,5, e a perda é menos o logaritmo natural de 0,5, que é ln 2, cerca de 0,693. É também a perda inicial do DPO quando a política é igual à referência, o que vimos na saída do código: 0,6931. Quem marcou zero pensou que sem diferença não haveria erro; mas a perda zero só ocorre quando o modelo ordena a preferida com folga infinita. Menos ln 2 seria negativo, e perdas desse tipo não são negativas. Pergunta: o que significa uma perda de 0,693 para o modelo? Que ele ainda não distingue as respostas."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "SFT ensina o formato de resposta; a máscara conta só a resposta",
+    "Bradley-Terry: P = σ(r_w − r_l); perda = −ln σ(r_w − r_l)",
+    "RLHF: recompensa menos β·KL; solução π* ∝ π_ref · e^(r/β)",
+    "DPO: classifica preferências direto, sem modelo de recompensa nem RL",
+    "Menor β: mais ganho de recompensa e mais risco de exploração",
+    "Preferências têm vieses; comportamento desejável não garante correção: verifique e meça"
+   ],
+   "notas": "Retome os pontos centrais em voz alta, pedindo que a turma complete as frases. O SFT ensina o formato e usa máscara. Bradley-Terry transforma comparações em recompensa por meio da sigmoide da diferença. O RLHF maximiza a recompensa com uma penalidade de KL, e sua solução reponderada pela exponencial da recompensa. O DPO atinge o mesmo objetivo por classificação direta das preferências, e verificamos numericamente, num caso minúsculo, que as políticas coincidem. Beta é o botão entre ganho e risco. E a mensagem final: um modelo que responde com educação e confiança mostra evidência de estilo, não de acerto. Pergunta de fechamento: que verificação você faria antes de confiar numa resposta?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "OUYANG, L. et al. Training language models to follow instructions with human feedback. NeurIPS 35, 2022.",
+    "RAFAILOV, R. et al. Direct preference optimization. NeurIPS 36, 2023.",
+    "CHRISTIANO, P. F. et al. Deep reinforcement learning from human preferences. NeurIPS 30, 2017.",
+    "SCHULMAN, J. et al. Proximal policy optimization algorithms. arXiv:1707.06347, 2017.",
+    "ZHOU, C. et al. LIMA: less is more for alignment. NeurIPS 36, 2023.",
+    "GAO, L.; SCHULMAN, J.; HILTON, J. Scaling laws for reward model overoptimization. ICML 40, 2023.",
+    "SHARMA, M. et al. Towards understanding sycophancy in language models. ICLR 12, 2024.",
+    "LIN, S.; HILTON, J.; EVANS, O. TruthfulQA. ACL 60, 2022."
+   ],
+   "notas": "Apresente as referências como caminhos de leitura para quem quiser se aprofundar. Sugira começar por Ouyang e colegas, que descrevem o pipeline em três etapas, e por Rafailov e colegas para o DPO. Gao, Schulman e Hilton e Sharma e colegas aprofundam os limites discutidos. As referências completas, no formato ABNT, estão no final do capítulo. Lembre que várias dessas obras tratam de modelos e configurações específicas, de modo que os resultados podem variar. Pergunta final: qual desses temas vocês gostariam de explorar em um projeto? Encerre reforçando que o código do capítulo é didático e executável, e que nada aqui substitui a documentação vigente de cada serviço ou biblioteca ao trabalhar com modelos reais."
+  }
+ ]
+}

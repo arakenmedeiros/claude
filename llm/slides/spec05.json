@@ -1,0 +1,375 @@
+{
+ "capitulo": 5,
+ "titulo": "Como os modelos de linguagem aprendem",
+ "parte": "Parte II — Treinamento, adaptação e geração",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Explicar o aprendizado autossupervisionado: o rótulo vem do próprio texto",
+    "Diferenciar próximo token, mascaramento e recuperação de trechos corrompidos",
+    "Descrever o ciclo de treinamento e reproduzi-lo em um modelo pequeno",
+    "Ler curvas de perda de treino e validação e reconhecer sobreajuste",
+    "Estimar custo de treino (FLOPs e memória) e reconhecer contaminação de dados"
+   ],
+   "notas": "Comece dizendo que este capítulo responde a uma pergunta simples: como uma máquina aprende a escrever sem que ninguém tenha corrigido milhões de páginas? Percorra os cinco objetivos devagar e peça que a turma anote qual deles parece mais misterioso. Explique que usaremos um modelo minúsculo, que roda em menos de um segundo, para ver o ciclo completo com os próprios olhos, mas que ele não é um Transformer nem um LLM. Avise também que as contas de custo usam números hipotéticos, só para treinar o raciocínio de ordem de grandeza. Pergunta à turma: quem já viu uma barra de progresso de treinamento de um modelo?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Como ensinar sem professor?",
+   "itens": [
+    "Milhões de páginas de texto, nenhum rótulo humano",
+    "Meta: um modelo que continue textos em português com fluência",
+    "Truque: esconder a próxima palavra; a resposta está no texto",
+    "Cada frase vira milhares de exercícios com gabarito",
+    "Perguntas sérias: que texto entra? quanto custa? o modelo aprendeu ou decorou?"
+   ],
+   "notas": "Apresente a situação inicial do capítulo: uma equipe tem muito texto e nenhum rótulo. Pergunte à turma como ensinar algo a uma máquina sem professor. Deixe duas ou três respostas e então revele o truque: o próprio texto fornece o gabarito. Dê um exemplo oral: na frase 'o aluno lê o livro', escondo 'livro' e peço ao modelo que adivinhe; eu já sei a resposta. Multiplique isso por bilhões de frases. Em seguida avise que o truque traz perguntas sérias sobre dados, custo e avaliação, e que elas organizam o restante do capítulo. Armadilha: não diga que não há aprendizado supervisionado; a supervisão existe, só que vem do texto."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: completar a frase com o final coberto",
+   "texto": "É como estudar com um livro cujo final de cada frase está coberto por um post-it: você tenta adivinhar e depois descobre a resposta.",
+   "detalhe": "O gabarito já está na página, então não precisa de professor. Com milhões de páginas, o aluno treina o tempo todo e aprende padrões da língua.",
+   "notas": "Use a imagem do post-it: peça que a turma imagine um livro em que a última palavra de cada frase está coberta. Você tenta adivinhar, levanta o papel e confere. Não precisa de professor, porque o livro mesmo guarda a resposta. Agora imagine fazer isso com milhões de livros, o tempo todo. É isso que chamamos de aprendizado autossupervisionado. Limite da analogia: o aluno só aprende o que o livro ensina, com os erros, os vieses e as lacunas dele. Pergunta à turma: se o livro tiver erros de português, o que o aluno aprende? Conduza para a ideia de que a qualidade dos dados importa, tema que voltará mais adiante."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Três jeitos de aprender: de onde vem o rótulo?",
+   "cabecalho": [
+    "Paradigma",
+    "De onde vem o rótulo",
+    "Exemplo"
+   ],
+   "linhas": [
+    [
+     "Supervisionado",
+     "De anotadores humanos",
+     "Classificar e-mails como spam ou não"
+    ],
+    [
+     "Não supervisionado",
+     "Não há rótulo",
+     "Agrupar documentos por assunto"
+    ],
+    [
+     "Autossupervisionado",
+     "Do próprio texto, por regra automática",
+     "Prever o próximo token"
+    ]
+   ],
+   "notas": "Explique cada linha com um exemplo do cotidiano. No supervisionado, uma pessoa marcou cada e-mail como spam ou não; isso custa tempo e dinheiro. No não supervisionado, ninguém marcou nada e o algoritmo apenas agrupa o que é parecido. No autossupervisionado, uma regra automática cria o rótulo a partir dos próprios dados; para texto, a regra é esconder uma parte e pedir que seja prevista. A grande vantagem é a escala, porque desaparece o gargalo da anotação humana. O limite é que o modelo aprende o que o texto ensina, com vieses e lacunas. Pergunta: qual dos três paradigmas você usaria para separar spam se já tivesse mil e-mails marcados?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "A perda do modelo causal",
+   "tex": "L = −(1/n) · Σ ln p(wₜ | w₁ … wₜ₋₁)",
+   "explicacao": [
+    "p é a probabilidade que o modelo deu ao token correto",
+    "−ln p mede a surpresa: quanto menor p, maior a perda",
+    "A perda é a média da surpresa em todas as posições",
+    "Uma única passada calcula todas as posições (máscara causal)"
+   ],
+   "notas": "Leia a fórmula em voz alta: a perda é a média, sobre todas as posições, da surpresa do modelo com o token correto. Se o modelo deu probabilidade alta ao token certo, a surpresa é pequena; se deu probabilidade baixa, é grande. O logaritmo transforma isso em um número fácil de somar. Lembre que a máscara causal, vista no Capítulo 4, deixa o modelo calcular todas as posições de uma só vez, cada uma olhando só para o passado. Conecte com a perplexidade: perda média L corresponde a e elevado a L. Pergunta à turma: o que acontece com a perda se o modelo acertar tudo com probabilidade 1? Resposta: zero, mas isso nunca ocorre em texto real."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Exemplo resolvido: perda de uma frase",
+   "itens": [
+    "Frase: “o aluno lê o livro .” com probabilidades dadas ao token correto",
+    "Surpresas: 1,609; 0,693; 0,223; 1,386; 0,105",
+    "Soma 4,016; média sobre 5 posições: perda ≈ 0,803",
+    "Perplexidade: e elevado a 0,803 ≈ 2,23",
+    "O primeiro token “o” é só o início e não entra na conta"
+   ],
+   "notas": "Faça a conta na lousa junto com a turma. As probabilidades dadas ao token correto são 0,2; 0,5; 0,8; 0,25 e 0,9. Aplique menos o logaritmo natural a cada uma: 1,609; 0,693; 0,223; 1,386 e 0,105. A soma é 4,016, e a média sobre as cinco posições é cerca de 0,803. A perplexidade, que é a exponencial da perda, dá aproximadamente 2,23. Interpretação oral: é como se o modelo estivesse hesitando entre pouco mais de dois candidatos a cada passo. Armadilha: lembre que o primeiro token é dado como início e não entra no cálculo. Os números das probabilidades são hipotéticos, escolhidos para o exercício."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o professor que corrige passo a passo",
+   "texto": "Teacher forcing é como resolver um problema de matemática em que, a cada linha, o professor troca seu caderno pelo gabarito correto antes da linha seguinte.",
+   "detalhe": "No treino, o contexto de cada posição é o texto verdadeiro, não o que o modelo geraria sozinho. Assim, todas as posições são treinadas ao mesmo tempo.",
+   "notas": "Explique a ideia de teacher forcing com a imagem do caderno trocado. Imagine um aluno resolvendo uma conta com várias linhas. Se ele errar a segunda linha, normalmente tudo depois sairia errado. No treino, porém, o professor devolve a linha correta antes de cada nova linha, então o aluno pratica cada passo sempre a partir do ponto certo. É exatamente isso: o contexto de cada posição é o texto verdadeiro. Graças à máscara causal, todas as posições são calculadas em uma só passada. Ressalve: na hora de usar o modelo, não há gabarito, e os erros se acumulam; isso será visto no Capítulo 6. Pergunta: por que isso torna o treino mais rápido?"
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Três objetivos de treinamento",
+   "cabecalho": [
+    "Objetivo",
+    "Entrada",
+    "Alvo",
+    "Família típica"
+   ],
+   "linhas": [
+    [
+     "Próximo token",
+     "Tokens anteriores",
+     "Token seguinte",
+     "Decoder"
+    ],
+    [
+     "Mascaramento (BERT)",
+     "Texto com ~15% de tokens ocultos",
+     "Tokens ocultos",
+     "Encoder"
+    ],
+    [
+     "Corrupção de trechos (T5, BART)",
+     "Texto corrompido",
+     "Trechos ou texto original",
+     "Encoder-decoder"
+    ]
+   ],
+   "notas": "Compare os três objetivos. No próximo token, o modelo vê só o passado e prevê o seguinte; é a base dos modelos que geram texto. No mascaramento, usado pelo BERT, cerca de 15% dos tokens são escondidos por um símbolo especial e o modelo os recupera olhando para os dois lados; a perda é calculada só nas posições mascaradas. Resultado: boas representações para classificação, mas o modelo não gera texto de forma natural. Na corrupção de trechos, do T5 e do BART, o encoder lê o texto estragado e o decoder escreve o original. Pergunta à turma: qual objetivo parece mais adequado para um assistente que conversa? Conduza para o próximo token."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: pares de treino e perda de uma frase",
+   "codigo": "frases = corpus.frases_lm(3000, seed=0)\nfrase = frases[0]\nprint(\"frase:\", \" \".join(frase))\nfor t in range(1, 5):\n    print(f\"  {' '.join(frase[:t]):<28} -> {frase[t]}\")\nlm = modelos.NgramaLM(n=3, k=0.05).ajustar(frases[:2400])\nlp = lm.logprob_frase(frase)\nprint(f\"perda por token = {-lp / len(frase):.3f} nats\")",
+   "saida": "frase: a professora lê o livro depois da aula .\n  a                            -> professora\n  a professora                 -> lê\n  a professora lê              -> o\n  a professora lê o            -> livro\nperda por token de 'a professora lê o livro depois da aula .' = 0.863 nats",
+   "notas": "Mostre que uma única frase gera vários exercícios: o contexto 'a' tem alvo 'professora', depois 'a professora' tem alvo 'lê', e assim por diante. É o gabarito escondido no texto. A última linha mede a perda por token dessa frase com um modelo de trigramas, que é um modelo estatístico simples, e não um LLM: 0,863 nats. Explique nat como a unidade da perda quando se usa logaritmo natural. O código completo do capítulo também mostra o mascaramento, em que alguns tokens viram [MASK], mas aqui mostramos só um recorte para caber no slide. Pergunta à turma: se a perda fosse zero, o que isso diria sobre o modelo? Que ele prevê todos os tokens com certeza."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O ciclo de treinamento",
+   "fig": "f05_treino",
+   "legenda": "O ciclo de treinamento autossupervisionado: cada volta usa um lote de texto; a validação periódica indica se o modelo generaliza.",
+   "itens": [
+    "1. Sorteia um lote",
+    "2. Passada para frente",
+    "3. Calcula a perda",
+    "4. Passada para trás (gradiente)",
+    "5. Otimizador atualiza",
+    "6. Agenda da taxa e recorte",
+    "7. Valida de tempos em tempos"
+   ],
+   "notas": "Percorra o ciclo como uma receita repetida milhões de vezes. Pegue um lote pequeno de sequências; o modelo faz a passada para frente e produz as distribuições; calcule a perda; a passada para trás, a retropropagação, calcula o gradiente, isto é, a direção em que cada parâmetro deve mudar; o otimizador, como o AdamW, aplica a mudança. A agenda de taxa de aprendizado e o recorte de gradiente mantêm o treino estável. De tempos em tempos, mede-se a perda em dados que o modelo nunca viu. Analogia: é como treinar lances livres no basquete; arremessa, vê o erro, ajusta o gesto e repete. Pergunta: por que validar em dados separados?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "A agenda da taxa de aprendizado",
+   "tex": "η(s) = η_max · s/w  (s ≤ w);   depois, decaimento em cosseno até η_min",
+   "explicacao": [
+    "Aquecimento: a taxa sobe linearmente nos primeiros w passos",
+    "Evita instabilidade quando as estimativas do otimizador ainda são ruins",
+    "Decaimento em cosseno permite refinar o ajuste no final",
+    "Recorte do gradiente: se a norma passa do limite, reescala o vetor"
+   ],
+   "notas": "A taxa de aprendizado é o tamanho do passo que o otimizador dá. Comece devagar, aqueça até um valor máximo e depois diminua suavemente, em forma de cosseno. Analogia oral: ao descer uma encosta no escuro, você começa com passos curtos até conhecer o terreno, anda mais firme no meio e volta a passos curtos perto do fundo. O recorte do gradiente funciona como um freio: se o gradiente fica enorme, ele é reduzido para uma norma máxima, mantendo a direção. Na próxima tela vemos valores reais. Pergunta à turma: o que poderia acontecer se começássemos com a taxa máxima no primeiro passo? Instabilidade e passos explosivos."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: aquecimento, cosseno e recorte",
+   "codigo": "def taxa(s, S, eta_max=1e-3, eta_min=1e-4, w=100):\n    if s <= w:\n        return eta_max * s / w\n    return eta_min + 0.5*(eta_max-eta_min)*(1+np.cos(np.pi*(s-w)/(S-w)))\n\ndef recortar(grad, norma_max=1.0):\n    n = np.linalg.norm(grad)\n    return grad * (norma_max / n) if n > norma_max else grad\n\nfor s in (1, 50, 100, 500, 1000):\n    print(f\"passo {s:>4}: taxa = {taxa(s, 1000):.6f}\")\ng = np.array([3.0, 4.0])",
+   "saida": "passo    1: taxa = 0.000010\npasso   50: taxa = 0.000500\npasso  100: taxa = 0.001000\npasso  500: taxa = 0.000628\npasso 1000: taxa = 0.000100\ngradiente original: [3. 4.] | norma = 5.0 | recortado: [0.6 0.8] | norma = 1.0",
+   "notas": "Leia a saída: no passo 1 a taxa é minúscula, 0,00001; sobe até 0,001 no passo 100, que é o fim do aquecimento; cai para 0,000628 no meio e chega a 0,0001 no passo 1000. O recorte é mostrado com um exemplo clássico: o vetor 3 e 4 tem norma 5, e o recorte o reescala para 0,6 e 0,8, com norma 1, mantendo a direção. Observe que esse exemplo é pedagógico, com números escolhidos para facilitar a conta. Pergunta à turma: se a norma já fosse menor que o limite, o que o recorte faria? Nada; o gradiente passa intacto. Armadilha: não confundir recorte do gradiente com recorte da taxa de aprendizado."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: treinando um modelo pequeno",
+   "codigo": "m = modelos.MLPLM(vocab, ctx=3, d=16, h=64, seed=0)\nprint(\"parâmetros do modelo:\", sum(p.size for p in m.P.values()))\nfor ep in range(1, 13):\n    h = m.treinar(treino, epocas=1, lote=64, lr=0.01, seed=ep)\n    X, y = m.dados(validacao); _, _, z = m.frente(X)\n    lp = modelos.log_softmax(z)\n    perda_val = float(-lp[np.arange(len(y)), y].mean())\n    print(f\"{ep:>5} {h[0]:>13.3f} {perda_val:>16.3f}\")",
+   "saida": "parâmetros do modelo: 6781\népoca  perda treino  perda validação\n    1         2.012            1.085\n    6         0.932            0.926\n   12         0.921            0.960",
+   "notas": "Este é o ciclo completo em miniatura. Atenção: é um protótipo educacional, uma rede com embeddings, camada oculta e softmax, com gradientes escritos à mão em NumPy; não é um Transformer nem um LLM. Ele tem 6781 parâmetros e treina com 400 frases. A perda de treino cai de 2,012 na primeira época para cerca de 0,92; a de validação, medida em 1000 frases que ele não viu, fica por volta de 0,93 a 0,96. Mostramos só algumas linhas da saída. O programa também imprime perplexidade de validação de 2,61 contra 2,38 do modelo de trigramas com mais dados. Pergunta: por que a perda de treino não chega a zero?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Curvas de perda: treino e validação",
+   "fig": "f05_curvas",
+   "legenda": "Perda de treino e de validação por época para o modelo pequeno treinado com 400 frases. A validação estabiliza em um patamar.",
+   "itens": [
+    "As duas curvas caem juntas no início",
+    "Depois, a validação forma um patamar",
+    "Patamar = perda irredutível do corpus",
+    "Nenhum modelo prevê melhor que a entropia verdadeira"
+   ],
+   "notas": "Aqui estão os números da tela anterior em forma de gráfico. Aponte as duas curvas caindo juntas nas primeiras épocas, sinal de que o modelo está aprendendo regularidades reais. Depois, a validação estabiliza em um patamar perto de 0,95. Esse patamar tem explicação: o gerador do corpus sorteia verbos e complementos ao acaso, então existe uma aleatoriedade intrínseca que nenhum modelo consegue prever. É a perda irredutível. Em texto real acontece o mesmo: ninguém chega a perda zero. Pergunta à turma: se a perda de validação ficasse parada em 0,95, vale a pena treinar por mais épocas? Discuta custo versus ganho e a ideia de interromper cedo."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: decorar a prova do ano passado",
+   "texto": "Sobreajuste é como o aluno que decora as respostas da prova do ano passado: vai bem nela, mas erra quando as questões mudam.",
+   "detalhe": "Perda de treino baixa e de validação alta indicam decoreba. Com mais exemplos, decorar deixa de compensar e o modelo precisa generalizar.",
+   "notas": "Use a imagem da prova decorada. O aluno que memoriza o gabarito tira dez no simulado repetido, mas não aprendeu a matéria; quando a prova muda, vai mal. No modelo, o simulado repetido é o conjunto de treino e a prova nova é a validação. Quando a perda de treino é baixa e a de validação é alta, temos sobreajuste. Com poucos exemplos, decorar é fácil; com muitos, a memória não dá conta, e o modelo precisa captar regularidades. Pergunta à turma: como um professor pode descobrir se o aluno decorou ou aprendeu? Resposta: aplicando questões inéditas, que é a validação. Reforce que a validação precisa ser realmente separada do treino."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: mais dados, menos decoreba",
+   "codigo": "for n in (20, 50, 100, 200, 400, 800, 1600, 3200):\n    mm = modelos.MLPLM(vocab, ctx=3, d=16, h=64, seed=0)\n    epocas = int(max(6, min(60, 18000 / n)))\n    mm.treinar(frases[:n], epocas=epocas, lote=64, lr=0.01)\n    pt = np.log(mm.perplexidade(frases[:min(n, 400)]))\n    pv = np.log(mm.perplexidade(validacao))\n    print(f\"{n:>17} {pt:>13.3f} {pv:>16.3f}\")",
+   "saida": " frases de treino  perda treino  perda validação\n               20         0.518            2.827\n              100         0.716            1.257\n              400         0.858            0.957\n             1600         0.904            0.910\n             3200         0.913            0.898",
+   "notas": "Variamos o número de frases de treino e medimos as duas perdas. Com 20 frases, a perda de treino é 0,518 e a de validação é 2,827: memorização clara. Com 400 frases, 0,858 contra 0,957. Com 3200, 0,913 contra 0,898, praticamente coladas. Mostramos apenas cinco das oito linhas. Interpretação: mais dados fecham a lacuna, e a validação converge para o patamar irredutível. É a versão minúscula do que Kaplan e colaboradores observaram em escala muito maior. Pergunta à turma: por que a perda de treino sobe quando há mais frases? Porque fica mais difícil decorar tudo. Lembre que são rótulos de um modelo-brinquedo em corpus sintético."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "A escala vista no modelo-brinquedo",
+   "fig": "f05_escala",
+   "legenda": "Experimento com o modelo-brinquedo em corpus sintético; não são “leis de escala” de LLMs.",
+   "itens": [
+    "Eixo horizontal em escala logarítmica",
+    "A lacuna treino–validação encolhe com mais dados",
+    "Ilustra o fenômeno, não uma lei de potência",
+    "Não se transfere a modelos reais"
+   ],
+   "notas": "Este gráfico resume o experimento anterior com o eixo horizontal em escala logarítmica. Mostre como a curva de validação despenca e a de treino sobe devagar até as duas quase se encontrarem. Em seguida, faça a ressalva obrigatória: este experimento ilustra que mais dados reduzem o sobreajuste, mas não estabelece uma lei de potência e não se transfere a modelos reais, porque o corpus é artificial e o piso vem da gramática. As leis de escala reais foram estimadas por Kaplan e por Hoffmann e colaboradores em experimentos muito maiores. Pergunta: por que seria errado usar este gráfico para prever o desempenho de um LLM? Porque muda tudo: arquitetura, corpus e escala."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: peneirar os ingredientes",
+   "texto": "Preparar dados é como cozinhar para muita gente: antes do fogo, é preciso escolher, lavar, peneirar e anotar a origem dos ingredientes.",
+   "detalhe": "Coleta, limpeza, filtragem de qualidade, equilíbrio de idiomas, deduplicação, remoção de dados sensíveis e documentação. Atenção: toda peneira deixa passar uma coisa e barra outra.",
+   "notas": "Compare a preparação de dados à cozinha. Não se joga tudo na panela: seleciona-se, limpa-se, tira-se o que estragou e registra-se de onde veio cada ingrediente. As etapas são coleta, extração e limpeza, filtragem de qualidade, equilíbrio de idioma e domínio, deduplicação, remoção de dados sensíveis, filtragem de segurança e legalidade e documentação em uma ficha de dados, como propôs Gebru e colegas. A parte mais importante é a última frase: filtros não são neutros. Dodge e colaboradores mostraram que filtragens podem remover desproporcionalmente textos de certos grupos e que ainda restava conteúdo problemático. Pergunta: quem decide o que é de baixa qualidade?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: achando quase duplicatas",
+   "codigo": "def shingles(texto, k=3):\n    p = texto.lower().split()\n    return {tuple(p[i:i + k]) for i in range(len(p) - k + 1)}\n\ndef jaccard(a, b):\n    return len(a & b) / len(a | b) if (a | b) else 0.0\n\nS = [shingles(d) for d in docs]      # 4 documentos\nmanter = []\nfor i, s in enumerate(S):\n    if all(jaccard(s, S[j]) < 0.5 for j in manter):\n        manter.append(i)",
+   "saida": "  (0,1): 1.00\n  (0,2): 0.70\n  (0,3): 0.00\ndocumentos mantidos com limiar 0,5: [0, 3]",
+   "notas": "Dois documentos quase iguais aparecem muito na web. Para achá-los, quebramos cada texto em shingles, sequências de três palavras, e medimos a similaridade de Jaccard: tamanho da interseção dividido pelo da união. Na saída, o par 0 e 1 é cópia exata e dá 1,00; o par 0 e 2 difere apenas por uma hora, 22h contra 23h, e dá 0,70; o documento 3 trata de outro assunto e dá 0,00. Com limiar de 0,5, ficam os documentos 0 e 3. Os quatro documentos são fictícios. Em escala real, comparar todos os pares é inviável, e usam-se técnicas aproximadas como MinHash. Pergunta: por que deduplicar ajuda? Reduz memorização literal, segundo Lee e colaboradores."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Modelo-base e a regra dos “20 tokens por parâmetro”",
+   "itens": [
+    "Modelo-base: continua texto; não segue instruções por si só",
+    "Comportamento de assistente vem do pós-treinamento (Capítulo 7)",
+    "Hoffmann et al.: com computação fixa, cresça parâmetros e tokens juntos",
+    "Resumo corrente: cerca de 20 tokens por parâmetro; é referência, não regra",
+    "Muitos modelos treinam além disso para ficarem mais baratos de servir"
+   ],
+   "notas": "Diferencie continuar texto de seguir instruções. Um modelo-base, resultado do treino autossupervisionado, pode responder a 'Quais são os planetas do sistema solar?' com outras perguntas, porque listas de perguntas são continuações plausíveis. O comportamento de assistente vem depois, no pós-treinamento. Em seguida, apresente a pergunta de quanto dado para quantos parâmetros. Hoffmann e colaboradores treinaram mais de 400 modelos e concluíram que, para computação fixa, parâmetros e tokens devem crescer juntos; um modelo de 70 bilhões treinado com 1,4 trilhão de tokens superou modelos maiores. A leitura corrente é cerca de 20 tokens por parâmetro. Ressalve que é um ponto de referência: servir o modelo também custa, e Touvron e colegas treinam com bem mais tokens."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Quanto custa treinar? A conta 6ND",
+   "tex": "C ≈ 6 · N · D  FLOPs",
+   "explicacao": [
+    "N = parâmetros; D = tokens de treino; fator 6 = 2 (frente) + 4 (trás)",
+    "Exemplo hipotético: N = 7×10⁹ e D = 10¹² dão 4,2×10²² FLOPs",
+    "Memória de treino: cerca de 16 bytes por parâmetro (piso)",
+    "Para N = 7×10⁹, isso dá cerca de 112 GB, sem contar ativações"
+   ],
+   "notas": "Apresente a aproximação 6ND como estimativa de ordem de grandeza: cerca de 2ND para a passada para frente e 4ND para a de trás. Faça o exemplo hipotético: sete bilhões de parâmetros e um trilhão de tokens dão 4,2 vezes dez elevado a 22 FLOPs. Em seguida, mencione a memória: com o otimizador Adam e precisão mista, guardamos pesos, gradientes e estados do otimizador, cerca de 16 bytes por parâmetro, o que dá 112 GB para esse modelo e não cabe em um único acelerador. Isso é um piso, pois as ativações vêm além. Lembre que eficiência de hardware é premissa que deve ser declarada. Pergunta: o que significa cada premissa que mudamos na conta? Troque a eficiência e veja o tempo mudar."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: tempo de treino e memória (valores hipotéticos)",
+   "codigo": "def flops_treino(N, D):\n    return 6 * N * D\n\ndef dias(flops, flops_s, n_acel, eficiencia=1.0):\n    return flops / (flops_s * n_acel * eficiencia) / 86400\n\nN, D = 7e9, 1e12\nfor n_acel in (1, 100, 1000):\n    print(dias(flops_treino(N, D), 1e14, n_acel),\n          dias(flops_treino(N, D), 1e14, n_acel, 0.4))",
+   "saida": "FLOPs de treino: 4.20e+22\n    1 aceleradores a 1e14 FLOP/s, eficiência 100%:     4861.1 dias | com 40% de eficiência:    12152.8 dias\n 1000 aceleradores a 1e14 FLOP/s, eficiência 100%:        4.9 dias | com 40% de eficiência:       12.2 dias\nmemória de treino (≈16 bytes/parâmetro) para N=7e+09: 112 GB, sem contar ativações\ntokens por parâmetro: 143",
+   "notas": "A saída confirma as contas do slide anterior. Os FLOPs são 4,2 vezes dez elevado a 22. Com um acelerador hipotético de dez elevado a 14 operações por segundo, seriam 4861 dias, cerca de 13 anos; com mil aceleradores e eficiência perfeita, 4,9 dias; com 40% de eficiência, 12,2 dias. A linha da memória dá 112 GB, e a razão tokens por parâmetro é 143, bem acima de 20, o que ilustra treinar além do ponto ótimo. A saída aqui está abreviada: omitimos a linha de 100 aceleradores. Todos os valores de hardware são hipotéticos; informações de modelos comerciais costumam ser não divulgadas. Pergunta: por que a eficiência importa tanto?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Contaminação de dados",
+   "itens": [
+    "Exemplos do teste (ou respostas) aparecem nos dados de treino",
+    "O modelo “viu a prova”: o desempenho medido supera o real",
+    "Detecção simples: sobreposição de n-gramas; só acha cópias literais",
+    "Prevenção: testes privados ou novos, dados datados, relatório de contaminação",
+    "Mesmo sem contaminação, o teste pode diferir do uso real"
+   ],
+   "notas": "Contaminação é quando a prova vazou para o treino. Em LLMs treinados em grandes rastreamentos da web, o risco é alto, pois benchmarks circulam em sites, fóruns e repositórios. O relatório do GPT-3 já trazia uma análise de contaminação, e relatá-la virou prática recomendável. No exemplo do capítulo, calculamos a sobreposição de 4-gramas entre documentos fictícios e um 'treino': os 5 documentos que estavam no treino tiveram 100% de sobreposição, e os 5 de fora tiveram 0%. Mas atenção: ausência de sobreposição literal não prova ausência de contaminação, porque paráfrases e traduções escapam. Pergunta à turma: como criar um teste que o modelo certamente não viu?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes",
+   "itens": [
+    "Avaliar no conjunto de treino e concluir que o modelo aprendeu",
+    "Confundir perda baixa com qualidade geral, verdade ou utilidade",
+    "Esquecer o patamar irredutível: perda zero não existe em texto real",
+    "Ignorar a deduplicação e misturar treino e teste na divisão dos dados",
+    "Estimar custo sem declarar eficiência, precisão e tamanho de lote",
+    "Tratar leis de escala como garantias, e não como regularidades empíricas"
+   ],
+   "notas": "Revise os erros mais comuns como uma lista de checagem. O primeiro é o mais clássico: avaliar no treino. O segundo é achar que perda baixa significa modelo útil ou verdadeiro; a perda mede previsão de tokens. O terceiro é esperar perda zero. O quarto inclui um erro sutil: dividir frases aleatoriamente quando várias vêm do mesmo documento, o que mistura treino e teste. O quinto é apresentar custo sem premissas. O sexto é tratar leis de escala como garantias fora das faixas estudadas. Peça que a turma escolha o erro que mais já cometeu ou viu cometer, em qualquer área, e conte um exemplo. Isso ajuda a fixar o cuidado."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Limitações do que vimos",
+   "itens": [
+    "O modelo-brinquedo não é Transformer nem LLM; o corpus é sintético",
+    "FLOPs, tempo e memória usam aproximações e hardware hipotético",
+    "“20 tokens por parâmetro” é discutido na literatura; não aplique mecanicamente",
+    "Sobreposição de n-gramas não detecta paráfrases",
+    "Dados e custos de modelos comerciais costumam não ser divulgados"
+   ],
+   "notas": "Seja explícito sobre o que os experimentos não mostram. O modelo pequeno ilustra o ciclo e o sobreajuste, mas não representa o comportamento de LLMs; o corpus é sintético e minúsculo. As estimativas de custo são ordens de grandeza, baseadas em 6ND e 16 bytes por parâmetro, com premissas de hardware inventadas para o exercício. A regra dos 20 tokens por parâmetro resume um resultado empírico específico. A detecção de contaminação por n-gramas só pega cópias literais. E, para modelos comerciais, não trate dados e custos como fatos sem fonte. Pergunta à turma: que afirmação deste capítulo você aceitaria só depois de ver a fonte? Use a resposta para reforçar o hábito de checar."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "treine, compare e interprete curvas",
+   "passos": [
+    "Gere 12 000 frases com corpus.frases_lm e separe as últimas 1 000 para validação",
+    "Treine o MLPLM com 200 frases por 20 épocas, registrando as duas perdas",
+    "Repita com 3 000 frases e plote as curvas em cada caso",
+    "Calcule a lacuna (validação menos treino) ao final de cada treino",
+    "Varie h em {8, 32, 128} e compare perda de validação e tempo",
+    "Escreva um parágrafo explicando sobreajuste e o papel de mais dados"
+   ],
+   "notas": "Apresente a atividade como um mini-laboratório de uma hora. Os passos seguem o capítulo: gerar frases, separar validação, treinar com poucos e com muitos dados, plotar curvas e calcular a lacuna. O passo cinco explora o tamanho da camada oculta: espere que modelos maiores demorem mais, e investigue se isso reduz a perda de validação. O parágrafo final é o produto de aprendizagem: peça que explique sobreajuste com os próprios números, sem copiar o livro. Armadilha: ao dividir dados, garanta que a validação não contenha frases do treino. O Exercício prático 5.1 guia o experimento e a solução está no Apêndice D. Combine com a turma se será em duplas e o que entregar."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "perplexidade",
+   "pergunta": "Uma perda média de 1,0 nat por token corresponde a uma perplexidade de aproximadamente:",
+   "opcoes": [
+    "1,0",
+    "2,72",
+    "0,37",
+    "10"
+   ],
+   "resposta": "B",
+   "explicacao": "PPL = e elevado a 1 ≈ 2,72.",
+   "notas": "Dê um tempo para a turma pensar e peça votos por letra. Relembre que a perplexidade é a exponencial da perda média. Com perda 1, o resultado é o número de Euler, cerca de 2,72. Quem marcou 1,0 provavelmente confundiu perda com perplexidade; quem marcou 0,37 usou o inverso da exponencial, e o 10 parece vir de uma base de logaritmo diferente. Reforce que nat é a unidade quando se usa o logaritmo natural. Conecte com o exemplo resolvido: perda 0,803 deu perplexidade 2,23. Pergunta extra: o que significaria perplexidade 1? Que o modelo acerta tudo com certeza, o que não ocorre em texto real."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "sobreajuste",
+   "pergunta": "Qual padrão nas curvas de perda indica sobreajuste?",
+   "opcoes": [
+    "As duas perdas baixas e próximas",
+    "As duas perdas muito altas",
+    "Perda de treino baixa e perda de validação muito mais alta",
+    "Perda de validação menor que a de treino em todas as épocas"
+   ],
+   "resposta": "C",
+   "explicacao": "A lacuna mostra que o modelo decorou os exemplos em vez de generalizar.",
+   "notas": "Retome o experimento de variar o número de frases: com 20 frases, treino 0,518 e validação 2,827. A alternativa correta descreve exatamente essa lacuna. A primeira alternativa descreve um bom ajuste; a segunda, um modelo que ainda não aprendeu, chamado de subajuste; a quarta é incomum e costuma indicar outro fenômeno. Peça a um aluno que explique com a analogia da prova decorada. Pergunta extra: o que fazer para reduzir o sobreajuste? Mais dados, modelo menor ou parada antecipada. Mantenha o foco na leitura de curvas, que é uma habilidade prática central do capítulo."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "custo",
+   "pergunta": "Usando C ≈ 6ND, qual o número de FLOPs para N = 10⁹ parâmetros e D = 2×10¹⁰ tokens?",
+   "opcoes": [
+    "1,2×10¹⁹",
+    "1,2×10²⁰",
+    "1,2×10²¹",
+    "2×10¹⁹"
+   ],
+   "resposta": "B",
+   "explicacao": "6 × 10⁹ × 2×10¹⁰ = 1,2×10²⁰.",
+   "notas": "Peça que a turma faça a conta em um minuto: seis vezes dez elevado a nove, vezes dois vezes dez elevado a dez, dá 12 vezes dez elevado a 19, ou 1,2 vezes dez elevado a 20. Quem errou a potência provavelmente perdeu uma casa ao multiplicar 6 por 2. Reforce que é estimativa de ordem de grandeza e que o fator 6 vem de 2 da passada para frente e 4 da passada para trás. Pergunta extra: se dobrarmos os tokens, o que acontece com o custo? Dobra, porque C é proporcional a D. Se dobrarmos os parâmetros, também dobra."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Autossupervisionado: o rótulo vem do próprio texto; ganho = escala",
+    "Objetivos: próximo token, mascaramento e corrupção de trechos",
+    "Ciclo: lote, frente, perda, trás, otimizador, agenda, recorte, validação",
+    "Sobreajuste: treino baixo e validação alta; mais dados ajudam; há piso irredutível",
+    "Dados: filtros não são neutros; deduplique e documente",
+    "Custo ≈ 6ND FLOPs e ≈16 bytes por parâmetro; contaminação infla a avaliação"
+   ],
+   "notas": "Feche o capítulo retomando a pergunta inicial: como ensinar sem professor? O gabarito está no texto. Percorra os seis pontos como um resumo falado em um minuto. Enfatize três mensagens: a perda mede previsão de tokens, e não verdade; dados e filtros moldam o modelo; e todo número de custo traz premissas. Peça que cada aluno escreva em uma frase o que mais o surpreendeu. Prepare a transição para o Capítulo 6: agora que o modelo aprendeu a prever o próximo token, como transformamos essas probabilidades em texto? Anuncie que o próximo capítulo trata de decodificação, janela de contexto e cache. Lembre os exercícios do capítulo e o projeto final."
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "KAPLAN, J. et al. Scaling laws for neural language models. arXiv:2001.08361, 2020.",
+    "HOFFMANN, J. et al. Training compute-optimal large language models. arXiv:2203.15556, 2022.",
+    "LEE, K. et al. Deduplicating training data makes language models better. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 60., 2022, Dublin. Proceedings [...]. Stroudsburg: ACL, 2022. p. 8424-8445.",
+    "GEBRU, T. et al. Datasheets for datasets. Communications of the ACM, v. 64, n. 12, p. 86-92, 2021.",
+    "DODGE, J. et al. Documenting large webtext corpora: a case study on the Colossal Clean Crawled Corpus. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING, 2021. Proceedings [...]. Stroudsburg: ACL, 2021. p. 1286-1305.",
+    "DEVLIN, J. et al. BERT: pre-training of deep bidirectional transformers for language understanding. In: CONFERENCE OF THE NORTH AMERICAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS (NAACL-HLT), 2019, Minneapolis. Proceedings [...]. Stroudsburg: ACL, 2019. p. 4171-4186."
+   ]
+  }
+ ]
+}

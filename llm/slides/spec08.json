@@ -1,0 +1,401 @@
+{
+ "capitulo": 8,
+ "titulo": "Engenharia de prompts",
+ "parte": "Parte III — Prompts e aplicações",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Decompor um prompt em objetivo, contexto, instruções, restrições, exemplos e formato",
+    "Escolher exemplos (zero-shot e few-shot) e estruturar entradas com delimitadores",
+    "Exigir justificativas verificáveis em vez de confiar na explicação gerada",
+    "Especificar saídas estruturadas, validá-las e tratar falhas",
+    "Avaliar versões de prompt com métricas e intervalos de confiança",
+    "Registrar parâmetros e reconhecer limites da reprodutibilidade"
+   ],
+   "notas": "Abra dizendo que engenharia de prompts não é uma coleção de frases secretas, e sim especificação de requisitos para um sistema probabilístico. Leia os objetivos e destaque três palavras que guiam a aula: especificar, verificar e medir. Avise que os experimentos quantitativos usam um simulador de regras, o SimuladorLLM, e não um modelo real; o que importa é aprender o processo de avaliar prompts. Pergunta à turma: quando pedem algo a um assistente e o resultado vem ruim, o que costumam mudar? Anote as respostas, pois muitas serão tentativas sem método. Armadilha: prometer que a aula dará o prompt perfeito; ela dará um método para testar prompts."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Dois pedidos, dois resultados",
+   "itens": [
+    "Pedido 1: \"Resuma esse contrato.\"",
+    "Pedido 2: papel, até cinco tópicos, citação literal, \"não consta\"",
+    "O primeiro recebe texto fluente de foco imprevisível",
+    "A segunda recebe tópicos que pode conferir no contrato",
+    "A diferença está na especificação, não no modelo"
+   ],
+   "notas": "Conte a situação inicial do capítulo. Duas pessoas pedem o mesmo ao assistente. A primeira escreve apenas resuma esse contrato. A segunda diz o papel, o formato, o limite de cinco tópicos, pede citação entre aspas de cada tópico e manda escrever não consta quando faltar informação. A primeira recebe um texto fluente, de tamanho e foco imprevisíveis; a segunda recebe tópicos que pode conferir no documento. Nenhuma das duas sabe como o modelo funciona por dentro. A diferença está na especificação: o que se quer, para quem, com que limites, em que formato e como verificar. Pergunta: qual das duas teria mais facilidade de detectar um erro? Armadilha: achar que o segundo prompt garante acerto; ele só torna o resultado verificável."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: pedir uma pizza",
+   "texto": "\"Uma pizza, por favor\" funciona na pizzaria que te conhece. Com um desconhecido, é preciso especificar.",
+   "detalhe": "Sabor, tamanho, borda, sem cebola, entrega às 20h. O modelo é o atendente que não conhece você, sua empresa nem seus documentos. Quanto mais clara a especificação, menos surpresas na entrega.",
+   "notas": "Use a pizza para mostrar por que a especificação importa. Se você liga para a pizzaria do bairro, que já conhece seu pedido, basta dizer o de sempre. Com um atendente novo, é preciso informar sabor, tamanho, borda, restrições e horário. O modelo de linguagem é esse atendente novo: não conhece sua empresa, seus documentos nem a data de hoje. Isso conecta com o princípio de fornecer o contexto necessário, e só ele. Pergunta à turma: se o atendente não puder fazer o pedido, o que ele deveria dizer? É a abstenção, que veremos adiante. Armadilha: a analogia não deve sugerir que o modelo entende como um atendente humano; ele condiciona uma distribuição de probabilidade."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Anatomia de um prompt",
+   "cabecalho": [
+    "Componente",
+    "Função",
+    "Exemplo"
+   ],
+   "linhas": [
+    [
+     "Papel",
+     "Define o comportamento geral",
+     "Você é assistente da secretaria"
+    ],
+    [
+     "Tarefa",
+     "O que fazer",
+     "Classifique a mensagem"
+    ],
+    [
+     "Contexto",
+     "Informação necessária",
+     "Trechos do regulamento"
+    ],
+    [
+     "Exemplos",
+     "Mostram formato e critério",
+     "Três mensagens com categoria"
+    ],
+    [
+     "Entrada",
+     "O dado a processar",
+     "A mensagem do cliente"
+    ],
+    [
+     "Formato de saída",
+     "Como responder",
+     "Apenas JSON com campos"
+    ],
+    [
+     "Restrições",
+     "Limites e regras",
+     "Se faltar, responda 'não consta'"
+    ]
+   ],
+   "notas": "Em aplicações reais, o prompt raramente é uma frase: é um documento montado por código a partir de partes. Percorra a tabela de cima para baixo. O papel define o comportamento geral; a tarefa diz o que fazer; o contexto traz a informação de que o modelo precisa; os exemplos mostram formato e critério; a entrada é o dado a processar; o formato de saída diz como responder; e as restrições fixam limites. Como cada parte é separada, pode ser testada, versionada e substituída de forma independente. Pergunta: qual desses componentes costuma faltar nos pedidos do dia a dia? Normalmente formato e restrições. Armadilha: pensar que mais componentes sempre melhoram; contexto irrelevante gasta a janela e distrai."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Prompt montado por código",
+   "fig": "f08_anatomia",
+   "legenda": "Cada componente pode ser testado, versionado e substituído de forma independente.",
+   "notas": "A figura mostra o prompt como uma montagem. Cada bloco, papel, tarefa, contexto, exemplos, entrada, formato e restrições, é uma peça que o código encaixa. Isso permite trocar apenas um bloco e medir o efeito, que é a base da comparação controlada que veremos no final. Também facilita guardar cada peça em um sistema de versões, como se faz com software. Peça que a turma aponte onde ficariam os dados do usuário e por que eles devem ser separados das instruções. Isso prepara a discussão sobre delimitadores e injeção de prompts, tratada no Capítulo 17. Armadilha: tratar o prompt como texto solto copiado de um lugar para outro, sem dono nem versão."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Um prompt condiciona, não programa",
+   "itens": [
+    "O prompt altera uma distribuição de probabilidade",
+    "Pode ser ignorado, mal interpretado ou seguido só em parte",
+    "O mesmo prompt pode variar entre modelos e entre versões",
+    "Instruções não são garantias",
+    "Todo prompt é uma hipótese a ser testada"
+   ],
+   "notas": "Este é o aviso conceitual do capítulo. Um prompt não é código que o computador executa linha a linha; ele condiciona a geração. Por isso o mesmo prompt pode ter efeitos diferentes em modelos diferentes, ou na mesma versão em momentos diferentes. Instruções não são garantias: o modelo pode ignorar, interpretar mal ou obedecer só na maior parte das vezes. A consequência prática é tratar todo prompt como hipótese e testá-la, o que dá sentido às seções de avaliação. Pergunta à turma: se um prompt funcionou três vezes, podemos afirmar que funciona? Provavelmente não. Armadilha: escrever em maiúsculas ou repetir a ordem não transforma instrução em garantia."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Princípios de especificação (1 a 4)",
+   "itens": [
+    "Diga o objetivo e o critério de sucesso",
+    "Dê o contexto necessário, e só ele",
+    "Seja específico sobre o formato: tamanho, estrutura, idioma, público",
+    "Prefira dizer o que fazer a dizer o que não fazer",
+    "\"Responda em até 3 frases\" funciona melhor que \"não seja prolixo\""
+   ],
+   "notas": "Apresente os quatro primeiros princípios com exemplos. Primeiro, objetivo e critério de sucesso: resuma é vago, resuma em até cinco tópicos para um gestor, destacando prazos e valores, é verificável. Segundo, contexto necessário e só ele, porque informação irrelevante gasta a janela de contexto e pode distrair. Terceiro, especifique o formato: tamanho, estrutura, idioma, nível de detalhe e público. Quarto, instruções positivas e concretas costumam funcionar melhor que negativas isoladas: responda em até três frases em vez de não seja prolixo. Pergunta à turma: reescrevam em voz alta a instrução não faça respostas ruins. Armadilha: isso é orientação geral; sempre teste no seu modelo e na sua tarefa."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Princípios de especificação (5 a 8)",
+   "itens": [
+    "Permita a abstenção: diga o que fazer se faltar informação",
+    "Separe instruções de dados com delimitadores",
+    "Peça evidências quando a correção importa",
+    "Peça uma coisa de cada vez, quando possível"
+   ],
+   "notas": "Continue com os outros quatro princípios. Quinto, permita a abstenção: diga o que fazer quando faltar informação, como responder não consta, para reduzir respostas inventadas. Sem uma saída legítima, o modelo tende a produzir alguma resposta plausível. Sexto, separe instruções de dados com delimitadores claros. Sétimo, peça evidências quando a correção importa, assunto das próximas seções. Oitavo, peça uma coisa de cada vez, o que prepara a decomposição de tarefas. Pergunta: em que situações da sua rotina seria melhor o assistente dizer não sei do que arriscar? Armadilha: delimitadores ajudam, mas são apenas a primeira e insuficiente defesa contra injeção de prompts; a segurança exige várias camadas."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Reescrevendo um prompt vago",
+   "cabecalho": [
+    "Versão",
+    "Prompt",
+    "Problema"
+   ],
+   "linhas": [
+    [
+     "Vaga",
+     "Classifique esta mensagem.",
+     "Sem categorias, formato nem abstenção"
+    ],
+    [
+     "Melhor",
+     "Classifique em UMA categoria; se nenhuma servir, responda 'indefinido'",
+     "Falta o formato"
+    ],
+    [
+     "Melhor ainda",
+     "Idem, e responda só com JSON: intenção e evidência literal",
+     "Formato verificável; evidência checável"
+    ]
+   ],
+   "notas": "Mostre a evolução de um mesmo pedido em três versões. A vaga não define categorias, formato nem o que fazer quando nenhuma serve. A versão melhor lista as categorias e permite responder indefinido, mas ainda não diz como responder. A melhor ainda exige apenas JSON com a intenção e a evidência, que é um trecho literal da mensagem; assim, o resultado pode ser validado por código e a evidência pode ser conferida. Pergunta à turma: o que ainda poderia melhorar? Talvez exemplos. Armadilha: melhor ainda é relativo; só os testes dirão se a terceira versão funciona melhor para o seu modelo e seus dados, e é isso que mediremos nas seções de avaliação."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: montando o prompt por componentes",
+   "codigo": "def montar_prompt(mensagem, papel=True, categorias=True,\n                  formato_json=True, exemplos=()):\n    partes = []\n    if papel: partes.append(\"Você é um assistente de triagem ...\")\n    ...   # tarefa, categorias, exemplos (trecho resumido)\n    partes.append('Responda apenas com JSON: {\"intencao\": ..., \"evidencia\": ...}')\n    partes.append(f\"Mensagem: <<<{mensagem}>>>\")\n    return \"\\n\\n\".join(partes)",
+   "saida": "identificador do prompt (hash curto): 0dd3324fd8\nnúmero de caracteres: 512",
+   "notas": "O código do capítulo monta o prompt a partir de componentes controlados por parâmetros; aqui mostramos um trecho resumido, com reticências onde o código completo continua. Isso torna cada parte testável e versionável. A saída real mostra o identificador curto do prompt, um hash, 0dd3324fd8, e o número de caracteres, 512. O hash serve como identificador de versão: se qualquer caractere mudar, o hash muda. Pergunta à turma: por que um identificador ajuda no registro dos experimentos? Para saber exatamente qual texto foi avaliado. Note os delimitadores com sinais de maior e menor em volta da mensagem do cliente, que separam instruções de dados. Armadilha: não confundir hash com garantia de qualidade; ele só identifica."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a receita com foto",
+   "texto": "Quando a descrição não basta, mostre a foto do prato pronto.",
+   "detalhe": "Exemplos no prompt (few-shot) fazem o papel da foto: o modelo imita o formato e o critério mostrados. Foto errada ensina o erro; foto só de bolos fáceis não prepara para os difíceis.",
+   "notas": "Brown e colegas chamam de zero-shot o uso sem exemplos, one-shot com um e few-shot com poucos, e mostram que modelos grandes tendem a melhorar com exemplos sem mudar seus parâmetros. A analogia da receita com foto ajuda: descrever o prato com palavras nem sempre basta, mas a foto mostra o resultado esperado. O modelo imita formato e critério dos exemplos. Por isso, escolha exemplos representativos, que cubram categorias e casos difíceis, corretos, diversos na redação e no formato exato de saída desejado, e equilibre os rótulos. Lembre o custo: cada exemplo ocupa tokens. Pergunta: o que acontece se quase todos os exemplos tiverem o mesmo rótulo? O modelo tende a repeti-lo."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Exemplos: sensibilidade à ordem",
+   "itens": [
+    "Resultados podem depender da ordem, do rótulo mais frequente e do último exemplo",
+    "Zhao et al. (2021) e Lu et al. (2022): permutações mudam a acurácia em alguns modelos",
+    "Não conclua nada de uma única ordem",
+    "Teste algumas ordens e relate a variação"
+   ],
+   "notas": "A literatura mostra que, com exemplos no prompt, a ordem pode importar. Zhao e colegas, e Lu e colegas, relatam que permutações dos mesmos exemplos podem alterar muito a acurácia em alguns modelos, e que o rótulo mais frequente e o último exemplo também influenciam. As duas implicações práticas são: não tire conclusões de uma única ordem, e teste algumas ordens, relatando a variação. Dê um exemplo oral: você avalia o prompt com os exemplos em uma ordem e obtém um acerto ótimo; trocar a ordem pode mudar o resultado. Pergunta à turma: como relatar isso em um registro de experimento? Informando as ordens testadas e a variação. Armadilha: os resultados são para modelos e tarefas específicos e podem não se repetir em outros."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: prompt com documentos e delimitadores",
+   "codigo": "def montar_prompt_documentos(pergunta, documentos):\n    corpo = \"\\n\".join(f'<documento id=\"{i}\">\\n{t}\\n</documento>'\n                      for i, t in documentos)\n    return (\"Responda usando APENAS os documentos abaixo. Cite o id. \"\n            \"Se a resposta não estiver nos documentos, responda \"\n            \"exatamente: não consta.\\n\\n\"\n            f\"{corpo}\\n\\nPergunta: {pergunta}\\nResposta:\")",
+   "saida": "Responda à pergunta usando APENAS os documentos abaixo. Cite o id do documento que sustenta a resposta. Se a resposta não estiver nos documentos, responda exatamente: não consta.\n\n<documento id=\"D12\">\nO atraso na devolução gera multa de R$ 1,50 por dia e por exemplar. Quando a dívida passa de R$ 30,00, o empréstimo é suspenso até a quitação.\n</documento>\n",
+   "notas": "Este trecho mostra a estruturação de entradas: tags com identificador separam cada documento, a instrução diz para usar apenas os documentos e citar o id, e há uma saída de abstenção exata, não consta. A saída real mostra o início do prompt montado, com o documento D12 sobre multa por atraso na devolução, de R$ 1,50 por dia e por exemplar. Os documentos são fictícios, da base da Universidade Federal Aurora. Pergunta à turma: onde está a abstenção e onde está o delimitador? Lembre também que informação no meio de contextos longos pode ser menos usada, segundo Liu e colegas, então coloque instruções importantes no início e repita o essencial no fim. Armadilha: delimitadores não bastam como defesa de segurança."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a linha de montagem",
+   "texto": "Uma tarefa grande, dividida em estações, é mais fácil de conferir.",
+   "detalhe": "Estação 1 extrai os fatos; estação 2 valida por regras; estação 3 redige usando só os fatos validados. Se algo sai errado, você sabe em que estação. O preço: mais chamadas e mais tempo de espera.",
+   "notas": "Descreva o encadeamento de prompts, o prompt chaining, como uma linha de montagem. Em vez de pedir tudo de uma vez, dividimos a tarefa em etapas com entrada, saída e verificação próprias: extrair os fatos relevantes, validar a extração por regras e redigir a resposta usando somente os fatos validados. Benefícios: cada etapa é mais simples, testável e depurável, e os erros são localizados. Custo: mais chamadas e mais latência. Pergunta à turma: em qual estação você colocaria uma verificação por código? Na segunda. Armadilha: dividir não elimina erros; apenas torna mais fácil encontrá-los e corrigi-los."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Explicações geradas não são acesso ao raciocínio",
+   "itens": [
+    "\"Pense passo a passo\" melhorou modelos grandes em raciocínio (Wei et al., 2022)",
+    "Votar entre vários raciocínios melhora mais (Wang et al., 2023)",
+    "Mas a explicação escrita não é acesso fiel ao processo interno",
+    "Turpin et al. (2023): fatores não mencionados podem influenciar a resposta"
+   ],
+   "notas": "Aqui há uma ressalva importante. Wei e colegas mostraram que pedir raciocínio passo a passo, a cadeia de pensamento, melhorou o desempenho de modelos grandes em problemas aritméticos e lógicos, e Wang e colegas mostraram que amostrar vários raciocínios e votar na resposta mais frequente, a autoconsistência, melhora ainda mais. Mas Turpin e colegas mostraram que as explicações podem ser influenciadas por fatores que o texto não menciona, como a ordem das opções ou uma sugestão no prompt, e justificar de modo plausível uma resposta determinada por outros motivos. Explicações geradas são mais texto gerado, e podem estar certas ou erradas. Pergunta: então o que pedir? Artefatos verificáveis, como veremos."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Em vez de explicação, peça algo verificável",
+   "cabecalho": [
+    "Em vez de...",
+    "Peça...",
+    "Como verificar"
+   ],
+   "linhas": [
+    [
+     "Explique por que",
+     "Citação literal da fonte",
+     "Buscar a citação no documento"
+    ],
+    [
+     "Calcule",
+     "O cálculo explícito",
+     "Refazer a conta em código"
+    ],
+    [
+     "Confie em mim",
+     "Evidências com origem",
+     "Conferir cada fato"
+    ],
+    [
+     "Tenho certeza",
+     "Abstenção se faltar informação",
+     "Testar com perguntas sem resposta"
+    ],
+    [
+     "Resposta em etapas",
+     "Resultado de cada etapa",
+     "Validar cada campo por regra"
+    ]
+   ],
+   "notas": "Esta tabela é o coração da seção. A ideia é transformar uma explicação, difícil de avaliar, em uma afirmação checável. Em vez de explique por que, peça a citação literal do trecho que sustenta a resposta e procure-a no documento. Em vez de calcule, peça o cálculo explícito com os números usados e refaça em código. Em vez de confie em mim, peça evidências estruturadas, com origem. Em vez de tenho certeza, exija abstenção quando faltar informação e teste com perguntas sem resposta. E nas respostas em etapas, peça cada resultado em um campo separado. Regra prática: se a verificação for impossível, trate a justificativa como texto de apoio, não como prova. Pergunta: qual dessas linhas você usaria no seu trabalho?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: verificando citações e cálculos",
+   "codigo": "def citacao_existe(citacao, documento):\n    return normalizar(citacao) in normalizar(documento)\n\ndef conferir_calculo(atraso_dias, exemplares, multa_dia,\n                     total_informado, tol=0.01):\n    esperado = atraso_dias * exemplares * multa_dia\n    return abs(esperado - total_informado) <= tol, esperado\n# respostas do \"modelo\": escritas à mão, para ilustrar",
+   "saida": "citação verificada=True  | resposta: R$ 1,50 por dia e por exemplar\ncitação verificada=False | resposta: R$ 2,00 por dia\ncitação verificada=True  | resposta: suspensão ao passar de R$ 30,00\ntotal informado R$ 31.50 | esperado R$ 31.50 | correto=True\ntotal informado R$ 21.00 | esperado R$ 31.50 | correto=False",
+   "notas": "Atenção ao rótulo: as respostas do modelo neste exemplo foram escritas à mão para ilustrar os verificadores; não vêm de um LLM. O primeiro verificador procura a citação, normalizada, dentro do documento. O segundo refaz a conta da multa. A saída real mostra que duas citações foram encontradas e uma, com R$ 2,00 por dia, não foi: é um alarme útil de resposta inventada. Já o cálculo: sete dias, três exemplares e R$ 1,50 por dia dão R$ 31,50; o total informado de R$ 21,00 está errado. Nada disso exige confiar na explicação do modelo, pois verificamos os artefatos. Pergunta: e se a citação existir mas a resposta estiver errada? Pode acontecer; o verificador só detecta o que foi especificado."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Verificar os artefatos, não a explicação",
+   "fig": "f08_verif",
+   "legenda": "Citações, cálculos, campos estruturados e abstenções: cada artefato entregue pelo modelo é verificado.",
+   "notas": "A figura resume a mudança de atitude: em vez de acreditar na explicação, verificam-se os artefatos entregues, que são citações, cálculos, campos estruturados e abstenções. Cada artefato tem uma verificação própria e automatizável. Isso reduz a dependência da confiança no tom da resposta, que é justamente o que o pós-treinamento do capítulo anterior pode inflar. Peça que a turma associe cada artefato à verificação correspondente. Reforce o limite: um verificador programático detecta apenas o que foi especificado, de modo que uma resposta pode passar em todas as verificações e ainda estar errada. Casos de risco pedem revisão humana. Armadilha: usar outro modelo como único revisor; ele favorece textos parecidos com os seus, segundo Zheng e colegas."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Saídas estruturadas",
+   "itens": [
+    "Peça JSON com campos, tipos e valores permitidos definidos",
+    "Valide sempre: nunca confie que o JSON seja válido",
+    "Em caso de falha, reenvie o erro, com limite de tentativas",
+    "Decodificação restrita a esquema: consulte a documentação do serviço",
+    "Formato válido não garante conteúdo correto"
+   ],
+   "notas": "Aplicações precisam de saídas legíveis por máquina, e o padrão mais comum é JSON com campos definidos. Os pontos de atenção: um esquema explícito, com campos, tipos, enumerações, opcionais e a forma de indicar ausência; validação programática, porque a resposta pode não ser JSON válido nem obedecer ao esquema; novas tentativas controladas, reenviando o erro de validação ao modelo com limite de tentativas; e a decodificação restrita, oferecida por alguns serviços, que o capítulo apenas menciona e não executa, pedindo que se consulte a documentação. Por fim, uma saída que obedece ao esquema pode conter valores errados. Pergunta à turma: o que você faria depois da terceira tentativa que falha? Encaminhar a um tratamento alternativo."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: validando com pydantic",
+   "codigo": "class Extracao(BaseModel):\n    intencao: Literal[\"segunda_via\", \"cancelamento\", ..., \"indefinido\"]\n    evidencia: Optional[str] = Field(default=None, max_length=200)\n\ndef validar(texto):\n    try:\n        return Extracao.model_validate_json(texto), None\n    except (ValidationError, ValueError) as e:\n        return None, str(e).splitlines()[0]",
+   "saida": "versão do pydantic: 2.13.5\nOK   | {\"intencao\": \"cancelamento\", \"evidencia\": \"quero cancel | cancelamento\nFALHA | {\"intencao\": \"cancelar\", \"evidencia\": \"quero cancelar\"} | 1 validation error for Extracao\nFALHA | Claro! Aqui está o JSON: {\"intencao\": \"elogio\"}         | 1 validation error for Extracao\nOK   | {\"intencao\": \"elogio\"}                                  | elogio",
+   "notas": "O esquema é uma classe pydantic, com a intenção restrita a uma enumeração de valores permitidos e a evidência opcional. A função validar devolve o objeto ou a mensagem de erro. A saída real, com a versão 2.13.5 do pydantic, testa quatro textos escritos à mão. O primeiro é válido. O segundo falha porque cancelar não está na enumeração. O terceiro falha porque o modelo educadamente acrescentou texto antes do JSON, algo frequente em produção. O quarto é válido, sem evidência. Isso motiva instruir responda apenas com JSON, validar e tentar de novo com a mensagem de erro, no máximo duas ou três vezes. Pergunta: o JSON do segundo caso estava bem formado, e mesmo assim falhou; por quê? Valor fora do esquema."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a cozinha de teste",
+   "texto": "Nenhum restaurante serve um prato novo sem antes prová-lo várias vezes.",
+   "detalhe": "Prompt é igual: uma versão, um conjunto de casos de teste, métricas, e só então a mudança vai para o cardápio. Mude um ingrediente por vez, senão você não sabe o que melhorou o sabor.",
+   "notas": "Esta analogia introduz a ideia de que prompts são artefatos de software. Um chef que testa um prato novo prova várias vezes, anota a receita, muda um ingrediente por vez e compara com a versão anterior. Do mesmo modo, um prompt precisa de versão, de casos de teste com saídas esperadas, incluindo casos difíceis e sem resposta, de métricas como acerto, validade de formato, abstenção correta, custo e latência, de comparação controlada com a mesma amostra e os mesmos parâmetros, e de testes de regressão após cada mudança. Pergunta à turma: o que acontece se mudarmos três coisas de uma vez e o resultado melhorar? Não saberemos qual causou a melhora. Armadilha: avaliar com poucos casos e decidir pela melhor impressão."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: avaliando três versões de prompt",
+   "codigo": "X, y = corpus.intencoes(60, seed=11)      # 480 mensagens de teste\nfor v in (\"v1\", \"v2\", \"v3\"):\n    sim = SimuladorLLM(v, semente=0)      # simulador de regras, não LLM\n    for texto, rotulo in zip(X, y):\n        pred, ok = interpretar(v, sim.responder(texto))\n        ...                               # acumula acertos e formato\n    m, lo, hi = av.bootstrap_ic(acertos, n=1000, seed=0)",
+   "saida": "versão   acerto    IC95% (bootstrap)  formato válido\nv1        0.356       [0.312; 0.398]           0.000\nv2        0.771       [0.731; 0.806]           0.860\nv3        0.931       [0.908; 0.950]           1.000\n\ndiferença pareada v3 - v2: +0.160  IC95% [+0.129; +0.196]",
+   "notas": "Rótulo essencial: o SimuladorLLM é baseado em regras e não é um LLM; os efeitos entre v1, v2 e v3 foram programados por nós. O que interessa é o processo. A v1 é um prompt vago, a v2 define categorias e formato, a v3 acrescenta exemplos e saída em JSON. A saída real mostra acertos de 0,356, 0,771 e 0,931, cada um com intervalo de confiança por bootstrap, e validade de formato de 0,000, 0,860 e 1,000. A diferença pareada entre v3 e v2 é de mais 0,160, com intervalo de 0,129 a 0,196. Se o intervalo incluísse zero, a diferença poderia ser acaso. Pergunta à turma: por que formato válido é uma métrica separada? Um prompt pode acertar o conteúdo e falhar no formato."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Relatório de avaliação de prompts",
+   "fig": "f08_resultados",
+   "legenda": "Acerto de três versões com IC de 95% por bootstrap. Efeitos programados no simulador; não mostra o desempenho de LLMs.",
+   "notas": "O gráfico ilustra o formato de um bom relatório: o acerto de cada versão com barras de intervalo de confiança. Aponte que os intervalos de v1, v2 e v3 não se sobrepõem aqui, mas não basta olhar: o capítulo mostra também a diferença pareada com seu próprio intervalo. Repita o aviso da legenda: os efeitos foram programados no simulador, portanto o gráfico mostra o formato do relatório e não o desempenho de modelos reais. Pergunta: o que mais deveria constar no registro da execução? Modelo e versão, data, parâmetros, conjunto de teste e métricas. Para modelos reais com amostragem, repita a avaliação com várias sementes e relate a variação."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "A diferença é real ou acaso?",
+   "itens": [
+    "Prompt A acerta 78 de 100; prompt B acerta 84 de 100",
+    "Erro-padrão perto de 0,8: √(0,8 × 0,2 / 100) = 0,04",
+    "O IC95% tem cerca de ±8 pontos; a diferença é de 6",
+    "Casos iguais para A e B: use a diferença pareada",
+    "Evidência fraca: aumente a amostra e repita"
+   ],
+   "notas": "É o segundo exemplo resolvido do capítulo. Em 100 casos, A acerta 78 e B acerta 84. Podemos afirmar que B é melhor? O erro-padrão de uma proporção em torno de 0,8 é a raiz de 0,8 vezes 0,2 dividido por 100, ou seja, 0,04, e o intervalo de 95% de cada acerto tem largura em torno de mais ou menos 8 pontos percentuais. A diferença de 6 pontos está dentro dessa incerteza. Além disso, como A e B foram avaliados nos mesmos casos, o correto é calcular a diferença pareada e seu intervalo. Sem mais casos, a evidência é fraca; o caminho é aumentar a amostra, por exemplo para 500, e repetir com outras sementes. Pergunta: o que você faria na prática?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limites",
+   "itens": [
+    "Procurar frases mágicas em vez de especificar",
+    "Avaliar com poucos casos ou só com casos fáceis",
+    "Mudar vários elementos de uma vez",
+    "Não validar o formato; não versionar prompts",
+    "Lembrar: o simulador não é um LLM, e os efeitos foram programados",
+    "Uma resposta pode passar nas verificações e ainda estar errada"
+   ],
+   "notas": "Reúna os erros mais comuns da lista do capítulo. Tratar prompts como encantamentos; avaliar com poucos exemplos e decidir pela impressão; mudar vários elementos de uma vez; confiar na explicação como prova; não validar o formato; misturar instruções e dados; esquecer a abstenção; não versionar; testar só casos fáceis; ignorar a variabilidade da geração. Reforce também as limitações declaradas: os experimentos usam um simulador de regras, as respostas dos verificadores foram escritas à mão, resultados da literatura valem para modelos específicos, e recursos de serviços variam entre provedores e mudam, então consulte a documentação oficial vigente. Pergunta: qual desses erros vocês já cometeram? Peça que um voluntário conte, sem constrangimento."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Três versões de um prompt",
+   "passos": [
+    "Escolha uma tarefa simples com resposta verificável",
+    "Escreva 30 casos de teste: 5 sem resposta e 5 difíceis",
+    "Escreva v1 (vaga), v2 (instruções, formato, abstenção) e v3 (com exemplos)",
+    "Execute em um modelo à sua escolha, registrando modelo, versão, data e parâmetros; repita 3 vezes se possível",
+    "Calcule acerto, formato válido e abstenção correta, com intervalos",
+    "Discuta: a diferença é distinguível do acaso?"
+   ],
+   "notas": "Esta atividade espelha o laço de avaliação do capítulo, agora com a tarefa e o modelo escolhidos pelos alunos. Insista nos casos de teste: trinta casos, incluindo cinco sem resposta, para testar a abstenção, e cinco difíceis. As três versões devem mudar de forma controlada, e o registro precisa de modelo, versão, data e parâmetros. Se possível, repetir três vezes para medir a variação. Quem preferir praticar sem serviços externos pode usar o Exercício prático 8.1, com o simulador. Pergunta à turma: que tarefa vocês escolheriam do seu trabalho? Armadilha: com apenas 30 casos, os intervalos serão largos; discuta com franqueza os limites da avaliação no parágrafo final."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o mais verificável",
+   "pergunta": "Qual dos pedidos abaixo é o mais verificável?",
+   "opcoes": [
+    "\"Faça um resumo bom.\"",
+    "\"Resuma como um especialista.\"",
+    "\"Resuma em até 5 tópicos, citando entre aspas o trecho de apoio de cada um.\"",
+    "\"Resuma e seja criativo.\""
+   ],
+   "resposta": "C",
+   "explicacao": "Tamanho, estrutura e citação são critérios que podem ser conferidos.",
+   "notas": "Dê um minuto e peça um voto por alternativa. A correta é a que define tamanho, estrutura e citação: até cinco tópicos, e trecho de apoio entre aspas, que podem ser contados e procurados no texto. As outras usam termos subjetivos: bom, como um especialista, criativo. Ninguém consegue conferir objetivamente se um resumo é bom sem um critério. Pergunta: como verificaria a citação? Procurando o trecho no documento, como no verificador do capítulo. Se a turma errar, retome a tabela de reescrita do prompt vago. Dica: um bom teste de verificabilidade é perguntar se um programa, ou uma pessoa com a fonte aberta, conseguiria dizer sim ou não."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "condicionar x programar",
+   "pergunta": "Por que se diz que um prompt condiciona, e não programa, o modelo?",
+   "opcoes": [
+    "O modelo executa cada linha como um comando exato",
+    "O prompt altera os pesos do modelo",
+    "O prompt é compilado antes de ser enviado",
+    "Ele altera uma distribuição de probabilidade; o modelo pode seguir só em parte"
+   ],
+   "resposta": "D",
+   "explicacao": "Instruções não são garantias; por isso todo prompt deve ser testado.",
+   "notas": "A alternativa correta é a última: o prompt altera uma distribuição de probabilidade e o modelo pode interpretar mal, ignorar ou seguir só em parte. A primeira descreve exatamente o oposto, uma execução determinista de comandos. A segunda é um erro comum: o prompt não altera os pesos; quem altera pesos é o treinamento ou o ajuste fino. A terceira confunde prompt com código-fonte. Aproveite para retomar o slide de aviso: toda versão de prompt é uma hipótese a ser testada. Pergunta à turma: se o prompt não muda os pesos, onde fica o efeito? Na distribuição da próxima geração, naquele contexto. Armadilha: dizer que repetir uma instrução com ênfase é garantia de obediência."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "abstenção",
+   "pergunta": "Por que instruir o modelo a responder \"não consta\" quando faltar informação?",
+   "opcoes": [
+    "Para que o modelo nunca responda a nada",
+    "Para reduzir respostas inventadas, dando uma saída legítima",
+    "Para aumentar o tamanho das respostas",
+    "Para eliminar a necessidade de contexto"
+   ],
+   "resposta": "B",
+   "explicacao": "Sem opção de abstenção, o modelo tende a produzir alguma resposta plausível.",
+   "notas": "A resposta correta é a segunda. Sem uma saída legítima, o modelo tende a produzir alguma resposta plausível, mesmo sem base nos documentos. Dizer exatamente o que responder quando faltar informação reduz as respostas inventadas e permite testar o comportamento com perguntas sem resposta. A primeira alternativa é exagero: a abstenção é só para quando falta informação. A terceira e a quarta não têm relação. Lembre que a abstenção não garante ausência de alucinação, apenas ajuda; e que RAG, quando usado, ajuda a ancorar respostas mas não garante correção. Pergunta: como medir a taxa de abstenção correta? Incluindo, no conjunto de teste, casos sem resposta, como na atividade prática."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Prompt é uma especificação montada por componentes; condiciona, não programa",
+    "Exemplos ajudam, mas são sensíveis a ordem, rótulos e formato",
+    "Delimitadores e etapas verificáveis organizam entradas e tarefas",
+    "Peça citações, cálculos e evidências checáveis; explicações geradas não são prova",
+    "Saídas estruturadas exigem esquema, validação e tentativas limitadas",
+    "Versione, teste e meça, com intervalos de confiança e comparações pareadas"
+   ],
+   "notas": "Feche com os pontos que a turma deve levar. Um prompt é uma especificação montada por componentes e cada versão é uma hipótese a testar. Exemplos ajudam, mas dependem de ordem, rótulos e formato. Delimitadores e decomposição em etapas deixam o sistema mais depurável. Em vez de confiar em explicações geradas, peça artefatos que um programa ou uma pessoa possam checar. Saídas estruturadas exigem esquema, validação e novas tentativas limitadas, sabendo que formato válido não garante conteúdo correto. E avaliar significa usar casos de teste, métricas, intervalos de confiança e comparações pareadas, registrando modelo, data e parâmetros. Pergunta final: o que você vai mudar na próxima vez que escrever um prompt? Lembre o aviso do simulador: os números do capítulo ilustram o processo."
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "BROWN, T. B. et al. Language models are few-shot learners. NeurIPS 33, 2020.",
+    "WEI, J. et al. Chain-of-thought prompting elicits reasoning in large language models. NeurIPS 35, 2022.",
+    "WANG, X. et al. Self-consistency improves chain of thought reasoning. ICLR 11, 2023.",
+    "TURPIN, M. et al. Language models don't always say what they think. NeurIPS 36, 2023.",
+    "ZHAO, Z. et al. Calibrate before use. ICML 38, 2021.",
+    "LU, Y. et al. Fantastically ordered prompts and where to find them. ACL 60, 2022.",
+    "LIU, N. F. et al. Lost in the middle. TACL, v. 12, 2024.",
+    "ZHENG, L. et al. Judging LLM-as-a-judge with MT-Bench and Chatbot Arena. NeurIPS 36, 2023."
+   ],
+   "notas": "Apresente as referências como leituras de aprofundamento. Brown e colegas introduzem os termos zero-shot, one-shot e few-shot; Wei e colegas e Wang e colegas tratam de cadeia de pensamento e autoconsistência; Turpin e colegas mostram os limites das explicações geradas; Zhao e colegas e Lu e colegas discutem a sensibilidade à ordem dos exemplos; Liu e colegas estudam o uso de contextos longos; Zheng e colegas analisam o uso de modelos como juízes. As entradas completas, em formato ABNT, estão na lista de referências do capítulo. Os resultados dessas obras valem para modelos e tarefas específicos e podem não se repetir. Pergunta final: qual dessas leituras ajudaria no seu projeto? Lembre também que recursos de serviços mudam e devem ser conferidos na documentação oficial."
+  }
+ ]
+}

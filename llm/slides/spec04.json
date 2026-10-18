@@ -1,0 +1,370 @@
+{
+ "capitulo": 4,
+ "titulo": "Atenção e arquitetura Transformer",
+ "parte": "Parte I — Fundamentos dos modelos de linguagem",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Entender a atenção como média ponderada guiada por consulta, chave e valor",
+    "Calcular a atenção à mão e em NumPy, e justificar o fator 1/√dk",
+    "Descrever a máscara causal e o que ela impede",
+    "Explicar cabeças, posições, residuais e normalização",
+    "Montar um bloco Transformer e estimar seus parâmetros e o custo da atenção",
+    "Distinguir encoder, decoder e encoder-decoder"
+   ],
+   "notas": "Bem-vindos ao Capítulo 4, o coração dos modelos de linguagem atuais. Vamos construir, passo a passo, o mecanismo de atenção e a arquitetura Transformer. Ao final, vocês devem conseguir calcular uma atenção à mão, explicar por que dividimos por raiz de dk, descrever a máscara causal, montar um bloco completo em NumPy e estimar quantos parâmetros ele tem. Também vamos separar as três famílias de arquitetura. Aviso de honestidade: todos os exemplos usam pesos aleatórios ou valores escolhidos, sem treinamento; mostram a mecânica e os formatos, não o comportamento de um modelo real. Pergunta inicial à turma: quando vocês leem uma frase longa, como sabem a que palavra um pronome se refere?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Quem é \"ela\"?",
+   "itens": [
+    "\"A professora disse à aluna que ela tinha acertado a prova.\"",
+    "Com outro final, \"ela\" passa a ser a professora",
+    "Seu cérebro pondera quais palavras da frase importam",
+    "O modelo precisa fazer algo equivalente, em cada posição",
+    "Até 2017: redes recorrentes, que leem palavra por palavra"
+   ],
+   "notas": "Leia a frase do capítulo em voz alta: a professora disse à aluna que ela tinha acertado a prova. Pergunte quem acertou. Provavelmente a aluna. Troque o final para precisava corrigir a prova: agora é a professora. Nosso cérebro olha as outras palavras e pondera quais importam. O modelo de linguagem precisa fazer algo equivalente, em cada posição, para centenas ou milhares de palavras ao mesmo tempo. Contexto histórico: até 2017, o recurso dominante eram redes recorrentes, que leem o texto palavra por palavra e carregam um resumo numa memória de tamanho fixo; no fim de um parágrafo longo os detalhes do início podem ter se perdido, e o processamento sequencial é difícil de acelerar. Pergunta: que palavras vocês olharam para decidir?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Da atenção ao Transformer",
+   "itens": [
+    "Atenção (Bahdanau; Cho; Bengio, 2015): olhar direto para qualquer parte da entrada",
+    "Transformer (Vaswani et al., 2017): modelo inteiro construído em torno dela",
+    "Pergunta guia: como decidir quais posições são relevantes?",
+    "E como tornar isso treinável em paralelo e escalável?"
+   ],
+   "notas": "Apresente a linha do tempo mínima do capítulo. O mecanismo de atenção, de Bahdanau, Cho e Bengio, em 2015, permitiu olhar diretamente para qualquer parte da entrada em vez de depender de um resumo único. A arquitetura Transformer, de Vaswani e colaboradores, em 2017, construiu o modelo inteiro em torno da atenção. A pergunta que guia o capítulo é: como um modelo decide, em cada posição, quais outras posições do texto são relevantes, e como isso se torna uma arquitetura que podemos treinar em paralelo e escalar a bilhões de parâmetros? Não entre em detalhes técnicos ainda. Pergunta à turma: qual a vantagem de poder treinar em paralelo? Resposta de partida: aproveita melhor o hardware, o que retomaremos com a máscara causal."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O mapa do capítulo",
+   "fig": "f04_mapa",
+   "legenda": "Consultas, chaves e valores alimentam a atenção; cabeças, posições, residuais e normalização compõem o bloco; blocos empilhados formam as arquiteturas.",
+   "notas": "Use o mapa conceitual como roteiro. Consultas, chaves e valores alimentam a atenção. Várias cabeças, representações posicionais, conexões residuais e normalização compõem o bloco Transformer. Blocos empilhados formam as arquiteturas encoder, decoder e encoder-decoder. Diga que vamos percorrer o mapa da esquerda para a direita e que, ao final, vocês devem conseguir contar parâmetros de um bloco. Revise os pré-requisitos do Capítulo 2: produto escalar, multiplicação de matrizes com a regra de formatos, softmax e variância; e do Capítulo 3: embeddings. Dica prática do capítulo: escreva sempre os formatos das matrizes; se as dimensões não fecham, a fórmula está errada. Pergunta: quem se lembra do formato do produto de uma matriz m por n com outra n por p?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Atenção é uma ida à biblioteca",
+   "texto": "Você chega com uma pergunta, compara com as etiquetas das lombadas e lê um resumo ponderado dos conteúdos.",
+   "detalhe": "Pergunta = consulta (query). Etiqueta = chave (key). Conteúdo = valor (value). Mais atenção aos livros que combinam; menos aos demais.",
+   "notas": "Analogia do capítulo. Você chega à biblioteca com uma pergunta, a consulta, em inglês query. Cada livro tem uma etiqueta na lombada, a chave, key, e um conteúdo, o valor, value. Você compara a pergunta com todas as etiquetas, descobre quais livros combinam mais e lê um resumo ponderado dos conteúdos: mais atenção aos livros mais parecidos com a pergunta, menos aos demais. Os limites da analogia: na biblioteca você escolhe um livro; na atenção o modelo mistura todos os valores. E consulta, chave e valor não são significados fixos: são projeções aprendidas, cujo papel emerge do treinamento. Pergunta à turma: que pergunta você levaria a uma biblioteca para resolver o pronome ela?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O fluxo da atenção para um token",
+   "fig": "f04_qkv",
+   "legenda": "A consulta do token é comparada com as chaves de todos; o softmax produz pesos; a saída é a soma dos valores ponderada.",
+   "itens": [
+    "1. Cada token gera consulta, chave e valor",
+    "2. Produto escalar consulta · chaves: uma pontuação por par",
+    "3. Softmax: pesos que somam 1",
+    "4. Saída: média dos valores ponderada pelos pesos"
+   ],
+   "notas": "Percorra os quatro passos do capítulo. Primeiro, cada token gera uma consulta, uma chave e um valor, três vetores obtidos por multiplicação de matrizes. Segundo, a consulta de um token é comparada, por produto escalar, com as chaves de todos os tokens, resultando em uma pontuação para cada par. Terceiro, as pontuações passam por um softmax e viram pesos que somam 1. Quarto, a saída do token é a média dos valores, ponderada por esses pesos. A intuição central: a atenção é uma média ponderada cujos pesos dependem do conteúdo. Em uma média comum, todos pesam igual; aqui o modelo decide a quem dar peso, a cada token e a cada camada. Pergunta: por que a saída é um vetor novo para cada posição?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "A fórmula da atenção",
+   "tex": "Atenção(Q, K, V) = softmax( Q Kᵀ / √dk ) V",
+   "explicacao": [
+    "Q = X·W_Q, K = X·W_K, V = X·W_V: projeções aprendidas da entrada X (T × d)",
+    "Q Kᵀ: matriz T × T com a pontuação de todos os pares",
+    "Softmax linha a linha: cada linha vira uma distribuição de pesos",
+    "Multiplicar por V faz a média ponderada: um vetor por token"
+   ],
+   "notas": "Apresente a fórmula com os formatos. X tem T linhas, uma por token, e d colunas. As matrizes de pesos W_Q, W_K e W_V são aprendidas e produzem Q e K de formato T por dk e V de formato T por dv. O produto Q vezes K transposta dá uma matriz T por T com a pontuação de todos os pares de uma só vez. O softmax é aplicado linha a linha, de modo que cada linha vira uma distribuição de pesos sobre os tokens. Multiplicar por V faz a média ponderada e o resultado tem formato T por dv. Armadilha clássica: aplicar o softmax no eixo errado; deve ser sobre as chaves, a última dimensão. Pergunta: se a matriz de pontuações é T por T, por que ela cresce depressa com textos longos?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Por que dividir por raiz de dk?",
+   "tex": "Var(q·k) = dk     →     Var(q·k / √dk) = 1",
+   "explicacao": [
+    "Componentes independentes, média 0 e variância 1",
+    "q·k é soma de dk termos: a variância cresce com dk",
+    "Pontuações enormes saturam o softmax: um peso perto de 1, o resto perto de 0",
+    "Gradientes minúsculos prejudicam o treinamento (Vaswani et al., 2017)"
+   ],
+   "notas": "Esta é a justificativa do fator, uma das derivações essenciais do capítulo. Suponha que as componentes de q e de k sejam independentes, com média 0 e variância 1. Cada produto q_i vezes k_i tem média 0 e variância 1, e o produto escalar é a soma de dk termos independentes, logo a variância é dk. Dividindo por raiz de dk a variância volta a 1, qualquer que seja dk. Sem a divisão, o desvio-padrão cresce com raiz de dk e as pontuações grandes empurram o softmax para a saturação: um peso próximo de 1 e os demais perto de 0, o que torna os gradientes minúsculos. Pergunta à turma: se dk for 64, qual o desvio-padrão sem escala? Raiz de 64, igual a 8. Lembre que a hipótese de independência é uma idealização."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: verificando o escalonamento",
+   "codigo": "rng = np.random.default_rng(0)\nfor dk in (4, 16, 64, 256, 1024):\n    q = rng.normal(size=(20000, dk)); k = rng.normal(size=(20000, dk))\n    d = (q * k).sum(axis=1)\n    print(f\"{dk:<5} {d.var():>8.1f} {(d / np.sqrt(dk)).var():>12.2f}\")\n\nfor dk in (4, 64, 1024):\n    q = rng.normal(size=(2000, 1, dk)); k = rng.normal(size=(2000, 10, dk))\n    s = (q * k).sum(-1)\n    print(f\"{dk:<5} {softmax(s).max(1).mean():>10.3f} {softmax(s / np.sqrt(dk)).max(1).mean():>11.3f}\")",
+   "saida": "dk    var(q·k)  var(q·k/√dk)\n4          4.0         1.00\n64        63.4         0.99\n1024    1020.0         1.00\n4         0.492       0.303\n1024      0.967       0.321",
+   "notas": "Simulação com vetores gaussianos, não um modelo treinado. As primeiras linhas confirmam a teoria: a variância do produto escalar é próxima de dk, 4,0, 63,4 e 1.020,0 para dk igual a 4, 64 e 1.024, e fica perto de 1 depois da divisão. As duas últimas linhas mostram o efeito no softmax sobre 10 chaves: o peso máximo médio, sem escala, vai de 0,492 com dk igual a 4 até 0,967 com dk igual a 1.024, quase saturado; com escala, fica por volta de 0,3, moderado. O código resumido omite linhas de cabeçalho impressas no capítulo. Pergunta: o que significa, na prática, um peso máximo de 0,967? O token escolhe quase um único vizinho. Com escala, o modelo continua flexível e os gradientes viáveis."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: atenção com três tokens",
+   "codigo": "def atencao(Q, K, V, mascara=None):\n    dk = Q.shape[-1]\n    S = Q @ K.T / np.sqrt(dk)\n    if mascara is not None:\n        S = np.where(mascara, S, -1e9)\n    A = softmax(S, axis=-1)\n    return A @ V, A\n\nQ = K = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])\nV = np.array([[1.0, 0.0], [0.0, 2.0], [3.0, 3.0]])\nsaida, pesos = atencao(Q, K, V)\nprint(pesos.round(3)); print(saida.round(3))",
+   "saida": "[[0.401 0.198 0.401]\n [0.198 0.401 0.401]\n [0.248 0.248 0.503]]\n[[1.604 1.599]\n [1.401 2.006]\n [1.759 2.007]]",
+   "notas": "Exemplo resolvido, que também pode ser feito à mão. Com dk igual a 2, as pontuações escalonadas são o produto Q K transposta dividido por raiz de 2, cerca de 1,414. Na linha 1, as pontuações são 0,707, 0 e 0,707; as exponenciais valem 2,028, 1 e 2,028, soma 5,056, e os pesos são 0,401, 0,198 e 0,401, como na saída real. A saída da linha 1 é 0,401 vezes o valor 1, 0, mais 0,198 vezes 0, 2, mais 0,401 vezes 3, 3, aproximadamente 1,604 e 1,599. O token 1 recebeu uma mistura dos três valores, com mais peso nos tokens 1 e 3, cujas chaves se parecem mais com sua consulta. Pergunta: por que cada linha de pesos soma 1? Porque o softmax normaliza. Os valores aqui foram escolhidos, não aprendidos."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Máscara causal: não vale espiar o gabarito",
+   "texto": "Ao prever a próxima palavra, o modelo não pode ler as palavras seguintes, como numa prova sem olhar o gabarito.",
+   "detalhe": "Na geração, os tokens futuros ainda não existem. No treino, vê-los seria \"colar\": a resposta estaria na entrada.",
+   "notas": "Analogia: uma prova em que a resposta da questão 5 já está escrita na folha. Se o aluno pudesse ler as respostas, tiraria nota alta sem ter aprendido. Num modelo que gera texto, o token na posição t não pode ver os tokens posteriores: na geração eles ainda não existem, e no treinamento vê-los seria colar, pois a resposta estaria na entrada. A máscara causal impede isso. Aviso do capítulo, importante: um erro de máscara costuma passar despercebido porque o treinamento funciona, e a perda cai muito rápido, justamente porque o modelo está colando. Por isso há um teste de vazamento, que veremos no código. Pergunta à turma: se a perda cair rápido demais no início do treino, devemos comemorar ou desconfiar? Desconfiar e testar a máscara."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Máscaras: bidirecional e causal",
+   "fig": "f04_mascara",
+   "legenda": "Seis tokens: no encoder todos veem todos; no decoder cada token vê só a si e aos anteriores.",
+   "itens": [
+    "Antes do softmax, pares com j > i recebem −∞",
+    "e^(−∞) = 0: peso zero",
+    "Matriz de pesos triangular inferior",
+    "Uma passada treina todas as posições em paralelo"
+   ],
+   "notas": "A figura compara as duas máscaras para seis tokens. Na bidirecional, usada em encoders, todos os tokens veem todos. Na causal, usada em decoders, cada token vê apenas a si e aos anteriores. Implementação: antes do softmax, as pontuações dos pares com j maior que i são substituídas por menos infinito, na prática um número muito negativo; como e elevado a menos infinito é zero, esses pares recebem peso zero e as linhas continuam somando 1. Resultado: matriz de pesos triangular inferior; a saída do token i depende só dos tokens 1 a i. Vantagem para o treino: com uma única passada, o modelo prevê o próximo token em todas as posições, cada uma vendo só seu passado. Armadilha: aplicar a máscara depois do softmax, que quebra a soma 1."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: atenção com máscara causal",
+   "codigo": "T = 3\nmascara = np.tril(np.ones((T, T), dtype=bool))\nsaida_c, pesos_c = atencao(Q, K, V, mascara)\nprint(mascara.astype(int))\nprint(pesos_c.round(3))\nprint(saida_c.round(3))",
+   "saida": "[[1 0 0]\n [1 1 0]\n [1 1 1]]\n[[1.    0.    0.   ]\n [0.33  0.67  0.   ]\n [0.248 0.248 0.503]]\n[[1.    0.   ]\n [0.33  1.34 ]\n [1.759 2.007]]",
+   "notas": "Mesmos Q, K e V do exemplo anterior, agora com máscara. A máscara é triangular inferior: 1 onde o token pode olhar. Na linha 1, o token só enxerga a si mesmo, peso 1. Na linha 2, só os tokens 1 e 2, com pesos 0,33 e 0,67, e a saída vira 0,33 e 1,34. Confira à mão, como no capítulo: pontuações 0 e 0,707, exponenciais 1 e 2,028, soma 3,028, pesos 0,330 e 0,670. O valor 3, 3 do token 3 não contribuiu. A linha 3 pode ver todos e é igual à do caso sem máscara. Pergunta: se mudarmos só o token 3, quais saídas mudam? Apenas a do token 3. Esse é o princípio do teste de vazamento que faremos adiante."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Várias cabeças: um comitê de leitores",
+   "texto": "Vários colegas leem a mesma frase, cada um atento a um aspecto: concordância, pronomes, tema.",
+   "detalhe": "Cada cabeça tem suas próprias matrizes W_Q, W_K, W_V e trabalha com dk = d/h. As saídas são concatenadas e misturadas por W_O.",
+   "notas": "Analogia: um comitê. Peça a três colegas que leiam o mesmo parágrafo; um presta atenção na concordância verbal, outro nas referências dos pronomes, outro no tema. Depois juntam as anotações. As cabeças da atenção funcionam de forma parecida: cada uma tem suas próprias matrizes e produz um tipo de média por token. Com h cabeças e dimensão do modelo d, cada cabeça trabalha com dk igual a d dividido por h; as saídas são concatenadas, voltando à dimensão d, e misturadas pela matriz de saída W_O. O bloco de atenção tem 4 d ao quadrado parâmetros. Cuidado, ponto essencial: a analogia sugere papéis claros, mas muitas cabeças são redundantes ou difusas; não afirme que a cabeça 3 cuida de pronomes. Pergunta: por que o custo é parecido com o de uma única atenção de dimensão d?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Pesos de atenção não são explicação",
+   "itens": [
+    "Algumas cabeças têm padrões interpretáveis em alguns modelos",
+    "Muitas são redundantes ou difusas",
+    "Pesos podem ser alterados sem mudar a saída",
+    "Interpretação como explicação é contestada (Jain; Wallace, 2019; Wiegreffe; Pinter, 2019)",
+    "Use mapas de atenção como pistas, não como prova"
+   ],
+   "notas": "Este slide protege a turma de uma interpretação tentadora. Ao ver um mapa de atenção, é fácil dizer que o modelo olhou aquela palavra porque ela decidiu a resposta. A literatura mostra que os pesos podem ser alterados sem mudar a saída e que a interpretação como explicação é contestada, nos trabalhos de Jain e Wallace, e de Wiegreffe e Pinter, ambos de 2019. Algumas cabeças têm padrões interpretáveis em alguns modelos, mas muitas são redundantes ou difusas. Portanto, mapas de atenção servem como pistas, nunca como prova. No código do capítulo, a atenção multicabeça com 4 cabeças e d igual a 16 produz pesos de formato 4, 6, 6, e o bloco de atenção tem 1.024 parâmetros, igual a 4 d ao quadrado. Pergunta: que outras evidências, além do mapa, vocês exigiriam antes de explicar uma decisão do modelo?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Posições: a atenção não conhece a ordem",
+   "itens": [
+    "Embaralhar a entrada só embaralha a saída do mesmo modo",
+    "\"O cachorro mordeu o homem\" ≈ \"o homem mordeu o cachorro\"",
+    "Solução original: somar ao embedding um vetor de posição (senos e cossenos)",
+    "Alternativas: posições aprendidas, relativas e rotacionais (RoPE)",
+    "Teste no código: sem posições, a saída embaralhada é só reordenada: True"
+   ],
+   "fig": "f04_posicional",
+   "notas": "Fato desconcertante: se embaralharmos a ordem dos tokens de entrada, a saída de cada token continua a mesma, apenas reordenada do mesmo jeito. Para a atenção sozinha, o cachorro mordeu o homem e o homem mordeu o cachorro são o mesmo saco de palavras. Precisamos injetar informação de posição. A solução original, de Vaswani e colaboradores, soma ao embedding um vetor de posição com senos e cossenos de frequências diferentes; dimensões de baixo índice oscilam rápido e distinguem vizinhas, as de alto índice oscilam devagar. Alternativas: posições aprendidas, relativas e rotacionais, RoPE, de Su e colaboradores. A escolha afeta o tratamento de textos mais longos que os do treino. No experimento do capítulo, sem posições a igualdade vale, e com posições a ordem passa a importar. Pergunta: por que a posição 0 vale 0, 1, 0, 1?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Conexão residual: a rodovia da informação",
+   "texto": "A camada não reescreve a informação: ela só acrescenta uma correção, como um revisor que anota à margem.",
+   "detalhe": "y = x + F(x). A entrada atalha a camada, e o gradiente tem caminho direto até as camadas iniciais (He et al., 2016).",
+   "notas": "Analogia do cotidiano: o revisor de texto que anota à margem em vez de reescrever o documento inteiro. O texto original continua lá, e cada revisor acrescenta sua contribuição. Em vez de calcular y igual a F de x, a camada calcula y igual a x mais F de x: a entrada atalha a camada e é somada à sua saída, de modo que a camada aprende apenas a correção. O capítulo usa outra imagem: uma rodovia da informação ao longo da pilha, à qual cada camada acrescenta algo. Motivo prático: redes com muitas camadas são difíceis de treinar porque os gradientes podem sumir ou explodir, e o atalho dá ao gradiente um caminho direto. Referência: He e colaboradores, 2016. Pergunta à turma: o que aconteceria se uma camada aprendesse F igual a zero?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Normalização de camada",
+   "tex": "LN(x) = γ ⊙ (x − μ) / √(σ² + ε) + β",
+   "explicacao": [
+    "μ e σ²: média e variância das d dimensões de cada token",
+    "γ e β: parâmetros aprendidos; ε evita divisão por zero",
+    "Resultado: média 0 e variância 1 (antes de γ e β)",
+    "RMSNorm omite a média (Zhang; Sennrich, 2019)",
+    "Pré-LN: dentro do ramo residual; costuma ser mais estável (Xiong et al., 2020)"
+   ],
+   "notas": "A normalização de camada padroniza cada vetor de token entre suas d dimensões. Calcule a média μ e a variância σ ao quadrado, subtraia a média e divida pela raiz da variância mais ε, uma constante pequena que evita divisão por zero. Depois, γ e β, parâmetros aprendidos, reescalam o resultado. Ba, Kiros e Hinton propuseram a técnica em 2016. Uma variante mais simples, a RMSNorm, de Zhang e Sennrich, omite a subtração da média. Há duas posições: pós-LN, depois da soma residual, como no Transformer original, e pré-LN, antes da subcamada, dentro do ramo residual; a pré-LN costuma treinar de forma mais estável em modelos profundos, segundo Xiong e colaboradores. Pergunta: por que normalizar ajuda se as magnitudes das ativações variam muito entre camadas?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: a normalização remove a escala",
+   "codigo": "def layernorm(x, gamma=None, beta=None, eps=1e-5):\n    mu = x.mean(axis=-1, keepdims=True)\n    var = ((x - mu) ** 2).mean(axis=-1, keepdims=True)\n    y = (x - mu) / np.sqrt(var + eps)\n    return y\n\nx = np.array([[1.0, 2.0, 3.0, 4.0], [100.0, 200.0, 300.0, 400.0]])\ny = layernorm(x)\nprint(\"LayerNorm linha 1:\", y[0].round(3))\nprint(\"LayerNorm linha 2:\", y[1].round(3))",
+   "saida": "LayerNorm linha 1: [-1.342 -0.447  0.447  1.342] | média ≈ 0.0 | desvio ≈ 1.0\nLayerNorm linha 2: [-1.342 -0.447  0.447  1.342]\nRMSNorm   linha 1: [0.365 0.73  1.095 1.461]",
+   "notas": "Código resumido, sem γ e β, que no capítulo são opcionais; a saída exibida inclui linhas do código completo. A linha 2 é a linha 1 multiplicada por 100, e a normalização produz exatamente o mesmo resultado: menos 1,342, menos 0,447, 0,447 e 1,342. Ela remove a escala. Esse é o motivo de a normalização estabilizar o treinamento mesmo quando as magnitudes das ativações variam muito entre camadas. A RMSNorm, na linha 1, dá 0,365, 0,73, 1,095 e 1,461, pois não subtrai a média. Pergunta à turma: como fica a média da linha 1 após a LayerNorm? Zero, com desvio-padrão 1, como a saída mostra. Cuidado: com γ e β aprendidos, o resultado final não terá mais média 0 e variância 1."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "FFN: processar cada posição",
+   "itens": [
+    "Rede aplicada separadamente a cada posição",
+    "FFN(x) = W₂ σ(W₁x + b₁) + b₂, com d_ff ≈ 4d",
+    "Expande a dimensão e depois a comprime",
+    "Sem não linearidade, as duas camadas viram uma só",
+    "Intuição: atenção move informação; FFN processa (não é descrição rigorosa)"
+   ],
+   "notas": "Cada bloco tem, além da atenção, uma pequena rede aplicada separadamente a cada posição. Ela multiplica por W1, expandindo de d para d_ff, aplica uma função de ativação não linear, como ReLU ou GELU, e multiplica por W2, comprimindo de volta para d. Costuma-se usar d_ff próximo de 4d. Sem a não linearidade, as duas camadas colapsariam numa única transformação linear. Parâmetros: 2 vezes d vezes d_ff, ou 8 d ao quadrado quando d_ff é 4d, o dobro da atenção. A intuição de divisão de trabalho, a atenção move informação entre posições e a FFN processa a de cada posição, é didática, não uma descrição rigorosa. Há indícios de que parte do conhecimento factual fica nas FFNs, mas é tema de pesquisa, não fato estabelecido. Pergunta: por que a FFN não mistura posições?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O bloco Transformer e a pilha",
+   "fig": "f04_bloco",
+   "legenda": "Bloco pré-LN e pilha de um decoder. Esquema simplificado: omite vieses, dropout e detalhes.",
+   "itens": [
+    "X' = X + MultiCabeça(LN(X))",
+    "X'' = X' + FFN(LN(X'))",
+    "N blocos empilhados",
+    "Depois: normalização final e projeção para o vocabulário (logits)"
+   ],
+   "notas": "Juntando as peças, um bloco em formato pré-LN calcula X linha igual a X mais a multicabeça aplicada à normalização de X, e X duas linhas igual a X linha mais a FFN aplicada à normalização de X linha. As setas de atalho na figura são as conexões residuais. Um LLM do tipo decoder é uma pilha de N blocos idênticos em formato, cada um com parâmetros próprios, precedida de embeddings com posições e seguida de uma normalização final e de uma projeção linear para o vocabulário, cujo resultado são os logits do próximo token, tema do Capítulo 2. O esquema é simplificado: omite vieses, dropout, inicialização, paralelismo e tipos numéricos de baixa precisão, que variam entre modelos. Pergunta à turma: onde cada ideia que vimos aparece na figura: atenção, máscara, posições, residual, normalização?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: bloco completo e teste de vazamento",
+   "codigo": "rng = np.random.default_rng(3)\nT, d, h, dff = 8, 32, 4, 128\nbloco = BlocoTransformer(d, h, dff, rng)\ncausal = np.tril(np.ones((T, T), dtype=bool))\nX = rng.normal(size=(T, d)); Y = bloco(X, causal)\n\nX2 = X.copy(); X2[5:] = rng.normal(size=(T - 5, d))   # muda só os tokens 6, 7 e 8\nY2 = bloco(X2, causal)\nprint(\"saídas dos tokens 1-5 inalteradas (causal)?\", np.allclose(Y[:5], Y2[:5]))\nYb = bloco(X, None); Yb2 = bloco(X2, None)\nprint(\"sem máscara, os tokens 1-5 também mudam?\", not np.allclose(Yb[:5], Yb2[:5]))",
+   "saida": "formato entrada/saída: (8, 32) (8, 32)\nparâmetros do bloco: 12448 | 12·d² = 12288 (diferença = vieses)\nsaídas dos tokens 1-5 inalteradas (causal)? True\nsaídas dos tokens 6-8 mudaram? True\nsem máscara, os tokens 1-5 também mudam? True",
+   "notas": "A classe BlocoTransformer, no capítulo, monta o bloco pré-LN com NumPy; aqui aparece só o teste. Entrada e saída têm o mesmo formato, 8 por 32. O bloco tem 12.448 parâmetros contra 12 d ao quadrado igual a 12.288; a diferença são os vieses. O teste de vazamento: alteramos apenas os tokens 6 a 8 e verificamos que as saídas dos tokens 1 a 5 não mudam com a máscara causal; sem máscara, elas mudam. Mensagem do capítulo: sempre verifique que um modelo causal não deixa informação do futuro vazar para o passado. Um erro de máscara costuma passar despercebido, porque o treinamento funciona e a perda cai muito rápido. Os pesos são aleatórios, então só a mecânica é testada. Pergunta: como automatizar esse teste num projeto?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Contando parâmetros",
+   "tex": "N_parâm ≈ 12 · N · d² + V · d",
+   "explicacao": [
+    "Por bloco: 4d² na atenção + 8d² na FFN = 12d²",
+    "Hipotético: N = 12, d = 768, V = 50.000",
+    "Blocos: 84,9 milhões; embeddings: 38,4 milhões",
+    "Total ≈ 123,3 milhões; em float16, cerca de 247 MB"
+   ],
+   "notas": "Desprezando vieses e normalizações, cada bloco tem 4 d ao quadrado parâmetros na atenção e 8 d ao quadrado na FFN, total 12 d ao quadrado. Com N blocos e uma tabela de embeddings V por d, possivelmente compartilhada com a projeção de saída, o total é aproximadamente 12 N d ao quadrado mais V d. Exemplo hipotético do capítulo: N igual a 12, d igual a 768 e V igual a 50.000. Blocos: 12 vezes 12 vezes 768 ao quadrado, 84.934.656, cerca de 84,9 milhões. Embeddings: 38,4 milhões. Total aproximado: 123,3 milhões; a código real imprime 123.334.656. Em float16, 2 bytes por parâmetro, cerca de 247 MB. É uma configuração hipotética, que mostra ordem de grandeza. Exemplo 2: d igual a 512 e d_ff igual a 2.048 dá 3,1 milhões por bloco. Pergunta: que fração do bloco é a FFN? Dois terços."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Três famílias de arquitetura",
+   "cabecalho": [
+    "Família",
+    "Atenção",
+    "Uso comum",
+    "Exemplo"
+   ],
+   "linhas": [
+    [
+     "Somente encoder",
+     "Bidirecional",
+     "Classificação, embeddings, busca",
+     "BERT"
+    ],
+    [
+     "Somente decoder",
+     "Causal",
+     "Geração; base dos LLMs de conversação",
+     "Família GPT"
+    ],
+    [
+     "Encoder-decoder",
+     "Encoder bidirecional; decoder causal com atenção cruzada",
+     "Tradução, resumo",
+     "T5, BART"
+    ]
+   ],
+   "notas": "A tabela resume as três famílias. Somente encoder: atenção bidirecional, objetivo típico de prever palavras mascaradas, usos como classificação, embeddings e busca, exemplo BERT. Somente decoder: atenção causal, objetivo de prever o próximo token, usada para geração e como base dos LLMs de conversação, exemplo a família GPT. Encoder-decoder: encoder bidirecional e decoder causal com atenção cruzada, para tradução e resumo; exemplos: o Transformer original, T5 e BART. Na atenção cruzada, as consultas vêm do decoder e as chaves e valores, da saída do encoder: é assim que, em tradução, cada palavra gerada olha para a frase de origem. Nos decoder-only, o mesmo objetivo serve ao pré-treino e à geração, o que simplifica o treino em escala; isso não torna as demais famílias obsoletas. Pergunta: qual família para classificar e-mails?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: o custo quadrático da atenção",
+   "codigo": "def memoria_scores_gb(T, h, bytes_por_elem=2):\n    return T * T * h * bytes_por_elem / 1e9\n\nfor T in (1024, 4096, 16384):\n    print(f\"T = {T:>6}: matriz de pontuações (h=32, float16, uma camada) = {memoria_scores_gb(T, 32):8.2f} GB\")",
+   "saida": "T =   1024: matriz de pontuações (h=32, float16, uma camada) =     0.07 GB\nT =   4096: matriz de pontuações (h=32, float16, uma camada) =     1.07 GB\nT =  16384: matriz de pontuações (h=32, float16, uma camada) =    17.18 GB",
+   "notas": "Conta simples, não um benchmark de modelo real: calcula o tamanho da matriz T por T de pontuações, para 32 cabeças, em float16, de uma única camada, se ela fosse materializada. Com T igual a 1.024, 0,07 GB; com 4.096, 1,07 GB; com 16.384, 17,18 GB. Dobrar o comprimento quadruplica o número. Exemplo 3 do capítulo: de 2.048 para 8.192 tokens, a matriz cresce 16 vezes, enquanto projeções e FFN crescem 4 vezes. Respostas existentes: implementações eficientes que calculam a mesma atenção exata sem armazenar a matriz completa, como a FlashAttention, de Dao e colaboradores, e variantes como a atenção por consultas agrupadas, de Ainslie e colaboradores. O Capítulo 6 traz o cache de chaves e valores, e o 15, as técnicas de eficiência. Pergunta: por que contextos longos são caros?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limitações",
+   "itens": [
+    "Esquecer o fator 1/√dk",
+    "Softmax no eixo errado",
+    "Máscara aplicada depois do softmax, ou invertida",
+    "Confundir dimensões: dk por cabeça é d/h, não d",
+    "Esquecer as posições, ou ignorar o custo quadrático",
+    "Exemplos com pesos aleatórios: mecânica, não comportamento real"
+   ],
+   "notas": "Revise os erros do capítulo. Esquecer o fator 1 sobre raiz de dk, o que torna o treino instável com dk grande. Aplicar o softmax no eixo errado; deve ser sobre as chaves. Aplicar a máscara depois do softmax, porque ela precisa entrar antes para que os pesos continuem somando 1; ou ter uma máscara invertida ou sem a diagonal. Confundir dimensões: dk por cabeça é d dividido por h. Esquecer as posições, e o modelo trata a entrada como saco de palavras. Interpretar pesos de atenção como explicação garantida. Ignorar o custo quadrático ao planejar contextos longos. Limitações: os exemplos usam pesos aleatórios e omitem detalhes reais; a estimativa de parâmetros é aproximada e usa configuração hipotética. Pergunta à turma: qual desses erros não geraria mensagem de erro? Quase todos, e é por isso que testes são importantes."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "atenção do zero",
+   "passos": [
+    "Implemente atencao(Q, K, V, mascara) e teste com os valores do exemplo",
+    "Gere 6 tokens aleatórios de dimensão 8, projete em Q, K, V e calcule pesos com e sem máscara",
+    "Mostre a matriz de pesos com matplotlib.pyplot.imshow",
+    "Teste automaticamente: com máscara, alterar o token 6 não muda os tokens 1 a 5",
+    "Some a codificação posicional senoidal e confirme que embaralhar deixa de ser só reordenar",
+    "Escreva por que o teste do passo 4 importa em modelos de geração"
+   ],
+   "notas": "Atividade prática do capítulo, com o Exercício prático 4.1 guiando a implementação. Passo 1: implementar a atenção como na seção 4.7 e conferir com os valores do exemplo de três tokens. Passo 2: seis tokens com embeddings aleatórios de dimensão 8, projeções com matrizes aleatórias e pesos com e sem máscara, mostrados com imshow. Passo 3: teste automático de que, com máscara, alterar o token 6 não muda as saídas dos tokens 1 a 5. Passo 4: acrescentar a codificação posicional senoidal e confirmar que embaralhar deixa de apenas reordenar a saída. Passo 5: um parágrafo sobre a importância do teste de vazamento. Armadilhas: máscara invertida e softmax no eixo errado. Sugira trabalho em duplas, 20 minutos, e discussão dos resultados. Pergunta final: o que o teste detectaria que a perda de treino não detecta?"
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "raiz de dk",
+   "pergunta": "Por que as pontuações são divididas por √dk?",
+   "opcoes": [
+    "Para que a soma dos pesos seja igual a dk",
+    "Para aumentar o número de parâmetros",
+    "Para manter a variância das pontuações perto de 1, evitando a saturação do softmax",
+    "Para que as pontuações fiquem sempre negativas"
+   ],
+   "resposta": "C",
+   "explicacao": "Com componentes independentes de variância 1, Var(q·k) = dk; dividir por √dk restaura variância 1.",
+   "notas": "Dê um minuto para a turma pensar antes de revelar. A resposta certa é C. Com componentes independentes de média 0 e variância 1, a variância do produto escalar é dk, e dividir por raiz de dk restaura variância 1. Isso evita que o softmax sature, com um peso próximo de 1 e os demais perto de 0, o que prejudicaria os gradientes. Retome a simulação: sem escala e com dk igual a 1.024, o peso máximo médio foi 0,967; com escala, 0,321. As demais alternativas são falsas: a soma dos pesos é sempre 1 por causa do softmax, o fator não adiciona parâmetros e não torna pontuações negativas. Pergunta: o que aconteceria com dk muito grande e sem o fator? O treino ficaria instável."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "máscara causal",
+   "pergunta": "Como a máscara causal é implementada na prática?",
+   "opcoes": [
+    "Zerando os pesos depois do softmax, sem renormalizar",
+    "Removendo os últimos tokens da sequência",
+    "Trocando por um número muito negativo as pontuações dos pares em que o token consultado vem depois, antes do softmax",
+    "Reduzindo a dimensão dk"
+   ],
+   "resposta": "C",
+   "explicacao": "Como e^(−∞) = 0, esses pares recebem peso zero e as linhas continuam somando 1.",
+   "notas": "A resposta é C. Antes do softmax, as pontuações dos pares com o token consultado vindo depois são substituídas por um número muito negativo, na prática menos infinito. Como e elevado a menos infinito é zero, esses pares recebem peso zero e as linhas continuam somando 1. A alternativa A é o erro frequente: zerar depois do softmax sem renormalizar deixa as linhas com soma menor que 1. Peça que alguém explique por que remover os últimos tokens não é a mesma coisa: cada posição precisa de sua própria visão do passado. Retome o exemplo do token 2: pesos 0,33 e 0,67 e saída 0,33 e 1,34, sem contribuição do valor 3, 3. Pergunta: qual teste mostra que a máscara está correta? O teste de vazamento do bloco."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "contexto mais longo",
+   "pergunta": "Se o comprimento T da sequência dobra, o tamanho da matriz de pontuações da atenção:",
+   "opcoes": [
+    "Dobra",
+    "Permanece igual",
+    "Fica pela metade",
+    "Quadruplica"
+   ],
+   "resposta": "D",
+   "explicacao": "A matriz é T × T, crescendo com T².",
+   "notas": "A resposta é D. A matriz de pontuações é T por T, então cresce com T ao quadrado: dobrar T quadruplica o número de elementos. Retome a tabela do código: de 1.024 para 4.096, que é quatro vezes mais tokens, a matriz passou de 0,07 GB para 1,07 GB, cerca de 16 vezes mais. Já as projeções e a FFN crescem linearmente com T. Se alguém respondeu A, pergunte se estava pensando nas partes lineares do bloco. Conecte à prática: para textos longos o termo quadrático passa a dominar, o que explica o esforço de pesquisa em atenção eficiente, como FlashAttention e atenção por consultas agrupadas. Pergunta: se T for multiplicado por 4, por quanto cresce a matriz? Por 16. Cuidado: os valores de GB do slide são para uma camada, em float16, com 32 cabeças."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Atenção: média ponderada dos valores; pesos = softmax das similaridades consulta × chaves",
+    "Atenção = softmax(QKᵀ/√dk)V; o fator mantém a variância em 1",
+    "Máscara causal: triangular inferior; treina em paralelo e impede vazamento",
+    "Cabeças: várias atenções em subespaços de dimensão d/h",
+    "Posições são necessárias; residuais, normalização e FFN completam o bloco",
+    "Parâmetros ≈ 12Nd² + Vd; custo da atenção cresce com T²",
+    "Pesos de atenção são pistas, não explicações garantidas"
+   ],
+   "notas": "Revise com a turma, pedindo que cada aluno complete uma frase. A atenção é uma média ponderada dos valores, com pesos dados pelo softmax das similaridades entre consulta e chaves. A fórmula é softmax de Q K transposta sobre raiz de dk, vezes V, e o fator mantém a variância das pontuações em 1. A máscara causal é triangular inferior, permite treinar em paralelo e impede vazamento do futuro. As cabeças são várias atenções em subespaços de dimensão d sobre h, concatenadas e misturadas por W_O. A atenção não conhece a ordem, então precisa de posições. Residuais facilitam o fluxo do gradiente, a normalização estabiliza a escala e a FFN processa cada posição. Parâmetros: cerca de 12 N d ao quadrado mais V d. Encoder, decoder e encoder-decoder servem a fins diferentes. Próximo capítulo: como esses modelos aprendem. Pergunta final: o que ficou mais claro?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "VASWANI, A. et al. Attention is all you need. NeurIPS, 30., 2017. p. 5998-6008.",
+    "BAHDANAU, D.; CHO, K.; BENGIO, Y. Neural machine translation by jointly learning to align and translate. ICLR, 3., 2015.",
+    "DEVLIN, J. et al. BERT. NAACL-HLT, 2019. p. 4171-4186.",
+    "HE, K. et al. Deep residual learning for image recognition. CVPR, 2016. p. 770-778.",
+    "BA, J. L.; KIROS, J. R.; HINTON, G. E. Layer normalization. arXiv:1607.06450, 2016.",
+    "SU, J. et al. RoFormer. Neurocomputing, v. 568, art. 127063, 2024.",
+    "JAIN, S.; WALLACE, B. C. Attention is not explanation. NAACL-HLT, 2019. p. 3543-3556.",
+    "DAO, T. et al. FlashAttention. NeurIPS, 35., 2022."
+   ],
+   "notas": ""
+  }
+ ]
+}
