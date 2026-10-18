@@ -116,7 +116,7 @@ def cache():
     fig, ax = plt.subplots(figsize=(6.2, 3.8))
     ax.plot(taus, [h for h, _ in a], "o-", c=IND, label="acerto do cache"); ax.plot(taus, [e for _, e in a], "o-", c=RED, label="erro entre os acertos")
     ax.plot(taus, [h for h, _ in b], "o--", c=IND, alpha=.6, label="acerto (com verificação de entidades)"); ax.plot(taus, [e for _, e in b], "o--", c=RED, alpha=.6, label="erro (com verificação de entidades)")
-    ax.invert_xaxis(); ax.set_xlabel("limiar de similaridade $\\tau$ (cosseno)"); ax.set_ylabel("fração"); ax.set_ylim(-0.02, 1); ax.legend(fontsize=7.5, frameon=False, loc="upper left")
+    ax.invert_xaxis(); ax.set_xlabel("limiar de similaridade $\\tau$ (cosseno)"); ax.set_ylabel("fração"); ax.set_ylim(-0.02, 1.4); ax.legend(fontsize=7.5, frameon=False, loc="upper left", ncol=2)
     ax.set_title("Cache semântico: acertos e erros (corpus sintético)", fontsize=9.5); save(fig, "f15_cache")
 
 

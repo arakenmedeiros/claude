@@ -56,6 +56,8 @@ def calcular_seguro(expressao: str):
         arvore = ast.parse(expressao.strip(), mode="eval")
     except SyntaxError as e:
         raise ValueError(f"sintaxe inválida: {e.msg}") from None
+    except (RecursionError, MemoryError):
+        raise ValueError("expressão aninhada demais") from None
 
     def ev(no):
         if isinstance(no, ast.Expression):
@@ -77,7 +79,10 @@ def calcular_seguro(expressao: str):
             return _UN[type(no.op)](ev(no))
         raise ValueError(f"elemento não permitido: {type(no).__name__}")
 
-    r = ev(arvore)
+    try:
+        r = ev(arvore)
+    except RecursionError:                          # aninhamento profundo (ex.: muitos sinais de menos seguidos)
+        raise ValueError("expressão aninhada demais") from None
     return round(r, 10) if isinstance(r, float) else r
 
 

@@ -171,7 +171,12 @@ print("auditoria íntegra:", aud.verificar(), "| CPF no log:", "123.456.789-09" 
 print("tarefa de teste correta:", ok, "| bloqueios:", ex.bloqueios, "| efeitos:", ex.efeitos)
 
 t_ok = next(t for t in T if t.tipo == "trancar" and t.protocolos == 1)
+print("--- traço com sucesso (configuração B)")
 print(rodar_tarefa(t_ok, F, 0, kb)[1].formatar(largura=80))
-print(ex.formatar(largura=80))
+t_inj = next(t for t in T if t.tipo == "injecao")
+ok_i, ex_i, amb_i = rodar_tarefa(t_inj, F, 0, kb, sanitizar=False)      # sem o sanitizador, só o menor privilégio protege
+print("--- traço com bloqueio (sanitizador desligado, menor privilégio ligado)")
+print(ex_i.formatar(largura=80))
+print("bloqueios:", ex_i.bloqueios, "| e-mails enviados:", amb_i.outbox)
 ```
 @@NOTE TBD
