@@ -152,6 +152,7 @@ def bancada(sistemas, X, y, estratos, base, candidato, K=10, margem=0.02, queda_
 X, y = corpus.intencoes(100, seed=61)
 comp = np.array([len(t.split()) for t in X]); c1, c2 = np.quantile(comp, [1/3, 2/3])
 tam = ["curta" if c <= c1 else "média" if c <= c2 else "longa" for c in comp]
+relatorio, res = bancada(["v1", "v2", "v3"], X, y, {"categoria": list(y), "tamanho": tam}, base="v2", candidato="v3")
 print(relatorio)
 print("\nDecisão: a v3 substitui a v2 neste teste; o que o teste NÃO cobre: modelos reais, usuários reais, texto fora do padrão das frases sintéticas, avaliação humana.")
 
