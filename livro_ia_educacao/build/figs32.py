@@ -38,8 +38,8 @@ def f32_sintese():
               (68, 5, "Plano de 90 dias", PLUM), (4, 5, "Comunidade de prática", TEAL)]
     for x, y, t, c in blocos:
         rbox(ax, x, y, 28, 11, t, fc=c, tc="white", bold=True, fs=8.4, r=3, z=3, wrap_at=22)
-    arrow(ax, (32.3, 38.5), (43.5, 30.5)); arrow(ax, (67.7, 38.5), (56.5, 30.5))
-    arrow(ax, (67.7, 13.5), (56.5, 22.5)); arrow(ax, (32.3, 13.5), (43.5, 22.5))
+    arrow(ax, (32.3, 38.5), (41.0, 32.0)); arrow(ax, (67.7, 38.5), (59.0, 32.0))
+    arrow(ax, (67.7, 13.5), (59.0, 21.0)); arrow(ax, (32.3, 13.5), (41.0, 21.0))
     save(fig, "f32_sintese")
 
 def f32_livro():
