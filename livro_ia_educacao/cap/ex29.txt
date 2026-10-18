@@ -1,0 +1,349 @@
+#1
+MC: Qual das informações a seguir é considerada dado pessoal no contexto escolar?
++ Nome de um estudante associado às suas notas e a observações sobre comportamento.
+- Um plano de aula genérico, sem referência a estudantes. || Não identifica nenhuma pessoa, portanto não é dado pessoal.
+- O calendário letivo da rede, publicado no portal. || É informação pública e institucional, sem relação com pessoa identificável.
+- Um poema de domínio público usado como texto-base. || É obra de domínio público, sem pessoa identificável envolvida.
+- Uma rubrica de avaliação sem nomes. || Instrumento genérico que não identifica ninguém.
+R: Dado pessoal é qualquer informação que identifique ou possa identificar uma pessoa, como nome associado a notas e comportamento.
+
+#2
+MC: Por que dados sobre saúde, deficiência ou religião de estudantes exigem cuidado reforçado?
++ Porque são considerados dados sensíveis, cujo uso inadequado pode gerar discriminação e danos maiores.
+- Porque são sempre públicos na escola. || Ao contrário, são informações restritas que devem ser protegidas.
+- Porque a lei proíbe qualquer registro desses dados. || A lei não proíbe todo registro; exige base legal e proteção.
+- Porque só se aplicam a estudantes adultos. || Aplicam-se a pessoas de qualquer idade, com cuidado ainda maior no caso de crianças.
+- Porque não têm relação com a aprendizagem. || Podem ser relevantes para apoio e inclusão, mas devem ser tratados com sigilo.
+R: Dados sensíveis têm proteção reforçada devido ao potencial de discriminação.
+
+#3
+MC: Qual princípio da LGPD está mais diretamente em jogo quando o professor pede à IA um modelo de parecer e inclui nomes e notas reais, embora fosse possível usar marcadores?
++ Necessidade (minimização): usar apenas os dados indispensáveis à finalidade.
+- Gratuidade: o serviço deve ser sempre gratuito. || Não é um princípio da LGPD.
+- Velocidade: o tratamento deve ser o mais rápido possível. || Celeridade não é critério de proteção de dados.
+- Popularidade: o dado deve ser conhecido por muitos. || É o oposto da proteção.
+- Anonimato absoluto: nenhum dado pode jamais ser tratado. || A lei permite tratamento com base legal; o ponto é usar só o necessário.
+R: Para o objetivo (gerar um modelo), dados reais são desnecessários.
+
+#4
+MC: O que o princípio da finalidade exige do professor ao pensar em usar dados de estudantes em uma ferramenta?
++ Que o propósito seja específico, legítimo e informado, e que o uso não extrapole esse propósito.
+- Que o propósito seja "testar a ferramenta" sem maior definição. || Finalidade vaga não atende ao princípio.
+- Que o professor decida sozinho sem comunicar famílias. || A transparência é parte do tratamento adequado.
+- Que a finalidade seja alterada conforme a conveniência. || Mudar a finalidade sem base afronta o princípio.
+- Que o propósito seja puramente comercial. || A finalidade deve ser legítima e compatível com a educação.
+R: Finalidade clara orienta o que pode e o que não pode ser feito com os dados.
+
+#5
+MC: O que acontece, em termos gerais, quando alguém digita um texto em um serviço de IA externo?
++ O conteúdo sai do ambiente da escola e passa a ser tratado conforme os termos e a política de privacidade do fornecedor.
+- O texto permanece apenas no computador do usuário. || Serviços externos processam o conteúdo em servidores do fornecedor.
+- O texto é automaticamente apagado após cada resposta, sempre. || Prazos de retenção variam e dependem do serviço e do plano.
+- A escola passa a ser dona do serviço. || O uso de um serviço não transfere sua propriedade.
+- A lei proíbe qualquer tratamento posterior. || A lei regula o tratamento; não o proíbe em geral.
+R: Por isso é essencial ler termos, políticas e configurações antes de inserir qualquer dado da escola.
+
+#6
+MC: Qual é um item essencial a conferir nos termos de serviço antes de usar uma ferramenta com dados da escola?
++ Se as entradas são armazenadas, por quanto tempo e se são usadas para treinar modelos.
+- A cor predominante da interface. || É irrelevante para a proteção de dados.
+- O número de seguidores do fornecedor nas redes sociais. || Popularidade não informa sobre privacidade.
+- O nome do fundador da empresa. || Não indica as garantias dadas ao usuário.
+- O tamanho da fonte dos termos. || É um detalhe de apresentação, sem relação com o tratamento dos dados.
+R: Retenção e reutilização das entradas são pontos centrais de risco para a privacidade.
+
+#7
+MC: O que sugere a pesquisa sobre extração de dados de treinamento de modelos de linguagem?
++ Que, em certas condições, os modelos podem memorizar e reproduzir trechos dos dados de treinamento, inclusive informações pessoais.
+- Que os modelos nunca guardam nenhuma informação dos dados. || Contradiz demonstrações experimentais de memorização.
+- Que a memorização ocorre em todas as respostas de qualquer serviço atual. || A pesquisa não permite afirmar frequência universal.
+- Que apenas imagens podem ser memorizadas. || O estudo tratou de texto, inclusive dados pessoais.
+- Que o risco desaparece quando o usuário é professor. || O risco não depende da profissão de quem insere dados.
+R: A memorização reforça a cautela, ainda que não se conheça a frequência em cada serviço.
+
+#8
+MC: Por que remover apenas o nome de um estudante nem sempre anonimiza o texto?
++ Porque combinações de informações (série, turma, deficiência, episódio específico) podem identificar a pessoa, sobretudo em comunidades pequenas.
+- Porque nomes não são dados pessoais. || Nomes são dados pessoais; o problema é que remover só o nome é insuficiente.
+- Porque a IA descobre nomes sozinha em qualquer texto. || Não é a IA que reidentifica necessariamente; o contexto já pode identificar.
+- Porque a lei exige que o nome permaneça. || Não há tal exigência.
+- Porque anonimizar é sempre impossível e inútil. || É possível reduzir riscos com cuidado; o ponto é que não é trivial.
+R: A reidentificação por contexto é um risco real; prefira casos fictícios ou marcadores.
+
+#9
+MC: Qual é uma regra prática simples para decidir se um texto pode ser colado em uma ferramenta externa?
++ Se você não o colocaria em um mural aberto da escola, não o cole em um serviço externo sem as garantias necessárias.
+- Se o texto for longo, pode ser colado. || O tamanho não define a sensibilidade das informações.
+- Se a ferramenta for gratuita, qualquer texto pode ser colado. || A gratuidade não elimina riscos; muitas vezes o dado é parte do modelo de negócio.
+- Se o professor tiver pressa, pode ser colado. || A pressa não é justificativa de proteção de dados.
+- Se o estudante pedir, qualquer dado de terceiros pode ser colado. || O pedido de um estudante não autoriza o tratamento de dados de outras pessoas.
+R: A regra do mural ajuda a perceber quando a informação não deveria sair do ambiente protegido.
+
+#10
+MC: Qual é o procedimento mais adequado para gerar pareceres do bimestre com apoio de IA, protegendo os estudantes?
++ Pedir à ferramenta um modelo com marcadores, sem dados reais, e preencher o parecer com as observações do professor fora da ferramenta.
+- Colar a planilha completa com nomes e comportamentos para o sistema gerar todos os pareceres. || Expõe dados pessoais e sensíveis sem necessidade.
+- Pedir à IA que invente observações sobre os estudantes. || Gera informações falsas sobre pessoas reais, o que é uma falha de integridade.
+- Publicar os pareceres em uma rede social para revisão. || Viola a privacidade e a confidencialidade.
+- Compartilhar a senha da conta institucional com colegas. || Compromete a segurança e a responsabilização.
+R: O professor mantém o controle do conteúdo; a IA ajuda só com a estrutura.
+
+#11
+MC: Em geral, o que costuma exigir autorização ou licença segundo a lei de direitos autorais brasileira, ressalvadas as limitações legais?
++ Reproduzir ou compartilhar obras protegidas de terceiros, como livros e artigos, além de pequenos trechos citados com fonte.
+- Citar um pequeno trecho com indicação de fonte, para estudo ou crítica. || É uma das limitações previstas, interpretada de forma restrita.
+- Usar uma obra em domínio público. || Obras em domínio público podem ser usadas, respeitados os direitos morais.
+- Usar material cuja licença aberta permita a reprodução, conforme as condições. || A licença é a autorização; deve-se cumprir as condições.
+- Ler um livro adquirido legalmente. || A leitura em si não exige nova autorização.
+R: A regra geral é a autorização; as limitações são específicas e interpretadas restritivamente.
+
+#12
+MC: Por que digitalizar um livro didático inteiro e enviá-lo a um serviço de IA para "criar exercícios" merece cautela?
++ Pode configurar reprodução e compartilhamento de obra protegida sem autorização, além de a obra poder ser armazenada pelo serviço.
+- Porque livros didáticos não têm autor. || Livros didáticos têm autoria e direitos protegidos.
+- Porque exercícios criados por IA são sempre proibidos. || Gerar exercícios é legítimo; o ponto é a reprodução da obra de terceiros.
+- Porque a digitalização estraga o livro. || O problema não é físico.
+- Porque a IA não lê textos longos. || Não é uma questão de capacidade técnica.
+R: Alternativas: usar trechos curtos, materiais de licença aberta, ou descrever o conteúdo com suas próprias palavras.
+
+#13
+MC: O que indicam as licenças abertas (como as Creative Commons)?
++ O que se pode fazer com um material e sob que condições, como atribuir o crédito ao autor.
+- Que o material está em domínio público e não tem autor. || Licença aberta mantém a autoria; domínio público é outra situação.
+- Que qualquer uso é permitido sem nenhuma condição. || Cada licença impõe condições específicas.
+- Que o material só pode ser usado por universidades. || Não há essa restrição geral.
+- Que o material não pode ser adaptado. || Algumas licenças permitem adaptação; é preciso verificar a licença específica.
+R: A licença define permissões e condições, e deve ser lida para cada material.
+
+#14
+MC: Sobre a autoria de resultados gerados por IA, o que é correto afirmar?
++ A lei brasileira define o autor como a pessoa física criadora, e há debate em evolução sobre o grau de contribuição humana necessário para proteção.
+- O sistema de IA é o autor e detém todos os direitos. || Contraria a definição de autor como pessoa física criadora.
+- Tudo o que a IA gera é de domínio público automaticamente. || Não há uma regra geral e automática; depende do caso e da jurisdição.
+- Qualquer texto gerado é obrigatoriamente protegido em favor de quem digitou o pedido. || Órgãos de registro em outros países sustentam que comandos isolados nem sempre bastam.
+- A questão está completamente resolvida em todos os países. || O debate está em evolução e há divergências.
+R: Convém não presumir que o resultado seja livre de direitos nem de responsabilidade.
+
+#15
+MC: Por que periódicos e comitês editoriais afirmam que sistemas de IA não podem ser listados como autores?
++ Porque autoria envolve responder pela exatidão, integridade e originalidade do trabalho, algo que sistemas não fazem.
+- Porque sistemas de IA não conseguem escrever frases completas. || Conseguem; o argumento é de responsabilidade.
+- Porque o nome de um sistema é muito longo. || Não é um critério editorial.
+- Porque a IA exige pagamento de direitos autorais. || Não é essa a razão.
+- Porque autores humanos são obrigados a trabalhar sem ferramentas. || As políticas admitem uso de ferramentas desde que declarado.
+R: A responsabilidade e a declaração do uso recaem sobre os autores humanos.
+
+#16
+MC: Qual é a função principal da declaração de uso de IA em um trabalho escolar?
++ Dar transparência ao processo, permitindo ensinar a usar melhor e avaliar com justiça.
+- Servir como confissão para aplicar punição automática. || A declaração honesta, dentro das regras, não deve ser punida.
+- Substituir a necessidade de referências. || Referências continuam necessárias.
+- Garantir que a nota seja sempre alta. || Não tem relação com a nota.
+- Evitar que o professor leia o trabalho. || O professor continua responsável por avaliar.
+R: A declaração é uma prática de transparência e aprendizagem, e não um mecanismo punitivo.
+
+#17
+MC: Quais informações costumam constar em uma boa declaração de uso de IA?
++ Para que foi usada, qual sistema e quando, o que foi mantido ou alterado, e como se conferiu a informação.
+- Apenas o nome do estudante. || Não informa sobre o uso da IA.
+- A senha da conta utilizada. || Dados de acesso não devem ser compartilhados.
+- Uma lista de todos os colegas que também usaram. || Não é pertinente e expõe terceiros.
+- A opinião do estudante sobre a empresa que fabrica o sistema. || Não informa sobre o processo de produção do trabalho.
+R: A declaração descreve finalidade, ferramenta, intervenções humanas e verificação.
+
+#18
+MC: Qual é a melhor definição de integridade acadêmica?
++ Compromisso com honestidade, confiança, justiça, respeito e responsabilidade em estudo, ensino e pesquisa.
+- Conjunto de regras que proíbe o uso de qualquer tecnologia. || Integridade não se resume à proibição e admite usos transparentes.
+- Capacidade de obter as maiores notas. || Notas altas não indicam integridade por si.
+- Uso de detectores em todos os trabalhos. || Detectores são ferramentas limitadas e não definem integridade.
+- Obediência cega ao professor. || Integridade envolve responsabilidade ética, e não obediência acrítica.
+R: Integridade é um conjunto de valores e práticas, e não apenas controle.
+
+#19
+MC: Por que a clareza das regras deve vir antes da suspeita?
++ Porque estudantes só podem cumprir o que compreendem; regras claras por tarefa previnem conflitos e injustiças.
+- Porque as regras tornam as tarefas mais fáceis. || Não é esse o objetivo.
+- Porque a suspeita nunca é necessária. || Casos de dúvida podem surgir e exigem procedimento justo.
+- Porque regras impedem qualquer uso de ferramentas. || A clareza define o que é permitido, o que exige declaração e o que é vedado.
+- Porque os estudantes nunca leem os regulamentos. || É uma generalização sem base.
+R: Expectativas explícitas por tarefa protegem a aprendizagem e a justiça do processo.
+
+#20
+MC: Qual das seguintes práticas avalia o processo e não apenas o produto?
++ Pedir rascunhos, versões, anotações e uma breve conversa sobre as decisões tomadas.
+- Aceitar somente o texto final enviado em formato digital. || Avalia só o produto e dificulta perceber a autoria.
+- Aplicar um detector e considerar o resultado definitivo. || Detectores não avaliam o processo e são pouco confiáveis.
+- Reduzir o prazo de entrega para dificultar o uso de IA. || Aumenta a pressão e estimula atalhos.
+- Exigir que os trabalhos sejam longos. || A extensão não informa sobre o processo.
+R: Registros e conversas mostram o caminho percorrido e a compreensão do estudante.
+
+#21
+MC: Qual é a limitação central dos detectores de texto gerado por IA, segundo testes independentes?
++ Baixa confiabilidade, com erros em ambos os sentidos e viés contra quem escreve em segunda língua.
+- São perfeitos, mas lentos. || Contradiz os resultados dos testes.
+- Só funcionam com textos curtos. || Não é essa a limitação documentada.
+- São proibidos pela legislação de dados. || A restrição de uso se baseia em confiabilidade, e não em proibição legal geral.
+- Funcionam apenas para estudantes do ensino superior. || Não há essa restrição documentada.
+R: Acusações não devem se basear exclusivamente em detectores.
+
+#22
+MC: Um professor suspeita que um trabalho foi feito por IA. Qual é o primeiro passo mais adequado?
++ Conversar com o estudante, pedir que explique o trabalho e solicitar rascunhos e anotações, sem presumir culpa.
+- Aplicar nota zero imediatamente. || Pune antes de apurar e contraria o procedimento justo.
+- Divulgar a suspeita para a turma. || Expõe o estudante e viola o respeito.
+- Colar o trabalho em um detector e decidir pelo resultado. || O detector é pouco confiável e o trabalho do estudante é dado pessoal.
+- Ignorar o caso para evitar conflitos. || Omissão prejudica a justiça e a formação.
+R: A conversa formativa reúne evidências variadas e preserva a dignidade do estudante.
+
+#23
+MC: Por que colar trabalhos de estudantes em um sistema externo para "avaliar" pode ser problemático?
++ Envolve dados pessoais e produção intelectual dos estudantes sem base adequada e pode gerar decisões sem revisão humana.
+- Porque estudantes proíbem que professores leiam seus trabalhos. || Professores leem e avaliam trabalhos; o problema é o envio a terceiros.
+- Porque sistemas externos nunca conseguem ler textos em português. || Não é uma limitação geral.
+- Porque a correção humana é sempre mais lenta. || A velocidade não é o ponto de preocupação.
+- Porque a escola não deve avaliar trabalhos. || Avaliar faz parte da função educativa.
+R: A autoria e a privacidade dos estudantes devem ser protegidas, e a decisão final é humana.
+
+#24
+MC: Como a pressão por notas e o excesso de tarefas se relacionam com a integridade acadêmica?
++ Podem estimular atalhos, e reduzi-los faz parte da prevenção.
+- Não têm nenhuma relação com o comportamento dos estudantes. || Contradiz a observação de que condições de pressão favorecem atalhos.
+- São a única causa de desonestidade. || Há múltiplas causas; a pressão é um fator.
+- Servem como justificativa para aceitar qualquer cópia. || Explicar não é justificar; a escola deve prevenir e educar.
+- Só afetam estudantes de pós-graduação. || Ocorrem em todos os níveis.
+R: Cuidar das condições de estudo é uma estratégia de prevenção e de justiça.
+
+#25
+MC: Qual é a atitude adequada ao professor sobre criar imagem ou voz sintéticas de estudantes ou colegas para uma atividade?
++ Não criar nem compartilhar sem base adequada, pois imagem e voz são dados pessoais e envolvem direitos da personalidade.
+- Criar livremente, pois são apenas pixels. || Imagem e voz identificam pessoas e são protegidas.
+- Criar desde que o estudante não perceba. || A falta de ciência agrava a violação.
+- Criar e publicar em redes para divulgar a escola. || A divulgação sem base adequada amplia a exposição.
+- Criar apenas para estudantes de bom desempenho. || O desempenho não é critério de autorização.
+R: Prefira personagens fictícios ou imagens de licença aberta.
+
+#26
+MC: Qual é o papel do encarregado de dados (ou da assessoria jurídica) em uma instituição?
++ Orientar sobre o tratamento de dados e a conformidade com a legislação, e ser canal de comunicação com titulares e autoridade.
+- Escolher as notas dos estudantes. || Não é função desse papel.
+- Substituir a decisão pedagógica dos professores. || Orienta sobre proteção de dados, sem substituir a autonomia pedagógica.
+- Cobrar mensalidades. || É função administrativa distinta.
+- Treinar os modelos de IA. || Não é função do encarregado.
+R: Consultar esse profissional ajuda a tomar decisões seguras e informadas.
+
+#27
+MC: O que este capítulo recomenda sobre as normas relativas a IA, dados e direitos autorais?
++ Que sejam conferidas em fontes oficiais, pois mudam e podem variar entre instituições e países.
+- Que sejam tratadas como definitivas e imutáveis. || Contraria a evolução rápida do tema.
+- Que sejam ignoradas até haver multa. || A diligência prévia é parte do dever de cuidado.
+- Que sejam aplicadas apenas por empresas. || Escolas, redes e pessoas também estão sujeitas a elas.
+- Que sejam substituídas por regras pessoais de cada professor. || Decisões individuais não substituem as normas.
+R: A atualização e a consulta a fontes oficiais fazem parte da conduta responsável.
+
+#28
+MC: Quais usos de IA costumam ser mais seguros do ponto de vista da privacidade em uma escola?
++ Gerar planos, exemplos e modelos genéricos, sem dados pessoais, e revisar o resultado.
+- Enviar laudos e relatórios de estudantes para análise. || São dados sensíveis, que não devem ser inseridos.
+- Enviar áudios de reuniões com famílias para transcrição. || Contêm dados pessoais de terceiros.
+- Subir fotos da turma para criar versões animadas. || Imagens de estudantes (muitas vezes menores) exigem proteção.
+- Inserir a planilha completa de frequência. || Dados identificáveis em uma ferramenta externa.
+R: Conteúdos genéricos e casos fictícios reduzem o risco.
+
+#29
+MC: Em relação a efeitos de políticas de declaração de uso de IA, o que a pesquisa permite afirmar?
++ Há poucos estudos; a recomendação de transparência se apoia principalmente em princípios de integridade e orientações institucionais.
+- Estudos conclusivos mostram que a declaração elimina o plágio. || Não há tais estudos conclusivos.
+- Estudos mostram que a declaração piora a aprendizagem. || Não há base para essa afirmação.
+- Não há nenhuma orientação institucional a respeito. || Periódicos e instituições têm orientado a declaração.
+- A declaração só funciona em instituições privadas. || Não há evidência dessa limitação.
+R: A cautela quanto à força das evidências é parte da honestidade intelectual.
+
+#30
+MC: Qual é a atitude mais coerente da escola diante de estudantes que declaram honestamente um uso de IA dentro das regras?
++ Acolher a declaração, usando-a para ensinar a usar melhor, sem punição.
+- Reduzir a nota por haver usado IA, mesmo permitida. || Pune o cumprimento das regras e desestimula a transparência.
+- Ignorar a declaração. || Perde-se a chance de aprender com o processo.
+- Divulgar a declaração para a turma como exemplo negativo. || Expõe o estudante sem necessidade.
+- Exigir que o estudante refaça tudo sem IA, mesmo permitida. || Contradiz a própria política da tarefa.
+R: Premiar a honestidade reforça uma cultura de integridade.
+
+DISC: Explique por que dados que parecem "anonimizados" podem continuar identificando estudantes e proponha duas práticas para reduzir esse risco.
+R: Combinações de informações permitem reidentificar; práticas: casos fictícios, marcadores, agregação, revisão por outra pessoa, consulta ao encarregado de dados.
+C: Explicação clara; práticas viáveis.
+
+DISC: Descreva três itens que você verificaria nos termos de serviço de uma ferramenta antes de usá-la na escola e explique por que cada um importa.
+R: Retenção, uso para treinamento, idade mínima/consentimento, local de processamento, exclusão, versão institucional; justificativas ligadas ao risco.
+C: Itens pertinentes; justificativa.
+
+DISC: Aplique os princípios de finalidade, necessidade e transparência a um uso concreto de IA que você pretende fazer com informações de estudantes.
+R: Descrever finalidade específica; mínimo de dados; comunicação a estudantes e famílias; alternativa sem dados pessoais.
+C: Aplicação coerente; alternativas.
+
+DISC: Elabore a regra de três categorias (pode, com cuidado, não inserir) para sua escola, com três exemplos em cada.
+R: Pode: planos genéricos, casos fictícios, textos de domínio público; com cuidado: dados agregados em ferramenta aprovada; não inserir: laudos, imagens, notas com nomes.
+C: Categorias coerentes; exemplos reais.
+
+DISC: Explique por que o resultado gerado por IA não deve ser presumido livre de direitos e como isso orienta o uso em materiais publicados.
+R: Possíveis semelhanças com obras existentes; debate jurídico em evolução; verificar originalidade, citar fontes, usar licenças abertas.
+C: Cautela fundamentada; orientações práticas.
+
+DISC: Diferencie citação de pequenos trechos, uso de obra com licença aberta e reprodução integral de obra protegida, indicando o que cada uma exige.
+R: Citação: limitação restrita, com fonte; licença aberta: cumprir condições; reprodução integral: autorização do titular, salvo exceções legais.
+C: Distinções corretas; cautela.
+
+DISC: Por que sistemas de IA não são considerados autores e o que significa dizer que quem assina responde pelo conteúdo?
+R: Autoria implica responsabilidade por exatidão, originalidade e fontes; sistemas não respondem; quem assina responde e declara uso.
+C: Relação entre autoria e responsabilidade.
+
+DISC: Redija um modelo de declaração de uso de IA para um trabalho de sua disciplina, com cinco campos.
+R: Campos: usou ou não; finalidade; sistema e data; o que manteve ou alterou; como conferiu; confirmação de responsabilidade.
+C: Campos pertinentes; clareza.
+
+DISC: Descreva uma conversa formativa diante de dúvida sobre a autoria de um trabalho, indicando perguntas e evidências que você buscaria.
+R: Descrever sem acusar; pedir explicação; rascunhos e anotações; tarefa curta em sala; registrar; decidir com várias evidências.
+C: Procedimento respeitoso; evidências variadas.
+
+DISC: Argumente por que detectores de IA não devem ser prova isolada e proponha duas alternativas de avaliação do processo.
+R: Pouca confiabilidade, falsos positivos, viés contra segunda língua; alternativas: rascunhos, defesa oral, produção em sala, portfólio.
+C: Argumentos fundamentados; alternativas aplicáveis.
+
+DISC: Como uma política de uso de IA por tarefa (permitido, com declaração, não permitido) pode proteger a aprendizagem? Dê um exemplo.
+R: Alinha uso ao objetivo; exemplo: corretor ortográfico livre; feedback com declaração; texto integral gerado vedado em tarefa de autoria.
+C: Alinhamento ao objetivo; exemplo claro.
+
+DISC: Discuta como a pressão por notas e o excesso de tarefas influenciam a integridade acadêmica e que medidas a escola pode tomar.
+R: Pressão estimula atalhos; medidas: reduzir carga, avaliar processo, feedback, apoio, tarefas significativas.
+C: Relação causal prudente; medidas concretas.
+
+DISC: Explique o papel das licenças abertas e do domínio público para professores que produzem materiais e como verificar a licença de um recurso.
+R: Ampliam o uso legal; verificar tipo de licença, condições (atribuição, adaptação, uso comercial), fonte oficial do material.
+C: Conceitos corretos; verificação.
+
+DISC: Avalie o dilema de um professor que deseja usar a IA para devolver comentários a todos os estudantes e proponha uma solução que proteja a privacidade.
+R: Evitar colar textos identificáveis; usar rubricas e bancos de comentários genéricos; comentários finais individualizados pelo professor; ferramenta institucional com garantias.
+C: Equilíbrio entre eficiência e proteção; solução viável.
+
+DISC: Por que a declaração de uso deve ser tratada como prática de aprendizagem e não de punição? Como a escola pode comunicar isso?
+R: Transparência permite ensinar; punir desestimula honestidade; comunicar regras, aceitar declarações honestas, usar para feedback.
+C: Argumento coerente; comunicação clara.
+
+DISC: Explique o que significa memorização de dados de treinamento por modelos de linguagem e quais limites existem para afirmar o risco em um serviço específico.
+R: Modelos podem reproduzir trechos de dados de treino; demonstrado experimentalmente; frequência desconhecida em cada serviço; cautela por princípio.
+C: Conceito correto; reconhece incerteza.
+
+DISC: Planeje a comunicação com as famílias sobre o uso de dados e de IA em uma escola, indicando o que dizer e como garantir acessibilidade.
+R: Linguagem simples; finalidade; dados tratados; alternativa sem IA; contato; formatos acessíveis e outras línguas quando necessário.
+C: Transparência; acessibilidade.
+
+DISC: Analise por que as normas sobre IA, dados e direitos autorais precisam ser conferidas periodicamente e como organizar essa revisão na escola.
+R: Normas mudam; conferir fontes oficiais; responsável pela revisão; calendário semestral; registro das versões consultadas.
+C: Justificativa; organização exequível.
+
+DISC: Redija um parágrafo reflexivo sobre o que mudará na sua forma de tratar dados e autoria nos seus trabalhos após estudar este capítulo.
+R: Resposta pessoal: práticas atuais; riscos identificados; mudanças concretas; compromissos.
+C: Reflexividade; coerência com o capítulo; ações viáveis.
+
+DISC: Compare o risco de colar um manuscrito, um projeto ou um trabalho de terceiros em um sistema externo com o risco de colar um texto de domínio público, e explique a diferença em termos de privacidade, direitos autorais e autoria.
+R: Material de terceiros envolve confidencialidade, dados pessoais, direitos autorais e autoria alheia, além de eventual retenção pelo serviço; domínio público não tem esses riscos, ainda que o resultado deva ser verificado.
+C: Distinção correta entre os três eixos; exemplos; cautela com a verificação.
