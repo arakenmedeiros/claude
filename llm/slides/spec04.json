@@ -23,20 +23,9 @@
     "Com outro final, \"ela\" passa a ser a professora",
     "Seu cérebro pondera quais palavras da frase importam",
     "O modelo precisa fazer algo equivalente, em cada posição",
-    "Até 2017: redes recorrentes, que leem palavra por palavra"
+    "Até 2017: redes recorrentes, palavra por palavra; atenção (Bahdanau et al., 2015) e Transformer (Vaswani et al., 2017) mudaram isso"
    ],
-   "notas": "Leia a frase do capítulo em voz alta: a professora disse à aluna que ela tinha acertado a prova. Pergunte quem acertou. Provavelmente a aluna. Troque o final para precisava corrigir a prova: agora é a professora. Nosso cérebro olha as outras palavras e pondera quais importam. O modelo de linguagem precisa fazer algo equivalente, em cada posição, para centenas ou milhares de palavras ao mesmo tempo. Contexto histórico: até 2017, o recurso dominante eram redes recorrentes, que leem o texto palavra por palavra e carregam um resumo numa memória de tamanho fixo; no fim de um parágrafo longo os detalhes do início podem ter se perdido, e o processamento sequencial é difícil de acelerar. Pergunta: que palavras vocês olharam para decidir?"
-  },
-  {
-   "tipo": "topico",
-   "titulo": "Da atenção ao Transformer",
-   "itens": [
-    "Atenção (Bahdanau; Cho; Bengio, 2015): olhar direto para qualquer parte da entrada",
-    "Transformer (Vaswani et al., 2017): modelo inteiro construído em torno dela",
-    "Pergunta guia: como decidir quais posições são relevantes?",
-    "E como tornar isso treinável em paralelo e escalável?"
-   ],
-   "notas": "Apresente a linha do tempo mínima do capítulo. O mecanismo de atenção, de Bahdanau, Cho e Bengio, em 2015, permitiu olhar diretamente para qualquer parte da entrada em vez de depender de um resumo único. A arquitetura Transformer, de Vaswani e colaboradores, em 2017, construiu o modelo inteiro em torno da atenção. A pergunta que guia o capítulo é: como um modelo decide, em cada posição, quais outras posições do texto são relevantes, e como isso se torna uma arquitetura que podemos treinar em paralelo e escalar a bilhões de parâmetros? Não entre em detalhes técnicos ainda. Pergunta à turma: qual a vantagem de poder treinar em paralelo? Resposta de partida: aproveita melhor o hardware, o que retomaremos com a máscara causal."
+   "notas": "Leia a frase em voz alta e pergunte quem acertou a prova: provavelmente a aluna. Troque o final para precisava corrigir a prova: agora é a professora. Nosso cérebro olha as outras palavras e pondera quais importam. O modelo de linguagem precisa fazer algo equivalente, em cada posição, para centenas ou milhares de palavras ao mesmo tempo. Contexto histórico: até 2017, o recurso dominante eram redes recorrentes, que leem o texto palavra por palavra e carregam um resumo numa memória de tamanho fixo; no fim de um parágrafo longo os detalhes do início podem ter se perdido, e o processamento sequencial é difícil de acelerar. Mencione a pergunta guia: como decidir quais posições são relevantes e treinar isso em paralelo, em escala? A atenção, de Bahdanau, Cho e Bengio, e o Transformer, de Vaswani e colaboradores, respondem a isso. Pergunta: que palavras vocês olharam para decidir?"
   },
   {
    "tipo": "figura",
@@ -231,7 +220,7 @@
     "Blocos: 84,9 milhões; embeddings: 38,4 milhões",
     "Total ≈ 123,3 milhões; em float16, cerca de 247 MB"
    ],
-   "notas": "Desprezando vieses e normalizações, cada bloco tem 4 d ao quadrado parâmetros na atenção e 8 d ao quadrado na FFN, total 12 d ao quadrado. Com N blocos e uma tabela de embeddings V por d, possivelmente compartilhada com a projeção de saída, o total é aproximadamente 12 N d ao quadrado mais V d. Exemplo hipotético do capítulo: N igual a 12, d igual a 768 e V igual a 50.000. Blocos: 12 vezes 12 vezes 768 ao quadrado, 84.934.656, cerca de 84,9 milhões. Embeddings: 38,4 milhões. Total aproximado: 123,3 milhões; a código real imprime 123.334.656. Em float16, 2 bytes por parâmetro, cerca de 247 MB. É uma configuração hipotética, que mostra ordem de grandeza. Exemplo 2: d igual a 512 e d_ff igual a 2.048 dá 3,1 milhões por bloco. Pergunta: que fração do bloco é a FFN? Dois terços."
+   "notas": "Desprezando vieses e normalizações, cada bloco tem 4 d ao quadrado parâmetros na atenção e 8 d ao quadrado na FFN, total 12 d ao quadrado. Com N blocos e uma tabela de embeddings V por d, possivelmente compartilhada com a projeção de saída, o total é aproximadamente 12 N d ao quadrado mais V d. Exemplo hipotético do capítulo: N igual a 12, d igual a 768 e V igual a 50.000. Blocos: 12 vezes 12 vezes 768 ao quadrado, 84.934.656, cerca de 84,9 milhões. Embeddings: 38,4 milhões. Total aproximado: 123,3 milhões; o código real imprime 123.334.656. Em float16, 2 bytes por parâmetro, cerca de 247 MB. É uma configuração hipotética, que mostra ordem de grandeza. Exemplo 2: d igual a 512 e d_ff igual a 2.048 dá 3,1 milhões por bloco. Pergunta: que fração do bloco é a FFN? Dois terços."
   },
   {
    "tipo": "tabela",
