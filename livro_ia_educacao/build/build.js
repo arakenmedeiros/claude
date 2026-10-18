@@ -187,9 +187,12 @@ function ativ(b) {
 }
 function table(b) {
   const rows = b.rows; const n = rows[0].length;
+  if (!rows.every((r)=>r.length===rows[0].length)) console.error("TABELA IRREGULAR:", JSON.stringify(rows.slice(0,3)));
   const lens = new Array(n).fill(0).map((_, j) => Math.max(...rows.map((r) => Math.min(44, Math.max(7, (r[j] || "").length)))));
   const tot = lens.reduce((a, c) => a + c, 0);
-  let widths = lens.map((l) => Math.max(1000, Math.floor((l / tot) * CW)));
+  const minW = Math.min(1000, Math.floor(CW / n * 0.6));
+  let widths = lens.map((l) => Math.max(minW, Math.floor((l / tot) * CW)));
+  { const sum = widths.reduce((a, c) => a + c, 0); if (sum > CW) widths = widths.map((w) => Math.floor(w * CW / sum)); }
   widths[widths.length - 1] += CW - widths.reduce((a, c) => a + c, 0);
   const bd = { style: BorderStyle.SINGLE, size: 4, color: C.mid };
   const trs = rows.map((r, ri) => new TableRow({ tableHeader: ri === 0, cantSplit: true, children: r.map((c, j) => new TableCell({ width: { size: widths[j], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, fill: ri === 0 ? C.pri : ri % 2 === 0 ? "FBF4EC" : "FFFFFF", color: "auto" }, margins: { top: 60, bottom: 60, left: 100, right: 100 }, borders: { top: bd, bottom: bd, left: bd, right: bd }, verticalAlign: VerticalAlign.CENTER, children: [new Paragraph({ spacing: { after: 0, line: 252 }, children: runs(c, { size: 18, ...(ri === 0 ? { bold: true, color: "FFFFFF" } : {}) }) })] })) }));
