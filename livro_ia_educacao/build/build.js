@@ -201,7 +201,7 @@ function figure(b) {
   if (!fs.existsSync(file)) { console.warn("FIGURA AUSENTE:", b.id); return [P("[figura ausente: " + b.id + "]")]; }
   const { w, h } = pngSize(file);
   let dw = Math.min(600, (w / 200) * 96), dh = (dw * h) / w;
-  if (dh > 430) { dh = 430; dw = (dh * w) / h; }
+  if (dh > 520) { dh = 520; dw = (dh * w) / h; }
   const alt = b.caption + (b.desc ? " Descrição: " + b.desc : "");
   const out = [
     new Paragraph({ alignment: AlignmentType.CENTER, keepNext: true, spacing: { before: 120, after: 60 }, children: [new ImageRun({ type: "png", data: fs.readFileSync(file), transformation: { width: Math.round(dw), height: Math.round(dh) }, altText: { title: b.id, description: alt.replace(/[{}]/g, ""), name: b.id } })] }),

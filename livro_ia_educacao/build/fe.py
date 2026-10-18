@@ -176,7 +176,7 @@ def fluxo(name, passos, w=8.4, cor=TERRA, h=None, fs=8.2, wrap_at=18, notas=None
         y = H - 3 - (r + 1) * (bh + 6) + 3
         col = CL[i % len(CL)] if cor == "multi" else cor
         rbox(ax, x, y, bw, bh, "", fc=WHITE, ec=col, lw=1.8, r=2.5, z=2)
-        rbox(ax, x, y + bh - 6.2, bw, 6.2, f"{i + 1}. {t}", fc=col, tc="white", bold=True, fs=fs, r=2.5, wrap_at=wrap_at + 4, z=3)
+        rbox(ax, x, y + bh - 6.2, bw, 6.2, f"{i + 1}. {t}", fc=col, tc="white", bold=True, fs=fs - (0.9 if len(t) > 11 else 0), r=2.5, wrap_at=wrap_at + 4, z=3)
         ax.text(x + bw / 2, y + (bh - 6.2) / 2, wrap(d, wrap_at), ha="center", va="center", fontsize=fs - 1, zorder=4, linespacing=1.18)
         if c < por - 1 and i < n - 1:
             arrow(ax, (x + bw + 0.3, y + bh / 2), (x + bw + 4.7, y + bh / 2), INK, lw=1.6)
@@ -313,8 +313,7 @@ def decisao(name, nos, ligacoes, w=8.4, h=6.0, fs=7.8):
     for k, (x, y, bw, bh, t, tp) in nos.items():
         fc, ec, tc = sty[tp]
         if tp == "q":
-            ax.add_patch(Polygon([[x, y + bh / 2], [x + bw / 2, y + bh], [x + bw, y + bh / 2], [x + bw / 2, y]], fc=fc, ec=ec, lw=1.8, zorder=3))
-            ax.text(x + bw / 2, y + bh / 2, wrap(t, int(bw * 0.42)), ha="center", va="center", fontsize=fs - 0.6, zorder=5, linespacing=1.1, color=tc)
+            rbox(ax, x, y, bw, bh, t, fc=fc, ec=ec, tc=tc, fs=fs, r=2, wrap_at=int(bw * 0.72), lw=2, z=3, bold=True)
         else:
             rbox(ax, x, y, bw, bh, t, fc=fc, ec=ec, tc=tc, fs=fs, r=2, wrap_at=int(bw * 0.62), lw=1.8, z=3, bold=(tp in ("f", "x", "i")))
     def anchor(k, side):
