@@ -1,0 +1,183 @@
+@@EX 1 | Orçamento de custo e latência de um assistente | básico
+Um assistente tem 1 200 tokens de instruções fixas, 150 tokens variáveis por pedido e gera, em média, 180 tokens de saída. Use preços **hipotéticos** de 1,0 u.m. por milhão de tokens de entrada, 5,0 u.m. por milhão de tokens de saída e 0,1 u.m. por milhão para entrada servida do cache de prefixo; o preenchimento processa 5 000 tokens por segundo e cada token gerado leva 30 ms (valores hipotéticos). Para 200 000 pedidos por dia, calcule o custo diário e a latência de um pedido nas quatro configurações: (a) base; (b) saída limitada a 100 tokens; (c) prefixo fixo em cache (a latência de preenchimento passa a contar só a parte variável); (d) as duas melhorias.
+
+*Pergunta:* qual melhoria reduz mais o custo? E a latência? Os dois efeitos coincidem?
+@@SOL
+```python
+P_ENT, P_SAI, P_CACHE = 1.0, 5.0, 0.1          # u.m. por milhão de tokens (HIPOTÉTICOS)
+T_FIXO, T_VAR = 1200, 150
+PREFILL_TPS, MS_TOKEN = 5000, 30
+PEDIDOS = 200_000
+
+def avaliar(t_saida, cache):
+    p_fixo = P_CACHE if cache else P_ENT
+    custo = (T_FIXO * p_fixo + T_VAR * P_ENT + t_saida * P_SAI) / 1e6
+    tokens_prefill = T_VAR if cache else T_FIXO + T_VAR
+    lat = tokens_prefill / PREFILL_TPS + t_saida * MS_TOKEN / 1000
+    return custo, lat
+
+configs = [("(a) base", 180, False), ("(b) saída 100", 100, False), ("(c) prefixo em cache", 180, True), ("(d) as duas", 100, True)]
+base_c, base_l = avaliar(180, False)
+print(f"{'configuração':<22} {'custo/dia (u.m.)':>17} {'relativo':>9} {'latência (s)':>13} {'relativa':>9}")
+for nome, ts, ca in configs:
+    c, l = avaliar(ts, ca)
+    print(f"{nome:<22} {c*PEDIDOS:>17.1f} {c/base_c:>9.2f} {l:>13.2f} {l/base_l:>9.2f}")
+```
+@@NOTE O custo diário vai de 450 u.m. (base) para 370 limitando a saída (queda de 18%), 234 com o prefixo em cache (queda de 48%) e 154 com as duas melhorias (queda de 66%). Já a latência vai de 5,67 s para 3,27 s ao limitar a saída (queda de 42%), mas só para 5,43 s com o cache de prefixo (queda de 4%); com as duas, 3,03 s. Os efeitos **não coincidem**: o cache de prefixo é a alavanca do custo (as 1 200 tokens fixas passam a custar um décimo) e a saída curta é a alavanca da latência (cada token gerado leva 30 ms, e o preenchimento é rápido). Todos os preços e tempos são hipotéticos; o importante é o método de escrever a conta e identificar o termo dominante de cada métrica.
+@@EX 2 | Sensibilidade de cada matriz à quantização | intermediário
+Treine o `MLPLM` (`corpus.frases_lm(3000, seed=2)`, 8 épocas, `seed=0`) e meça a perplexidade em `corpus.frases_lm(600, seed=3)`. Para 4 e 3 bits, quantize **uma matriz por vez** (`E`, `W1` ou `W2`), deixando as demais em precisão cheia, com escala **por coluna**. Em seguida, monte uma configuração de **precisão mista** (a matriz mais sensível com 8 bits e as outras com 3) e compare sua perplexidade e o número de bits médios por parâmetro com o uso uniforme de 4 bits.
+
+*Pergunta:* qual matriz é a mais sensível? A precisão mista vence a uniforme de 4 bits em qualidade, em tamanho ou em ambos?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus
+from llmdidatico.modelos import MLPLM
+
+def reconstruir(W, bits):
+    qmax = 2 ** (bits - 1) - 1
+    s = np.abs(W).max(axis=0, keepdims=True) / qmax
+    s = np.where(s == 0, 1.0, s)
+    return np.clip(np.round(W / s), -qmax, qmax) * s
+
+frases = corpus.frases_lm(3000, seed=2); teste = corpus.frases_lm(600, seed=3)
+vocab = sorted({t for f in frases for t in f} | {"<s>"})
+lm = MLPLM(vocab, ctx=3, d=16, h=48, seed=0); lm.treinar(frases, epocas=8)
+P0 = {k: v.copy() for k, v in lm.P.items()}
+base = lm.perplexidade(teste)
+print(f"perplexidade original: {base:.4f}")
+
+def ppl_config(bits_por_matriz):
+    for k in ("E", "W1", "W2"):
+        lm.P[k] = reconstruir(P0[k], bits_por_matriz[k]) if bits_por_matriz.get(k) else P0[k].copy()
+    r = lm.perplexidade(teste)
+    for k in P0: lm.P[k] = P0[k].copy()
+    return r
+
+tam = {k: P0[k].size for k in ("E", "W1", "W2")}
+print(f"{'matriz':<7} {'parâmetros':>10} {'4 bits':>9} {'3 bits':>9}")
+sens = {}
+for k in ("E", "W1", "W2"):
+    p4, p3 = ppl_config({k: 4}), ppl_config({k: 3})
+    sens[k] = p3
+    print(f"{k:<7} {tam[k]:>10} {p4:>9.4f} {p3:>9.4f}")
+mais_sensivel = max(sens, key=sens.get)
+print("mais sensível a 3 bits:", mais_sensivel)
+
+def bits_medios(cfg):
+    return sum(tam[k] * cfg[k] for k in tam) / sum(tam.values())
+
+uniforme4 = {"E": 4, "W1": 4, "W2": 4}
+mista = {k: (8 if k == mais_sensivel else 3) for k in tam}
+for nome, cfg in (("uniforme 4 bits", uniforme4), ("mista (sensível 8, demais 3)", mista)):
+    print(f"{nome:<30} perplexidade {ppl_config(cfg):.4f} | bits médios por parâmetro {bits_medios(cfg):.2f}")
+```
+@@NOTE Em 3 bits, a matriz mais sensível foi `W2` (perplexidade 2,436, contra 2,412 do modelo original), seguida de `E` (2,427); `W1` quase não mudou (2,411). Em 4 bits, as três ficam entre 2,414 e 2,417. A configuração mista (8 bits em `W2` e 3 nas demais) teve perplexidade 2,428 e 5,08 bits médios por parâmetro, contra 2,426 e 4,00 bits da uniforme de 4 bits: **neste modelo, a mista não venceu**, porque `W2` não é a maior matriz e a diferença de qualidade é minúscula. O exercício mostra o método (medir a sensibilidade de cada parte antes de decidir os bits) e que a precisão mista só compensa quando a parte sensível é pequena em relação ao total. Com um modelo tão pequeno, as diferenças de milésimos estão no nível do ruído; não as generalize.
+@@EX 3 | Escolhendo o limiar de um cache semântico | intermediário
+Com `corpus.intencoes(100, seed=9)` (800 mensagens), divida as mensagens ao meio (as 400 primeiras para **calibração** e as 400 últimas para **teste**). Ajuste o `LSAEmbedder` (dim 30) apenas na calibração. Defina a resposta correta como intenção mais entidades (números, planos e produtos, como na Seção 15.9). Para cada limiar $\tau\in\{0{,}99; 0{,}95; 0{,}90; 0{,}80\}$, simule o cache (sem verificação de entidades) em cada metade e meça acerto e erro entre os acertos. Escolha na calibração o menor $\tau$ cujo erro seja de, no máximo, 15%, e verifique o erro dessa escolha no teste.
+
+*Pergunta:* o limiar escolhido na calibração mantém o erro no teste? Que ajuste de projeto reduziria o erro sem aumentar o limiar?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus
+from llmdidatico.modelos import LSAEmbedder
+
+X, y = corpus.intencoes(100, seed=9)
+ENT = ["fatura", "nota fiscal", "boleto", "serviço", "aplicativo", "contrato", "internet", "1042", "8873", "2201", "5560", "premium", "básico", "família", "empresarial"]
+entidades = lambda t: tuple(e for e in ENT if e in t.lower())
+Xc, yc, Xt, yt = X[:400], y[:400], X[400:], y[400:]
+emb = LSAEmbedder(dim=30).ajustar(Xc)
+
+def simular(Xs, ys, tau):
+    Z = emb.transformar(Xs); cz, ck, hit, erro = [], [], 0, 0
+    for t, r, z in zip(Xs, ys, Z):
+        k = (r, entidades(t))
+        if cz:
+            s = np.array(cz) @ z; j = int(s.argmax())
+            if s[j] >= tau:
+                hit += 1; erro += ck[j] != k; continue
+        cz.append(z); ck.append(k)
+    return hit / len(Xs), erro / max(hit, 1)
+
+print(f"{'tau':>5} | {'calib: acerto':>13} {'erro':>6} | {'teste: acerto':>13} {'erro':>6}")
+res = {}
+for tau in (0.99, 0.95, 0.90, 0.80):
+    res[tau] = (simular(Xc, yc, tau), simular(Xt, yt, tau))
+    (hc, ec), (ht, et) = res[tau]
+    print(f"{tau:>5.2f} | {hc:>13.3f} {ec:>6.3f} | {ht:>13.3f} {et:>6.3f}")
+ok = [t for t in res if res[t][0][1] <= 0.15]
+if ok:
+    t_esc = min(ok); print(f"\nlimiar escolhido na calibração (erro <= 15%): {t_esc}; erro no teste: {res[t_esc][1][1]:.3f}")
+else:
+    print("\nnenhum limiar atinge erro <= 15% na calibração; o menor erro observado foi", round(min(res[t][0][1] for t in res), 3))
+```
+@@NOTE Com $\tau=0{,}99$, o cache tem acerto de 14,0% e erro de 12,5% entre os acertos na calibração: foi o único limiar com erro de até 15%, e foi o escolhido. No teste, o erro desse limiar foi de 6,9% (acerto de 14,5%), menor que o da calibração, mas com poucos acertos (cerca de 58 respostas reaproveitadas em 400) a estimativa é muito incerta. Os limiares menores têm erros de 23% a 43% no teste. Mesmo no limiar mais alto, há erros porque o vetor LSA distingue mal números e nomes de planos. O ajuste de projeto que reduziria o erro sem aumentar o limiar é a **verificação de entidades** (só reaproveitar se número, plano e produto forem iguais), medida na Seção 15.9; outras opções são excluir categorias sensíveis e dar validade às entradas.
+@@ALEM
+- **Documentação do seu fornecedor ou servidor de inferência:** descreve cache de prompt, lote contínuo, limites de taxa e métricas disponíveis; confira nomes, prazos e preços vigentes antes de adaptar os exercícios a um serviço real.
+- **scikit-learn:** `TfidfVectorizer` e `TruncatedSVD` (a base do `LSAEmbedder`) permitem experimentar outros vetores para o cache semântico; compare as taxas de erro entre os acertos.
+- **SciPy:** `scipy.stats.ks_2samp` e `scipy.stats.poisson` ajudam a monitorar deriva e a gerar cargas de teste sintéticas.
+@@PROJ Plano de capacidade, custo e metas de um assistente | intermediário
+**Contexto.** A secretaria de uma universidade vai lançar um assistente e precisa decidir a capacidade e as alavancas de economia. Você fará um plano **em simulação**, com parâmetros hipotéticos declarados. O servidor processa lotes: um lote com $b$ pedidos dura $T_0+T_1 b$ segundos, com $T_0=1{,}0$ s e $T_1=0{,}1$ s. Um cache de respostas atende uma fração $h$ dos pedidos em 0,01 s. A meta de serviço é: **p95 de latência de até 3 s**. Os custos são hipotéticos: 10 u.m. por pedido atendido pelo modelo e 0 u.m. por pedido atendido pelo cache.
+
+**Tarefas.**
+
+1. Implemente a simulação do servidor com lote e cache (chegadas de Poisson).
+2. Para $B\in\{1,4,8\}$ e $h\in\{0; 0{,}3\}$, varra a taxa de chegada $\lambda$ de 0,2 a 6 pedidos por segundo (passo de 0,2) e encontre a **maior carga** em que o p95 ainda cumpre a meta. Apresente uma tabela.
+3. Para uma carga esperada de 3 pedidos por segundo, escolha a configuração mais barata que cumpre a meta, calcule o custo por 1 000 pedidos e a fração do orçamento de 3 s consumida pelo p95.
+4. Para um pico de 5 pedidos por segundo, diga se a configuração escolhida aguenta; se não, proponha duas medidas (por exemplo, limite de taxa ou mais réplicas) e justifique.
+5. Escreva um parágrafo com os riscos do plano (taxa de acerto do cache em dados reais, erros do cache semântico, tempos de serviço que não são constantes) e as métricas de monitoramento.
+
+**Entregáveis.** Código, tabela, escolha justificada e o parágrafo.
+@@RUBRICA
+- Simulação correta do servidor com lote e cache (3 pontos).
+- Tabela de capacidade por configuração, com o critério de p95 aplicado corretamente (3 pontos).
+- Escolha da configuração e cálculo do custo, com análise do pico (2 pontos).
+- Discussão crítica dos riscos e das métricas de monitoramento, reconhecendo que os parâmetros são hipotéticos (2 pontos).
+@@SOL
+```python
+import numpy as np
+
+T0, T1, T_HIT, META_P95, CUSTO_MODELO = 1.0, 0.1, 0.01, 3.0, 10.0       # parâmetros HIPOTÉTICOS
+
+def simular(lam, B, h, n=30_000, seed=0):
+    rng = np.random.default_rng(seed)
+    chegada = np.cumsum(rng.exponential(1 / lam, n)); hit = rng.random(n) < h
+    lat = np.full(n, T_HIT); idx = np.where(~hit)[0]; a = chegada[idx]; m = len(a); livre, i = 0.0, 0
+    while i < m:
+        ini = max(livre, a[i]); j = i
+        while j < m and a[j] <= ini and j - i < B:
+            j += 1
+        livre = ini + T0 + T1 * (j - i); lat[idx[i:j]] = livre - a[i:j]; i = j
+    return lat[n // 20:]
+
+lams = np.round(np.arange(0.2, 6.01, 0.2), 1)
+cap = {}
+print(f"{'B':>3} {'h':>5} {'maior carga com p95 <= 3 s (req/s)':>38}")
+for B in (1, 4, 8):
+    for h in (0.0, 0.3):
+        # a maior carga em que a meta vale para todas as cargas menores (a curva é crescente)
+        maior = 0.0
+        for l in lams:
+            if np.quantile(simular(l, B, h), 0.95) <= META_P95: maior = l
+            else: break
+        cap[(B, h)] = maior
+        print(f"{B:>3} {h:>5.1f} {maior:>38.1f}")
+
+LAM = 3.0
+print(f"\ncarga esperada: {LAM} req/s")
+cands = []
+for (B, h), maior in cap.items():
+    if maior >= LAM:
+        p95 = np.quantile(simular(LAM, B, h), 0.95)
+        cands.append((CUSTO_MODELO * (1 - h) * 1000, B, h, p95))
+cands.sort()
+for custo, B, h, p95 in cands:
+    print(f"B={B} h={h:.1f}: custo por 1000 pedidos = {custo:.0f} u.m.; p95 = {p95:.2f} s ({p95/META_P95:.0%} da meta)")
+escolha = cands[0]
+print("escolha:", f"B={escolha[1]}, h={escolha[2]}")
+PICO = 5.0
+p95_pico = np.quantile(simular(PICO, escolha[1], escolha[2]), 0.95)
+print(f"no pico de {PICO} req/s, a configuração escolhida tem p95 = {p95_pico:.2f} s ({'cumpre' if p95_pico <= META_P95 else 'NÃO cumpre'} a meta)")
+```
+@@NOTE Sem lote e sem cache, o p95 de 3 s só é cumprido até 0,2 pedido/s; o cache de 30% eleva isso a 0,6. Com lote de 4, a capacidade sobe a 1,6 (2,6 com cache) e, com lote de 8, a 2,6 (4,0 com cache). Para a carga esperada de 3 pedidos por segundo, apenas a configuração B=8 com cache de 30% a cumpre (p95 de 2,66 s, 89% da meta), a um custo de 7 000 u.m. por 1 000 pedidos (o custo hipotético sem cache seria 10 000). No pico de 5 pedidos por segundo, o p95 sobe a 3,59 s e a meta **não é cumprida**: seriam necessárias medidas como limitar a taxa (recusando o excesso com mensagem clara), adicionar réplicas, subir a taxa de acerto do cache com perguntas frequentes seguras, ou tolerar a degradação por um período curto. Os riscos incluem uma taxa de acerto de cache real diferente de 30% (e erros do cache semântico), tempos de serviço variáveis e que dependem do tamanho da resposta (aqui constantes), e rajadas. Monitoramento: p95 e p99, taxa de acerto do cache e erro entre acertos amostrado, tamanho da fila, recusas e custo por 1 000 pedidos. Todos os parâmetros são hipotéticos.

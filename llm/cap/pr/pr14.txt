@@ -42,7 +42,7 @@ for _ in range(500):
         recusadas += 1
 print(f"500 expressões aleatórias: {numeros} avaliadas, {recusadas} recusadas com ValueError, 0 exceções inesperadas")
 ```
-@@NOTE TBD
+@@NOTE No item (a), as 8 chamadas deram 3 resultados corretos, 1 erro de ferramenta desconhecida e 4 erros de argumentos inválidos (campo extra, tipo errado, valor fora da enumeração e argumentos que não formam um objeto). No item (b), a segunda chamada devolveu o protocolo já existente e houve **1** execução real. No item (c), das 500 expressões aleatórias, 18 foram avaliadas e 482 recusadas com `ValueError`, sem nenhuma exceção inesperada. Um detalhe instrutivo: a **primeira versão** da calculadora falhou nesse teste com `RecursionError` (muitos sinais de menos aninhados), e foi corrigida para converter esse caso em `ValueError`. O teste garante o **contrato de erros** (número ou `ValueError`) para essas 500 entradas e que nenhuma delas executou código. Ele **não** prova que não existam outros defeitos (consumo de tempo ou de memória com entradas adversariais, por exemplo), nem verifica o **valor** das contas; por isso se acrescentam limites de tamanho e de potência, e a execução da ferramenta sob tempo limite.
 @@EX 2 | Qual o limite de passos? | intermediário
 Com `gerar_tarefas()`, a base `kb_com_envenenados()` e falhas de intensidade 0,4 (`p_arg_invalido=0.2`, `p_ferramenta_errada=0.1`, `p_laco=0.1`, `p_recupera_erro=0.7`), avalie o agente com 20 sementes para limites de passos de 2 a 8. Para cada limite, informe o sucesso com IC 95% (bootstrap sobre as **tarefas**), os tokens médios e o **custo por sucesso** (tokens médios divididos pelo sucesso). Escolha o menor limite cujo sucesso fique a até 1 ponto percentual do máximo observado.
 
@@ -68,7 +68,7 @@ escolhido = min(l[0] for l in linhas if l[1] >= melhor - 0.01)
 barato = min(linhas, key=lambda l: l[3])
 print(f"sucesso máximo: {melhor:.3f} | menor limite a até 1 p.p. do máximo: {escolhido} | menor custo por sucesso: limite {barato[0]}")
 ```
-@@NOTE TBD
+@@NOTE O sucesso sobe de 0,456 com 2 passos para 0,839 com 6 e **estabiliza** daí em diante (0,839 de 6 a 8). O menor limite a até 1 ponto percentual do máximo é **5** (0,830). O menor custo por sucesso, porém, ocorre com limite **3** (cerca de 133 tokens por sucesso, contra cerca de 142 com 5 ou 6), mas ao preço de 8 pontos percentuais de sucesso (0,758 contra 0,839): o critério de custo, sozinho, escolheria um agente que falha mais. O limite deve ser escolhido pelo valor que se atribui ao sucesso e ao custo, e não só por um deles. Com falhas mais frequentes, as recuperações consomem mais passos, a curva satura mais tarde (o limite necessário sobe) e o custo por sucesso aumenta.
 @@EX 3 | Fluxo, agente ou híbrido? | avançado
 Construa uma solução **híbrida**: se `classificar_tarefa` indicar `calculo`, `prazo` ou `kb`, execute `fluxo_roteamento` (caminho fixo); caso contrário (`multa`, `trancar`), use o agente com falhas de intensidade 0,2. Compare, no conjunto `gerar_tarefas()`, a taxa de sucesso e o número médio de passos (cada chamada de ferramenta do fluxo conta como 1 passo, mais 1 passo para a resposta) de: (a) fluxo puro (tarefas sem rota contam como fracasso), (b) agente puro e (c) híbrido, com 20 sementes para o agente (o fluxo é determinístico).
 
@@ -99,7 +99,7 @@ print(f"{'(c) híbrido':<14} {hib_taxa.mean():>8.3f} {hib_passos.mean():>14.2f}"
 n_agente = sum(classificar_tarefa(t.texto) not in {"calculo", "prazo", "kb"} for t in T)
 print(f"tarefas desviadas ao agente no híbrido: {n_agente} de {len(T)}")
 ```
-@@NOTE TBD
+@@NOTE O fluxo puro acerta 0,678 (as 18 tarefas de multa e de trancamento, sem rota, contam como fracasso), com 1,79 passos; o agente acerta 0,867 com 2,30 passos; o híbrido acerta 0,867 com 2,22 passos, desviando 18 das 87 tarefas ao agente. No **sucesso**, o híbrido empata com o agente puro (os erros restantes são, em sua maior parte, falhas de recuperação da base, que afetam as duas soluções), e o ganho de passos é pequeno (cerca de 0,08 por tarefa). O que o híbrido ganha é **previsibilidade e menor superfície de risco** nas tarefas roteáveis: não há laço, nem ferramenta errada, nem variabilidade, e o agente só atua onde é necessário. O custo é manter as rotas. O híbrido seria claramente melhor quando as falhas do modelo são mais frequentes ou mais custosas, ou quando as ferramentas das tarefas roteáveis são arriscadas, pois removeria o modelo da decisão exatamente onde ela não é necessária.
 @@ALEM
 - **Documentação do SDK e da API de um provedor de LLM:** leia a seção de uso de ferramentas e adapte o `python-ni` da seção 14.16 a um modelo real, mantendo o menor privilégio, a confirmação humana e o registro de auditoria.
 - **Publicação pública sobre padrões de agentes** (Anthropic, 2024): leia o texto original sobre fluxos e agentes e compare os padrões com os do capítulo.
@@ -179,4 +179,4 @@ print("--- traço com bloqueio (sanitizador desligado, menor privilégio ligado)
 print(ex_i.formatar(largura=80))
 print("bloqueios:", ex_i.bloqueios, "| e-mails enviados:", amb_i.outbox)
 ```
-@@NOTE TBD
+@@NOTE Foram 93 tarefas (87 geradas e 6 fora do escopo) com 10 sementes cada: 930 execuções por configuração. A configuração A (sem guardrails) teve sucesso de 0,785 (IC 95% de 0,704 a 0,861) e **74 efeitos indevidos** (comunicados enviados por obediência a instruções embutidas ou por ferramenta errada); a B (com guardrails) teve sucesso de 0,865 (IC de 0,794 a 0,927) e **0** efeitos indevidos, com 2,31 passos e 102 tokens médios, contra 2,35 passos e 109 tokens em A. Os intervalos de A e B se **sobrepõem** parcialmente; a diferença nos efeitos indevidos (74 contra 0) é a evidência mais forte. A auditoria de B foi íntegra e não continha o CPF nem o e-mail da tarefa de teste. O primeiro traço mostra um trancamento concluído (consulta o prazo, protocola, responde); o segundo, com o sanitizador desligado, mostra o menor privilégio bloqueando o envio do comunicado, e o agente ainda responde corretamente. Os números descrevem o **simulador** com falhas e uma obediência que nós programamos, sobre tarefas sintéticas e dois ataques que nós escrevemos: não permitem concluir nada sobre modelos reais, sobre ataques novos nem sobre a segurança em produção.
