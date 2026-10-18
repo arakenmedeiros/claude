@@ -676,19 +676,31 @@ def fluxo_orquestrador(pergunta_composta: str, registro: Registro):
     return subs, respostas, " ".join(f"({i + 1}) {r}" for i, r in enumerate(respostas))
 
 
+def _candidatas(t: str, o: str):
+    """Frases dos documentos recuperados, ordenadas por sobreposição lexical com a pergunta: [(sobreposição, id, frase)]."""
+    o = re.sub(r"</?dado_externo[^>]*>", "", o)
+    q = set(modelos.tokenizar_sem_stop(t))
+    cand = []
+    for ln in o.strip().split("\n"):
+        m = re.match(r"\[(D\d+)\] [^:]+: (.*)", ln)
+        if m:
+            for fr in re.split(r"(?<=[.!?])\s+", m.group(2)):
+                cand.append((len(q & set(modelos.tokenizar_sem_stop(fr))), m.group(1), fr))
+    return sorted(cand, key=lambda c: -c[0])
+
+
 def fluxo_avaliador_otimizador(pergunta: str, registro: Registro, max_iter: int = 3):
-    """Avaliador-otimizador: gerador responde com os k primeiros documentos; avaliador exige sobreposição lexical mínima
-    com a pergunta e fonte citada; se reprovar, a próxima iteração amplia k. Tudo regra, sem LLM."""
+    """Avaliador-otimizador: o GERADOR propõe a melhor frase candidata com fonte; o AVALIADOR (regra) exige fonte citada e
+    um fato verificável (algum algarismo); se reprova, o feedback faz o gerador tentar a próxima candidata."""
+    r = registro.executar("buscar_base", {"consulta": pergunta, "top_k": 3})
+    cand = _candidatas(pergunta, r.conteudo) if r.ok else []
     hist = []
-    for k in range(1, max_iter + 1):
-        r = registro.executar("buscar_base", {"consulta": pergunta, "top_k": k})
-        resp = ModeloSimulado._resposta_kb(pergunta, r.conteudo) if r.ok else "não consta na base"
-        q = set(modelos.tokenizar_sem_stop(pergunta))
-        sobre = len(q & set(modelos.tokenizar_sem_stop(resp))) / max(1, len(q))
-        aprovado = "fonte:" in resp and sobre >= 0.4
-        hist.append((k, resp, round(sobre, 2), aprovado))
-        if aprovado:
-            break
+    for i, (sob, did, fr) in enumerate(cand[:max_iter], 1):
+        rascunho = f"{fr} (fonte: {did})"
+        falhas = [] if re.search(r"\d", fr) else ["sem fato verificável (algarismo)"]
+        hist.append((i, rascunho, falhas))
+        if not falhas:
+            return hist
     return hist
 
 
@@ -824,3 +836,43 @@ def rodar_tarefa(t: Tarefa, falhas: Falhas, semente: int, kb: BaseBM25, max_pass
 
 def kb_com_envenenados() -> BaseBM25:
     return BaseBM25(list(DOCS) + ENVENENADOS)
+
+
+class ModeloRoteirizado:
+    """Modelo SIMULADO totalmente programável: devolve, em ordem, as ações de um roteiro (útil para testes e para
+    reproduzir falhas específicas). Depois do fim do roteiro, repete a última ação."""
+
+    def __init__(self, roteiro: list):
+        self.roteiro, self.i = list(roteiro), 0
+
+    def decidir(self, tarefa, msgs) -> Acao:
+        a = self.roteiro[min(self.i, len(self.roteiro) - 1)]
+        self.i += 1
+        return a
+
+
+def avaliar(tarefas: list, falhas: Falhas, kb: BaseBM25, K: int = 20, **kw) -> dict:
+    """Roda cada tarefa com K sementes e agrega: taxa de sucesso POR TAREFA, passos, tokens (proxy), desfechos e incidentes."""
+    from collections import Counter
+    import numpy as np
+    taxa, passos, tokens = [], [], []
+    desf, incid = Counter(), Counter()
+    for t in tarefas:
+        oks, ps, tk = [], [], []
+        for s in range(K):
+            ok, ex, amb = rodar_tarefa(t, falhas, s, kb, **kw)
+            oks.append(float(ok)); ps.append(ex.n_passos); tk.append(ex.tokens_entrada)
+            for _, a, r in ex.passos:
+                if r is not None and not r.ok:
+                    incid[r.tipo_erro] += 1
+            if ok:
+                desf["sucesso"] += 1
+            elif any(p in ex.efeitos for p in t.proibidos):
+                desf["ação indevida"] += 1
+            elif ex.parada != "resposta":
+                desf[ex.parada] += 1
+            else:
+                desf["resposta incorreta"] += 1
+        taxa.append(np.mean(oks)); passos.append(np.mean(ps)); tokens.append(np.mean(tk))
+    return {"taxa": np.array(taxa), "passos": np.array(passos), "tokens": np.array(tokens), "desfechos": desf,
+            "incidentes": incid, "tipos": [t.tipo for t in tarefas]}
