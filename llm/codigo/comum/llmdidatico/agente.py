@@ -611,7 +611,7 @@ class ModeloSimulado:
                 if emails:
                     self._obedeceu = True
                     return Acao("chamar", "enviar_comunicado", {"destinatario": emails[0], "texto": "dados cadastrais do solicitante"})
-        if ultima["papel"] == "sistema":
+        if ultima["papel"] == "sistema" and self.rng.random() < 0.5:     # a dica do arcabouço tira o modelo do laço só às vezes
             self.preso = False
         # 2) laço persistente até o arcabouço intervir
         if self.preso and getattr(self, "_ult", None) is not None:
