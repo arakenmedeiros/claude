@@ -1,0 +1,424 @@
+MC: O RPROP utiliza, para atualizar cada peso,
++ apenas o sinal da derivada parcial, com um passo individual adaptativo.
+- o valor do gradiente multiplicado por uma taxa global fixa.
+- a Hessiana completa da perda.
+- o gradiente médio de um minilote sorteado.
+- uma estimativa de curvatura por secante.
+R: O RPROP descarta a magnitude do gradiente e usa o sinal e passos individuais $\Delta_i$.
+
+MC: A regra de Manhattan, com passo fixo $\Delta$, tem como limitação principal
++ não convergir: perto do mínimo o peso oscila com amplitude da ordem de $\Delta$.
+- exigir o cálculo da Hessiana.
+- depender da magnitude do gradiente.
+- só funcionar em redes com uma camada.
+- divergir sempre.
+R: Com passo fixo, o sinal do gradiente troca a cada passo perto do mínimo, e o peso ziguezagueia.
+
+MC: Os valores típicos de $\eta^+$ e $\eta^-$ no RPROP são
++ $1{,}2$ e $0{,}5$.
+- $0{,}5$ e $1{,}2$.
+- $2$ e $0{,}1$.
+- $1{,}0$ e $1{,}0$.
+- $10$ e $0{,}01$.
+R: $\eta^+>1$ (aumenta o passo) e $\eta^-<1$ (reduz).
+
+MC: Com $\Delta_i(t-1)=0{,}40$, $\eta^+=1{,}2$, $\Delta_{\max}=50$ e $g_i(t-1)g_i(t)>0$, o novo passo individual é
++ $0{,}48$
+- $0{,}20$
+- $0{,}40$
+- $0{,}33$
+- $1{,}20$
+R: $\min(1{,}2\cdot0{,}40,\ 50)=0{,}48$.
+
+MC: Com $\Delta_i(t-1)=0{,}40$, $\eta^-=0{,}5$, $\Delta_{\min}=10^{-6}$ e $g_i(t-1)g_i(t)<0$, o novo passo individual é
++ $0{,}20$
+- $0{,}48$
+- $0{,}40$
+- $0{,}80$
+- $0{,}10$
+R: $\max(0{,}5\cdot0{,}40,\ 10^{-6})=0{,}20$.
+
+MC: Se $g_i(t)=-3$ e $\Delta_i(t)=0{,}2$, o deslocamento do peso é
++ $\Delta w_i=+0{,}2$
+- $\Delta w_i=-0{,}2$
+- $\Delta w_i=+0{,}6$
+- $\Delta w_i=-0{,}6$
+- $\Delta w_i=0$
+R: $\Delta w=-\mathrm{sinal}(g)\Delta=-(-1)(0{,}2)=+0{,}2$.
+
+MC: O RPROP deve ser usado em modo de lote porque
++ o produto $g_i(t-1)g_i(t)$ só é informativo se os dois gradientes se referem ao mesmo conjunto de dados.
+- o RPROP não calcula gradientes.
+- o minilote não tem sinal.
+- o lote usa menos memória.
+- o RPROP depende de uma taxa global.
+R: Com gradientes estocásticos, a troca de sinal ocorre por ruído e encolhe o passo sem necessidade.
+
+MC: Uma propriedade do RPROP é que seu comportamento
++ não muda se a perda for multiplicada por uma constante positiva.
+- depende fortemente da escala da perda.
+- exige reescalar a taxa de aprendizagem.
+- muda se trocarmos soma por média, necessariamente.
+- depende do número de amostras.
+R: O sinal do gradiente (e a comparação de perdas) não mudam ao multiplicar $E$ por $c>0$.
+
+MC: No RPROP+, quando $g_i(t-1)g_i(t)<0$, ocorre
++ redução do passo individual, desfazimento do último passo ($\Delta w_i(t)=-\Delta w_i(t-1)$) e $g_i(t)\leftarrow0$.
+- apenas aumento do passo individual.
+- nenhum retrocesso e continuação com o gradiente atual.
+- retrocesso apenas se a perda aumentou.
+- redução do passo e passo nulo, sem guardar o gradiente.
+R: É o retrocesso (*weight-backtracking*) incondicional.
+
+MC: No RPROP−, quando $g_i(t-1)g_i(t)<0$,
++ o passo individual é reduzido e o peso segue com $-\mathrm{sinal}(g_i)\Delta_i$ (sem retrocesso).
+- o último passo é desfeito.
+- o peso não se move nesta iteração.
+- $\Delta_i$ é multiplicado por $\eta^+$.
+- a perda é comparada com a anterior.
+R: Não há retrocesso; usa-se o passo reduzido já na direção do novo gradiente.
+
+MC: No iRPROP+, o último passo de um peso só é desfeito se
++ a perda total aumentou em relação à iteração anterior.
+- o gradiente é nulo.
+- o passo individual atingiu $\Delta_{\max}$.
+- o peso está próximo de zero.
+- sempre que o sinal troca.
+R: Retrocesso condicional: $E(t)>E(t-1)$.
+
+MC: No iRPROP−, quando o sinal do gradiente troca,
++ o passo individual é reduzido, $g_i\leftarrow0$ e o peso não se move nessa iteração.
+- o último passo é desfeito.
+- o peso se move com o novo gradiente.
+- $\Delta_i$ é multiplicado por $\eta^+$.
+- o treinamento para.
+R: Com $g_i=0$, $\Delta w_i=-\mathrm{sinal}(0)\Delta_i=0$.
+
+MC: Entre as quatro variantes, a única que usa o valor da perda $E$ nas suas regras é
++ iRPROP+
+- RPROP+
+- RPROP−
+- iRPROP−
+- nenhuma
+R: Só o iRPROP+ compara $E(t)$ com $E(t-1)$.
+
+MC: As variantes que precisam guardar o deslocamento anterior $\Delta w(t-1)$ são
++ RPROP+ e iRPROP+
+- RPROP− e iRPROP−
+- apenas o iRPROP−
+- todas as quatro
+- nenhuma
+R: Só elas podem desfazer o último passo.
+
+MC: A atribuição $g_i(t)\leftarrow0$ após a mudança de sinal tem a função de
++ evitar que o passo individual seja reduzido duas vezes seguidas, pois na iteração seguinte o produto será zero.
+- aumentar o passo individual.
+- impedir que o peso se mova para sempre.
+- zerar a perda.
+- reiniciar a rede.
+R: No caso do produto nulo, $\Delta_i$ não muda.
+
+MC: Os algoritmos iRPROP+ e iRPROP− foram propostos por
++ Igel e Hüsken (2000, 2003).
+- Riedmiller e Braun (1993).
+- Fahlman (1988).
+- Hagan e Menhaj (1994).
+- Jacobs (1988).
+R: "Improved Rprop", Igel e Hüsken.
+
+MC: O RPROP original foi proposto por
++ Riedmiller e Braun (1993).
+- Igel e Hüsken (2003).
+- Levenberg (1944).
+- Rosenblatt (1958).
+- Minai e Williams (1990).
+R: IEEE International Conference on Neural Networks, 1993.
+
+MC: Nos valores padrão do `trainrp` do MATLAB (documentação atual), o passo inicial `delta0` é
++ $0{,}07$
+- $0{,}1$
+- $0{,}5$
+- $1{,}0$
+- $0{,}01$
+R: `delt_inc`$=1{,}2$, `delt_dec`$=0{,}5$, `delta0`$=0{,}07$ e `deltamax`$=50$ (conferir na versão utilizada).
+
+MC: No MATLAB, os dados de entrada e alvo de `train` têm
++ as amostras nas colunas.
+- as amostras nas linhas.
+- uma amostra por arquivo.
+- apenas uma amostra.
+- amostras e atributos misturados.
+R: Diferentemente do NumPy e do scikit-learn, o MATLAB usa colunas para amostras.
+
+MC: A documentação do `trainrp` do MATLAB
++ não discrimina qual das quatro variantes é implementada; não se deve assumir equivalência.
+- afirma que implementa o iRPROP+.
+- afirma que implementa o RPROP+ sempre.
+- implementa o Quickprop.
+- usa o método de Newton.
+R: Por isso o livro recomenda relatar a variante e os parâmetros em qualquer comparação.
+
+MC: A parada antecipada com paciência $p=3$ interrompe o treinamento quando
++ a perda de validação não melhora por 3 épocas consecutivas.
+- a perda de treino fica nula.
+- a perda de validação aumenta uma única vez.
+- o gradiente é nulo por 3 épocas.
+- passam 3 épocas.
+R: Depois da parada, restauram-se os parâmetros da melhor época.
+
+MC: Ao final de uma parada antecipada, os parâmetros devolvidos devem ser
++ os da época de menor perda de validação.
+- os da última época treinada.
+- os da primeira época.
+- a média dos parâmetros de todas as épocas.
+- os da época de menor perda de treino.
+R: A melhor época (menor validação) é o ponto de restauração.
+
+MC: Depois de usar o conjunto de validação para decidir a parada, ele
++ deixa de ser um estimador imparcial do desempenho; é necessário um teste separado.
+- continua imparcial.
+- passa a ser usado como treino.
+- dispensa o conjunto de teste.
+- fica com erro nulo.
+R: Como a validação orientou escolhas, o erro nela é otimista.
+
+MC: No experimento do capítulo (rede 1–100–1, 10 sementes), o RMSE de teste médio foi
++ $0{,}437$ com restauração da melhor época e $0{,}528$ após as 3000 épocas.
+- $0{,}528$ com restauração da melhor época e $0{,}437$ após as 3000 épocas.
+- idêntico nos dois casos.
+- zero com restauração.
+- maior que $1$ nos dois casos.
+R: A parada antecipada venceu em 10 de 10 sementes.
+
+MC: Segundo as regras de nomeação do capítulo, o nome mais adequado para o número de parâmetros de uma rede é
++ `n_params`
+- `N`
+- `l`
+- `x`
+- `Parametros_da_Rede`
+R: Prefixo `n_` para contagens, `snake_case`, sem ambiguidade.
+
+MC: No livro, usar `delta` para a sensibilidade do backpropagation (em `MLP.grad`) e também para o passo individual (em `rprop`) é
++ aceitável apenas se cada módulo mantiver um único significado e o texto indicar qual; em projetos reais, prefira nomes distintos.
+- obrigatório pelo PEP 8.
+- proibido em Python.
+- indistinto, pois os dois são sempre iguais.
+- um erro que impede a execução.
+R: Um nome deve ter um só significado no contexto onde aparece.
+
+MC: Representar todos os parâmetros em um único vetor $\theta$ facilita os otimizadores porque
++ o estado por parâmetro (`delta`, `g_ant`) tem a mesma forma de $\theta$ e as atualizações são vetorizadas.
+- elimina a necessidade de calcular gradientes.
+- reduz a rede a um neurônio.
+- evita sementes aleatórias.
+- torna as camadas todas iguais.
+R: Operações como `np.where` e `np.sign` atuam em todo o vetor de uma vez.
+
+MC: Em relação ao gradiente descendente, o RPROP requer, além de $\theta$, a memória adicional de
++ três vetores de tamanho $P$ (`delta`, `g_ant` e `dw_ant`).
+- uma matriz $P\times P$.
+- um vetor por amostra.
+- a Jacobiana completa.
+- nenhuma memória adicional.
+R: Custo $O(P)$; já o Levenberg–Marquardt exige $O(P^2)$.
+
+MC: No experimento da rede 1–8–1, em 300 épocas e semente 0, o iRPROP+ teve 1776 mudanças de sinal e
++ apenas 161 retrocessos efetivos (cerca de 9%).
+- 1776 retrocessos efetivos.
+- nenhum retrocesso.
+- 1613 retrocessos efetivos.
+- 5 retrocessos.
+R: Em 91% das mudanças de sinal a perda total não havia aumentado; já no RPROP+ houve 1613 retrocessos em 1613 mudanças.
+
+MC: O que se pode concluir do experimento com as quatro variantes (rede 1–8–1, 10 sementes) e do experimento em Friedman #1?
++ Nenhuma variante é a melhor nos dois problemas; as conclusões são limitadas a poucas redes e sementes.
+- iRPROP− é sempre superior.
+- RPROP− é sempre inferior em qualquer problema.
+- RPROP+ é sempre o melhor.
+- As variantes são idênticas.
+R: Na rede 1–8–1, as variantes "i" convergiram mais cedo; em Friedman #1, o RPROP+ teve a maior mediana de $R^2$.
+
+DISC: Explique, com suas palavras, a ideia do RPROP e por que ele usa apenas o sinal do gradiente. Cite uma vantagem e uma limitação.
+R: O RPROP mantém um passo individual $\Delta_i$ por peso: se o sinal da derivada parcial se mantém entre duas iterações, o passo cresce ($\times\eta^+$); se troca, o mínimo da coordenada foi ultrapassado e o passo encolhe ($\times\eta^-$); o peso se move $-\mathrm{sinal}(g_i)\Delta_i$. Usa só o sinal porque a magnitude do gradiente varia muito entre pesos, camadas e ativações (por exemplo, $10^{-5}$ contra $10^{2}$) e é pouco confiável. **Vantagem:** dispensa a taxa de aprendizagem e é insensível à escala do gradiente. **Limitação:** exige o modo de lote (o sinal de gradientes estocásticos é ruidoso).
+
+DISC: Aplique quatro iterações, à mão, da variante RPROP− a um peso com $w_0=0$, $\Delta_0=0{,}1$, $\eta^+=1{,}2$, $\eta^-=0{,}5$ e sequência de gradientes $g=(+2;\,+1;\,-1;\,-0{,}5)$. Depois, refaça a terceira e a quarta iteração para o iRPROP− e para o RPROP+.
+R: **RPROP−:** $t=1$: $\Delta=0{,}1$ (produto nulo); $\Delta w=-0{,}1$; $w=-0{,}1$. $t=2$: $g=+1$, produto $+2>0$: $\Delta=0{,}12$; $\Delta w=-0{,}12$; $w=-0{,}22$. $t=3$: $g=-1$, produto $-1<0$: $\Delta=0{,}06$; $\Delta w=+0{,}06$; $w=-0{,}16$. $t=4$: $g=-0{,}5$, produto $(-1)(-0{,}5)>0$: $\Delta=0{,}072$; $\Delta w=+0{,}072$; $w=-0{,}088$. **iRPROP−:** $t=3$: $\Delta=0{,}06$, $g\leftarrow0$, $\Delta w=0$, $w=-0{,}22$. $t=4$: produto nulo, $\Delta=0{,}06$, $\Delta w=+0{,}06$, $w=-0{,}16$. **RPROP+:** $t=3$: $\Delta=0{,}06$; retrocede: $\Delta w=-\Delta w_{\text{ant}}=+0{,}12$; $w=-0{,}10$; $g\leftarrow0$. $t=4$: produto nulo, $\Delta=0{,}06$, $\Delta w=+0{,}06$, $w=-0{,}04$.
+
+DISC: Complete o item anterior para o iRPROP+ nos dois cenários: (a) a perda aumentou na iteração 3; (b) a perda diminuiu na iteração 3.
+R: Em ambos, $t=3$: $\Delta=0{,}06$, $g\leftarrow0$. (a) Perda aumentou: retrocede, $\Delta w=-\Delta w_{\text{ant}}=+0{,}12$, $w=-0{,}10$; $t=4$: produto nulo, $\Delta w=+0{,}06$, $w=-0{,}04$ (igual ao RPROP+). (b) Perda diminuiu: $\Delta w=0$, $w=-0{,}22$; $t=4$: produto nulo, $\Delta w=+0{,}06$, $w=-0{,}16$ (igual ao iRPROP−). O iRPROP+ coincide com o RPROP+ quando o erro sobe e com o iRPROP− quando o erro cai.
+
+DISC: Explique por que, após uma mudança de sinal, faz-se $g_i\leftarrow0$, e o que ocorreria se isso não fosse feito.
+R: Na iteração seguinte, o produto $g_i(t-1)g_i(t)$ envolve o gradiente da iteração anterior. Se $g_i(t-1)$ guardasse o valor com o sinal "trocado", o produto poderia novamente ser negativo (por exemplo, no RPROP+, após o retrocesso o peso está de volta ao ponto anterior, onde o sinal é o antigo), e o passo seria reduzido **duas vezes seguidas** sem justificativa. Com $g_i(t-1)=0$, o produto é nulo e o passo individual permanece, permitindo um novo avanço com o passo já reduzido.
+
+DISC: Mostre que, se a perda for multiplicada por uma constante $c>0$ (por exemplo, trocar a soma pela média), a sequência de atualizações do RPROP (qualquer variante) não muda.
+R: O gradiente passa a ser $c\,\mathbf{g}$; como $c>0$, $\mathrm{sinal}(c\,g_i)=\mathrm{sinal}(g_i)$ e os produtos $c^2g_i(t-1)g_i(t)$ têm o mesmo sinal. Logo, as regras de $\Delta_i$ e $\Delta w_i$ são idênticas. No iRPROP+, a comparação $cE(t)>cE(t-1)$ equivale a $E(t)>E(t-1)$. Portanto, a trajetória é a mesma. (Ao contrário do gradiente descendente, cuja taxa depende da escala da perda.)
+
+DISC: Calcule 6 passos da regra de Manhattan com $\Delta=0{,}1$ para $E(w)=\tfrac12w^2$ a partir de $w_0=0{,}35$ e descreva o comportamento.
+R: $g=w$. $w_1=0{,}35-0{,}1=0{,}25$; $w_2=0{,}15$; $w_3=0{,}05$; $w_4=0{,}05-0{,}1=-0{,}05$; $w_5=-0{,}05+0{,}1=0{,}05$; $w_6=-0{,}05$. A partir de $w_3$, o peso oscila entre $+0{,}05$ e $-0{,}05$ sem convergir (amplitude $\Delta/2$). O RPROP corrigiria isso reduzindo $\Delta$ a cada troca de sinal.
+
+DISC: Explique a motivação do iRPROP: por que o retrocesso incondicional do RPROP+ pode ser inadequado em uma rede com muitos pesos?
+R: A derivada parcial de um peso depende dos demais pesos; ela pode trocar de sinal porque **outros pesos** mudaram, mesmo que a perda total tenha diminuído. Desfazer o passo desse peso, nesse caso, desperdiça um passo útil e pode reintroduzir um ponto pior. O iRPROP+ só retrocede se $E$ aumentou, e o iRPROP− elimina o retrocesso (apenas reduz o passo e pula a atualização desse peso na iteração). No experimento do capítulo, só 9% das mudanças de sinal do iRPROP+ levaram a um retrocesso efetivo.
+
+DISC: Preencha a tabela comparativa das quatro variantes: ação na mudança de sinal, move o peso, guarda $\Delta w(t-1)$, usa $E$.
+R: **RPROP+:** reduz $\Delta$, desfaz o último passo, $g\leftarrow0$; move (para trás); guarda $\Delta w(t-1)$: sim; usa $E$: não. **RPROP−:** reduz $\Delta$ e segue com $-\mathrm{sinal}(g)\Delta$; move (para frente); guarda: não; usa $E$: não. **iRPROP+:** reduz $\Delta$, $g\leftarrow0$; desfaz só se $E$ subiu, senão não move; guarda: sim; usa $E$: sim. **iRPROP−:** reduz $\Delta$, $g\leftarrow0$; não move; guarda: não; usa $E$: não.
+
+DISC: Um colega relata "treinei com RPROP e obtive erro de 0,02". Que informações essenciais estão faltando para que o resultado seja reprodutível e comparável?
+R: Variante (RPROP+, RPROP−, iRPROP+ ou iRPROP−); parâmetros $\eta^{\pm}$, $\Delta_0$, $\Delta_{\min}$, $\Delta_{\max}$; definição da perda (soma ou média; fator $\tfrac12$); arquitetura e ativações; inicialização e semente; pré-processamento (ajustado só no treino); divisão dos dados; critério de parada (épocas, validação, paciência); em qual conjunto o erro foi medido; versões das bibliotecas; e a variabilidade entre sementes.
+
+DISC: Traduza para o pacote `rnbook` (ou scikit-learn, quando possível) a configuração do MATLAB `net = feedforwardnet(10,'trainrp'); net.trainParam.delt_inc=1.2; net.trainParam.delt_dec=0.5; net.trainParam.delta0=0.07; net.trainParam.deltamax=50;` e comente o que não se traduz diretamente.
+R: Em `rnbook`: `MLP([n_entradas, 10, n_saidas], ["tanh", "identidade"])` e `O.rprop(theta0, fun, grad, variante="irprop-", eta_mais=1.2, eta_menos=0.5, delta0=0.07, delta_max=50.0)`. Não se traduz diretamente: (i) a **variante** (o MATLAB não a discrimina); (ii) a **divisão de dados** e o **pré-processamento** automáticos do MATLAB (aqui são explícitos); (iii) `max_fail` e `min_grad` (aqui `paciencia` e `tol_grad`); (iv) a orientação dos dados (colunas no MATLAB); (v) a perda padrão (média no MATLAB); (vi) o scikit-learn não oferece RPROP (`solver` só tem `lbfgs`, `sgd` e `adam`).
+
+DISC: As perdas de validação por época são $(0{,}50;\,0{,}40;\,0{,}35;\,0{,}36;\,0{,}34;\,0{,}37;\,0{,}38;\,0{,}39;\,0{,}40)$. Com paciência $p=3$, em que época o treino para e qual época é restaurada?
+R: Épocas 1 a 3 melhoram (melhor $=0{,}35$ na época 3). Época 4 ($0{,}36$): não melhora (contador 1). Época 5 ($0{,}34$): melhora; novo melhor, contador zerado. Épocas 6 ($0{,}37$), 7 ($0{,}38$) e 8 ($0{,}39$): três épocas sem melhora (contador 3): **o treino para na época 8**. A época **restaurada é a 5** ($0{,}34$).
+
+DISC: Discuta os riscos de usar a parada antecipada com um conjunto de validação pequeno e proponha duas formas de reduzi-los.
+R: Com poucas amostras, a perda de validação é uma estimativa ruidosa: o mínimo pode ocorrer por acaso, muito cedo ou muito tarde (em testes exploratórios com 15 pontos de validação, a "melhor época" às vezes ocorreu antes da época 15 e o modelo ficou pior). Além disso, a validação deixa de ser imparcial. Formas de reduzir: (1) aumentar o conjunto de validação ou usar validação cruzada; (2) suavizar a curva de validação e usar paciência maior; (3) repetir com várias sementes e relatar a dispersão; (4) manter um teste separado.
+
+DISC: Reescreva o trecho abaixo com nomes melhores e explique cada mudança: `def f(a,b,c):\n    l=np.zeros(len(a))\n    for i in range(len(a)):\n        l[i]=a[i]*b\n    return l-c`
+R: Um exemplo: `def passo_com_decaimento(g, eta, dw_ant): passo = -eta * g + dw_ant; return passo` (se a intenção é atualizar com momento). Mudanças: (i) nome da função descreve o que faz; (ii) `g`, `eta`, `dw_ant` correspondem aos símbolos do texto; (iii) `l` (confundível com 1 e I) é eliminado; (iv) o laço é substituído por uma operação vetorizada do NumPy. A solução depende da intenção do trecho, que no original estava oculta pelos nomes: eis o problema que as regras de nomeação evitam.
+
+DISC: Compare representar os parâmetros como lista de matrizes e como um único vetor $\theta$, discutindo legibilidade, código dos otimizadores e memória.
+R: **Lista de matrizes:** mais legível para o modelo (`W[l]`, `b[l]`), mas cada otimizador precisa percorrer as listas e manter estado em estruturas paralelas; operações como `np.where` não se aplicam diretamente a listas. **Vetor $\theta$:** os otimizadores trabalham sobre arrays únicos, e o estado por parâmetro (`delta`, `g_ant`, `dw_ant`) tem a mesma forma de $\theta$, com atualização vetorizada; o custo é fatiar $\theta$ para obter $W^{(l)}$ e $\mathbf{b}^{(l)}$ (visões, sem cópia). Memória: equivalente; o vetor evita fragmentação. Para um livro com vários otimizadores, o vetor simplifica a infraestrutura.
+
+DISC: Escreva uma função com as quatro variantes do RPROP para **um peso** e reproduza as quatro colunas da tabela do Exemplo 6.2 ($E=\tfrac12(w-1)^2$, $w_0=3$, $\Delta_0=0{,}5$, 10 iterações).
+R:
+```python
+import numpy as np
+
+def rprop_1d(var, w0=3.0, delta0=0.5, n=10, eta_mais=1.2, eta_menos=0.5, dmin=1e-6, dmax=50.0):
+    E = lambda w: 0.5 * (w - 1.0) ** 2
+    g_fun = lambda w: w - 1.0
+    w, delta, g_ant, dw_ant, E_ant = w0, delta0, 0.0, 0.0, np.inf
+    traj = []
+    for _ in range(n):
+        traj.append(w)
+        g, Et = g_fun(w), E(w); prod = g_ant * g
+        if prod > 0: delta = min(delta * eta_mais, dmax)
+        elif prod < 0: delta = max(delta * eta_menos, dmin)
+        if var == "rprop+":
+            dw = -dw_ant if prod < 0 else -np.sign(g) * delta
+            g = 0.0 if prod < 0 else g
+        elif var == "rprop-":
+            dw = -np.sign(g) * delta
+        elif var == "irprop-":
+            g = 0.0 if prod < 0 else g; dw = -np.sign(g) * delta
+        else:  # irprop+
+            if prod < 0:
+                dw = -dw_ant if Et > E_ant else 0.0; g = 0.0
+            else:
+                dw = -np.sign(g) * delta
+        w, g_ant, dw_ant, E_ant = w + dw, g, dw, Et
+    return traj
+
+for v in ("rprop+", "rprop-", "irprop+", "irprop-"):
+    print(v, np.round(rprop_1d(v), 4))
+```
+Saída esperada (primeiras posições): RPROP+ $3;\,2{,}5;\,1{,}9;\,1{,}18;\,0{,}316;\,1{,}18;\,0{,}748;\,1{,}18;\,0{,}964;\,1{,}18$; RPROP− $\ldots;\,0{,}316;\,0{,}748;\,1{,}2664;\,1{,}0072;\,0{,}6962;\,0{,}8517$; iRPROP+ como RPROP+ até $t=8$, depois $0{,}964;\,0{,}964$; iRPROP− $\ldots;\,0{,}316;\,0{,}316;\,0{,}748;\,1{,}2664;\,1{,}2664;\,1{,}0072$. Critérios: quatro regras distintas; $g\leftarrow0$ onde cabe; saída igual à tabela.
+
+DISC: Compare a regra de Manhattan ($\Delta=0{,}1$) e o iRPROP− ($\Delta_0=0{,}1$) em $f=\tfrac12(x^2+10y^2)$ a partir de $(2{,}5;\,1{,}2)$ por 80 passos. Imprima a distância à origem.
+R:
+```python
+import numpy as np
+
+gq = lambda v: np.array([v[0], 10.0 * v[1]])
+v = np.array([2.5, 1.2]); manh = v.copy()
+delta, g_ant = np.full(2, 0.1), np.zeros(2)
+for _ in range(80):
+    manh = manh - 0.1 * np.sign(gq(manh))                       # Manhattan: passo fixo
+    g = gq(v); prod = g_ant * g
+    delta = np.where(prod > 0, np.minimum(1.2 * delta, 50.0), delta)
+    delta = np.where(prod < 0, np.maximum(0.5 * delta, 1e-6), delta)
+    g = np.where(prod < 0, 0.0, g)                              # iRPROP-
+    v = v - np.sign(g) * delta; g_ant = g
+print("Manhattan: %.4f | iRPROP-: %.2e" % (np.linalg.norm(manh), np.linalg.norm(v)))
+```
+Resultado observado: $0{,}1000$ para a regra de Manhattan e $6{,}8\times10^{-7}$ para o iRPROP−. Critérios: ambas as regras corretas; mesma partida e mesmo número de passos; conclusão limitada ao exemplo.
+
+DISC: Instrumente o RPROP+ e o iRPROP+ para contar as mudanças de sinal e os retrocessos efetivos na rede 1–8–1 do capítulo (semente 0, 300 épocas, dados com semente 3). Que valores você obtém?
+R:
+```python
+import numpy as np
+from rnbook import MLP
+
+N = 100; rng = np.random.default_rng(3); X = rng.uniform(0, 1, (N, 1)); T = np.sin(2 * np.pi * X) + rng.normal(0, 0.15, (N, 1))
+
+def conta(var, semente=0, it=300):
+    r = MLP([1, 8, 1], ["tanh", "identidade"], semente=semente); th = r.theta.copy()
+    delta = np.full_like(th, 0.1); g_ant = np.zeros_like(th); dw_ant = np.zeros_like(th); E_ant = np.inf
+    retros = sinais = 0
+    for _ in range(it):
+        g = r.grad(th, X, T) / N; E = r.perda(th, X, T) / N; prod = g_ant * g; pos, neg = prod > 0, prod < 0
+        delta = np.where(pos, np.minimum(delta * 1.2, 50.0), delta); delta = np.where(neg, np.maximum(delta * 0.5, 1e-6), delta)
+        sinais += int(neg.sum())
+        if var == "rprop+" or E > E_ant:
+            dw = np.where(neg, -dw_ant, -np.sign(g) * delta); retros += int(neg.sum())
+        else:
+            dw = np.where(neg, 0.0, -np.sign(g) * delta)
+        g = np.where(neg, 0.0, g); th = th + dw; g_ant, dw_ant, E_ant = g, dw, E
+    return sinais, retros
+
+print(conta("rprop+"), conta("irprop+"))
+```
+Resultado: RPROP+ com 1613 mudanças de sinal e 1613 retrocessos; iRPROP+ com 1776 mudanças de sinal e 161 retrocessos efetivos (9,1%).
+
+DISC: Reproduza a parada antecipada com paciência 100 (iRPROP−, rede 1–100–1, 30 amostras de treino e 30 de validação, ruído $0{,}4$, sementes 0 a 2). Relate a época em que parou e os RMSE de teste.
+R:
+```python
+import numpy as np
+from rnbook import MLP, otimizadores as O
+
+def exp_pa(seed, ntr=30, nva=30, H=100, noise=0.4, its=3000, pac=100):
+    rng = np.random.default_rng(100 + seed); n = ntr + nva + 300
+    xs = rng.uniform(0, 1, (n, 1)); ts = np.sin(2 * np.pi * xs) + rng.normal(0, noise, (n, 1))
+    xtr, ttr = xs[:ntr], ts[:ntr]; xva, tva = xs[ntr:ntr + nva], ts[ntr:ntr + nva]; xte, tte = xs[ntr + nva:], ts[ntr + nva:]
+    r = MLP([1, H, 1], ["tanh", "identidade"], semente=seed, init="he")
+    res = O.rprop(r.theta, lambda th: r.perda(th, xtr, ttr) / len(xtr), lambda th: r.grad(th, xtr, ttr) / len(xtr),
+                  variante="irprop-", max_iter=its, tol_grad=0,
+                  val=lambda th: r.perda(th, xva, tva) / len(xva), paciencia=pac)
+    rmse = lambda th: np.sqrt(np.mean((r.prever(xte, th) - tte) ** 2))
+    return res.n_iter, rmse(res.theta_melhor), rmse(res.theta)
+
+for s in range(3):
+    print(s, exp_pa(s))
+```
+Resultado observado: parou nas épocas $344$, $343$ e $215$; RMSE de teste com os parâmetros restaurados: $0{,}436$, $0{,}483$ e $0{,}485$; com os últimos parâmetros: $0{,}439$, $0{,}486$ e $0{,}468$. A restauração ajudou em 2 de 3 sementes; em uma, os últimos parâmetros ficaram melhores no teste, o que ilustra que a validação é uma estimativa ruidosa.
+
+DISC: Compare as quatro variantes na base `make_moons(400, noise=0.25)` (70/30 estratificado, padronização só no treino), rede 2–10–1 (tanh e sigmoide), erro quadrático, 300 épocas, 5 sementes. Relate a mediana da acurácia de teste.
+R:
+```python
+import numpy as np
+from sklearn.datasets import make_moons
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+X, y = make_moons(400, noise=0.25, random_state=0)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(X_tr); Xs, Xt = esc.transform(X_tr), esc.transform(X_te)
+T = y_tr[:, None].astype(float); N = len(y_tr)
+for var in O.VARIANTES_RPROP:
+    acc = []
+    for s in range(5):
+        r = MLP([2, 10, 1], ["tanh", "sigmoide"], semente=s)
+        res = O.rprop(r.theta, lambda th: r.perda(th, Xs, T) / N, lambda th: r.grad(th, Xs, T) / N,
+                      variante=var, max_iter=300, tol_grad=0)
+        acc.append(np.mean((r.prever(Xt, res.theta).ravel() > 0.5) == y_te))
+    print(var, np.median(acc), min(acc), max(acc))
+```
+Resultado observado (mediana [mín; máx]): RPROP+ $0{,}900$ [$0{,}900$; $0{,}925$]; RPROP− $0{,}908$ [$0{,}900$; $0{,}917$]; iRPROP+ $0{,}908$ [$0{,}900$; $0{,}925$]; iRPROP− $0{,}917$ [$0{,}908$; $0{,}925$]. Com 120 amostras de teste (0,83 ponto percentual por amostra), as diferenças são de 1 a 2 amostras: **não conclusivas**.
+
+DISC: Aplique as quatro variantes (`delta0=0,1`, 2000 iterações) à minimização da função de Rosenbrock $f(x,y)=(1-x)^2+100(y-x^2)^2$ a partir de $(-1{,}2;\,1)$. Compare com o gradiente descendente com $\eta=10^{-3}$. O que se observa?
+R:
+```python
+import numpy as np
+from rnbook import otimizadores as O
+
+f = lambda v: (1 - v[0]) ** 2 + 100 * (v[1] - v[0] ** 2) ** 2
+g = lambda v: np.array([-2 * (1 - v[0]) - 400 * v[0] * (v[1] - v[0] ** 2), 200 * (v[1] - v[0] ** 2)])
+for var in O.VARIANTES_RPROP:
+    r = O.rprop(np.array([-1.2, 1.0]), f, g, variante=var, delta0=0.1, max_iter=2000, tol_grad=1e-10)
+    print(var, np.round(r.theta, 4), "f = %.2e" % f(r.theta))
+r = O.gradiente_descendente(np.array([-1.2, 1.0]), f, g, taxa=1e-3, max_iter=2000)
+print("GD", np.round(r.theta, 4), "f = %.3e" % f(r.theta))
+```
+Resultado observado (2000 iterações, mínimo em $(1,1)$): RPROP+ $(0{,}897;\,0{,}806)$, $f=1{,}05\times10^{-2}$; RPROP− $(0{,}915;\,0{,}837)$, $f=7{,}2\times10^{-3}$; iRPROP+ $(0{,}988;\,0{,}977)$, $f=1{,}3\times10^{-4}$; iRPROP− $(0{,}987;\,0{,}975)$, $f=1{,}6\times10^{-4}$; gradiente descendente $(0{,}721;\,0{,}518)$, $f=7{,}8\times10^{-2}$. Em um problema sabidamente difícil (vale curvo e estreito), as variantes "i" chegaram mais perto do mínimo; nenhuma convergiu totalmente. É um problema (e um ponto de partida), não uma regra.

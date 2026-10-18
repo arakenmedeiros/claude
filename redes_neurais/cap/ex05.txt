@@ -1,0 +1,387 @@
+MC: O algoritmo Quickprop foi proposto por
+a) Riedmiller e Braun, em 1993.
+b) Jacobs, em 1988, com o nome Delta-Bar-Delta.
+c) Hagan e Menhaj, em 1994.
+d) Rumelhart, Hinton e Williams, em 1986.
+e) Fahlman, em 1988.
+R: e | Fahlman (1988), relatório CMU-CS-88-162. Jacobs (1988) propôs o Delta-Bar-Delta e Riedmiller e Braun (1993), o RPROP.
+
+MC: As duas suposições centrais do Quickprop, para cada peso, são
+a) que o erro é linear e que os pesos são todos iguais.
+b) que a Hessiana completa é conhecida e que os gradientes são ruidosos.
+c) que o erro é convexo em todos os pesos conjuntamente e que a taxa é constante.
+d) que o erro é aproximadamente uma parábola com concavidade para cima e que os pesos são independentes.
+e) que há apenas uma camada e que a ativação é o degrau.
+R: d | Parábola (curvatura local) e independência (Hessiana tratada como diagonal).
+
+MC: A regra básica do Quickprop para um peso é
+a) $\Delta w(t)=\dfrac{S(t)}{S(t-1)-S(t)}\,\Delta w(t-1)$
+b) $\Delta w(t)=-\eta\,S(t)$
+c) $\Delta w(t)=-\Delta_i\,\mathrm{sinal}(S(t))$
+d) $\Delta w(t)=-H^{-1}S(t)$
+e) $\Delta w(t)=\Delta w(t-1)+\eta S(t)$
+R: a | É a Equação (5.1): passo quadrático obtido pela secante de $S=\partial E/\partial w$.
+
+MC: Com $S(t-1)=4$, $S(t)=1$ e $\Delta w(t-1)=-0{,}3$, o passo quadrático do Quickprop vale
+a) $-0{,}3$
+b) $-0{,}4$
+c) $-1{,}2$
+d) $-0{,}1$
+e) $+0{,}1$
+R: d | $\dfrac{1}{4-1}\cdot(-0{,}3)=-0{,}1$.
+
+MC: O Quickprop, ponto a ponto, equivale a
+a) aplicar o método de Newton com a Hessiana completa.
+b) usar apenas o sinal do gradiente.
+c) fazer busca em linha exata.
+d) aplicar o método das secantes a $E'(w)=0$ (Newton com $E''$ estimada pela secante).
+e) usar momento de Nesterov.
+R: d | A curvatura é estimada por $(S(t)-S(t-1))/\Delta w(t-1)$.
+
+MC: Com $\mu=1{,}75$, o fator de encolhimento $\sigma=\mu/(1+\mu)$ vale aproximadamente
+a) $0{,}636$
+b) $0{,}175$
+c) $0{,}571$
+d) $1{,}75$
+e) $0{,}364$
+R: a | $1{,}75/2{,}75=0{,}636$.
+
+MC: O papel do parâmetro $\mu$ é
+a) limitar o crescimento relativo do passo: o novo passo não excede $\mu$ vezes o anterior (nos casos do passo quadrático).
+b) definir a taxa de aprendizagem do primeiro passo.
+c) impor um limite absoluto para $|\Delta w|$.
+d) ponderar o decaimento de pesos.
+e) escolher o número de neurônios ocultos.
+R: a | $\mu$ é um fator de crescimento relativo, não um limite absoluto.
+
+MC: Quando o passo anterior é nulo ($\Delta w(t-1)=0$), o Quickprop executa
+a) um passo quadrático com denominador nulo.
+b) nenhum passo.
+c) um passo igual a $\mu S$.
+d) um passo de sinal.
+e) um passo de gradiente descendente, $-\varepsilon S$.
+R: e | Regra (A): arranque.
+
+MC: Se $\Delta w(t-1)<0$, $S>0$ e $S\ge\sigma S_{\text{ant}}$, a regra aplicada é
+a) passo quadrático.
+b) passo nulo.
+c) passo de sinal.
+d) parada do treinamento.
+e) crescimento máximo, $\mu\,\Delta w(t-1)$ (mais o termo $-\varepsilon S$).
+R: e | O declive não diminuiu o suficiente; usa-se a regra (C).
+
+MC: Com $\varepsilon=0{,}1$, $\mu=1{,}75$, $\Delta w(t-1)=-0{,}2$, $S_{\text{ant}}=0{,}60$ e $S=0{,}30$, o passo total é
+a) $-0{,}23$
+b) $-0{,}20$
+c) $-0{,}35$
+d) $-0{,}03$
+e) $-0{,}40$
+R: a | Passo quadrático $-0{,}20$ mais termo de gradiente $-0{,}03$ (porque $S>0$).
+
+MC: Com os mesmos dados, mas $S=0{,}50$, o passo total é
+a) $-1{,}0$
+b) $-0{,}40$
+c) $-0{,}23$
+d) $-0{,}35$
+e) $-0{,}05$
+R: b | Crescimento máximo $\mu\Delta w=-0{,}35$ mais o termo de gradiente $-0{,}05$.
+
+MC: Com os mesmos dados, mas $S=-0{,}20$ (o declive trocou de sinal), o passo é
+a) $-0{,}35$
+b) $+0{,}05$ (passo quadrático de retorno, sem termo de gradiente).
+c) $-0{,}02$
+d) $+0{,}35$
+e) $0$
+R: b | $\dfrac{-0{,}20}{0{,}60+0{,}20}(-0{,}2)=+0{,}05$.
+
+MC: O gradiente do erro em relação a $V_{kj}$ (neurônio oculto $j$ ao de saída $k$) é
+a) $\sum_p\delta^{o}_{pk}\,x_{pi}$
+b) $\sum_p r_{pk}\,V_{kj}$
+c) $\sum_p a_{pj}\,\phi'(z_{pj})$
+d) $\sum_p\delta^{h}_{pj}$
+e) $\sum_p\delta^{o}_{pk}\,a_{pj}$
+R: e | Eq. (5.2): sensibilidade da saída vezes a ativação oculta que chega ao peso.
+
+MC: A sensibilidade de um neurônio oculto $j$ em uma rede com $M$ saídas é
+a) $\delta^{h}_{pj}=\sum_k\delta^{o}_{pk}\,a_{pk}$
+b) $\delta^{h}_{pj}=\left(\sum_k\delta^{o}_{pk}V_{kj}\right)\phi'(z^{(1)}_{pj})$
+c) $\delta^{h}_{pj}=\phi'(z^{(1)}_{pj})$
+d) $\delta^{h}_{pj}=\sum_kV_{kj}$
+e) $\delta^{h}_{pj}=\delta^{o}_{pj}\,x_{pj}$
+R: b | Eq. (5.3): cada saída devolve ao neurônio $j$ seu erro multiplicado pelo peso que os liga.
+
+MC: Para uma saída linear, $\phi_o'=1$ e a sensibilidade de saída é
+a) $\delta^{o}_{pk}=0$
+b) $\delta^{o}_{pk}=y_{pk}\,t_{pk}$
+c) $\delta^{o}_{pk}=r_{pk}^2$
+d) $\delta^{o}_{pk}=r_{pk}=y_{pk}-t_{pk}$
+e) $\delta^{o}_{pk}=1$
+R: d | BP1 com derivada unitária.
+
+MC: Em uma rede 4–6–3 (4 entradas, 6 ocultos, 3 saídas), o número total de parâmetros é
+a) 33
+b) 42
+c) 51
+d) 54
+e) 72
+R: c | $(6\cdot4+6)+(3\cdot6+3)=30+21=51$.
+
+MC: O Quickprop deve ser usado preferencialmente em modo de lote porque
+a) o lote usa menos memória que o minilote.
+b) o gradiente do lote é sempre nulo.
+c) a estimativa de curvatura compara declives de épocas consecutivas, e o ruído do gradiente estocástico a distorce.
+d) o Quickprop não calcula gradientes.
+e) não existe passo quadrático em minilotes.
+R: c | Com gradientes ruidosos, $S(t)-S(t-1)$ mistura variação real e ruído.
+
+MC: Para uma função de erro exatamente quadrática em $w$, o passo quadrático do Quickprop
+a) precisa de $\log(1/\varepsilon)$ passos.
+b) nunca converge.
+c) é sempre limitado a $\mu\Delta w(t-1)$.
+d) leva ao mínimo em um passo.
+e) diverge se $\mu>1$.
+R: d | A secante de uma função linear ($S$) é exata.
+
+MC: Se $E''<0$ (curvatura negativa), o passo quadrático do Quickprop
+a) é sempre correto.
+b) pode levar a um máximo local em vez de um mínimo.
+c) é sempre zero.
+d) reduz o erro garantidamente.
+e) é equivalente ao gradiente descendente.
+R: b | A parábola tem concavidade para baixo; seu extremo é um máximo.
+
+MC: O termo de decaimento de pesos no Quickprop é incluído no declive como
+a) $S=\partial E/\partial w-\lambda$.
+b) $S=\lambda\,\partial E/\partial w$.
+c) $S=\partial E/\partial w+\lambda\,w$.
+d) $S=\partial E/\partial w\cdot w$.
+e) $S=\partial E/\partial w+\lambda/w$.
+R: c | Penaliza pesos grandes (decaimento).
+
+MC: Somar $0{,}1$ à derivada da sigmoide (artifício de Fahlman) faz com que
+a) o gradiente fique mais preciso.
+b) o gradiente calculado deixe de ser o da perda original; a verificação por diferenças finitas falha.
+c) a rede deixe de ter saturação.
+d) o gradiente passe a ser exato em qualquer ponto.
+e) a perda seja convexa.
+R: b | A modificação evita pontos planos, mas altera o gradiente; no teste, erro relativo $0{,}20$.
+
+MC: Quando $S$ e $S_{\text{ant}}$ têm o mesmo sinal e são quase iguais, o denominador $S_{\text{ant}}-S$ é quase zero e o Quickprop
+a) divide por zero e falha sempre.
+b) zera o peso.
+c) usa o crescimento máximo $\mu\Delta w(t-1)$ (teste do fator $\sigma$), evitando a divisão.
+d) para o treinamento.
+e) usa a Hessiana.
+R: c | Se $S\ge\sigma S_{\text{ant}}$, aplica-se a regra (C).
+
+MC: Em hipótese de independência dos pesos, a Hessiana é tratada como
+a) identidade.
+b) nula.
+c) inversível sempre.
+d) cheia, porém simétrica.
+e) diagonal.
+R: e | Cada peso tem uma curvatura própria, sem termos cruzados.
+
+MC: Em relação ao gradiente descendente, o Quickprop requer, por parâmetro, a memória adicional de
+a) uma matriz $P\times P$.
+b) dois números: o declive anterior e o passo anterior.
+c) nenhum número adicional.
+d) toda a história de gradientes.
+e) uma Jacobiana.
+R: b | $S(t-1)$ e $\Delta w(t-1)$; custo de memória $O(P)$.
+
+MC: No experimento 1–8–1 do capítulo (10 sementes, 300 épocas), a mediana da perda final foi
+a) $0{,}019$ para o Quickprop e $0{,}081$ para o gradiente descendente com $\eta=0{,}5$.
+b) $0{,}081$ para o Quickprop e $0{,}019$ para o gradiente descendente.
+c) igual para os dois.
+d) zero para o Quickprop.
+e) maior que $1$ para ambos.
+R: a | Quickprop foi melhor **nesse** experimento; não se pode generalizar.
+
+MC: A conclusão mais adequada sobre esse experimento é que
+a) o Quickprop é sempre superior ao gradiente descendente.
+b) o gradiente descendente nunca é competitivo.
+c) o resultado vale para qualquer rede e qualquer base.
+d) o Quickprop foi melhor nesse problema, mas a generalização exige mais experimentos e outras configurações.
+e) $\eta$ não importa.
+R: d | Um único problema, uma arquitetura, 300 épocas e sementes limitadas.
+
+MC: No experimento de sensibilidade, o parâmetro com efeito claro sobre a perda final foi
+a) $\varepsilon$ (valores grandes pioraram o resultado).
+b) $\mu$, com efeito monotônico forte.
+c) o número de épocas, que não variou.
+d) a semente aleatória, que não importa.
+e) nenhum deles.
+R: a | Com $\varepsilon\ge0{,}5$ a perda subiu; a dependência em $\mu$ foi pequena e não monotônica.
+
+MC: Na dedução do Quickprop pela série de Taylor, a curvatura $E''(w(t))$ é aproximada por
+a) $S(t)\,\Delta w(t-1)$
+b) $\dfrac{S(t)}{S(t-1)}$
+c) $\Delta w(t-1)\,S(t-1)$
+d) $\dfrac{1}{S(t)}$
+e) $\dfrac{S(t)-S(t-1)}{\Delta w(t-1)}$
+R: e | É a inclinação da secante de $E'$, sob a hipótese de curvatura aproximadamente constante.
+
+MC: Não se deve confundir QPROP/Quickprop com RPROP porque
+a) ambos usam apenas o sinal.
+b) o RPROP é de Fahlman.
+c) o Quickprop usa o valor do declive em um passo quadrático por peso, enquanto o RPROP usa apenas o sinal do declive e passos individuais.
+d) o Quickprop é de Riedmiller.
+e) são o mesmo algoritmo.
+R: c | Algoritmos distintos, com autores e regras distintos.
+
+MC: Na rede 1–$H$–1 da Seção 5.5, a derivada do erro em relação ao viés $b_j$ de um neurônio oculto é
+a) $\sum_p\delta^{o}_p\,a_{pj}$
+b) $\sum_p\delta^{o}_p\,v_j\,x_p$
+c) $\sum_p\delta^{o}_p\,v_j\,\phi'(z_{pj})$
+d) $\sum_p r_p\,\phi(z_{pj})$
+e) $\sum_p\delta^{o}_p$
+R: c | O viés tem "entrada" constante 1: o gradiente é a sensibilidade oculta $\delta^h_{pj}=\delta^o_pv_j\phi'(z_{pj})$ somada sobre as amostras.
+
+DISC: Deduza o Quickprop a partir da série de Taylor de segunda ordem, indicando as hipóteses e a aproximação da curvatura.
+R: Modelo: $E(w+\Delta)\approx E(w)+S\Delta+\tfrac12E''\Delta^2$, com $S=E'(w)$. Mínimo do modelo: $S+E''\Delta=0\Rightarrow\Delta=-S/E''$ (exige $E''>0$). Com a curvatura constante entre $w(t-1)$ e $w(t)$ (hipótese), $E''\approx\dfrac{S(t)-S(t-1)}{w(t)-w(t-1)}=\dfrac{S(t)-S(t-1)}{\Delta w(t-1)}$. Substituindo, $\Delta w(t)=-\dfrac{S(t)\,\Delta w(t-1)}{S(t)-S(t-1)}=\dfrac{S(t)}{S(t-1)-S(t)}\Delta w(t-1)$. Hipóteses: suavidade, concavidade para cima, independência dos pesos e curvatura aproximadamente constante.
+
+DISC: Mostre que o passo quadrático do Quickprop é o método das secantes aplicado a $E'(w)=0$. Aplique a $E(w)=w^2-4w$ com $w_0=0$ e $w_1=1$ e mostre que se chega ao mínimo.
+R: Com $\Delta w(t-1)=w(t)-w(t-1)$, $w(t+1)=w(t)+\dfrac{S(t)}{S(t-1)-S(t)}(w(t)-w(t-1))=w(t)-S(t)\dfrac{w(t)-w(t-1)}{S(t)-S(t-1)}$, que é a recorrência das secantes em $S=E'$. Exemplo: $S(w)=2w-4$; $S(0)=-4$, $S(1)=-2$, $\Delta w=1$. $w_2=1+\dfrac{-2}{-4-(-2)}\cdot1=1+1=2$, que é o mínimo ($S(2)=0$), pois $E$ é quadrática.
+
+DISC: Seja $E(w)=2(w-3)^2$. Com $w_0=0$ e $w_1=1$, calcule $w_2$ pelo passo quadrático e verifique que é o mínimo.
+R: $S(w)=4(w-3)$: $S(0)=-12$, $S(1)=-8$; $\Delta w(0\to1)=1$. $w_2=1+\dfrac{S(1)}{S(0)-S(1)}\cdot1=1+\dfrac{-8}{-12+8}=1+2=3$. O mínimo está em $w=3$. A secante é exata porque $S$ é linear.
+
+DISC: Dados $\varepsilon=0{,}2$, $\mu=2$, $\Delta w(t-1)=+0{,}1$, $S_{\text{ant}}=-0{,}5$ e $S=-0{,}4$, calcule o passo do Quickprop e indique a regra usada.
+R: $\sigma=\mu/(1+\mu)=2/3$. Como $\Delta w(t-1)>0$, o teste de crescimento é $S\le\sigma S_{\text{ant}}$: $-0{,}4\le-0{,}333$: **sim**. Portanto, regra (C): $\mu\,\Delta w(t-1)=0{,}2$. Termo de gradiente: $\Delta w>0$ e $S<0$, então $-\varepsilon S=+0{,}08$. Total: $\Delta w(t)=0{,}28$. O passo quadrático seria $\dfrac{-0{,}4}{-0{,}5+0{,}4}\cdot0{,}1=0{,}4$, 4 vezes o anterior, acima do limite $\mu=2$.
+
+DISC: Prove que, quando a regra do passo quadrático é usada (isto é, $0<S<\sigma S_{\text{ant}}$, com $S_{\text{ant}}>0$ e $\Delta w(t-1)<0$), o passo satisfaz $|\Delta w(t)|\le\mu\,|\Delta w(t-1)|$.
+R: O passo é $\Delta w(t)=\dfrac{S}{S_{\text{ant}}-S}\Delta w(t-1)$. A função $g(S)=\dfrac{S}{S_{\text{ant}}-S}$ é crescente em $S\in(0,S_{\text{ant}})$. Como $S<\sigma S_{\text{ant}}$, $g(S)<g(\sigma S_{\text{ant}})=\dfrac{\sigma}{1-\sigma}$. Com $\sigma=\mu/(1+\mu)$, $1-\sigma=1/(1+\mu)$ e $\dfrac{\sigma}{1-\sigma}=\mu$. Logo $0<g(S)<\mu$ e $|\Delta w(t)|<\mu|\Delta w(t-1)|$.
+
+DISC: Rede 2–2–1 (tanh nos ocultos, saída linear) com $W=\begin{pmatrix}0{,}2&0{,}4\\-0{,}3&0{,}1\end{pmatrix}$, $\mathbf{b}=(0;\,0{,}1)$, $\mathbf{v}=(0{,}5;\,-0{,}5)$, $c=0{,}1$, amostra $\mathbf{x}=(1;\,-1)$, $t=0{,}2$. Calcule o passo direto e os gradientes de saída e ocultos.
+R: $\mathbf{z}^{(1)}=(0{,}2-0{,}4;\ -0{,}3-0{,}1+0{,}1)=(-0{,}2;\,-0{,}3)$; $\mathbf{a}=\tanh=(-0{,}19738;\,-0{,}29131)$. $y=0{,}5(-0{,}19738)-0{,}5(-0{,}29131)+0{,}1=0{,}14697$; $r=y-t=-0{,}05303$ ($\delta^{o}=r$, saída linear). Saída: $\partial E/\partial\mathbf{v}=r\,\mathbf{a}=(0{,}01047;\,0{,}01545)$; $\partial E/\partial c=-0{,}05303$. Ocultos: $\delta^{h}_j=r\,v_j\,\phi'(z_j)$, com $\phi'=(0{,}96104;\,0{,}91513)$: $\delta^{h}=(-0{,}02548;\,0{,}02427)$. $\partial E/\partial W=\boldsymbol{\delta}^{h}\mathbf{x}^T=\begin{pmatrix}-0{,}02548&0{,}02548\\0{,}02427&-0{,}02427\end{pmatrix}$; $\partial E/\partial\mathbf{b}=(-0{,}02548;\,0{,}02427)$.
+
+DISC: Para uma rede com $n=3$ entradas, $H=5$ ocultos e $M=2$ saídas e $N=10$ amostras, dê as dimensões de $\Delta^{o}$, $\Delta^{h}$, $V$, $W$, $A$ e dos gradientes da Eq. (5.7). Quantos parâmetros tem a rede?
+R: $X$: $10\times3$; $W$: $5\times3$; $\mathbf{b}$: $5$; $A$ (ativações ocultas): $10\times5$; $V$: $2\times5$; $\mathbf{c}$: $2$; $Y,T,\Delta^{o}$: $10\times2$; $\Delta^{h}=(\Delta^{o}V)\odot\phi'$: $(10\times2)(2\times5)=10\times5$. $\partial E/\partial V=(\Delta^{o})^TA$: $(2\times10)(10\times5)=2\times5$; $\partial E/\partial W=(\Delta^{h})^TX$: $(5\times10)(10\times3)=5\times3$. $P=(5\cdot3+5)+(2\cdot5+2)=20+12=32$.
+
+DISC: Explique por que o Quickprop é pensado para o modo de lote e o que acontece se for usado com gradientes de amostras individuais.
+R: O passo depende da **diferença** $S(t)-S(t-1)$ entre épocas consecutivas para os mesmos pesos. Em lote, essa diferença reflete a mudança real do gradiente com o peso. Com gradientes de amostras individuais, $S(t)$ e $S(t-1)$ se referem a amostras diferentes; a diferença é dominada pelo ruído, o denominador oscila de sinal e magnitude, e o passo quadrático torna-se erático (o limite $\mu$ evita parte do dano, mas a estimativa de curvatura deixa de ter significado).
+
+DISC: Dê uma situação em que a hipótese de independência dos pesos falha. Considere $E(w_1,w_2)=(w_1+w_2-1)^2$ e discuta o comportamento do passo por peso.
+R: A Hessiana de $E$ é $\begin{pmatrix}2&2\\2&2\end{pmatrix}$ (singular, com termos cruzados iguais aos diagonais). Fixando $w_2$, $E$ é uma parábola em $w_1$ com mínimo em $w_1=1-w_2$, o que depende de $w_2$. Ao atualizar os dois pesos **simultaneamente**, cada um "corrige" todo o erro: o resultado ultrapassa o alvo (soma $w_1+w_2$ andou duas vezes o necessário), e pode oscilar. Isso ilustra que ignorar os termos cruzados pode gerar passos excessivos; o limite $\mu$ e o termo $\varepsilon$ atenuam, mas não eliminam.
+
+DISC: Interprete a tabela do experimento de sensibilidade: $\varepsilon\in\{0{,}05;\,0{,}1;\,0{,}2;\,0{,}5;\,1\}$ resultou em perdas medianas $0{,}0190;\,0{,}0203;\,0{,}0199;\,0{,}0346;\,0{,}0624$. O que se pode concluir? O que não?
+R: Pode-se concluir que, neste problema e com 10 sementes, valores de $\varepsilon$ até $0{,}2$ produzem resultados semelhantes (diferenças dentro da variação entre sementes) e que $\varepsilon\ge0{,}5$ piora os resultados. Não se pode concluir que $\varepsilon=0{,}05$ seja "ótimo" (as diferenças $0{,}0190$ a $0{,}0203$ são pequenas), nem que valem os mesmos valores em outros problemas. Seria preciso mais sementes e problemas.
+
+DISC: Explique o artifício $+0{,}1$ na derivada da sigmoide: motivação, efeito observado no XOR (Seção 5.4) e cuidados.
+R: **Motivação:** quando um neurônio de sigmoide está saturado, $\sigma'\approx0$ e o gradiente some ("ponto plano"); somar $0{,}1$ garante um gradiente mínimo. **Efeito observado:** com Quickprop no XOR, a mediana de épocas entre as sementes que resolvem caiu de 3000 para 63; o número de sementes que resolvem passou de 18 para 20 de 30 (diferença pequena). **Cuidados:** o gradiente deixa de ser o da perda, de modo que a verificação por diferenças finitas falha (erro relativo $0{,}20$) e a convergência a um mínimo da perda original não é garantida.
+
+DISC: Compare gradiente descendente, Quickprop e Newton quanto à informação usada, ao custo por iteração, às hipóteses e ao comportamento em uma quadrática.
+R: **Gradiente descendente:** só $\nabla E$; custo $O(P)$; sem hipótese sobre a curvatura; em quadrática, convergência linear dependente do condicionamento. **Quickprop:** $\nabla E$ atual e anterior e o último passo (curvatura por peso via secante); custo $O(P)$ e memória $2P$; hipóteses de parábola e independência; em quadrática diagonal, um passo por peso (exato por peso). **Newton:** $\nabla E$ e $H$; custo $O(P^2)$ para formar e $O(P^3)$ para resolver; exige $H$ positiva definida; em quadrática, um passo (qualquer $H$).
+
+DISC: Escreva uma função em Python que implemente o passo de **um peso** do Quickprop (regras A a D, $\Delta w(t-1)<0$, $=0$ ou $>0$) e teste com os três casos do Exemplo 5.1.
+R:
+```python
+def passo_quickprop(S, S_ant, dw_ant, eps=0.1, mu=1.75):
+    sigma = mu / (1.0 + mu)
+    if dw_ant == 0:
+        return -eps * S                                   # (A) arranque
+    sinal = -1.0 if dw_ant < 0 else 1.0                   # sentido do passo anterior
+    passo = 0.0
+    if sinal * S < 0:                                     # (B) declive ainda pede o mesmo sentido
+        passo -= eps * S
+    if sinal * S <= sinal * sigma * S_ant:                # declive não diminuiu o bastante
+        passo += mu * dw_ant                              # (C) crescimento máximo
+    else:
+        passo += dw_ant * S / (S_ant - S)                 # (D) passo quadrático
+    return passo
+
+for S in (0.30, 0.50, -0.20):
+    print(S, round(passo_quickprop(S, 0.60, -0.2), 4))     # -0.23, -0.40, +0.05
+```
+Critérios: trata os dois sentidos; implementa (A) a (D); reproduz $-0{,}23$, $-0{,}40$ e $+0{,}05$.
+
+DISC: Escreva um programa que implemente, com **laços explícitos**, os gradientes das Eqs. (5.2) e (5.3) para uma rede $n$–$H$–$M$ e os compare com `MLP.grad` do pacote em uma rede 3–5–2 (tanh e sigmoide).
+R:
+```python
+import numpy as np
+from rnbook import MLP
+
+def grad_explicito(W, b, V, c, X, T):
+    sig = lambda z: 1 / (1 + np.exp(-z))
+    gW, gb, gV, gc = np.zeros_like(W), np.zeros_like(b), np.zeros_like(V), np.zeros_like(c)
+    for p in range(len(X)):
+        a = np.tanh(W @ X[p] + b); y = sig(V @ a + c)
+        do = (y - T[p]) * y * (1 - y)                       # delta de saída
+        gV += np.outer(do, a); gc += do
+        dh = (V.T @ do) * (1 - a ** 2)                      # delta oculto
+        gW += np.outer(dh, X[p]); gb += dh
+    return np.concatenate([gW.ravel(), gb, gV.ravel(), gc])
+
+rng = np.random.default_rng(1); X = rng.normal(size=(7, 3)); T = rng.normal(size=(7, 2))
+r = MLP([3, 5, 2], ["tanh", "sigmoide"], semente=2); (W, b), (V, c) = r.desempacotar(r.theta)
+print(np.abs(grad_explicito(W, b, V, c, X, T) - r.grad(r.theta, X, T)).max())    # ~1e-16
+```
+Critérios: usa $\delta^o$ e $\delta^h$ corretos; resultado da ordem de $10^{-16}$.
+
+DISC: Usando o pacote `rnbook`, compare o gradiente descendente em lote ($\eta=0{,}5$) e o Quickprop ($\varepsilon=0{,}05$, $\mu=1{,}75$) em uma rede 1–8–1 (tanh, saída linear) com 100 pontos de $\sin(2\pi x)$ mais ruído $\mathcal{N}(0;0{,}15^2)$, 300 épocas, 5 sementes. Relate a mediana da perda final.
+R:
+```python
+import numpy as np
+from rnbook import MLP, otimizadores as O
+
+N = 100; rng = np.random.default_rng(3); X = rng.uniform(0, 1, (N, 1))
+T = np.sin(2 * np.pi * X) + rng.normal(0, 0.15, (N, 1))
+
+def final(otim, semente, **kw):
+    r = MLP([1, 8, 1], ["tanh", "identidade"], semente=semente)
+    res = otim(r.theta, lambda th: r.perda(th, X, T) / N, lambda th: r.grad(th, X, T) / N, **kw)
+    return res.historico["perda"][-1]
+
+gd = [final(O.gradiente_descendente, s, taxa=0.5, max_iter=300, tol_grad=0) for s in range(5)]
+qp = [final(O.quickprop, s, epsilon=0.05, max_iter=300, tol_grad=0) for s in range(5)]
+print(np.median(gd), np.median(qp))
+```
+Resultado observado: mediana de $0{,}0810$ para o gradiente descendente (valores entre $0{,}0768$ e $0{,}0825$) e de $0{,}0187$ para o Quickprop (valores entre $0{,}0128$ e $0{,}0212$). Critérios: mesmas sementes e orçamento para os dois; perda dividida por $N$ nos dois; conclusão limitada ao experimento.
+
+DISC: Adapte o Quickprop para contar, a cada época, a fração de pesos que usam as regras (A), (C) e (D). Rode no problema anterior (semente 0, 300 épocas) e interprete.
+R:
+```python
+import numpy as np
+from rnbook import MLP
+
+def conta_regras(X, T, eps=0.05, mu=1.75, epocas=300, semente=0):
+    r = MLP([1, 8, 1], ["tanh", "identidade"], semente=semente); th = r.theta.copy(); N = len(X)
+    dw, sa = np.zeros_like(th), np.zeros_like(th); sig = mu / (1 + mu); cont = dict(A=0, C=0, D=0)
+    for _ in range(epocas):
+        s = r.grad(th, X, T) / N + 1e-4 * th; passo = np.zeros_like(th)
+        neg, pos, zer = dw < 0, dw > 0, dw == 0
+        passo[neg & (s > 0)] -= eps * s[neg & (s > 0)]; passo[pos & (s < 0)] -= eps * s[pos & (s < 0)]
+        passo[zer] -= eps * s[zer]
+        cres = (neg & (s >= sig * sa)) | (pos & (s <= sig * sa)); passo[cres] += mu * dw[cres]
+        quad = (neg | pos) & ~cres; passo[quad] += dw[quad] * s[quad] / (sa[quad] - s[quad])
+        cont["A"] += zer.sum(); cont["C"] += cres.sum(); cont["D"] += quad.sum()
+        sa, dw, th = s, passo, th + passo
+    tot = sum(cont.values()); return {k: v / tot for k, v in cont.items()}
+```
+Resultado observado (25 pesos × 300 épocas): regra (A) em $0{,}33\%$ dos casos (só na primeira época), regra (C) em $44{,}7\%$ e regra (D) em $55{,}0\%$. Interpretação: o limite de crescimento $\mu$ é acionado em quase metade das atualizações: a hipótese de parábola raramente é aplicável por inteiro; o passo "quadrático puro" é minoria do tempo.
+
+DISC: Treine o XOR com Quickprop em uma rede 2–2–1 com sigmoide e derivada $+0{,}1$ na saída (`"sigmoide_fahlman"`), $\varepsilon=0{,}5$, 10 sementes, até $E<10^{-3}$ ou 3000 épocas. Quantas sementes resolvem e quantas épocas cada uma usa?
+R:
+```python
+import numpy as np
+from rnbook import MLP, otimizadores as O
+
+P4 = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], float); T4 = np.array([[0], [1], [1], [0]], float)
+for s in range(10):
+    r = MLP([2, 2, 1], ["sigmoide", "sigmoide_fahlman"], semente=s, init="pequena")
+    res = O.quickprop(r.theta, lambda th: r.perda(th, P4, T4), lambda th: r.grad(th, P4, T4),
+                      epsilon=0.5, max_iter=3000, tol_perda=1e-3)
+    ok = ((r.prever(P4, res.theta) > 0.5) == T4).all()
+    print(s, ok, res.n_iter)
+```
+Resultado observado: resolveram 8 de 10 sementes. As sementes 2 a 9 resolveram em 41, 53, 264, 66, 84, 83, 83 e 48 épocas; as sementes 0 e 1 usaram as 3000 épocas sem resolver. Critérios: parada por perda e por limite de épocas; critério de sucesso por classificação dos quatro pontos.
+
+DISC: Complete o Exemplo 5.2 calculando $\partial E/\partial b_1$ e $\partial E/\partial b_2$ à mão ($w=(1,-1)$, $b=(0;0{,}5)$, $v=(1,1)$, $c=0$, amostras $(0,0)$ e $(1,1)$, $\phi=\tanh$, saída linear).
+R: Resíduos: $r_1=0{,}46212$ e $r_2=-0{,}70053$. Derivadas da tanh: amostra 1: $\phi'(z_{11})=1$, $\phi'(z_{12})=1-0{,}46212^2=0{,}78645$; amostra 2: $\phi'(z_{21})=1-0{,}76159^2=0{,}41998$, $\phi'(z_{22})=0{,}78645$. Então $\dfrac{\partial E}{\partial b_1}=\sum_pr_pv_1\phi'(z_{p1})=0{,}46212\cdot1-0{,}70053\cdot0{,}41998=0{,}16791$ e $\dfrac{\partial E}{\partial b_2}=(0{,}46212-0{,}70053)\cdot0{,}78645=-0{,}18750$. Coincidem com o gradiente calculado pelo pacote.
+
+DISC: Compare o Quickprop e o RPROP (Cap. 6): que informação do gradiente cada um usa, que parâmetros precisam de ajuste e que tipo de falha é típica de cada um.
+R: **Quickprop:** usa o **valor** do declive em duas épocas e o último passo; estima a curvatura por peso; parâmetros $\varepsilon$, $\mu$ e decaimento; falha típica: passos quadráticos mal condicionados (curvatura negativa ou parábola ruim) causam picos. **RPROP:** usa apenas o **sinal** do declive, com um passo individual por peso que cresce ou encolhe por fatores fixos; parâmetros $\eta^+,\eta^-,\Delta_0,\Delta_{\min},\Delta_{\max}$; falha típica: mudança de sinal por oscilação ruidosa, que encolhe o passo. Ambos exigem modo de lote e partem do mesmo gradiente do backpropagation.
+
+DISC: Os gráficos do experimento mostram picos ocasionais na perda do Quickprop. Explique a origem e proponha duas salvaguardas, indicando que elas não fazem parte da formulação original.
+R: Origem: em alguns pesos, a parábola local estimada pela secante é ruim (curvatura mal estimada ou negativa), e o passo quadrático (ou o de crescimento $\mu$) ultrapassa a região de validade, aumentando temporariamente $E$. Salvaguardas didáticas: (1) limitar o passo absoluto (`passo_max`); (2) detectar aumento da perda e, nesse caso, desfazer o passo e reiniciar o passo anterior de todos os pesos com $-\varepsilon\,S$ (gradiente descendente). Ambas são adaptações (como o `passo_max` do pacote `rnbook`) e podem alterar o desempenho; não são da formulação original de Fahlman.

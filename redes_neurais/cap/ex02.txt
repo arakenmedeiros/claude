@@ -1,0 +1,377 @@
+MC: A derivada de $f(x)=x^3$ no ponto $x=2$ é
+a) $8$
+b) $6$
+c) $3$
+d) $24$
+e) $12$
+R: e | $f'(x)=3x^2$, logo $f'(2)=12$.
+
+MC: O valor de $\tanh'(0)$ é
+a) $0$
+b) $0{,}25$
+c) $1$
+d) $0{,}5$
+e) $-1$
+R: c | $\tanh'(z)=1-\tanh^2z$ e $\tanh0=0$, logo $\tanh'(0)=1$ (o máximo).
+
+MC: O valor de $\sigma'(0)$, derivada da sigmoide em zero, é
+a) $0{,}25$
+b) $0$
+c) $0{,}5$
+d) $1$
+e) $0{,}125$
+R: a | $\sigma'(z)=\sigma(z)(1-\sigma(z))$ e $\sigma(0)=0{,}5$, logo $\sigma'(0)=0{,}25$, que é o máximo da derivada.
+
+MC: Sendo $y=(3x+1)^2$, pela regra da cadeia, $dy/dx$ em $x=1$ vale
+a) $16$
+b) $24$
+c) $8$
+d) $12$
+e) $48$
+R: b | $dy/dx=2(3x+1)\cdot3=6(3x+1)$; em $x=1$: $6\cdot4=24$.
+
+MC: Para $f(x,y)=x^2y+y^3$, o valor de $\partial f/\partial y$ no ponto $(1,2)$ é
+a) $4$
+b) $12$
+c) $13$
+d) $5$
+e) $9$
+R: c | $\partial f/\partial y=x^2+3y^2=1+12=13$.
+
+MC: A Jacobiana de $\mathbf{F}:\mathbb{R}^3\to\mathbb{R}^2$ tem dimensão
+a) $3\times2$
+b) $2\times3$
+c) $3\times3$
+d) $2\times2$
+e) $6\times1$
+R: b | $J$ tem $m=2$ linhas (componentes de $\mathbf{F}$) e $n=3$ colunas (variáveis).
+
+MC: A Hessiana de uma função escalar de 5 variáveis é uma matriz
+a) $5\times5$, simétrica se as segundas derivadas forem contínuas.
+b) $1\times5$.
+c) $5\times1$.
+d) $25\times1$, sempre diagonal.
+e) $5\times5$, sempre positiva definida.
+R: a | $H_{ij}=\partial^2f/\partial x_i\partial x_j$; pelo teorema de Schwarz é simétrica sob continuidade. Não é sempre positiva definida.
+
+MC: O gradiente de $f(x,y)=x^2+3y^2$ no ponto $(1,1)$ é
+a) $(2,\,3)$
+b) $(1,\,3)$
+c) $(4,\,6)$
+d) $(2,\,6)$
+e) $(2,\,2)$
+R: d | $\nabla f=(2x,\,6y)=(2,\,6)$.
+
+MC: Se $\nabla f=(3,4)$ em um ponto, a maior taxa de crescimento possível de $f$ nesse ponto vale
+a) $7$
+b) $12$
+c) $3{,}5$
+d) $5$
+e) $1$
+R: d | Vale $\|\nabla f\|=\sqrt{3^2+4^2}=5$, atingida na direção $\nabla f/\|\nabla f\|$.
+
+MC: A direção de maior **decrescimento** local de $f$ é
+a) $\nabla f/\|\nabla f\|$.
+b) $-\nabla f/\|\nabla f\|$.
+c) qualquer vetor perpendicular ao gradiente.
+d) o autovetor de menor autovalor da Hessiana, sempre.
+e) a direção do eixo coordenado de maior derivada parcial.
+R: b | Pela desigualdade de Cauchy–Schwarz, $D_{\mathbf{u}}f=\nabla f\cdot\mathbf{u}$ é mínima quando $\mathbf{u}=-\nabla f/\|\nabla f\|$.
+
+MC: Ao longo de uma curva de nível de $f$, a derivada direcional na direção tangente à curva é
+a) máxima.
+b) zero.
+c) mínima.
+d) igual à norma do gradiente.
+e) indefinida.
+R: b | O gradiente é perpendicular às curvas de nível; $\nabla f\cdot\mathbf{u}=0$ se $\mathbf{u}$ é tangente.
+
+MC: Para $f=\tfrac12\mathbf{x}^TA\mathbf{x}$ com autovalores de $A$ entre $\lambda_{\min}=1$ e $\lambda_{\max}=10$, o gradiente descendente com taxa constante converge para qualquer $\eta$ tal que
+a) $0<\eta<0{,}2$
+b) $0<\eta<1$
+c) $0<\eta<2$
+d) $0<\eta<0{,}1$
+e) $0<\eta<10$
+R: a | A condição é $\eta<2/\lambda_{\max}=2/10=0{,}2$.
+
+MC: Com os mesmos autovalores ($1$ e $10$), a taxa que minimiza o fator de contração é
+a) $0{,}2$
+b) $1/10$
+c) $2/11\approx0{,}182$
+d) $1/11$
+e) $0{,}5$
+R: c | $\eta^*=2/(\lambda_{\min}+\lambda_{\max})=2/11$, com fator $(\kappa-1)/(\kappa+1)=9/11$.
+
+MC: Com $\lambda_{\max}=10$ e $\eta=0{,}25$, o gradiente descendente na direção do autovalor $10$
+a) converge, porque $\eta<1$.
+b) converge, porque $\eta<\lambda_{\max}$.
+c) oscila sem aumentar, porque $|1-\eta\lambda|=1$.
+d) converge em um passo.
+e) diverge, porque $|1-\eta\lambda|=1{,}5>1$.
+R: e | O erro é multiplicado por $1-0{,}25\cdot10=-1{,}5$ a cada passo, em módulo maior que 1.
+
+MC: Aplicado a uma função quadrática com Hessiana positiva definida, o método de Newton (passo completo) chega ao mínimo em
+a) $\kappa$ passos.
+b) $\log(1/\varepsilon)$ passos, sempre.
+c) infinitos passos.
+d) um passo.
+e) dois passos, sempre.
+R: d | O modelo quadrático de Taylor é exato; seu mínimo é o mínimo da função.
+
+MC: O passo de Newton é calculado, na prática, resolvendo
+a) $\mathbf{d}=-\eta\nabla f$.
+b) $H\,\mathbf{d}=-\nabla f$.
+c) $\mathbf{d}=-\mathrm{sinal}(\nabla f)$.
+d) $H\,\mathbf{d}=+\nabla f$.
+e) $\nabla f\,\mathbf{d}=-H$.
+R: b | O passo minimiza o modelo quadrático: $\nabla f+H\mathbf{d}=\mathbf{0}$. Resolve-se o sistema; não é preciso inverter $H$.
+
+MC: Com $f(x)=x^2-4$, $x_0=1$ e $x_1=3$, o ponto $x_2$ do método das secantes para raízes é
+a) $2{,}0$
+b) $2{,}5$
+c) $1{,}5$
+d) $2{,}25$
+e) $1{,}75$
+R: e | $f(1)=-3$, $f(3)=5$; $x_2=3-5\cdot\frac{3-1}{5-(-3)}=3-1{,}25=1{,}75$.
+
+MC: Aplicar o método das secantes à derivada $f'$ de uma função equivale a usar Newton com a segunda derivada aproximada por
+a) $\dfrac{f(x_k)-f(x_{k-1})}{x_k-x_{k-1}}$
+b) $f'(x_k)\,(x_k-x_{k-1})$
+c) $\dfrac{f'(x_k)-f'(x_{k-1})}{x_k-x_{k-1}}$
+d) $\dfrac{f'(x_k)}{f(x_k)}$
+e) $\dfrac{1}{f'(x_k)}$
+R: c | A inclinação da secante de $f'$ estima $f''$.
+
+MC: A ordem de convergência do método das secantes, em condições favoráveis, é aproximadamente
+a) $1$
+b) $2$
+c) $1{,}618$
+d) $3$
+e) $0{,}5$
+R: c | A razão áurea; mais lenta que Newton (2), mas sem calcular derivadas.
+
+MC: Na tabela-verdade do XOR, a saída para as entradas $(1,1)$ é
+a) $1$
+b) depende do viés.
+c) indefinida.
+d) $0$
+e) $2$
+R: d | XOR vale 1 apenas quando as entradas diferem.
+
+MC: Entre as portas AND, OR, NAND e XOR, aquela cujos pontos **não** podem ser separados por uma reta é
+a) XOR
+b) AND
+c) OR
+d) NAND
+e) todas podem ser separadas.
+R: a | Para XOR, $(0,1)$ e $(1,0)$ têm rótulo 1 e $(0,0)$ e $(1,1)$ têm rótulo 0: nenhuma reta separa os dois grupos.
+
+MC: As equações normais do problema de mínimos quadrados $\min\tfrac12\|A\theta-\mathbf{y}\|^2$ são
+a) $A\,\theta=\mathbf{y}$ sempre
+b) $AA^T\theta=\mathbf{y}$
+c) $\theta=A\mathbf{y}$
+d) $A^T\theta=A\mathbf{y}$
+e) $A^TA\,\theta=A^T\mathbf{y}$
+R: e | Resultam de igualar o gradiente $A^T(A\theta-\mathbf{y})$ a zero.
+
+MC: Calcular $\theta$ resolvendo diretamente $A^TA\theta=A^T\mathbf{y}$ pode ser numericamente pior que usar QR porque
+a) eleva ao quadrado o número de condição: $\kappa(A^TA)=\kappa(A)^2$.
+b) torna o problema não linear.
+c) exige derivadas segundas.
+d) só funciona para $N<P$.
+e) altera a solução exata do problema.
+R: a | A solução exata é a mesma, mas o erro numérico pode se ampliar com $\kappa^2$.
+
+MC: No ajuste por mínimos quadrados, o vetor de resíduos $A\theta-\mathbf{y}$ na solução é
+a) paralelo às colunas de $A$.
+b) igual a zero sempre.
+c) igual a $\mathbf{y}$.
+d) ortogonal às colunas de $A$.
+e) ortogonal a $\mathbf{y}$ sempre.
+R: d | Das equações normais: $A^T(A\theta-\mathbf{y})=\mathbf{0}$.
+
+MC: Sob ruído gaussiano independente e de variância constante, a estimativa de máxima verossimilhança dos parâmetros equivale a minimizar
+a) a soma dos erros quadráticos.
+b) a soma dos erros absolutos.
+c) a entropia cruzada binária.
+d) o máximo erro absoluto.
+e) a norma $L_1$ dos pesos.
+R: a | O logaritmo da verossimilhança gaussiana é, a menos de constantes, $-\tfrac{1}{2\sigma^2}\sum r^2$.
+
+MC: Em NumPy, para dois vetores `a` e `b`, a expressão `a * b` calcula
+a) o produto escalar.
+b) o produto vetorial.
+c) o produto matricial.
+d) erro: `*` não é permitido para arrays.
+e) o produto elemento a elemento; o produto escalar é `a @ b`.
+R: e | `*` é Hadamard; `@` é produto matricial (ou escalar para vetores).
+
+MC: Por que não devemos escrever `0.1 + 0.2 == 0.3` em um critério de parada?
+a) Porque Python não permite comparar números reais.
+b) Porque a soma resulta em um inteiro.
+c) Porque números reais são armazenados com precisão finita; compara-se com tolerância (por exemplo, `math.isclose`).
+d) Porque `==` só serve para textos.
+e) Porque 0,1 não é um número válido.
+R: c | Em ponto flutuante, `0.1 + 0.2` vale `0.30000000000000004`.
+
+MC: No ponto crítico $\mathbf{x}^*$, se a Hessiana possui um autovalor positivo e outro negativo, então $\mathbf{x}^*$ é
+a) um mínimo local.
+b) um máximo local.
+c) um mínimo global.
+d) um ponto de sela.
+e) um ponto onde o gradiente não é nulo.
+R: d | Há uma direção de curvatura positiva e outra negativa.
+
+MC: Quais condições garantem que $\mathbf{x}^*$ é um mínimo local?
+a) Apenas $\nabla f(\mathbf{x}^*)=\mathbf{0}$.
+b) Apenas $H(\mathbf{x}^*)$ semidefinida positiva.
+c) $\nabla f(\mathbf{x}^*)\neq\mathbf{0}$ e $H$ diagonal.
+d) $f(\mathbf{x}^*)=0$.
+e) $\nabla f(\mathbf{x}^*)=\mathbf{0}$ e $H(\mathbf{x}^*)$ positiva definida.
+R: e | Essa é a condição suficiente de segunda ordem. Gradiente nulo sozinho é só necessário (exemplo: $x^3$).
+
+MC: A relação entre a soma $E=\tfrac12\sum r^2$ e a média $\mathrm{MSE}=\tfrac1{Nm}\sum r^2$ é
+a) $\mathrm{MSE}=E/2$.
+b) $\mathrm{MSE}=\dfrac{2}{Nm}\,E$.
+c) $\mathrm{MSE}=NmE$.
+d) $\mathrm{MSE}=E^2$.
+e) $\mathrm{MSE}=E$.
+R: b | $E=\tfrac12\sum r^2\Rightarrow\sum r^2=2E$, e $\mathrm{MSE}=2E/(Nm)$. O gradiente fica escalonado pelo mesmo fator.
+
+DISC: Deduza a derivada da sigmoide, $\sigma'(z)=\sigma(z)(1-\sigma(z))$, e calcule $\sigma'(0)$ e $\sigma'(2)$.
+R: $\sigma(z)=(1+e^{-z})^{-1}$. Pela regra da cadeia,
+$$ \sigma'(z)=-(1+e^{-z})^{-2}(-e^{-z})=\frac{1}{1+e^{-z}}\cdot\frac{e^{-z}}{1+e^{-z}}=\sigma(z)\left(1-\sigma(z)\right) $$
+pois $\dfrac{e^{-z}}{1+e^{-z}}=1-\dfrac{1}{1+e^{-z}}$. Em $z=0$: $\sigma=0{,}5$, $\sigma'=0{,}25$. Em $z=2$: $\sigma=0{,}8808$, $\sigma'=0{,}8808\cdot0{,}1192=0{,}1050$.
+
+DISC: Um neurônio tem $x=2$, $w=0{,}5$, $b=0$, ativação sigmoide e alvo $t=0$. Com $E=\tfrac12(y-t)^2$, calcule $\partial E/\partial w$ e $\partial E/\partial b$ pela regra da cadeia.
+R: $z=0{,}5\cdot2+0=1$; $y=\sigma(1)=0{,}7311$; $r=y-t=0{,}7311$; $\sigma'(1)=0{,}7311\cdot0{,}2689=0{,}1966$.
+$$ \frac{\partial E}{\partial w}=r\,\sigma'(z)\,x=0{,}7311\cdot0{,}1966\cdot2=0{,}2875,\qquad \frac{\partial E}{\partial b}=r\,\sigma'(z)=0{,}1437 $$
+Ambos positivos: reduzir $w$ e $b$ diminui $E$ (o neurônio está acima do alvo).
+
+DISC: Seja $f(x,y)=x^2+xy+2y^2$. Calcule o gradiente e a Hessiana, encontre o ponto crítico e classifique-o.
+R: $\nabla f=(2x+y,\;x+4y)$. Igualando a zero: $y=-2x$ e $x+4(-2x)=-7x=0\Rightarrow x=0$, $y=0$. A Hessiana é constante, $H=\begin{pmatrix}2&1\\1&4\end{pmatrix}$, com autovalores $3\pm\sqrt2\approx1{,}586$ e $4{,}414$, ambos positivos. Logo $H$ é positiva definida e $(0,0)$ é um **mínimo local** (global, pois $f$ é quadrática convexa).
+
+DISC: Calcule a Jacobiana de $\mathbf{F}(x,y)=(xy,\;x+y^2,\;e^x)$ e avalie-a em $(1,1)$. Qual é a dimensão?
+R: $J=\begin{pmatrix}y&x\\1&2y\\e^x&0\end{pmatrix}$, de dimensão $3\times2$. Em $(1,1)$:
+$$ J(1,1)=\begin{pmatrix}1&1\\1&2\\e&0\end{pmatrix}\approx\begin{pmatrix}1&1\\1&2\\2{,}718&0\end{pmatrix} $$
+
+DISC: Para $f(x,y)=x^2y$ no ponto $(1,2)$, calcule a derivada direcional na direção do vetor $(3,4)$ e a maior taxa de crescimento possível.
+R: $\nabla f=(2xy,\,x^2)$; em $(1,2)$: $(4,1)$. A direção unitária é $\mathbf{u}=(3,4)/5=(0{,}6;\,0{,}8)$. Logo $D_{\mathbf{u}}f=4\cdot0{,}6+1\cdot0{,}8=3{,}2$. A maior taxa é $\|\nabla f\|=\sqrt{17}\approx4{,}123$, na direção do gradiente.
+
+DISC: Aplique, à mão, dois passos do gradiente descendente com $\eta=0{,}1$ em $f=\tfrac12(x^2+10y^2)$, a partir de $(2,\,1)$. O que acontece com a componente $y$ e por quê?
+R: $\nabla f=(x,\,10y)$. Passo 1: $\nabla f(2,1)=(2,10)$; $(x,y)\leftarrow(2-0{,}2,\;1-1)=(1{,}8;\,0)$. Passo 2: $\nabla f=(1{,}8;\,0)$; $(x,y)\leftarrow(1{,}8-0{,}18;\,0)=(1{,}62;\,0)$. A componente $y$ foi zerada em um passo porque $1-\eta\lambda_y=1-0{,}1\cdot10=0$; já a componente $x$ é multiplicada por $1-0{,}1=0{,}9$ a cada passo, convergindo lentamente. É o efeito do mau condicionamento: uma taxa que é ótima para uma direção é lenta para outra.
+
+DISC: Para $f=\tfrac12\lambda x^2$ ($\lambda>0$), mostre que o gradiente descendente converge se e somente se $0<\eta<2/\lambda$. Para $\lambda=4$, o que ocorre com $\eta=0{,}4$, $\eta=0{,}5$ e $\eta=0{,}6$?
+R: $x_{k+1}=x_k-\eta\lambda x_k=(1-\eta\lambda)x_k$, logo $x_k=(1-\eta\lambda)^kx_0$, que tende a zero se e só se $|1-\eta\lambda|<1\iff0<\eta<2/\lambda$. Com $\lambda=4$ o limite é $0{,}5$. Para $\eta=0{,}4$: fator $1-1{,}6=-0{,}6$ (converge, oscilando). Para $\eta=0{,}5$: fator $-1$ (oscila entre $\pm x_0$, sem convergir). Para $\eta=0{,}6$: fator $-1{,}4$ (diverge).
+
+DISC: Aplique o método de Newton a $f(x)=x^4/4-x$ ($f'=x^3-1$, $f''=3x^2$) a partir de $x_0=2$. Calcule $x_1$, $x_2$ e $x_3$, e compare com o mínimo $x^*=1$.
+R: $x_{k+1}=x_k-\dfrac{x_k^3-1}{3x_k^2}$. $x_1=2-\dfrac{7}{12}=1{,}41667$; $x_2=1{,}41667-\dfrac{1{,}8426}{6{,}0208}=1{,}11053$; $x_3=1{,}01064$. O erro cai de $1$ para $0{,}417$, $0{,}111$ e $0{,}0106$, aproximando-se do comportamento quadrático (o erro seguinte seria da ordem de $10^{-4}$).
+
+DISC: Calcule três iterações do método das secantes para a raiz de $f(x)=x^2-3$ com $x_0=1$ e $x_1=2$. Compare com $\sqrt3$.
+R: $f(1)=-2$, $f(2)=1$. $x_2=2-1\cdot\dfrac{2-1}{1-(-2)}=1{,}6667$. $f(x_2)=-0{,}2222$: $x_3=1{,}6667-(-0{,}2222)\dfrac{1{,}6667-2}{-0{,}2222-1}=1{,}7273$. $x_4=1{,}7321$ (aproximadamente). O valor exato é $\sqrt3=1{,}7320508$: os erros absolutos de $x_1,\dots,x_4$ foram $0{,}268;\ 0{,}065;\ 0{,}0048;\ 5\times10^{-5}$.
+
+DISC: Explique os dois usos do método das secantes (raiz e curvatura) e dê um exemplo de cada. Por que o segundo é relevante para algoritmos de treinamento?
+R: (i) **Raiz:** resolve $f(x)=0$ sem derivada; exemplo: $\sqrt2$ como raiz de $x^2-2$. (ii) **Curvatura:** aplicado a $f'$, a inclinação da secante $(f'(x_k)-f'(x_{k-1}))/(x_k-x_{k-1})$ estima $f''$; exemplo: em $e^x-2x$ com pontos $0$ e $1$, estima-se $f''\approx1{,}718$ (verdadeiro $f''(0{,}5)=1{,}649$). O segundo uso é relevante porque dá informação de segunda ordem sem calcular a Hessiana, ideia por trás do Quickprop e dos métodos quase-Newton.
+
+DISC: Ajuste, por mínimos quadrados, a reta $\hat y=\theta_0+\theta_1x$ aos pontos $(0,1)$, $(1,2)$, $(2,2)$ resolvendo as equações normais. Calcule o erro $E=\tfrac12\sum r^2$.
+R: $A=\begin{pmatrix}1&0\\1&1\\1&2\end{pmatrix}$, $\mathbf{y}=(1,2,2)^T$. $A^TA=\begin{pmatrix}3&3\\3&5\end{pmatrix}$, $A^T\mathbf{y}=(5,6)^T$. Resolvendo: $\det=6$; $\theta_0=(5\cdot5-3\cdot6)/6=7/6\approx1{,}1667$; $\theta_1=(3\cdot6-3\cdot5)/6=0{,}5$. Predições: $1{,}1667;\ 1{,}6667;\ 2{,}1667$; resíduos: $0{,}1667;\ -0{,}3333;\ 0{,}1667$. $E=\tfrac12(0{,}0278+0{,}1111+0{,}0278)=0{,}0833$. Verificação: $A^T\mathbf{r}=(0,0)$.
+
+DISC: Mostre, a partir das equações normais, que o resíduo $\mathbf{r}=A\theta-\mathbf{y}$ é ortogonal a cada coluna de $A$. Qual é a interpretação geométrica?
+R: Das equações normais, $A^TA\theta-A^T\mathbf{y}=A^T(A\theta-\mathbf{y})=A^T\mathbf{r}=\mathbf{0}$. A $j$-ésima componente é $\mathbf{a}_j^T\mathbf{r}=0$, isto é, $\mathbf{r}\perp\mathbf{a}_j$ para toda coluna $\mathbf{a}_j$. Geometricamente, $A\theta$ é a **projeção ortogonal** de $\mathbf{y}$ no subespaço gerado pelas colunas de $A$, e o resíduo é o "pedaço" de $\mathbf{y}$ perpendicular a esse subespaço.
+
+DISC: Explique por que $\kappa(A^TA)=\kappa(A)^2$ torna as equações normais menos recomendáveis. Se $\kappa(A)=10^4$, qual é o $\kappa(A^TA)$ e o que isso significa para a precisão em dupla precisão ($\approx16$ dígitos)?
+R: Os valores singulares de $A^TA$ são os quadrados dos de $A$; logo, a razão entre o maior e o menor também se eleva ao quadrado. Com $\kappa(A)=10^4$, $\kappa(A^TA)=10^8$: perde-se da ordem de 8 dígitos de precisão, restando cerca de 8 dos 16. Com $\kappa(A)=10^8$, restariam praticamente nenhum. QR e `lstsq` trabalham com $A$ diretamente, com perda de ordem $\kappa(A)$.
+
+DISC: Mostre que, com ruído gaussiano $\mathcal{N}(0,\sigma^2)$ independente, maximizar a verossimilhança equivale a minimizar a soma dos erros quadráticos.
+R: Para $t_p=y_p+\varepsilon_p$, $\varepsilon_p\sim\mathcal{N}(0,\sigma^2)$: $p(t_p|\mathbf{x}_p,\theta)=\dfrac{1}{\sqrt{2\pi\sigma^2}}\exp\!\left(-\dfrac{(t_p-y_p)^2}{2\sigma^2}\right)$. O logaritmo da verossimilhança conjunta é
+$$ \ln L(\theta)=-\frac{N}{2}\ln(2\pi\sigma^2)-\frac{1}{2\sigma^2}\sum_{p=1}^{N}(t_p-y_p)^2 $$
+O primeiro termo não depende de $\theta$; logo, maximizar $\ln L$ equivale a minimizar $\sum(t_p-y_p)^2$.
+
+DISC: Construa a função XOR usando apenas AND, OR e NOT, e verifique com uma tabela-verdade.
+R: $x_1\oplus x_2=(x_1\vee x_2)\wedge\neg(x_1\wedge x_2)$. Tabela: $(0,0)$: $0\wedge1=0$; $(0,1)$: $1\wedge1=1$; $(1,0)$: $1\wedge1=1$; $(1,1)$: $1\wedge0=0$. A construção usa duas "camadas" de portas: um indício de que o XOR exigirá duas camadas de neurônios.
+
+DISC: Escreva uma função em Python `gd(grad, x0, eta, tol=1e-8, kmax=10000)` que implemente o gradiente descendente com os critérios de parada da Seção 2.7 e teste-a em $f=\tfrac12(x^2+10y^2)$ com $\eta=0{,}18$ a partir de $(2{,}5;\,1{,}2)$.
+R: Solução de referência:
+```python
+import numpy as np
+
+def gd(grad, x0, eta, tol=1e-8, kmax=10000):
+    x = np.array(x0, dtype=float)
+    for k in range(kmax):
+        g = grad(x)
+        if np.linalg.norm(g) < tol:
+            return x, k, "gradiente pequeno"
+        x = x - eta * g
+    return x, kmax, "máximo de iterações"
+
+A = np.diag([1.0, 10.0])
+x, k, motivo = gd(lambda v: A @ v, [2.5, 1.2], 0.18)
+print(x, k, motivo)
+```
+Critérios: usa norma do gradiente e limite de iterações; devolve ponto, iterações e motivo; resultado próximo de $(0,0)$.
+
+DISC: Escreva uma função `grad_num(f, x, h=1e-6)` por diferenças centrais e use-a para conferir o gradiente analítico de $f(x,y)=x^2y+y^3$ em $(1,2)$, que é $(4,\,13)$.
+R:
+```python
+import numpy as np
+
+def grad_num(f, x, h=1e-6):
+    x = np.asarray(x, dtype=float)
+    g = np.zeros_like(x)
+    for i in range(x.size):
+        e = np.zeros_like(x); e[i] = h
+        g[i] = (f(x + e) - f(x - e)) / (2 * h)
+    return g
+
+f = lambda v: v[0] ** 2 * v[1] + v[1] ** 3
+print(grad_num(f, [1.0, 2.0]))     # aproximadamente [ 4. 13.]
+```
+Critérios: diferença central; laço sobre as componentes; resultado $\approx(4;13)$. Limitação: verifica o gradiente só no ponto testado.
+
+DISC: Escreva um programa que ajuste uma reta por mínimos quadrados de três formas (equações normais, `np.linalg.lstsq` e QR) para os pontos $(0,1)$, $(1,2)$, $(2,2)$ e compare os resultados.
+R:
+```python
+import numpy as np
+x = np.array([0.0, 1.0, 2.0]); y = np.array([1.0, 2.0, 2.0])
+A = np.column_stack([np.ones_like(x), x])
+th_normais = np.linalg.solve(A.T @ A, A.T @ y)
+th_lstsq = np.linalg.lstsq(A, y, rcond=None)[0]
+Q, R = np.linalg.qr(A)
+th_qr = np.linalg.solve(R, Q.T @ y)
+print(th_normais, th_lstsq, th_qr)   # todos ~ [1.1667 0.5]
+```
+Critérios: três métodos; coeficientes $\approx(1{,}1667;\,0{,}5)$; não usa `np.linalg.inv`.
+
+DISC: Implemente o método de Newton para minimizar $f(x)=e^x-2x$, com critério de parada $|f'(x)|<10^{-10}$, e mostre as iterações até a convergência.
+R:
+```python
+import numpy as np
+x, k = 0.0, 0
+while abs(np.exp(x) - 2.0) >= 1e-10 and k < 50:
+    x = x - (np.exp(x) - 2.0) / np.exp(x)
+    k += 1
+    print(k, x)
+print("mínimo em", x, "ln 2 =", np.log(2))
+```
+Critérios: usa $f'$ e $f''$ corretas; critério de parada e limite de iterações; converge em cerca de 5 a 6 iterações para $\ln2\approx0{,}693147$.
+
+DISC: Escreva um código Matplotlib que desenhe as curvas de nível de $f=\tfrac12(x^2+10y^2)$ e a trajetória do gradiente descendente com $\eta=0{,}18$ a partir de $(2{,}5;\,1{,}2)$, com 30 passos. Comente o formato da trajetória.
+R:
+```python
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+A = np.diag([1.0, 10.0])
+v = np.array([2.5, 1.2]); caminho = [v.copy()]
+for _ in range(30):
+    v = v - 0.18 * (A @ v); caminho.append(v.copy())
+caminho = np.array(caminho)
+X, Y = np.meshgrid(np.linspace(-3, 3, 200), np.linspace(-1.6, 1.6, 200))
+fig, ax = plt.subplots()
+ax.contour(X, Y, 0.5 * (X ** 2 + 10 * Y ** 2), levels=[0.5, 2, 5, 10, 16, 25])
+ax.plot(caminho[:, 0], caminho[:, 1], "o-")
+fig.savefig("gd.png")
+```
+Comentário: a trajetória faz zigue-zague na direção $y$ (curvatura alta) enquanto avança lentamente em $x$ (curvatura baixa), típico de mau condicionamento ($\kappa=10$).

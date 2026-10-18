@@ -1,0 +1,372 @@
+MC: O papel exato do algoritmo de backpropagation no treinamento de uma rede é
+a) escolher a taxa de aprendizagem de cada peso.
+b) decidir quando o treinamento deve parar.
+c) calcular as derivadas parciais da perda em relação a todos os pesos e vieses.
+d) inicializar os pesos de forma adequada.
+e) dividir os dados em treino, validação e teste.
+R: c | Backpropagation produz $\nabla E$. As demais tarefas pertencem ao otimizador e ao protocolo de avaliação.
+
+MC: Uma rede com duas camadas e ativações apenas lineares, $\mathbf{y}=W^{(2)}(W^{(1)}\mathbf{x}+\mathbf{b}^{(1)})+\mathbf{b}^{(2)}$, é equivalente a
+a) uma única camada linear com $W'=W^{(2)}W^{(1)}$ e $\mathbf{b}'=W^{(2)}\mathbf{b}^{(1)}+\mathbf{b}^{(2)}$.
+b) uma rede com camada oculta não linear.
+c) um perceptron com degrau.
+d) uma rede que resolve o XOR.
+e) uma rede com o dobro de parâmetros úteis.
+R: a | A composição de funções afins é afim; por isso a não linearidade é indispensável.
+
+MC: O valor máximo da derivada da sigmoide é
+a) $0{,}25$
+b) $1$
+c) $0{,}5$
+d) $2$
+e) $0{,}1$
+R: a | $\sigma'(z)=\sigma(1-\sigma)$ é máxima em $\sigma=0{,}5$, com valor $0{,}25$.
+
+MC: Em uma rede com 10 camadas de sigmoides, o fator multiplicativo das derivadas das ativações no gradiente da primeira camada é, no máximo, da ordem de
+a) $0{,}25$
+b) $10^{-2}$
+c) $4^{-10}\approx9{,}5\times10^{-7}$
+d) $2^{-10}\approx10^{-3}$
+e) $1$
+R: c | Cada camada contribui com um fator $\le1/4$; o produto de dez fatores é $\le4^{-10}$ (antes de considerar os pesos).
+
+MC: Para uma ReLU, se $z<0$ para todas as amostras de treino, o neurônio
+a) tem derivada $1$ e aprende mais rápido.
+b) passa a ser uma sigmoide.
+c) satura em $1$.
+d) tem saída negativa.
+e) tem derivada zero e deixa de aprender ("neurônio morto").
+R: e | $\mathrm{ReLU}'(z)=0$ para $z<0$, de modo que nenhum gradiente chega a seus pesos.
+
+MC: Em implementações da softmax, subtrai-se $\max_jz_j$ de todos os $z_j$ antes de exponenciar porque
+a) muda a classe prevista para a mais provável.
+b) faz a soma ser diferente de 1.
+c) torna a derivada nula.
+d) acelera o treinamento em 10 vezes.
+e) evita estouro numérico sem alterar o resultado.
+R: e | $e^{z_k-c}/\sum_je^{z_j-c}=e^{z_k}/\sum_je^{z_j}$ para qualquer constante $c$.
+
+MC: Para a perda $E=\tfrac12\|\mathbf{y}-\mathbf{t}\|^2$ e saída com ativação identidade, a sensibilidade da camada de saída é
+a) $\boldsymbol{\delta}^{(L)}=\mathbf{y}-\mathbf{t}$
+b) $\boldsymbol{\delta}^{(L)}=\mathbf{t}-\mathbf{y}$
+c) $\boldsymbol{\delta}^{(L)}=(\mathbf{y}-\mathbf{t})^2$
+d) $\boldsymbol{\delta}^{(L)}=\mathbf{y}\odot\mathbf{t}$
+e) $\boldsymbol{\delta}^{(L)}=\mathbf{0}$
+R: a | BP1 com $\phi_L'=1$.
+
+MC: A equação de recorrência do backpropagation para camadas ocultas é
+a) $\boldsymbol{\delta}^{(l)}=\left((W^{(l+1)})^T\boldsymbol{\delta}^{(l+1)}\right)\odot\phi_l'(\mathbf{z}^{(l)})$.
+b) $\boldsymbol{\delta}^{(l)}=W^{(l+1)}\boldsymbol{\delta}^{(l+1)}+\phi_l'(\mathbf{z}^{(l)})$.
+c) $\boldsymbol{\delta}^{(l)}=(W^{(l)})^T\boldsymbol{\delta}^{(l-1)}$.
+d) $\boldsymbol{\delta}^{(l)}=\boldsymbol{\delta}^{(l+1)}\odot\mathbf{a}^{(l)}$.
+e) $\boldsymbol{\delta}^{(l)}=\phi_l(\mathbf{z}^{(l)})$.
+R: a | É BP2: o erro da camada seguinte, transportado por $(W^{(l+1)})^T$ e multiplicado pela derivada local.
+
+MC: A derivada $\partial E/\partial W^{(l)}$ tem dimensão $n_l\times n_{l-1}$ e é dada por
+a) $(\boldsymbol{\delta}^{(l)})^T\mathbf{a}^{(l)}$
+b) $\mathbf{a}^{(l)}(\boldsymbol{\delta}^{(l-1)})^T$
+c) $\boldsymbol{\delta}^{(l)}\odot\mathbf{a}^{(l-1)}$
+d) $W^{(l)}\boldsymbol{\delta}^{(l)}$
+e) $\boldsymbol{\delta}^{(l)}(\mathbf{a}^{(l-1)})^T$
+R: e | BP3: produto externo entre a sensibilidade e a ativação da camada anterior.
+
+MC: No Exemplo 4.2 (rede 2–2–1), o valor de $\delta^{(2)}$ é
+a) $-0{,}11082$
+b) $-0{,}44811$
+c) $0{,}24731$
+d) $0{,}11082$
+e) $-0{,}02722$
+R: a | $\delta^{(2)}=r\,y(1-y)=-0{,}44811\cdot0{,}24731=-0{,}11082$.
+
+MC: No Exemplo 4.2, a derivada $\partial E/\partial W^{(2)}_{1}$ (peso do primeiro neurônio oculto à saída) vale
+a) $-0{,}05264$
+b) $-0{,}06501$
+c) $-0{,}11082$
+d) $0{,}06501$
+e) $-0{,}58662$
+R: b | $\delta^{(2)}a^{(1)}_1=-0{,}11082\cdot0{,}58662=-0{,}06501$.
+
+MC: Para $N=10$ amostras e uma camada oculta com 4 neurônios, a matriz $\Delta^{(1)}$ da forma matricial do backpropagation tem dimensão
+a) $4\times10$
+b) $4\times4$
+c) $10\times4$
+d) $10\times10$
+e) $40\times1$
+R: c | $\Delta^{(l)}\in\mathbb{R}^{N\times n_l}$, uma linha por amostra.
+
+MC: Calcular o gradiente por diferenças finitas, para uma rede com $P$ parâmetros, exige aproximadamente
+a) uma avaliação, como o backpropagation.
+b) $2P$ avaliações da perda (diferença central), enquanto o backpropagation custa cerca de duas passagens pela rede.
+c) $\log P$ avaliações.
+d) $P^3$ avaliações.
+e) nenhuma avaliação.
+R: b | Cada derivada parcial exige duas avaliações (para $\pm h$); backpropagation obtém todas de uma só vez.
+
+MC: Uma desvantagem do backpropagation em relação às diferenças finitas é
+a) ser menos preciso numericamente, sempre.
+b) exigir mais avaliações da perda.
+c) não funcionar com mais de uma camada.
+d) depender da escolha de $h$.
+e) a necessidade de guardar na memória as ativações e entradas líquidas de todas as camadas.
+R: e | O passo reverso reutiliza os valores do passo direto.
+
+MC: Com diferença central em dupla precisão, um valor de $h$ adequado para a verificação de gradientes é da ordem de
+a) $10^{-1}$
+b) $10^{-15}$
+c) $10^{-13}$
+d) $10^{-5}$ a $10^{-6}$
+e) $1$
+R: d | Na nossa medição, o melhor foi $h\approx10^{-5}$ (erro relativo $5\times10^{-11}$).
+
+MC: Na verificação de gradiente, um erro relativo $\varepsilon_{\text{rel}}$ menor que $10^{-7}$ (dupla precisão) indica, em geral,
+a) que o gradiente está correto em todo o espaço de parâmetros.
+b) que a rede generaliza bem.
+c) que o gradiente analítico provavelmente está correto no ponto testado.
+d) que a taxa de aprendizagem é adequada.
+e) que o otimizador é o melhor.
+R: c | Só vale no ponto testado e não valida outras partes do treinamento.
+
+MC: A verificação de gradiente numérica pode "falhar" mesmo com código correto quando
+a) a perda é quadrática.
+b) a função não é derivável no ponto, como a ReLU em $z=0$.
+c) o lote tem mais de uma amostra.
+d) a rede usa tanh.
+e) a inicialização é de Glorot.
+R: b | A diferença central vê uma média das inclinações dos dois lados; a convenção do código escolhe uma só.
+
+MC: Com saída sigmoide e entropia cruzada binária, a sensibilidade da saída é
+a) $\delta^{(L)}=(y-t)\,y(1-y)$
+b) $\delta^{(L)}=t-y^2$
+c) $\delta^{(L)}=\ln y-\ln t$
+d) $\delta^{(L)}=y-t$
+e) $\delta^{(L)}=0$
+R: d | O fator $y(1-y)$ da sigmoide cancela com o denominador da derivada da entropia cruzada.
+
+MC: Trocar a soma $E=\tfrac12\sum r^2$ pela média $\mathrm{MSE}=\tfrac{1}{Nm}\sum r^2$ faz o gradiente ser multiplicado por
+a) $1/2$
+b) $2/(Nm)$
+c) $N m$
+d) $1/N$ apenas
+e) $1$
+R: b | $\mathrm{MSE}=\dfrac{2}{Nm}E$, logo $\nabla\mathrm{MSE}=\dfrac{2}{Nm}\nabla E$.
+
+MC: Sobre o teorema da aproximação universal, é correto afirmar que
+a) garante que o gradiente descendente sempre atinge o mínimo global.
+b) garante boa generalização com poucos dados.
+c) garante a existência de uma rede com uma camada oculta que aproxima uma função contínua em um compacto, mas não garante que o treinamento a encontre.
+d) exige que a função seja derivável e linear.
+e) vale apenas para ativações em degrau.
+R: c | É um resultado de existência, sem relação com otimização ou generalização.
+
+MC: Segundo Leshno, Lin, Pinkus e Schocken (1993), uma ativação (localmente limitada e contínua por partes) permite aproximação universal por uma camada oculta se, e somente se,
+a) não é um polinômio.
+b) é derivável em toda parte.
+c) é limitada.
+d) é monótona.
+e) tem derivada máxima igual a 1.
+R: a | Polinômios de grau fixo geram um espaço de dimensão finita, que não é denso.
+
+MC: Para $N=1000$ amostras, minilotes de $B=50$ e 30 épocas, o número de atualizações de parâmetros é
+a) $30$
+b) $600$
+c) $1000$
+d) $30\,000$
+e) $50$
+R: b | $\lceil1000/50\rceil=20$ atualizações por época, vezes 30 épocas.
+
+MC: O gradiente de um minilote sorteado uniformemente é, em relação ao gradiente médio completo,
+a) exatamente igual.
+b) sempre enviesado para zero.
+c) independente de $B$.
+d) mais preciso para $B=1$ do que para $B=N$.
+e) um estimador não enviesado, com variância que diminui com $B$.
+R: e | A esperança do gradiente do minilote é o gradiente médio; a variância é proporcional a $1/B$.
+
+MC: Para `MLPRegressor` com saída única, o atributo `loss_` (com `alpha=0`) é igual a
+a) a soma dos quadrados dos erros.
+b) a raiz do erro quadrático médio.
+c) a média dos valores absolutos dos erros.
+d) a entropia cruzada.
+e) $E_{\text{sse}}/N$, isto é, $\tfrac12\cdot$ média dos quadrados dos erros.
+R: e | Verificamos numericamente: `loss_` $=E_{\text{sse}}/(Nm)$ com $m=1$.
+
+MC: Em uma rede 4–5–3 do scikit-learn, o atributo `coefs_[0]` tem forma
+a) $(5,4)$
+b) $(4,3)$
+c) $(5,3)$
+d) $(4,5)$
+e) $(3,5)$
+R: d | `coefs_[l]` tem forma $(n_{l-1},n_l)$, a transposta de $W^{(l)}$ da notação do livro.
+
+MC: Entre os valores de `solver` das classes MLP do scikit-learn (versão 1.9.1) estão
+a) `'rprop'`, `'quickprop'` e `'lm'`.
+b) `'lbfgs'`, `'sgd'` e `'adam'`.
+c) `'trainlm'`, `'trainrp'` e `'sgd'`.
+d) `'newton'`, `'adam'` e `'rprop'`.
+e) `'dbd'`, `'lbfgs'` e `'adam'`.
+R: b | RPROP, Quickprop, LM e DBD não são solvers do scikit-learn e precisam ser implementados à parte.
+
+MC: `feedforwardnet` é
+a) uma classe do scikit-learn.
+b) um solver do `MLPClassifier`.
+c) uma função do NumPy.
+d) uma função do MATLAB (Deep Learning Toolbox) para criar redes feedforward.
+e) uma função do SciPy.
+R: d | As classes do scikit-learn não reproduzem essa API.
+
+MC: Para evitar vazamento de informação, o `StandardScaler` deve ser
+a) ajustado com todos os dados antes da divisão.
+b) ajustado separadamente no teste.
+c) ajustado com os dados de teste para maior fidelidade.
+d) ajustado (`fit`) apenas com os dados de treino e depois aplicado à validação e ao teste.
+e) dispensado em redes neurais.
+R: d | Estatísticas do teste não devem influenciar o treinamento.
+
+MC: No Exemplo 4.5 (rótulos aleatórios), a acurácia de $0{,}950$ obtida com a seleção de atributos fora da validação cruzada se deve
+a) à capacidade real da regressão logística em prever rótulos aleatórios.
+b) a um erro de arredondamento.
+c) ao vazamento: os rótulos de todas as amostras participaram da escolha dos atributos.
+d) à inicialização das sementes.
+e) ao pequeno número de atributos.
+R: c | Dentro do `Pipeline`, a acurácia caiu para $0{,}483$, coerente com o acaso.
+
+MC: A inicialização uniforme de Glorot para uma camada com 100 entradas e 50 saídas tem limite $a=\sqrt{6/(n_{\text{ent}}+n_{\text{sai}})}$ igual a
+a) $0{,}06$
+b) $0{,}12$
+c) $0{,}45$
+d) $0{,}20$
+e) $1{,}0$
+R: d | $\sqrt{6/150}=\sqrt{0{,}04}=0{,}2$.
+
+DISC: Mostre que uma rede de duas camadas com ativações lineares equivale a um único neurônio linear. Dê um exemplo numérico com $W^{(1)}=\begin{pmatrix}1&2\\0&1\end{pmatrix}$, $\mathbf{b}^{(1)}=(1,0)^T$, $W^{(2)}=(1,\,-1)$, $b^{(2)}=2$ e calcule $W'$ e $b'$.
+R: $\mathbf{y}=W^{(2)}(W^{(1)}\mathbf{x}+\mathbf{b}^{(1)})+b^{(2)}=(W^{(2)}W^{(1)})\mathbf{x}+(W^{(2)}\mathbf{b}^{(1)}+b^{(2)})$. Com os dados: $W'=(1,-1)\begin{pmatrix}1&2\\0&1\end{pmatrix}=(1,\,1)$ e $b'=(1,-1)\cdot(1,0)^T+2=1+2=3$. Logo $y=x_1+x_2+3$: um único neurônio linear. A profundidade, sem não linearidade, não acrescenta expressividade.
+
+DISC: Deduza $\tanh'(z)=1-\tanh^2z$ e calcule $\tanh'(0)$ e $\tanh'(2)$.
+R: $\tanh z=\dfrac{e^z-e^{-z}}{e^z+e^{-z}}$. Pela regra do quociente, $\tanh'z=\dfrac{(e^z+e^{-z})^2-(e^z-e^{-z})^2}{(e^z+e^{-z})^2}=\dfrac{4}{(e^z+e^{-z})^2}=1-\tanh^2z$, pois $(e^z+e^{-z})^2-(e^z-e^{-z})^2=4$. Valores: $\tanh'(0)=1$; $\tanh(2)=0{,}9640$, logo $\tanh'(2)=1-0{,}9293=0{,}0707$.
+
+DISC: Considere uma rede 1–2–1 com $z^{(1)}_j=w_jx$, $a_j=\phi(z^{(1)}_j)$ e $y=v_1a_1+v_2a_2$, $E=\tfrac12(y-t)^2$. Derive $\partial E/\partial w_1$ pela regra da cadeia e identifique $\delta^{(1)}_1$ e $\delta^{(2)}$.
+R: $\delta^{(2)}=\partial E/\partial y=y-t$ (saída linear). $\partial E/\partial a_1=(y-t)\,v_1$. $\partial a_1/\partial z^{(1)}_1=\phi'(w_1x)$. Logo $\delta^{(1)}_1=\partial E/\partial z^{(1)}_1=(y-t)\,v_1\,\phi'(w_1x)=\delta^{(2)}v_1\phi'(z^{(1)}_1)$ (BP2). Por fim $\partial E/\partial w_1=\delta^{(1)}_1\cdot\partial z^{(1)}_1/\partial w_1=(y-t)\,v_1\,\phi'(w_1x)\,x$ (BP3).
+
+DISC: Rede 2–2–1 com $\tanh$ na camada oculta e saída linear: $W^{(1)}=\begin{pmatrix}0{,}5&-0{,}5\\1&1\end{pmatrix}$, $\mathbf{b}^{(1)}=\mathbf{0}$, $W^{(2)}=(1,\,-1)$, $b^{(2)}=0$. Para $\mathbf{x}=(1,\,2)$ e $t=0{,}5$, calcule o passo direto, $E$, $\delta^{(2)}$, $\boldsymbol{\delta}^{(1)}$ e $\partial E/\partial W^{(1)}$.
+R: $\mathbf{z}^{(1)}=(0{,}5-1;\ 1+2)=(-0{,}5;\ 3)$; $\mathbf{a}^{(1)}=\tanh=(-0{,}46212;\ 0{,}99505)$. $y=-0{,}46212-0{,}99505=-1{,}45717$; $r=y-t=-1{,}95717$; $E=\tfrac12r^2=1{,}91526$. $\delta^{(2)}=r=-1{,}95717$ (saída linear). $\partial E/\partial W^{(2)}=\delta^{(2)}\mathbf{a}^{(1)T}=(0{,}90444;\ -1{,}94749)$. $\boldsymbol{\delta}^{(1)}=(W^{(2)T}\delta^{(2)})\odot(1-\mathbf{a}^{(1)2})=(-1{,}95717\cdot0{,}78645;\ +1{,}95717\cdot0{,}00987)=(-1{,}53921;\ 0{,}01931)$. $\partial E/\partial W^{(1)}=\boldsymbol{\delta}^{(1)}\mathbf{x}^T=\begin{pmatrix}-1{,}53921&-3{,}07843\\0{,}01931&0{,}03862\end{pmatrix}$. Observe que o segundo neurônio, saturado ($z=3$), recebe gradiente cerca de 80 vezes menor que o primeiro.
+
+DISC: Para uma saída sigmoide com $z=0{,}4$ e alvo $t=1$, calcule $\delta^{(L)}$ com a perda quadrática $\tfrac12(y-t)^2$ e com a entropia cruzada. Compare e comente.
+R: $y=\sigma(0{,}4)=0{,}59869$. Quadrática: $\delta=(y-t)\,y(1-y)=(-0{,}40131)(0{,}24025)=-0{,}09642$. Entropia cruzada: $\delta=y-t=-0{,}40131$. A entropia cruzada fornece um gradiente 4,2 vezes maior neste ponto; em saídas saturadas ($y\approx0$ com $t=1$), o fator $y(1-y)\approx0$ torna a perda quadrática quase "surda", enquanto a entropia cruzada ainda dá um gradiente próximo de $-1$.
+
+DISC: Deduza a Jacobiana da softmax, $\partial s_i/\partial z_j=s_i(\delta_{ij}-s_j)$, e mostre que, com entropia cruzada $E=-\sum_kt_k\ln s_k$ e $\sum_kt_k=1$, tem-se $\partial E/\partial z_j=s_j-t_j$.
+R: $s_i=e^{z_i}/S$, $S=\sum_ke^{z_k}$. Para $i=j$: $\partial s_i/\partial z_i=\dfrac{e^{z_i}S-e^{z_i}e^{z_i}}{S^2}=s_i(1-s_i)$. Para $i\neq j$: $\partial s_i/\partial z_j=-\dfrac{e^{z_i}e^{z_j}}{S^2}=-s_is_j$. Juntos: $s_i(\delta_{ij}-s_j)$. Então $\dfrac{\partial E}{\partial z_j}=-\sum_k\dfrac{t_k}{s_k}\dfrac{\partial s_k}{\partial z_j}=-\sum_k\dfrac{t_k}{s_k}s_k(\delta_{kj}-s_j)=-\left(t_j-s_j\sum_kt_k\right)=s_j-t_j$.
+
+DISC: Com $N=50$ amostras e $m=2$ saídas, a perda $E=\tfrac12\sum r^2$ funciona bem com $\eta=0{,}005$. Qual taxa $\eta'$ produz o mesmo passo se trocarmos para $\mathrm{MSE}=\tfrac{1}{Nm}\sum r^2$? Mostre a relação entre os gradientes.
+R: $\mathrm{MSE}=\dfrac{2}{Nm}E=0{,}02E$. Então $\nabla\mathrm{MSE}=0{,}02\nabla E$. Para o mesmo passo, $\eta'\cdot0{,}02\nabla E=0{,}005\nabla E$, logo $\eta'=0{,}25$. Se mantivéssemos $\eta=0{,}005$ com o MSE, o passo seria 50 vezes menor.
+
+DISC: Uma rede tem 8 camadas com sigmoide. Estime um limite superior para o fator das derivadas das ativações no gradiente da primeira camada. Por que o resultado real depende também dos pesos? Qual a consequência para o treinamento?
+R: Cada camada contribui com $\sigma'\le0{,}25$; para 8 camadas, $\le0{,}25^8\approx1{,}5\times10^{-5}$. Entre as camadas atuam também as matrizes $W^{(l)}$; se suas normas forem grandes, podem compensar parcialmente (ou, se muito grandes, saturar as ativações). Em geral o gradiente das primeiras camadas é muito menor que o das últimas: elas aprendem lentamente, ou nada. Mitigação: ativações não saturantes (ReLU), inicialização adequada (Glorot, He) e normalização.
+
+DISC: Explique por que o erro relativo da verificação de gradiente é grande tanto para $h$ muito grande quanto para $h$ muito pequeno. Qual é o $h$ aproximadamente ótimo em dupla precisão com diferença central?
+R: Com $h$ grande domina o erro de truncamento, $O(h^2)$ na diferença central. Com $h$ muito pequeno, $f(\theta+h)-f(\theta-h)$ subtrai números quase iguais; o erro de arredondamento é $O(\varepsilon/h)$ e cresce. O compromisso ocorre quando as duas parcelas são parecidas: $h\sim\varepsilon^{1/3}\approx6\times10^{-6}$. Na nossa medição, o melhor foi $10^{-5}$ ($5{,}2\times10^{-11}$).
+
+DISC: Enuncie o teorema da aproximação universal de Cybenko e liste três coisas que ele não garante.
+R: **Enunciado:** se $\sigma$ é contínua e sigmoidal, as somas finitas $\sum_j\alpha_j\sigma(\mathbf{w}_j^T\mathbf{x}+b_j)$ são densas em $C([0,1]^n)$ na norma do supremo: dada $f$ contínua e $\varepsilon>0$, existe $G$ com $\sup|G-f|<\varepsilon$. **Não garante:** (1) que o treinamento por gradiente encontre os parâmetros; (2) que se conheça $H$ ou que seja pequeno; (3) boa generalização com dados finitos e ruidosos; também não cobre funções descontínuas fora das extensões do teorema nem domínios não compactos.
+
+DISC: Na Seção 4.4, com $H=4$, o RMSE entre sementes variou de $0{,}029$ a $0{,}213$. Explique o que isso indica e proponha um procedimento prático.
+R: Indica que a superfície de erro tem mínimos locais ou platôs: dependendo da inicialização, o treinamento termina em soluções muito diferentes. Procedimento: múltiplas reinicializações (várias sementes), escolhendo pela perda de **validação** (e não de treino); usar um otimizador mais robusto (por exemplo, LM em redes pequenas); usar inicialização adequada; relatar média e dispersão, e não o melhor caso.
+
+DISC: Mostre que, para amostras sorteadas independentemente e uniformemente, o gradiente de um minilote é um estimador não enviesado do gradiente médio e calcule a variância em função de $B$.
+R: Seja $\mathbf{g}_p=\nabla E_p$ e $\bar{\mathbf{g}}=\frac1N\sum_p\mathbf{g}_p$. Para $p$ sorteado uniformemente, $\mathbb{E}[\mathbf{g}_p]=\bar{\mathbf{g}}$. O estimador do minilote é $\hat{\mathbf{g}}=\frac1B\sum_{i=1}^B\mathbf{g}_{p_i}$, com $\mathbb{E}[\hat{\mathbf{g}}]=\bar{\mathbf{g}}$ (linearidade da esperança). Se as amostras são independentes, $\mathrm{Var}(\hat{\mathbf{g}})=\frac1B\mathrm{Var}(\mathbf{g}_p)$ (componente a componente). Portanto, a variância cai com $1/B$; sem reposição, há um fator de correção $(N-B)/(N-1)$.
+
+DISC: Com $N=1000$ amostras e minilotes de $B=50$: quantas atualizações há por época? Em 30 épocas? Quantos gradientes por amostra são calculados no total? Compare com o modo lote e com o padrão a padrão.
+R: Por época, $\lceil1000/50\rceil=20$ atualizações; em 30 épocas, 600. Cada amostra contribui com 1 gradiente por época: 30 no total (30000 gradientes por amostra somada). No modo lote, 1 atualização por época (30 no total) com o mesmo custo de gradientes; no padrão a padrão, 1000 atualizações por época (30000 no total). O custo em gradientes é igual; mudam o número de atualizações e o ruído.
+
+DISC: Compare os modos padrão a padrão e lote quanto a ruído do gradiente, número de atualizações por época, uso de operações matriciais e sensibilidade à taxa $\eta$. Quando o minilote é uma boa escolha?
+R: Padrão a padrão: gradiente muito ruidoso (na Seção 4.5, ruído $\approx4{,}6\times$ o sinal), $N$ atualizações por época, pouca vetorização, e exige $\eta$ pequeno. Lote: gradiente exato, 1 atualização por época, vetorização máxima (e memória), permite $\eta$ maior mas pode converger devagar por época. O minilote equilibra: ruído moderado (variância $\propto1/B$), várias atualizações por época e boa vetorização; é a escolha usual quando os dados são grandes.
+
+DISC: Dê três exemplos de pares (cálculo de gradiente, otimizador) mostrando que o backpropagation e o otimizador são conceitos distintos. O que muda de um par para outro?
+R: (1) Backpropagation + gradiente descendente: $\theta\leftarrow\theta-\eta\mathbf{g}$. (2) Backpropagation + RPROP: usa só $\mathrm{sinal}(g_i)$ com passos individuais $\Delta_i$. (3) Backpropagation (para $J$) + Levenberg–Marquardt: resolve $(J^TJ+\mu I)\mathbf{d}=-J^T\mathbf{r}$. Em todos, o cálculo das derivadas é o mesmo; muda a regra que transforma derivadas em um passo.
+
+DISC: Explique por que o `StandardScaler` deve ser ajustado só com o treino. Escreva o código com `Pipeline` e `train_test_split` que evita o vazamento.
+R: Média e desvio do conjunto inteiro incorporam informação do teste, contaminando a avaliação (otimista). Código de referência:
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+modelo = make_pipeline(StandardScaler(), MLPClassifier(hidden_layer_sizes=(5,), max_iter=3000, random_state=0))
+modelo.fit(X_tr, y_tr)               # o scaler é ajustado só com X_tr
+print(modelo.score(X_te, y_te))      # o teste só é transformado, nunca usado no fit
+```
+Critérios: `fit` só no treino; `stratify`; teste avaliado uma vez.
+
+DISC: Escreva uma função `verificar_gradiente(f, g, theta, h=1e-5)` que compare o gradiente analítico `g(theta)` com o numérico (diferença central) e devolva o erro relativo. Teste com $f(\theta)=\tfrac12\sum\theta_i^2+\sum\sin\theta_i$ e $\nabla f=\theta+\cos\theta$ em $\theta=(0{,}3;\,-1;\,2)$.
+R:
+```python
+import numpy as np
+
+def verificar_gradiente(f, g, theta, h=1e-5):
+    theta = np.asarray(theta, float)
+    gn = np.zeros_like(theta)
+    for i in range(theta.size):
+        e = np.zeros_like(theta); e[i] = h
+        gn[i] = (f(theta + e) - f(theta - e)) / (2 * h)
+    ga = g(theta)
+    return np.linalg.norm(ga - gn) / (np.linalg.norm(ga) + np.linalg.norm(gn))
+
+f = lambda t: 0.5 * np.sum(t ** 2) + np.sum(np.sin(t))
+g = lambda t: t + np.cos(t)
+print(verificar_gradiente(f, g, [0.3, -1.0, 2.0]))   # ~1e-11, bem abaixo de 1e-7
+```
+Critérios: diferença central; erro relativo definido como no texto; resultado $<10^{-7}$.
+
+DISC: Implemente, só com NumPy, uma rede 2–$H$–1 (tanh na oculta, sigmoide na saída) com backpropagation vetorizado e gradiente descendente em lote para o XOR ($H=3$, $\eta=1$, 6000 épocas, semente fixa). Informe a perda final e as saídas.
+R:
+```python
+import numpy as np
+sig = lambda z: 1 / (1 + np.exp(-z))
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], float); T = np.array([[0], [1], [1], [0]], float)
+rng = np.random.default_rng(0)
+W1 = rng.normal(0, 0.5, (3, 2)); b1 = np.zeros(3); W2 = rng.normal(0, 0.5, (1, 3)); b2 = np.zeros(1)
+for _ in range(6000):
+    A1 = np.tanh(X @ W1.T + b1); Y = sig(A1 @ W2.T + b2)          # passo direto
+    D2 = (Y - T) * Y * (1 - Y)                                    # BP1
+    D1 = (D2 @ W2) * (1 - A1 ** 2)                                # BP2
+    W2 -= 1.0 * D2.T @ A1; b2 -= 1.0 * D2.sum(0)                  # BP3, BP4
+    W1 -= 1.0 * D1.T @ X;  b1 -= 1.0 * D1.sum(0)
+print(0.5 * np.sum((Y - T) ** 2), np.round(Y.ravel(), 3))
+```
+Com a semente 0 (execução do código acima): perda final $1{,}1\times10^{-4}$ e saídas $(0{,}003;\ 0{,}992;\ 0{,}992;\ 0{,}009)$. Critérios: BP1 a BP4 corretos; atualização em lote; saída próxima de $(0,1,1,0)$ (a convergência depende da semente e de $\eta$; reporte o valor obtido).
+
+DISC: Escreva um programa com `MLPRegressor(solver="lbfgs", alpha=0)` e duas saídas que verifique numericamente que `loss_` é igual a $E_{\text{sse}}/(Nm)$, com $E_{\text{sse}}=\tfrac12\sum r^2$. Que valor você obtém?
+R:
+```python
+import numpy as np
+from sklearn.neural_network import MLPRegressor
+
+rng = np.random.default_rng(0); X = rng.uniform(-1, 1, (100, 2))
+T = np.c_[np.sin(3 * X[:, 0]) + X[:, 1] ** 2, X[:, 0] * X[:, 1]]
+m = MLPRegressor(hidden_layer_sizes=(6,), activation="tanh", solver="lbfgs", alpha=0.0,
+                 max_iter=3000, tol=1e-10, random_state=0).fit(X, T)
+r = m.predict(X) - T
+print(m.loss_, 0.5 * np.sum(r ** 2) / (100 * 2))   # ambos ~ 9.4550e-05
+```
+Resultado observado: os dois valores coincidem ($9{,}455\times10^{-5}$), confirmando que a média é sobre amostras **e** saídas.
+
+DISC: Usando a base Wine, separe 60/20/20 (treino/validação/teste, estratificado), padronize só com o treino e compare `MLPClassifier` com $H=2$, $5$ e $20$ neurônios pela acurácia de validação. Escolha $H$ e avalie no teste uma única vez. Descreva os cuidados.
+R:
+```python
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+
+X, y = load_wine(return_X_y=True)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+X_tr, X_va, y_tr, y_va = train_test_split(X_a, y_a, test_size=0.25, random_state=0, stratify=y_a)
+constroi = lambda H: make_pipeline(StandardScaler(), MLPClassifier(hidden_layer_sizes=(H,), max_iter=3000, random_state=0))
+val = {H: constroi(H).fit(X_tr, y_tr).score(X_va, y_va) for H in (2, 5, 20)}
+print(val)                                  # {2: 0.9167, 5: 1.0, 20: 0.9722}
+H = max(val, key=val.get)
+print(H, constroi(H).fit(X_a, y_a).score(X_te, y_te))
+```
+Com a semente 0, as acurácias de validação foram $0{,}917$ ($H=2$), $1{,}000$ ($H=5$) e $0{,}972$ ($H=20$); escolhe-se $H=5$. Cuidados: base pequena (36 amostras de validação: uma amostra vale 2,8 pontos); usar várias sementes ou validação cruzada; o teste não deve guiar a escolha; relatar a variabilidade.

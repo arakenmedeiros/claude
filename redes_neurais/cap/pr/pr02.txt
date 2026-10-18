@@ -1,0 +1,160 @@
+@@EX 1 | Conferindo derivadas das ativações | iniciante
+Neste exercício você confere, numericamente, as fórmulas das derivadas da sigmoide e da tangente hiperbólica (Seção 2.1).
+
+1. Defina as funções `sigmoide`, `tanh` e as derivadas analíticas $\sigma'(z)=\sigma(1-\sigma)$ e $\tanh'(z)=1-\tanh^2z$.
+2. Calcule a derivada numérica por diferença central com $h=10^{-6}$ em $z\in\{-4;\,-1;\,0;\,0{,}5;\,2;\,6\}$.
+3. Mostre o maior erro absoluto entre a derivada analítica e a numérica.
+4. Repita com $h=10^{-12}$. O que acontece e por quê?
+
+**Pergunta:** qual valor de $h$ você usaria em uma verificação de gradiente? Justifique.
+@@SOL
+```python
+import numpy as np
+
+sigmoide = lambda z: 1.0 / (1.0 + np.exp(-z))
+d_sigmoide = lambda z: sigmoide(z) * (1.0 - sigmoide(z))
+d_tanh = lambda z: 1.0 - np.tanh(z) ** 2
+
+z = np.array([-4.0, -1.0, 0.0, 0.5, 2.0, 6.0])
+for nome, f, df in [("sigmoide", sigmoide, d_sigmoide), ("tanh", np.tanh, d_tanh)]:
+    for h in (1e-6, 1e-12):
+        num = (f(z + h) - f(z - h)) / (2 * h)
+        print("%-9s h=%.0e  erro máximo = %.2e" % (nome, h, np.abs(df(z) - num).max()))
+```
+@@NOTE Com $h=10^{-6}$ o erro é da ordem de $10^{-11}$ a $10^{-10}$; com $h=10^{-12}$ o erro **piora** muito, porque $f(z+h)-f(z-h)$ subtrai números quase iguais e o erro de arredondamento ($\sim\varepsilon/h$) domina o de truncamento. Em verificações de gradiente usa-se $h$ entre $10^{-5}$ e $10^{-7}$ com diferença central (ver Seção 2.1 e Capítulo 4).
+
+@@EX 2 | Mínimos quadrados de quatro maneiras | intermediário
+A base **Diabetes** do scikit-learn (Efron et al., 2004; 442 pacientes, 10 atributos já padronizados, alvo = progressão da doença) permite comparar formas de resolver um problema de mínimos quadrados.
+
+1. Separe 75% treino e 25% teste (`random_state=0`).
+2. Monte a matriz $A$ com uma coluna de uns (viés) e os atributos.
+3. Calcule $\theta$ por: (a) equações normais com `np.linalg.solve`; (b) `np.linalg.lstsq`; (c) `LinearRegression` do scikit-learn; (d) gradiente descendente com $\eta=1/\lambda_{\max}(A^TA)$ e 20 000 passos.
+4. Compare os resultados e mostre os números de condição de $A$ e $A^TA$.
+
+**Pergunta:** por que o gradiente descendente ainda não coincide com as outras soluções após 20 000 passos?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_diabetes
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+
+X, y = load_diabetes(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.25, random_state=0)
+A = np.column_stack([np.ones(len(X_tr)), X_tr])           # coluna de uns = viés
+
+th_normais = np.linalg.solve(A.T @ A, A.T @ y_tr)
+th_lstsq = np.linalg.lstsq(A, y_tr, rcond=None)[0]
+lr = LinearRegression().fit(X_tr, y_tr)
+th_sk = np.concatenate([[lr.intercept_], lr.coef_])
+
+eta = 1.0 / np.linalg.eigvalsh(A.T @ A).max()
+th_gd = np.zeros(A.shape[1])
+for _ in range(20000):
+    th_gd -= eta * (A.T @ (A @ th_gd - y_tr))
+
+print("normais x lstsq      :", np.abs(th_normais - th_lstsq).max())
+print("normais x scikit-learn:", np.abs(th_normais - th_sk).max())
+print("normais x gradiente   :", np.abs(th_normais - th_gd).max())
+print("cond(A) = %.1f | cond(A^T A) = %.1f" % (np.linalg.cond(A), np.linalg.cond(A.T @ A)))
+print("R2 de teste (scikit-learn): %.4f" % lr.score(X_te, y_te))
+```
+@@NOTE As três soluções diretas coincidem até a precisão numérica. O gradiente descendente fica longe: o problema tem $\kappa(A^TA)\approx4{,}7\times10^4$, de modo que a direção de menor curvatura converge com fator $1-1/\kappa$ por passo (muito lento), mesmo com a melhor taxa estável. Note também que $\kappa(A^TA)=\kappa(A)^2$ (aproximadamente $217{,}5^2$). O $R^2$ de teste (≈0,36) mostra que um modelo linear explica só parte da variação; isso é uma característica da base, não um erro de código.
+
+@@EX 3 | Um neurônio sigmoide é uma regressão logística | intermediário
+Treine, "à mão", um **neurônio sigmoide** (regressão logística) na base **Breast Cancer Wisconsin (Diagnostic)** da UCI, embutida no scikit-learn (569 amostras, 30 atributos, 2 classes), e compare com `LogisticRegression`.
+
+1. Separe 70% treino e 30% teste, estratificado (`random_state=0`). Padronize com `StandardScaler` ajustado só no treino.
+2. Implemente o gradiente descendente em lote para minimizar $\frac1N\sum\bigl[-t\ln y-(1-t)\ln(1-y)\bigr]+\frac{1}{2CN}\|\mathbf{w}\|^2$ com $C=1$ (viés sem penalização), $\eta=1/L$ e $L=\lambda_{\max}(X^TX/N)/4$, em 5000 passos.
+3. Compare os coeficientes e a acurácia de teste com `LogisticRegression(C=1.0)`.
+
+**Pergunta:** por que a mesma perda do scikit-learn pode ser escrita com a divisão por $N$ e $C$ desta forma?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+sig = lambda z: 1.0 / (1.0 + np.exp(-z))
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(X_tr)
+Xs, Xt = esc.transform(X_tr), esc.transform(X_te)
+N, C = len(y_tr), 1.0
+
+L = np.linalg.eigvalsh(Xs.T @ Xs / N).max() / 4.0      # constante de Lipschitz do gradiente
+w, b = np.zeros(Xs.shape[1]), 0.0
+for _ in range(5000):
+    p = sig(Xs @ w + b)
+    w -= (1.0 / L) * (Xs.T @ (p - y_tr) / N + w / (C * N))
+    b -= (1.0 / L) * np.mean(p - y_tr)
+
+sk = LogisticRegression(C=C, max_iter=10000, tol=1e-10).fit(Xs, y_tr)
+print("maior diferença nos coeficientes: %.4f" % np.abs(w - sk.coef_[0]).max())
+print("acurácia teste (neurônio próprio): %.4f | scikit-learn: %.4f"
+      % (np.mean((sig(Xt @ w + b) > 0.5) == y_te), sk.score(Xt, y_te)))
+```
+@@NOTE Os coeficientes coincidem até cerca de $4\times10^{-3}$ e as acurácias são idênticas (0,9591). A perda do scikit-learn é $C\sum_p\ell_p+\tfrac12\|\mathbf{w}\|^2$; dividir por $CN$ dá $\tfrac1N\sum\ell_p+\tfrac1{2CN}\|\mathbf{w}\|^2$, que tem o mesmo minimizador, mas gradiente em outra escala: é a mesma observação sobre a **escala da perda** feita no Capítulo 1.
+
+@@PROJ O custo da má escala: padronização e condicionamento | intermediário
+**Objetivo.** Medir o efeito do pré-processamento sobre a velocidade do gradiente descendente.
+
+**Dados.** Breast Cancer Wisconsin (Diagnostic), da UCI, embutida no scikit-learn.
+
+**Tarefas.**
+1. Separe treino e teste (70/30, estratificado). Prepare duas versões do treino: **bruta** e **padronizada** (escalonador ajustado só no treino).
+2. Calcule o número de condição de $X^TX$ nas duas versões.
+3. Treine a regressão logística regularizada ($C=1$) por gradiente descendente com $\eta=1/L$ (veja o Exercício 3) em cada versão, por 5000 passos, registrando a perda a cada passo.
+4. Determine em quantos passos cada versão chega a $10^{-2}$ e a $10^{-3}$ da perda ótima (obtida com `LogisticRegression`). Registre também as acurácias de teste.
+5. Redija 8 a 10 linhas: o que explica a diferença? Como isso se liga à Seção 2.7?
+
+**Para ir além (não testado no livro).** Repita com outras bases tabulares da UCI ou do Kaggle com atributos em escalas muito diferentes (por exemplo, preços, áreas e contagens). Confira descrição, licença e colunas antes de usar.
+@@RUBRICA
+- Escalonador ajustado apenas com o treino (sem vazamento).
+- Cálculo correto de $\eta=1/L$ para cada versão.
+- Comparação feita com a perda de referência do scikit-learn, em mesmas condições.
+- Interpretação ligando condicionamento, taxa máxima estável e lentidão.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+sig = lambda z: 1.0 / (1.0 + np.exp(-z))
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(X_tr)
+N, C = len(y_tr), 1.0
+
+def perda(X, t, w, b):
+    p = np.clip(sig(X @ w + b), 1e-12, 1 - 1e-12)
+    return -np.mean(t * np.log(p) + (1 - t) * np.log(1 - p)) + 0.5 * np.sum(w * w) / (C * N)
+
+def treinar(X, t, passos=5000):
+    L = np.linalg.eigvalsh(X.T @ X / N).max() / 4.0
+    w, b, hist = np.zeros(X.shape[1]), 0.0, []
+    for _ in range(passos):
+        p = sig(X @ w + b)
+        w -= (1.0 / L) * (X.T @ (p - t) / N + w / (C * N))
+        b -= (1.0 / L) * np.mean(p - t)
+        hist.append(perda(X, t, w, b))
+    return w, b, np.array(hist), L
+
+Xs, Xt = esc.transform(X_tr), esc.transform(X_te)
+ref_sk = LogisticRegression(C=C, max_iter=10000, tol=1e-10).fit(Xs, y_tr)
+ref = perda(Xs, y_tr, ref_sk.coef_[0], ref_sk.intercept_[0])
+print("perda de referência (versão padronizada): %.5f" % ref)
+
+for nome, Xa, Xb in [("bruta", X_tr, X_te), ("padronizada", Xs, Xt)]:
+    w, b, h, L = treinar(Xa, y_tr)
+    n2 = np.argmax(h < ref + 1e-2) if (h < ref + 1e-2).any() else None
+    n3 = np.argmax(h < ref + 1e-3) if (h < ref + 1e-3).any() else None
+    acc = np.mean((sig(Xb @ w + b) > 0.5) == y_te)
+    print("%-11s cond(X^T X)=%.2e  L=%.3g  perda final=%.4f  passos(1e-2)=%s  passos(1e-3)=%s  acc=%.4f"
+          % (nome, np.linalg.cond(Xa.T @ Xa), L, h[-1], n2, n3, acc))
+```
+@@NOTE Na versão **padronizada**, a perda chega a $10^{-2}$ da ótima em 114 passos e a $10^{-3}$ em 598. Na **bruta**, nem em 5000 passos: $\kappa(X^TX)\approx3\times10^{12}$ (contra $\approx1\times10^5$) e $L\approx4\times10^5$ (contra $\approx3{,}3$), o que força uma taxa $\eta=1/L$ minúscula; o treino fica quase parado nas direções de baixa curvatura, e a acurácia de teste (0,918) fica abaixo da obtida com padronização (0,959). Isso ilustra a Seção 2.7: a maior curvatura limita a taxa e a razão de curvaturas ($\kappa$) determina quão lento é o avanço. Conclusão prudente: padronizar não é "detalhe": muda a facilidade do problema de otimização. Este é um experimento em uma base; a magnitude do efeito depende dos dados.

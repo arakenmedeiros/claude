@@ -1,0 +1,371 @@
+MC: A série de Taylor de segunda ordem de $E$ em torno de $\theta$ é
++ $E(\theta+\mathbf{d})\approx E(\theta)+\mathbf{g}^T\mathbf{d}+\tfrac12\mathbf{d}^TH\mathbf{d}$
+- $E(\theta+\mathbf{d})\approx E(\theta)+\mathbf{g}\,\mathbf{d}^T H$
+- $E(\theta+\mathbf{d})\approx E(\theta)\,\mathbf{g}^T\mathbf{d}\,H$
+- $E(\theta+\mathbf{d})\approx\mathbf{g}^T\mathbf{d}+\tfrac12\mathbf{d}^T\mathbf{d}$
+- $E(\theta+\mathbf{d})\approx E(\theta)+H^{-1}\mathbf{g}$
+R: Termos de ordem zero, linear (gradiente) e quadrático (Hessiana).
+
+MC: Uma condição **necessária** de primeira ordem para que $\theta^*$ seja mínimo local é
++ $\nabla E(\theta^*)=\mathbf{0}$
+- $H(\theta^*)$ ser positiva definida
+- $E(\theta^*)=0$
+- $\|\theta^*\|=1$
+- $H(\theta^*)=\mathbf{0}$
+R: Se o gradiente fosse não nulo, haveria direção de descida.
+
+MC: A condição **suficiente** de segunda ordem para um mínimo local estrito é
++ $\nabla E(\theta^*)=\mathbf{0}$ e $H(\theta^*)$ positiva definida.
+- $\nabla E(\theta^*)=\mathbf{0}$ e $H(\theta^*)$ semidefinida positiva.
+- apenas $\nabla E(\theta^*)=\mathbf{0}$.
+- $H(\theta^*)$ simétrica.
+- $\nabla E(\theta^*)\neq\mathbf{0}$ e $H$ diagonal.
+R: Semidefinida positiva é só necessária (por exemplo, $\theta^4$ e $\theta^3$ em $0$).
+
+MC: Para $f(x,y)=x^3-3x+y^2$, o ponto crítico $(-1,0)$ é
++ um ponto de sela, pois a Hessiana $\mathrm{diag}(6x,2)$ tem autovalores $-6$ e $2$.
+- um mínimo local.
+- um máximo local.
+- um mínimo global.
+- não é um ponto crítico.
+R: $\nabla f=(3x^2-3,\,2y)=(0,0)$ em $(\pm1,0)$; em $(-1,0)$, $H=\mathrm{diag}(-6,2)$.
+
+MC: Em $E(\theta)=\theta^4$, no ponto $\theta=0$,
++ há um mínimo, embora $E''(0)=0$: a condição suficiente não é satisfeita, mas a necessária sim.
+- não há mínimo, pois $E''(0)=0$.
+- há um máximo.
+- há uma sela.
+- o gradiente é diferente de zero.
+R: A Hessiana semidefinida positiva é necessária, não suficiente; neste caso, o mínimo existe.
+
+MC: O passo de Newton é a solução de
++ $H\,\mathbf{d}=-\mathbf{g}$
+- $\mathbf{d}=-\eta\,\mathbf{g}$
+- $J^TJ\,\mathbf{d}=\mathbf{r}$
+- $\mathbf{d}=H\,\mathbf{g}$
+- $(H+\mu I)\,\mathbf{d}=\mathbf{g}$
+R: Minimiza o modelo quadrático de Taylor.
+
+MC: O passo de Newton puro pode ser problemático quando
++ a Hessiana não é positiva definida, e o passo pode apontar para um máximo ou uma sela.
+- o gradiente é muito grande.
+- a perda é convexa.
+- a Hessiana é positiva definida.
+- $N$ é pequeno.
+R: Exemplo: $\varphi(y)=(y^2-1)^2/4$ em $y_0=0{,}1$ ($\varphi''<0$).
+
+MC: Usar $H+\tau I$ com $\tau$ suficientemente grande no método de Newton modificado serve para
++ tornar a matriz positiva definida e, portanto, o passo uma direção de descida.
+- aumentar a precisão numérica do gradiente.
+- anular o gradiente.
+- eliminar o custo de resolver o sistema.
+- garantir convergência em um passo.
+R: Todos os autovalores de $H+\tau I$ são deslocados em $\tau$.
+
+MC: A condição de Armijo na busca em linha por *backtracking* exige que
++ $E(\theta+\alpha\mathbf{d})\le E(\theta)+c_1\,\alpha\,\mathbf{g}^T\mathbf{d}$ (redução suficiente).
+- $E(\theta+\alpha\mathbf{d})=0$.
+- $\alpha=1$ sempre.
+- $\mathbf{g}^T\mathbf{d}>0$.
+- $\|\mathbf{d}\|=1$.
+R: O passo é reduzido por um fator até haver redução suficiente de $E$.
+
+MC: Para $E=\tfrac12\|\mathbf{r}\|^2$, o gradiente é
++ $\mathbf{g}=J^T\mathbf{r}$
+- $\mathbf{g}=J\,\mathbf{r}$
+- $\mathbf{g}=J^TJ\,\mathbf{r}$
+- $\mathbf{g}=\mathbf{r}^T\mathbf{r}$
+- $\mathbf{g}=J^{-1}\mathbf{r}$
+R: $\partial E/\partial\theta_j=\sum_ir_i\,\partial r_i/\partial\theta_j$.
+
+MC: A Hessiana exata de $E=\tfrac12\|\mathbf{r}\|^2$ é
++ $H=J^TJ+\sum_ir_i\nabla^2r_i$
+- $H=J^TJ$
+- $H=JJ^T$
+- $H=\sum_ir_i\nabla^2r_i$ apenas
+- $H=J^{-1}$
+R: O segundo termo (que depende das segundas derivadas dos resíduos) é desprezado no Gauss–Newton.
+
+MC: O método de Gauss–Newton aproxima $H$ por
++ $J^TJ$
+- $JJ^T$
+- $I$
+- $\sum_ir_i\nabla^2r_i$
+- $\mathbf{g}\mathbf{g}^T$
+R: Desprezando $S$.
+
+MC: O passo de Gauss–Newton é a solução de
++ $\min_{\mathbf{d}}\tfrac12\|\mathbf{r}+J\mathbf{d}\|^2$, o problema linearizado de mínimos quadrados.
+- $\min_{\mathbf{d}}\|\mathbf{d}\|$ sujeito a $\mathbf{g}=0$.
+- $\max_{\mathbf{d}}\|J\mathbf{d}\|$.
+- $\min_{\mathbf{d}}\mathbf{g}^T\mathbf{d}$ sem restrição.
+- $J\,\mathbf{d}=\mathbf{r}$ sempre exatamente.
+R: Equações normais: $J^TJ\,\mathbf{d}=-J^T\mathbf{r}$.
+
+MC: A matriz $J^TJ$ é sempre
++ simétrica e semidefinida positiva.
+- positiva definida.
+- diagonal.
+- inversível.
+- igual à Hessiana de $E$.
+R: $\mathbf{v}^TJ^TJ\mathbf{v}=\|J\mathbf{v}\|^2\ge0$; é singular se $J$ tem posto incompleto.
+
+MC: Em uma rede com $N=50$ amostras, $m=2$ saídas e $P=26$ parâmetros, a Jacobiana dos resíduos tem dimensão
++ $100\times26$
+- $50\times26$
+- $26\times100$
+- $26\times26$
+- $100\times100$
+R: $Nm=100$ linhas e $P=26$ colunas.
+
+MC: O Gauss–Newton puro tende a falhar em redes neurais porque
++ $J^TJ$ é frequentemente singular ou muito mal condicionada e o passo completo pode ser enorme.
+- $J^TJ$ é sempre diagonal.
+- a perda é linear nos parâmetros.
+- não há gradiente.
+- a Hessiana é nula.
+R: Na rede 1–8–1 do capítulo, $J$ tinha posto 13 de 25 no ponto inicial, e o passo levou $E$ de $22{,}67$ a $5{,}5\times10^{21}$.
+
+MC: A equação de Levenberg–Marquardt é
++ $(J^TJ+\mu I)\,\mathbf{d}=-J^T\mathbf{r}$
+- $(J^TJ-\mu I)\,\mathbf{d}=-J^T\mathbf{r}$
+- $J^TJ\,\mathbf{d}=-\mu\,\mathbf{r}$
+- $(JJ^T+\mu I)\,\mathbf{d}=\mathbf{r}$
+- $\mu\,\mathbf{d}=J\,\mathbf{r}$
+R: Gauss–Newton com amortecimento $\mu$.
+
+MC: Quando $\mu\to0$, o passo de Levenberg–Marquardt tende ao passo de
++ Gauss–Newton.
+- gradiente descendente com $\eta=1$.
+- RPROP.
+- Quickprop.
+- um passo nulo.
+R: $(J^TJ+\mu I)^{-1}\to(J^TJ)^{-1}$.
+
+MC: Quando $\mu\to\infty$, o passo de Levenberg–Marquardt é aproximadamente
++ $-\mathbf{g}/\mu$ (curto, na direção de descida do gradiente).
+- o passo de Gauss–Newton.
+- o passo de Newton.
+- nulo e sem direção.
+- $+\mathbf{g}\,\mu$.
+R: $(J^TJ+\mu I)\approx\mu I$.
+
+MC: A matriz $J^TJ+\mu I$ com $\mu>0$ é sempre
++ positiva definida, de modo que o sistema tem solução única e $\mathbf{d}$ é direção de descida.
+- singular.
+- indefinida.
+- semidefinida negativa.
+- igual a $J^TJ$.
+R: Autovalores $\ge\mu>0$; $\mathbf{g}^T\mathbf{d}=-\mathbf{g}^T(J^TJ+\mu I)^{-1}\mathbf{g}<0$.
+
+MC: Na proposta de Marquardt, o amortecimento é escalado por
++ $D=\mathrm{diag}(J^TJ)$: $(J^TJ+\mu D)\mathbf{d}=-\mathbf{g}$.
+- $D=\mathbf{g}\mathbf{g}^T$.
+- $D=H^{-1}$.
+- $D=I$ sempre.
+- $D=\mathrm{diag}(\mathbf{r})$.
+R: Parâmetros com curvatura maior recebem mais amortecimento.
+
+MC: No algoritmo de LM de Hagan e Menhaj, quando o passo reduz $E$, o parâmetro $\mu$ é
++ multiplicado por `mu_dec` (por exemplo, $0{,}1$) e o passo é aceito.
+- multiplicado por 10 e o passo é rejeitado.
+- mantido e o passo é rejeitado.
+- zerado.
+- dividido por $E$.
+R: Passo rejeitado: $\mu$ multiplicado por `mu_inc` e o sistema é resolvido novamente.
+
+MC: O sistema amortecido de LM pode ser interpretado como a solução de
++ $\min\tfrac12\|\mathbf{r}+J\mathbf{d}\|^2$ sujeito a $\|\mathbf{d}\|\le\Delta$, com $\mu$ como multiplicador de Lagrange.
+- $\min\|\mathbf{d}\|$ sem restrição.
+- $\max E$.
+- a minimização exata de $E$ em um passo.
+- uma busca em linha exata.
+R: Região de confiança: $\mu$ maior equivale a $\Delta$ menor.
+
+MC: A aplicação do método de Levenberg–Marquardt ao treinamento de redes feedforward é descrita por
++ Hagan e Menhaj (1994).
+- Fahlman (1988).
+- Rosenblatt (1958).
+- Igel e Hüsken (2003).
+- Jacobs (1988).
+R: *IEEE Transactions on Neural Networks*, 5(6).
+
+MC: Nos valores padrão do `trainlm` do MATLAB (documentação atual), o parâmetro inicial de amortecimento é
++ $\mu=0{,}001$
+- $\mu=1$
+- $\mu=10$
+- $\mu=0{,}1$
+- $\mu=10^{10}$
+R: `mu`$=0{,}001$, `mu_dec`$=0{,}1$, `mu_inc`$=10$ e `mu_max`$=10^{10}$ (conferir na versão utilizada).
+
+MC: Para $P=10^4$ parâmetros, a matriz $J^TJ$ (em dupla precisão) ocupa cerca de
++ $800$ MB
+- $800$ kB
+- $8$ MB
+- $80$ GB
+- $80$ MB
+R: $8\cdot10^4\cdot10^4=8\times10^8$ bytes.
+
+MC: Com `scipy.optimize.least_squares`, o método `'lm'` (MINPACK)
++ não aceita limites nos parâmetros e exige número de resíduos maior ou igual ao de variáveis.
+- aceita limites e exige menos resíduos que variáveis.
+- só funciona para $P=1$.
+- calcula a Hessiana exata.
+- é idêntico ao nosso código didático.
+R: Para limites, use `'trf'` ou `'dogbox'`; implementações diferentes não são idênticas.
+
+MC: Na razão de ganho de Nielsen, $\rho=\dfrac{E(\theta)-E(\theta+\mathbf{d})}{L(\mathbf{0})-L(\mathbf{d})}$, o passo é aceito quando
++ $\rho>0$, e $\mu$ é atualizado por $\mu\max\{1/3,\,1-(2\rho-1)^3\}$.
+- $\rho<0$, e $\mu$ é multiplicado por 10.
+- $\rho=0$ sempre.
+- $\rho>1$ apenas.
+- $\rho$ é negativo e $\mu$ é zerado.
+R: $L(\mathbf{d})=\tfrac12\|\mathbf{r}+J\mathbf{d}\|^2$ é o modelo linearizado.
+
+MC: Na minimização de Rosenbrock como mínimos quadrados a partir de $(-1{,}2;\,1)$, Gauss–Newton puro convergiu em 3 iterações enquanto o LM (Hagan–Menhaj) precisou de 28 porque
++ o resíduo é nulo na solução e $m=n$ (Gauss–Newton é Newton para $\mathbf{r}=\mathbf{0}$), enquanto o LM é cauteloso com o amortecimento.
+- o Gauss–Newton é sempre mais rápido que o LM.
+- o LM não usa a Jacobiana.
+- o gradiente descendente é superior.
+- a Jacobiana é singular.
+R: Em problemas de resíduo nulo, Gauss–Newton pode ser excelente; em redes com $J^TJ$ singular, falha.
+
+MC: Ao trocar $\mathbf{r}=\mathbf{y}-\mathbf{t}$ por $\mathbf{e}=\mathbf{t}-\mathbf{y}$, a Jacobiana muda de sinal e, no passo de LM,
++ $J^TJ$ e $J^T\mathbf{r}$ não mudam; a atualização é a mesma.
+- o passo muda de sinal.
+- o passo é multiplicado por $-1$.
+- $\mu$ precisa ser negativo.
+- o algoritmo deixa de funcionar.
+R: $(-J)^T(-\mathbf{r})=J^T\mathbf{r}$ e $(-J)^T(-J)=J^TJ$.
+
+DISC: Deduza o gradiente $\mathbf{g}=J^T\mathbf{r}$ e a Hessiana $H=J^TJ+\sum_ir_i\nabla^2r_i$ de $E=\tfrac12\sum_ir_i(\theta)^2$.
+R: $\dfrac{\partial E}{\partial\theta_j}=\sum_ir_i\dfrac{\partial r_i}{\partial\theta_j}=(J^T\mathbf{r})_j$. Derivando novamente em relação a $\theta_k$, pela regra do produto: $\dfrac{\partial^2E}{\partial\theta_j\partial\theta_k}=\sum_i\dfrac{\partial r_i}{\partial\theta_k}\dfrac{\partial r_i}{\partial\theta_j}+\sum_ir_i\dfrac{\partial^2r_i}{\partial\theta_j\partial\theta_k}=(J^TJ)_{jk}+S_{jk}$, com $S=\sum_ir_i\nabla^2r_i$.
+
+DISC: Deduza o passo de Gauss–Newton a partir da linearização dos resíduos e explique em que condições $S$ pode ser desprezado.
+R: Linearize: $\mathbf{r}(\theta+\mathbf{d})\approx\mathbf{r}+J\mathbf{d}$. Minimize $\tfrac12\|\mathbf{r}+J\mathbf{d}\|^2$: gradiente em $\mathbf{d}$ é $J^T(\mathbf{r}+J\mathbf{d})=\mathbf{0}$, ou seja, $J^TJ\,\mathbf{d}=-J^T\mathbf{r}$. Isto equivale ao passo de Newton com $H\approx J^TJ$. $S$ pode ser desprezado quando os resíduos são pequenos (perto de uma solução de resíduo nulo) ou quando os resíduos são quase lineares em $\theta$ (segundas derivadas pequenas) ou se cancelam em $S$ (sinais variados).
+
+DISC: Prove que $J^TJ$ é semidefinida positiva e que $J^TJ+\mu I$ é positiva definida para $\mu>0$. Mostre que o passo de LM é uma direção de descida.
+R: Para todo $\mathbf{v}$, $\mathbf{v}^TJ^TJ\mathbf{v}=\|J\mathbf{v}\|^2\ge0$. Logo $J^TJ$ é semidefinida positiva e seus autovalores são $\ge0$. Os autovalores de $J^TJ+\mu I$ são $\lambda_i+\mu\ge\mu>0$: é positiva definida e inversível. Então $\mathbf{d}=-(J^TJ+\mu I)^{-1}\mathbf{g}$ e $\mathbf{g}^T\mathbf{d}=-\mathbf{g}^T(J^TJ+\mu I)^{-1}\mathbf{g}<0$ para $\mathbf{g}\neq\mathbf{0}$ (pois a inversa também é positiva definida): $\mathbf{d}$ é direção de descida.
+
+DISC: Dados $J=\begin{pmatrix}1&0\\0&2\\1&1\end{pmatrix}$ e $\mathbf{r}=(1;\,-1;\,0{,}5)$, calcule $\mathbf{g}$, $J^TJ$, o passo de Gauss–Newton e o passo de LM com $\mu=1$. Compare as normas.
+R: $\mathbf{g}=J^T\mathbf{r}=(1+0{,}5;\ -2+0{,}5)=(1{,}5;\,-1{,}5)$. $J^TJ=\begin{pmatrix}2&1\\1&5\end{pmatrix}$ (det $=9$). **Gauss–Newton:** $\mathbf{d}=-(J^TJ)^{-1}\mathbf{g}$: resolvendo $\begin{pmatrix}2&1\\1&5\end{pmatrix}\mathbf{d}=(-1{,}5;\,1{,}5)$: $d_1=\dfrac{-1{,}5\cdot5-1\cdot1{,}5}{9}=-1$, $d_2=\dfrac{2\cdot1{,}5-1\cdot(-1{,}5)}{9}=0{,}5$; $\mathbf{d}_{GN}=(-1;\,0{,}5)$, $\|\mathbf{d}\|=1{,}118$. **LM ($\mu=1$):** $\begin{pmatrix}3&1\\1&6\end{pmatrix}\mathbf{d}=(-1{,}5;\,1{,}5)$ (det $=17$): $d_1=\dfrac{-1{,}5\cdot6-1{,}5}{17}=-0{,}6176$, $d_2=\dfrac{3\cdot1{,}5+1{,}5}{17}=0{,}3529$; $\|\mathbf{d}\|=0{,}711$. O passo de LM é menor (cerca de 64% do GN) e seu ângulo com $-\mathbf{g}$ é menor. Ambos satisfazem $\mathbf{g}^T\mathbf{d}<0$ ($-2{,}25$ e $-1{,}455$).
+
+DISC: Para $f(x)=x^4/4-x^2/2$ e $x_0=0{,}2$, calcule o passo de Newton puro e o passo com $\tau=1$ (curvatura efetiva $f''+\tau$). Mostre como a busca em linha com $\alpha=1/2$ resolve o excesso do passo modificado.
+R: $f'=x^3-x=-0{,}192$; $f''=3x^2-1=-0{,}88$ (negativa). **Newton puro:** $x_1=0{,}2-\dfrac{-0{,}192}{-0{,}88}=-0{,}0182$: aproxima-se do máximo local em $0$. **Modificado:** $f''+\tau=0{,}12>0$; $x_1=0{,}2+\dfrac{0{,}192}{0{,}12}=1{,}8$. Mas $f(1{,}8)=1{,}0044>f(0{,}2)=-0{,}0196$: o passo excede o raio de validade do modelo e **aumenta** $E$ (viola Armijo). Com $\alpha=1/2$: $x_1=0{,}2+0{,}5\cdot1{,}6=1{,}0$ e $f(1)=-0{,}25<f(0{,}2)$: aceito. (O mínimo está em $x=1$.)
+
+DISC: Classifique os pontos críticos de $f(x,y)=x^3+y^3-3xy$.
+R: $\nabla f=(3x^2-3y,\;3y^2-3x)=\mathbf{0}\Rightarrow y=x^2$ e $x=y^2\Rightarrow x=x^4\Rightarrow x=0$ ou $x=1$. Pontos: $(0,0)$ e $(1,1)$. $H=\begin{pmatrix}6x&-3\\-3&6y\end{pmatrix}$. Em $(0,0)$: $H=\begin{pmatrix}0&-3\\-3&0\end{pmatrix}$, autovalores $\pm3$: **sela**. Em $(1,1)$: $H=\begin{pmatrix}6&-3\\-3&6\end{pmatrix}$, autovalores $3$ e $9$: **mínimo local** (estrito).
+
+DISC: Aplique, à mão, o Gauss–Newton a $r_1=10(y-x^2)$, $r_2=1-x$ a partir de $(-1{,}2;\,1)$. Mostre que o mínimo $(1,1)$ é atingido em duas iterações e explique.
+R: $\mathbf{r}(-1{,}2;1)=(10(1-1{,}44);\,2{,}2)=(-4{,}4;\ 2{,}2)$; $J=\begin{pmatrix}-20x&10\\-1&0\end{pmatrix}=\begin{pmatrix}24&10\\-1&0\end{pmatrix}$. Resolver $J\mathbf{d}=-\mathbf{r}$: linha 2: $-d_1=-2{,}2\Rightarrow d_1=2{,}2$; linha 1: $24\cdot2{,}2+10d_2=4{,}4\Rightarrow d_2=-4{,}84$. Novo ponto: $(1;\,-3{,}84)$, com $E\approx1171$ (muito pior). Segunda iteração: $\mathbf{r}=(-48{,}4;\,0)$, $J=\begin{pmatrix}-20&10\\-1&0\end{pmatrix}$: linha 2: $d_1=0$; linha 1: $10d_2=48{,}4\Rightarrow d_2=4{,}84$. Ponto: $(1,1)$, $E=0$. Como $m=n$ e há solução de resíduo nulo, $J$ é quadrada e inversível e o passo é o de Newton para $\mathbf{r}=\mathbf{0}$: converge rápido, ainda que passando por um ponto de $E$ elevada (sem teste de aceitação, o método não é monótono).
+
+DISC: Dados $E=10$, $E_{\text{novo}}=9{,}5$, $\mu=1$, $\mathbf{d}=(-0{,}5;\,0)$ e $\mathbf{g}=(2;\,0)$, calcule a razão de ganho $\rho$ de Nielsen e o novo $\mu$. Repita para $E_{\text{novo}}=10{,}2$ (com $\nu=2$).
+R: Ganho previsto: $L(\mathbf{0})-L(\mathbf{d})=\tfrac12\mathbf{d}^T(\mu\mathbf{d}-\mathbf{g})=\tfrac12(-0{,}5)(1\cdot(-0{,}5)-2)=\tfrac12(-0{,}5)(-2{,}5)=0{,}625$. Caso 1: $\rho=(10-9{,}5)/0{,}625=0{,}8>0$: aceito; $\mu\leftarrow1\cdot\max\{1/3,\,1-(2\cdot0{,}8-1)^3\}=\max\{0{,}333;\,1-0{,}216\}=0{,}784$; $\nu=2$. Caso 2: $\rho=(10-10{,}2)/0{,}625=-0{,}32<0$: rejeitado; $\mu\leftarrow\nu\mu=2$ e $\nu\leftarrow4$.
+
+DISC: Mostre que o exemplo da rede 1–2–1 tem $\partial E/\partial w_1=\sum_iJ_{i1}r_i=-0{,}2942$ usando a primeira coluna de $J$ do Exemplo 7.5. Qual é a dimensão de $J$ e de $J^TJ$?
+R: Primeira coluna de $J$: $(0;\,0{,}4200)^T$; resíduos $\mathbf{r}=(0{,}4621;\,-0{,}7005)^T$. $\partial E/\partial w_1=0\cdot0{,}4621+0{,}4200\cdot(-0{,}7005)=-0{,}2942$. $J$ é $2\times7$ ($Nm=2$, $P=7$); $J^TJ$ é $7\times7$ com posto $\le2$.
+
+DISC: Calcule a memória necessária para $J$ e $J^TJ$ (dupla precisão) para $N=1000$, $m=3$ e $P=500$. E para $N=60\,000$, $m=10$ e $P=10^4$?
+R: Caso 1: $J$: $3000\times500=1{,}5\times10^6$ elementos $=12$ MB; $J^TJ$: $500\times500=2{,}5\times10^5$ elementos $=2$ MB. Viável. Caso 2: $J$: $6\times10^5\times10^4=6\times10^9$ elementos $=48$ GB; $J^TJ$: $10^8$ elementos $=800$ MB. A Jacobiana inviabiliza o método; usam-se minilotes, aproximações ou outros otimizadores.
+
+DISC: Explique por que o LM costuma levar o erro de treino abaixo do ruído (sobreajuste) em redes com muitos parâmetros e dê três formas de mitigar.
+R: O LM converge muito rápido para mínimos (locais) da perda de treino e, se o modelo tem capacidade (muitos parâmetros relativos às amostras), ajusta também o ruído: no Capítulo 7, $E=0{,}93$ ficou abaixo do piso do ruído ($1{,}125$) com 25 parâmetros e 100 pontos. Mitigações: (1) parada antecipada com validação (Seção 6.4); (2) regularização por decaimento de pesos (resíduos aumentados com $\sqrt\alpha\,\theta$); (3) reduzir o número de neurônios; (4) mais dados ou validação cruzada para escolher a arquitetura.
+
+DISC: Mostre que a penalização $E_\alpha=\tfrac12\|\mathbf{r}\|^2+\tfrac\alpha2\|\theta\|^2$ equivale a mínimos quadrados com resíduo e Jacobiana aumentados e escreva o sistema de LM correspondente.
+R: Defina $\tilde{\mathbf{r}}=\begin{pmatrix}\mathbf{r}\\\sqrt\alpha\,\theta\end{pmatrix}$. Então $\tfrac12\|\tilde{\mathbf{r}}\|^2=\tfrac12\|\mathbf{r}\|^2+\tfrac\alpha2\|\theta\|^2=E_\alpha$. A Jacobiana aumentada é $\tilde J=\begin{pmatrix}J\\\sqrt\alpha\,I\end{pmatrix}$, e $\tilde J^T\tilde J=J^TJ+\alpha I$; $\tilde J^T\tilde{\mathbf{r}}=J^T\mathbf{r}+\alpha\theta$. O sistema de LM: $(J^TJ+\alpha I+\mu I)\,\mathbf{d}=-(J^T\mathbf{r}+\alpha\theta)$.
+
+DISC: Mostre que a troca de convenção $\mathbf{r}=\mathbf{y}-\mathbf{t}$ por $\mathbf{e}=\mathbf{t}-\mathbf{y}$ não altera o passo de Levenberg–Marquardt.
+R: Com $\mathbf{e}=-\mathbf{r}$ e $J_e=\partial\mathbf{e}/\partial\theta=-J$: $J_e^TJ_e=(-J)^T(-J)=J^TJ$ e $J_e^T\mathbf{e}=(-J)^T(-\mathbf{r})=J^T\mathbf{r}$. O sistema $(J_e^TJ_e+\mu I)\mathbf{d}=-J_e^T\mathbf{e}$ é idêntico ao original. O que muda é apenas o rótulo dos objetos (e a interpretação do sinal de $J$).
+
+DISC: Compare gradiente descendente, RPROP e LM quanto à informação usada, ao custo por iteração, à memória e à sensibilidade a hiperparâmetros.
+R: **Gradiente descendente:** $\nabla E$; custo $O(P)$ por época; memória $O(P)$; sensível a $\eta$. **RPROP:** sinal de $\nabla E$ e passos individuais; custo $O(P)$; memória $3P$; pouco sensível ($\eta^{\pm}$, $\Delta_0$). **LM:** $J$ ($Nm\times P$) e resolve sistema $P\times P$; custo $O(NmP^2+P^3)$; memória $O(NmP+P^2)$; pouco sensível a $\mu_0$ e aos fatores; converge em poucas iterações em redes pequenas, mas é inviável quando $P$ ou $N$ são grandes.
+
+DISC: Escreva o resíduo e a Jacobiana para o modelo $y=a\,e^{bx}$ e use o `levenberg_marquardt` do `rnbook` (a partir de $a=1$, $b=0{,}1$) em 30 pontos com $a=2$, $b=0{,}8$ e ruído $\mathcal{N}(0;0{,}1^2)$. Compare com `curve_fit`.
+R:
+```python
+import numpy as np
+from scipy.optimize import curve_fit
+from rnbook import otimizadores as O
+
+rng = np.random.default_rng(0); x = np.linspace(0, 2, 30)
+y = 2.0 * np.exp(0.8 * x) + rng.normal(0, 0.1, 30)
+res = lambda th: th[0] * np.exp(th[1] * x) - y                              # r = y_modelo - y_dado
+jac = lambda th: np.column_stack([np.exp(th[1] * x), th[0] * x * np.exp(th[1] * x)])
+r = O.levenberg_marquardt(np.array([1.0, 0.1]), res, jac, max_iter=100, tol_grad=1e-10)
+print(r.theta, r.n_iter, r.motivo)
+p, _ = curve_fit(lambda x, a, b: a * np.exp(b * x), x, y, p0=[1.0, 0.1], method="lm")
+print(p)
+```
+Resultado observado: LM $\hat\theta=(1{,}98850;\ 0{,}80251)$ em 8 iterações (parou por gradiente pequeno); `curve_fit` deu os mesmos valores. Critérios: $\partial r/\partial a=e^{bx}$ e $\partial r/\partial b=a\,x\,e^{bx}$; comparação coerente.
+
+DISC: Programe o Gauss–Newton e o LM (Hagan–Menhaj) para Rosenbrock como mínimos quadrados a partir de $(-1{,}2;\,1)$ e conte as iterações.
+R:
+```python
+import numpy as np
+from rnbook import otimizadores as O
+
+res = lambda v: np.array([10 * (v[1] - v[0] ** 2), 1 - v[0]])
+jac = lambda v: np.array([[-20 * v[0], 10.0], [-1.0, 0.0]])
+v0 = np.array([-1.2, 1.0])
+gn = O.gauss_newton(v0, res, jac, max_iter=100, tol_grad=1e-10)
+lm = O.levenberg_marquardt(v0, res, jac, max_iter=100, tol_grad=1e-10)
+nl = O.levenberg_marquardt_nielsen(v0, res, jac, max_iter=100, tol_grad=1e-10)
+print(gn.n_iter, lm.n_iter, nl.n_iter)
+```
+Resultado observado: Gauss–Newton 3 iterações; LM (Hagan–Menhaj) 28; LM com razão de ganho 18. Critérios: resíduos e Jacobiana corretos; contagem consistente; comentário sobre o caso de resíduo nulo.
+
+DISC: Verifique numericamente a Jacobiana analítica `MLP.jacobiana` de uma rede 2–3–2 (tanh e sigmoide) com 5 amostras, comparando-a com diferenças finitas centrais dos resíduos.
+R:
+```python
+import numpy as np
+from rnbook import MLP
+
+rede = MLP([2, 3, 2], ["tanh", "sigmoide"], semente=0)
+X = np.random.default_rng(1).normal(size=(5, 2)); T = np.random.default_rng(2).uniform(size=(5, 2))
+J = rede.jacobiana(rede.theta, X)
+r = lambda th: rede.residuos(th, X, T)
+Jn = np.column_stack([(r(rede.theta + 1e-6 * e) - r(rede.theta - 1e-6 * e)) / 2e-6 for e in np.eye(rede.n_params)])
+print(J.shape, np.abs(J - Jn).max())
+```
+Resultado observado: forma $(10,17)$ ($Nm=10$, $P=17$) e diferença máxima de $7{,}9\times10^{-11}$. Critérios: diferença central, $h\approx10^{-6}$, uma coluna por parâmetro.
+
+DISC: Estude a sensibilidade do LM a $\mu_0\in\{10^{-6},10^{-3},1,100\}$ e aos fatores $(\times10,\times0{,}1)$ e $(\times2,\times0{,}5)$ na rede 1–8–1 do capítulo. Mostre o número de iterações até $E<1{,}2375$ (limiar do capítulo).
+R:
+```python
+import numpy as np
+from rnbook import MLP, otimizadores as O
+
+rng = np.random.default_rng(3); N = 100; X = rng.uniform(0, 1, (N, 1)); T = np.sin(2 * np.pi * X) + rng.normal(0, 0.15, (N, 1))
+rede = MLP([1, 8, 1], ["tanh", "identidade"], semente=0)
+res = lambda th: rede.residuos(th, X, T); jac = lambda th: rede.jacobiana(th, X)
+lim = 1.1 * 0.5 * N * 0.15 ** 2
+
+def iteracoes(**kw):
+    h = np.array(O.levenberg_marquardt(rede.theta, res, jac, max_iter=100, tol_grad=1e-12, **kw).historico["perda"])
+    return int(np.argmax(h < lim)) if (h < lim).any() else None
+
+for mu0 in (1e-6, 1e-3, 1.0, 100.0):
+    print(mu0, iteracoes(mu0=mu0), iteracoes(mu0=mu0, mu_inc=2.0, mu_dec=0.5))
+```
+Resultado observado (HM, fatores $\times10/\times0{,}1$ e $\times2/\times0{,}5$): $\mu_0=10^{-6}$: 9 e 8; $\mu_0=10^{-3}$: 9 e 8; $\mu_0=1$: 9 e 9; $\mu_0=100$: 10 e 11. O LM é pouco sensível a esses parâmetros.
+
+DISC: Meça o tempo de resolver $(A^TA+I)\mathbf{d}=\mathbf{b}$ para $P=100,200,400,800,1600$ com `np.linalg.solve` e estime o expoente de crescimento. Discuta as implicações para o LMBP.
+R:
+```python
+import time
+import numpy as np
+
+tempos = {}
+for P in (100, 200, 400, 800, 1600):
+    A = np.random.default_rng(0).normal(size=(P, P)); M = A.T @ A + np.eye(P); b = np.ones(P)
+    t0 = time.perf_counter()
+    for _ in range(3): np.linalg.solve(M, b)
+    tempos[P] = (time.perf_counter() - t0) / 3
+Ps = list(tempos)
+for a, b in zip(Ps[:-1], Ps[1:]):
+    print(b, tempos[b], "razão", tempos[b] / tempos[a], "expoente", np.log2(tempos[b] / tempos[a]))
+```
+Resultado observado (depende da máquina): de $0{,}0002$ s ($P=100$) a $0{,}033$ s ($P=1600$); razões de $\approx4{,}7$ a $4{,}8$ por duplicação, isto é, expoente $\approx2{,}2$ (abaixo de 3, por causa de BLAS e paralelismo, para $P$ pequeno); para $P$ muito maior, o expoente tende a 3. Implicação: o custo do LMBP cresce rapidamente com $P$ (além da memória $P^2$), e o método fica restrito a redes pequenas e médias.
+
+DISC: Usando a decomposição espectral $J^TJ=Q\Lambda Q^T$, mostre que a norma do passo de LM, $\|\mathbf{d}(\mu)\|$, é decrescente em $\mu$ e que $\mathbf{d}(\mu)\approx-\mathbf{g}/\mu$ quando $\mu\to\infty$.
+R: $\mathbf{d}(\mu)=-(Q\Lambda Q^T+\mu I)^{-1}\mathbf{g}=-Q(\Lambda+\mu I)^{-1}Q^T\mathbf{g}$. Com $c_i=\mathbf{q}_i^T\mathbf{g}$, $\|\mathbf{d}(\mu)\|^2=\sum_i\dfrac{c_i^2}{(\lambda_i+\mu)^2}$. Cada parcela é decrescente em $\mu>0$ (pois $\lambda_i\ge0$); logo a soma também. Para $\mu\gg\lambda_{\max}$, $(\lambda_i+\mu)^{-1}\approx\mu^{-1}$ e $\mathbf{d}\approx-\mu^{-1}Q Q^T\mathbf{g}=-\mathbf{g}/\mu$. Para $\mu\to0$ com $\lambda_i>0$ para todo $i$, $\mathbf{d}\to$ passo de Gauss–Newton; se algum $\lambda_i=0$ com $c_i\ne0$, o passo cresce sem limite (singularidade): é exatamente o que o amortecimento evita. Isto explica a medição do capítulo: com $\mu=10^{-6}$ a norma foi $201$ e com $\mu=10^{3}$, $0{,}029$.

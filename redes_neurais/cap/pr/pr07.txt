@@ -1,0 +1,193 @@
+@@EX 1 | Ajuste de curva por mínimos quadrados não lineares | iniciante
+Ajuste a curva logística $y=\dfrac{a}{1+e^{-b(x-c)}}$ a dados sintéticos, com Gauss–Newton e Levenberg–Marquardt, e compare com o SciPy.
+
+1. Gere 40 pontos em $x\in[0,10]$ com $a=5$, $b=1{,}2$, $c=5$ e ruído $\mathcal{N}(0;0{,}2^2)$ (semente 0).
+2. Escreva o vetor de resíduos e a Jacobiana analítica (derivadas em $a$, $b$ e $c$).
+3. A partir de $(a,b,c)=(3;\,0{,}5;\,4)$, rode `gauss_newton` e `levenberg_marquardt` do pacote `rnbook` e `scipy.optimize.least_squares(method="lm")`.
+4. Calcule o $R^2$ (`sklearn.metrics.r2_score`) e compare os parâmetros.
+
+**Pergunta:** o Gauss–Newton convergiu? Se sim ou não, por quê?
+@@SOL
+```python
+import numpy as np
+from scipy.optimize import least_squares
+from sklearn.metrics import r2_score
+from rnbook import otimizadores as O
+
+rng = np.random.default_rng(0)
+x = np.linspace(0, 10, 40)
+curva = lambda th, x: th[0] / (1 + np.exp(-th[1] * (x - th[2])))
+y = curva([5.0, 1.2, 5.0], x) + rng.normal(0, 0.2, x.size)
+
+res = lambda th: curva(th, x) - y                              # r = modelo - dado
+def jac(th):
+    e = np.exp(-th[1] * (x - th[2])); s = 1 / (1 + e)
+    return np.column_stack([s,                                 # dr/da
+                            th[0] * s ** 2 * e * (x - th[2]),  # dr/db
+                            -th[0] * s ** 2 * e * th[1]])      # dr/dc
+
+th0 = np.array([3.0, 0.5, 4.0])
+gn = O.gauss_newton(th0, res, jac, max_iter=100, tol_grad=1e-10)
+lm = O.levenberg_marquardt(th0, res, jac, max_iter=100, tol_grad=1e-10)
+sp = least_squares(res, th0, jac=jac, method="lm")
+for nome, th, it in [("Gauss-Newton", gn.theta, gn.n_iter), ("LM (rnbook)", lm.theta, lm.n_iter), ("scipy lm", sp.x, sp.nfev)]:
+    print("%-13s a=%.4f b=%.4f c=%.4f | R2=%.4f | iterações/avaliações: %d" % ((nome,) + tuple(th) + (r2_score(y, curva(th, x)), it)))
+print("motivo (GN):", gn.motivo, "| motivo (LM):", lm.motivo)
+```
+@@NOTE O **Gauss–Newton puro não convergiu**: com a partida $(3;\,0{,}5;\,4)$, o primeiro passo foi enorme (por exemplo, $b\approx-209$ e $c\approx-3227$), o modelo se afastou da região em que a linearização vale e, em seguida, apareceram valores não finitos ($R^2=-1{,}42$ antes de parar, motivo `valores_nao_finitos`). Na região plana da logística, as colunas de $J$ ficam quase dependentes, e o passo completo é inadequado. O **LM** (19 iterações) e o `scipy` com `method="lm"` (12 avaliações) chegaram à mesma solução, $(4{,}9725;\,1{,}2909;\,4{,}9943)$, com $R^2=0{,}9947$; os valores verdadeiros são $(5;\,1{,}2;\,5)$, e a diferença em $b$ é efeito do ruído em 40 pontos. O motivo de parada do LM, `mu_maximo`, indica que, no fim, nenhum passo reduziu $E$ no limite da precisão numérica: não é falha. O exercício ilustra a razão de ser do amortecimento.
+
+@@EX 2 | LM com parada antecipada contra o `lbfgs` do scikit-learn | intermediário
+Em **Friedman #1** (`make_friedman1`, 500 amostras, `noise=1.0`, `random_state=0`), treine redes 10–$H$–1 (tanh, saída linear) com o LM do `rnbook`, usando um conjunto de validação para parada antecipada, e compare com `MLPRegressor(solver="lbfgs")`.
+
+1. Separe teste (20%) e, do restante, validação (25%); padronize $X$ e $y$ com o treino.
+2. Para $H\in\{4,8,16\}$ e 5 sementes, rode o LM (`max_iter=100`, paciência 10, perda de validação) e relate o $R^2$ de teste dos parâmetros da melhor época.
+3. Compare com `MLPRegressor(hidden_layer_sizes=(8,), activation="tanh", solver="lbfgs", alpha=0, max_iter=300)` (5 sementes).
+
+**Pergunta:** em que iteração a validação foi mínima? O que isso diz sobre o sobreajuste do LM?
+@@SOL
+```python
+import time
+import warnings
+import numpy as np
+from sklearn.datasets import make_friedman1
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = make_friedman1(n_samples=500, n_features=10, noise=1.0, random_state=0)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.2, random_state=0)
+X_tr, X_va, y_tr, y_va = train_test_split(X_a, y_a, test_size=0.25, random_state=0)
+esx, esy = StandardScaler().fit(X_tr), StandardScaler().fit(y_tr[:, None])
+Xs, Xv, Xt = esx.transform(X_tr), esx.transform(X_va), esx.transform(X_te)
+ys, yv = esy.transform(y_tr[:, None]), esy.transform(y_va[:, None]); Nv = len(yv)
+
+for H in (4, 8, 16):
+    r2, it, tempo = [], [], []
+    for s in range(5):
+        r = MLP([10, H, 1], ["tanh", "identidade"], semente=s); t0 = time.perf_counter()
+        res = O.levenberg_marquardt(r.theta, lambda th: r.residuos(th, Xs, ys), lambda th: r.jacobiana(th, Xs),
+                                    max_iter=100, tol_grad=1e-10,
+                                    val=lambda th: 0.5 * np.sum((r.prever(Xv, th) - yv) ** 2) / Nv, paciencia=10)
+        tempo.append(time.perf_counter() - t0)
+        r2.append(r2_score(y_te, esy.inverse_transform(r.prever(Xt, res.theta_melhor)).ravel()))
+        it.append((res.n_iter, int(np.argmin(res.historico["perda_val"])) + 1))
+    print("LM H=%2d (P=%3d) R2 teste: mediana %.3f [%.3f; %.3f] | (iterações, melhor) %s | tempo %.2f s"
+          % (H, r.n_params, np.median(r2), min(r2), max(r2), it, np.mean(tempo)))
+
+r2, tempo = [], []
+for s in range(5):
+    t0 = time.perf_counter()
+    m = MLPRegressor(hidden_layer_sizes=(8,), activation="tanh", solver="lbfgs", alpha=0.0, max_iter=300,
+                     random_state=s).fit(Xs, ys.ravel())
+    tempo.append(time.perf_counter() - t0)
+    r2.append(r2_score(y_te, esy.inverse_transform(m.predict(Xt)[:, None]).ravel()))
+print("sklearn lbfgs H=8: R2 teste mediana %.3f [%.3f; %.3f] | tempo %.2f s" % (np.median(r2), min(r2), max(r2), np.mean(tempo)))
+```
+@@NOTE Mediana do $R^2$ de teste (5 sementes): LM com $H=4$ ($P=49$): $0{,}776$ [$0{,}769$; $0{,}840$]; $H=8$ ($P=97$): $0{,}879$ [$0{,}728$; $0{,}922$]; $H=16$ ($P=193$): $0{,}853$ [$0{,}682$; $0{,}880$]; `lbfgs` com $H=8$: $0{,}922$ [$0{,}698$; $0{,}931$]. A validação foi mínima muito cedo, em geral entre as iterações 5 e 32 (em uma semente com $H=8$, na 93): o LM **ajusta rapidamente e passa a sobreajustar**; com $H=16$ (193 parâmetros para 300 amostras de treino), a melhor iteração foi 5 a 13 em todas as sementes. Sem parada antecipada, o LM teria entregue um modelo pior. A dispersão entre sementes (até $0{,}2$ de $R^2$) é maior que a diferença entre métodos; com 100 amostras de teste, **não** se pode declarar vencedor entre LM e `lbfgs`.
+
+@@EX 3 | O preço do LM: memória e tempo em função de $P$ | intermediário
+Meça, para redes 10–$H$–1 em Friedman #1 ($N=300$), as dimensões e o custo dos objetos do LM.
+
+1. Para $H\in\{5,20,50,100\}$, calcule $P$, o tamanho de $J$ (e sua memória) e de $J^TJ$.
+2. Meça (melhor de 5 repetições) o tempo de calcular $J$, de formar $J^TJ$ e de resolver $(J^TJ+I)\mathbf{d}=\mathbf{b}$.
+3. Extrapole a memória de $J^TJ$ para $P=10^4$ e $P=10^5$.
+
+**Pergunta:** qual etapa domina o custo quando $P$ cresce?
+@@SOL
+```python
+import time
+import numpy as np
+from sklearn.datasets import make_friedman1
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP
+
+X, _ = make_friedman1(n_samples=300, n_features=10, noise=1.0, random_state=0)
+Xs = StandardScaler().fit_transform(X)
+
+def melhor_tempo(f, repeticoes=5):
+    tempos = []
+    for _ in range(repeticoes):
+        t0 = time.perf_counter(); f(); tempos.append(time.perf_counter() - t0)
+    return min(tempos)
+
+for H in (5, 20, 50, 100):
+    r = MLP([10, H, 1], ["tanh", "identidade"], semente=0); P = r.n_params
+    J = r.jacobiana(r.theta, Xs); A = J.T @ J + np.eye(P); b = np.ones(P)
+    tJ = melhor_tempo(lambda: r.jacobiana(r.theta, Xs)); tA = melhor_tempo(lambda: J.T @ J); tS = melhor_tempo(lambda: np.linalg.solve(A, b))
+    print("H=%3d P=%4d | J %dx%d = %.2f MB | J^T J %.2f MB | t(J)=%.4f s  t(J^T J)=%.4f s  t(solve)=%.4f s"
+          % (H, P, J.shape[0], J.shape[1], J.nbytes / 1e6, 8.0 * P * P / 1e6, tJ, tA, tS))
+for P in (10 ** 4, 10 ** 5):
+    print("P=%d: J^T J ocupa %.0f MB" % (P, 8.0 * P * P / 1e6))
+```
+@@NOTE Para $H=5$, $20$, $50$ e $100$, $P=61$, $241$, $601$ e $1201$. $J$ ocupa $0{,}15$ a $2{,}9$ MB (cresce linearmente em $P$ para $N$ fixo), enquanto $J^TJ$ ocupa $0{,}03$ a $11{,}5$ MB (cresce com $P^2$). Os tempos medidos (dependem da máquina) foram: $J$: $0{,}0001$ a $0{,}0014$ s; $J^TJ$: $0{,}0001$ a $0{,}0055$ s; resolver o sistema: $0{,}0001$ a $0{,}0151$ s. Com $P$ 20 vezes maior, o tempo de resolver cresceu cerca de 150 vezes (expoente $\approx1{,}7$, abaixo de 3 pelo uso de bibliotecas otimizadas em $P$ pequeno): para $P=1201$, **resolver** o sistema já domina ($0{,}015$ s contra $0{,}0055$ s e $0{,}0014$ s) e a memória de $J^TJ$ explode com $P^2$ ($800$ MB para $P=10^4$ e $80$ GB para $P=10^5$). Para $N$ grande (projeto abaixo), a etapa de formar $J$ e $J^TJ$ ($O(NmP^2)$) também pesa.
+
+@@PROJ LM em dígitos manuscritos: quanto custa e quanto rende? | avançado
+**Objetivo.** Avaliar o Levenberg–Marquardt em um problema de classificação com muitas amostras e saídas e compará-lo com iRPROP− e com o `lbfgs` do scikit-learn.
+
+**Dados.** **Digits** do scikit-learn (1797 imagens $8\times8$; subconjunto da base *Optical Recognition of Handwritten Digits*, UCI), 10 classes, alvos *one-hot*.
+
+**Tarefas.**
+1. Separe 60/20/20 (estratificado, `random_state=0`); padronize com o treino.
+2. Rede 64–10–10 (tanh e sigmoide). Calcule $P$ e as dimensões e a memória de $J$ para o conjunto de treino.
+3. Treine, com 3 sementes: (a) LM (`max_iter=60`, paciência 8, validação por perda); (b) iRPROP− (`max_iter=300`, paciência 30); (c) `MLPClassifier(hidden_layer_sizes=(10,), activation="tanh", solver="lbfgs", max_iter=300)`.
+4. Registre acurácia de teste, iterações, época da melhor validação e tempo.
+5. Redija 10 a 12 linhas: o LM compensou? Que fatores explicam o resultado (perda quadrática sobre saídas sigmoides, sobreajuste, custo de $J$)?
+
+**Para ir além (não testado no livro).** Repita com o *optdigits* original (UCI) e discuta a viabilidade do LM no MNIST (Kaggle): estime a memória de $J$ com $N=60\,000$ e $m=10$.
+@@RUBRICA
+- Cálculo correto das dimensões e da memória de $J$ ($Nm\times P$).
+- Mesmas partições e sementes para os três métodos; validação usada para parada, teste apenas para relato.
+- Comparação honesta do custo (tempo) e do desempenho; discussão de sobreajuste do LM.
+- Conclusão limitada ao experimento, sem generalizar a "LM é sempre melhor/pior".
+@@SOL
+```python
+import time
+import warnings
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = load_digits(return_X_y=True)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+X_tr, X_va, y_tr, y_va = train_test_split(X_a, y_a, test_size=0.25, random_state=0, stratify=y_a)
+esc = StandardScaler().fit(X_tr)
+Xs, Xv, Xt = esc.transform(X_tr), esc.transform(X_va), esc.transform(X_te)
+T, Tv = np.eye(10)[y_tr], np.eye(10)[y_va]; N, Nv = len(y_tr), len(y_va)
+
+r0 = MLP([64, 10, 10], ["tanh", "sigmoide"], semente=0)
+J = r0.jacobiana(r0.theta, Xs)
+print("P = %d | J: %d x %d = %.1f MB | J^T J: %d x %d = %.1f MB" % (r0.n_params, J.shape[0], J.shape[1], J.nbytes / 1e6, r0.n_params, r0.n_params, 8.0 * r0.n_params ** 2 / 1e6))
+
+def val_perda(r):
+    return lambda th: 0.5 * np.sum((r.prever(Xv, th) - Tv) ** 2) / Nv
+
+print("(a) Levenberg-Marquardt")
+for s in range(3):
+    r = MLP([64, 10, 10], ["tanh", "sigmoide"], semente=s); t0 = time.perf_counter()
+    res = O.levenberg_marquardt(r.theta, lambda th: r.residuos(th, Xs, T), lambda th: r.jacobiana(th, Xs),
+                                max_iter=60, tol_grad=1e-10, val=val_perda(r), paciencia=8)
+    print("   semente %d: iterações %d (melhor %d) | acurácia teste %.4f | tempo %.1f s"
+          % (s, res.n_iter, int(np.argmin(res.historico["perda_val"])) + 1,
+             np.mean(np.argmax(r.prever(Xt, res.theta_melhor), axis=1) == y_te), time.perf_counter() - t0))
+print("(b) iRPROP-")
+for s in range(3):
+    r = MLP([64, 10, 10], ["tanh", "sigmoide"], semente=s); t0 = time.perf_counter()
+    res = O.rprop(r.theta, lambda th: r.perda(th, Xs, T), lambda th: r.grad(th, Xs, T), variante="irprop-",
+                  max_iter=300, tol_grad=0, val=val_perda(r), paciencia=30)
+    print("   semente %d: épocas %d | acurácia teste %.4f | tempo %.2f s"
+          % (s, res.n_iter, np.mean(np.argmax(r.prever(Xt, res.theta_melhor), axis=1) == y_te), time.perf_counter() - t0))
+print("(c) scikit-learn lbfgs")
+for s in range(3):
+    t0 = time.perf_counter()
+    m = MLPClassifier(hidden_layer_sizes=(10,), activation="tanh", solver="lbfgs", max_iter=300, random_state=s).fit(Xs, y_tr)
+    print("   semente %d: n_iter_ %d | acurácia teste %.4f | tempo %.2f s" % (s, m.n_iter_, m.score(Xt, y_te), time.perf_counter() - t0))
+print("estimativa para MNIST: J com N=60000, m=10, P=8000 -> %.1f GB" % (8.0 * 60000 * 10 * 8000 / 1e9))
+```
+@@NOTE Com $P=760$, $J$ tem $10\,770\times760$ elementos ($65{,}5$ MB) e $J^TJ$, $4{,}6$ MB. **LM:** parou após 26, 18 e 19 iterações (melhor validação nas iterações 18, 10 e 11), com acurácia de teste de $0{,}889$, $0{,}872$ e $0{,}869$ e tempo de $2{,}7$ a $4{,}4$ s. **iRPROP−:** 63, 63 e 54 épocas, acurácia de $0{,}936$, $0{,}933$ e $0{,}931$, em $0{,}10$ a $0{,}13$ s. **`lbfgs`:** $0{,}917$, $0{,}917$ e $0{,}908$ em $0{,}05$ a $0{,}10$ s. Neste problema e nesta configuração, o LM **não compensou**: foi cerca de 25 a 40 vezes mais lento e menos acurado. Fatores prováveis (hipóteses, não testadas aqui): o erro quadrático sobre saídas sigmoides *one-hot* (sem entropia cruzada), o sobreajuste rápido do LM (a validação é mínima após 10 a 18 iterações) e a ausência de regularização. Com outro regularizador ou outra arquitetura, o resultado poderia mudar. A estimativa para o MNIST ($N=60\,000$, $m=10$, $P\approx8000$) é de $38{,}4$ GB só para $J$: inviável. **Conclusão:** o LM é excelente em problemas pequenos de regressão com poucas saídas; para classificação com muitas amostras e saídas, outros métodos são mais práticos.

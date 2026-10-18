@@ -1,0 +1,299 @@
+MC: A principal motivação para usar uma taxa de aprendizagem **individual** para cada peso é que
++ direções com curvaturas muito diferentes pedem passos diferentes, e uma taxa única é um compromisso ruim.
+- todos os pesos têm exatamente a mesma curvatura, e a taxa individual só aumenta o custo.
+- a taxa individual elimina a necessidade de calcular o gradiente.
+- a taxa individual garante convergência para o mínimo global.
+- o número de pesos é sempre menor que o número de amostras.
+R: Em uma calha, a direção íngreme exige passo pequeno e a plana exige passo grande; uma taxa única não atende às duas.
+
+MC: Na regra delta-delta, a derivada $\partial E(t+1)/\partial\alpha_i(t)$ é igual a
++ $-g_i(t+1)\,g_i(t)$
+- $+g_i(t+1)\,g_i(t)$
+- $-g_i(t)^2$
+- $g_i(t+1)/g_i(t)$
+- $-\alpha_i(t)\,g_i(t)$
+R: Regra da cadeia: $\partial E(t+1)/\partial w_i(t+1)=g_i(t+1)$ e $\partial w_i(t+1)/\partial\alpha_i(t)=-g_i(t)$.
+
+MC: A regra delta-delta, na forma usada no livro, atualiza a taxa por
++ $\alpha_i(t+1)=\alpha_i(t)+\gamma\,g_i(t)\,g_i(t-1)$
+- $\alpha_i(t+1)=\alpha_i(t)-\gamma\,g_i(t)\,g_i(t-1)$
+- $\alpha_i(t+1)=\gamma\,\alpha_i(t)\,g_i(t)$
+- $\alpha_i(t+1)=\alpha_i(t)+\kappa$ sempre
+- $\alpha_i(t+1)=\alpha_i(t)/|g_i(t)|$
+R: O sinal positivo vem de descer $E$ em relação a $\alpha$: gradientes consecutivos de mesmo sinal aumentam a taxa.
+
+MC: Uma fragilidade da delta-delta, observada nos experimentos do capítulo, é que
++ com $\gamma$ grande a taxa pode ficar negativa ou explodir, produzindo valores não finitos.
+- ela sempre converge mais lentamente que o gradiente descendente com taxa ótima.
+- ela exige o cálculo da Hessiana.
+- ela só funciona com funções de ativação lineares.
+- o valor de $\gamma$ não afeta o resultado.
+R: A correção $\gamma g(t)g(t-1)$ depende da escala de $E$ e não tem proteção contra taxas negativas ou crescentes.
+
+MC: No Delta-Bar-Delta, $\bar g_i(t)$ é
++ uma média exponencial do gradiente, $(1-\theta)g_i(t)+\theta\bar g_i(t-1)$.
+- a média aritmética de todos os gradientes de todos os pesos.
+- o gradiente normalizado pelo seu módulo.
+- a Hessiana diagonal estimada por secante.
+- o sinal de $g_i(t)$.
+R: $\bar g$ é uma memória do gradiente do próprio peso, usada no teste de sinal.
+
+MC: No DBD, quando $\bar g_i(t-1)\,g_i(t)>0$, a taxa $\alpha_i$
++ aumenta de uma constante $\kappa$ (aumento aditivo).
+- é multiplicada por $(1-\phi)$.
+- é zerada.
+- é multiplicada por $e^{-\gamma|\bar g|}$.
+- permanece inalterada.
+R: Mesmo sinal indica declive consistente, e a taxa sobe devagar, de forma aditiva.
+
+MC: No DBD, quando $\bar g_i(t-1)\,g_i(t)<0$, a taxa $\alpha_i$
++ é multiplicada por $(1-\phi)$, o que a mantém positiva.
+- aumenta de $\kappa$.
+- é trocada de sinal.
+- é igualada ao gradiente.
+- é fixada em $\alpha_{\max}$.
+R: Sinais opostos indicam oscilação; a redução multiplicativa corta a taxa rapidamente e preserva $\alpha_i>0$.
+
+MC: A assimetria "aditivo para subir, multiplicativo para descer" do DBD tem por finalidade
++ subir com cuidado e descer rapidamente quando a oscilação aparece.
+- subir rapidamente e descer devagar para não perder tempo.
+- garantir que a soma das taxas seja constante.
+- tornar o DBD idêntico ao RPROP.
+- eliminar a necessidade da média $\bar g$.
+R: A redução geométrica restabelece a estabilidade em poucos passos; o aumento linear é suave.
+
+MC: Qual hiperparâmetro do DBD controla o peso da **memória** do gradiente na média $\bar g$?
++ $\theta$
+- $\kappa$
+- $\phi$
+- $\alpha_0$
+- $\gamma$
+R: $\bar g=(1-\theta)g+\theta\bar g_{\text{ant}}$: quanto maior $\theta$, mais memória.
+
+MC: Em uma quadrática $\tfrac12\lambda w^2$ com passo $\alpha$, o produto $g(t)g(t-1)$ é negativo quando
++ $1<\alpha\lambda<2$ (o peso muda de sinal a cada passo, mas converge).
+- $\alpha\lambda<1$.
+- $\alpha\lambda=0$.
+- $\alpha\lambda<0{,}5$.
+- nunca, para qualquer $\alpha>0$.
+R: Como $w(t+1)=(1-\alpha\lambda)w(t)$, o sinal alterna quando $1-\alpha\lambda<0$.
+
+MC: Em uma quadrática, a taxa $\alpha$ torna o gradiente descendente **divergente** quando
++ $\alpha\lambda>2$.
+- $\alpha\lambda<1$.
+- $\alpha\lambda=1$.
+- $\alpha\lambda<2$.
+- $\alpha<0{,}5/\lambda$.
+R: O fator $|1-\alpha\lambda|$ passa de 1 apenas para $\alpha\lambda>2$.
+
+MC: Para a quadrática com curvaturas $\lambda=(1;\,10)$, o melhor passo único do gradiente descendente é
++ $\eta^*=2/(\lambda_{\min}+\lambda_{\max})=2/11$
+- $\eta^*=1/\lambda_{\min}=1$
+- $\eta^*=2/\lambda_{\min}=2$
+- $\eta^*=1/(\lambda_{\min}\lambda_{\max})=0{,}1$
+- $\eta^*=\lambda_{\max}/\lambda_{\min}=10$
+R: Esse passo equilibra os fatores $|1-\eta\lambda_{\min}|$ e $|1-\eta\lambda_{\max}|$.
+
+MC: Nos experimentos do capítulo com quadráticas diagonais, ao passar do número de condição $10$ para $10^3$, o número de iterações do DBD
++ quase não mudou (69 para 70), enquanto o do gradiente descendente com $1/\lambda_{\max}$ passou de 132 para 13 809.
+- aumentou cerca de 100 vezes, como o do gradiente descendente.
+- diminuiu 100 vezes.
+- passou de 132 para 13 809.
+- tornou-se infinito.
+R: Com a Hessiana diagonal, cada coordenada encontra sua própria taxa.
+
+MC: A vantagem das taxas individuais em quadráticas **diagonais** pode diminuir quando
++ a Hessiana não é diagonal (curvaturas acopladas entre pesos).
+- o problema tem apenas duas variáveis.
+- o gradiente é calculado em lote.
+- a função é convexa.
+- a taxa inicial é pequena.
+R: Taxas por coordenada fazem pré-condicionamento diagonal; não corrigem acoplamento.
+
+MC: O Delta-Bar-Delta Estendido (EDBD) acrescenta ao DBD
++ um momento individual adaptativo e incrementos que decrescem com $|\bar g|$, além de limites.
+- o cálculo da Hessiana inversa.
+- a divisão do gradiente pela sua raiz quadrada média.
+- o uso apenas do sinal do gradiente.
+- o abandono da média $\bar g$.
+R: O EDBD adapta $\alpha_i$ e $\mu_i$, usando $\kappa e^{-\gamma|\bar g|}$ e os limites $\alpha_{\max}$ e $\mu_{\max}$.
+
+MC: No EDBD didático do livro, o incremento da taxa é $\kappa_\alpha e^{-\gamma_\alpha|\bar g_i|}$ porque
++ reduz o aumento quando o gradiente suavizado é grande, evitando acelerar em terreno íngreme.
+- aumenta o passo quando o gradiente é grande.
+- elimina o limite $\alpha_{\max}$.
+- torna a taxa negativa.
+- faz o momento valer sempre 1.
+R: Quanto maior $|\bar g|$, menor o fator exponencial.
+
+MC: A variação do peso no EDBD é
++ $\Delta w_i(t)=-\alpha_i\,g_i(t)+\mu_i\,\Delta w_i(t-1)$
+- $\Delta w_i(t)=-\mathrm{sinal}(g_i)\,\Delta_i$
+- $\Delta w_i(t)=-H^{-1}g$
+- $\Delta w_i(t)=-\bar g_i(t)/\sqrt{v_i}$
+- $\Delta w_i(t)=\mu_i\,g_i(t)$
+R: É o gradiente com momento, em que $\alpha_i$ e $\mu_i$ são individuais.
+
+MC: A diferença essencial entre o DBD/EDBD e o RPROP é que
++ o DBD/EDBD mantêm a magnitude do gradiente no passo, e o RPROP usa só o sinal.
+- o RPROP usa a Hessiana e o DBD não.
+- o DBD é de segunda ordem.
+- o RPROP não pode ser usado em lote.
+- ambos usam exatamente a mesma regra de atualização.
+R: No DBD, $\Delta w=-\alpha g$; no RPROP, $\Delta w=-\mathrm{sinal}(g)\Delta$.
+
+MC: O momento clássico, diferentemente do EDBD, usa
++ o mesmo coeficiente $\beta$ para todos os pesos e sem teste de sinal.
+- um coeficiente diferente para cada peso, ajustado pelo sinal.
+- a Hessiana para ajustar $\beta$.
+- um limite $\mu_{\max}$ adaptativo por peso.
+- a média $\bar g$ no teste de sinal.
+R: O momento clássico não adapta $\beta$.
+
+MC: Na implementação do DBD, a média $\bar g$ deve ser atualizada
++ depois do teste de sinal e do passo, para que o teste use $\bar g(t-1)$.
+- antes do teste de sinal.
+- somente na primeira iteração.
+- apenas quando $\alpha$ diminui.
+- a cada duas iterações, de forma alternada.
+R: Se $\bar g$ já contiver $g(t)$, o produto fica quase sempre positivo e a taxa só cresce.
+
+MC: Na rede 1–8–1 do capítulo, o piso do ruído da perda $E/N$ com $E=\tfrac12\sum r^2$ e ruído $\mathcal N(0;0{,}15^2)$ vale
++ $\tfrac12\cdot0{,}15^2=0{,}01125$.
+- $0{,}15$.
+- $0{,}15^2=0{,}0225$.
+- $2\cdot0{,}15^2=0{,}045$.
+- $0$.
+R: Uma rede perfeita ainda teria resíduo igual ao ruído, de variância $0{,}15^2$, e o fator $\tfrac12$ vem de $E$.
+
+MC: Na comparação da rede 1–8–1, os hiperparâmetros foram escolhidos nas sementes 0 a 4 e o desempenho foi medido nas sementes 5 a 14 para
++ evitar avaliar o método nas mesmas inicializações usadas para ajustá-lo.
+- tornar o resultado idêntico ao do treino.
+- usar mais amostras de teste.
+- reduzir o tempo de execução.
+- eliminar a necessidade de semente.
+R: Ajustar e avaliar nas mesmas sementes superestima os métodos com mais hiperparâmetros.
+
+MC: Na comparação da rede 1–8–1, o que os resultados **autorizam** concluir?
++ EDBD e gradiente descendente com momento chegaram ao piso do ruído, sem que se possa declarar um superior ao outro.
+- O EDBD é sempre superior ao momento em qualquer problema.
+- O DBD é superior a qualquer método de segunda ordem.
+- A delta-delta é o melhor método adaptativo.
+- O gradiente descendente simples é o mais robusto.
+R: A perda final foi $0{,}0121$ contra $0{,}0120$; havia só um problema e o EDBD teve mais combinações testadas.
+
+MC: Na grade de hiperparâmetros, o EDBD teve 64 combinações e o momento, 8. Isso implica que
++ a comparação favorece o EDBD na seleção, e isso deve ser dito ao interpretar o resultado.
+- a comparação favorece o momento.
+- a comparação é perfeitamente equilibrada.
+- o número de combinações não importa.
+- o EDBD é necessariamente pior.
+R: Mais tentativas aumentam a chance de uma boa configuração nas sementes de ajuste.
+
+MC: Na análise de sensibilidade do DBD, com $\alpha_0=0{,}1$ e $\theta=0{,}9$, a combinação $\kappa=0{,}2$ e $\phi=0{,}05$ levou a
++ divergência (aumento rápido com redução fraca).
+- o melhor resultado da grade.
+- perda final igual ao piso do ruído.
+- perda final igual a zero.
+- um resultado idêntico ao de $\kappa=0{,}005$.
+R: Subir depressa e descer devagar não restabelece a estabilidade.
+
+MC: Nas taxas individuais do DBD na rede (semente 5), uma fraqueza observada foi
++ a taxa mínima poder despencar (até cerca de $10^{-12}$) e a máxima chegar a dezenas, pois não há piso nem teto.
+- as taxas serem todas iguais ao final.
+- as taxas ficarem sempre entre $0{,}1$ e $0{,}2$.
+- o momento ser negativo.
+- a taxa ser sempre limitada por $\alpha_{\max}$.
+R: Sem limites, a redução multiplicativa congela pesos e o aumento aditivo pode ser grande para pesos de gradiente pequeno.
+
+MC: Qual a relação do `traingdx` do MATLAB com o DBD?
++ Aplica momento e taxa global adaptativa pelo erro; o DBD adapta uma taxa por peso pelo sinal do gradiente.
+- É a mesma regra, com nome diferente.
+- Usa a Hessiana, como o Levenberg–Marquardt.
+- Usa só o sinal do gradiente, como o RPROP.
+- Implementa o EDBD de Minai e Williams.
+R: A adaptação do `traingdx` é global (sobre o erro), enquanto a do DBD é individual (sobre o gradiente).
+
+MC: Sobre a comparação entre o DBD e o Adam, este capítulo
++ não avalia o Adam e não afirma equivalência nem superioridade.
+- prova que o Adam é um caso particular do DBD.
+- mostra que o DBD supera o Adam em minilotes.
+- usa o Adam como método de referência.
+- mostra que o Adam diverge na rede 1–8–1.
+R: O texto apenas distingue as regras e declara que o Adam não foi avaliado.
+
+MC: O DBD é uma regra projetada para treinamento em
++ lote (gradiente determinístico), pois o teste de sinal é ruidoso com minilotes pequenos.
+- minilotes de uma amostra.
+- apenas dados com valores ausentes.
+- apenas redes sem camada oculta.
+- apenas funções de ativação ReLU.
+R: Com gradientes ruidosos, o produto $\bar g\,g$ perde significado, salvo suavização forte.
+
+MC: Na delta-delta, a taxa $\alpha_i$ é atualizada com o produto dos gradientes de dois instantes consecutivos porque
++ gradientes de mesmo sinal indicam que o passo está curto e os de sinais opostos indicam oscilação.
+- o produto é sempre negativo.
+- o produto mede a curvatura exata da Hessiana.
+- o produto elimina a necessidade de $\gamma$.
+- o produto garante $\alpha_i\le1$.
+R: O sinal de $g(t)g(t-1)$ detecta se o peso está atravessando o declive ou oscilando em torno do vale.
+
+DISC: Deduza a regra delta-delta, $\alpha_i(t+1)=\alpha_i(t)+\gamma\,g_i(t)g_i(t-1)$, indicando o que é aproximação ao deslocar o índice de tempo.
+R: Como $w_i(t+1)=w_i(t)-\alpha_i(t)g_i(t)$, a regra da cadeia dá $\partial E(t+1)/\partial\alpha_i(t)=g_i(t+1)\cdot(-g_i(t))=-g_i(t+1)g_i(t)$. Descendo $E$ em $\alpha$ com passo $\gamma$: $\Delta\alpha_i=\gamma\,g_i(t+1)g_i(t)$. Como $g_i(t+1)$ não é conhecido no instante de escolher $\alpha_i$, desloca-se o índice e usam-se os dois últimos gradientes disponíveis: $\alpha_i(t+1)=\alpha_i(t)+\gamma g_i(t)g_i(t-1)$. A aproximação é essa troca de $g(t+1)g(t)$ por $g(t)g(t-1)$, razoável quando o gradiente varia lentamente.
+
+DISC: Verifique numericamente $\partial E(t+1)/\partial\alpha=-g(t+1)g(t)$ para $E(w)=\tfrac12\lambda w^2$, $\lambda=4$, $w=1$, $\alpha=0{,}1$.
+R: $g(t)=\lambda w=4$. Novo peso: $w'=1-0{,}1\cdot4=0{,}6$, $g(t+1)=2{,}4$. Analítico: $-g(t+1)g(t)=-9{,}6$. Direto: $E(\alpha)=\tfrac12\cdot4\,(1-4\alpha)^2=2(1-4\alpha)^2$, $E'(\alpha)=-16(1-4\alpha)$, e em $\alpha=0{,}1$: $-16\cdot0{,}6=-9{,}6$. Coincidem (o cálculo por diferença central, no livro, também deu $-9{,}6$).
+
+DISC: Em $E(w)=\tfrac12\lambda w^2$ com $\lambda=2$, $w_0=1$, $\alpha_0=0{,}3$, $\gamma=0{,}1$ e $g_{\text{ant}}=0$ na primeira iteração, execute três passos da delta-delta (atualize $\alpha$ e depois $w$).
+R: Iteração 1: $g=2$, $\alpha=0{,}3+0{,}1\cdot2\cdot0=0{,}3$, $w=1-0{,}3\cdot2=0{,}4$. Iteração 2: $g=0{,}8$, $\alpha=0{,}3+0{,}1\cdot0{,}8\cdot2=0{,}46$, $w=0{,}4-0{,}46\cdot0{,}8=0{,}032$. Iteração 3: $g=0{,}064$, $\alpha=0{,}46+0{,}1\cdot0{,}064\cdot0{,}8=0{,}46512$, $w=0{,}032-0{,}46512\cdot0{,}064\approx0{,}00223$. A taxa subiu, porque os gradientes têm o mesmo sinal, e a convergência foi rápida.
+
+DISC: Mostre que, em uma quadrática 1D, $g(t)g(t-1)=\lambda^2(1-\alpha\lambda)\,w(t-1)^2$ e discuta o comportamento de $\alpha$ para $\alpha\lambda<1$, $1<\alpha\lambda<2$ e $\alpha\lambda>2$ na delta-delta.
+R: $w(t)=(1-\alpha\lambda)w(t-1)$, logo $g(t)g(t-1)=\lambda^2w(t)w(t-1)=\lambda^2(1-\alpha\lambda)w(t-1)^2$. Se $\alpha\lambda<1$, é positivo e $\alpha$ cresce. Se $1<\alpha\lambda<2$, $w$ alterna de sinal, mas $|1-\alpha\lambda|<1$ e o erro diminui; o produto é negativo e $\alpha$ diminui, e o sistema se autocorrige. Se $\alpha\lambda>2$, $|w|$ cresce e o produto negativo cresce junto, de modo que $\gamma gg$ pode tornar $\alpha$ negativa ou levar a valores absurdos: a regra falha onde seria mais necessária.
+
+DISC: Explique por que a delta-delta depende da escala de $E$, e por que o DBD é menos sensível a isso.
+R: Na delta-delta, a correção é $\gamma g(t)g(t-1)$; se $E$ é multiplicada por $c$, os gradientes são multiplicados por $c$ e a correção por $c^2$, de modo que o mesmo $\gamma$ produz efeitos diferentes (o passo $\alpha g$ também muda). No DBD, o aumento $\kappa$ e a redução $\phi$ independem da escala, e o teste usa apenas o **sinal** de $\bar g\,g$, que não muda com $c>0$. O passo $\alpha g$ ainda depende da escala do gradiente, e por isso o DBD é *menos*, não totalmente, sensível.
+
+DISC: Execute à mão três iterações do teste de sinal do DBD para um peso com $g(1)=2$, $g(2)=1{,}5$, $g(3)=-1$, $\alpha_0=0{,}1$, $\kappa=0{,}05$, $\phi=0{,}2$, $\theta=0{,}7$ e $\bar g(0)=0$.
+R: Iteração 1: $\bar g(0)g(1)=0$, a taxa permanece $0{,}1$; $\bar g(1)=0{,}3\cdot2=0{,}6$. Iteração 2: $\bar g(1)g(2)=0{,}9>0$, $\alpha=0{,}15$; $\bar g(2)=0{,}3\cdot1{,}5+0{,}7\cdot0{,}6=0{,}87$. Iteração 3: $\bar g(2)g(3)=-0{,}87<0$, $\alpha=0{,}8\cdot0{,}15=0{,}12$; $\bar g(3)=0{,}3\cdot(-1)+0{,}7\cdot0{,}87=0{,}309$. A taxa subiu duas vezes com o gradiente consistente e foi cortada quando o sinal mudou.
+
+DISC: Mostre que o DBD mantém $\alpha_i>0$ se $\alpha_0>0$, $\kappa>0$ e $0<\phi<1$, e explique por que isso não vale para a delta-delta.
+R: Por indução: se $\alpha_i(t)>0$, o aumento aditivo $\alpha+\kappa>0$ e a redução $(1-\phi)\alpha>0$ (pois $1-\phi\in(0,1)$), e a ausência de mudança mantém o valor; logo $\alpha_i(t+1)>0$. Na delta-delta, $\alpha_i+\gamma g_ig_{\text{ant}}$ soma um termo de sinal arbitrário e de módulo ilimitado, e pode resultar em valor negativo, o que inverte o sentido do passo.
+
+DISC: Por que o DBD aumenta a taxa de forma aditiva e a reduz de forma multiplicativa? Cite um efeito colateral da ausência de limites.
+R: O aumento aditivo é suave e de risco moderado em um declive consistente; a redução multiplicativa corta a taxa em ordens de grandeza em poucos passos, restabelecendo a estabilidade quando surge oscilação ("subir devagar, descer depressa"). Efeito colateral sem limites: a taxa mínima pode despencar (cerca de $10^{-12}$ na semente 5), congelando um peso, e a máxima pode chegar a dezenas para pesos com gradiente pequeno, o que causa picos de erro quando o gradiente volta a crescer.
+
+DISC: Interprete o efeito de $\theta$ no DBD e use os valores do capítulo ($\theta=0$: $0{,}0568$; $0{,}7$: $0{,}0164$; $0{,}9$: $0{,}0163$; $0{,}99$: $0{,}0248$).
+R: Com $\theta=0$, $\bar g(t-1)=g(t-1)$ e o teste de sinal usa só o gradiente anterior: é ruidoso, e a perda final foi alta ($0{,}0568$). Com $\theta$ intermediário ($0{,}7$ a $0{,}9$), a média filtra flutuações mas ainda reage às mudanças de sinal: melhor desempenho (cerca de $0{,}016$). Com $\theta=0{,}99$, a memória é tão longa que a mudança de sinal demora a ser detectada, e a perda piora ($0{,}0248$). O resultado vale para este problema (10 sementes, $\kappa=0{,}05$, $\phi=0{,}1$).
+
+DISC: Na quadrática $\tfrac12(x^2+10y^2)$, explique, com base nas taxas do DBD, por que a taxa de $x$ chega a $0{,}405$, maior que o passo ótimo $2/11$ do gradiente descendente, sem divergir.
+R: A taxa individual de $x$ só precisa respeitar a curvatura de $x$, que é $1$: o limite de estabilidade para esse eixo é $2/\lambda_x=2$, e $0{,}405$ está bem abaixo. O passo único do gradiente descendente é limitado pela maior curvatura ($\lambda_y=10$, limite $0{,}2$). Como a coordenada $y$ converge cedo e sua taxa é cortada, a coordenada $x$ pode seguir acelerando sozinha. Esta é a vantagem de adaptar taxas por coordenada em curvaturas alinhadas aos eixos.
+
+DISC: Explique por que as taxas individuais não resolvem o mal-condicionamento de uma quadrática com Hessiana não diagonal. Dê um exemplo de $H$.
+R: A taxa individual equivale a um pré-condicionador diagonal $D$: o passo é $-D\,\nabla E$. Se $H=\begin{pmatrix}5{,}5&4{,}5\\4{,}5&5{,}5\end{pmatrix}$ (autovalores $1$ e $10$ em direções diagonais, $\pm45^\circ$), os eixos coordenados não coincidem com as direções de curvatura; $D=\mathrm{diag}(d_1,d_2)$ reescala os eixos, mas $DH$ (ou $D^{1/2}HD^{1/2}$) continua com autovalores quase tão espalhados quanto os de $H$ (por simetria, o melhor $D$ é múltiplo de $I$, e o número de condição permanece $10$). Corrigir isso exige a Hessiana inteira (Newton, Levenberg–Marquardt).
+
+DISC: Escreva as regras do EDBD para $\alpha_i$ e $\mu_i$ e calcule uma atualização com $\kappa_\alpha=0{,}1$, $\gamma_\alpha=1$, $\bar g_i(t-1)=0{,}5$, $g_i(t)=0{,}4$, $\alpha_i=0{,}2$, $\alpha_{\max}=1$.
+R: Se $\bar g\,g>0$: $\alpha\leftarrow\min\{\alpha+\kappa_\alpha e^{-\gamma_\alpha|\bar g|},\alpha_{\max}\}$; se $<0$: $\alpha\leftarrow(1-\phi_\alpha)\alpha$; o momento segue regra análoga, com $\mu_{\max}<1$. Aqui $\bar g\,g=0{,}2>0$, o incremento vale $0{,}1\,e^{-0{,}5}\approx0{,}0607$ e $\alpha=0{,}2+0{,}0607=0{,}2607<1$. Sem o fator exponencial, o incremento seria $0{,}1$: o fator reduz o aumento quando $|\bar g|$ é maior.
+
+DISC: Calcule uma variação do peso do EDBD com $\alpha_i=0{,}3$, $g_i=0{,}4$, $\mu_i=0{,}5$ e $\Delta w_i(t-1)=-0{,}1$. Interprete o termo de momento.
+R: $\Delta w_i=-\alpha_ig_i+\mu_i\Delta w_i(t-1)=-0{,}3\cdot0{,}4+0{,}5\cdot(-0{,}1)=-0{,}12-0{,}05=-0{,}17$. O termo de momento reforça o movimento anterior (também negativo) e acelera a descida enquanto o gradiente é consistente; se o sinal mudasse, $\mu_i$ seria reduzido para que a inércia não atrapalhasse.
+
+DISC: Compare DBD, momento clássico e RPROP quanto ao que é adaptado, ao uso da magnitude do gradiente e ao tipo de treinamento.
+R: **Momento clássico:** não adapta taxas (usa $\beta$ fixo e comum), usa a magnitude, adequado a lote ou minilote. **DBD:** adapta uma taxa por peso pelo sinal de $\bar g\,g$, mantém a magnitude no passo ($\Delta w=-\alpha g$), é de lote. **RPROP:** adapta um tamanho de passo por peso pelo sinal de $g(t)g(t-1)$, **descarta** a magnitude ($\Delta w=-\mathrm{sinal}(g)\Delta$), é de lote. O DBD é, de certo modo, intermediário: adapta como o RPROP, mas conserva o gradiente como o momento.
+
+DISC: Descreva o protocolo experimental do capítulo para comparar os otimizadores na rede 1–8–1 e justifique cada escolha.
+R: (1) Hiperparâmetros escolhidos em grades pequenas usando as sementes 0 a 4. (2) Desempenho medido em 10 outras sementes (5 a 14), para não avaliar o método onde foi ajustado. (3) Relato de mediana e extremos, e não da melhor execução, que esconde a variabilidade. (4) Mesma rede, dados e épocas (300, lote inteiro) para todos. (5) Reconhecimento explícito das desigualdades do protocolo (64 combinações para o EDBD e 8 para o momento) e dos limites (um problema, uma arquitetura, só lote). As conclusões se restringem ao que esses dados autorizam.
+
+DISC: A perda final mediana do EDBD ($0{,}0121$) e do momento ($0{,}0120$) quase coincidem. O que a diferença de épocas até $0{,}03$ (98 contra 161) autoriza concluir? Cite três limitações.
+R: Autoriza dizer que, neste problema e com esses hiperparâmetros, a mediana do EDBD cruzou $0{,}03$ antes. Limitações: (i) um único problema e uma única arquitetura; (ii) o EDBD recebeu mais combinações na busca (64 contra 8), o que lhe dá vantagem de seleção; (iii) as perdas finais são praticamente iguais (ambas no piso do ruído, $0{,}01125$) e a diferença de velocidade pode depender da faixa de taxas da grade; além disso, sem testes estatísticos e sem medir a variação entre sementes na época de cruzamento. Não se pode generalizar "EDBD supera o momento".
+
+DISC: Interprete a figura de sensibilidade do DBD: o que as duas ordens de grandeza de variação na perda final dizem sobre o uso prático do método?
+R: Com $\alpha_0$ e $\theta$ fixos, apenas $\kappa$ e $\phi$ fizeram a perda final variar de $0{,}0154$ a $0{,}0799$ (e houve divergência para $\kappa=0{,}2$, $\phi=0{,}05$). O método adaptativo troca o ajuste de uma taxa pelo ajuste de quatro hiperparâmetros; o ganho de "adaptar" pode ser consumido pela busca, e é preciso um protocolo de seleção com validação (ou sementes separadas) para não se enganar. Há uma região boa (aumento forte e redução forte), mas ela é estreita e específica do problema.
+
+DISC: Aponte as diferenças conceituais entre a suavização $\bar g$ do DBD e o momento do EDBD. Por que os dois coexistem sem se confundir?
+R: $\bar g=(1-\theta)g+\theta\bar g_{\text{ant}}$ é uma média do gradiente usada **só no teste de sinal**: ela decide se $\alpha_i$ e $\mu_i$ sobem ou descem, mas não entra no passo. O momento $\mu_i\Delta w(t-1)$ é uma parcela do **passo**: soma-se ao deslocamento anterior. Coexistem porque cumprem papéis distintos: um é um sensor (de consistência de sinal), e o outro, um atuador (inércia do deslocamento). Chamar $\bar g$ de "momento" é um erro frequente.
+
+DISC: Implemente em Python, com NumPy, uma função `dbd_passo(alfa, gbar, g, kappa, phi, teta)` que devolva a nova taxa e o novo $\bar g$, vetorizada em todos os pesos. Indique a ordem correta das operações.
+R: O esboço: `prod = gbar * g`; `alfa = np.where(prod > 0, alfa + kappa, np.where(prod < 0, alfa * (1 - phi), alfa))`; `gbar = (1 - teta) * g + teta * gbar`; `return alfa, gbar`. A ordem importa: o teste usa $\bar g(t-1)$, isto é, o valor **antes** de incorporar $g(t)$. Depois, o chamador atualiza o peso com `theta = theta - alfa * g`. Atualizar `gbar` antes do teste faria o produto ser quase sempre positivo e a taxa só crescer.
+
+DISC: Projete um experimento para verificar se o EDBD é mais robusto à inicialização do que o gradiente descendente com momento. Indique dados, protocolo, métricas e como evitar vazamento.
+R: Dados: um problema de regressão (por exemplo, `make_friedman1` ou `diabetes`) com partições treino/validação/teste feitas **antes** de qualquer escalonamento, ajustando o escalonador só no treino. Protocolo: mesma arquitetura e mesmo número de épocas; busca de hiperparâmetros (grades de **mesmo tamanho** para os dois) usando sementes e validação separadas das de avaliação; avaliar em 30 sementes ou mais. Métricas: mediana e quartis do erro de validação/teste, taxa de divergência e épocas até um limiar, com intervalos por *bootstrap*. Vazamento: o teste só entra uma vez, no fim, e a seleção de hiperparâmetros usa apenas a validação. Conclusão limitada ao que os dados mostrarem; registrar versões e sementes.

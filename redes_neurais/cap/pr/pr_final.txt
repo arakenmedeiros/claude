@@ -1,0 +1,120 @@
+@@PROJ Comparação de treinadores em classificação e regressão | avançado
+**Objetivo.** Integrar o que foi visto nos oito capítulos: treinar a mesma rede com os algoritmos do livro e comparar desempenho em dados não vistos, custo e robustez, com um protocolo que evite vazamento e conclusões infundadas.
+
+**Dados (embutidos no scikit-learn; originários do repositório UCI).**
+- Classificação: *Breast Cancer Wisconsin (Diagnostic)* (569 amostras, 30 atributos).
+- Regressão: *Diabetes* (442 amostras, 10 atributos; alvo = progressão da doença).
+
+**Algoritmos.** Gradiente descendente com momento, Quickprop, iRPROP−, DBD, EDBD e Levenberg–Marquardt (pacote `rnbook`), mais o `lbfgs` do scikit-learn como referência externa. O perceptron e o Adam **não** entram: o primeiro não resolve regressão, e o segundo não é implementado no livro.
+
+**Tarefas.**
+1. Em cada problema, separe 60/20/20 (treino/validação/teste; estratificado na classificação), `random_state=0`; padronize com o treino. Na regressão, divida o alvo pelo desvio do treino.
+2. Rede com uma camada oculta de 8 neurônios (tanh); saída sigmoide (classificação) ou linear (regressão); erro quadrático.
+3. Para cada algoritmo, escolha hiperparâmetros em uma grade pequena, com uma **semente de ajuste** (100), pela perda de validação.
+4. Com a configuração escolhida, treine com as sementes 0 a 4 e registre: desempenho de teste (acurácia ou $R^2$; mediana e intervalo), número de épocas ou iterações, tempo e divergências.
+5. Faça um quadro-resumo e redija 12 a 15 linhas: quais afirmações o experimento sustenta, quais **não** sustenta e que mudanças tornariam a comparação mais confiável (mais sementes, validação cruzada, mais bases, teste estatístico, regularização, parada antecipada).
+
+**Para ir além (não executado no livro).** Repita com bases da UCI/Kaggle ainda não vistas (por exemplo, *Wine Quality* e *Heart Disease*), que exigem acesso à internet; inclua a validação cruzada aninhada; e inclua um algoritmo de minilote (`solver="adam"` do scikit-learn) como contraste, comentando por que ele responde a outro regime.
+@@RUBRICA
+- Partições feitas antes de qualquer pré-processamento; escalonador ajustado só no treino; teste usado apenas no relato.
+- Hiperparâmetros escolhidos na validação e com semente separada das de avaliação; grades de tamanho comparável ou diferença reconhecida.
+- Relato de mediana, intervalo, tempo e divergências; sem eleger o "melhor" método.
+- Conclusão que declara o que **não** foi testado, com limites de generalização.
+- Registro de versões de bibliotecas e de sementes.
+@@SOL
+```python
+import time
+import warnings
+import itertools
+import numpy as np
+import sklearn
+import scipy
+from sklearn.datasets import load_breast_cancer, load_diabetes
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier, MLPRegressor
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+print("versões: numpy", np.__version__, "| scipy", scipy.__version__, "| scikit-learn", sklearn.__version__)
+
+
+def preparar(X, y, classif):
+    est = y if classif else None
+    X_tmp, X_te, y_tmp, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=est)
+    est = y_tmp if classif else None
+    X_tr, X_va, y_tr, y_va = train_test_split(X_tmp, y_tmp, test_size=0.25, random_state=0, stratify=est)
+    esc = StandardScaler().fit(X_tr)
+    dp = 1.0 if classif else float(y_tr.std())
+    return dict(Xtr=esc.transform(X_tr), Xva=esc.transform(X_va), Xte=esc.transform(X_te),
+                ytr=y_tr, yva=y_va, yte=y_te, T=(y_tr / dp)[:, None].astype(float), Tva=(y_va / dp)[:, None].astype(float), dp=dp)
+
+
+def metodo_rodar(metodo, D, semente, kw, classif):
+    ativ = ["tanh", "sigmoide"] if classif else ["tanh", "identidade"]
+    r = MLP([D["Xtr"].shape[1], 8, 1], ativ, semente=semente)
+    N = len(D["T"])
+    t0 = time.perf_counter()
+    if metodo == "LM":
+        res = O.levenberg_marquardt(r.theta, lambda th: r.residuos(th, D["Xtr"], D["T"]),
+                                    lambda th: r.jacobiana(th, D["Xtr"]), max_iter=60, tol_grad=0, **kw)
+    else:
+        otim = {"GD+momento": O.gradiente_descendente, "Quickprop": O.quickprop, "iRPROP-": O.rprop,
+                "DBD": O.delta_bar_delta, "EDBD": O.delta_bar_delta_estendido}[metodo]
+        res = otim(r.theta, lambda th: r.perda(th, D["Xtr"], D["T"]) / N, lambda th: r.grad(th, D["Xtr"], D["T"]) / N,
+                   max_iter=300, tol_grad=0, **kw)
+    return r, res, time.perf_counter() - t0
+
+
+def medida(r, th, D, parte, classif):
+    X, y = D["X" + parte], D["y" + parte]
+    p = r.prever(X, th).ravel()
+    return float(np.mean((p > 0.5) == y)) if classif else float(r2_score(y, p * D["dp"]))
+
+
+grades = {
+    "GD+momento": [dict(taxa=a, momento=b) for a, b in itertools.product((0.05, 0.3), (0.5, 0.9))],
+    "Quickprop": [dict(epsilon=e, mu=1.75) for e in (0.01, 0.05, 0.1, 0.5)],
+    "iRPROP-": [dict(variante="irprop-", delta0=d) for d in (0.01, 0.05, 0.1, 0.2)],
+    "DBD": [dict(alfa0=0.1, kappa=k, phi=p, teta=0.7) for k, p in itertools.product((0.01, 0.05), (0.1, 0.3))],
+    "EDBD": [dict(alfa0=0.1, kappa_a=k, phi_a=0.3, alfa_max=a, kappa_m=0.05, mu_max=0.9) for k, a in itertools.product((0.02, 0.1), (1.0, 3.0))],
+    "LM": [dict(mu0=m, mu_inc=i) for m, i in itertools.product((1e-3, 1e-1), (10.0, 5.0))],
+}
+problemas = {"Breast Cancer (classificação, acurácia)": (load_breast_cancer(return_X_y=True), True),
+             "Diabetes (regressão, R2)": (load_diabetes(return_X_y=True), False)}
+for nome_p, ((X, y), classif) in problemas.items():
+    D = preparar(X, y, classif)
+    print("\n== %s | treino %d, validação %d, teste %d" % (nome_p, len(D["ytr"]), len(D["yva"]), len(D["yte"])))
+    for metodo, grade in grades.items():
+        sc = []
+        for kw in grade:
+            try:
+                r, res, _ = metodo_rodar(metodo, D, 100, kw, classif)
+                v = float(np.mean((r.prever(D["Xva"], res.theta) - D["Tva"]) ** 2))
+            except Exception:
+                v = np.inf
+            sc.append(v if np.isfinite(v) else np.inf)
+        kw = grade[int(np.argmin(sc))]
+        va, te, tt, it, div = [], [], [], [], 0
+        for s in range(5):
+            r, res, dt = metodo_rodar(metodo, D, s, kw, classif)
+            m_te = medida(r, res.theta, D, "te", classif)
+            if not np.isfinite(m_te):
+                div += 1; continue
+            va.append(medida(r, res.theta, D, "va", classif)); te.append(m_te); tt.append(dt); it.append(res.n_iter)
+        print("%-11s %-70s teste %.3f [%.3f; %.3f] | val %.3f | it %d | %.3f s | div %d"
+              % (metodo, str(kw)[:70], np.median(te), min(te), max(te), np.median(va), np.median(it), np.mean(tt), div))
+    ref_te, ref_tt = [], []
+    for s in range(5):
+        if classif:
+            m = MLPClassifier(hidden_layer_sizes=(8,), activation="tanh", solver="lbfgs", max_iter=300, random_state=s)
+        else:
+            m = MLPRegressor(hidden_layer_sizes=(8,), activation="tanh", solver="lbfgs", max_iter=300, random_state=s)
+        t0 = time.perf_counter()
+        m.fit(D["Xtr"], D["ytr"] if classif else D["ytr"] / D["dp"])
+        ref_tt.append(time.perf_counter() - t0)
+        ref_te.append(m.score(D["Xte"], D["yte"]) if classif else r2_score(D["yte"], m.predict(D["Xte"]) * D["dp"]))
+    print("%-11s %-70s teste %.3f [%.3f; %.3f] | %.3f s" % ("sk lbfgs", "(referência externa)", np.median(ref_te), min(ref_te), max(ref_te), np.mean(ref_tt)))
+```
+@@NOTE Versões: NumPy 2.5.3, SciPy 1.18.1, scikit-learn 1.9.1; semente de ajuste 100, avaliação nas sementes 0 a 4. **Breast Cancer** (341/114/114): acurácia de teste mediana $0{,}974$ para GD+momento, Quickprop, DBD e EDBD (intervalos de $0{,}947$ a $0{,}982$), $0{,}947$ para o iRPROP−, $0{,}939$ para o LM e $0{,}965$ para o `lbfgs` do scikit-learn; uma amostra de teste vale $0{,}88$ ponto. **Diabetes** (264/89/89), $R^2$ de teste mediano: GD+momento $0{,}313$ [$0{,}267$; $0{,}336$]; LM $0{,}189$ [$0{,}037$; $0{,}268$]; DBD $0{,}118$ [$0{,}102$; $0{,}180$]; iRPROP− $0{,}066$ [$-0{,}043$; $0{,}154$]; Quickprop $0{,}016$ [$-0{,}056$; $0{,}185$]; EDBD $-0{,}090$ [$-0{,}284$; $0{,}083$]; `lbfgs` $-0{,}077$ [$-0{,}157$; $0{,}143$]. Nenhuma execução divergiu; os tempos foram de $0{,}03$ a $0{,}14$ s. **O que sustenta:** na classificação, os métodos ficam praticamente empatados (diferenças de uma a quatro amostras de teste), e o LM, com só 60 iterações, não foi melhor. Na regressão, os $R^2$ de teste são **baixos e em vários casos negativos**: o sobreajuste é a **hipótese** mais provável (não testada aqui: sem parada antecipada, 300 épocas com 8 neurônios) (o $R^2$ de validação mediano, por exemplo $0{,}446$ no momento e $0{,}334$ no DBD, é bem maior que o de teste em vários métodos, e as próprias partições têm só 89 amostras). **O que não sustenta:** que o GD+momento seja "o melhor" na regressão; o resultado depende de uma semente de ajuste, de grades pequenas, de **ausência de parada antecipada e de regularização** (tratadas como melhorias possíveis, não testadas aqui) e de uma única partição; a variação entre sementes ($0{,}27$ a $0{,}34$ no momento e $-0{,}28$ a $0{,}08$ no EDBD) é da ordem das diferenças entre métodos. **Para tornar a comparação confiável:** validação cruzada repetida, mais bases e sementes, parada antecipada ou regularização, mesma busca para todos e intervalos por *bootstrap*. Os resultados **não** autorizam ranquear os algoritmos.

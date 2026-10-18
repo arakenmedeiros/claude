@@ -1,0 +1,189 @@
+@@EX 1 | Um RPROP vetorizado, do zero | intermediário
+Implemente o iRPROP− **sem usar** o pacote `rnbook`, para minimizar funções de várias variáveis, e teste-o em uma quadrática mal condicionada.
+
+1. Escreva `irprop_menos(grad, x0, delta0=0.1, eta_mais=1.2, eta_menos=0.5, delta_min=1e-6, delta_max=50.0, max_iter=500, tol=1e-6)` com estado por parâmetro (`delta`, `g_ant`) e operações vetorizadas.
+2. Aplique a $f(\mathbf{x})=\tfrac12\sum_i\lambda_ix_i^2$ com $\lambda=(1;\,10;\,100;\,1000)$ e $\mathbf{x}_0=(1,1,1,1)$.
+3. Compare o número de iterações até $\|\mathbf{x}\|<10^{-6}$ com o do gradiente descendente com a melhor taxa estável $\eta=1/\lambda_{\max}$ (limitado a 20 000 iterações).
+
+**Pergunta:** o que isso mostra sobre o condicionamento ($\kappa=1000$) e sobre o RPROP?
+@@SOL
+```python
+import numpy as np
+
+def irprop_menos(grad, x0, delta0=0.1, eta_mais=1.2, eta_menos=0.5, delta_min=1e-6, delta_max=50.0,
+                 max_iter=500, tol=1e-6):
+    x = np.array(x0, float)
+    delta = np.full_like(x, delta0)
+    g_ant = np.zeros_like(x)
+    for k in range(1, max_iter + 1):
+        if np.linalg.norm(x) < tol:
+            return x, k - 1
+        g = grad(x)
+        prod = g_ant * g
+        delta = np.where(prod > 0, np.minimum(delta * eta_mais, delta_max), delta)
+        delta = np.where(prod < 0, np.maximum(delta * eta_menos, delta_min), delta)
+        g = np.where(prod < 0, 0.0, g)               # iRPROP-: zera o gradiente na mudança de sinal
+        x = x - np.sign(g) * delta
+        g_ant = g
+    return x, max_iter
+
+lam = np.array([1.0, 10.0, 100.0, 1000.0])
+grad = lambda x: lam * x
+x, k = irprop_menos(grad, np.ones(4))
+print("iRPROP-: %d iterações, norma final %.2e" % (k, np.linalg.norm(x)))
+
+x = np.ones(4); eta = 1.0 / lam.max(); k_gd = 0
+while np.linalg.norm(x) >= 1e-6 and k_gd < 20000:
+    x = x - eta * grad(x); k_gd += 1
+print("gradiente descendente (eta=1/1000): %d iterações, norma final %.2e" % (k_gd, np.linalg.norm(x)))
+```
+@@NOTE O iRPROP− precisou de **57 iterações** para $\|\mathbf{x}\|<10^{-6}$; o gradiente descendente com a melhor taxa estável ($\eta=1/\lambda_{\max}$), de **13 809**: cerca de 240 vezes mais. Com $\kappa=1000$, a direção de menor curvatura contrai por fator $1-1/1000$ por passo e exige $\approx\ln(10^6)\cdot1000\approx1{,}4\times10^4$ passos, como observado. O RPROP adapta um passo por coordenada e, como aqui os eixos coincidem com os autovetores da Hessiana (quadrática **diagonal**, o melhor caso para passos por coordenada), contorna o mau condicionamento. Em uma quadrática **rotacionada**, em que o mau condicionamento não está alinhado com os eixos, a vantagem seria bem menor: o exercício ilustra um caso favorável, não uma regra geral.
+
+@@EX 2 | Parada antecipada no scikit-learn | intermediário
+Estude o efeito de `early_stopping` em `MLPRegressor` em uma base pequena e ruidosa.
+
+1. Gere 150 amostras com `make_friedman1(noise=2.0, random_state=0)`, separe 40% para teste e padronize $X$ e $y$ com o treino.
+2. Treine 5 sementes de `MLPRegressor(hidden_layer_sizes=(100,), activation="tanh", solver="adam", alpha=0, learning_rate_init=0.005, max_iter=2000)` **sem** e **com** `early_stopping=True` (`validation_fraction=0.2`, `n_iter_no_change=30`).
+3. Relate o $R^2$ de teste (mediana e intervalo) e o número de iterações (`n_iter_`).
+
+**Pergunta:** por que o parâmetro `early_stopping` só existe para `sgd` e `adam` e não para `lbfgs`? Quais cuidados são necessários com a validação interna?
+@@SOL
+```python
+import warnings
+import numpy as np
+from sklearn.datasets import make_friedman1
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import StandardScaler
+
+warnings.filterwarnings("ignore")
+X, y = make_friedman1(n_samples=150, n_features=10, noise=2.0, random_state=0)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.4, random_state=0)
+esx, esy = StandardScaler().fit(X_a), StandardScaler().fit(y_a[:, None])
+Xs, Xt, ys = esx.transform(X_a), esx.transform(X_te), esy.transform(y_a[:, None]).ravel()
+
+for es in (False, True):
+    r2, its = [], []
+    for s in range(5):
+        m = MLPRegressor(hidden_layer_sizes=(100,), activation="tanh", solver="adam", alpha=0.0,
+                         learning_rate_init=0.005, max_iter=2000, early_stopping=es,
+                         validation_fraction=0.2, n_iter_no_change=30, random_state=s).fit(Xs, ys)
+        r2.append(r2_score(y_te, esy.inverse_transform(m.predict(Xt)[:, None]).ravel())); its.append(m.n_iter_)
+    print("early_stopping=%-5s R2 de teste: mediana %.3f [%.3f; %.3f] | iterações: %s" % (es, np.median(r2), min(r2), max(r2), its))
+```
+@@NOTE Sem parada antecipada, o `adam` terminou em 184 a 216 iterações (não chegou a 2000: parou pelo critério de tolerância da perda de treino) com $R^2$ de teste mediano $0{,}415$ [$0{,}391$; $0{,}482$]; com `early_stopping=True`, em 39 a 68 iterações, com $0{,}503$ [$0{,}388$; $0{,}545$]. A mediana subiu cerca de $0{,}09$, mas os intervalos se sobrepõem e a base de teste tem 60 pontos: o ganho é **sugestivo, não conclusivo**. Note que a parada antecipada do scikit-learn retira `validation_fraction` do treino (aqui 20% de 90 = 18 pontos), de modo que há menos dados para ajustar. `early_stopping` só tem efeito com `sgd` e `adam` (otimizadores iterativos por época/minilote); o `lbfgs` é um método determinístico em lote, parado por `tol` e `max_iter`. A validação interna é pequena e ruidosa; para decisões importantes, use validação cruzada ou um conjunto de validação explícito.
+
+@@EX 3 | As quatro variantes na base Breast Cancer | intermediário
+Compare as quatro variantes do RPROP (pacote `rnbook`) na base **Breast Cancer Wisconsin (Diagnostic)** (UCI; embutida no scikit-learn) e o `lbfgs` do scikit-learn.
+
+1. Separe 70/30 estratificado (`random_state=0`), padronize com o treino e use alvo 0/1.
+2. Rede 30–10–1 (tanh, saída sigmoide), erro quadrático médio, 300 épocas, 5 sementes, para cada variante.
+3. Registre a acurácia de teste (mediana e intervalo), a perda de treino e o tempo. Compare com `MLPClassifier(hidden_layer_sizes=(10,), activation="tanh", solver="lbfgs", max_iter=300)`.
+
+**Pergunta:** as diferenças entre as variantes são significativas?
+@@SOL
+```python
+import time
+import warnings
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = load_breast_cancer(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+esc = StandardScaler().fit(X_tr)
+Xs, Xt = esc.transform(X_tr), esc.transform(X_te)
+T = y_tr[:, None].astype(float); N = len(y_tr)
+
+for var in O.VARIANTES_RPROP:
+    acc, perda, tempo = [], [], []
+    for s in range(5):
+        r = MLP([30, 10, 1], ["tanh", "sigmoide"], semente=s)
+        t0 = time.perf_counter()
+        res = O.rprop(r.theta, lambda th: r.perda(th, Xs, T) / N, lambda th: r.grad(th, Xs, T) / N,
+                      variante=var, max_iter=300, tol_grad=0)
+        tempo.append(time.perf_counter() - t0)
+        acc.append(np.mean((r.prever(Xt, res.theta).ravel() > 0.5) == y_te)); perda.append(res.historico["perda"][-1])
+    print("%-8s acurácia teste: mediana %.4f [%.4f; %.4f] | perda de treino %.5f | tempo %.3f s"
+          % (var, np.median(acc), min(acc), max(acc), np.median(perda), np.mean(tempo)))
+sk = [MLPClassifier(hidden_layer_sizes=(10,), activation="tanh", solver="lbfgs", max_iter=300, random_state=s).fit(Xs, y_tr).score(Xt, y_te) for s in range(5)]
+print("sklearn lbfgs acurácia teste: mediana %.4f [%.4f; %.4f]" % (np.median(sk), min(sk), max(sk)))
+```
+@@NOTE As acurácias de teste medianas ficaram entre $0{,}947$ e $0{,}953$ nas quatro variantes e no `lbfgs` do scikit-learn ($0{,}953$), com intervalos de $0{,}93$ a $0{,}97$. Com 171 amostras de teste, uma amostra vale 0,6 ponto percentual: as diferenças são de 1 amostra e **não são significativas**. A perda de treino mediana é quase idêntica ($0{,}00126$) porque, com saídas saturadas em 0 ou 1, ela é **quantizada**: $0{,}00126=\tfrac12\cdot\tfrac1{398}$ é a contribuição de **uma** amostra de treino mal classificada (e $0$ indica ajuste perfeito). Nesta base, fácil e quase linearmente separável, as variantes não se distinguem; a comparação do Capítulo 6 (rede 1–8–1 e Friedman #1) é mais informativa.
+
+@@PROJ RPROP com parada antecipada em dígitos manuscritos | avançado
+**Objetivo.** Treinar com iRPROP− uma rede para a base Digits, comparando treino com número fixo de épocas e parada antecipada, e comparar com o scikit-learn.
+
+**Dados.** **Digits** do scikit-learn (1797 imagens $8\times8$; subconjunto da base *Optical Recognition of Handwritten Digits* da UCI), 10 classes.
+
+**Tarefas.**
+1. Separe 60% treino, 20% validação e 20% teste (estratificado, `random_state=0`); padronize com o treino; alvos *one-hot*.
+2. Rede 64–30–10 (tanh e sigmoide), erro quadrático médio, iRPROP−, com (a) 500 épocas fixas e (b) 500 épocas com parada antecipada (paciência 30, validação por perda). 3 sementes.
+3. Registre a acurácia de teste nos casos (a) e (b), a época em que a validação foi mínima e o tempo.
+4. Compare com `MLPClassifier(hidden_layer_sizes=(30,), activation="tanh", solver="adam", early_stopping=True, max_iter=500)` (3 sementes).
+5. Redija 10 a 12 linhas: o papel da validação, o risco de usar o mesmo conjunto para parar e para relatar, e os limites do estudo.
+
+**Para ir além (não testado no livro).** Repita com o conjunto original *optdigits* (UCI) e com o MNIST (Kaggle), observando a necessidade de minilotes (RPROP exige o lote inteiro) e o aumento do custo por época.
+@@RUBRICA
+- Divisão treino/validação/teste correta; padronização ajustada só no treino.
+- Parada antecipada usando apenas a validação; teste usado apenas para relatar.
+- Comparação com sementes e relato de variabilidade; tempos medidos de forma consistente.
+- Discussão do risco de reutilizar a validação e da diferença entre "épocas" do RPROP (lote) e do `adam` (minilote).
+@@SOL
+```python
+import time
+import warnings
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = load_digits(return_X_y=True)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+X_tr, X_va, y_tr, y_va = train_test_split(X_a, y_a, test_size=0.25, random_state=0, stratify=y_a)
+esc = StandardScaler().fit(X_tr)
+Xs, Xv, Xt = esc.transform(X_tr), esc.transform(X_va), esc.transform(X_te)
+T, Tv = np.eye(10)[y_tr], np.eye(10)[y_va]; N, Nv = len(y_tr), len(y_va)
+
+def rprop_digitos(semente, paciencia):
+    r = MLP([64, 30, 10], ["tanh", "sigmoide"], semente=semente)
+    t0 = time.perf_counter()
+    res = O.rprop(r.theta, lambda th: r.perda(th, Xs, T) / N, lambda th: r.grad(th, Xs, T) / N,
+                  variante="irprop-", max_iter=500, tol_grad=0,
+                  val=lambda th: r.perda(th, Xv, Tv) / Nv, paciencia=paciencia)
+    dt = time.perf_counter() - t0
+    acc = np.mean(np.argmax(r.prever(Xt, res.theta_melhor), axis=1) == y_te)
+    return acc, int(np.argmin(res.historico["perda_val"])) + 1, res.n_iter, dt
+
+print("(a) 500 épocas fixas / (b) parada antecipada com paciência 30")
+for rot, pac in (("(a)", None), ("(b)", 30)):
+    R = [rprop_digitos(s, pac) for s in range(3)]
+    print("%s acurácia teste %s | época de menor validação %s | épocas executadas %s | tempo %.2f s"
+          % (rot, np.round([r[0] for r in R], 4), [r[1] for r in R], [r[2] for r in R], np.mean([r[3] for r in R])))
+# nota: em (a), 'theta_melhor' é o último theta apenas se não houver val; aqui há val, então o melhor é restaurado nos dois casos
+
+def so_ultimo(semente):
+    r = MLP([64, 30, 10], ["tanh", "sigmoide"], semente=semente)
+    res = O.rprop(r.theta, lambda th: r.perda(th, Xs, T) / N, lambda th: r.grad(th, Xs, T) / N,
+                  variante="irprop-", max_iter=500, tol_grad=0)
+    return np.mean(np.argmax(r.prever(Xt, res.theta), axis=1) == y_te)
+print("500 épocas, sem validação (últimos parâmetros): acurácia teste", np.round([so_ultimo(s) for s in range(3)], 4))
+
+sk = []
+for s in range(3):
+    t0 = time.perf_counter()
+    m = MLPClassifier(hidden_layer_sizes=(30,), activation="tanh", solver="adam", early_stopping=True,
+                      max_iter=500, random_state=s).fit(np.vstack([Xs, Xv]), np.concatenate([y_tr, y_va]))
+    sk.append((m.score(Xt, y_te), m.n_iter_, time.perf_counter() - t0))
+print("sklearn adam + early_stopping: acurácia teste %s | n_iter_ %s | tempo %.2f s"
+      % (np.round([a[0] for a in sk], 4), [a[1] for a in sk], np.mean([a[2] for a in sk])))
+```
+@@NOTE Em (a), com 500 épocas, a época de menor validação foi 189, 24 e 33 (sementes 0 a 2); em (b), a parada antecipada interrompeu o treino nas épocas 70, 54 e 63 (tempo médio $0{,}10$ s contra $0{,}98$ s), com acurácias de teste de $0{,}950$, $0{,}942$ e $0{,}956$, praticamente iguais às de (a) ($0{,}953$; $0{,}942$; $0{,}956$) e às dos parâmetros finais sem validação ($0{,}950$; $0{,}956$; $0{,}958$). Ou seja, **nesta base e rede** (pouco sobreajuste), a parada antecipada praticamente não mudou a acurácia, mas **reduziu o custo em cerca de 10 vezes**. O `adam` com `early_stopping=True` do scikit-learn (que reserva 10% dos dados de treino, nesse caso treino mais validação) obteve $0{,}956$, $0{,}947$ e $0{,}906$ (variação maior entre sementes). Cuidados: (i) em (a) e (b) o código restaura os parâmetros da melhor época de **validação**, e a validação, por orientar a escolha, não é mais imparcial; o teste é o relato; (ii) as "épocas" do RPROP (lote) e do `adam` (minilotes de 200 amostras) não são equivalentes; (iii) 3 sementes e 360 amostras de teste (0,28 ponto percentual por amostra) limitam as conclusões.

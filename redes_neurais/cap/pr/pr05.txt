@@ -1,0 +1,229 @@
+@@EX 1 | O passo do Quickprop para um peso | iniciante
+Implemente a função `passo_quickprop(S, S_ant, dw_ant, eps, mu)` com as regras (A) a (D) (para os dois sentidos do passo anterior) e use-a para minimizar $E(w)=e^w-2w$ a partir de $w_0=0$.
+
+1. Teste os três casos do Exemplo 5.1 ($\Delta w(t-1)=-0{,}2$, $S_{\text{ant}}=0{,}60$ e $S\in\{0{,}30;\,0{,}50;\,-0{,}20\}$).
+2. Minimize $E$ com $\varepsilon=0{,}3$ e $\mu=1{,}75$, imprimindo $w$, $E'(w)$ e a regra usada a cada iteração, até $|E'|<10^{-8}$.
+3. Compare o número de iterações com o do gradiente descendente com $\eta=0{,}3$ e com o de Newton (Seção 2.8).
+
+**Pergunta:** por que o Quickprop se parece com o método das secantes aplicado a $E'$?
+@@SOL
+```python
+import numpy as np
+
+def passo_quickprop(S, S_ant, dw_ant, eps=0.1, mu=1.75):
+    sigma = mu / (1.0 + mu)
+    if dw_ant == 0:
+        return -eps * S, "A"
+    sinal = -1.0 if dw_ant < 0 else 1.0
+    passo = -eps * S if sinal * S < 0 else 0.0
+    if sinal * S <= sinal * sigma * S_ant:
+        return passo + mu * dw_ant, "C"
+    return passo + dw_ant * S / (S_ant - S), "D"
+
+for S in (0.30, 0.50, -0.20):
+    print("caso S=%+.2f: passo = %+.4f (regra %s)" % ((S,) + passo_quickprop(S, 0.60, -0.2)))
+
+dE = lambda w: np.exp(w) - 2.0
+w, dw, S_ant = 0.0, 0.0, 0.0
+for k in range(1, 40):
+    S = dE(w)
+    if abs(S) < 1e-8:
+        break
+    passo, regra = passo_quickprop(S, S_ant, dw, eps=0.3, mu=1.75)
+    print("k=%2d  w=%.6f  E'=%+.2e  passo=%+.5f  regra %s" % (k, w, S, passo, regra))
+    S_ant, dw, w = S, passo, w + passo
+print("Quickprop: %d iterações, w = %.8f (ln 2 = %.8f)" % (k, w, np.log(2)))
+
+x, k_gd = 0.0, 0
+while abs(dE(x)) >= 1e-8:
+    x -= 0.3 * dE(x); k_gd += 1
+print("gradiente descendente (eta=0,3): %d iterações" % k_gd)
+x, k_n = 0.0, 0
+while abs(dE(x)) >= 1e-8:
+    x -= dE(x) / np.exp(x); k_n += 1
+print("Newton: %d iterações" % k_n)
+```
+@@NOTE Os três casos reproduzem os passos do Exemplo 5.1 ($-0{,}23$, $-0{,}40$ e $+0{,}05$). Na minimização de $e^w-2w$, a trajetória é: passo de gradiente (A), um passo de crescimento máximo (C) que ultrapassa o mínimo ($w=1{,}02$), e então passos quadráticos (D) que convergem rapidamente para $\ln2$: 9 atualizações até $|E'|<10^{-8}$, contra 22 do gradiente descendente com $\eta=0{,}3$ e 5 do método de Newton. Newton, que usa a segunda derivada exata, é o mais rápido; o Quickprop (curvatura estimada por secante) fica entre os dois, e é exatamente o método das secantes em $E'$ depois do arranque.
+
+@@EX 2 | Quickprop contra os otimizadores do scikit-learn | intermediário
+Use a base sintética **Friedman #1** (`make_friedman1`, Friedman, 1991): $y=10\sin(\pi x_1x_2)+20(x_3-0{,}5)^2+10x_4+5x_5+\varepsilon$, com 10 atributos (só 5 relevantes). Compare, com a **mesma arquitetura** (10–8–1, tanh), o gradiente descendente em lote e o Quickprop (pacote `rnbook`) com `MLPRegressor` (`lbfgs`, `adam`, `sgd`) do scikit-learn.
+
+1. Gere 400 amostras (`noise=1.0`, `random_state=0`), separe 25% para teste e padronize $X$ e $y$ **com o treino**.
+2. Rode 5 sementes de cada método, com 300 épocas (iterações): gradiente descendente em lote $\eta=0{,}5$; Quickprop $\varepsilon=0{,}2$ e $\mu=1{,}75$; scikit-learn com `max_iter=300` (para `sgd`, `learning_rate_init=0.05`; para `adam`, o padrão).
+3. Registre a mediana (e o intervalo) do $R^2$ de teste e o tempo.
+
+**Pergunta:** o que torna a comparação "injusta" ou apenas "não equivalente"?
+@@SOL
+```python
+import time
+import warnings
+import numpy as np
+from sklearn.datasets import make_friedman1
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = make_friedman1(n_samples=400, n_features=10, noise=1.0, random_state=0)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.25, random_state=0)
+esx, esy = StandardScaler().fit(X_a), StandardScaler().fit(y_a[:, None])
+Xs, Xt, ys = esx.transform(X_a), esx.transform(X_te), esy.transform(y_a[:, None])
+N = len(ys)
+
+def propria(otim, semente, **kw):
+    r = MLP([10, 8, 1], ["tanh", "identidade"], semente=semente)
+    t0 = time.perf_counter()
+    res = otim(r.theta, lambda th: r.perda(th, Xs, ys) / N, lambda th: r.grad(th, Xs, ys) / N, **kw)
+    pred = esy.inverse_transform(r.prever(Xt, res.theta)).ravel()
+    return r2_score(y_te, pred), time.perf_counter() - t0
+
+def sk(solver, semente, **kw):
+    t0 = time.perf_counter()
+    m = MLPRegressor(hidden_layer_sizes=(8,), activation="tanh", solver=solver, alpha=0.0,
+                     max_iter=300, random_state=semente, **kw).fit(Xs, ys.ravel())
+    pred = esy.inverse_transform(m.predict(Xt)[:, None]).ravel()
+    return r2_score(y_te, pred), time.perf_counter() - t0
+
+metodos = {
+    "GD em lote (eta=0.5)": lambda s: propria(O.gradiente_descendente, s, taxa=0.5, max_iter=300, tol_grad=0),
+    "Quickprop (eps=0.2)": lambda s: propria(O.quickprop, s, epsilon=0.2, max_iter=300, tol_grad=0),
+    "sklearn lbfgs": lambda s: sk("lbfgs", s),
+    "sklearn adam (padrão)": lambda s: sk("adam", s),
+    "sklearn sgd (lr 0.05)": lambda s: sk("sgd", s, learning_rate_init=0.05),
+}
+for nome, f in metodos.items():
+    R = [f(s) for s in range(5)]
+    r2 = [r[0] for r in R]
+    print("%-24s R2 teste: mediana %.3f [%.3f, %.3f] | tempo médio %.2f s"
+          % (nome, np.median(r2), min(r2), max(r2), np.mean([r[1] for r in R])))
+```
+@@NOTE Mediana do $R^2$ de teste (5 sementes): gradiente descendente $0{,}730$; Quickprop $0{,}885$ (mas com intervalo largo, de $0{,}716$ a $0{,}910$); `lbfgs` $0{,}915$ (intervalo estreito, $0{,}890$ a $0{,}924$); `sgd` $0{,}834$; `adam` com os padrões $0{,}671$. Em 300 épocas, o Quickprop ficou muito acima do gradiente descendente, mas **abaixo do `lbfgs`**, que é mais regular entre sementes. O `adam` com taxa padrão ($10^{-3}$) simplesmente não teve tempo de convergir. A comparação **não é equivalente**: uma "iteração" do `lbfgs` pode avaliar a função várias vezes; as épocas de `sgd` e `adam` do scikit-learn são passagens em minilotes de 200 amostras (mais de uma atualização por época), enquanto as do gradiente descendente e do Quickprop são lotes (uma atualização por época); as perdas também diferem em escala. Diferenças de alguns centésimos de $R^2$ estão dentro da variação entre sementes.
+
+@@EX 3 | Sensibilidade do Quickprop a $\varepsilon$ e $\mu$ | intermediário
+Na mesma base **Friedman #1**, estude a sensibilidade do Quickprop.
+
+1. Varie $\varepsilon\in\{0{,}02;\,0{,}05;\,0{,}2;\,0{,}5\}$ e $\mu\in\{1{,}25;\,1{,}75;\,3\}$ (5 sementes, 300 épocas).
+2. Para cada par, registre a mediana do $R^2$ de teste e o número de sementes com $R^2<0{,}5$.
+3. Descreva o padrão.
+
+**Pergunta:** qual dos dois parâmetros importa mais? Por quê?
+@@SOL
+```python
+import warnings
+import numpy as np
+from sklearn.datasets import make_friedman1
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = make_friedman1(n_samples=400, n_features=10, noise=1.0, random_state=0)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.25, random_state=0)
+esx, esy = StandardScaler().fit(X_a), StandardScaler().fit(y_a[:, None])
+Xs, Xt, ys = esx.transform(X_a), esx.transform(X_te), esy.transform(y_a[:, None])
+N = len(ys)
+
+def r2_teste(eps, mu, semente):
+    r = MLP([10, 8, 1], ["tanh", "identidade"], semente=semente)
+    res = O.quickprop(r.theta, lambda th: r.perda(th, Xs, ys) / N, lambda th: r.grad(th, Xs, ys) / N,
+                      epsilon=eps, mu=mu, max_iter=300, tol_grad=0)
+    return r2_score(y_te, esy.inverse_transform(r.prever(Xt, res.theta)).ravel())
+
+print("   eps \\ mu " + "".join("%14.2f" % m for m in (1.25, 1.75, 3.0)))
+for eps in (0.02, 0.05, 0.2, 0.5):
+    linha = []
+    for mu in (1.25, 1.75, 3.0):
+        r2 = [r2_teste(eps, mu, s) for s in range(5)]
+        linha.append("%7.3f (%d)" % (np.median(r2), sum(v < 0.5 for v in r2)))
+    print("%10.2f   " % eps + "   ".join(linha))
+```
+@@NOTE Nenhuma combinação teve semente com $R^2<0{,}5$. Os valores medianos variaram entre $0{,}811$ e $0{,}897$. Com $\varepsilon$ pequeno ($0{,}02$), o resultado ficou em torno de $0{,}81$ a $0{,}83$ qualquer que fosse $\mu$; os melhores valores apareceram em $(\varepsilon,\mu)=(0{,}2;\,3)$ com $0{,}897$ e em $(0{,}5;\,1{,}25)$ com $0{,}894$, de modo que há **interação** entre os parâmetros (o melhor $\mu$ depende de $\varepsilon$). Como a dispersão entre sementes é da ordem de $0{,}2$ (Exercício 2), diferenças de $0{,}05$ entre células **não são conclusivas** com 5 sementes. A conclusão prudente: $\varepsilon$ muito pequeno é conservador demais; entre $0{,}2$ e $0{,}5$ há bons resultados; o valor de $\mu$ importa menos.
+
+@@PROJ Orçamento igual: Quickprop, gradiente descendente e L-BFGS em dois problemas | intermediário
+**Objetivo.** Comparar de forma controlada o Quickprop com o gradiente descendente em lote e com o `lbfgs` do scikit-learn, em regressão e em classificação.
+
+**Dados.** (a) Regressão: Friedman #1 (`make_friedman1`, 400 amostras). (b) Classificação: **Wine** (UCI, 178 amostras, 13 atributos, 3 classes), com alvos *one-hot* e saída sigmoide (erro quadrático, pacote `rnbook`), em comparação com `MLPClassifier`.
+
+**Tarefas.**
+1. Em (a): 10–8–1; em (b): 13–8–3 (tanh nas ocultas e sigmoide na saída para o pacote `rnbook`). Separe teste (25%, estratificado em (b)); padronize com o treino.
+2. Mesmo orçamento: 300 épocas; 5 sementes. Gradiente descendente com a melhor taxa de uma pequena grade; Quickprop com a melhor $\varepsilon$ de uma pequena grade (escolha pela perda **de treino**; o teste só para relatar).
+3. Relate: $R^2$ (a) ou acurácia (b) de teste (mediana e intervalo), perda final de treino e tempo.
+4. Redija 10 a 12 linhas sobre o que é e o que não é comparável (épocas de `lbfgs` $\neq$ épocas do lote, perdas diferentes) e sobre a variabilidade.
+
+**Para ir além (não testado no livro).** Repita com bases de regressão e classificação do repositório da UCI e do Kaggle (por exemplo, resistência do concreto ou qualidade de vinhos). Verifique licença, tipos de colunas e valores ausentes antes de usar.
+@@RUBRICA
+- Mesmo orçamento e mesmas sementes em todos os métodos; escolha de hiperparâmetros sem olhar o teste.
+- Padronização ajustada apenas no treino; estratificação em (b).
+- Relato de mediana e intervalo; tempos medidos de forma consistente.
+- Discussão honesta da não equivalência entre "épocas" dos métodos e da variabilidade do Quickprop.
+@@SOL
+```python
+import time
+import warnings
+import numpy as np
+from sklearn.datasets import load_wine, make_friedman1
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier, MLPRegressor
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+
+def avaliar(nome, f):
+    R = [f(s) for s in range(5)]
+    q = [r[0] for r in R]
+    print("%-26s teste: mediana %.3f [%.3f, %.3f] | perda treino (mediana) %s | tempo %.2f s"
+          % (nome, np.median(q), min(q), max(q),
+             ("%.4f" % np.median([r[1] for r in R])) if R[0][1] is not None else "  --  ", np.mean([r[2] for r in R])))
+
+def melhor_param(grade, f_treino):
+    return min(grade, key=lambda g: np.median([f_treino(g, s) for s in range(5)]))
+
+# ---------------- (a) regressão
+X, y = make_friedman1(n_samples=400, n_features=10, noise=1.0, random_state=0)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.25, random_state=0)
+esx, esy = StandardScaler().fit(X_a), StandardScaler().fit(y_a[:, None])
+Xs, Xt, ys = esx.transform(X_a), esx.transform(X_te), esy.transform(y_a[:, None]); N = len(ys)
+
+def reg(otim, s, **kw):
+    r = MLP([10, 8, 1], ["tanh", "identidade"], semente=s); t0 = time.perf_counter()
+    res = otim(r.theta, lambda th: r.perda(th, Xs, ys) / N, lambda th: r.grad(th, Xs, ys) / N, max_iter=300, tol_grad=0, **kw)
+    return r2_score(y_te, esy.inverse_transform(r.prever(Xt, res.theta)).ravel()), res.historico["perda"][-1], time.perf_counter() - t0
+
+eta = melhor_param([0.1, 0.2, 0.5, 1.0], lambda g, s: reg(O.gradiente_descendente, s, taxa=g)[1])
+eps = melhor_param([0.02, 0.05, 0.2, 0.5], lambda g, s: reg(O.quickprop, s, epsilon=g)[1])
+print("(a) Friedman #1 | eta=%.2f, eps=%.2f (escolhidos pela perda de treino)" % (eta, eps))
+avaliar("GD em lote", lambda s: reg(O.gradiente_descendente, s, taxa=eta))
+avaliar("Quickprop", lambda s: reg(O.quickprop, s, epsilon=eps))
+def reg_sk(s):
+    t0 = time.perf_counter()
+    m = MLPRegressor(hidden_layer_sizes=(8,), activation="tanh", solver="lbfgs", alpha=0.0, max_iter=300, random_state=s).fit(Xs, ys.ravel())
+    return r2_score(y_te, esy.inverse_transform(m.predict(Xt)[:, None]).ravel()), None, time.perf_counter() - t0
+avaliar("sklearn lbfgs", reg_sk)
+
+# ---------------- (b) classificação (Wine)
+Xw, yw = load_wine(return_X_y=True)
+Xa, Xte, ya, yte = train_test_split(Xw, yw, test_size=0.25, random_state=0, stratify=yw)
+esc = StandardScaler().fit(Xa); Xs2, Xt2 = esc.transform(Xa), esc.transform(Xte); T = np.eye(3)[ya]; N2 = len(ya)
+
+def cls(otim, s, **kw):
+    r = MLP([13, 8, 3], ["tanh", "sigmoide"], semente=s); t0 = time.perf_counter()
+    res = otim(r.theta, lambda th: r.perda(th, Xs2, T) / N2, lambda th: r.grad(th, Xs2, T) / N2, max_iter=300, tol_grad=0, **kw)
+    return np.mean(np.argmax(r.prever(Xt2, res.theta), axis=1) == yte), res.historico["perda"][-1], time.perf_counter() - t0
+
+eta = melhor_param([0.1, 0.2, 0.5, 1.0], lambda g, s: cls(O.gradiente_descendente, s, taxa=g)[1])
+eps = melhor_param([0.02, 0.05, 0.2, 0.5], lambda g, s: cls(O.quickprop, s, epsilon=g)[1])
+print("(b) Wine | eta=%.2f, eps=%.2f (escolhidos pela perda de treino)" % (eta, eps))
+avaliar("GD em lote", lambda s: cls(O.gradiente_descendente, s, taxa=eta))
+avaliar("Quickprop", lambda s: cls(O.quickprop, s, epsilon=eps))
+def cls_sk(s):
+    t0 = time.perf_counter()
+    m = MLPClassifier(hidden_layer_sizes=(8,), activation="tanh", solver="lbfgs", alpha=0.0, max_iter=300, random_state=s).fit(Xs2, ya)
+    return m.score(Xt2, yte), None, time.perf_counter() - t0
+avaliar("sklearn lbfgs", cls_sk)
+```
+@@NOTE **(a) Regressão (Friedman #1).** Escolhidos pela perda de treino, $\eta=1{,}0$ e $\varepsilon=0{,}5$. $R^2$ de teste (mediana): gradiente descendente $0{,}714$; Quickprop $0{,}881$ (intervalo largo, $0{,}682$ a $0{,}908$); `lbfgs` $0{,}915$. A perda de treino mediana foi de $0{,}0557$ (gradiente descendente) contra $0{,}0191$ (Quickprop). **(b) Classificação (Wine).** Os três métodos atingiram acurácia de teste igual a $1{,}000$ nas 5 sementes (45 amostras): **a base é fácil demais para discriminar**; a perda de treino do Quickprop ($0{,}0005$) é muito menor que a do gradiente descendente ($0{,}0043$), mas isso não se traduz em ganho de teste. Conclusão prudente: o Quickprop converge mais depressa que o gradiente descendente em lote nos dois problemas, mas o `lbfgs` do scikit-learn foi mais regular e igualmente preciso na regressão, e a classificação não permite distinguir os métodos. As "épocas" dos três não são equivalentes entre si e os tempos (0,01 a 0,06 s) dependem da máquina e do código (laço Python contra código compilado).

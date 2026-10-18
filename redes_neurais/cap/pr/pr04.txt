@@ -1,0 +1,179 @@
+@@EX 1 | Backpropagation vetorizado em 20 linhas | intermediário
+Implemente o passo direto e o passo reverso para uma rede 2–2–1 com sigmoide em todos os neurônios e confira com os números do Exemplo 4.2.
+
+1. Escreva `forward(x, t, params)` e `backward(...)` com as Equações BP1 a BP4.
+2. Com $\mathbf{x}=(1;0{,}5)$, $t=1$ e os parâmetros do Exemplo 4.2, imprima $E$, $\delta^{(2)}$, $\boldsymbol{\delta}^{(1)}$ e todos os gradientes.
+3. Verifique cada gradiente por diferenças centrais ($h=10^{-5}$) e imprima o erro relativo.
+4. Execute 5 passos de gradiente descendente com $\eta=0{,}5$ e mostre $E$ a cada passo.
+
+**Pergunta:** o que acontece com o erro relativo se você usar $h=10^{-12}$?
+@@SOL
+```python
+import numpy as np
+
+sig = lambda z: 1.0 / (1.0 + np.exp(-z))
+x = np.array([1.0, 0.5]); t = np.array([1.0])
+P = {"W1": np.array([[0.1, 0.3], [-0.2, 0.4]]), "b1": np.array([0.1, -0.1]),
+     "W2": np.array([[0.5, -0.6]]), "b2": np.array([0.2])}
+
+def forward(P):
+    a1 = sig(P["W1"] @ x + P["b1"]); y = sig(P["W2"] @ a1 + P["b2"])
+    return a1, y, 0.5 * np.sum((y - t) ** 2)
+
+def backward(P):
+    a1, y, E = forward(P)
+    d2 = (y - t) * y * (1 - y)                          # BP1
+    d1 = (P["W2"].T @ d2) * a1 * (1 - a1)               # BP2
+    return {"W2": np.outer(d2, a1), "b2": d2, "W1": np.outer(d1, x), "b1": d1}, d2, d1   # BP3, BP4
+
+g, d2, d1 = backward(P)
+print("E = %.5f | delta2 = %s | delta1 = %s" % (forward(P)[2], np.round(d2, 5), np.round(d1, 5)))
+for nome in g: print(nome, np.round(g[nome], 5).tolist())
+
+def erro_rel(P, h):
+    pior = 0.0
+    for nome in P:
+        gn = np.zeros_like(P[nome])
+        for idx in np.ndindex(*P[nome].shape):
+            Pp = {k: v.copy() for k, v in P.items()}; Pm = {k: v.copy() for k, v in P.items()}
+            Pp[nome][idx] += h; Pm[nome][idx] -= h
+            gn[idx] = (forward(Pp)[2] - forward(Pm)[2]) / (2 * h)
+        pior = max(pior, np.linalg.norm(g[nome] - gn) / (np.linalg.norm(g[nome]) + np.linalg.norm(gn)))
+    return pior
+print("erro relativo (h=1e-5): %.2e | (h=1e-12): %.2e" % (erro_rel(P, 1e-5), erro_rel(P, 1e-12)))
+
+Q = {k: v.copy() for k, v in P.items()}
+for passo in range(5):
+    g, _, _ = backward(Q)
+    for k in Q: Q[k] -= 0.5 * g[k]
+    print("passo %d: E = %.5f" % (passo + 1, forward(Q)[2]))
+```
+@@NOTE Os números coincidem com o Exemplo 4.2 ($E=0{,}10040$, $\delta^{(2)}=-0{,}11082$). O erro relativo com $h=10^{-5}$ é da ordem de $10^{-10}$ (gradiente correto); com $h=10^{-12}$ **piora** por erro de arredondamento. A perda diminui a cada passo: o gradiente aponta para a direção de descida.
+
+@@EX 2 | XOR com MLPClassifier: depende da semente? | intermediário
+Verifique, com o scikit-learn, se uma rede pequena aprende o XOR.
+
+1. Monte os quatro pontos do XOR.
+2. Para $H\in\{2,\,4\}$, treine `MLPClassifier(hidden_layer_sizes=(H,), activation="tanh", solver="lbfgs", max_iter=2000)` com 20 sementes (`random_state=0,…,19`) e conte em quantas a acurácia nos quatro pontos é 1,0.
+3. Repita com `solver="sgd"`, `learning_rate_init=0.1` e `max_iter=2000` (apenas para $H=2$).
+
+**Pergunta:** o que isso diz sobre a "garantia" do teorema da aproximação universal?
+@@SOL
+```python
+import warnings
+import numpy as np
+from sklearn.neural_network import MLPClassifier
+
+warnings.filterwarnings("ignore")
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], float); y = np.array([0, 1, 1, 0])
+
+def taxa(H, solver, **kw):
+    ok = 0
+    for s in range(20):
+        m = MLPClassifier(hidden_layer_sizes=(H,), activation="tanh", solver=solver, max_iter=2000,
+                          random_state=s, **kw).fit(X, y)
+        ok += int(m.score(X, y) == 1.0)
+    return ok
+
+print("H=2, lbfgs:", taxa(2, "lbfgs"), "/ 20")
+print("H=4, lbfgs:", taxa(4, "lbfgs"), "/ 20")
+print("H=2, sgd (taxa 0,1):", taxa(2, "sgd", learning_rate_init=0.1), "/ 20")
+```
+@@NOTE Com `lbfgs`, a rede com $H=2$ resolveu o XOR em **14 de 20** sementes e a com $H=4$ em **20 de 20**; com `sgd` ($H=2$) em 11 de 20. O teorema da aproximação universal garante que **existem** pesos que resolvem o XOR com 2 neurônios ocultos, mas o treinamento depende da inicialização e do otimizador: nas sementes em que falha, a rede fica presa em um ponto estacionário que acerta 3 dos 4 pontos. Mais neurônios ocultos tornam o problema de otimização mais fácil.
+
+@@EX 3 | Regressão com MLP: ele supera um modelo linear? | intermediário
+A base **Diabetes** (Efron et al., 2004; 442 pacientes, 10 atributos padronizados, alvo = progressão da doença) é um problema de regressão pequeno e ruidoso.
+
+1. Separe treino/validação/teste (60/20/20, `random_state=0`).
+2. Treine `LinearRegression` (linha de base) e `MLPRegressor(hidden_layer_sizes=(H,), solver="lbfgs", alpha=a, max_iter=5000)` para $H\in\{2,5,10,30\}$ e $a\in\{0;\,1;\,10\}$.
+3. Escolha $(H,a)$ pelo $R^2$ de validação e avalie no teste **uma vez**, junto com a linha de base.
+
+**Pergunta:** o MLP trouxe ganho? O que a regularização `alpha` faz?
+@@SOL
+```python
+import warnings
+import numpy as np
+from sklearn.datasets import load_diabetes
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+
+warnings.filterwarnings("ignore")
+X, y = load_diabetes(return_X_y=True)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.2, random_state=0)
+X_tr, X_va, y_tr, y_va = train_test_split(X_a, y_a, test_size=0.25, random_state=0)
+
+base = LinearRegression().fit(X_tr, y_tr)
+print("linear: R2 validação = %.4f" % base.score(X_va, y_va))
+melhor = None
+for H in (2, 5, 10, 30):
+    for a in (0.0, 1.0, 10.0):
+        mod = make_pipeline(StandardScaler(), MLPRegressor(hidden_layer_sizes=(H,), solver="lbfgs", alpha=a,
+                                                           max_iter=5000, random_state=0)).fit(X_tr, y_tr)
+        r2 = mod.score(X_va, y_va)
+        print("H=%2d alpha=%4.1f  R2 treino=%.3f validação=%.3f" % (H, a, mod.score(X_tr, y_tr), r2))
+        if melhor is None or r2 > melhor[0]: melhor = (r2, H, a)
+r2, H, a = melhor
+final = make_pipeline(StandardScaler(), MLPRegressor(hidden_layer_sizes=(H,), solver="lbfgs", alpha=a,
+                                                     max_iter=5000, random_state=0)).fit(X_a, y_a)
+print("escolhido: H=%d alpha=%.1f | teste: MLP R2=%.4f | linear R2=%.4f"
+      % (H, a, final.score(X_te, y_te), LinearRegression().fit(X_a, y_a).score(X_te, y_te)))
+```
+@@NOTE A linha de base linear teve $R^2$ de validação $0{,}497$. O melhor MLP pela validação ($H=5$, $\alpha=10$) teve $0{,}487$, **sem superar** o modelo linear, e no teste o MLP ($R^2=0{,}260$) ficou **abaixo** do linear ($0{,}332$). Com $H=30$ e $\alpha=0$, o $R^2$ de treino foi $0{,}994$ e o de validação, $-0{,}851$: sobreajuste extremo. A penalidade `alpha` reduz a magnitude dos pesos e diminui o sobreajuste (para $H=30$, validação de $-0{,}85$ para $-0{,}22$ com $\alpha=10$), mas não o elimina. A base é pequena (442) e ruidosa: modelos mais flexíveis nem sempre ganham. Com 89 pontos de teste, as diferenças têm incerteza considerável.
+
+@@PROJ Reconhecendo dígitos: arquitetura, otimizador e generalização | intermediário
+**Objetivo.** Estudar como a arquitetura e o otimizador afetam o desempenho de um MLP em uma base real de imagens.
+
+**Dados.** A base **Digits** do scikit-learn: 1797 imagens $8\times8$ de dígitos manuscritos (subconjunto da base *Optical Recognition of Handwritten Digits*, do repositório da UCI), 64 atributos, 10 classes.
+
+**Tarefas.**
+1. Separe 60% treino, 20% validação e 20% teste (estratificado, `random_state=0`). Padronize com estatísticas **do treino**.
+2. Para $H\in\{10,\,30,\,100\}$ e `solver` em {`lbfgs`, `adam`}, treine com 3 sementes e registre: acurácia de validação (média ± desvio), tempo de treinamento (s) e número de iterações.
+3. Escolha a configuração pela validação, treine-a de novo com treino + validação e avalie no teste **uma única vez**. Mostre a matriz de confusão.
+4. Redija 10 a 12 linhas: efeito da largura, diferença entre os otimizadores (qual custo? qual precisão?), e limites do estudo.
+
+**Para ir além (não testado no livro).** Obtenha, no repositório da UCI, o conjunto original *optdigits* (treino e teste separados, 32×32 reduzidos a 8×8) e, no Kaggle, bases de dígitos como o MNIST; compare o desempenho e o tempo de treinamento. Confira licença e formato antes de usar.
+@@RUBRICA
+- Divisão treino/validação/teste correta e estratificada; padronização ajustada só no treino.
+- Várias sementes e relato de média e desvio; tempo medido de forma consistente.
+- Teste usado uma única vez; matriz de confusão interpretada.
+- Texto honesto sobre os limites (base fácil, diferenças pequenas, tempos dependem da máquina).
+@@SOL
+```python
+import time
+import warnings
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+warnings.filterwarnings("ignore")
+X, y = load_digits(return_X_y=True)
+X_a, X_te, y_a, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+X_tr, X_va, y_tr, y_va = train_test_split(X_a, y_a, test_size=0.25, random_state=0, stratify=y_a)
+print("treino/validação/teste:", len(y_tr), len(y_va), len(y_te))
+
+def construir(H, solver, semente):
+    return make_pipeline(StandardScaler(), MLPClassifier(hidden_layer_sizes=(H,), solver=solver,
+                                                         max_iter=500, random_state=semente))
+res = {}
+for solver in ("lbfgs", "adam"):
+    for H in (10, 30, 100):
+        acc, tempo, its = [], [], []
+        for s in range(3):
+            t0 = time.perf_counter(); m = construir(H, solver, s).fit(X_tr, y_tr); tempo.append(time.perf_counter() - t0)
+            acc.append(m.score(X_va, y_va)); its.append(m[-1].n_iter_)
+        res[(solver, H)] = np.mean(acc)
+        print("%-6s H=%3d  acc_val = %.4f ± %.4f | tempo = %.2f s | iterações = %d"
+              % (solver, H, np.mean(acc), np.std(acc), np.mean(tempo), np.mean(its)))
+solver, H = max(res, key=res.get)
+final = construir(H, solver, 0).fit(np.vstack([X_tr, X_va]), np.concatenate([y_tr, y_va]))
+print("escolhida:", solver, H, "| acurácia no teste (uma vez): %.4f" % final.score(X_te, y_te))
+print(confusion_matrix(y_te, final.predict(X_te)))
+```
+@@NOTE Todas as configurações ficaram entre $0{,}94$ e $0{,}97$ de acurácia de validação; a largura da camada oculta ajuda ($H=10\to100$: $0{,}944\to0{,}970$ com `lbfgs`; $0{,}950\to0{,}968$ com `adam`), com retornos decrescentes. Nesta base pequena, `lbfgs` (quase-Newton em lote) chegou a precisão semelhante à do `adam` em **15 a 27 iterações**, contra 154 a 403, e em tempo comparável ou menor (0,02 a 0,44 s contra 0,6 a 0,8 s; os tempos dependem da máquina). Escolhida pela validação, `lbfgs` com $H=100$ obteve $0{,}969$ no teste (360 amostras; 11 erros): as confusões mais comuns envolvem os dígitos 1, 2, 3, 5, 8 e 9. As diferenças entre `lbfgs` e `adam` (0,3 a 0,6 ponto percentual) são menores que a variação entre sementes; **não** se pode declarar um vencedor com 3 sementes e uma base fácil. Em bases grandes, `lbfgs` (que usa o lote inteiro) é pouco prático, e `adam` costuma ser preferido.

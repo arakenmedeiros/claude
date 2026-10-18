@@ -1,0 +1,374 @@
+MC: Neste livro, o perceptron de Rosenblatt produz saída $\hat y=1$ quando
++ $z=\mathbf{w}^T\mathbf{x}+b>0$.
+- $z\ge1$.
+- $\mathbf{w}^T\mathbf{x}=0$ exatamente.
+- $z<0$.
+- $\|\mathbf{w}\|>\|\mathbf{x}\|$.
+R: A saída é o degrau aplicado a $z$; com a convenção do livro, $z=0$ resulta em $\hat y=0$.
+
+MC: O vetor de pesos $\mathbf{w}$ do perceptron é, geometricamente,
++ perpendicular (normal) ao hiperplano de decisão.
+- paralelo ao hiperplano de decisão.
+- igual ao ponto mais próximo da origem.
+- sempre unitário.
+- tangente à curva de nível do erro.
+R: Em $\mathbf{w}^T\mathbf{x}+b=0$, dois pontos $\mathbf{x}_1,\mathbf{x}_2$ da fronteira satisfazem $\mathbf{w}^T(\mathbf{x}_1-\mathbf{x}_2)=0$.
+
+MC: A distância do ponto $(1,1)$ ao hiperplano $x_1+x_2-1{,}5=0$ é
++ $\dfrac{0{,}5}{\sqrt2}\approx0{,}354$
+- $0{,}5$
+- $1{,}5$
+- $\sqrt2$
+- $0{,}25$
+R: $|\mathbf{w}^T\mathbf{x}+b|/\|\mathbf{w}\|=|1+1-1{,}5|/\sqrt2$.
+
+MC: Para a porta AND implementada com $\mathbf{w}=(1,1)$ e $b=-1{,}5$, a saída para a entrada $(1,0)$ é
++ $0$, pois $z=-0{,}5$.
+- $1$, pois $z=0{,}5$.
+- $0$, pois $z=-1{,}5$.
+- $1$, pois $z=1$.
+- indefinida.
+R: $z=1\cdot1+1\cdot0-1{,}5=-0{,}5\le0$.
+
+MC: Qual conjunto de parâmetros implementa a porta NAND com entradas em $\{0,1\}$?
++ $\mathbf{w}=(-1,-1)$ e $b=1{,}5$.
+- $\mathbf{w}=(1,1)$ e $b=-1{,}5$.
+- $\mathbf{w}=(1,1)$ e $b=-0{,}5$.
+- $\mathbf{w}=(-1,-1)$ e $b=-1{,}5$.
+- $\mathbf{w}=(1,-1)$ e $b=0$.
+R: Com $(-1,-1)$ e $1{,}5$: $(0,0)\to1{,}5$; $(1,0)\to0{,}5$; $(1,1)\to-0{,}5$. Saídas $1,1,0$, como NAND.
+
+MC: Com $\mathbf{w}=(0,0)$, $b=0$, $\eta=1$ e o exemplo $\mathbf{x}=(1,2)$ com $y=+1$, depois da atualização do perceptron os parâmetros são
++ $\mathbf{w}=(1,2)$ e $b=1$.
+- $\mathbf{w}=(0,0)$ e $b=1$.
+- $\mathbf{w}=(1,2)$ e $b=0$.
+- $\mathbf{w}=(-1,-2)$ e $b=-1$.
+- $\mathbf{w}=(2,4)$ e $b=2$.
+R: $z=0$, logo é erro; $\mathbf{w}\leftarrow\mathbf{w}+y\mathbf{x}=(1,2)$ e $b\leftarrow b+y=1$.
+
+MC: Com $\mathbf{w}=(1,1)$, $b=0$, $\eta=1$, o exemplo $\mathbf{x}=(2,-1)$ com $y=-1$ é classificado incorretamente e a atualização dá
++ $\mathbf{w}=(-1,2)$ e $b=-1$.
+- $\mathbf{w}=(3,0)$ e $b=1$.
+- $\mathbf{w}=(1,1)$ e $b=-1$.
+- $\mathbf{w}=(-1,2)$ e $b=0$.
+- $\mathbf{w}=(1,1)$ e $b=0$ (sem atualização).
+R: $z=1$, $yz=-1\le0$: erro. $\mathbf{w}\leftarrow(1,1)+(-1)(2,-1)=(-1,2)$; $b\leftarrow0-1=-1$.
+
+MC: Partindo de $\mathbf{w}=\mathbf{0}$ e $b=0$, trocar $\eta=1$ por $\eta=10$ no perceptron
++ não altera a sequência de erros; apenas multiplica $\mathbf{w}$ e $b$ por uma constante.
+- acelera a convergência em dez vezes.
+- impede a convergência.
+- muda a fronteira de decisão final.
+- altera o limite do teorema de convergência.
+R: A regra é linear em $\eta$ e o sinal de $z$ não muda com a escala, logo a sequência de erros é idêntica.
+
+MC: O teorema de convergência do perceptron exige, essencialmente, que os dados sejam
++ linearmente separáveis com alguma margem $\gamma>0$.
+- gaussianos.
+- em número maior que a dimensão.
+- normalizados com média zero.
+- separáveis por uma curva qualquer.
+R: Sem separabilidade linear não existe $\tilde{\mathbf{w}}^*$ com margem positiva.
+
+MC: Se $R=2$ e a margem é $\gamma=0{,}5$, o número máximo de atualizações garantido é
++ $16$
+- $4$
+- $8$
+- $32$
+- $2$
+R: $(R/\gamma)^2=(2/0{,}5)^2=16$.
+
+MC: O limite $(R/\gamma)^2$ do teorema depende de
++ $R$ e $\gamma$, e não do número de exemplos nem da dimensão.
+- do número de exemplos $N$.
+- da dimensão $n$ e da taxa $\eta$.
+- da ordem dos exemplos apenas.
+- do número de épocas.
+R: Aparece apenas a razão entre o raio dos dados e a margem.
+
+MC: Quando os dados **não** são linearmente separáveis, o perceptron
++ não converge: segue cometendo erros e os pesos podem entrar em ciclo.
+- converge para a solução de mínimos quadrados.
+- converge para a solução de maior margem.
+- converge após $(R/\gamma)^2$ passos de qualquer forma.
+- produz sempre pesos nulos.
+R: O teorema não se aplica; na execução do XOR, houve 4 erros por época indefinidamente.
+
+MC: O problema XOR não é resolvível por um perceptron de uma camada porque
++ os pontos de rótulos 1 e 0 não podem ser separados por uma única reta.
+- o XOR não é uma função booleana.
+- o degrau não é derivável.
+- faltam amostras.
+- o viés é sempre nulo no XOR.
+R: Os pontos $(0,1),(1,0)$ e $(0,0),(1,1)$ se "cruzam" no plano.
+
+MC: Uma rede 2–2–1 resolve o XOR porque a camada oculta
++ mapeia as entradas para um espaço em que as classes são linearmente separáveis.
+- reduz o número de parâmetros.
+- elimina a necessidade de viés.
+- aplica uma derivada à entrada.
+- transforma o problema em regressão.
+R: No espaço $(h_1,h_2)=(\mathrm{OR},\mathrm{NAND})$, uma reta separa as classes.
+
+MC: A função degrau é um problema para o treinamento por gradiente porque
++ sua derivada é zero (quase sempre) e não existe na descontinuidade.
+- é sempre negativa.
+- cresce sem limite.
+- exige derivadas de segunda ordem.
+- só aceita uma entrada.
+R: O gradiente da perda em relação aos pesos fica nulo ou indefinido, não informando como corrigir.
+
+MC: O critério do perceptron, $E_P=-\sum_{i\in\mathcal{M}}y_i\,\tilde{\mathbf{w}}^T\tilde{\mathbf{x}}_i$, em que $\mathcal{M}$ é o conjunto dos exemplos mal classificados,
++ é não negativo e vale zero quando todos os exemplos são bem classificados.
+- é sempre negativo.
+- coincide com o erro quadrático médio.
+- só é definido para dados separáveis.
+- é independente de $\tilde{\mathbf{w}}$.
+R: Cada termo de $\mathcal{M}$ é positivo (pois $y\tilde{\mathbf{w}}^T\tilde{\mathbf{x}}\le0$); sem erros, $E_P=0$.
+
+MC: O teorema de convergência do perceptron é atribuído a
++ Novikoff (1962), com demonstração anterior de Block (1962).
+- Rumelhart, Hinton e Williams (1986).
+- Fahlman (1988).
+- Widrow e Hoff (1960).
+- Cybenko (1989).
+R: Ver Novikoff (1962) e Block (1962).
+
+MC: O perceptron com regra de aprendizagem foi proposto por
++ Rosenblatt (1958).
+- McCulloch e Pitts (1943).
+- Minsky e Papert (1969).
+- Hebb (1949).
+- Riedmiller e Braun (1993).
+R: Rosenblatt (1958), *Psychological Review*.
+
+MC: Segundo a documentação do scikit-learn 1.9.1, `Perceptron()` é equivalente a
++ `SGDClassifier(loss="perceptron", eta0=1, learning_rate="constant", penalty=None)`.
+- `LogisticRegression(penalty=None)`.
+- `MLPClassifier(hidden_layer_sizes=())`.
+- `SVC(kernel="linear")`.
+- `GaussianNB()`.
+R: A classe compartilha a implementação do `SGDClassifier`.
+
+MC: Para classificar mais de duas classes, a classe `Perceptron` do scikit-learn utiliza
++ a estratégia um-contra-todos: um perceptron por classe.
+- uma única fronteira não linear.
+- uma camada oculta.
+- um perceptron para cada par de classes (um-contra-um).
+- softmax sobre as saídas.
+R: O atributo `coef_` tem uma linha por classe; a classe prevista é a de maior $z$.
+
+MC: Qual é o valor padrão do parâmetro `shuffle` em `Perceptron` e por que isso importa para reproduzir o algoritmo do livro?
++ `True`; o livro visita os exemplos em ordem fixa, então é preciso usar `shuffle=False`.
+- `False`; nada precisa ser mudado.
+- `True`; mas o embaralhamento não altera o resultado.
+- `False`; é preciso ativá-lo.
+- Não existe tal parâmetro.
+R: O padrão embaralha a cada época; para reproduzir a nossa implementação também é preciso `tol=None` e `penalty=None`.
+
+MC: Para reproduzir com `Perceptron` o resultado do perceptron didático do livro, devemos usar
++ `penalty=None`, `eta0=1.0`, `shuffle=False` e `tol=None`.
+- `penalty="l2"` e `alpha=1`.
+- `early_stopping=True` e `tol=0{,}1`.
+- `class_weight="balanced"`.
+- `warm_start=True` apenas.
+R: Sem regularização, sem embaralhamento e sem parada por tolerância, o algoritmo coincide com o do livro.
+
+MC: Para uma base com 3 classes e 4 atributos, o atributo `coef_` de um `Perceptron` ajustado tem forma
++ $(3,4)$
+- $(4,3)$
+- $(1,4)$
+- $(3,3)$
+- $(4,4)$
+R: Uma linha de pesos por classe (um-contra-todos) e uma coluna por atributo.
+
+MC: Dizer que um conjunto de dados é "linearmente separável" é uma propriedade
++ do conjunto de dados e da representação (atributos) usada.
+- apenas da quantidade de exemplos.
+- apenas do algoritmo de treinamento.
+- exclusiva do XOR.
+- independente da representação.
+R: Dados não separáveis nos atributos originais podem tornar-se separáveis após uma transformação (como uma camada oculta).
+
+MC: A **margem** de um conjunto separável, no teorema do perceptron, mede
++ a menor distância (com sinal, em um separador unitário) entre os exemplos e a fronteira.
+- a largura do conjunto de dados.
+- o número de épocas até convergir.
+- o valor de $\eta$.
+- a norma do maior exemplo.
+R: $\gamma=\min_i y_i\,\tilde{\mathbf{w}}^{*T}\tilde{\mathbf{x}}_i$ com $\|\tilde{\mathbf{w}}^*\|=1$.
+
+MC: Quando o perceptron converge em um conjunto de treino, pode-se concluir que
++ todos os exemplos de treino estão bem classificados, mas nada se garante sobre dados novos.
+- o modelo generalizará bem.
+- a solução é a de maior margem.
+- a solução é única.
+- o erro de teste é zero.
+R: Convergência é uma propriedade do treino; generalização exige avaliação em dados não vistos.
+
+MC: Para duas variáveis de entrada e um perceptron com viés, o número total de parâmetros ajustáveis é
++ $3$
+- $2$
+- $4$
+- $1$
+- $6$
+R: Dois pesos e um viés: $2+1=3$.
+
+MC: O perceptron fornece como saída
++ apenas a classe prevista, sem uma probabilidade associada.
+- a probabilidade posterior da classe.
+- uma estimativa de variância.
+- um valor contínuo em $[0,1]$.
+- a distância à fronteira em unidades de desvio-padrão.
+R: A saída é o degrau de $z$. Já a regressão logística aplica a sigmoide e produz probabilidade.
+
+MC: Ao passar para o vetor aumentado $\tilde{\mathbf{x}}=(\mathbf{x},1)$ e $\tilde{\mathbf{w}}=(\mathbf{w},b)$, o viés
++ passa a ser tratado como mais um peso, com entrada constante 1.
+- é eliminado do modelo.
+- passa a valer sempre 1.
+- é substituído pela taxa de aprendizagem.
+- deixa de ser atualizado.
+R: $z=\tilde{\mathbf{w}}^T\tilde{\mathbf{x}}$ e a regra de atualização vale para o vetor completo.
+
+MC: Com $\mathbf{w}=(1,1)$ e $b=-0{,}5$ (entradas em $\{0,1\}$), a saída do perceptron para $(0,0)$ é
++ $0$
+- $1$
+- $-0{,}5$
+- $0{,}5$
+- indefinida
+R: $z=-0{,}5\le0$, logo $\hat y=0$ (porta OR: só $(0,0)$ dá $0$).
+
+DISC: Defina conjunto linearmente separável e margem. Dê um exemplo em duas dimensões com quatro pontos e determine uma reta separadora e a margem aproximada.
+R: Um conjunto é linearmente separável se existe um hiperplano que deixa todos os exemplos de classe $+1$ de um lado e todos de classe $-1$ do outro; a **margem** de um separador unitário é a menor distância dos exemplos a ele. Exemplo: $(0,0),(1,0)$ com $y=-1$ e $(0,2),(1,2)$ com $y=+1$. A reta $x_2=1$, isto é, $\mathbf{w}=(0,1)$ e $b=-1$ (já unitário), separa os grupos e a margem é $\min|x_2-1|=1$.
+
+DISC: Considere $\mathbf{w}=(3,4)$, $b=-5$. Determine de que lado do hiperplano está o ponto $(2,1)$ e a distância dele à fronteira.
+R: $z=3\cdot2+4\cdot1-5=5>0$: lado positivo ($\hat y=1$). A distância é $|z|/\|\mathbf{w}\|=5/\sqrt{9+16}=5/5=1$.
+
+DISC: Treine à mão um perceptron para a porta NOT (entrada $x\in\{0,1\}$, saída $1-x$) com $\eta=1$, $w=0$, $b=0$, visitando $x=0$ e depois $x=1$ em cada época. Mostre cada atualização.
+R: Rótulos: $x=0\to y=+1$; $x=1\to y=-1$. Época 1: $x=0$, $z=0$: erro, $b=1$. $x=1$: $z=0\cdot1+1=1>0$ mas $y=-1$: erro, $w=-1$, $b=0$. Época 2: $x=0$: $z=0$: erro, $b=1$; $x=1$: $z=-1+1=0$: erro, $w=-2$, $b=0$. Época 3: $x=0$: $z=0$: erro, $b=1$; $x=1$: $z=-2+1=-1$: correto. Época 4: $x=0$: $z=1$ ok; $x=1$: $z=-1$ ok. Resultado: $w=-2$, $b=1$ (5 atualizações). Verificação: $x=0\to z=1>0\to1$; $x=1\to z=-1\to0$.
+
+DISC: Prove que o XNOR (saída 1 quando as entradas são iguais) não é linearmente separável.
+R: Precisamos de $b>0$ para $(0,0)\to1$ e de $w_1+w_2+b>0$ para $(1,1)\to1$; para $(0,1)\to0$ e $(1,0)\to0$, $w_2+b\le0$ e $w_1+b\le0$. Somando as duas últimas: $w_1+w_2+2b\le0$. Mas $w_1+w_2+2b=(w_1+w_2+b)+b>0$, pois ambos os termos são positivos. Contradição.
+
+DISC: Aplique o teorema de convergência ao conjunto 1D $\{(x=1,\ y=+1),\ (x=-1,\ y=-1)\}$ com vetor aumentado $\tilde{\mathbf{x}}=(x,1)$ e $\tilde{\mathbf{w}}^*=(1,0)$. Calcule $R$, $\gamma$ e o limite. Depois execute o perceptron de $\tilde{\mathbf{w}}_0=\mathbf{0}$, $\eta=1$ e confira.
+R: $\tilde{\mathbf{x}}_1=(1,1)$, $\tilde{\mathbf{x}}_2=(-1,1)$; $R=\sqrt2$. $y_i\tilde{\mathbf{w}}^{*T}\tilde{\mathbf{x}}_i=1$ para ambos: $\gamma=1$. Limite: $(R/\gamma)^2=2$. Execução: $x=1$: $z=0$, erro: $(w,b)=(1,1)$. $x=-1$: $z=-1+1=0$, erro: $(w,b)=(1+(-1)(-1),\,1-1)=(2,0)$. $x=1$: $z=2>0$ ok; $x=-1$: $z=-2$, ok. Total: **2 atualizações**, igual ao limite (o limite pode ser justo).
+
+DISC: Mostre, por indução ou argumento direto, que com $\tilde{\mathbf{w}}_0=\mathbf{0}$ a sequência de erros do perceptron não depende de $\eta>0$.
+R: Seja $\tilde{\mathbf{w}}_k(\eta)$ o vetor após $k$ atualizações com taxa $\eta$. Afirmamos que $\tilde{\mathbf{w}}_k(\eta)=\eta\,\tilde{\mathbf{w}}_k(1)$. Para $k=0$, ambos são nulos. Se vale para $k$, o teste de erro é $y\,\tilde{\mathbf{w}}_k(\eta)^T\tilde{\mathbf{x}}=\eta\,y\,\tilde{\mathbf{w}}_k(1)^T\tilde{\mathbf{x}}\le0$, que equivale ao teste com $\eta=1$ (pois $\eta>0$); portanto os mesmos exemplos geram erro e $\tilde{\mathbf{w}}_{k+1}(\eta)=\eta\tilde{\mathbf{w}}_k(1)+\eta y\tilde{\mathbf{x}}=\eta\tilde{\mathbf{w}}_{k+1}(1)$. Logo a sequência de erros e a fronteira (que só depende da direção de $\tilde{\mathbf{w}}$) são as mesmas.
+
+DISC: Mostre que a regra do perceptron é um passo de gradiente descendente (com um exemplo por vez) do critério $E_P(\tilde{\mathbf{w}})=-\sum_{i\in\mathcal{M}}y_i\tilde{\mathbf{w}}^T\tilde{\mathbf{x}}_i$, e explique por que esse resultado não se estende a redes com camadas ocultas e ativação degrau.
+R: Para um exemplo $i\in\mathcal{M}$, $E_i=-y_i\tilde{\mathbf{w}}^T\tilde{\mathbf{x}}_i$ e $\nabla E_i=-y_i\tilde{\mathbf{x}}_i$. Um passo $\tilde{\mathbf{w}}\leftarrow\tilde{\mathbf{w}}-\eta\nabla E_i=\tilde{\mathbf{w}}+\eta y_i\tilde{\mathbf{x}}_i$ é a regra do perceptron. Em uma rede com camada oculta e degrau, a saída é constante por trechos: a derivada da perda em relação aos pesos ocultos é nula quase sempre, e o critério acima só se define para o neurônio de saída observando erros de classificação. Para propagar o erro às camadas ocultas são necessárias ativações deriváveis.
+
+DISC: Projete uma rede de perceptrons de duas camadas para a função majoritária de três entradas binárias (saída 1 se pelo menos duas entradas são 1) e uma para o AND de três entradas. Verifique com a tabela-verdade.
+R: Ambas cabem em **um** perceptron: majoritária: $\mathbf{w}=(1,1,1)$, $b=-1{,}5$ ($z>0$ se a soma $\ge2$). AND de três: $\mathbf{w}=(1,1,1)$, $b=-2{,}5$ ($z>0$ só se soma $=3$). Tabela (ordem $000,001,010,011,100,101,110,111$): majoritária $=0,0,0,1,0,1,1,1$; AND $=0,0,0,0,0,0,0,1$. Ambas separáveis, não precisam de camada oculta.
+
+DISC: Mostre, para a ordem $(0,0),(0,1),(1,0),(1,1)$ e rótulos do XOR, que depois de uma época completa os pesos voltam a $\tilde{\mathbf{w}}=\mathbf{0}$ (com $\eta=1$). O que isso implica?
+R: Rótulos $y=(-1,+1,+1,-1)$. Início $(w_1,w_2,b)=(0,0,0)$. $(0,0)$: $z=0$, erro: $b=-1$. $(0,1)$: $z=-1$, $y=+1$: erro: $w_2=1$, $b=0$. $(1,0)$: $z=0$, erro: $w_1=1$, $b=1$. $(1,1)$: $z=3>0$, $y=-1$: erro: $w_1=0,w_2=0,b=0$. Voltamos ao zero após 4 atualizações. Como o estado inicial se repete, o algoritmo ciclará **para sempre**, com 4 erros por época: ilustra o ciclo e a ausência de convergência.
+
+DISC: Verifique a tabela-verdade da rede da Eq. [eq:xor-2camadas] (OR e NAND na camada oculta e AND na saída). Em seguida, altere os pesos da saída para que ela implemente OR em vez de AND e diga que função booleana resulta.
+R: Para $(x_1,x_2)=(0,0),(0,1),(1,0),(1,1)$: $h_1=0,1,1,1$ (OR); $h_2=1,1,1,0$ (NAND); saída AND: $\mathbb{1}[h_1+h_2-1{,}5>0]=0,1,1,0$ (XOR). Se a saída for OR, $\mathbb{1}[h_1+h_2-0{,}5>0]=1,1,1,1$: a função constante 1, pois sempre ao menos um de OR e NAND vale 1 (OR$\vee$NAND é tautologia).
+
+DISC: Explique por que a função sigmoide, no lugar do degrau, permite o treinamento por gradiente, e escreva a derivada que será usada.
+R: A sigmoide $\sigma(z)=1/(1+e^{-z})$ é contínua e derivável em toda parte; sua derivada $\sigma'(z)=\sigma(z)(1-\sigma(z))$ é positiva e varia suavemente, fornecendo um gradiente não nulo que mostra, para cada peso, em que sentido alterá-lo para reduzir a perda. O degrau tem derivada nula quase sempre, de modo que o gradiente não carrega informação.
+
+DISC: Interprete os resultados da Seção 3.4: acurácias (treino/teste) de 0,9048/0,9778 sem padronização e 0,8857/0,8222 com padronização, na base Iris com 3 classes. Quais cuidados se deve ter?
+R: Versicolor e virginica não são linearmente separáveis nos atributos da base; o perceptron não converge e a solução final depende da ordem dos dados, do número de épocas e da parada por tolerância. A diferença de teste (45 amostras, cada acerto = 2,2 pontos) pode ser acaso. Cuidados: repetir com várias sementes e partições, usar validação cruzada, controlar `max_iter` e `tol`, e comparar com modelos adequados a dados sobrepostos (regressão logística). Não se conclui que a padronização "piora" o perceptron.
+
+DISC: Cite três diferenças entre o algoritmo do livro e o `Perceptron()` do scikit-learn com parâmetros padrão e explique o efeito de cada uma.
+R: (1) `shuffle=True`: os exemplos são embaralhados a cada época; muda a ordem das atualizações e, em dados não separáveis, a solução. (2) `tol=1e-3`: o treino para quando a perda não melhora por `n_iter_no_change` épocas; pode parar antes de uma época sem erros. (3) `max_iter=1000`: limite de épocas. Também há `penalty=None` (padrão), mas `alpha` existe e só tem efeito se se escolhe penalidade; e, por padrão, `random_state=0`.
+
+DISC: Em uma base com 3 classes, os valores de $z$ dos três perceptrons um-contra-todos para uma amostra são $(-0{,}4;\ 1{,}3;\ 0{,}2)$. Qual classe é prevista? E se fossem $(-0{,}4;\ -1{,}3;\ -0{,}2)$?
+R: A classe prevista é a de maior $z$ (argmax): no primeiro caso, a classe 2 (índice 1, com $z=1{,}3$). No segundo, todos são negativos (nenhum classificador diz "pertence"), mas a regra do argmax ainda escolhe a classe com o maior valor, $-0{,}2$ (índice 2). Observação: o argmax sempre devolve uma classe, mesmo quando nenhum perceptron "reconhece" a amostra.
+
+DISC: Programe o perceptron com ordem embaralhada e execute-o 5 vezes (sementes 0 a 4) na base Iris, classes setosa e versicolor, com **os quatro atributos**. Relate o número de atualizações e a convergência em cada execução. O resultado muda com a semente?
+R:
+```python
+import numpy as np
+from sklearn.datasets import load_iris
+
+def perceptron(X, y, semente, max_epocas=1000):
+    rng = np.random.default_rng(semente)
+    y = np.where(y > 0, 1, -1)
+    w, b, n_upd = np.zeros(X.shape[1]), 0.0, 0
+    for epoca in range(max_epocas):
+        erros = 0
+        for i in rng.permutation(len(y)):
+            if y[i] * (X[i] @ w + b) <= 0:
+                w, b = w + y[i] * X[i], b + y[i]; erros += 1; n_upd += 1
+        if erros == 0:
+            return w, b, n_upd, True
+    return w, b, n_upd, False
+
+X, y = load_iris(return_X_y=True)
+m = y < 2
+for s in range(5):
+    w, b, n, ok = perceptron(X[m], y[m], s)
+    print(s, ok, n)
+```
+Com a ordem embaralhada do pacote do livro, as execuções com as sementes 0 a 4 convergiram em **9, 9, 9, 7 e 7 atualizações** (valores obtidos executando exatamente o código acima). Todas convergem (o conjunto é separável); o número de atualizações e os pesos finais variam com a ordem, mas sempre respeitam o limite do teorema. Critérios: embaralha a cada época, registra convergência e atualizações, comenta a variabilidade.
+
+DISC: Escreva uma função que, dado um conjunto aumentado $(\tilde{X},y)$ e um separador unitário $\tilde{\mathbf{w}}^*$, calcule $\gamma$, $R$ e o limite $(R/\gamma)^2$. Aplique ao Exemplo da questão 5 desta lista.
+R:
+```python
+import numpy as np
+
+def limite_perceptron(Xa, y, w_estrela):
+    w_estrela = w_estrela / np.linalg.norm(w_estrela)       # garante vetor unitário
+    gama = np.min(y * (Xa @ w_estrela))
+    R = np.max(np.linalg.norm(Xa, axis=1))
+    return gama, R, (R / gama) ** 2
+
+Xa = np.array([[1.0, 1.0], [-1.0, 1.0]]); y = np.array([1, -1])
+print(limite_perceptron(Xa, y, np.array([1.0, 0.0])))      # (1.0, 1.414..., 2.0)
+```
+Critérios: normaliza $\tilde{\mathbf{w}}^*$; verifica $\gamma>0$; resultado $(1;\,\sqrt2;\,2)$.
+
+DISC: Escreva um programa que treine o perceptron nas portas OR e XOR (ordem fixa, 30 épocas) e trace, com Matplotlib, o número de erros por época. O que você observa?
+R:
+```python
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+def erros_por_epoca(X, t, epocas=30):
+    y = np.where(np.array(t) > 0, 1, -1); w, b, hist = np.zeros(2), 0.0, []
+    for _ in range(epocas):
+        e = 0
+        for xi, yi in zip(X, y):
+            if yi * (xi @ w + b) <= 0:
+                w, b = w + yi * xi, b + yi; e += 1
+        hist.append(e)
+    return hist
+
+P4 = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], float)
+fig, ax = plt.subplots()
+ax.plot(erros_por_epoca(P4, [0, 1, 1, 1]), "o-", label="OR")
+ax.plot(erros_por_epoca(P4, [0, 1, 1, 0]), "s-", label="XOR")
+ax.set_xlabel("época"); ax.set_ylabel("erros"); ax.legend(); fig.savefig("erros.png")
+```
+Observação: OR chega a 0 erros na 6ª época e permanece; XOR fica em 4 erros em todas as épocas.
+
+DISC: Implemente, em NumPy, a rede 2–2–1 do XOR com os pesos da Eq. [eq:xor-2camadas] e verifique a tabela-verdade. Depois, estenda para uma função `xor_rede(X)` que aceite um lote de pontos com valores reais em $[0,1]^2$ e mapeie $(0{,}9;\,0{,}1)$ e $(0{,}8;\,0{,}9)$.
+R:
+```python
+import numpy as np
+degrau = lambda z: (z > 0).astype(int)
+
+def xor_rede(X):
+    X = np.atleast_2d(X)
+    h1 = degrau(X @ np.array([1.0, 1.0]) - 0.5)       # OR
+    h2 = degrau(X @ np.array([-1.0, -1.0]) + 1.5)     # NAND
+    return degrau(h1 + h2 - 1.5)                      # AND
+
+P4 = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], float)
+print(xor_rede(P4))                                   # [0 1 1 0]
+print(xor_rede(np.array([[0.9, 0.1], [0.8, 0.9]])))   # [1 0]
+```
+Para $(0{,}9;0{,}1)$: $h_1=1$ ($1{,}0-0{,}5>0$), $h_2=1$ ($-1+1{,}5>0$), saída 1. Para $(0{,}8;0{,}9)$: $x_1+x_2=1{,}7$: $h_1=1$, $h_2=0$ ($-1{,}7+1{,}5<0$), saída 0.
+
+DISC: Compare o perceptron e a regressão logística quanto à saída, à função de perda, à garantia de convergência e à interpretação probabilística.
+R: **Saída:** perceptron, classe via degrau; logística, $\sigma(z)$, entre 0 e 1. **Perda:** perceptron, critério $-\sum_{\mathcal{M}}y\tilde{\mathbf{w}}^T\tilde{\mathbf{x}}$ (só erros contam); logística, entropia cruzada (todas as amostras contam, com peso maior para erros confiantes). **Convergência:** perceptron converge em número finito de passos se, e só se, os dados forem separáveis; a logística tem perda convexa e, com regularização ou dados não separáveis, converge para o mínimo (sem regularização, em dados separáveis os pesos divergem em norma). **Interpretação:** apenas a logística tem interpretação probabilística (probabilidade posterior sob certas hipóteses).
+
+DISC: Explique o papel do viés $b$ no perceptron. Mostre, com os pontos 1D $x=1$ (classe $+1$) e $x=2$ (classe $-1$), que sem viés não há separador e que com viés há.
+R: Sem viés, $z=wx$ e a fronteira passa pela origem. Exigindo $w\cdot1>0$ (classe $+1$) e $w\cdot2<0$ (classe $-1$), teríamos $w>0$ e $w<0$: impossível. Com viés, $z=wx+b$: tomando $w=-1$ e $b=1{,}5$, $z(1)=0{,}5>0$ e $z(2)=-0{,}5<0$: separados. O viés desloca a fronteira para fora da origem; em termos geométricos, é o que permite a reta $x=1{,}5$.

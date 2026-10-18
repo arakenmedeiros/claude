@@ -1,0 +1,339 @@
+MC: No treinamento de uma rede neural, o papel do algoritmo de backpropagation é
++ calcular o gradiente da função de perda em relação aos parâmetros da rede.
+- atualizar os pesos usando uma taxa de aprendizagem adaptativa individual.
+- escolher o número de camadas ocultas mais adequado ao problema.
+- definir a função de ativação usada em cada neurônio.
+- medir o erro de generalização em dados nunca vistos.
+R: Backpropagation calcula $\nabla E$. Quem usa o gradiente para mudar os pesos é o método de otimização.
+
+MC: Entre as alternativas, qual é um exemplo de **método de otimização** (e não de algoritmo de diferenciação)?
++ RPROP.
+- Backpropagation.
+- Função sigmoide.
+- Erro quadrático médio.
+- Arquitetura 3–4–2.
+R: RPROP usa o gradiente para atualizar os pesos. Backpropagation calcula o gradiente; a sigmoide é ativação; o erro quadrático é perda; 3–4–2 é arquitetura.
+
+MC: Um neurônio tem entradas $\mathbf{x}=(2,\,3)$, pesos $\mathbf{w}=(1,\,-1)$ e viés $b=0{,}5$. Qual é a entrada líquida $z$?
++ $z=-0{,}5$
+- $z=0{,}5$
+- $z=-1{,}5$
+- $z=5{,}5$
+- $z=2{,}5$
+R: $z=1\cdot2+(-1)\cdot3+0{,}5=2-3+0{,}5=-0{,}5$.
+
+MC: Para a função sigmoide $\phi(z)=1/(1+e^{-z})$, o valor de $\phi(0)$ é
++ $0{,}5$
+- $0$
+- $1$
+- $0{,}25$
+- $-0{,}5$
+R: $\phi(0)=1/(1+e^{0})=1/2$.
+
+MC: Uma rede tem 4 entradas, uma camada oculta com 5 neurônios e 3 saídas. Quantos parâmetros (pesos e vieses) ela possui?
++ 43
+- 35
+- 38
+- 60
+- 23
+R: Camada 1: $5\cdot4+5=25$. Camada 2: $3\cdot5+3=18$. Total $=43$.
+
+MC: Em uma rede 3–4–2 (3 entradas, 4 neurônios ocultos, 2 saídas), a matriz $W^{(2)}$ tem dimensão
++ $2\times4$
+- $4\times3$
+- $4\times2$
+- $3\times4$
+- $2\times3$
+R: $W^{(l)}$ é $n_l\times n_{l-1}$: $n_2=2$ e $n_1=4$.
+
+MC: Dizer que uma rede neural está sendo "treinada" significa
++ procurar valores de pesos e vieses que tornem a perda pequena nos dados de treino.
+- escolher manualmente cada peso com base na intuição do projetista.
+- aumentar o número de camadas até o erro desaparecer.
+- apagar os neurônios que não participam da saída.
+- memorizar os exemplos e devolvê-los quando solicitados.
+R: Treinar é um problema de otimização sobre $\theta$. Memorizar exemplos é justamente o risco a evitar.
+
+MC: Se trocamos a perda $E=\tfrac12\sum r^2$ pela média dos erros quadráticos, mantendo os mesmos dados, o que ocorre?
++ O ponto de mínimo não muda, mas a escala do gradiente muda por um fator constante.
+- O ponto de mínimo muda, porque a função deixa de ser quadrática.
+- O gradiente fica idêntico; só o valor da perda muda.
+- A rede passa a não ter mínimo.
+- O backpropagation deixa de ser aplicável.
+R: As funções diferem por um fator constante positivo; mesmo minimizador, mas gradientes escalonados. Isso afeta a taxa de aprendizagem adequada.
+
+MC: Neste livro, o resíduo de uma amostra é definido como
++ $\mathbf{r}=\mathbf{y}-\mathbf{t}$ (predição menos alvo).
+- $\mathbf{r}=\mathbf{t}-\mathbf{y}$ (alvo menos predição).
+- $\mathbf{r}=\mathbf{y}\cdot\mathbf{t}$.
+- $\mathbf{r}=|\mathbf{y}|+|\mathbf{t}|$.
+- $\mathbf{r}=\mathbf{y}/\mathbf{t}$.
+R: A convenção do livro é $\mathbf{r}=\mathbf{y}-\mathbf{t}$, de modo que $\nabla E=J^T\mathbf{r}$. Outros textos usam o sinal oposto.
+
+MC: O perceptron com regra de aprendizagem foi apresentado por
++ Rosenblatt, em 1958.
+- Rumelhart, Hinton e Williams, em 1986.
+- Minsky e Papert, em 1969.
+- Levenberg, em 1944.
+- Fahlman, em 1988.
+R: Rosenblatt (1958), em *Psychological Review*.
+
+MC: O livro de Minsky e Papert (1969) é frequentemente citado porque
++ analisou rigorosamente limitações do perceptron de uma única camada.
+- provou que redes de múltiplas camadas nunca podem ser treinadas.
+- introduziu o algoritmo de Levenberg–Marquardt em redes.
+- propôs o Quickprop.
+- criou a função de ativação ReLU.
+R: A análise mostrou o que o perceptron simples não representa (como o XOR). Não provou que redes de múltiplas camadas são impossíveis.
+
+MC: O artigo de 1986 na revista *Nature* que popularizou o backpropagation é de
++ Rumelhart, Hinton e Williams.
+- Rosenblatt e Widrow.
+- Hagan e Menhaj.
+- Riedmiller e Braun.
+- Igel e Hüsken.
+R: Rumelhart, Hinton e Williams (1986).
+
+MC: Quickprop foi proposto por
++ Fahlman, em 1988.
+- Jacobs, em 1988.
+- Riedmiller e Braun, em 1993.
+- Marquardt, em 1963.
+- Minai e Williams, em 1990.
+R: Fahlman (1988). Jacobs (1988) propôs o Delta-Bar-Delta.
+
+MC: O algoritmo Delta-Bar-Delta está associado a
++ Jacobs (1988), com taxas de aprendizagem individuais e adaptativas.
+- Rosenblatt (1958), com limiar fixo.
+- Levenberg (1944), com amortecimento.
+- Igel e Hüsken, com retrocesso condicional.
+- Cybenko (1989), com sigmoides.
+R: Jacobs (1988) descreve o Delta-Bar-Delta.
+
+MC: A aplicação do método de Levenberg–Marquardt ao treinamento de redes feedforward é descrita por
++ Hagan e Menhaj (1994).
+- McCulloch e Pitts (1943).
+- Widrow e Hoff (1960).
+- Hebb (1949).
+- Fahlman (1988).
+R: Hagan e Menhaj (1994), em *IEEE Transactions on Neural Networks*.
+
+MC: Os resultados de Cybenko (1989) e de Hornik, Stinchcombe e White (1989) tratam de
++ aproximação universal: redes com uma camada oculta podem aproximar funções sob certas hipóteses.
+- garantia de que o treinamento por gradiente sempre encontra o mínimo global.
+- garantia de boa generalização para qualquer conjunto de dados.
+- convergência do perceptron para qualquer problema.
+- a ineficiência de redes com mais de uma camada oculta.
+R: Eles tratam de existência de aproximação, não de treinabilidade nem de generalização.
+
+MC: Um erro de treino muito baixo, isoladamente, indica que
++ nada se pode concluir sobre a generalização; é preciso avaliar em dados de validação ou de teste.
+- a rede generalizará bem em dados novos.
+- a rede é, necessariamente, a menor possível para o problema.
+- o algoritmo de otimização é o melhor disponível.
+- não há ruído nos dados.
+R: A rede pode estar ajustando o ruído (sobreajuste). Avalie com dados não usados no treino.
+
+MC: Qual é a função do viés $b$ em um neurônio?
++ Deslocar o ponto em que o neurônio passa a responder, independentemente das entradas.
+- Limitar o valor máximo das entradas.
+- Normalizar os pesos para que somem 1.
+- Substituir a função de ativação.
+- Aumentar o número de entradas do neurônio.
+R: $z=\mathbf{w}^T\mathbf{x}+b$; $b$ desloca $z$ e, portanto, a fronteira de decisão.
+
+MC: Uma rede 10–20–1 tem quantos parâmetros?
++ 241
+- 220
+- 230
+- 211
+- 251
+R: Camada 1: $20\cdot10+20=220$. Camada 2: $1\cdot20+1=21$. Total $241$.
+
+MC: Em uma rede com $N=50$ amostras, $m=2$ saídas e $P=26$ parâmetros, a Jacobiana dos resíduos tem dimensão
++ $100\times26$
+- $50\times26$
+- $26\times100$
+- $50\times2$
+- $26\times26$
+R: $J=\partial\mathbf{r}/\partial\theta$ tem $Nm=100$ linhas e $P=26$ colunas.
+
+MC: O fator $\tfrac12$ na perda $E=\tfrac12\sum r^2$ é incluído principalmente para
++ cancelar o 2 que aparece ao derivar o quadrado.
+- tornar a perda sempre menor que 1.
+- garantir que a perda seja convexa.
+- evitar overfitting.
+- normalizar os dados de entrada.
+R: $\partial(\tfrac12 r^2)/\partial r=r$. A constante não altera o minimizador.
+
+MC: Na analogia da mesa de som, o gradiente corresponde a
++ um aviso, para cada botão, sobre em que direção e o quanto girá-lo para melhorar a mistura.
+- ao conjunto de botões da mesa.
+- à música que se deseja obter.
+- ao ruído captado pelos microfones.
+- ao número de instrumentos na mistura.
+R: Botões são os pesos; a mistura desejada é o alvo; o gradiente indica como alterar cada botão.
+
+MC: Neste livro, o termo "implementação didática do livro" indica
++ uma função própria, escrita para aprendizagem, e não uma função nativa de uma biblioteca.
+- uma função do scikit-learn com otimização para produção.
+- uma função do MATLAB traduzida para Python.
+- um código que não foi testado.
+- um código proprietário que não pode ser lido.
+R: O pacote `rnbook` reúne implementações legíveis e testadas, usadas para aprender os algoritmos.
+
+MC: A técnica de calcular derivadas propagando informações de trás para frente, usada pelo backpropagation, é um caso do
++ modo reverso da diferenciação automática.
+- método das diferenças finitas progressivas.
+- método de Newton modificado.
+- método dos mínimos quadrados.
+- critério de parada antecipada.
+R: Backpropagation é a diferenciação automática no modo reverso aplicada a redes (Linnainmaa, 1970; Werbos, 1974).
+
+MC: Widrow e Hoff (1960) são lembrados por
++ ADALINE e a regra LMS (mínimos quadrados médios).
+- demonstrar a aproximação universal.
+- criar o RPROP.
+- introduzir o Quickprop.
+- generalizar o método de Newton.
+R: A regra LMS (delta) é antecessora do gradiente descendente para neurônios.
+
+MC: Para uma camada com $n_{l-1}=10$ entradas e $n_l=4$ neurônios, processando $N=32$ amostras em lote, a matriz de entradas líquidas $Z$ (com amostras nas linhas) tem dimensão
++ $32\times4$
+- $4\times32$
+- $32\times10$
+- $10\times4$
+- $4\times10$
+R: $Z=A_{\text{prev}}W^T+\mathbf{b}$, com $A_{\text{prev}}$ de $32\times10$ e $W^T$ de $10\times4$.
+
+MC: Qual dos itens abaixo **não** é um dos cinco conceitos distinguidos neste capítulo?
++ Conjunto de dados de teste.
+- Neurônio artificial.
+- Função de perda.
+- Algoritmo de diferenciação.
+- Método de otimização.
+R: Os cinco são: neurônio, arquitetura, função de perda, algoritmo de diferenciação e método de otimização.
+
+MC: Por que fixamos a semente aleatória nos experimentos?
++ Para que os resultados possam ser reproduzidos por outras pessoas.
+- Para garantir que o erro seja sempre mínimo.
+- Para evitar a necessidade de dados de validação.
+- Para que a rede não precise de inicialização.
+- Para acelerar o treinamento.
+R: A semente fixa a sequência pseudoaleatória (inicialização, ruído, embaralhamento), tornando o experimento reprodutível.
+
+MC: No "Olá, rede", o RMSE de treino ($0{,}1434$) ficou abaixo do ruído verdadeiro ($0{,}15$). A interpretação mais adequada é:
++ a rede pode estar ajustando parte do ruído; é preciso validar com dados novos.
+- a rede encontrou o mínimo global e generaliza perfeitamente.
+- o ruído dos dados foi estimado incorretamente pelo gerador.
+- a rede é pequena demais para o problema.
+- o algoritmo de Levenberg–Marquardt é sempre superior aos demais.
+R: Um modelo flexível pode reduzir o erro de treino abaixo do ruído por sobreajuste. Um único experimento não permite concluir superioridade de algoritmos.
+
+MC: Na convenção do livro, a camada $l$ calcula
++ $\mathbf{z}^{(l)}=W^{(l)}\mathbf{a}^{(l-1)}+\mathbf{b}^{(l)}$ e $\mathbf{a}^{(l)}=\phi_l(\mathbf{z}^{(l)})$.
+- $\mathbf{z}^{(l)}=\mathbf{a}^{(l-1)}W^{(l)}$ e $\mathbf{a}^{(l)}=\mathbf{z}^{(l)}$.
+- $\mathbf{a}^{(l)}=\phi_l(\mathbf{b}^{(l)})\,W^{(l)}$.
+- $\mathbf{z}^{(l)}=\phi_l(W^{(l)})+\mathbf{a}^{(l-1)}$.
+- $\mathbf{a}^{(l)}=W^{(l)}+\mathbf{b}^{(l)}$.
+R: Combinação linear das ativações da camada anterior, mais viés, seguida da ativação não linear.
+
+DISC: Explique, com suas palavras, o que é uma rede neural artificial, o que são pesos e o que significa treinar a rede.
+R: Uma rede neural artificial é uma função formada por neurônios organizados em camadas; cada neurônio combina suas entradas com **pesos**, soma um **viés** e aplica uma função de ativação. Os pesos e vieses são os parâmetros ajustáveis $\theta$. **Treinar** é procurar valores de $\theta$ que tornem pequena uma função de perda $E(\theta)$, medida nos exemplos de treino, de modo que a rede reproduza as saídas desejadas e, idealmente, generalize para dados novos.
+
+DISC: Diferencie neurônio artificial, arquitetura, função de perda, algoritmo de diferenciação e método de otimização, dando um exemplo de cada um.
+R: **Neurônio:** unidade que calcula $a=\phi(\mathbf{w}^T\mathbf{x}+b)$ (ex.: neurônio sigmoide). **Arquitetura:** como os neurônios se organizam (ex.: 3–4–2). **Perda:** mede o erro (ex.: $E=\tfrac12\sum r^2$). **Algoritmo de diferenciação:** calcula $\nabla E$ de modo eficiente (backpropagation). **Otimização:** usa $\nabla E$ para atualizar $\theta$ (ex.: gradiente descendente, RPROP). Confundir esses itens leva a frases incorretas, como "o backpropagation atualiza os pesos".
+
+DISC: Calcule a saída de um neurônio com $\mathbf{x}=(-1;\,2;\,0{,}5)$, $\mathbf{w}=(2;\,0{,}5;\,-4)$, $b=1$ e ativação tangente hiperbólica.
+R: $z=2\cdot(-1)+0{,}5\cdot2+(-4)\cdot0{,}5+1=-2+1-2+1=-2$.
+$$ a=\tanh(-2)=-\tanh(2)\approx-0{,}9640 $$
+O neurônio está próximo da saturação negativa ($a\to-1$).
+
+DISC: Conte os parâmetros de uma rede 5–8–4–2 e indique as dimensões de cada $W^{(l)}$ e $\mathbf{b}^{(l)}$.
+R: $W^{(1)}$: $8\times5$ (40 pesos), $\mathbf{b}^{(1)}$: 8. $W^{(2)}$: $4\times8$ (32), $\mathbf{b}^{(2)}$: 4. $W^{(3)}$: $2\times4$ (8), $\mathbf{b}^{(3)}$: 2.
+$$ P=(40+8)+(32+4)+(8+2)=48+36+10=94 $$
+
+DISC: Para a arquitetura 10–6–3, determine as dimensões de $W^{(1)}$, $\mathbf{b}^{(1)}$, $W^{(2)}$, $\mathbf{b}^{(2)}$ e o total $P$.
+R: $W^{(1)}$: $6\times10$; $\mathbf{b}^{(1)}$: 6; $W^{(2)}$: $3\times6$; $\mathbf{b}^{(2)}$: 3.
+$$ P=(6\cdot10+6)+(3\cdot6+3)=66+21=87 $$
+
+DISC: Mostre que, para $E=\tfrac12\sum_p\sum_k r_{pk}^2$ com $r_{pk}=y_{pk}-t_{pk}$, tem-se $\partial E/\partial y_{pk}=r_{pk}$. Por que isso é conveniente?
+R: Só o termo $(p,k)$ depende de $y_{pk}$:
+$$ \frac{\partial E}{\partial y_{pk}}=\frac12\cdot2\,(y_{pk}-t_{pk})\cdot1=r_{pk} $$
+O fator $\tfrac12$ cancela o 2 da derivada do quadrado, e o início da retropropagação fica $\delta=\mathbf{r}\odot\phi'(\mathbf{z})$ sem constantes extras.
+
+DISC: Com $N=100$ amostras e $m=1$ saída, relacione $E=\tfrac12\sum r^2$ ao $\mathrm{MSE}=\tfrac1{Nm}\sum r^2$, e indique como se relacionam seus gradientes. Se uma taxa $\eta=0{,}01$ funciona bem com $E$, qual taxa produziria o mesmo passo com o MSE?
+R: $\mathrm{MSE}=\dfrac{2}{Nm}E=0{,}02\,E$. Logo $\nabla\mathrm{MSE}=0{,}02\,\nabla E$. Para obter o mesmo passo: $\eta_{\mathrm{MSE}}\cdot0{,}02\,\nabla E=0{,}01\,\nabla E\Rightarrow\eta_{\mathrm{MSE}}=0{,}5$. A taxa precisa ser 50 vezes maior. Moral: a escala da perda faz parte do ajuste da taxa.
+
+DISC: Explique por que o trabalho de Minsky e Papert (1969) não "provou" que redes neurais não funcionam, e qual foi a sua contribuição.
+R: O livro analisou, com rigor matemático, limites de **perceptrons de uma camada** (por exemplo, a impossibilidade de representar o XOR por um único limiar linear). Isso não implica que redes de múltiplas camadas não sejam úteis. O problema que ficou em aberto era **como treiná-las**; o backpropagation (Rumelhart et al., 1986) deu uma resposta prática. O impacto do livro sobre o interesse e o financiamento da área é debatido na literatura; convém evitar afirmações categóricas.
+
+DISC: Dê um exemplo de um mesmo vetor de gradientes sendo usado por dois otimizadores diferentes. Por que isso mostra que backpropagation e otimização são conceitos distintos?
+R: O backpropagation fornece $\mathbf{g}=\nabla E(\theta)$ em um ponto. O gradiente descendente faz $\theta\leftarrow\theta-\eta\mathbf{g}$; o RPROP usa apenas o **sinal** de cada componente, $\theta_i\leftarrow\theta_i-\Delta_i\,\mathrm{sinal}(g_i)$, com passos $\Delta_i$ adaptativos. O mesmo $\mathbf{g}$ alimenta regras de atualização diferentes; logo, o cálculo do gradiente e a regra de atualização são etapas separadas e independentes.
+
+DISC: No experimento "Olá, rede", o erro de treino (RMSE $=0{,}1434$) ficou abaixo do ruído ($0{,}15$). Explique o que isso sugere e descreva um procedimento para verificar a generalização.
+R: Sugere que a rede (25 parâmetros para 40 pontos) está ajustando parte do ruído, isto é, **sobreajuste** leve. Procedimento: gerar ou reservar dados **novos** (validação/teste) que não participaram do treino; calcular o RMSE neles. Se for maior que o do treino, há perda de generalização. Pode-se reduzir neurônios, usar parada antecipada ou regularização, e comparar o erro de validação.
+
+DISC: Escreva uma função em Python que receba a lista de neurônios por camada (por exemplo, `[3, 4, 2]`) e devolva o número total de parâmetros. Teste com `[3, 4, 2]` e `[1, 8, 1]`.
+R: Solução de referência:
+```python
+def n_parametros(camadas):
+    """Número de pesos e vieses de um MLP totalmente conectado."""
+    return sum(n_l * n_ant + n_l for n_ant, n_l in zip(camadas[:-1], camadas[1:]))
+
+print(n_parametros([3, 4, 2]))   # 26
+print(n_parametros([1, 8, 1]))   # 25
+```
+Critérios: usa o pareamento correto das camadas; resultado 26 e 25; função simples e documentada.
+
+DISC: Escreva uma função NumPy que calcule a saída de um neurônio sigmoide para um vetor de entradas, pesos e viés. Use-a no Exemplo 1.1 ($\mathbf{x}=(1,2)$, $\mathbf{w}=(0{,}5,-1)$, $b=0{,}2$).
+R:
+```python
+import numpy as np
+
+def neuronio_sigmoide(x, w, b):
+    z = np.dot(w, x) + b
+    return 1.0 / (1.0 + np.exp(-z))
+
+print(round(neuronio_sigmoide(np.array([1, 2]), np.array([0.5, -1]), 0.2), 4))   # 0.2142
+```
+Critérios: usa produto escalar; retorna 0,2142.
+
+DISC: Escreva uma função que calcule a propagação direta de uma rede dada como lista de pares $(W,\mathbf{b})$ com ativação tangente hiperbólica nas camadas ocultas e identidade na saída, para um lote com amostras nas linhas. Verifique as dimensões com uma rede 3–4–2 e $N=5$.
+R:
+```python
+import numpy as np
+
+def forward(params, X):
+    A = X
+    for l, (W, b) in enumerate(params):
+        Z = A @ W.T + b                       # (N, n_l)
+        A = np.tanh(Z) if l < len(params) - 1 else Z
+    return A
+
+rng = np.random.default_rng(0)
+params = [(rng.normal(size=(4, 3)), np.zeros(4)), (rng.normal(size=(2, 4)), np.zeros(2))]
+print(forward(params, rng.normal(size=(5, 3))).shape)   # (5, 2)
+```
+Critérios: usa $A W^T+b$; saída com forma $(5,2)$; tanh nas ocultas e identidade na saída.
+
+DISC: Explique por que fixar a semente aleatória e registrar as versões das bibliotecas é importante em um experimento computacional. O que mais deve ser registrado?
+R: A inicialização dos pesos, o ruído sintético e o embaralhamento dependem de números pseudoaleatórios; fixar a semente permite que outra pessoa obtenha os mesmos resultados. Versões de bibliotecas importam porque algoritmos, valores padrão e arredondamentos mudam. Também se registram: sistema operacional, hardware (quando o tempo é medido), hiperparâmetros, critérios de parada, partição dos dados e o código usado.
+
+DISC: Aponte duas limitações da analogia "mesa de som" para o treinamento de redes neurais.
+R: (i) Na mesa de som, o efeito de cada botão é percebido separadamente e quase independente; em uma rede, o efeito de um peso depende dos demais (as camadas se compõem). (ii) A mesa tem dezenas de botões e um ouvinte que decide; a rede tem muitos parâmetros e um critério numérico (a perda). Outra limitação: o ouvinte percebe a qualidade de forma subjetiva; a perda é objetiva, mas pode medir algo diferente do que realmente queremos.
+
+DISC: Verifique as dimensões de $Z=A_{\mathrm{prev}}W^T+\mathbf{b}$ para $N=32$, $n_{l-1}=10$ e $n_l=4$. Como o viés é somado?
+R: $A_{\mathrm{prev}}$: $32\times10$; $W$: $4\times10$, logo $W^T$: $10\times4$; o produto é $32\times4$. O viés $\mathbf{b}$ (dimensão 4) é somado a **cada linha** (difusão ou *broadcasting* do NumPy), resultando em $Z$ de $32\times4$.
+
+DISC: Escolha um problema real (por exemplo, prever o preço de uma casa) e descreva: o que seria $\mathbf{x}$, $\mathbf{t}$, $m$ e uma função de perda adequada.
+R: Exemplo: previsão do preço de imóveis. $\mathbf{x}$: área, número de quartos, idade, bairro codificado numericamente ($n_0$ atributos); $\mathbf{t}$: preço (já padronizado), com $m=1$; perda: soma ou média dos erros quadráticos, $E=\tfrac12\sum r^2$. Observações: alvos e entradas costumam ser normalizados com estatísticas **do conjunto de treino**; é necessário reservar dados de validação e teste.
+
+DISC: Em um problema de classificação com 3 classes, quantas saídas $m$ a rede deve ter se usamos codificação *one-hot* para os alvos? Dê o alvo de uma amostra da segunda classe.
+R: $m=3$, uma saída por classe. O alvo da segunda classe é $\mathbf{t}=(0,\,1,\,0)$. A classe prevista é a de maior saída (*argmax*).
+
+DISC: Explique a diferença entre "o treinamento convergiu" e "a rede generaliza bem". Cite um sinal numérico que ajuda a distinguir as duas situações.
+R: Convergência trata da **otimização**: a perda de treino parou de diminuir (ou o gradiente é pequeno). Generalização trata do desempenho em **dados novos**. Uma rede pode convergir e generalizar mal (sobreajuste). Sinal: perda de validação crescendo enquanto a de treino diminui, ou diferença grande entre o erro de treino e o de teste.
+
+DISC: Uma rede tem $N=10$ amostras, $m=1$ saída e $P=25$ parâmetros. Qual é a dimensão da Jacobiana $J$ dos resíduos? O que representa a linha $p$ e a coluna $j$?
+R: $J$ tem dimensão $Nm\times P=10\times25$. O elemento $J_{pj}=\partial r_p/\partial\theta_j$: a linha $p$ mostra como o resíduo da amostra $p$ varia com cada parâmetro; a coluna $j$ mostra como todos os resíduos variam com o parâmetro $\theta_j$. Ela será a base do método de Levenberg–Marquardt (Cap. 7).

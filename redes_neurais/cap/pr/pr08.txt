@@ -1,0 +1,252 @@
+@@EX 1 | O Delta-Bar-Delta vetorizado, do zero | iniciante
+Implemente o DBD em NumPy (sem o pacote `rnbook`), aplique-o à quadrática $f(x,y)=\tfrac12(x^2+10y^2)$ a partir de $(2{,}5;\,1{,}2)$ e compare com o gradiente descendente de passo $\eta^*=2/11$.
+
+1. Escreva `dbd(theta0, grad, alfa0, kappa, phi, teta, max_iter)` vetorizada, que devolva o histórico de $\theta$ e das taxas.
+2. Use $\alpha_0=0{,}01$, $\kappa=0{,}005$, $\phi=0{,}2$, $\theta=0{,}7$.
+3. Conte as iterações até $f<10^{-12}$ nos dois métodos e imprima as taxas individuais após 20, 40 e 79 passos.
+
+**Pergunta:** por que as duas taxas terminam tão diferentes uma da outra?
+@@SOL
+```python
+import numpy as np
+
+lam = np.array([1.0, 10.0])
+f = lambda th: 0.5 * np.sum(lam * th ** 2)
+grad = lambda th: lam * th
+
+
+def dbd(theta0, grad, alfa0, kappa, phi, teta, max_iter):
+    theta = theta0.copy()
+    alfa = np.full_like(theta, alfa0)
+    gbar = np.zeros_like(theta)
+    hist_th, hist_al = [theta.copy()], []
+    for _ in range(max_iter):
+        g = grad(theta)
+        prod = gbar * g                                    # teste de sinal com gbar(t-1)
+        alfa = np.where(prod > 0, alfa + kappa, np.where(prod < 0, alfa * (1 - phi), alfa))
+        theta = theta - alfa * g
+        gbar = (1 - teta) * g + teta * gbar                # memória atualizada por último
+        hist_th.append(theta.copy()); hist_al.append(alfa.copy())
+    return np.array(hist_th), np.array(hist_al)
+
+
+th0 = np.array([2.5, 1.2])
+H, A = dbd(th0, grad, 0.01, 0.005, 0.2, 0.7, 400)
+it_dbd = next(k for k, t in enumerate(H) if f(t) < 1e-12)
+
+th = th0.copy(); it_gd = None
+for k in range(1, 2000):
+    th = th - (2 / 11) * grad(th)
+    if f(th) < 1e-12:
+        it_gd = k; break
+
+print("iterações até f < 1e-12: DBD =", it_dbd, "| GD (eta* = 2/11) =", it_gd)
+for k in (20, 40, 79):
+    print("taxas após %d passos: alfa_x = %.4f, alfa_y = %.2e" % (k, A[k - 1, 0], A[k - 1, 1]))
+```
+@@NOTE O DBD levou **70 iterações** para $f<10^{-12}$, contra **75** do gradiente descendente com $\eta^*=2/11$ (o texto do capítulo informa $69$ para o pacote `rnbook`; a diferença de uma unidade vem da forma de contar as iterações, não de um algoritmo diferente — a origem exata da contagem não foi investigada). As taxas individuais foram: após 20 passos, $\alpha_x=0{,}105$ e $\alpha_y=0{,}080$; após 40, $\alpha_x=0{,}205$ e $\alpha_y=9{,}2\times10^{-4}$; após 79, $\alpha_x=0{,}400$ e $\alpha_y=1{,}5\times10^{-7}$. **Resposta:** a coordenada $y$ (curvatura $10$) converge cedo; com o gradiente praticamente nulo, o sinal de $\bar g\,g$ passa a alternar e a taxa é cortada a cada passo (multiplicação por $0{,}8$), sem piso. A coordenada $x$ (curvatura $1$) mantém gradiente de mesmo sinal e **continua subindo**, de forma aditiva, em $0{,}005$ por passo. Com a curvatura $1$, o limite de estabilidade em $x$ é $2/\lambda_x=2$, e $0{,}4$ ainda está longe. Este é o benefício de uma taxa por coordenada, quando as curvaturas estão alinhadas aos eixos.
+@@EX 2 | Escala do erro: a delta-delta sofre, o DBD menos | intermediário
+Verifique, em uma quadrática, que a delta-delta depende da **escala** do erro e que o DBD, que testa apenas o sinal, depende menos.
+
+1. Tome $E_c(\theta)=c\cdot\tfrac12(x^2+10y^2)$ com $c\in\{0{,}1;\,1;\,10\}$ e ponto inicial $(2{,}5;\,1{,}2)$.
+2. Rode 60 passos da delta-delta ($\alpha_0=0{,}01$, $\gamma=10^{-3}$) e do DBD ($\alpha_0=0{,}01$, $\kappa=0{,}005$, $\phi=0{,}2$, $\theta=0{,}7$), usando o gradiente $c\,\nabla f$.
+3. Registre $E_c/c$ (isto é, $f$) ao final e se houve valores não finitos.
+
+**Pergunta:** o que muda e o que não muda quando $c$ cresce? Por quê?
+@@SOL
+```python
+import numpy as np
+
+lam = np.array([1.0, 10.0])
+f = lambda th: 0.5 * np.sum(lam * th ** 2)
+
+
+def delta_delta(th0, c, alfa0=0.01, gama=1e-3, n=60):
+    th, alfa, g_ant = th0.copy(), np.full(2, alfa0), np.zeros(2)
+    for _ in range(n):
+        g = c * lam * th
+        alfa = alfa + gama * g * g_ant
+        th = th - alfa * g
+        g_ant = g
+        if not np.all(np.isfinite(th)):
+            return th, alfa
+    return th, alfa
+
+
+def dbd(th0, c, alfa0=0.01, kappa=0.005, phi=0.2, teta=0.7, n=60):
+    th, alfa, gbar = th0.copy(), np.full(2, alfa0), np.zeros(2)
+    for _ in range(n):
+        g = c * lam * th
+        prod = gbar * g
+        alfa = np.where(prod > 0, alfa + kappa, np.where(prod < 0, alfa * (1 - phi), alfa))
+        th = th - alfa * g
+        gbar = (1 - teta) * g + teta * gbar
+        if not np.all(np.isfinite(th)):
+            return th, alfa
+    return th, alfa
+
+
+th0 = np.array([2.5, 1.2])
+for c in (0.1, 1.0, 10.0):
+    thd, ad = delta_delta(th0, c)
+    thb, ab = dbd(th0, c)
+    print("c=%-5g delta-delta: f=%.3e (finito: %s), alfa=%s | DBD: f=%.3e (finito: %s), alfa=%s"
+          % (c, f(thd), np.all(np.isfinite(thd)), np.round(ad, 4), f(thb), np.all(np.isfinite(thb)), np.round(ab, 4)))
+```
+@@NOTE Com $c=1$, a delta-delta convergiu ($f=4{,}9\times10^{-4}$) e o DBD convergiu muito mais ($f=1{,}9\times10^{-9}$). Com $c=0{,}1$ (erro menor), a delta-delta quase não adapta a taxa (correção $\propto c^2$) e ficou em $f=2{,}87$; o DBD, cuja adaptação independe de $c$, chegou a $f=0{,}46$ (ainda lento, pois o passo $\alpha g$ é proporcional a $c$). Com $c=10$, a delta-delta **divergiu** (taxa $\approx-4\times10^{269}$ e $f$ infinito), enquanto o DBD **convergiu** ($f\approx10^{-51}$, taxa cortada pela redução multiplicativa). **Resposta:** na delta-delta, a correção $\gamma g g_{\text{ant}}$ cresce com $c^2$, de modo que o mesmo $\gamma$ funciona para uma escala e explode em outra. No DBD, a adaptação usa apenas o **sinal** do produto, que não depende de $c>0$, mas o passo $\alpha g$ continua proporcional a $c$; por isso o DBD é *menos*, e não totalmente, sensível à escala.
+@@EX 3 | DBD e EDBD na base Breast Cancer, com validação | intermediário
+Compare gradiente descendente com momento, DBD, EDBD e iRPROP− (pacote `rnbook`) na base **Breast Cancer Wisconsin (Diagnostic)** (UCI; embutida no scikit-learn), escolhendo hiperparâmetros **só na validação**.
+
+1. Separe 60/20/20 estratificado (`random_state=0`) em treino, validação e teste; padronize com o treino.
+2. Rede 30–10–1 (tanh, saída sigmoide), erro quadrático médio, 200 épocas. Para cada método, teste uma grade pequena (4 a 8 combinações), com a semente 0, e escolha a de menor perda de validação.
+3. Com a configuração escolhida, treine com as sementes 1 a 5 e relate a acurácia de teste (mediana e intervalo) e o tempo.
+
+**Pergunta:** a ordem dos métodos é a mesma na validação e no teste? O que se pode concluir?
+@@SOL
+```python
+import time
+import warnings
+import itertools
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = load_breast_cancer(return_X_y=True)
+X_tmp, X_te, y_tmp, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+X_tr, X_va, y_tr, y_va = train_test_split(X_tmp, y_tmp, test_size=0.25, random_state=0, stratify=y_tmp)
+esc = StandardScaler().fit(X_tr)
+Xtr, Xva, Xte = esc.transform(X_tr), esc.transform(X_va), esc.transform(X_te)
+Ttr, Tva = y_tr[:, None].astype(float), y_va[:, None].astype(float)
+N = len(y_tr)
+
+
+def treinar(otim, semente, **kw):
+    r = MLP([30, 10, 1], ["tanh", "sigmoide"], semente=semente)
+    t0 = time.perf_counter()
+    res = otim(r.theta, lambda th: r.perda(th, Xtr, Ttr) / N, lambda th: r.grad(th, Xtr, Ttr) / N,
+               max_iter=200, tol_grad=0, **kw)
+    return r, res, time.perf_counter() - t0
+
+
+def perda_val(r, th):
+    return float(np.mean((r.prever(Xva, th) - Tva) ** 2) / 2)
+
+
+def acc(r, th, Xa, ya):
+    return float(np.mean((r.prever(Xa, th).ravel() > 0.5) == ya))
+
+
+grades = {
+    "GD+momento": (O.gradiente_descendente, [dict(taxa=a, momento=b) for a, b in itertools.product((0.1, 0.5), (0.5, 0.9))]),
+    "DBD": (O.delta_bar_delta, [dict(alfa0=0.1, kappa=k, phi=p, teta=0.7) for k, p in itertools.product((0.01, 0.05), (0.1, 0.3))]),
+    "EDBD": (O.delta_bar_delta_estendido, [dict(alfa0=0.1, kappa_a=k, phi_a=0.3, alfa_max=a, kappa_m=0.05, mu_max=0.9)
+                                          for k, a in itertools.product((0.02, 0.1), (1.0, 3.0))]),
+    "iRPROP-": (O.rprop, [dict(variante="irprop-", delta0=d) for d in (0.01, 0.05, 0.1, 0.2)]),
+}
+for nome, (otim, grade) in grades.items():
+    sc = []
+    for kw in grade:
+        try:
+            r, res, _ = treinar(otim, 0, **kw); v = perda_val(r, res.theta)
+        except Exception:
+            v = np.inf
+        sc.append(v if np.isfinite(v) else np.inf)
+    kw = grade[int(np.argmin(sc))]
+    ac_va, ac_te, tt = [], [], []
+    for s in range(1, 6):
+        r, res, dt = treinar(otim, s, **kw)
+        ac_va.append(acc(r, res.theta, Xva, y_va)); ac_te.append(acc(r, res.theta, Xte, y_te)); tt.append(dt)
+    print("%-11s melhor %s\n            val: %.4f [%.4f; %.4f] | teste: %.4f [%.4f; %.4f] | tempo %.3f s"
+          % (nome, {k: v for k, v in kw.items()}, np.median(ac_va), min(ac_va), max(ac_va),
+             np.median(ac_te), min(ac_te), max(ac_te), np.mean(tt)))
+```
+@@NOTE Conjuntos: 341 amostras de treino, 114 de validação e 114 de teste (uma amostra de teste vale $0{,}88$ ponto percentual). Configurações escolhidas na semente 0: GD+momento ($\eta=0{,}5$, $\beta=0{,}9$); DBD ($\alpha_0=0{,}1$, $\kappa=0{,}05$, $\phi=0{,}3$, $\theta=0{,}7$); EDBD ($\kappa_\alpha=0{,}1$, $\alpha_{\max}=3$); iRPROP− ($\Delta_0=0{,}01$). Acurácia nas sementes 1 a 5 (mediana [mín; máx]): validação $1{,}000$ [$0{,}991$; $1{,}000$] para os três primeiros e $0{,}974$ [$0{,}974$; $0{,}991$] para o iRPROP−; teste $0{,}974$ [$0{,}965$; $0{,}974$] (momento), $0{,}974$ [$0{,}956$; $0{,}983$] (DBD), $0{,}956$ [$0{,}939$; $0{,}983$] (EDBD) e $0{,}956$ [$0{,}947$; $0{,}956$] (iRPROP−). Tempos de $0{,}04$ a $0{,}08$ s. **Resposta:** a ordem **não** se mantém entre validação e teste (os três primeiros empatam em $1{,}000$ na validação, saturada, e se separam no teste), e as diferenças no teste são de uma a três amostras, dentro da variação entre sementes (até $4$ pontos no EDBD). Com 114 amostras de teste, **nenhum método pode ser declarado superior**; o experimento só mostra que todos alcançam acurácia em torno de $0{,}95$ a $0{,}97$ nesta base fácil. Note também que os melhores hiperparâmetros foram escolhidos com **uma** semente, o que é frágil.
+@@PROJ Otimizadores adaptativos em regressão: Friedman #1 | avançado
+**Objetivo.** Comparar, com protocolo honesto, os treinadores do livro (gradiente descendente com momento, DBD, EDBD, iRPROP− e LM) em um problema de regressão, medindo desempenho em teste, tempo e robustez entre sementes.
+
+**Dados.** `make_friedman1` do scikit-learn (600 amostras, 10 atributos, `noise=1.0`, `random_state=0`; só 5 atributos são informativos).
+
+**Tarefas.**
+1. Separe 60/20/20 (`random_state=0`); padronize os atributos com o treino e deixe o alvo na escala original dividido pelo desvio do treino (registre).
+2. Rede 10–10–1 (tanh, saída linear). Para cada método, escolha os hiperparâmetros em uma grade de 4 combinações (semente de ajuste 100) pela perda de **validação**.
+3. Com a configuração escolhida, treine com 10 sementes (0 a 9), com 300 épocas (LM: 60 iterações), e registre o $R^2$ de teste (mediana e intervalo), o tempo e o número de execuções divergentes.
+4. Redija 10 a 12 linhas de conclusão, apontando o que o experimento **não** permite afirmar.
+
+**Para ir além (não testado no livro).** Repita com `fetch_california_housing` (Kaggle/UCI; exige internet) e com minilotes para o gradiente descendente; discuta por que o DBD não é projetado para esse regime.
+@@RUBRICA
+- Partições feitas antes do escalonamento; escalonador ajustado só no treino; teste usado apenas no relato.
+- Grades de tamanho comparável (ou diferença reconhecida explicitamente) e semente de ajuste separada das de avaliação.
+- Relato de mediana, intervalo, tempo e divergências, e não da melhor execução.
+- Conclusão limitada ao problema e à arquitetura, sem "método X é melhor".
+@@SOL
+```python
+import time
+import warnings
+import itertools
+import numpy as np
+from sklearn.datasets import make_friedman1
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = make_friedman1(n_samples=600, n_features=10, noise=1.0, random_state=0)
+X_tmp, X_te, y_tmp, y_te = train_test_split(X, y, test_size=0.2, random_state=0)
+X_tr, X_va, y_tr, y_va = train_test_split(X_tmp, y_tmp, test_size=0.25, random_state=0)
+esc = StandardScaler().fit(X_tr)
+Xtr, Xva, Xte = esc.transform(X_tr), esc.transform(X_va), esc.transform(X_te)
+dp = y_tr.std()
+Ttr, Tva = (y_tr / dp)[:, None], (y_va / dp)[:, None]
+N = len(y_tr)
+print("desvio do alvo de treino (divisor):", round(float(dp), 4), "| N treino =", N)
+
+
+def treinar(metodo, semente, kw):
+    r = MLP([10, 10, 1], ["tanh", "identidade"], semente=semente)
+    t0 = time.perf_counter()
+    if metodo == "LM":
+        res = O.levenberg_marquardt(r.theta, lambda th: r.residuos(th, Xtr, Ttr), lambda th: r.jacobiana(th, Xtr),
+                                    max_iter=60, tol_grad=0, **kw)
+    else:
+        otim = {"GD+momento": O.gradiente_descendente, "DBD": O.delta_bar_delta,
+                "EDBD": O.delta_bar_delta_estendido, "iRPROP-": O.rprop}[metodo]
+        res = otim(r.theta, lambda th: r.perda(th, Xtr, Ttr) / N, lambda th: r.grad(th, Xtr, Ttr) / N,
+                   max_iter=300, tol_grad=0, **kw)
+    return r, res.theta, time.perf_counter() - t0
+
+
+def r2(r, th, Xa, ya):
+    return r2_score(ya, r.prever(Xa, th).ravel() * dp)
+
+
+grades = {
+    "GD+momento": [dict(taxa=a, momento=b) for a, b in itertools.product((0.05, 0.2), (0.5, 0.9))],
+    "DBD": [dict(alfa0=0.1, kappa=k, phi=p, teta=0.7) for k, p in itertools.product((0.01, 0.05), (0.1, 0.3))],
+    "EDBD": [dict(alfa0=0.1, kappa_a=k, phi_a=0.3, alfa_max=a, kappa_m=0.05, mu_max=0.9)
+             for k, a in itertools.product((0.02, 0.1), (1.0, 3.0))],
+    "iRPROP-": [dict(variante="irprop-", delta0=d) for d in (0.01, 0.05, 0.1, 0.2)],
+    "LM": [dict(mu0=m, mu_inc=i) for m, i in itertools.product((1e-3, 1e-1), (10.0, 5.0))],
+}
+for metodo, grade in grades.items():
+    sc = []
+    for kw in grade:
+        try:
+            r, th, _ = treinar(metodo, 100, kw); v = float(np.mean((r.prever(Xva, th) - Tva) ** 2))
+        except Exception:
+            v = np.inf
+        sc.append(v if np.isfinite(v) else np.inf)
+    kw = grade[int(np.argmin(sc))]
+    va, te, tt, div = [], [], [], 0
+    for s in range(10):
+        r, th, dt = treinar(metodo, s, kw)
+        a, b = r2(r, th, Xva, y_va), r2(r, th, Xte, y_te)
+        if not np.isfinite(b): div += 1; continue
+        va.append(a); te.append(b); tt.append(dt)
+    print("%-11s %s\n            R2 val %.3f | R2 teste %.3f [%.3f; %.3f] | tempo %.3f s | divergências: %d"
+          % (metodo, kw, np.median(va), np.median(te), min(te), max(te), np.mean(tt), div))
+```
+@@NOTE O alvo foi dividido por $\sigma=5{,}07$ (desvio do treino, $N=360$). $R^2$ de teste (10 sementes; mediana [mín; máx]): GD+momento ($\eta=0{,}05$, $\beta=0{,}9$) $0{,}842$ [$0{,}819$; $0{,}878$]; DBD ($\kappa=0{,}01$, $\phi=0{,}1$) $0{,}821$ [$0{,}801$; $0{,}907$]; EDBD $0{,}898$ [$0{,}709$; $0{,}917$]; iRPROP− ($\Delta_0=0{,}01$) $0{,}763$ [$0{,}737$; $0{,}912$]; LM ($\mu_0=0{,}1$) $0{,}915$ [$0{,}589$; $0{,}937$]. Nenhuma execução divergiu. Tempos de $0{,}04$ a $0{,}06$ s. **Leitura honesta.** (i) O LM e o EDBD tiveram as maiores medianas, mas também as **maiores dispersões** (mínimos de $0{,}59$ e $0{,}71$): em algumas sementes, o ajuste rápido acabou em um mínimo ruim ou sobreajustou. (ii) O DBD e o momento são mais estáveis, e menos acurados. (iii) A diferença entre a mediana do LM ($0{,}915$) e a do EDBD ($0{,}898$) é pequena frente às dispersões; com 120 amostras de teste, **não** se pode afirmar vencedor. (iv) Os hiperparâmetros foram escolhidos em uma única semente (100) e em grades de 4 combinações: outra semente de ajuste poderia reordenar os métodos; a ausência de parada antecipada também penaliza os métodos que sobreajustam. (v) O resultado é válido para este problema sintético, com a arquitetura 10–10–1 e lote inteiro. **Conclusão:** nenhum método é declarado superior; o que o experimento sustenta é que métodos com adaptação por peso (EDBD) ou de segunda ordem (LM) podem alcançar $R^2$ mais alto, ao preço de maior variabilidade entre sementes.

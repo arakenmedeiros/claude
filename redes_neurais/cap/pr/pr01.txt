@@ -1,0 +1,140 @@
+@@EX 1 | Primeira rede com MLPRegressor | iniciante
+Neste exercício você treinará uma rede do scikit-learn para aprender a curva $y=\sin(2\pi x)$ com ruído e verificará se ela **generaliza**.
+
+1. Gere 200 pontos $x\in[0,1]$ e $y=\sin(2\pi x)+\varepsilon$, com $\varepsilon\sim\mathcal{N}(0;\,0{,}15^2)$ (semente 0).
+2. Separe 70% para treino e 30% para teste (`train_test_split`, `random_state=0`).
+3. Treine `MLPRegressor` com uma camada oculta de 8 neurônios, ativação `tanh` e `solver="lbfgs"`.
+4. Calcule o $R^2$ no treino e no teste e conte os parâmetros da rede.
+
+**Pergunta:** a rede generalizou? O número de parâmetros confere com a fórmula do Capítulo 1?
+@@SOL
+```python
+import numpy as np
+from sklearn.neural_network import MLPRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+rng = np.random.default_rng(0)
+x = rng.uniform(0, 1, 200)[:, None]
+t = np.sin(2 * np.pi * x).ravel() + rng.normal(0, 0.15, 200)
+x_tr, x_te, t_tr, t_te = train_test_split(x, t, test_size=0.3, random_state=0)
+
+modelo = MLPRegressor(hidden_layer_sizes=(8,), activation="tanh", solver="lbfgs",
+                      max_iter=2000, random_state=0).fit(x_tr, t_tr)
+print("R2 treino = %.4f | R2 teste = %.4f" % (r2_score(t_tr, modelo.predict(x_tr)),
+                                              r2_score(t_te, modelo.predict(x_te))))
+P = sum(w.size for w in modelo.coefs_) + sum(b.size for b in modelo.intercepts_)
+print("parâmetros:", P, "| fórmula 1-8-1:", (8 * 1 + 8) + (1 * 8 + 1))
+```
+@@NOTE O $R^2$ de teste (0,9452) é próximo do de treino (0,9541): não há sinal forte de sobreajuste. Com ruído de desvio 0,15 e amplitude 1, o $R^2$ máximo esperado é da ordem de 0,95, de modo que a rede está perto do limite imposto pelo ruído. Os 25 parâmetros conferem com $P=(8\cdot1+8)+(1\cdot8+1)$. Observação: o scikit-learn guarda pesos em `coefs_` com forma $(n_{l-1},n_l)$, a transposta da convenção do livro.
+
+@@EX 2 | Classificando flores com MLPClassifier | iniciante
+A base **Iris** (Fisher, 1936; disponível na UCI e embutida no scikit-learn) tem 150 flores, 4 medidas e 3 espécies.
+
+1. Separe 70% treino e 30% teste de forma **estratificada** (`stratify=y`, `random_state=0`).
+2. Monte um `Pipeline` com `StandardScaler` e `MLPClassifier` (5 neurônios ocultos, `max_iter=2000`, `random_state=0`).
+3. Calcule a acurácia no treino e no teste e exiba a matriz de confusão.
+
+**Pergunta:** por que o `StandardScaler` está dentro do `Pipeline`, em vez de ser aplicado antes da separação dos dados?
+@@SOL
+```python
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import confusion_matrix
+
+X, y = load_iris(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+modelo = make_pipeline(StandardScaler(),
+                       MLPClassifier(hidden_layer_sizes=(5,), max_iter=2000, random_state=0))
+modelo.fit(X_tr, y_tr)
+print("acurácia treino = %.4f | teste = %.4f" % (modelo.score(X_tr, y_tr), modelo.score(X_te, y_te)))
+print(confusion_matrix(y_te, modelo.predict(X_te)))
+```
+@@NOTE Acurácia de 0,9619 no treino e 0,9778 no teste (44 de 45 acertos). A única confusão foi entre as espécies 2 e 3, que de fato se sobrepõem. O escalonador fica dentro do `Pipeline` para ser **ajustado só com o treino** (média e desvio do treino); calculá-lo antes da separação deixaria informação do teste "vazar" para o treinamento. Com 45 amostras de teste, uma diferença de um acerto equivale a 2,2 pontos percentuais: não superinterprete.
+
+@@EX 3 | Abrindo a rede: dimensões e parâmetros | intermediário
+Use a rede do Exercício 2 (já treinada) para conferir, na prática, as dimensões do Capítulo 1.
+
+1. Mostre a forma de cada matriz em `coefs_` e de cada vetor em `intercepts_`.
+2. Calcule o número total de parâmetros e compare com $P=\sum_l(n_ln_{l-1}+n_l)$.
+3. Qual é a função de ativação da saída escolhida pelo scikit-learn para este problema?
+
+**Pergunta:** como as formas de `coefs_` se relacionam com $W^{(l)}$ do livro?
+@@SOL
+```python
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+from sklearn.neural_network import MLPClassifier
+
+X, y = load_iris(return_X_y=True)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+modelo = make_pipeline(StandardScaler(),
+                       MLPClassifier(hidden_layer_sizes=(5,), max_iter=2000, random_state=0))
+modelo.fit(X_tr, y_tr)
+rede = modelo[-1]
+
+print("formas de coefs_:     ", [w.shape for w in rede.coefs_])
+print("formas de intercepts_:", [b.shape for b in rede.intercepts_])
+P = sum(w.size for w in rede.coefs_) + sum(b.size for b in rede.intercepts_)
+camadas = [4, 5, 3]
+P_formula = sum(n * n_ant + n for n_ant, n in zip(camadas[:-1], camadas[1:]))
+print("P =", P, "| fórmula =", P_formula)
+print("ativação da saída:", rede.out_activation_)
+```
+@@NOTE As formas são $(4,5)$ e $(5,3)$: no scikit-learn, `coefs_[l]` tem forma $(n_{l-1},n_l)$, ou seja, $W^{(l)T}$ na notação do livro (que usa $n_l\times n_{l-1}$). O total é $(5\cdot4+5)+(3\cdot5+3)=43$. Para classificação com mais de duas classes, a saída é `softmax`.
+
+@@PROJ Quanto a arquitetura importa? Explorando larguras de uma camada oculta | iniciante
+**Objetivo.** Investigar como o número de neurônios ocultos afeta o desempenho em uma base real.
+
+**Dados.** Base **Wine** (UCI Machine Learning Repository, embutida no scikit-learn): 178 vinhos, 13 medidas químicas, 3 cultivares.
+
+**Tarefas.**
+1. Separe os dados em treino (60%), validação (20%) e teste (20%), de forma estratificada e com sementes fixas.
+2. Para cada arquitetura $(2),\,(5),\,(10),\,(20),\,(50)$ e $(10,10)$, treine 5 redes com sementes diferentes (`StandardScaler` ajustado só com o treino) e registre média e desvio da acurácia de **validação**.
+3. Escolha a arquitetura pela validação. **Só então** avalie no teste, uma única vez.
+4. Redija 8 a 10 linhas: o que você observou? A conclusão vale para qualquer base?
+
+**Para ir além (não testado no livro).** Procure no repositório da UCI e no Kaggle bases tabulares pequenas de classificação (por exemplo, variações do conjunto de vinhos ou de diagnósticos médicos) e repita o procedimento. Confira a descrição, a licença e as colunas antes de usar.
+@@RUBRICA
+- Separação treino/validação/teste correta, sem vazamento (o escalonador ajustado só com o treino).
+- Uso de múltiplas sementes e relato de média e desvio.
+- Teste usado uma única vez, após a escolha.
+- Interpretação cuidadosa, com limites (base pequena, resultado quase perfeito).
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+from sklearn.neural_network import MLPClassifier
+
+X, y = load_wine(return_X_y=True)
+X_tmp, X_te, y_tmp, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+X_tr, X_va, y_tr, y_va = train_test_split(X_tmp, y_tmp, test_size=0.25, random_state=0,
+                                          stratify=y_tmp)
+print("tamanhos treino/val/teste:", len(y_tr), len(y_va), len(y_te))
+
+def construir(h, semente):
+    return make_pipeline(StandardScaler(),
+                         MLPClassifier(hidden_layer_sizes=h, max_iter=3000, random_state=semente))
+
+resultados = []
+for h in [(2,), (5,), (10,), (20,), (50,), (10, 10)]:
+    acc = [construir(h, s).fit(X_tr, y_tr).score(X_va, y_va) for s in range(5)]
+    modelo = construir(h, 4).fit(X_tr, y_tr)
+    P = sum(w.size for w in modelo[-1].coefs_) + sum(b.size for b in modelo[-1].intercepts_)
+    resultados.append((h, P, np.mean(acc), np.std(acc)))
+    print("%-10s P=%4d  acc_val = %.3f ± %.3f" % (str(h), P, np.mean(acc), np.std(acc)))
+
+melhor = max(resultados, key=lambda r: r[2])
+print("arquitetura escolhida pela validação:", melhor[0])
+final = construir(melhor[0], 0).fit(np.vstack([X_tr, X_va]), np.concatenate([y_tr, y_va]))
+print("acurácia no teste (avaliada uma única vez): %.3f" % final.score(X_te, y_te))
+```
+@@NOTE A acurácia de validação é próxima de 1 para quase todas as arquiteturas; só a rede com 2 neurônios ficou claramente abaixo (0,944 ± 0,035). A base Wine é fácil e a validação tem apenas 36 amostras, de modo que diferenças de 1 a 2 pontos percentuais **não são conclusivas**. O resultado perfeito no teste (36 amostras) também não prova que o modelo é perfeito. Conclusão prudente: para esta base, a largura da camada oculta importa pouco acima de uns 5 neurônios; a conclusão não se estende automaticamente a bases mais difíceis.
