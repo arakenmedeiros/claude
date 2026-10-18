@@ -1,0 +1,353 @@
+MC: O que é o pós-treinamento de um modelo de linguagem?
+= O conjunto de etapas posteriores ao pré-treinamento (como ajuste supervisionado e ajuste por preferências) que moldam o comportamento do modelo.
+- A etapa em que o modelo é treinado do zero com texto sem rótulos.
+- A etapa de implantação do modelo em servidores.
+- A coleta de dados da web para o pré-treinamento.
+- A redução do tamanho do vocabulário.
+J: O pós-treinamento adapta um modelo já pré-treinado a seguir instruções e a se comportar de modo desejado.
+
+MC: Qual é a diferença de comportamento típica entre um modelo-base e um modelo ajustado para instruções?
+= O modelo-base continua texto de modo plausível; o ajustado responde ao pedido no formato esperado.
+- O modelo-base segue instruções; o ajustado só continua texto.
+- Não há diferença de comportamento.
+- O modelo ajustado nunca erra.
+- O modelo-base é sempre maior que o ajustado.
+J: O SFT ensina o formato de interação (pergunta e resposta), que o pré-treinamento sozinho não ensina.
+
+MC: Quais são as três etapas do pipeline descrito por Ouyang et al. (2022) para o InstructGPT?
+= Ajuste supervisionado com demonstrações, treino de modelo de recompensa com comparações e otimização por aprendizado por reforço.
+- Tokenização, embeddings e atenção.
+- Coleta de dados, deduplicação e filtragem.
+- Quantização, destilação e implantação.
+- Pré-treinamento, avaliação e descarte.
+J: Cada etapa usa dados diferentes: demonstrações, rankings de respostas e a recompensa aprendida.
+
+MC: Qual o formato típico dos dados de ajuste fino supervisionado?
+= Pares de instrução e resposta desejada, organizados com um modelo de conversa que marca os papéis.
+- Textos sem estrutura, retirados da web.
+- Pares de respostas, com uma preferida e outra rejeitada.
+- Vetores de embeddings sem texto.
+- Apenas respostas, sem instruções.
+J: Os papéis (sistema, usuário, assistente) são indicados por marcadores especiais do modelo de conversa.
+
+MC: Por que, no SFT, a perda é normalmente calculada apenas sobre os tokens da resposta?
+= Para que o modelo aprenda a produzir respostas, e não a gerar instruções.
+- Porque os tokens da instrução não existem.
+- Porque a perda sobre a instrução é sempre zero.
+- Para aumentar o vocabulário.
+- Porque os gradientes dos tokens de instrução são proibidos pelo hardware.
+J: As instruções servem de contexto; o aprendizado é concentrado no comportamento de resposta.
+
+MC: Uma sequência tem perdas por token $(1;\ 2;\ 3;\ 4)$ e máscara $(0;\ 0;\ 1;\ 1)$. Qual a perda do SFT (média sobre a resposta)?
+= 3,5
+- 2,5
+- 7
+- 1,5
+- 10
+J: $(3+4)/2=3{,}5$. Sem máscara, a média seria 2,5.
+
+MC: O que sugerem os resultados de Zhou et al. (2023), no trabalho LIMA?
+= Que um conjunto pequeno e bem curado de exemplos pode bastar para ensinar o formato de resposta a um modelo bem pré-treinado.
+- Que nunca é necessário pré-treinamento.
+- Que mais dados sempre pioram o modelo.
+- Que o ajuste supervisionado ensina todo o conhecimento factual.
+- Que dados de baixa qualidade são preferíveis.
+J: A hipótese é que o conhecimento vem do pré-treinamento e o ajuste ensina principalmente o estilo; é uma hipótese discutida.
+
+MC: O que compõe um exemplo de preferência?
+= Um pedido, uma resposta preferida e uma resposta rejeitada.
+- Apenas um pedido e uma resposta correta.
+- Um conjunto de embeddings.
+- Um par de tokens consecutivos.
+- Um modelo de recompensa pronto.
+J: Cada comparação indica qual das duas respostas ao mesmo pedido é a melhor.
+
+MC: Por que costuma-se coletar comparações em vez de respostas ideais escritas por pessoas?
+= Comparar é mais fácil, barato e consistente do que escrever respostas.
+- Porque comparações dispensam qualquer avaliador.
+- Porque respostas escritas por pessoas são ilegais.
+- Porque comparações garantem correção factual.
+- Porque modelos não aprendem com respostas escritas.
+J: Escolher entre duas opções é uma tarefa cognitivamente mais simples e gera dados em maior quantidade.
+
+MC: No modelo de Bradley-Terry, qual a probabilidade de a resposta $y_w$ ser preferida à $y_l$?
+= $\sigma\big(r(y_w)-r(y_l)\big)$
+- $r(y_w)\cdot r(y_l)$
+- $r(y_w)+r(y_l)$
+- $\ln r(y_w)$
+- $r(y_w)/r(y_l)$
+J: A probabilidade depende da diferença de recompensas, passada pela sigmoide.
+
+MC: Se duas respostas têm a mesma recompensa, qual a probabilidade de preferência segundo Bradley-Terry?
+= 0,5
+- 0
+- 1
+- 0,25
+- Indefinida
+J: A diferença é zero e $\sigma(0)=0{,}5$.
+
+MC: Qual a perda do modelo de recompensa para um par em que a diferença de recompensas é zero?
+= $\ln2\approx0{,}693$
+- 0
+- 1
+- $-\ln2$
+- Infinita
+J: $-\ln\sigma(0)=-\ln0{,}5=\ln2$.
+
+MC: O que ocorre com a perda do modelo de recompensa quando a diferença (preferida menos rejeitada) cresce muito?
+= Tende a zero.
+- Cresce sem limite.
+- Fica constante em $\ln 2$.
+- Torna-se negativa.
+- Oscila entre 0 e 1.
+J: Quando o modelo ordena com folga as respostas na direção certa, $-\ln\sigma(d)\to0$.
+
+MC: Qual a consequência de avaliadores preferirem respostas mais longas, independentemente da qualidade?
+= O modelo de recompensa aprende que comprimento é bom, e um modelo otimizado contra ela tende a produzir respostas longas demais.
+- O modelo de recompensa passa a ignorar o conteúdo.
+- O modelo produz respostas mais curtas.
+- Não há consequência sobre o modelo.
+- A recompensa torna-se constante.
+J: É um viés conhecido: o comprimento correlaciona-se com a preferência e pode ser explorado.
+
+MC: O que é exploração da recompensa (*reward hacking*)?
+= Quando a política encontra respostas que maximizam a recompensa aprendida sem melhorar a qualidade real.
+- Quando o modelo de recompensa é treinado com poucos dados.
+- Quando os avaliadores trocam de idioma.
+- Quando o modelo de referência é atualizado.
+- Quando o vocabulário é ampliado.
+J: A recompensa é um substituto imperfeito da qualidade desejada, e a otimização explora suas falhas.
+
+MC: Qual a função da penalidade de KL no RLHF?
+= Impedir que a política se afaste demais do modelo de referência, limitando a exploração da recompensa.
+- Aumentar a recompensa a qualquer custo.
+- Reduzir o tamanho do modelo.
+- Eliminar o modelo de recompensa.
+- Substituir o ajuste supervisionado.
+J: O termo $-\beta D_{\mathrm{KL}}(\pi\Vert\pi_{\text{ref}})$ funciona como um "elástico" em torno da referência.
+
+MC: O que acontece com a política ótima quando $\beta$ diminui?
+= Concentra-se mais nas respostas de maior recompensa e afasta-se mais da referência.
+- Aproxima-se mais da referência.
+- Torna-se uniforme.
+- Deixa de depender da recompensa.
+- Ignora o modelo de referência.
+J: Em $\pi^*\propto\pi_{\text{ref}}e^{r/\beta}$, $\beta$ pequeno amplifica as diferenças de recompensa.
+
+MC: Qual a forma da política ótima do problema com penalidade de KL?
+= $\pi^*(y)\propto\pi_{\text{ref}}(y)\,\exp\big(r(y)/\beta\big)$
+- $\pi^*(y)\propto r(y)$
+- $\pi^*(y)=\pi_{\text{ref}}(y)$
+- $\pi^*(y)\propto\exp(-r(y))$
+- $\pi^*(y)\propto\beta\,r(y)$
+J: A referência é reponderada pelo exponencial da recompensa, e normalizada.
+
+MC: Para $\pi_{\text{ref}}=(0{,}5;\ 0{,}5)$, $r=(0;\ 1)$ e $\beta=1$, qual a política ótima?
+= Aproximadamente $(0{,}269;\ 0{,}731)$
+- $(0{,}5;\ 0{,}5)$
+- $(0;\ 1)$
+- $(0{,}731;\ 0{,}269)$
+- $(0{,}25;\ 0{,}75)$
+J: Pesos $(0{,}5;\ 0{,}5e)=(0{,}5;\ 1{,}359)$; soma $1{,}859$; probabilidades $0{,}269$ e $0{,}731$.
+
+MC: Qual o papel de algoritmos como o PPO no RLHF?
+= Otimizar a política para maximizar a recompensa com passos controlados, evitando atualizações instáveis.
+- Calcular a perda de entropia cruzada do pré-treinamento.
+- Tokenizar o texto.
+- Rotular os dados de preferência automaticamente.
+- Aumentar o contexto do modelo.
+J: O PPO é um método de aprendizado por reforço que limita o tamanho de cada atualização da política.
+
+MC: Qual a ideia central do DPO?
+= Reescrever a solução do problema de KL de modo que as preferências possam ser aprendidas diretamente, sem modelo de recompensa explícito nem aprendizado por reforço.
+- Treinar o modelo apenas com respostas rejeitadas.
+- Eliminar o modelo de referência.
+- Substituir o ajuste supervisionado pelo pré-treinamento.
+- Maximizar o comprimento das respostas.
+J: Ao expressar a recompensa pelas razões de probabilidade, o DPO reduz o problema a uma classificação das preferências.
+
+MC: Por que o DPO ainda precisa de um modelo de referência?
+= Porque a perda é calculada com razões de probabilidade entre a política e a referência, o que mantém o ajuste ancorado.
+- Porque o modelo de referência gera as respostas rejeitadas.
+- Porque a referência substitui o conjunto de dados.
+- Porque sem referência não há como calcular softmax.
+- Porque o DPO não usa preferências.
+J: O termo $\beta\ln(\pi_\theta/\pi_{\text{ref}})$ depende explicitamente da referência.
+
+MC: Qual a perda DPO quando a política é igual à referência?
+= $\ln2\approx0{,}693$
+- 0
+- 1
+- $\beta$
+- Infinita
+J: As razões são 1, a margem é 0, e $-\ln\sigma(0)=\ln2$.
+
+MC: No DPO, o que o treinamento tende a fazer, em relação ao modelo de referência?
+= Aumentar a probabilidade das respostas preferidas e diminuir a das rejeitadas.
+- Diminuir a probabilidade de todas as respostas.
+- Aumentar a probabilidade das rejeitadas.
+- Igualar a probabilidade de todas as respostas.
+- Manter todas as probabilidades inalteradas.
+J: A perda é menor quando a margem entre as razões logarítmicas da preferida e da rejeitada é grande e positiva.
+
+MC: O que o exemplo numérico tabular do capítulo mostrou?
+= Que, em um caso reduzido, a política aprendida pelo DPO se aproxima da solução teórica do RLHF com penalidade de KL.
+- Que o DPO é sempre superior ao RLHF em modelos reais.
+- Que o RLHF não funciona.
+- Que o modelo de recompensa é desnecessário em qualquer cenário.
+- Que $\beta$ não influencia a política.
+J: É uma verificação em um caso minúsculo; em modelos reais, não há vencedor universal.
+
+MC: O que é bajulação (*sycophancy*) em um modelo de linguagem?
+= A tendência de concordar com o usuário ou adaptar a resposta às suas opiniões, mesmo quando incorretas.
+- A tendência de responder sempre em uma só língua.
+- A recusa de qualquer pedido.
+- A repetição de tokens.
+- O uso excessivo de memória.
+J: Pode surgir porque avaliadores preferem respostas que concordam com eles (Sharma et al., 2024).
+
+MC: Qual afirmação sobre o pós-treinamento é a mais adequada?
+= Ele molda estilo e disposição do modelo, mas não garante correção factual.
+- Ele garante que todas as respostas sejam verdadeiras.
+- Ele elimina todos os riscos de segurança.
+- Ele dispensa a avaliação.
+- Ele substitui o pré-treinamento.
+J: Preferências humanas premiam respostas convincentes, o que não é o mesmo que respostas corretas.
+
+MC: Qual uma vantagem e um risco de usar IA para gerar feedback (como na IA Constitucional)?
+= Reduz o custo de anotação, mas pode herdar os vieses do modelo avaliador.
+- Elimina qualquer viés dos dados.
+- Aumenta o custo, mas elimina erros.
+- Dispensa princípios ou critérios.
+- Garante que o modelo seja imparcial.
+J: O feedback automatizado escala, mas a qualidade depende do avaliador e dos princípios usados.
+
+MC: Uma universidade quer que seu assistente responda corretamente sobre regulamentos que mudam todo semestre. Qual a estratégia mais indicada primeiro?
+= Fornecer os documentos atuais por recuperação (RAG), em vez de ajustar o modelo com os fatos.
+- Realizar um novo pré-treinamento a cada semestre.
+- Aplicar DPO com preferências sobre os regulamentos.
+- Ajustar a temperatura para zero.
+- Não usar documentos, só prompts curtos.
+J: Fatos mutáveis e específicos pedem recuperação de documentos atualizados; o ajuste fino é mal adequado a conhecimento volátil.
+
+MC: Qual costuma ser o modelo de referência $\pi_{\text{ref}}$ no RLHF e no DPO?
+= O modelo após o ajuste supervisionado, mantido fixo durante a otimização de preferências.
+- O modelo-base sem nenhum ajuste, alterado a cada passo.
+- Um modelo escolhido ao acaso, sem relação com o modelo ajustado.
+- O modelo de recompensa.
+- O conjunto de dados de preferências.
+J: A referência ancora o ajuste e define o ponto de partida; ela não é atualizada durante o treino.
+
+DISC[C]: Descreva o pipeline típico de pós-treinamento (SFT, modelo de recompensa, otimização com preferências) e indique que dados cada etapa usa.
+R: SFT: pares (instrução, resposta desejada) escritos ou curados por pessoas; ensina formato e estilo. Modelo de recompensa: comparações entre respostas (preferida e rejeitada), usadas para aprender uma pontuação de qualidade. Otimização com preferências: usa o modelo de recompensa (RLHF, com RL e penalidade de KL) ou as comparações diretamente (DPO) para ajustar a política. Em geral, parte-se do modelo após o SFT como referência.
+
+DISC[C]: Explique a diferença entre o objetivo do pré-treinamento e o do SFT, e por que o SFT usa máscara de perda.
+R: O pré-treinamento prevê o próximo token em grandes corpora, aprendendo língua e conhecimento. O SFT usa poucos exemplos curados no formato de conversa para ensinar a responder; a perda é calculada só sobre os tokens da resposta (máscara), porque queremos que o modelo aprenda a responder, e não a reproduzir as instruções.
+
+DISC[C]: Explique, com uma analogia, a penalidade de KL no RLHF e o papel do coeficiente $\beta$.
+R: A penalidade é como um elástico que prende a política ao modelo de referência: permite melhorar a recompensa, mas impede que o modelo se afaste demais e explore falhas do modelo de recompensa. $\beta$ é a rigidez do elástico: grande mantém a política perto da referência; pequeno permite maior ganho de recompensa e maior afastamento (e risco). A analogia tem limite: o "elástico" é uma penalidade matemática média sobre distribuições, e não uma restrição rígida por resposta.
+
+DISC[C]: Por que alinhar um modelo a preferências humanas não garante respostas corretas? Dê três razões.
+R: (1) Preferências premiam respostas convincentes, fluentes ou agradáveis, que podem estar erradas. (2) Os dados refletem vieses dos avaliadores (comprimento, concordância com o usuário). (3) O modelo de recompensa é uma aproximação ruidosa e pode ser explorado. Além disso, o conhecimento factual vem do pré-treinamento e de fontes externas, não do ajuste de estilo.
+
+DISC[M]: Uma sequência tem perdas por token $(2{,}4;\ 1{,}8;\ 0{,}9;\ 0{,}7;\ 0{,}2)$ e máscara $(0,0,1,1,1)$. Calcule a perda média sem e com máscara.
+R: Sem máscara: $(2{,}4+1{,}8+0{,}9+0{,}7+0{,}2)/5=6{,}0/5=1{,}2$. Com máscara: $(0{,}9+0{,}7+0{,}2)/3=1{,}8/3=0{,}6$.
+
+DISC[M]: Calcule a perda média do modelo de recompensa para três pares com diferenças de recompensa $(+1{,}5;\ 0;\ -1{,}0)$.
+R: $-\ln\sigma(1{,}5)=-\ln0{,}8176=0{,}2014$; $-\ln\sigma(0)=0{,}6931$; $-\ln\sigma(-1)=-\ln0{,}2689=1{,}3133$. Média: $(0{,}2014+0{,}6931+1{,}3133)/3=2{,}2078/3\approx0{,}736$.
+
+DISC[M]: Com $\pi_{\text{ref}}=(0{,}6;\ 0{,}3;\ 0{,}1)$ e $r=(0;\ 1;\ 2)$, calcule $\pi^*$ para $\beta=1$.
+R: Pesos: $0{,}6\cdot1=0{,}6$; $0{,}3\cdot e=0{,}815$; $0{,}1\cdot e^2=0{,}739$. $Z=2{,}154$. $\pi^*=(0{,}279;\ 0{,}379;\ 0{,}343)$. A resposta de maior recompensa passa de 10% a 34%.
+
+DISC[M]: Repita o cálculo anterior com $\beta=0{,}5$ e compare.
+R: Pesos: $0{,}6$; $0{,}3\,e^{2}=2{,}217$; $0{,}1\,e^{4}=5{,}460$. $Z=8{,}277$. $\pi^*=(0{,}072;\ 0{,}268;\ 0{,}660)$. Com $\beta$ menor, a massa se concentra na resposta de maior recompensa (66%), ao custo de maior afastamento da referência.
+
+DISC[M]: Calcule a perda DPO de um par com $\ln\pi_\theta(y_w)=-0{,}8$, $\ln\pi_{\text{ref}}(y_w)=-1{,}2$, $\ln\pi_\theta(y_l)=-3{,}0$, $\ln\pi_{\text{ref}}(y_l)=-2{,}4$, para $\beta=0{,}1$ e $\beta=1$.
+R: Razões logarítmicas: preferida $=-0{,}8-(-1{,}2)=+0{,}4$; rejeitada $=-3{,}0-(-2{,}4)=-0{,}6$. Diferença $=1{,}0$. Para $\beta=0{,}1$: margem $0{,}1$, $\sigma(0{,}1)=0{,}525$, perda $=0{,}644$. Para $\beta=1$: margem $1{,}0$, $\sigma(1)=0{,}731$, perda $=0{,}313$.
+
+DISC[M]: Pelo modelo de Bradley-Terry, qual a probabilidade de a resposta A (recompensa 2,3) ser preferida à B (recompensa 0,9)? Se, em 100 comparações, 70 avaliadores preferirem A, que diferença de recompensas é estimada?
+R: $\sigma(2{,}3-0{,}9)=\sigma(1{,}4)=0{,}802$. Com 70% de preferência, a diferença estimada é $\ln(0{,}7/0{,}3)=0{,}847$, bem abaixo de 1,4, sugerindo que a recompensa usada superestima a diferença percebida pelos avaliadores.
+
+DISC[A]: Em um sistema, as respostas ficaram cada vez mais longas após o ajuste por preferências, sem melhora medida na qualidade. Analise as causas prováveis e proponha duas ações.
+R: Causa provável: viés de comprimento nos dados de preferência, aprendido pelo modelo de recompensa e explorado pela política. Ações: auditar o modelo de recompensa (correlação com comprimento); controlar o comprimento nas comparações ou na avaliação (normalizar, penalizar); aumentar $\beta$ ou limitar a otimização; incluir avaliadores com instruções sobre concisão; acompanhar uma métrica de qualidade independente.
+
+DISC[A]: Durante um treinamento com RLHF, a recompensa média sobe continuamente, mas avaliações humanas de qualidade caem após certo ponto. Analise o fenômeno e como detectar e mitigar.
+R: É a exploração (superotimização) da recompensa: a política explora imperfeições do modelo de recompensa (Gao; Schulman; Hilton, 2023). Detecção: monitorar uma avaliação independente (humana ou outro modelo de recompensa) durante o treino; observar KL em relação à referência. Mitigação: parada antecipada, $\beta$ maior, modelos de recompensa mais robustos ou em conjunto, dados mais diversos, e revisão humana periódica.
+
+DISC[A]: Uma equipe quer que um assistente responda sobre regulamentos internos. Compare prompts, RAG, SFT e DPO para esse objetivo, indicando o que cada um resolve e não resolve.
+R: Prompts: definem tarefa, tom e formato, não trazem fatos novos. RAG: fornece os documentos atuais e permite citar fontes; ajuda a fundamentar respostas, mas depende da qualidade da recuperação e não garante correção. SFT: ensina formato e estilo consistentes; não é bom para armazenar fatos mutáveis. DPO: ajusta preferências (estilo, recusas) e exige dados de comparação; não corrige fatos. Recomendação: começar com prompt + RAG e avaliar; considerar SFT/DPO só se houver lacunas de formato ou de preferência.
+
+DISC[A]: Projete um teste para medir bajulação em um assistente e discuta uma limitação do teste.
+R: Montar pares de pedidos com premissas falsas e verdadeiras, apresentados com e sem opinião do usuário ("acho que..."); medir a taxa de concordância indevida e a mudança de resposta ao inserir a opinião; usar vários domínios e reformulações. Limitação: a classificação das respostas (concordou ou corrigiu) pode ser ambígua e exigir juiz humano; resultados dependem do prompt e podem não se generalizar para outros contextos.
+
+DISC[P]: Implemente `perda_sft(perdas, mascara)` que calcule a média das perdas sobre os tokens de resposta, e teste com o exemplo $(1,2,3,4)$ e máscara $(0,0,1,1)$.
+CODE:
+import numpy as np
+
+def perda_sft(perdas, mascara):
+    perdas = np.asarray(perdas, float)
+    mascara = np.asarray(mascara, float)
+    if mascara.sum() == 0:
+        raise ValueError("máscara sem tokens de resposta")
+    return float((perdas * mascara).sum() / mascara.sum())
+
+assert perda_sft([1, 2, 3, 4], [0, 0, 1, 1]) == 3.5
+assert perda_sft([1, 2, 3, 4], [1, 1, 1, 1]) == 2.5
+print(perda_sft([1, 2, 3, 4], [0, 0, 1, 1]))
+ENDCODE
+CRIT: Divide pela soma da máscara, e não pelo comprimento da sequência.
+CRIT: Trata o caso de máscara vazia.
+CRIT: Testa com e sem máscara.
+
+DISC[P]: Implemente `perda_dpo(lp_w, lp_l, lref_w, lref_l, beta)` vetorizada (média sobre pares) e teste com o par da questão matemática correspondente.
+CODE:
+import numpy as np
+
+def sig(x):
+    return 1 / (1 + np.exp(-x))
+
+def perda_dpo(lp_w, lp_l, lref_w, lref_l, beta):
+    lp_w, lp_l, lref_w, lref_l = map(np.asarray, (lp_w, lp_l, lref_w, lref_l))
+    margem = beta * ((lp_w - lref_w) - (lp_l - lref_l))
+    return float(-np.log(sig(margem)).mean())
+
+l1 = perda_dpo([-0.8], [-3.0], [-1.2], [-2.4], beta=0.1)
+l2 = perda_dpo([-0.8], [-3.0], [-1.2], [-2.4], beta=1.0)
+assert abs(l1 - 0.6444) < 1e-3 and abs(l2 - 0.3133) < 1e-3
+assert abs(perda_dpo([-1.0], [-2.0], [-1.0], [-2.0], beta=1.0) - np.log(2)) < 1e-12
+print(round(l1, 4), round(l2, 4))
+ENDCODE
+CRIT: Calcula a margem com a diferença das razões logarítmicas.
+CRIT: Usa a média sobre os pares e a sigmoide corretamente.
+CRIT: Verifica o caso em que política e referência coincidem (perda $\ln2$).
+
+DISC[P]: Implemente `politica_otima(pref, r, beta)` e verifique: (a) soma 1; (b) com $\beta$ muito grande, tende à referência; (c) com $\beta$ muito pequeno, concentra-se na maior recompensa.
+CODE:
+import numpy as np
+
+def politica_otima(pref, r, beta):
+    pref, r = np.asarray(pref, float), np.asarray(r, float)
+    z = np.log(pref) + r / beta
+    z = z - z.max()                    # estabilidade numérica
+    q = np.exp(z)
+    return q / q.sum()
+
+pref = np.array([0.6, 0.3, 0.1]); r = np.array([0.0, 1.0, 2.0])
+assert abs(politica_otima(pref, r, 1.0).sum() - 1) < 1e-12
+assert np.allclose(politica_otima(pref, r, 1e6), pref, atol=1e-4)
+assert politica_otima(pref, r, 0.01).argmax() == 2 and politica_otima(pref, r, 0.01)[2] > 0.999
+assert np.allclose(politica_otima(pref, r, 1.0), [0.279, 0.379, 0.343], atol=1e-3)
+print(politica_otima(pref, r, 1.0).round(3))
+ENDCODE
+CRIT: Reponderar a referência pelo exponencial de $r/\beta$ e normalizar.
+CRIT: Trabalha em escala logarítmica para evitar overflow.
+CRIT: Testa os limites de $\beta$ grande e pequeno.
+
+DISC[D]: Você vai coletar dados de preferência para ajustar um assistente de atendimento de uma instituição pública. Proponha as diretrizes de anotação, o controle de qualidade e as medidas contra vieses conhecidos.
+R: Diretrizes: critérios explícitos e ordenados (correção e fundamentação em fontes, clareza, segurança, concisão), exemplos de casos difíceis, instruções para não preferir respostas apenas por serem longas ou concordarem com o usuário, e opção de "ambas ruins". Controle de qualidade: múltiplos avaliadores por par, medida de concordância, pares de controle com resposta conhecida, auditoria periódica e treinamento. Vieses: balancear comprimento nos pares, incluir premissas falsas para testar bajulação, diversificar avaliadores, e registrar a composição e as limitações do conjunto (ficha de dados).
+
+DISC[D]: Defina critérios de decisão entre prompt, RAG, SFT e DPO para três demandas: (a) padronizar o tom das respostas, (b) responder sobre legislação atualizada, (c) recusar educadamente pedidos fora do escopo.
+R: (a) Tom: começar por instruções e exemplos no prompt; se a consistência for insuficiente, SFT com exemplos curados. (b) Legislação atualizada: RAG com documentos oficiais e citações; ajuste não é adequado a conhecimento volátil. (c) Recusas: instruções claras e filtros; se o comportamento for inconsistente, SFT com exemplos de recusa e, se necessário, DPO com pares de recusa adequada versus inadequada, com avaliação de recusas excessivas e insuficientes. Em todos os casos, medir antes e depois.
+
+DISC[D]: Liste riscos de implantar um modelo ajustado por preferências em um serviço público e as medidas de mitigação correspondentes.
+R: Respostas incorretas com tom confiante: exigir fontes, abstenção e supervisão humana. Bajulação: testes dedicados e instruções claras. Viés de avaliadores: auditoria e diversidade. Exploração da recompensa e comportamentos inesperados: avaliação contínua com dados independentes. Recusas excessivas ou insuficientes: métricas de ambos os erros. Mudança de versão do modelo: testes de regressão e registro de versões. Transparência: informar aos usuários o caráter automatizado e os limites.

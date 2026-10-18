@@ -1,0 +1,384 @@
+MC: Qual é a melhor descrição de um prompt em uma aplicação real?
+= Um documento de entrada, geralmente montado por código a partir de partes (papel, tarefa, contexto, exemplos, formato), que condiciona a geração.
+- Uma única frase digitada pelo usuário, sem estrutura.
+- Um programa escrito em linguagem de máquina.
+- Uma lista de palavras-chave secretas.
+- O conjunto de pesos do modelo.
+J: Em aplicações, o prompt é montado e versionado como um artefato, e não apenas digitado.
+
+MC: Por que se diz que um prompt condiciona, e não programa, o modelo?
+= Porque ele altera uma distribuição de probabilidade; o modelo pode interpretar mal, ignorar ou seguir só em parte as instruções.
+- Porque o modelo executa cada linha do prompt como um comando exato.
+- Porque o prompt altera os pesos do modelo.
+- Porque o prompt é compilado antes de ser enviado.
+- Porque o modelo nunca lê o prompt.
+J: Instruções não são garantias; por isso todo prompt deve ser testado.
+
+MC: Qual a função de especificar o formato de saída no prompt?
+= Tornar a resposta previsível e verificável por código.
+- Aumentar o número de parâmetros do modelo.
+- Impedir que o modelo use o contexto.
+- Reduzir a janela de contexto.
+- Eliminar a necessidade de testes.
+J: Um formato explícito (por exemplo, JSON com campos definidos) permite validação automática.
+
+MC: Qual dos pedidos abaixo é o mais verificável?
+= "Resuma em até 5 tópicos, citando entre aspas o trecho de apoio de cada um."
+- "Faça um resumo bom."
+- "Resuma como um especialista."
+- "Resuma e seja criativo."
+- "Resuma de qualquer jeito, mas bem."
+J: Tamanho, estrutura e citação são critérios que podem ser conferidos.
+
+MC: Qual o risco de incluir muito contexto irrelevante no prompt?
+= Consumir a janela de contexto e distrair o modelo, além de aumentar custo e latência.
+- Reduzir a probabilidade de alucinações a zero.
+- Impedir o uso de exemplos.
+- Aumentar a precisão sempre.
+- Tornar o modelo mais criativo, sem outros efeitos.
+J: Contexto deve ser necessário e suficiente, e não máximo.
+
+MC: Qual formulação costuma funcionar melhor?
+= "Responda em até três frases."
+- "Não seja prolixo."
+- "Não responda com textos longos nem curtos demais."
+- "Não faça respostas ruins."
+- "Evite qualquer problema."
+J: Instruções positivas e concretas costumam ser seguidas com mais consistência que negativas vagas.
+
+MC: Por que incluir no prompt a instrução de responder "não consta" quando faltar informação?
+= Para reduzir respostas inventadas, dando ao modelo uma saída legítima de abstenção.
+- Para que o modelo nunca responda a nada.
+- Para aumentar o tamanho das respostas.
+- Para eliminar a necessidade de contexto.
+- Para evitar o uso de documentos.
+J: Sem uma opção de abstenção, o modelo tende a produzir alguma resposta plausível.
+
+MC: Qual o propósito dos delimitadores (como <<< >>> ou tags) em um prompt?
+= Separar claramente instruções de dados, reduzindo confusões, e funcionando como uma primeira camada (insuficiente) contra injeção de prompts.
+- Garantir que o texto de entrada seja verdadeiro.
+- Aumentar o número de tokens.
+- Substituir a validação de saídas.
+- Impedir qualquer tipo de ataque.
+J: Delimitadores ajudam, mas não são uma defesa completa; a segurança exige várias camadas (Capítulo 17).
+
+MC: O que distingue os usos zero-shot, one-shot e few-shot?
+= O número de exemplos fornecidos no prompt: nenhum, um ou poucos.
+- O tamanho do modelo: pequeno, médio ou grande.
+- O idioma da resposta.
+- A temperatura de geração.
+- O número de camadas do modelo.
+J: Brown et al. (2020) usam esses termos para descrever a aprendizagem em contexto.
+
+MC: Qual critério é importante ao escolher exemplos few-shot?
+= Que sejam representativos, corretos, diversos e no formato de saída desejado.
+- Que sejam todos iguais, para reforçar o padrão.
+- Que contenham erros para o modelo aprender a corrigi-los.
+- Que sejam o mais longos possível.
+- Que pertençam todos à mesma categoria.
+J: O modelo imita formato e critério dos exemplos; exemplos errados ensinam o erro.
+
+MC: Em um prompt few-shot de classificação, quase todos os exemplos têm o mesmo rótulo. Qual a consequência provável?
+= O modelo tende a favorecer esse rótulo.
+- O modelo ignora os exemplos.
+- O modelo passa a acertar mais.
+- O modelo passa a responder em outro idioma.
+- Não há qualquer efeito.
+J: O viés para o rótulo mais frequente nos exemplos é um efeito documentado (Zhao et al., 2021).
+
+MC: O que a literatura mostra sobre a ordem dos exemplos em prompts few-shot?
+= Permutações dos mesmos exemplos podem alterar bastante o desempenho em alguns modelos.
+- A ordem nunca influencia o resultado.
+- Só o primeiro exemplo é lido.
+- A ordem só influencia modelos pequenos.
+- A melhor ordem é sempre a alfabética.
+J: Lu et al. (2022) e Zhao et al. (2021) documentam sensibilidade à ordem e a outros fatores.
+
+MC: O que é a técnica de cadeia de pensamento (chain of thought)?
+= Pedir ao modelo que produza etapas de raciocínio antes da resposta final.
+- Encadear vários modelos em série.
+- Treinar o modelo com pensamentos humanos.
+- Reduzir o contexto a uma só linha.
+- Aumentar a temperatura.
+J: Wei et al. (2022) mostraram melhora em tarefas de raciocínio com modelos grandes.
+
+MC: O que é a técnica de autoconsistência (self-consistency)?
+= Gerar várias respostas com raciocínios diferentes e escolher a mais frequente.
+- Pedir ao modelo que concorde consigo mesmo.
+- Usar sempre a mesma semente.
+- Forçar a temperatura zero.
+- Repetir o prompt até o modelo desistir.
+J: Wang et al. (2023) mostram que votar entre amostras melhora o resultado em várias tarefas de raciocínio.
+
+MC: O que Turpin et al. (2023) mostraram sobre explicações em cadeia de pensamento?
+= Que as explicações podem ser influenciadas por fatores não mencionados no texto e justificar de modo plausível respostas determinadas por outros motivos.
+- Que as explicações sempre refletem fielmente o processo interno do modelo.
+- Que o modelo nunca usa explicações.
+- Que explicações são sempre erradas.
+- Que explicações dispensam verificação.
+J: A explicação gerada é mais texto gerado, e não acesso fiel ao raciocínio interno.
+
+MC: Qual dos itens é uma justificativa verificável?
+= Uma citação literal do trecho do documento que sustenta a resposta.
+- A frase "tenho certeza de que está correto".
+- A afirmação de que "o modelo raciocinou com cuidado".
+- Um parágrafo genérico sobre o assunto.
+- A explicação sem fontes.
+J: Uma citação pode ser procurada no texto-fonte por um programa ou por uma pessoa.
+
+MC: Como verificar automaticamente se uma citação feita pelo modelo existe no documento?
+= Normalizar espaços e caixa e procurar a citação como subcadeia do documento.
+- Perguntar ao modelo se a citação está certa.
+- Calcular a temperatura da resposta.
+- Contar o número de tokens da citação.
+- Verificar se a citação tem mais de 10 palavras.
+J: A busca de subcadeia é uma verificação independente, determinística e barata.
+
+MC: Por que pedir o cálculo explícito (com os números usados) é útil?
+= Porque permite refazer a conta em código e detectar erros, sem depender de confiança.
+- Porque o modelo sempre calcula certo quando mostra os passos.
+- Porque elimina a necessidade de validar números.
+- Porque torna a resposta mais longa.
+- Porque reduz a latência.
+J: Verificar um cálculo é mais fácil e mais confiável que avaliar uma explicação em texto.
+
+MC: Qual o principal benefício do encadeamento de prompts (prompt chaining)?
+= Cada etapa é mais simples, testável e depurável, e os erros ficam localizados.
+- Reduz sempre o custo e a latência.
+- Elimina a necessidade de validação.
+- Faz o modelo aprender com cada etapa.
+- Evita o uso de dados de entrada.
+J: O custo é mais chamadas; o benefício é a controlabilidade.
+
+MC: Por que validar a saída JSON de um modelo antes de usá-la?
+= Porque o modelo pode produzir JSON inválido, texto extra ou valores fora do esquema.
+- Porque JSON nunca está correto.
+- Porque a validação aumenta a precisão do modelo.
+- Porque o JSON é sempre vazio.
+- Porque a validação elimina a temperatura.
+J: Instruções de formato não são garantias; a aplicação deve checar.
+
+MC: Qual a prática adequada para tratar falhas de validação de formato?
+= Reenviar o erro ao modelo em novas tentativas limitadas e, esgotadas, usar tratamento alternativo.
+- Repetir indefinidamente até dar certo.
+- Ignorar a falha e usar a saída mesmo assim.
+- Desligar a validação.
+- Aumentar a temperatura sem limite.
+J: Novas tentativas controladas equilibram robustez e custo, e evitam laços infinitos.
+
+MC: Uma saída que obedece ao esquema JSON esperado está necessariamente correta?
+= Não: o formato pode ser válido e o conteúdo errado.
+- Sim, a validação do esquema garante a correção do conteúdo.
+- Sim, se o JSON tiver menos de 100 caracteres.
+- Sim, se a temperatura for zero.
+- Sim, se a resposta contiver uma citação.
+J: A validade de formato é condição necessária, mas não suficiente.
+
+MC: Qual a limitação de usar um modelo de linguagem para revisar a resposta de outro (ou de si mesmo)?
+= Ele pode aprovar respostas erradas e favorecer textos parecidos com os seus; não substitui verificação independente.
+- Ele é sempre mais confiável que um humano.
+- Ele só funciona com temperatura zero.
+- Ele corrige todos os erros factuais.
+- Ele elimina o viés dos dados.
+J: Zheng et al. (2023) discutem vieses de modelos como avaliadores.
+
+MC: Por que versionar prompts como código?
+= Para saber qual versão produziu quais resultados e permitir testes de regressão e reversão.
+- Para aumentar o tamanho do prompt.
+- Para dispensar o conjunto de testes.
+- Para eliminar a variabilidade da geração.
+- Para evitar o uso de modelos.
+J: Mudanças pequenas em prompts podem mudar muito o comportamento; sem histórico, é impossível depurar.
+
+MC: Qual conjunto de testes é mais adequado para avaliar um prompt?
+= Casos representativos, incluindo casos difíceis e casos sem resposta, com respostas esperadas conhecidas.
+- Apenas casos fáceis, para mostrar bom desempenho.
+- Os mesmos exemplos usados no prompt.
+- Casos sem resposta esperada definida.
+- Um único caso, repetido várias vezes.
+J: Avaliar com os exemplos do próprio prompt infla os resultados e esconde falhas.
+
+MC: Duas versões de prompt são avaliadas nos mesmos 100 casos, com acerto 78% e 84%. Qual a conclusão mais adequada?
+= A diferença está dentro da incerteza típica de 100 casos; é preciso mais casos e uma comparação pareada.
+- A versão de 84% é certamente melhor.
+- A versão de 78% é certamente melhor.
+- Não há como avaliar prompts.
+- As duas versões são idênticas.
+J: O intervalo de confiança de 95% para cada acerto tem cerca de ±8 pontos percentuais com 100 casos.
+
+MC: Quais informações devem ser registradas em cada avaliação de um prompt?
+= Versão do prompt, modelo e versão, data, parâmetros de geração, conjunto de testes e métricas.
+- Apenas a data.
+- Apenas o nome do avaliador.
+- Apenas a melhor resposta obtida.
+- Nenhuma, pois a avaliação é sempre reproduzível.
+J: Esses dados permitem comparar, auditar e investigar mudanças.
+
+MC: Por que repetir a avaliação várias vezes ao usar um modelo com amostragem?
+= Para estimar a variabilidade devida à aleatoriedade da geração.
+- Para aumentar o tamanho do modelo.
+- Para reduzir o número de tokens.
+- Para trocar o prompt automaticamente.
+- Para eliminar a necessidade de conjunto de testes.
+J: Uma única execução pode ser favorável ou desfavorável por acaso.
+
+MC: Em contextos longos, onde a informação relevante tende a ser menos bem aproveitada, segundo Liu et al. (2024)?
+= No meio do contexto.
+- No início do contexto.
+- No final do contexto.
+- Em qualquer posição, igualmente.
+- Apenas na primeira linha.
+J: Isso sugere posicionar informações críticas no início ou no fim e evitar contextos desnecessariamente longos.
+
+MC: Qual métrica mede, separadamente do acerto, se as respostas do modelo seguem o formato exigido pela aplicação?
+= A taxa de validade de formato (fração de respostas que passam na validação do esquema).
+- A temperatura média das respostas.
+- O número de tokens do prompt.
+- A perplexidade do modelo.
+- A similaridade de cosseno entre prompt e resposta.
+J: Um prompt pode acertar o conteúdo e falhar no formato (ou vice-versa); por isso as duas métricas são acompanhadas separadamente.
+
+DISC[C]: Explique por que todo prompt deve ser tratado como uma hipótese a ser testada, e não como uma especificação garantida.
+R: O prompt condiciona uma distribuição de probabilidade; o modelo pode ignorar, interpretar mal ou seguir apenas em parte as instruções, e o comportamento varia entre modelos, versões e execuções. Por isso, é preciso testar com casos representativos, medir métricas e registrar condições, tratando cada mudança como um experimento.
+
+DISC[C]: Descreva os componentes de um prompt para uma tarefa de extração de dados e dê um exemplo de cada um.
+R: Papel: "Você é um assistente de extração de dados contratuais." Tarefa: "Extraia a data de início e o valor mensal." Contexto: texto do contrato (e, se houver, definições). Exemplos: um trecho com a resposta esperada. Entrada: o contrato a processar, entre delimitadores. Formato: JSON com campos "data_inicio" (AAAA-MM-DD) e "valor_mensal" (número) ou null. Restrições: usar só informações do texto; responder null se faltar.
+
+DISC[C]: Explique por que a explicação em texto de um modelo não deve ser considerada uma prova da sua resposta e o que usar no lugar.
+R: A explicação é mais texto gerado e pode não refletir os fatores que determinaram a resposta (Turpin et al., 2023); pode ser plausível e errada. Em vez disso, usar artefatos verificáveis de modo independente: citações literais (busca no texto-fonte), cálculos explícitos (refeitos em código), campos estruturados (validados por regras) e abstenção quando faltar informação.
+
+DISC[C]: Compare a decomposição de tarefas (encadeamento) com um único prompt complexo, indicando duas vantagens e duas desvantagens.
+R: Vantagens: etapas mais simples e testáveis; erros localizados e depuração mais fácil; possibilidade de validar resultados intermediários. Desvantagens: mais chamadas (custo e latência); erros podem propagar-se entre etapas; maior complexidade de orquestração. A escolha depende da complexidade da tarefa e do custo do erro.
+
+DISC[M]: Um prompt acerta 80 de 100 casos. Calcule o erro-padrão e um intervalo de confiança aproximado de 95% para o acerto.
+R: $p=0{,}8$; erro-padrão $=\sqrt{0{,}8\times0{,}2/100}=0{,}04$. Intervalo aproximado: $0{,}8\pm1{,}96\times0{,}04=0{,}8\pm0{,}078$, isto é, $[0{,}72;\ 0{,}88]$.
+
+DISC[M]: Quantos casos de teste são necessários para estimar um acerto em torno de 0,8 com margem de erro de ±3 pontos percentuais (95% de confiança)?
+R: $n=1{,}96^2\times0{,}8\times0{,}2/0{,}03^2=3{,}8416\times0{,}16/0{,}0009\approx683$ casos.
+
+DISC[M]: Um prompt tem 200 tokens de instruções, 3 exemplos de 60 tokens cada e recebe entradas de 100 tokens. Para 10 000 requisições, quantos tokens de entrada são processados? Se o preço **hipotético** fosse de 2 unidades monetárias por milhão de tokens de entrada, qual o custo? E sem os exemplos?
+R: Por requisição: $200+3\times60+100=480$ tokens. Total: $4{,}8\times10^{6}$ tokens; custo $4{,}8\times2=9{,}6$ unidades. Sem exemplos: $300$ tokens por requisição, $3\times10^{6}$ tokens e custo $6{,}0$ (redução de 37,5%). O ganho de qualidade dos exemplos deve ser medido contra esse custo.
+
+DISC[M]: Na autoconsistência com 5 amostras independentes, cada uma com probabilidade 0,6 de dar a resposta correta em um problema binário, qual a probabilidade de a maioria estar correta?
+R: A maioria exige pelo menos 3 acertos: $\binom{5}{3}0{,}6^3 0{,}4^2+\binom{5}{4}0{,}6^4 0{,}4+\binom{5}{5}0{,}6^5=10\cdot0{,}216\cdot0{,}16+5\cdot0{,}1296\cdot0{,}4+0{,}07776=0{,}3456+0{,}2592+0{,}0778\approx0{,}683$. A votação eleva a acurácia de 0,6 para cerca de 0,68, sob a hipótese (forte) de independência entre as amostras.
+
+DISC[M]: Dois prompts A e B foram avaliados nos mesmos 200 casos: ambos acertaram 120; só A acertou 10; só B acertou 30; ambos erraram 40. Calcule as acurácias e a estatística $z=(b-c)/\sqrt{b+c}$ dos pares discordantes.
+R: Acurácia de A: $(120+10)/200=0{,}65$; de B: $(120+30)/200=0{,}75$. Pares discordantes: $b=30$ (só B) e $c=10$ (só A). $z=(30-10)/\sqrt{40}=20/6{,}32\approx3{,}16$, valor grande: a diferença de 10 pontos percentuais dificilmente é acaso (aproximação do teste de McNemar). Mesmo assim, a conclusão vale para este conjunto de testes.
+
+DISC[A]: Um sistema de extração começou a falhar após a troca da versão do modelo, sem mudança no prompt. Analise as causas possíveis e como o processo de avaliação deveria ter evitado o problema.
+R: O novo modelo pode interpretar instruções de modo diferente, mudar o formato, a verbosidade ou o comportamento de abstenção. Um processo adequado teria testes de regressão automatizados sobre um conjunto fixo, executados antes de adotar a nova versão; registro de versões de modelo e prompt; métricas de validade de formato e de conteúdo; e implantação gradual com monitoramento.
+
+DISC[A]: Uma equipe afirma que "o modelo explicou o raciocínio, então a resposta está correta". Analise a afirmação e proponha verificações alternativas para uma resposta numérica.
+R: A explicação gerada não é acesso fiel ao raciocínio e pode ser plausível mas incorreta. Verificações: pedir os números e a fórmula usados e recomputar em código; comparar com um cálculo independente; verificar unidades e ordens de grandeza; usar autoconsistência (várias amostras) apenas como indício; checar contra fontes; e encaminhar casos de risco a revisão humana.
+
+DISC[A]: Um colega avaliou três prompts em 20 exemplos escolhidos por ele e concluiu que o terceiro é melhor. Aponte quatro problemas do protocolo e proponha melhorias.
+R: Problemas: amostra pequena; exemplos escolhidos pelo próprio autor (viés de seleção); possível sobreposição com exemplos do prompt; ausência de intervalo de confiança e de comparação pareada; sem casos difíceis ou sem resposta; sem registro de parâmetros e repetições. Melhorias: conjunto maior e representativo, separado dos exemplos do prompt, casos difíceis e sem resposta, métricas com IC, repetições, registro completo.
+
+DISC[A]: O esquema de saída validou em 99% das respostas, mas o conteúdo extraído estava errado em 20% delas. Analise o que isso indica e que verificações adicionais incluir.
+R: A validade de formato é independente da correção do conteúdo. É preciso medir acurácia de conteúdo contra um gabarito, validar regras de negócio (por exemplo, datas plausíveis, soma de valores), exigir citações verificáveis, tratar abstenção (null) e amostrar casos para revisão humana.
+
+DISC[P]: Implemente `verificar_citacoes(resposta, documento)` que receba uma lista de citações e devolva quais existem no documento (com normalização de espaços e caixa) e a fração de citações válidas.
+CODE:
+import re
+import unicodedata
+
+def normalizar(s):
+    return re.sub(r"\s+", " ", unicodedata.normalize("NFC", s).lower()).strip()
+
+def verificar_citacoes(citacoes, documento):
+    doc = normalizar(documento)
+    ok = [normalizar(c) in doc for c in citacoes]
+    return ok, (sum(ok) / len(ok) if ok else None)
+
+doc = "O atraso na devolução gera multa de R$ 1,50 por dia e por exemplar."
+ok, frac = verificar_citacoes(["multa de R$ 1,50  por dia", "multa de R$ 2,00 por dia"], doc)
+assert ok == [True, False] and frac == 0.5
+print(ok, frac)
+ENDCODE
+CRIT: Normaliza espaços e caixa dos dois lados.
+CRIT: Usa busca de subcadeia.
+CRIT: Trata lista vazia sem erro de divisão por zero.
+
+DISC[P]: Implemente `validar_saida(texto, campos_obrigatorios, enums)` sem bibliotecas externas: faça o parse de JSON, verifique campos obrigatórios e valores permitidos e devolva `(objeto, erro)`. Teste com quatro entradas.
+CODE:
+import json
+
+def validar_saida(texto, campos_obrigatorios, enums):
+    try:
+        obj = json.loads(texto)
+    except json.JSONDecodeError as e:
+        return None, f"JSON inválido: {e.msg}"
+    if not isinstance(obj, dict):
+        return None, "esperado um objeto JSON"
+    faltando = [c for c in campos_obrigatorios if c not in obj]
+    if faltando:
+        return None, f"campos ausentes: {faltando}"
+    for campo, permitidos in enums.items():
+        if campo in obj and obj[campo] not in permitidos:
+            return None, f"valor inválido em {campo}: {obj[campo]!r}"
+    return obj, None
+
+enums = {"intencao": ["elogio", "cancelamento", "indefinido"]}
+entradas = ['{"intencao": "elogio"}', '{"intencao": "xyz"}', 'texto solto {"intencao": "elogio"}', '{"outra": 1}']
+res = [validar_saida(t, ["intencao"], enums) for t in entradas]
+assert res[0][0] == {"intencao": "elogio"} and all(r[0] is None for r in res[1:])
+print([r[1] for r in res])
+ENDCODE
+CRIT: Trata JSON inválido sem lançar exceção.
+CRIT: Verifica campos obrigatórios e valores permitidos.
+CRIT: Devolve mensagens de erro úteis para reenvio ao modelo.
+
+DISC[P]: Implemente `com_tentativas(gerar, validar, max_tentativas)` que chame `gerar(erro_anterior)`, valide a resposta e tente de novo com a mensagem de erro, até o limite. Teste com um gerador simulado que acerta na segunda tentativa e outro que nunca acerta.
+CODE:
+def com_tentativas(gerar, validar, max_tentativas=3):
+    erro, historico = None, []
+    for k in range(1, max_tentativas + 1):
+        obj, erro = validar(gerar(erro))
+        if obj is not None:
+            return obj, k, historico
+        historico.append(erro)
+    return None, max_tentativas, historico
+
+validar = lambda t: ({"ok": True}, None) if t == "bom" else (None, "formato inválido")
+saidas = iter(["ruim", "bom"])
+obj, k, h = com_tentativas(lambda e: next(saidas), validar)
+assert obj == {"ok": True} and k == 2 and h == ["formato inválido"]
+obj2, k2, h2 = com_tentativas(lambda e: "ruim", validar, max_tentativas=3)
+assert obj2 is None and k2 == 3 and len(h2) == 3
+print(k, k2)
+ENDCODE
+CRIT: Repassa o erro anterior ao gerador.
+CRIT: Respeita o limite de tentativas.
+CRIT: Devolve o histórico de erros para registro.
+
+DISC[P]: Implemente a comparação pareada de dois prompts: dados vetores de acertos (0/1) `a` e `b` sobre os mesmos casos, devolva as acurácias, a diferença e o intervalo de confiança de 95% por bootstrap pareado. Teste com dados simulados.
+CODE:
+import numpy as np
+
+def comparar_pareado(a, b, n_boot=2000, seed=0):
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    d = b - a
+    rng = np.random.default_rng(seed)
+    medias = [rng.choice(d, len(d), replace=True).mean() for _ in range(n_boot)]
+    return a.mean(), b.mean(), d.mean(), float(np.quantile(medias, 0.025)), float(np.quantile(medias, 0.975))
+
+rng = np.random.default_rng(1)
+n = 300
+a = (rng.random(n) < 0.70).astype(float)
+b = np.where(rng.random(n) < 0.5, a, (rng.random(n) < 0.80).astype(float))   # B parcialmente correlacionado com A
+ma, mb, dm, lo, hi = comparar_pareado(a, b)
+assert lo <= dm <= hi
+print(round(ma, 3), round(mb, 3), round(dm, 3), (round(lo, 3), round(hi, 3)))
+ENDCODE
+CRIT: Reamostra os casos (pares), e não A e B separadamente.
+CRIT: Calcula o intervalo pelos quantis 2,5% e 97,5%.
+CRIT: Verifica que a diferença observada está dentro do intervalo.
+
+DISC[D]: Projete uma cadeia de prompts para extrair, validar e resumir cláusulas de rescisão de contratos, indicando a verificação de cada etapa e o tratamento de falhas.
+R: Etapa 1 (localização): identificar trechos candidatos; verificar que os trechos existem no contrato. Etapa 2 (extração): extrair prazo de aviso, multa e condições em JSON; validar esquema, tipos e faixas plausíveis; citação literal obrigatória e verificada por busca. Etapa 3 (consolidação): redigir resumo usando somente os campos validados; verificar que números do resumo constam nos campos. Falhas: novas tentativas limitadas com mensagem de erro; se persistirem, marcar o contrato para revisão humana; registrar versões, parâmetros e resultados; avaliar com conjunto anotado, incluindo contratos sem cláusula de rescisão (abstenção).
+
+DISC[D]: Defina uma estratégia para escolher e manter os exemplos few-shot de um classificador de tickets de suporte, incluindo atualização ao longo do tempo.
+R: Selecionar exemplos que cubram todas as categorias e casos difíceis, equilibrando rótulos e variando a redação; manter um conjunto separado de teste que não inclua esses exemplos; testar algumas ordens e medir a sensibilidade; limitar o número de exemplos pelo custo em tokens; revisar periodicamente com erros reais encontrados em produção (adicionando casos que o sistema erra); versionar o conjunto e reavaliar a cada mudança; considerar seleção dinâmica de exemplos por similaridade, avaliando o ganho.
+
+DISC[D]: Descreva o processo de uma equipe para alterar um prompt em produção com segurança (revisão, testes, implantação e monitoramento).
+R: Alteração proposta em controle de versão com descrição e motivo; revisão por pares; execução automática do conjunto de regressão (acerto, validade de formato, abstenção, custo, latência) comparando com a versão atual, com intervalos de confiança; critérios de aceitação definidos antes; implantação gradual (por exemplo, para uma fração do tráfego) com monitoramento de métricas e amostragem para revisão humana; plano de reversão rápida; registro do histórico de versões, parâmetros e resultados.

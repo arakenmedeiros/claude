@@ -1,0 +1,384 @@
+MC: Qual é a descrição mais precisa do que a atenção calcula para cada token?
+= Uma média ponderada dos vetores de valor de todos os tokens permitidos, com pesos obtidos por softmax das similaridades entre a consulta do token e as chaves.
+- A probabilidade do próximo token, calculada diretamente sobre o vocabulário.
+- O maior valor dentre os vetores de valor dos tokens vizinhos.
+- A soma simples dos embeddings de todos os tokens, sem pesos.
+- A posição do token mais frequente na sequência.
+J: Os pesos dependem do conteúdo (produto escalar consulta-chave) e a saída é a combinação linear dos valores.
+
+MC: Na analogia da biblioteca, qual elemento corresponde à "consulta" (query)?
+= A pergunta que o leitor leva e compara com as etiquetas dos livros.
+- O conteúdo do livro.
+- A etiqueta na lombada de cada livro.
+- A lista de todos os livros disponíveis.
+- O número de páginas de cada livro.
+J: A consulta é comparada com as chaves (etiquetas); os valores (conteúdos) são então combinados segundo a similaridade.
+
+MC: Se $\mathbf{X}$ tem formato $T\times d_{\text{modelo}}$ e $\mathbf{W}_Q$ tem formato $d_{\text{modelo}}\times d_k$, qual o formato de $\mathbf{Q}=\mathbf{X}\mathbf{W}_Q$?
+= $T\times d_k$
+- $d_{\text{modelo}}\times d_k$
+- $T\times T$
+- $T\times d_{\text{modelo}}$
+- $d_k\times d_k$
+J: Cada uma das $T$ linhas de $\mathbf{X}$ é projetada de $d_{\text{modelo}}$ para $d_k$ dimensões.
+
+MC: Qual o formato da matriz de pontuações $\mathbf{Q}\mathbf{K}^\top$ para uma sequência de $T$ tokens?
+= $T\times T$
+- $T\times d_k$
+- $d_k\times d_k$
+- $1\times T$
+- $T\times1$
+J: Há uma pontuação para cada par (token que consulta, token consultado).
+
+MC: Sobre qual eixo se aplica o softmax na matriz de pontuações?
+= Sobre as chaves (colunas), linha a linha, de modo que cada linha some 1.
+- Sobre as consultas (linhas), coluna a coluna.
+- Sobre toda a matriz de uma vez.
+- Sobre a dimensão $d_k$.
+- Não se aplica softmax na atenção.
+J: Cada token que consulta precisa de uma distribuição de pesos sobre os tokens consultados.
+
+MC: Por que as pontuações são divididas por $\sqrt{d_k}$?
+= Para manter a variância das pontuações próxima de 1, evitando a saturação do softmax quando $d_k$ é grande.
+- Para que a soma dos pesos seja igual a $d_k$.
+- Para aumentar o número de parâmetros.
+- Para eliminar a necessidade da máscara.
+- Para que as pontuações fiquem sempre negativas.
+J: Com componentes independentes de variância 1, $\mathrm{Var}(\mathbf{q}\cdot\mathbf{k})=d_k$; dividir por $\sqrt{d_k}$ restaura variância 1.
+
+MC: Com componentes independentes de média 0 e variância 1, qual a variância de $\mathbf{q}\cdot\mathbf{k}$ quando $d_k=64$?
+= 64
+- 1
+- 8
+- 4 096
+- 0,125
+J: A variância da soma de 64 termos independentes de variância 1 é 64 (desvio-padrão 8).
+
+MC: Qual a consequência de um softmax saturado (um peso próximo de 1 e os demais próximos de 0)?
+= Gradientes muito pequenos para quase todas as posições, o que dificulta o aprendizado.
+- Os pesos deixam de somar 1.
+- A atenção passa a ignorar o token mais relevante.
+- O modelo perde a capacidade de processar sequências curtas.
+- A memória necessária cai a zero.
+J: A derivada do softmax nas regiões saturadas é próxima de zero, tornando o ajuste lento ou instável.
+
+MC: Como a máscara causal é implementada na prática?
+= Substituindo por um número muito negativo (−∞) as pontuações dos pares em que o token consultado vem depois, antes do softmax.
+- Zerando os pesos depois do softmax, sem renormalizar.
+- Removendo os últimos tokens da sequência.
+- Multiplicando os valores por zero depois da soma.
+- Reduzindo a dimensão $d_k$.
+J: Como $e^{-\infty}=0$, esses pares recebem peso zero e as linhas continuam somando 1.
+
+MC: Por que aplicar a máscara depois do softmax (zerando pesos) seria incorreto?
+= As linhas deixariam de somar 1, e a média ponderada não seria uma média.
+- O softmax não funciona com zeros.
+- A máscara só funciona se aplicada à saída final do modelo.
+- Zerar pesos aumenta a dimensão do modelo.
+- Não haveria diferença alguma.
+J: A normalização precisa levar em conta apenas os tokens permitidos; por isso a máscara entra antes do softmax.
+
+MC: Qual vantagem do mascaramento causal para o treinamento de modelos de geração?
+= Permite prever o próximo token em todas as posições em uma única passada, cada posição vendo só o seu passado.
+- Elimina a necessidade de dados de treino.
+- Torna o modelo bidirecional.
+- Reduz o vocabulário.
+- Faz o modelo ver o texto inteiro em cada posição.
+J: A estrutura triangular garante que a previsão em cada posição não use o futuro, e todas as posições podem ser calculadas em paralelo.
+
+MC: Em um modelo com $d=768$ e $h=12$ cabeças, qual a dimensão $d_k$ de cada cabeça?
+= 64
+- 768
+- 12
+- 9 216
+- 6
+J: $d_k=d/h=768/12=64$.
+
+MC: Qual o papel da matriz $\mathbf{W}_O$ na atenção multicabeça?
+= Misturar as saídas concatenadas das cabeças, devolvendo a dimensão $d$ do modelo.
+- Calcular as consultas.
+- Aplicar a máscara causal.
+- Normalizar a camada.
+- Produzir os logits do vocabulário.
+J: As cabeças são concatenadas e projetadas por $\mathbf{W}_O\in\mathbb{R}^{d\times d}$.
+
+MC: Quantos parâmetros (sem vieses) tem um bloco de atenção com $d=1\,024$?
+= $4\times1\,024^2=4\,194\,304$
+- $1\,024^2=1\,048\,576$
+- $2\times1\,024=2\,048$
+- $8\times1\,024^2=8\,388\,608$
+- $12\times1\,024^2$
+J: As quatro matrizes $\mathbf{W}_Q,\mathbf{W}_K,\mathbf{W}_V,\mathbf{W}_O$ têm $d\times d$ elementos cada.
+
+MC: Por que são necessárias representações posicionais em um Transformer?
+= Porque a atenção, sozinha, é indiferente à ordem: embaralhar a entrada apenas embaralha a saída do mesmo modo.
+- Porque a atenção só funciona com sequências de comprimento par.
+- Porque os embeddings não têm dimensão suficiente.
+- Porque o softmax depende da posição absoluta.
+- Porque a máscara causal elimina a ordem.
+J: Sem informação de posição, "o cachorro mordeu o homem" e "o homem mordeu o cachorro" teriam representações equivalentes por token.
+
+MC: Na codificação posicional senoidal, quais valores têm as dimensões 0 e 1 na posição $p=0$?
+= 0 e 1 (seno de 0 e cosseno de 0)
+- 1 e 0
+- 0 e 0
+- 1 e 1
+- −1 e 1
+J: $\mathrm{PE}(0,0)=\sin0=0$ e $\mathrm{PE}(0,1)=\cos0=1$.
+
+MC: Qual a ideia central das posições rotacionais (RoPE)?
+= Rotacionar consultas e chaves conforme a posição, de modo que o produto escalar dependa da distância relativa entre os tokens.
+- Somar um vetor aleatório fixo a cada token.
+- Remover as posições durante a inferência.
+- Substituir a atenção por uma média simples.
+- Usar apenas posições absolutas aprendidas.
+J: A rotação codifica posição de modo que a interação consulta-chave reflita deslocamentos relativos (Su et al., 2024).
+
+MC: Qual o principal benefício da conexão residual $\mathbf{y}=\mathbf{x}+F(\mathbf{x})$?
+= Facilita o fluxo do gradiente e permite que a camada aprenda apenas uma correção da entrada.
+- Dobra a dimensão do vetor.
+- Elimina a necessidade de normalização.
+- Impede que o modelo aprenda.
+- Aumenta o vocabulário.
+J: O atalho cria um caminho direto para o gradiente e simplifica o aprendizado de camadas profundas.
+
+MC: O que faz a normalização de camada (LayerNorm) com o vetor de cada token?
+= Subtrai a média e divide pelo desvio-padrão calculados entre as dimensões do vetor, e depois aplica escala e deslocamento aprendidos.
+- Normaliza cada dimensão ao longo de todos os tokens do lote.
+- Divide o vetor pela posição do token.
+- Zera as dimensões menores que a média.
+- Aplica o softmax ao vetor.
+J: A normalização é por token, entre as $d$ dimensões, e não entre exemplos do lote.
+
+MC: O que distingue a configuração pré-LN da pós-LN?
+= Na pré-LN, a normalização é aplicada antes da subcamada, dentro do ramo residual; costuma treinar de forma mais estável em modelos profundos.
+- Na pré-LN, a normalização é aplicada somente na saída final.
+- Na pós-LN, não há conexões residuais.
+- A pré-LN elimina a atenção.
+- A pós-LN só funciona em encoders.
+J: A pré-LN é a escolha mais frequente em LLMs recentes por favorecer a estabilidade.
+
+MC: Qual característica da RMSNorm a distingue da LayerNorm?
+= Não subtrai a média; divide pelo valor quadrático médio (RMS) das ativações.
+- Calcula a média entre todos os tokens do lote.
+- Usa softmax em vez de divisão.
+- Só se aplica à primeira camada.
+- Não tem parâmetro de escala.
+J: A RMSNorm é uma variante mais simples e barata, que omite a centralização.
+
+MC: Como a rede feed-forward (FFN) de um bloco Transformer é aplicada?
+= Separadamente a cada posição, com expansão da dimensão (tipicamente $4d$) e uma função de ativação não linear.
+- Misturando todas as posições em uma única multiplicação.
+- Somente à última posição da sequência.
+- Sem função de ativação, apenas com multiplicações lineares.
+- Apenas durante a geração, e não no treinamento.
+J: A FFN processa cada posição de forma independente, enquanto a atenção troca informação entre posições.
+
+MC: Qual o número de parâmetros (sem vieses) da FFN com $d=512$ e $d_{ff}=2\,048$?
+= $2\times512\times2\,048=2\,097\,152$
+- $512\times2\,048=1\,048\,576$
+- $512^2=262\,144$
+- $4\times512^2=1\,048\,576$
+- $2\,048^2=4\,194\,304$
+J: As duas matrizes têm $d\times d_{ff}$ elementos cada, totalizando $2dd_{ff}$.
+
+MC: Usando $N_{\text{parâm}}\approx12Nd^2+Vd$, qual o número aproximado de parâmetros para $N=24$, $d=1\,024$ e $V=32\,000$?
+= Cerca de $334{,}8$ milhões
+- Cerca de $33{,}5$ milhões
+- Cerca de $3{,}3$ bilhões
+- Cerca de $12$ milhões
+- Cerca de $1$ bilhão
+J: $12\times24\times1\,024^2\approx301{,}99$ M e $32\,000\times1\,024\approx32{,}77$ M; soma $\approx334{,}76$ M.
+
+MC: Qual família de arquitetura usa atenção bidirecional e é muito empregada para classificação e embeddings?
+= Somente encoder.
+- Somente decoder.
+- Encoder-decoder com máscara causal em todas as camadas.
+- Nenhuma, pois essas tarefas não usam Transformers.
+- Rede recorrente.
+J: O encoder permite que cada token veja todos os outros, adequado para entender o texto como um todo.
+
+MC: Na atenção cruzada (cross-attention) de um modelo encoder-decoder:
+= As consultas vêm do decoder, e as chaves e os valores vêm da saída do encoder.
+- As consultas vêm do encoder, e as chaves e os valores, do decoder.
+- Não há consultas, apenas valores.
+- Todas as matrizes vêm da mesma sequência, sem exceção.
+- A atenção só ocorre entre tokens iguais.
+J: Isso permite que cada token gerado consulte a sequência de entrada processada pelo encoder.
+
+MC: Se o comprimento $T$ da sequência dobra, o tamanho da matriz de pontuações da atenção:
+= Quadruplica.
+- Dobra.
+- Permanece igual.
+- Fica pela metade.
+- Cresce por um fator constante de 10.
+J: A matriz é $T\times T$, crescendo com $T^2$.
+
+MC: Qual cuidado é adequado ao interpretar mapas de pesos de atenção?
+= Tratá-los como pistas, não como prova de explicação, pois a literatura contesta que representem a razão da decisão do modelo.
+- Considerá-los explicações completas e fiéis do comportamento.
+- Ignorá-los porque são sempre aleatórios.
+- Usá-los para provar que o modelo não é enviesado.
+- Presumir que cada cabeça tem sempre um papel linguístico bem definido.
+J: Jain e Wallace (2019) e Wiegreffe e Pinter (2019) discutem os limites da interpretação por atenção.
+
+MC: Qual a principal vantagem do Transformer sobre redes recorrentes para o treinamento?
+= Processa todas as posições da sequência em paralelo e oferece acesso direto entre posições distantes.
+- Elimina a necessidade de dados de treinamento.
+- Reduz o custo para crescer linearmente com qualquer tamanho de contexto.
+- Dispensa o uso de embeddings.
+- Garante respostas factualmente corretas.
+J: Redes recorrentes processam token a token e carregam um estado de tamanho fixo; a atenção conecta diretamente qualquer par de posições.
+
+MC: Em modelos somente encoder como o BERT, qual é o objetivo típico de pré-treinamento mencionado no capítulo?
+= Prever palavras que foram mascaradas na entrada, usando o contexto à esquerda e à direita.
+- Prever apenas o próximo token, sem ver o futuro.
+- Traduzir frases entre dois idiomas.
+- Gerar imagens a partir de texto.
+- Reordenar as palavras da frase aleatoriamente.
+J: O encoder é bidirecional; por isso o objetivo de mascaramento (palavras ocultas) é natural para ele.
+
+DISC[C]: Explique, com suas palavras e usando a analogia da biblioteca, os papéis de consulta, chave e valor, e aponte um limite da analogia.
+R: A consulta é a pergunta que um token faz; as chaves são as "etiquetas" que cada token oferece para ser encontrado; os valores são o conteúdo que cada token fornece. A similaridade consulta-chave decide o peso de cada valor, e a saída é a média ponderada dos valores. Limites: na biblioteca se escolhe um livro, e na atenção mistura-se todos; consulta, chave e valor são projeções aprendidas, sem significado fixo prévio.
+
+DISC[C]: Explique por que a atenção precisa de representações posicionais e descreva duas formas de fornecê-las.
+R: A atenção é equivariante à permutação: embaralhar os tokens apenas embaralha as saídas, de modo que a ordem não influencia o cálculo. Formas de fornecer posição: somar ao embedding um vetor posicional (senoidal fixo ou aprendido) ou usar mecanismos relativos como RoPE, que rotacionam consultas e chaves para que o produto escalar dependa da distância relativa. A escolha afeta a extrapolação para contextos maiores que os do treinamento.
+
+DISC[C]: Descreva a função das conexões residuais e da normalização em um bloco Transformer e o que ocorreria com o treinamento de um modelo profundo sem elas.
+R: Residuais criam atalhos que permitem que o gradiente chegue às camadas iniciais e que cada camada aprenda correções; a normalização controla a escala das ativações, estabilizando o treinamento. Sem elas, gradientes tenderiam a sumir ou explodir em dezenas de camadas, e o treinamento seria instável ou muito lento.
+
+DISC[M]: Calcule a atenção (com $d_k=2$) para $\mathbf{Q}=\mathbf{K}=\begin{bmatrix}1&0\\0&1\end{bmatrix}$ e $\mathbf{V}=\begin{bmatrix}2&0\\0&4\end{bmatrix}$, sem máscara e com máscara causal.
+R: Pontuações: $\mathbf{Q}\mathbf{K}^\top=\mathbf{I}$; divididas por $\sqrt2$: diagonal $0{,}707$, fora da diagonal 0. Softmax por linha: $e^{0{,}707}\approx2{,}028$ e $e^0=1$; pesos $(0{,}670;\ 0{,}330)$ na linha 1 e $(0{,}330;\ 0{,}670)$ na linha 2. Sem máscara: linha 1 $=0{,}670\cdot(2,0)+0{,}330\cdot(0,4)\approx(1{,}339;\ 1{,}321)$; linha 2 $=0{,}330\cdot(2,0)+0{,}670\cdot(0,4)\approx(0{,}661;\ 2{,}679)$. Com máscara causal, a linha 1 só vê o token 1: pesos $(1;\ 0)$ e saída $(2,0)$; a linha 2 permanece igual ao caso sem máscara.
+
+DISC[M]: Com $d_k=100$, qual o desvio-padrão do produto escalar de dois vetores de componentes independentes (média 0, variância 1) antes e depois do escalonamento? Compare o softmax de $(10,0)$ com o de $(1,0)$.
+R: Variância $=d_k=100$, desvio-padrão $10$; após dividir por $\sqrt{100}=10$, desvio-padrão 1. Softmax de $(10,0)$: $e^{10}/(e^{10}+1)\approx22\,026/22\,027\approx0{,}99995$ (praticamente saturado); de $(1,0)$: $e/(e+1)\approx0{,}731$. A escala mantém os pesos informativos e os gradientes viáveis.
+
+DISC[M]: Estime o número de parâmetros e a memória em `float16` de um modelo hipotético com $N=32$, $d=4\,096$ e $V=32\,000$ (use $12Nd^2+Vd$).
+R: $4\,096^2=16\,777\,216$; $12\times32\times16\,777\,216=6\,442\,450\,944$. Embeddings: $32\,000\times4\,096=131\,072\,000$. Total: $6\,573\,522\,944\approx6{,}57$ bilhões. Memória em `float16`: $\approx13{,}1$ GB. É um piso: não inclui ativações, cache de atenção nem outros componentes.
+
+DISC[M]: Calcule a LayerNorm do vetor $\mathbf{x}=(2,4,6,8)$, ignorando $\varepsilon$, $\boldsymbol\gamma$ e $\boldsymbol\beta$.
+R: Média $\mu=(2+4+6+8)/4=5$. Variância $\sigma^2=((−3)^2+(−1)^2+1^2+3^2)/4=20/4=5$; $\sigma=\sqrt5\approx2{,}236$. Resultado: $(−3,−1,1,3)/2{,}236\approx(−1{,}342;\ −0{,}447;\ 0{,}447;\ 1{,}342)$. Média 0, desvio-padrão 1.
+
+DISC[M]: Estime a memória da matriz de pontuações de **uma** camada para $T=8\,192$, $h=16$ e `float16`, se materializada. Quanto seria com $T=2\,048$?
+R: $8\,192^2=67\,108\,864$; vezes 16 cabeças: $1\,073\,741\,824$ elementos; vezes 2 bytes: $\approx2{,}15$ GB. Para $T=2\,048$: $2\,048^2\times16\times2\approx134$ MB (16 vezes menor, pois o fator é $(8\,192/2\,048)^2=16$).
+
+DISC[M]: Calcule $\mathrm{PE}(1,0)$, $\mathrm{PE}(1,1)$, $\mathrm{PE}(1,2)$ e $\mathrm{PE}(1,3)$ para $d=4$ (codificação senoidal).
+R: Para $i=0$: $\mathrm{PE}(1,0)=\sin(1)\approx0{,}841$ e $\mathrm{PE}(1,1)=\cos(1)\approx0{,}540$. Para $i=1$: $10000^{2\cdot1/4}=100$, então $\mathrm{PE}(1,2)=\sin(0{,}01)\approx0{,}010$ e $\mathrm{PE}(1,3)=\cos(0{,}01)\approx1{,}000$ ($0{,}99995$).
+
+DISC[A]: Um colega implementa a máscara causal zerando os pesos de atenção depois do softmax. O treinamento funciona, mas o modelo parece "bom demais". Analise o que pode estar errado e como testar.
+R: Depois do softmax, os pesos dos tokens permitidos já incorporaram a probabilidade dos tokens futuros na normalização, e a informação do futuro influenciou os pesos remanescentes (e, dependendo da implementação, pode vazar por outros caminhos). A máscara deve entrar antes do softmax. Teste: alterar tokens futuros e verificar que as saídas dos tokens anteriores permanecem idênticas (teste de vazamento); verificar que cada linha de pesos soma 1; checar se a perda de treino cai de forma implausivelmente rápida.
+
+DISC[A]: Compare atenção própria (self-attention) e atenção cruzada quanto à origem de $\mathbf{Q}$, $\mathbf{K}$ e $\mathbf{V}$ e quanto aos casos de uso. Indique o formato da matriz de pesos em cada caso.
+R: Na atenção própria, $\mathbf{Q},\mathbf{K},\mathbf{V}$ derivam da mesma sequência, de comprimento $T$; pesos $T\times T$; usada em encoders e decoders para relacionar tokens entre si. Na cruzada, $\mathbf{Q}$ vem do decoder (comprimento $T_d$) e $\mathbf{K},\mathbf{V}$ vêm do encoder (comprimento $T_e$); pesos $T_d\times T_e$; usada para condicionar a geração à entrada (tradução, resumo).
+
+DISC[A]: Um artigo afirma que "a cabeça 7 da camada 3 aprendeu a resolver pronomes" com base em mapas de atenção. Analise a solidez dessa afirmação e proponha uma verificação mais convincente.
+R: Mapas de atenção são correlacionais e podem não explicar causalmente o comportamento (Jain; Wallace, 2019; Wiegreffe; Pinter, 2019). Verificação mais convincente: intervenções, como desativar (ablação) ou editar a cabeça e medir a mudança no desempenho em tarefas de correferência; testar em conjuntos de dados de pronomes com controle; verificar se outras cabeças compensam; repetir em várias sementes e modelos.
+
+DISC[A]: Analise por que dobrar o comprimento do contexto pode mais que dobrar o custo de uma camada de atenção, e discuta duas estratégias para mitigar isso.
+R: A matriz de pontuações cresce com $T^2$ em tempo e memória, enquanto projeções e FFN crescem com $T$. Estratégias: implementações exatas eficientes em memória (por exemplo, FlashAttention), atenção agrupada ou com cabeças compartilhadas de chaves e valores (GQA), janelas locais ou esparsas, truncamento e resumo do contexto, e recuperação seletiva (RAG) para evitar contextos muito longos.
+
+DISC[P]: Implemente `atencao(Q, K, V, mascara=None)` e teste com os valores do exemplo de três tokens: as linhas dos pesos devem somar 1, e a saída da primeira linha deve ser aproximadamente $(1{,}604;\ 1{,}599)$.
+CODE:
+import numpy as np
+
+def softmax(z):
+    z = z - z.max(axis=-1, keepdims=True)
+    e = np.exp(z)
+    return e / e.sum(axis=-1, keepdims=True)
+
+def atencao(Q, K, V, mascara=None):
+    S = Q @ K.T / np.sqrt(Q.shape[-1])
+    if mascara is not None:
+        S = np.where(mascara, S, -1e9)
+    A = softmax(S)
+    return A @ V, A
+
+Q = K = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
+V = np.array([[1.0, 0.0], [0.0, 2.0], [3.0, 3.0]])
+out, A = atencao(Q, K, V)
+assert np.allclose(A.sum(axis=1), 1)
+assert np.allclose(out[0], [1.604, 1.599], atol=1e-3)
+out_c, A_c = atencao(Q, K, V, np.tril(np.ones((3, 3), dtype=bool)))
+assert np.allclose(A_c[0], [1, 0, 0])
+print(out.round(3)[0], A_c.round(3)[1])
+ENDCODE
+CRIT: Escalona por raiz de $d_k$ e aplica a máscara antes do softmax.
+CRIT: Softmax estável (subtrai o máximo) e por linha.
+CRIT: Testa soma 1 dos pesos e o valor esperado da primeira linha.
+
+DISC[P]: Implemente a separação e a junção de cabeças com `reshape` e `transpose`: `separa(M, h)` transforma `(T, d)` em `(h, T, d/h)` e `junta(M)` faz o inverso. Verifique que `junta(separa(M, h)) == M`.
+CODE:
+import numpy as np
+
+def separa(M, h):
+    T, d = M.shape
+    return M.reshape(T, h, d // h).transpose(1, 0, 2)
+
+def junta(Mh):
+    h, T, dh = Mh.shape
+    return Mh.transpose(1, 0, 2).reshape(T, h * dh)
+
+M = np.arange(6 * 8, dtype=float).reshape(6, 8)
+Mh = separa(M, 4)
+assert Mh.shape == (4, 6, 2)
+assert np.array_equal(junta(Mh), M)
+assert np.array_equal(Mh[1, 0], M[0, 2:4])      # a cabeça 1 do token 0 contém as dimensões 2 e 3
+print(Mh.shape)
+ENDCODE
+CRIT: Usa reshape para (T, h, d/h) antes da transposição.
+CRIT: A junção inverte exatamente a separação.
+CRIT: Testa o conteúdo de uma cabeça específica.
+
+DISC[P]: Escreva uma função `teste_vazamento(modelo, X, k)` que verifique se um modelo (função de `X` com formato `(T, d)` que devolve saídas `(T, d)`) é causal: alterar os tokens a partir da posição `k` não pode mudar as saídas das posições anteriores. Teste com uma função causal (soma cumulativa) e uma não causal (média global).
+CODE:
+import numpy as np
+
+def teste_vazamento(modelo, X, k, seed=0):
+    rng = np.random.default_rng(seed)
+    X2 = X.copy()
+    X2[k:] = rng.normal(size=X2[k:].shape)
+    return bool(np.allclose(modelo(X)[:k], modelo(X2)[:k]))
+
+causal = lambda X: np.cumsum(X, axis=0)
+nao_causal = lambda X: np.broadcast_to(X.mean(axis=0), X.shape).copy()
+
+X = np.random.default_rng(1).normal(size=(8, 4))
+assert teste_vazamento(causal, X, 5) is True
+assert teste_vazamento(nao_causal, X, 5) is False
+print(teste_vazamento(causal, X, 5), teste_vazamento(nao_causal, X, 5))
+ENDCODE
+CRIT: Altera apenas os tokens a partir de k.
+CRIT: Compara as saídas anteriores com tolerância numérica.
+CRIT: Testa um caso causal e um não causal.
+
+DISC[P]: Implemente a codificação posicional senoidal `posicional(T, d)` e verifique: (a) linha 0 alterna 0 e 1; (b) formato; (c) os valores da questão matemática correspondente para $d=4$ e posição 1.
+CODE:
+import numpy as np
+
+def posicional(T, d):
+    pos = np.arange(T)[:, None]
+    i = np.arange(d // 2)[None, :]
+    ang = pos / (10000 ** (2 * i / d))
+    PE = np.zeros((T, d))
+    PE[:, 0::2] = np.sin(ang)
+    PE[:, 1::2] = np.cos(ang)
+    return PE
+
+PE = posicional(10, 4)
+assert PE.shape == (10, 4)
+assert np.allclose(PE[0], [0, 1, 0, 1])
+assert np.allclose(PE[1], [np.sin(1), np.cos(1), np.sin(0.01), np.cos(0.01)])
+print(PE[1].round(4))
+ENDCODE
+CRIT: Usa expoente $2i/d$ e intercala seno (índices pares) e cosseno (ímpares).
+CRIT: Verifica formato e valores esperados.
+CRIT: Evita laços desnecessários, usando vetorização.
+
+DISC[D]: Para cada tarefa, indique a família de arquitetura mais natural e justifique: (a) classificar e-mails em categorias, (b) buscar documentos por similaridade semântica, (c) resumir relatórios, (d) assistente de conversação.
+R: (a) Somente encoder (ou um modelo pequeno ajustado): representa o texto inteiro para classificar. (b) Somente encoder treinado para embeddings de sentença (por exemplo, no estilo Sentence-BERT). (c) Encoder-decoder (resumo é texto para texto) ou decoder-only com instruções, dependendo de custo e qualidade. (d) Somente decoder, treinado e alinhado para seguir instruções. Em todos os casos, a decisão deve ser validada com medições na tarefa real, pois modelos de outra família também podem funcionar.
+
+DISC[D]: Sua aplicação precisa aceitar contextos de até 32 000 tokens, mas o servidor tem memória limitada. Descreva como estimaria o custo da atenção e que alternativas consideraria.
+R: Estimar a memória da matriz de pontuações ($T^2\times h\times$ bytes por camada, se materializada: com $T=32\,000$ e $h=32$ em `float16`, cerca de $65{,}5$ GB por camada) e, mais importante em geração, o cache de chaves e valores. Alternativas: implementações eficientes (FlashAttention), atenção agrupada, quantização do cache, janelas ou resumos hierárquicos, recuperação seletiva (RAG) para reduzir o contexto, limitar o tamanho por requisição e medir latência e qualidade com contextos reais.
+
+DISC[D]: Você precisa processar documentos de 200 páginas com um modelo de janela de 8 000 tokens. Compare três estratégias (truncar, dividir e resumir em etapas, recuperar trechos relevantes) quanto a custo, risco e qualidade, e proponha um plano de avaliação.
+R: Truncar: simples e barato, mas perde conteúdo e pode omitir o essencial. Dividir e resumir em etapas: cobre tudo, mas acumula erros e custo e pode perder detalhes. Recuperar trechos relevantes: eficiente quando a pergunta é específica, depende da qualidade da recuperação. Plano de avaliação: construir perguntas com respostas conhecidas em documentos reais, medir acerto, citações corretas e custo; comparar as estratégias com conjunto de teste separado, incluir perguntas cuja resposta está no meio do documento (onde modelos tendem a falhar) e analisar erros por tipo.

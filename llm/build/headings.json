@@ -1,0 +1,977 @@
+[
+ {
+  "level": 1,
+  "text": "Apresentação",
+  "id": "h1"
+ },
+ {
+  "level": 3,
+  "text": "Para quem é este livro",
+  "id": "h2"
+ },
+ {
+  "level": 3,
+  "text": "Como o livro está organizado",
+  "id": "h3"
+ },
+ {
+  "level": 3,
+  "text": "Ferramentas pedagógicas",
+  "id": "h4"
+ },
+ {
+  "level": 3,
+  "text": "Código, dados e reprodutibilidade",
+  "id": "h5"
+ },
+ {
+  "level": 3,
+  "text": "Atualização e rigor bibliográfico",
+  "id": "h6"
+ },
+ {
+  "level": 3,
+  "text": "Como estudar com este livro",
+  "id": "h7"
+ },
+ {
+  "level": 1,
+  "text": "Parte I — Fundamentos dos modelos de linguagem",
+  "id": "h8"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h9"
+ },
+ {
+  "level": 3,
+  "text": "1.1 Situação inicial",
+  "id": "h10"
+ },
+ {
+  "level": 3,
+  "text": "1.2 Objetivos de aprendizagem",
+  "id": "h11"
+ },
+ {
+  "level": 3,
+  "text": "1.3 Pré-requisitos e revisão necessária",
+  "id": "h12"
+ },
+ {
+  "level": 3,
+  "text": "1.4 Mapa conceitual",
+  "id": "h13"
+ },
+ {
+  "level": 3,
+  "text": "1.5 O que é um modelo de linguagem",
+  "id": "h14"
+ },
+ {
+  "level": 4,
+  "text": "1.5.1 Uma tarefa simples: prever o que vem depois",
+  "id": "h15"
+ },
+ {
+  "level": 4,
+  "text": "1.5.2 A regra da cadeia e a probabilidade de uma frase",
+  "id": "h16"
+ },
+ {
+  "level": 4,
+  "text": "1.5.3 Do modelo de n-gramas ao \"grande\" modelo de linguagem",
+  "id": "h17"
+ },
+ {
+  "level": 4,
+  "text": "1.5.4 O que torna um modelo \"grande\"?",
+  "id": "h18"
+ },
+ {
+  "level": 3,
+  "text": "1.6 IA, aprendizado de máquina, aprendizado profundo e PLN",
+  "id": "h19"
+ },
+ {
+  "level": 4,
+  "text": "1.6.1 Onde os LLMs se diferenciam dos modelos anteriores de PLN",
+  "id": "h20"
+ },
+ {
+  "level": 3,
+  "text": "1.7 Uma breve história dos modelos de linguagem",
+  "id": "h21"
+ },
+ {
+  "level": 3,
+  "text": "1.8 Modelo, aplicação, interface e sistema",
+  "id": "h22"
+ },
+ {
+  "level": 3,
+  "text": "1.9 Aplicações: onde os LLMs ajudam",
+  "id": "h23"
+ },
+ {
+  "level": 4,
+  "text": "1.9.1 Casos de uso por domínio",
+  "id": "h24"
+ },
+ {
+  "level": 3,
+  "text": "1.10 Capacidades, limitações e expectativas realistas",
+  "id": "h25"
+ },
+ {
+  "level": 4,
+  "text": "1.10.1 O que os LLMs costumam fazer bem",
+  "id": "h26"
+ },
+ {
+  "level": 4,
+  "text": "1.10.2 Onde eles falham",
+  "id": "h27"
+ },
+ {
+  "level": 4,
+  "text": "1.10.3 Três perguntas antes de adotar um LLM",
+  "id": "h28"
+ },
+ {
+  "level": 3,
+  "text": "1.11 Exemplos resolvidos",
+  "id": "h29"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Perplexidade e ordem do n-grama",
+  "id": "h30"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Calculando a probabilidade de uma frase",
+  "id": "h31"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Decidindo se vale usar um LLM",
+  "id": "h32"
+ },
+ {
+  "level": 3,
+  "text": "1.12 Atividade prática",
+  "id": "h33"
+ },
+ {
+  "level": 3,
+  "text": "1.13 Erros frequentes",
+  "id": "h34"
+ },
+ {
+  "level": 3,
+  "text": "1.14 Limitações e cuidados",
+  "id": "h35"
+ },
+ {
+  "level": 3,
+  "text": "1.15 Síntese",
+  "id": "h36"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h37"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h38"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h39"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h40"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h41"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h42"
+ },
+ {
+  "level": 3,
+  "text": "2.1 Situação inicial",
+  "id": "h43"
+ },
+ {
+  "level": 3,
+  "text": "2.2 Objetivos de aprendizagem",
+  "id": "h44"
+ },
+ {
+  "level": 3,
+  "text": "2.3 Pré-requisitos e revisão necessária",
+  "id": "h45"
+ },
+ {
+  "level": 3,
+  "text": "2.4 Mapa conceitual",
+  "id": "h46"
+ },
+ {
+  "level": 3,
+  "text": "2.5 Vetores, matrizes e tensores",
+  "id": "h47"
+ },
+ {
+  "level": 4,
+  "text": "2.5.1 Vetores: listas de números com significado",
+  "id": "h48"
+ },
+ {
+  "level": 4,
+  "text": "2.5.2 Matrizes: tabelas e transformações",
+  "id": "h49"
+ },
+ {
+  "level": 4,
+  "text": "2.5.3 Tensores",
+  "id": "h50"
+ },
+ {
+  "level": 4,
+  "text": "2.5.4 Códigos: vetores e matrizes em NumPy",
+  "id": "h51"
+ },
+ {
+  "level": 3,
+  "text": "2.6 Probabilidade, probabilidade condicional e softmax",
+  "id": "h52"
+ },
+ {
+  "level": 4,
+  "text": "2.6.1 Distribuições e probabilidade condicional",
+  "id": "h53"
+ },
+ {
+  "level": 4,
+  "text": "2.6.2 Do vetor de números à distribuição: o softmax",
+  "id": "h54"
+ },
+ {
+  "level": 4,
+  "text": "2.6.3 Estabilidade numérica",
+  "id": "h55"
+ },
+ {
+  "level": 4,
+  "text": "2.6.4 Temperatura",
+  "id": "h56"
+ },
+ {
+  "level": 3,
+  "text": "2.7 Logaritmos, entropia e entropia cruzada",
+  "id": "h57"
+ },
+ {
+  "level": 4,
+  "text": "2.7.1 Surpresa",
+  "id": "h58"
+ },
+ {
+  "level": 4,
+  "text": "2.7.2 Entropia",
+  "id": "h59"
+ },
+ {
+  "level": 4,
+  "text": "2.7.3 Entropia cruzada: a perda dos modelos de linguagem",
+  "id": "h60"
+ },
+ {
+  "level": 4,
+  "text": "2.7.4 Divergência de Kullback-Leibler (KL)",
+  "id": "h61"
+ },
+ {
+  "level": 3,
+  "text": "2.8 Derivadas, gradientes e otimização",
+  "id": "h62"
+ },
+ {
+  "level": 4,
+  "text": "2.8.1 A derivada como taxa de variação",
+  "id": "h63"
+ },
+ {
+  "level": 4,
+  "text": "2.8.2 Gradiente: derivadas em muitas dimensões",
+  "id": "h64"
+ },
+ {
+  "level": 4,
+  "text": "2.8.3 Descida do gradiente",
+  "id": "h65"
+ },
+ {
+  "level": 4,
+  "text": "2.8.4 A regra da cadeia e a retropropagação",
+  "id": "h66"
+ },
+ {
+  "level": 4,
+  "text": "2.8.5 O gradiente do softmax com entropia cruzada",
+  "id": "h67"
+ },
+ {
+  "level": 3,
+  "text": "2.9 Python, NumPy e tensores na prática",
+  "id": "h68"
+ },
+ {
+  "level": 4,
+  "text": "2.9.1 Vetorização e broadcasting",
+  "id": "h69"
+ },
+ {
+  "level": 4,
+  "text": "2.9.2 Tipos numéricos e memória",
+  "id": "h70"
+ },
+ {
+  "level": 3,
+  "text": "2.10 Organização de ambientes e experimentos",
+  "id": "h71"
+ },
+ {
+  "level": 3,
+  "text": "2.11 Exemplos resolvidos",
+  "id": "h72"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Qual documento é mais parecido?",
+  "id": "h73"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Perda e perplexidade de três previsões",
+  "id": "h74"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Um passo de descida do gradiente nos logits",
+  "id": "h75"
+ },
+ {
+  "level": 3,
+  "text": "2.12 Atividade prática",
+  "id": "h76"
+ },
+ {
+  "level": 3,
+  "text": "2.13 Erros frequentes",
+  "id": "h77"
+ },
+ {
+  "level": 3,
+  "text": "2.14 Limitações e cuidados",
+  "id": "h78"
+ },
+ {
+  "level": 3,
+  "text": "2.15 Síntese",
+  "id": "h79"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h80"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h81"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h82"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h83"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h84"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h85"
+ },
+ {
+  "level": 3,
+  "text": "3.1 Situação inicial",
+  "id": "h86"
+ },
+ {
+  "level": 3,
+  "text": "3.2 Objetivos de aprendizagem",
+  "id": "h87"
+ },
+ {
+  "level": 3,
+  "text": "3.3 Pré-requisitos e revisão necessária",
+  "id": "h88"
+ },
+ {
+  "level": 3,
+  "text": "3.4 Mapa conceitual",
+  "id": "h89"
+ },
+ {
+  "level": 3,
+  "text": "3.5 Representação computacional de texto",
+  "id": "h90"
+ },
+ {
+  "level": 4,
+  "text": "3.5.1 Caracteres, Unicode e bytes",
+  "id": "h91"
+ },
+ {
+  "level": 4,
+  "text": "3.5.2 Do texto aos vetores esparsos: saco de palavras e TF-IDF",
+  "id": "h92"
+ },
+ {
+  "level": 3,
+  "text": "3.6 Tokenização e vocabulário",
+  "id": "h93"
+ },
+ {
+  "level": 4,
+  "text": "3.6.1 O que é tokenizar",
+  "id": "h94"
+ },
+ {
+  "level": 4,
+  "text": "3.6.2 Três estratégias",
+  "id": "h95"
+ },
+ {
+  "level": 4,
+  "text": "3.6.3 O algoritmo BPE, passo a passo",
+  "id": "h96"
+ },
+ {
+  "level": 4,
+  "text": "3.6.4 Vocabulário, tokens especiais e custo",
+  "id": "h97"
+ },
+ {
+  "level": 3,
+  "text": "3.7 Embeddings: da palavra ao vetor denso",
+  "id": "h98"
+ },
+ {
+  "level": 4,
+  "text": "3.7.1 A tabela de embeddings",
+  "id": "h99"
+ },
+ {
+  "level": 4,
+  "text": "3.7.2 A hipótese distribucional",
+  "id": "h100"
+ },
+ {
+  "level": 4,
+  "text": "3.7.3 Embeddings estáticos e contextuais",
+  "id": "h101"
+ },
+ {
+  "level": 4,
+  "text": "3.7.4 Embeddings de sentenças e documentos",
+  "id": "h102"
+ },
+ {
+  "level": 3,
+  "text": "3.8 Similaridade e busca semântica",
+  "id": "h103"
+ },
+ {
+  "level": 4,
+  "text": "3.8.1 A receita",
+  "id": "h104"
+ },
+ {
+  "level": 4,
+  "text": "3.8.2 Uma busca de verdade, em escala pequena",
+  "id": "h105"
+ },
+ {
+  "level": 4,
+  "text": "3.8.3 Cosseno, produto escalar ou distância?",
+  "id": "h106"
+ },
+ {
+  "level": 3,
+  "text": "3.9 Particularidades do português",
+  "id": "h107"
+ },
+ {
+  "level": 3,
+  "text": "3.10 Limitações da interpretação de distâncias vetoriais",
+  "id": "h108"
+ },
+ {
+  "level": 3,
+  "text": "3.11 Exemplos resolvidos",
+  "id": "h109"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — BPE à mão",
+  "id": "h110"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Quando o TF-IDF falha e o embedding ajuda",
+  "id": "h111"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Custo em tokens",
+  "id": "h112"
+ },
+ {
+  "level": 3,
+  "text": "3.12 Atividade prática",
+  "id": "h113"
+ },
+ {
+  "level": 3,
+  "text": "3.13 Erros frequentes",
+  "id": "h114"
+ },
+ {
+  "level": 3,
+  "text": "3.14 Limitações e cuidados",
+  "id": "h115"
+ },
+ {
+  "level": 3,
+  "text": "3.15 Síntese",
+  "id": "h116"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h117"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h118"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h119"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h120"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h121"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h122"
+ },
+ {
+  "level": 3,
+  "text": "4.1 Situação inicial",
+  "id": "h123"
+ },
+ {
+  "level": 3,
+  "text": "4.2 Objetivos de aprendizagem",
+  "id": "h124"
+ },
+ {
+  "level": 3,
+  "text": "4.3 Pré-requisitos e revisão necessária",
+  "id": "h125"
+ },
+ {
+  "level": 3,
+  "text": "4.4 Mapa conceitual",
+  "id": "h126"
+ },
+ {
+  "level": 3,
+  "text": "4.5 A intuição da atenção",
+  "id": "h127"
+ },
+ {
+  "level": 3,
+  "text": "4.6 Consultas, chaves e valores",
+  "id": "h128"
+ },
+ {
+  "level": 3,
+  "text": "4.7 Atenção por produto escalar escalonado",
+  "id": "h129"
+ },
+ {
+  "level": 4,
+  "text": "4.7.1 Por que dividir por \\sqrt{d_k}?",
+  "id": "h130"
+ },
+ {
+  "level": 4,
+  "text": "4.7.2 Verificação experimental do escalonamento",
+  "id": "h131"
+ },
+ {
+  "level": 3,
+  "text": "4.8 A máscara causal e o fluxo de informação",
+  "id": "h132"
+ },
+ {
+  "level": 3,
+  "text": "4.9 Múltiplas cabeças de atenção",
+  "id": "h133"
+ },
+ {
+  "level": 3,
+  "text": "4.10 Representações posicionais",
+  "id": "h134"
+ },
+ {
+  "level": 3,
+  "text": "4.11 Conexões residuais e normalização",
+  "id": "h135"
+ },
+ {
+  "level": 4,
+  "text": "4.11.1 Conexões residuais",
+  "id": "h136"
+ },
+ {
+  "level": 4,
+  "text": "4.11.2 Normalização de camada",
+  "id": "h137"
+ },
+ {
+  "level": 3,
+  "text": "4.12 A rede alimentada adiante (FFN)",
+  "id": "h138"
+ },
+ {
+  "level": 3,
+  "text": "4.13 O bloco Transformer e a pilha",
+  "id": "h139"
+ },
+ {
+  "level": 4,
+  "text": "4.13.1 Contando parâmetros",
+  "id": "h140"
+ },
+ {
+  "level": 4,
+  "text": "4.13.2 Um bloco completo em NumPy",
+  "id": "h141"
+ },
+ {
+  "level": 3,
+  "text": "4.14 Três famílias de arquitetura",
+  "id": "h142"
+ },
+ {
+  "level": 3,
+  "text": "4.15 Custo computacional e limites de contexto",
+  "id": "h143"
+ },
+ {
+  "level": 3,
+  "text": "4.16 Exemplos resolvidos",
+  "id": "h144"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Atenção com máscara, passo a passo",
+  "id": "h145"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Contando parâmetros de uma camada",
+  "id": "h146"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — O que muda se dobrarmos o contexto?",
+  "id": "h147"
+ },
+ {
+  "level": 3,
+  "text": "4.17 Atividade prática",
+  "id": "h148"
+ },
+ {
+  "level": 3,
+  "text": "4.18 Erros frequentes",
+  "id": "h149"
+ },
+ {
+  "level": 3,
+  "text": "4.19 Limitações e cuidados",
+  "id": "h150"
+ },
+ {
+  "level": 3,
+  "text": "4.20 Síntese",
+  "id": "h151"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h152"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h153"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h154"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h155"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h156"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito comentado das questões objetivas",
+  "id": "h157"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h158"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h159"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h160"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h161"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice B — Soluções das questões matemáticas",
+  "id": "h162"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h163"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h164"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h165"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h166"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice C — Respostas orientadoras, códigos de referência e critérios",
+  "id": "h167"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h168"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h169"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h170"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h171"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h172"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h173"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h174"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h175"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h176"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos",
+  "id": "h177"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h178"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h179"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h180"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h181"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice F — Glossário",
+  "id": "h182"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice simbolos (provisório)",
+  "id": "h183"
+ },
+ {
+  "level": 3,
+  "text": "Seção provisória",
+  "id": "h184"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice instalacao (provisório)",
+  "id": "h185"
+ },
+ {
+  "level": 3,
+  "text": "Seção provisória",
+  "id": "h186"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice prompts (provisório)",
+  "id": "h187"
+ },
+ {
+  "level": 3,
+  "text": "Seção provisória",
+  "id": "h188"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice checklists (provisório)",
+  "id": "h189"
+ },
+ {
+  "level": 3,
+  "text": "Seção provisória",
+  "id": "h190"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice matriz (provisório)",
+  "id": "h191"
+ },
+ {
+  "level": 3,
+  "text": "Seção provisória",
+  "id": "h192"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice metodo (provisório)",
+  "id": "h193"
+ },
+ {
+  "level": 3,
+  "text": "Seção provisória",
+  "id": "h194"
+ },
+ {
+  "level": 1,
+  "text": "Referências",
+  "id": "h195"
+ }
+]

@@ -1,0 +1,174 @@
+@@EX 1 | Atenção do zero, máscara e teste de vazamento | básico
+Implemente `atencao(Q, K, V, mascara)` (produto escalar escalonado, softmax estável) e use-a com 6 tokens aleatórios de dimensão 8 (`np.random.default_rng(0)`), projetados por matrizes aleatórias para $\mathbf{Q}$, $\mathbf{K}$ e $\mathbf{V}$. Mostre (a) que cada linha dos pesos soma 1, (b) a matriz de pesos com máscara causal (arredondada), (c) o resultado de um **teste de vazamento**: alterar o último token não pode mudar as saídas dos cinco primeiros.
+
+*Pergunta:* o que o teste mostraria se a máscara fosse aplicada depois do softmax?
+@@SOL
+```python
+import numpy as np
+
+def softmax(z):
+    z = z - z.max(axis=-1, keepdims=True)
+    e = np.exp(z)
+    return e / e.sum(axis=-1, keepdims=True)
+
+def atencao(Q, K, V, mascara=None):
+    S = Q @ K.T / np.sqrt(Q.shape[-1])
+    if mascara is not None:
+        S = np.where(mascara, S, -1e9)
+    A = softmax(S)
+    return A @ V, A
+
+rng = np.random.default_rng(0)
+T, d = 6, 8
+X = rng.normal(size=(T, d))
+WQ, WK, WV = (rng.normal(size=(d, d)) / np.sqrt(d) for _ in range(3))
+causal = np.tril(np.ones((T, T), dtype=bool))
+
+saida, A = atencao(X @ WQ, X @ WK, X @ WV, causal)
+print("linhas somam 1:", np.allclose(A.sum(axis=1), 1))
+print("pesos com máscara causal:\n", A.round(2))
+
+X2 = X.copy(); X2[-1] = rng.normal(size=d)
+saida2, _ = atencao(X2 @ WQ, X2 @ WK, X2 @ WV, causal)
+print("tokens 1-5 inalterados ao mudar o token 6:", np.allclose(saida[:5], saida2[:5]))
+
+# versão incorreta: máscara aplicada depois do softmax, sem renormalizar
+def atencao_errada(Q, K, V, mascara):
+    A = softmax(Q @ K.T / np.sqrt(Q.shape[-1])) * mascara
+    return A @ V, A
+_, Ae = atencao_errada(X @ WQ, X @ WK, X @ WV, causal)
+print("versão errada: as linhas ainda somam 1?", np.allclose(Ae.sum(axis=1), 1), "| soma da linha 1:", round(float(Ae[0].sum()), 3))
+```
+@@NOTE Com a máscara antes do softmax, as linhas somam 1 e o teste de vazamento passa. A versão "errada" **também** passa no teste de vazamento (os pesos das posições futuras são zerados), mas suas linhas **não somam 1**: o token 1, por exemplo, tem soma de pesos bem menor que 1, e as saídas ficam com escala distorcida. Isso mostra que o teste de vazamento é necessário, mas **não suficiente**: é preciso também verificar a normalização dos pesos.
+@@EX 2 | Cabeças de atenção: mesmo custo em parâmetros, perfis diferentes | intermediário
+Com $d=64$ e $T=10$, construa blocos de atenção multicabeça com $h\in\{1,2,4,8\}$ cabeças (pesos aleatórios, `default_rng(1)`). Para cada $h$, imprima: o número de parâmetros do bloco (sem vieses), o formato do tensor de pesos e a **entropia média** dos pesos de atenção (em nats, sobre as linhas, média entre cabeças).
+
+*Pergunta:* o número de parâmetros muda com $h$? E a entropia? O que a entropia mede aqui?
+@@SOL
+```python
+import numpy as np
+
+def softmax(z):
+    z = z - z.max(axis=-1, keepdims=True)
+    e = np.exp(z)
+    return e / e.sum(axis=-1, keepdims=True)
+
+def multicabeca(X, WQ, WK, WV, WO, h):
+    T, d = X.shape; dh = d // h
+    sep = lambda M: M.reshape(T, h, dh).transpose(1, 0, 2)
+    Q, K, V = sep(X @ WQ), sep(X @ WK), sep(X @ WV)
+    A = softmax(Q @ K.transpose(0, 2, 1) / np.sqrt(dh))
+    Z = (A @ V).transpose(1, 0, 2).reshape(T, d)
+    return Z @ WO, A
+
+d, T = 64, 10
+rng = np.random.default_rng(1)
+X = rng.normal(size=(T, d))
+WQ, WK, WV, WO = (rng.normal(size=(d, d)) / np.sqrt(d) for _ in range(4))
+
+print(f"{'h':>3} {'dh':>4} {'parâmetros':>11} {'formato dos pesos':>18} {'entropia média':>15} {'máx. = ln T':>12}")
+for h in (1, 2, 4, 8):
+    Z, A = multicabeca(X, WQ, WK, WV, WO, h)
+    ent = -(A * np.log(A + 1e-12)).sum(-1).mean()
+    print(f"{h:>3} {d // h:>4} {4 * d * d:>11} {str(A.shape):>18} {ent:>15.3f} {np.log(T):>12.3f}")
+```
+@@NOTE O número de parâmetros é **o mesmo** para qualquer $h$ ($4d^2=16\,384$): dividir em cabeças só reparte as mesmas matrizes. O formato dos pesos ganha uma dimensão de cabeças. A entropia mede quão **espalhada** é a atenção: o máximo é $\ln T\approx2{,}30$ (pesos uniformes). Aqui ela fica quase igual para todos os $h$ (cerca de 2,0), perto do máximo: com pesos **aleatórios**, as pontuações são pouco discriminativas e a atenção é quase uniforme. Em um modelo **treinado**, as cabeças desenvolvem perfis diferentes (algumas focadas, outras difusas), mas isso não está sendo medido aqui.
+@@EX 3 | Quando a ordem importa: saco de palavras versus posição | intermediário
+Crie um problema em que **só a ordem** determina o rótulo: sequências de 6 tokens, escolhidos de um vocabulário de 8 letras, contendo exatamente um "x" e exatamente um "y" em posições distintas; o rótulo é 1 se "x" vem **antes** de "y". Gere 2 000 sequências (`default_rng(0)`). Treine uma `LogisticRegression` com (a) atributos de **saco de palavras** (contagens por token) e (b) atributos com **posição** (codificação *one-hot* da posição do "x" e da posição do "y"). Compare a acurácia em um conjunto de teste.
+
+*Pergunta:* por que o saco de palavras não consegue aprender? Que relação isso tem com a atenção sem posições?
+@@SOL
+```python
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+rng = np.random.default_rng(0)
+letras = list("abcdefgh")
+T, N = 6, 2000
+seqs, y = [], []
+for _ in range(N):
+    s = list(rng.choice(letras[:6], size=T))
+    px, py = rng.choice(T, size=2, replace=False)
+    s[px], s[py] = "x", "y"
+    seqs.append(s); y.append(int(px < py))
+y = np.array(y)
+vocab = letras[:6] + ["x", "y"]; ix = {t: i for i, t in enumerate(vocab)}
+
+# (a) saco de palavras: contagens por token
+Xbow = np.zeros((N, len(vocab)))
+for n, s in enumerate(seqs):
+    for t in s: Xbow[n, ix[t]] += 1
+
+# (b) posição de x e de y em one-hot
+Xpos = np.zeros((N, 2 * T))
+for n, s in enumerate(seqs):
+    Xpos[n, s.index("x")] = 1
+    Xpos[n, T + s.index("y")] = 1
+
+for nome, X in [("saco de palavras", Xbow), ("com posições", Xpos)]:
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+    acc = LogisticRegression(max_iter=2000).fit(Xtr, ytr).score(Xte, yte)
+    print(f"{nome:<18} acurácia no teste = {acc:.3f}")
+print("proporção de rótulo 1:", y.mean().round(3))
+```
+@@NOTE O saco de palavras tem acurácia próxima de 0,5 (acaso): as contagens de "x" e "y" são sempre 1 em todas as sequências, de modo que nenhuma informação sobre a ordem resta. Com a posição de cada letra, a acurácia sobe muito. É a mesma lição da atenção sem posições: sem informação posicional, o modelo trata a entrada como um conjunto. Por isso os Transformers somam codificações de posição aos embeddings.
+@@ALEM
+- **scikit-learn:** os módulos `sklearn.metrics` e `sklearn.model_selection` ajudam a construir avaliações reprodutíveis dos experimentos acima.
+- **UCI Machine Learning Repository:** conjuntos de sequências simbólicas, como *Splice-junction Gene Sequences*, em que a ordem dos símbolos importa, servem para experimentar a diferença entre atributos de contagem e de posição.
+- **Kaggle:** competições introdutórias de classificação de texto para praticar representações com e sem ordem.
+@@PROJ Medindo o custo da atenção | intermediário
+**Contexto.** A literatura diz que o custo da atenção cresce com $T^2$. Você vai **medir** esse crescimento na prática, com sua implementação em NumPy, e comparar com a previsão teórica. Isso treina dois hábitos: medir antes de afirmar e relatar condições do experimento.
+
+**Tarefas.**
+
+1. Use o bloco de atenção multicabeça do capítulo com $d=64$ e $h=4$ (pesos aleatórios).
+2. Meça o tempo de execução (mediana de 5 repetições, `time.perf_counter`) para $T\in\{64,128,256,512,1024\}$.
+3. Calcule também a memória teórica da matriz de pontuações ($h\,T^2$ elementos em `float32`).
+4. Ajuste uma reta aos logaritmos (`log T` versus `log tempo`) com `LinearRegression` e relate o **expoente** estimado.
+5. Escreva um parágrafo comparando o expoente medido com o esperado, discutindo por que o valor medido pode diferir de 2 (para menos ou para mais) e quais condições da máquina influenciam.
+
+**Entregáveis.** Código, tabela, expoente estimado e o parágrafo.
+@@RUBRICA
+- Medição correta (mediana de repetições, mesma configuração para todos os $T$) (3 pontos).
+- Memória teórica calculada corretamente (2 pontos).
+- Ajuste log-log e expoente reportado (2 pontos).
+- Discussão crítica: termos lineares e quadráticos, efeito de cache e de bibliotecas numéricas, variação entre máquinas (3 pontos).
+@@SOL
+```python
+import time
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+def softmax(z):
+    z = z - z.max(axis=-1, keepdims=True)
+    e = np.exp(z)
+    return e / e.sum(axis=-1, keepdims=True)
+
+def multicabeca(X, WQ, WK, WV, WO, h):
+    T, d = X.shape; dh = d // h
+    sep = lambda M: M.reshape(T, h, dh).transpose(1, 0, 2)
+    Q, K, V = sep(X @ WQ), sep(X @ WK), sep(X @ WV)
+    A = softmax(Q @ K.transpose(0, 2, 1) / np.sqrt(dh))
+    return ((A @ V).transpose(1, 0, 2).reshape(T, d)) @ WO
+
+d, h = 64, 4
+rng = np.random.default_rng(0)
+WQ, WK, WV, WO = (rng.normal(size=(d, d)).astype(np.float32) / 8 for _ in range(4))
+
+Ts = [64, 128, 256, 512, 1024]
+tempos = []
+print(f"{'T':>6} {'tempo mediano (ms)':>19} {'memória das pontuações (MB, float32)':>38}")
+for T in Ts:
+    X = rng.normal(size=(T, d)).astype(np.float32)
+    multicabeca(X, WQ, WK, WV, WO, h)                      # aquecimento
+    rep = []
+    for _ in range(5):
+        t0 = time.perf_counter(); multicabeca(X, WQ, WK, WV, WO, h); rep.append(time.perf_counter() - t0)
+    tempos.append(float(np.median(rep)))
+    print(f"{T:>6} {1000 * tempos[-1]:>19.2f} {h * T * T * 4 / 1e6:>38.2f}")
+
+reg = LinearRegression().fit(np.log(Ts).reshape(-1, 1), np.log(tempos))
+print(f"expoente estimado (inclinação log-log): {reg.coef_[0]:.2f} | esperado: entre 1 (domínio linear) e 2 (domínio quadrático)")
+```
+@@NOTE Os tempos dependem da máquina (processador, bibliotecas numéricas, carga), então **seus números serão diferentes** dos mostrados. Nesta execução, o expoente estimado foi cerca de 2,06, próximo do esperado para o regime quadrático; o salto de $T=512$ para $T=1024$ (cerca de 6 vezes, em vez de 4) sugere efeitos de memória e de cache além da conta teórica. Para $T$ pequeno, sobrecargas fixas e termos lineares (projeções) puxam o expoente para baixo; para $T$ grande, o termo quadrático domina, e efeitos de memória podem empurrá-lo para cima. A memória teórica, essa sim, cresce exatamente com $T^2$ (16 vezes de $T=256$ para $T=1024$). Relate sempre as condições do experimento.

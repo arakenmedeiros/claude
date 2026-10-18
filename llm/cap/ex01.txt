@@ -1,0 +1,355 @@
+MC: Qual é a descrição mais precisa de um modelo de linguagem?
+= Um modelo que atribui probabilidades a sequências de tokens, estimando o próximo token dado o contexto anterior.
+- Um programa que traduz automaticamente qualquer idioma para o português.
+- Uma base de dados que armazena todas as frases já escritas por humanos.
+- Um sistema de regras gramaticais escritas por linguistas para corrigir textos.
+- Um conjunto de respostas prontas que o programa escolhe por palavras-chave.
+J: A definição central é probabilística: dado o contexto, o modelo dá a expectativa de cada continuação. Tradução, correção e respostas prontas são aplicações ou técnicas distintas.
+
+MC: Na expressão $P(w_t \mid w_1, \ldots, w_{t-1})$, o símbolo "|" significa:
+= "dado que", isto é, a probabilidade de $w_t$ condicionada aos tokens anteriores.
+- "ou", isto é, a probabilidade de $w_t$ ou dos tokens anteriores.
+- "dividido por", isto é, uma razão entre dois tokens.
+- "aproximadamente igual a", isto é, uma estimativa grosseira.
+- "diferente de", isto é, uma exclusão de tokens.
+J: A barra vertical indica condicionamento. Lê-se "probabilidade de $w_t$ dado o que veio antes".
+
+MC: Por que, na prática, calculamos a probabilidade de uma frase longa somando logaritmos de probabilidades em vez de multiplicar as probabilidades?
+= Porque o produto de muitos números pequenos fica tão minúsculo que o computador o representa mal; somar logaritmos evita isso.
+- Porque logaritmos tornam as probabilidades maiores que 1, o que facilita a comparação.
+- Porque a regra da cadeia só é válida quando se usam logaritmos.
+- Porque somar é sempre mais barato que multiplicar em qualquer processador.
+- Porque logaritmos eliminam a necessidade de treinar o modelo.
+J: O motivo é numérico (evitar *underflow*). O logaritmo transforma produto em soma e mantém a ordem das probabilidades.
+
+MC: Uma frase recebe probabilidade alta de um modelo de linguagem. O que se pode concluir?
+= Que a frase é plausível segundo os padrões dos textos de treinamento; não se conclui que seja verdadeira.
+- Que a frase é verdadeira, pois o modelo foi treinado com muitos dados.
+- Que a frase foi vista literalmente no treinamento.
+- Que a frase é gramaticalmente perfeita em qualquer idioma.
+- Que a frase pode ser usada sem verificação em contextos jurídicos.
+J: Probabilidade mede plausibilidade estatística. Erros comuns em textos de treinamento também recebem probabilidade considerável.
+
+MC: Um modelo de bigramas estima $P(w_t \mid w_{t-1})$ por:
+= contagem do par $(w_{t-1}, w_t)$ dividida pela contagem de $w_{t-1}$ (com alguma suavização).
+- contagem de $w_t$ dividida pelo número total de frases.
+- soma dos embeddings de todos os tokens da frase.
+- produto das probabilidades de todos os tokens do vocabulário.
+- média das contagens de todos os pares do corpus.
+J: A estimativa por máxima verossimilhança em bigramas é a razão entre a contagem do par e a do token anterior.
+
+MC: O que é "esparsidade" no contexto de n-gramas?
+= A maior parte das combinações possíveis de $n$ tokens nunca aparece nos dados, o que dificulta estimar suas probabilidades.
+- O fato de o vocabulário conter poucas palavras.
+- A tendência de os modelos gerarem frases muito curtas.
+- A falta de memória RAM durante a geração de texto.
+- A ausência de pontuação nos textos de treinamento.
+J: Com vocabulário grande e $n$ crescente, o número de n-gramas possíveis explode e quase todos têm contagem zero.
+
+MC: Qual propriedade dos modelos neurais ajuda a lidar com a esparsidade que afeta os n-gramas?
+= Representações numéricas (embeddings) em que palavras semelhantes ficam próximas, permitindo generalizar entre contextos parecidos.
+- A capacidade de armazenar todas as frases do corpus na memória.
+- A eliminação do vocabulário, que passa a ser infinito.
+- O uso exclusivo de regras gramaticais.
+- A garantia de que toda frase gerada é verdadeira.
+J: A generalização por similaridade de representações é a vantagem central, ideia proposta no modelo neural de Bengio et al. (2003).
+
+MC: Sobre a expressão "grande" em "grande modelo de linguagem", é correto afirmar que:
+= Não há um limiar oficial; o termo é relativo e mudou com o tempo, referindo-se a escala de parâmetros, dados e computação.
+- Existe um limite padronizado de 1 bilhão de parâmetros.
+- Refere-se exclusivamente ao tamanho da janela de contexto.
+- Significa que o modelo foi treinado apenas com texto em inglês.
+- Indica que o modelo é necessariamente de código aberto.
+J: Não há consenso numérico. O termo descreve modelos treinados em larga escala, e o que é "grande" depende da época.
+
+MC: O que Kaplan et al. (2020) mostraram sobre a perda de modelos de linguagem Transformer?
+= Que a perda diminui de forma previsível, seguindo leis de potência, ao aumentar parâmetros, dados e computação.
+- Que a perda é independente do tamanho do modelo.
+- Que aumentar dados sempre piora o modelo.
+- Que a perda atinge zero com modelos suficientemente grandes.
+- Que a perda só depende da qualidade do tokenizador.
+J: As leis de escala descrevem melhoria regular da perda com a escala, dentro das faixas estudadas, sem implicar perda nula.
+
+MC: Qual é a relação correta entre IA, aprendizado de máquina (AM) e aprendizado profundo (AP)?
+= AP é um subconjunto de AM, que por sua vez é um subconjunto de IA.
+- IA é um subconjunto de AP.
+- AM e IA são conjuntos disjuntos.
+- AP engloba toda a IA e o AM.
+- AM é um subconjunto de PLN.
+J: A relação é de inclusão: IA ⊃ AM ⊃ AP. O PLN cruza esses conjuntos.
+
+MC: Onde se situam os LLMs, segundo a organização conceitual do capítulo?
+= Na interseção entre aprendizado profundo e processamento de linguagem natural.
+- Fora do aprendizado de máquina, por serem baseados em regras.
+- Exclusivamente dentro da visão computacional.
+- Na interseção entre regras manuais e estatística clássica.
+- Dentro do aprendizado por reforço, sem relação com PLN.
+J: LLMs são redes neurais profundas aplicadas a linguagem natural, portanto na interseção de AP com PLN.
+
+MC: O que o termo "aprendizagem em contexto" (*in-context learning*) descreve?
+= A adaptação do modelo à tarefa a partir de instruções e exemplos fornecidos no próprio prompt, sem atualizar os parâmetros.
+- O retreinamento completo do modelo a cada nova pergunta.
+- O aprendizado de novos idiomas durante a conversa, de forma permanente.
+- A compressão do modelo para rodar em celulares.
+- O uso de um banco de dados externo para armazenar respostas.
+J: Brown et al. (2020) descrevem a adaptação via prompt. Os parâmetros permanecem fixos durante a inferência.
+
+MC: Qual afirmação distingue corretamente "modelo" de "produto"?
+= O modelo é o conjunto de parâmetros treinados; o produto (por exemplo, uma interface de chat) é a forma de uso, e os modelos por trás podem mudar.
+- Modelo e produto são sempre o mesmo, pois o nome do chat designa o modelo.
+- O produto é o conjunto de parâmetros, e o modelo é a interface.
+- O modelo é a janela de chat, e o produto é o tokenizador.
+- Produto é um modelo que nunca muda de versão.
+J: Interfaces e serviços empacotam modelos, instruções e filtros. O nome do produto não identifica um modelo específico.
+
+MC: Na separação em camadas do capítulo, qual componente é responsável por montar o prompt, validar a saída e tratar erros?
+= A aplicação.
+- O modelo.
+- A interface de conversação.
+- O corpus de treinamento.
+- A função de perda.
+J: A aplicação é o código que prepara a entrada, chama o modelo e processa a saída. O modelo apenas transforma tokens em probabilidades.
+
+MC: Um assistente responde corretamente quando consulta a base de políticas e erra quando não a consulta. Isso evidencia, principalmente, que:
+= A qualidade final depende do sistema completo (recuperação, contexto), e não apenas do modelo.
+- O modelo foi treinado com dados incorretos.
+- A interface de conversação introduz viés político.
+- O tokenizador está corrompido.
+- Modelos nunca devem ser combinados com bases de dados.
+J: A diferença está no acesso à evidência: o componente de recuperação muda a resposta mesmo mantendo o mesmo modelo.
+
+MC: Qual é o uso mais adequado do termo "resposta inventada" (ou não fundamentada) neste livro?
+= Conteúdo fluente que não é fiel à fonte ou aos fatos, evitando sugerir que o modelo "percebe" algo.
+- Qualquer resposta curta do modelo.
+- Respostas que o usuário não entendeu.
+- Respostas produzidas apenas por modelos locais.
+- Qualquer texto gerado, verdadeiro ou não.
+J: A literatura usa "alucinação" para o fenômeno; o livro prefere termo que descreve o comportamento sem antropomorfizar.
+
+MC: Um colega afirma que o modelo é confiável porque acertou cinco perguntas que ele mesmo escolheu. Qual a melhor objeção?
+= Cinco exemplos escolhidos pelo próprio avaliador são amostra pequena e enviesada; é preciso um conjunto de teste maior e independente, com medida de incerteza.
+- Cinco acertos são suficientes para garantir confiabilidade em qualquer tarefa.
+- A única forma de avaliar é perguntar ao próprio modelo se ele acertou.
+- O número de perguntas é irrelevante, apenas a fluência importa.
+- Avaliar modelos é impossível, portanto qualquer escolha é válida.
+J: A confiança em um sistema exige amostra representativa, independência entre avaliador e escolha dos exemplos e intervalos de confiança (Capítulo 16).
+
+MC: Qual das situações abaixo é a mais adequada para considerar uma solução mais simples que um LLM?
+= Classificar mensagens em poucas categorias estáveis, quando um classificador pequeno atinge bom desempenho e custa menos.
+- Reescrever em diversos estilos textos com vocabulário imprevisível.
+- Responder a perguntas abertas sobre milhares de documentos novos por dia.
+- Gerar rascunhos criativos com revisão humana.
+- Traduzir manuais técnicos entre idiomas com baixa tolerância a erros, usando revisores.
+J: Para categorias poucas e estáveis, modelos pequenos costumam bastar; LLMs agregam custo e imprevisibilidade.
+
+MC: Qual das perguntas abaixo é uma das três propostas no capítulo para fazer antes de adotar um LLM?
+= Como saberei que a resposta está certa?
+- Qual fornecedor divulga o maior número de parâmetros?
+- Qual é o modelo mais comentado nas redes sociais no momento?
+- Qual interface de conversação tem o design mais moderno?
+- Qual a cor da marca do fornecedor do serviço?
+J: As três perguntas são: existe solução mais simples? como saberei que a resposta está certa? qual o custo de um erro? As demais opções tratam de popularidade ou aparência, e não de adequação.
+
+MC: Qual conclusão é adequada sobre a perplexidade?
+= É uma medida de incerteza média do modelo sobre o texto; menor é melhor, mas não mede verdade nem utilidade.
+- Mede a verdade das frases geradas.
+- Mede a velocidade de geração em tokens por segundo.
+- É sempre igual ao número de parâmetros.
+- Só pode ser calculada para modelos treinados com aprendizado por reforço.
+J: Perplexidade resume quão surpreso o modelo fica com um texto; é útil para comparar modelos de linguagem, com limitações discutidas no Capítulo 16.
+
+MC: Um modelo atribui probabilidade 0,5 a cada passo de uma frase de 3 tokens. Qual a perplexidade por token?
+= 2
+- 0,5
+- 3
+- 1,5
+- 8
+J: ln P = 3·ln 0,5 = −2,079; dividindo por 3: −0,693; e^{0,693} = 2. Intuição: como se escolhesse entre 2 opções igualmente prováveis.
+
+MC: Em um corpus sintético, o bigrama obtém perplexidade bem menor que o unigrama. Qual a explicação mais direta?
+= O bigrama usa o token anterior como contexto, reduzindo a incerteza sobre o próximo token.
+- O unigrama usa mais memória que o bigrama.
+- O bigrama memoriza a frase inteira.
+- O unigrama foi treinado com menos frases por definição.
+- A perplexidade só diminui quando se remove a pontuação.
+J: Condicionar no token anterior reduz a incerteza porque a estrutura da frase é regular. Isso não implica "entendimento".
+
+MC: Qual dos marcos abaixo introduziu uma arquitetura baseada apenas em atenção, sem recorrência?
+= O Transformer (Vaswani et al., 2017).
+- O modelo de Shannon (1948).
+- O modelo neural probabilístico (Bengio et al., 2003).
+- O word2vec (Mikolov et al., 2013).
+- Os modelos de n-gramas de ordem 3.
+J: O artigo "Attention is all you need" propôs o Transformer baseado em atenção.
+
+MC: Qual a principal função dos dados de preferência humana citados por Ouyang et al. (2022)?
+= Ajustar o modelo para seguir instruções de modo mais útil e aceitável, aproximando-o do formato de assistente.
+- Aumentar o vocabulário do tokenizador.
+- Reduzir o número de parâmetros do modelo.
+- Substituir o pré-treinamento por completo.
+- Garantir que o modelo nunca produza erros factuais.
+J: O pós-treinamento com preferências melhora aderência às instruções, sem garantir correção factual.
+
+MC: Por que a data de corte dos dados de treinamento é relevante para quem usa um LLM?
+= O modelo não tem conhecimento próprio de eventos posteriores; perguntas sobre fatos recentes exigem fontes atualizadas.
+- Ela determina o idioma em que o modelo responde.
+- Ela fixa o número de parâmetros do modelo.
+- Ela impede que o modelo use ferramentas externas.
+- Ela é irrelevante, pois o modelo se atualiza sozinho a cada pergunta.
+J: Os parâmetros refletem os dados disponíveis até certa data. Recuperação de documentos ou ferramentas podem suprir informação recente.
+
+MC: Qual cuidado é mais importante ao usar LLMs em saúde, direito ou finanças?
+= Tratar o modelo como apoio a profissionais, com verificação humana de toda saída relevante.
+- Confiar na fluência da resposta como critério de correção.
+- Evitar registrar versões e datas para simplificar o processo.
+- Usar apenas perguntas curtas para reduzir erros.
+- Remover qualquer citação de fontes para não confundir o usuário.
+J: Erros plausíveis podem causar dano real; a supervisão humana e a rastreabilidade das fontes são requisitos básicos.
+
+MC: Por que um experimento com um serviço externo de conversação nem sempre é reprodutível?
+= Porque o serviço pode mudar de modelo, de instruções ocultas e de políticas sem aviso, e a geração pode ser variável.
+- Porque serviços externos não usam probabilidades.
+- Porque só funcionam em computadores com GPU.
+- Porque nunca guardam registros de uso.
+- Porque o resultado depende apenas da cor da interface.
+J: Registrar data, versão e parâmetros é essencial; mesmo assim, a reprodutibilidade fica limitada em serviços que o usuário não controla.
+
+MC: O que significa dizer que um modelo de n-gramas suavizado "não atribui probabilidade zero" a uma frase inédita?
+= A suavização reserva uma pequena massa de probabilidade para combinações não observadas no corpus.
+- O modelo memorizou a frase durante o treinamento.
+- A frase é, por definição, verdadeira.
+- O modelo ignora o contexto anterior.
+- O vocabulário foi reduzido a uma única palavra.
+J: A suavização aditiva evita probabilidade zero para eventos não vistos, o que preveniria perplexidade infinita.
+
+MC: O que é um token, na definição usada neste capítulo?
+= A unidade de texto manipulada pelo modelo, que pode ser uma palavra, um pedaço de palavra ou um caractere.
+- Sempre uma palavra completa do dicionário.
+- Uma frase inteira, terminada por ponto.
+- Um parâmetro numérico ajustado durante o treinamento.
+- Um arquivo de texto do corpus de treinamento.
+J: O texto é dividido em tokens por um tokenizador (Capítulo 3). Token não é necessariamente uma palavra.
+
+MC: A regra da cadeia da probabilidade permite escrever a probabilidade de uma sequência como:
+= O produto das probabilidades condicionais de cada token dado os anteriores.
+- A soma das probabilidades individuais de cada token.
+- A média das probabilidades de todos os tokens do vocabulário.
+- A maior probabilidade individual entre os tokens da frase.
+- O inverso do número de tokens da frase.
+J: $P(w_1,\ldots,w_n)=\prod_t P(w_t\mid w_1,\ldots,w_{t-1})$. Cada fator é uma previsão de próximo token.
+
+DISC[C]: Explique, com suas palavras, o que é um modelo de linguagem e por que escrever um texto longo pode ser entendido como a repetição de um passo simples.
+R: Um modelo de linguagem estima a probabilidade do próximo token dado o contexto anterior. Para gerar um texto, calcula-se a distribuição sobre o próximo token, escolhe-se um token (por maior probabilidade ou por sorteio), acrescenta-se ao contexto e repete-se o processo. O texto longo resulta da repetição desse passo. A qualidade depende de quão boas são as distribuições estimadas e de como se escolhe o token a cada passo (Capítulo 6).
+
+DISC[C]: Diferencie modelo, aplicação, interface de conversação e sistema completo, dando um exemplo de falha típica em cada camada.
+R: Modelo: parâmetros treinados que mapeiam tokens em probabilidades; falha típica: conhecimento ausente ou resposta inventada. Aplicação: código que monta o prompt, valida e trata erros; falha típica: prompt mal formulado ou saída sem validação. Interface: a forma de interação (chat, voz, API); falha típica: instruções ocultas ou contexto que o usuário não vê. Sistema: aplicação mais recuperação, ferramentas, registros e supervisão; falha típica: documento errado recuperado ou ação indevida.
+
+DISC[C]: Por que não se deve usar "ChatGPT" como sinônimo de LLM? Dê dois argumentos.
+R: (1) ChatGPT designa um produto/interface de conversação; LLM designa uma classe de modelos. (2) Os modelos por trás de um produto mudam ao longo do tempo e podem ser vários, além de o produto incluir instruções, filtros e ferramentas. Identificar o produto com o modelo impede atribuir corretamente um erro ou um mérito, e prejudica a reprodutibilidade.
+
+DISC[C]: O que é esparsidade em n-gramas e como os modelos neurais a mitigam?
+R: Esparsidade é o fato de que, para vocabulário grande e $n$ crescente, o número de n-gramas possíveis cresce exponencialmente e a maioria nunca aparece no corpus, tornando as contagens pouco informativas. Modelos neurais aprendem representações vetoriais em que tokens semelhantes ficam próximos, o que permite generalizar de contextos vistos para contextos parecidos e reduz a dependência de contagens exatas.
+
+DISC[C]: Descreva, em um parágrafo, a diferença entre plausibilidade e verdade para um texto gerado por um modelo de linguagem.
+R: Plausibilidade é a expectativa estatística de um texto segundo os padrões dos dados de treinamento; verdade é a correspondência com os fatos. Um texto pode ser plausível e falso (um erro comum nos dados, uma combinação fluente de fatos inexistentes). A probabilidade atribuída pelo modelo mede a primeira, não a segunda. Por isso é preciso verificar com fontes e medir o desempenho com dados de teste.
+
+DISC[M]: Um modelo atribui $P(\text{o})=0{,}2$, $P(\text{aluno}\mid\text{o})=0{,}5$, $P(\text{lê}\mid\text{o aluno})=0{,}1$ e $P(\text{.}\mid\text{o aluno lê})=0{,}6$. Calcule (a) a probabilidade da frase, (b) $\ln P$ e (c) a perplexidade por token.
+R: (a) $P = 0{,}2 \times 0{,}5 \times 0{,}1 \times 0{,}6 = 0{,}006$.
+R: (b) $\ln 0{,}006 = \ln 6 - \ln 1000 \approx 1{,}792 - 6{,}908 = -5{,}116$.
+R: (c) Com 4 passos: $-5{,}116/4 = -1{,}279$; perplexidade $= e^{1{,}279} \approx 3{,}59$. Interpretação: tão incerto quanto escolher entre cerca de 3,6 opções equiprováveis a cada passo.
+
+DISC[M]: Um vocabulário tem 30 000 tokens. (a) Quantos trigramas distintos são possíveis? (b) Se um corpus tem 10⁹ posições de trigramas, qual a razão máxima entre trigramas observados e possíveis? O que isso revela?
+R: (a) $30\,000^3 = 27 \times 10^{12} = 2{,}7 \times 10^{13}$.
+R: (b) No máximo $10^9 / 2{,}7 \times 10^{13} \approx 3{,}7 \times 10^{-5}$, ou seja, cerca de 0,0037% dos trigramas possíveis poderiam aparecer, mesmo supondo que todos fossem distintos. Isso mostra a esparsidade: a imensa maioria nunca é observada.
+
+DISC[M]: Em um corpus, "o" ocorre 500 vezes e "o estudante" ocorre 100 vezes; o vocabulário tem 1 000 tokens. Estime $P(\text{estudante}\mid\text{o})$ (a) por máxima verossimilhança e (b) com suavização aditiva de $k=1$. Compare.
+R: (a) $100/500 = 0{,}20$.
+R: (b) $(100+1)/(500+1000\cdot 1) = 101/1500 \approx 0{,}0673$.
+R: A suavização com $k=1$ e vocabulário grande retira muita massa do evento observado e a distribui entre os 1 000 tokens; por isso o valor cai bastante. Valores menores de $k$ (como 0,05 no capítulo) distorcem menos.
+
+DISC[M]: Mostre que, se um modelo atribui probabilidade uniforme $1/V$ a cada passo, a perplexidade é $V$. Aplique para $V=8$.
+R: Em $n$ passos, $\ln P = n \ln(1/V) = -n\ln V$. A perplexidade é $e^{-\ln P / n} = e^{\ln V} = V$. Para $V=8$, a perplexidade é 8: o modelo está tão incerto quanto alguém que escolhe ao acaso entre 8 opções. Isso dá a interpretação de "número efetivo de opções".
+
+DISC[A]: Um aluno afirma: "Meu assistente nunca erra, pois acertou as 5 perguntas de teste que eu fiz". Analise os problemas dessa conclusão e proponha um protocolo melhor.
+R: Problemas: amostra muito pequena; escolha das perguntas pelo próprio avaliador (viés de seleção); ausência de intervalo de confiança; possível vazamento (perguntas comuns na internet); falta de verificação independente das respostas. Protocolo melhor: conjunto de teste maior, representativo e não visto; gabarito verificado por fonte; reportar acurácia com intervalo (bootstrap); testar variações de prompt; registrar versão/data; analisar tipos de erro.
+
+DISC[A]: O texto afirma que um resumo fluente pode conter um número inexistente. Analise em qual camada (modelo, aplicação, interface, sistema) esse erro pode surgir e que mecanismos de detecção cada uma permite.
+R: Pode surgir no modelo (geração de número não fundamentado). Aplicação: pode validar que números do resumo existem no texto de origem (verificação por correspondência). Sistema: pode exigir citação de trecho, registrar a evidência e encaminhar a revisão humana quando a verificação falhar. Interface: pode exibir a fonte ao usuário e permitir reportar erros. Detecção automática só cobre erros verificáveis; outros exigem revisão humana.
+
+DISC[A]: Compare n-gramas e modelos neurais de linguagem quanto a dados, generalização, custo de armazenamento e interpretabilidade. Quando um n-grama ainda pode ser suficiente?
+R: N-gramas: estimativa por contagem, pouca generalização além dos contextos vistos, tabelas grandes, mas alta interpretabilidade (cada probabilidade vem de contagens). Neurais: aprendem representações, generalizam melhor, custo de treinamento e inferência maior, menor interpretabilidade. N-gramas podem bastar em domínios restritos, vocabulário pequeno, restrições de custo ou como linha de base, como o corpus sintético do capítulo.
+
+DISC[A]: A Seção 1.7 apresenta uma linha do tempo. Analise duas limitações desse tipo de narrativa para entender o progresso dos modelos de linguagem.
+R: (1) Seleção: apenas alguns marcos são citados, omitindo muitos autores e abordagens, o que sugere linearidade e personalização do progresso. (2) Escala qualitativa: a linha do tempo não mostra que avanços dependem de dados, hardware e engenharia, nem os fracassos e debates (por exemplo, sobre emergência de capacidades). Também pode confundir data de publicação com data de adoção prática.
+
+DISC[P]: Escreva uma função `logprob_frase(frase, p_cond)` que receba uma lista de tokens e um dicionário `p_cond` mapeando `(contexto_tuple, token)` para probabilidade, e devolva $\ln P$ da frase. Use o contexto de até dois tokens anteriores. Teste com os valores da questão 6.
+CODE:
+import math
+
+def logprob_frase(frase, p_cond, ordem=3):
+    total = 0.0
+    for i, tok in enumerate(frase):
+        ctx = tuple(frase[max(0, i - (ordem - 1)):i])
+        total += math.log(p_cond[(ctx, tok)])
+    return total
+
+p = {((), "o"): 0.2, (("o",), "aluno"): 0.5, (("o", "aluno"), "lê"): 0.1, (("aluno", "lê"), "."): 0.6}
+lp = logprob_frase(["o", "aluno", "lê", "."], p)
+assert abs(lp - math.log(0.006)) < 1e-12
+print(round(lp, 3), round(math.exp(-lp / 4), 2))
+ENDCODE
+CRIT: Usa logaritmos e soma, não produto.
+CRIT: Trata corretamente o início da frase (contexto menor que a ordem).
+CRIT: Inclui um teste simples com resultado esperado.
+
+DISC[P]: Escreva uma função `perplexidade(logprobs)` que receba uma lista de log-probabilidades por token e retorne a perplexidade. Verifique que, para 5 tokens com probabilidade 1/4 cada, o resultado é 4.
+CODE:
+import math
+
+def perplexidade(logprobs):
+    return math.exp(-sum(logprobs) / len(logprobs))
+
+assert abs(perplexidade([math.log(0.25)] * 5) - 4.0) < 1e-12
+print(perplexidade([math.log(0.25)] * 5))
+ENDCODE
+CRIT: Divide pela quantidade de tokens.
+CRIT: Usa o sinal negativo corretamente.
+CRIT: Testa um caso com resposta conhecida.
+
+DISC[P]: Implemente `treinar_bigramas(frases, k)` que devolva uma função `prob(anterior, token)` com suavização aditiva. Mostre que as probabilidades para um `anterior` somam 1 sobre o vocabulário.
+CODE:
+from collections import Counter, defaultdict
+
+def treinar_bigramas(frases, k=0.1):
+    vocab = sorted({t for f in frases for t in f} | {"<s>"})
+    cont = defaultdict(Counter)
+    for f in frases:
+        seq = ["<s>"] + list(f)
+        for a, b in zip(seq, seq[1:]):
+            cont[a][b] += 1
+    V = len(vocab)
+    def prob(anterior, token):
+        c = cont[anterior]
+        return (c[token] + k) / (sum(c.values()) + k * V)
+    return prob, vocab
+
+frases = [["o", "aluno", "lê", "."], ["o", "aluno", "escreve", "."], ["a", "aluna", "lê", "."]]
+prob, vocab = treinar_bigramas(frases, k=0.1)
+assert abs(sum(prob("aluno", t) for t in vocab) - 1.0) < 1e-12
+print(round(prob("aluno", "lê"), 4))
+ENDCODE
+CRIT: Usa o marcador de início de frase.
+CRIT: O denominador inclui k vezes o tamanho do vocabulário.
+CRIT: Verifica que a soma é 1.
+
+DISC[D]: Uma prefeitura quer um assistente para responder dúvidas sobre o calendário de vacinação a partir de documentos oficiais. Proponha uma arquitetura em camadas, indicando onde colocaria verificação e supervisão humana, e justifique a escolha entre FAQ por busca, sistema com recuperação e LLM sozinho.
+R: Recomendação: sistema com recuperação sobre documentos oficiais atualizados, resposta com citação do trecho e data do documento, mensagem de abstenção quando não houver evidência, e encaminhamento a profissional de saúde em casos individuais. Camadas: interface simples e clara; aplicação que valida que a resposta cita fonte; recuperação com filtros por data/versão; registro das consultas; revisão periódica por equipe técnica. LLM sozinho é inadequado (pode inventar datas). FAQ por busca é uma boa linha de base se as perguntas forem poucas e estáveis. Critério de decisão: custo de erro alto, exigindo fonte e supervisão.
+
+DISC[D]: Uma empresa de atendimento classifica mensagens em 8 intenções e hoje usa um classificador pequeno com 95% de acurácia. Um colega propõe trocar por um LLM. Liste critérios objetivos para decidir e um plano de comparação.
+R: Critérios: acurácia e outras métricas por classe em conjunto de teste independente; custo por mensagem; latência; estabilidade/variabilidade; facilidade de auditoria; privacidade; manutenção quando categorias mudam. Plano: separar conjunto de teste rotulado e não visto; comparar classificador atual, LLM com prompt simples e com exemplos; medir com intervalo de confiança; analisar erros por classe; estimar custo e latência com premissas explícitas; decidir apenas se ganho for relevante na prática (significância prática), não só estatística.
+
+DISC[D]: Você deve apresentar a um gestor uma lista de riscos de adotar um assistente baseado em LLM para consultas internas. Elabore cinco riscos e, para cada um, uma medida de mitigação coerente com o conteúdo do capítulo.
+R: (1) Respostas inventadas: exigir citação de fonte e abstenção. (2) Conhecimento datado: usar recuperação com documentos atualizados. (3) Vazamento de dados sensíveis: política de dados, anonimização e controle de acesso. (4) Dependência de serviço externo: registro de versões, plano de contingência, abstração do provedor. (5) Excesso de confiança dos usuários: comunicar limitações, supervisão humana em decisões relevantes e avaliação contínua.
+
+DISC[D]: Defina um protocolo mínimo de registro (data, versão, parâmetros, entrada, saída, avaliação) para os experimentos da Atividade Prática 1.12. Justifique cada campo.
+R: Campos: data e hora (o serviço muda); nome e versão do modelo/serviço (o comportamento depende dele); parâmetros de geração, se disponíveis (variabilidade); texto exato do prompt (pequenas mudanças alteram a saída); resposta integral; verificação feita e fonte usada (rastreabilidade); resultado (correto/parcial/incorreto) e observações. Esse registro permite reproduzir, auditar e comparar execuções, mesmo que reprodutibilidade exata não seja garantida.

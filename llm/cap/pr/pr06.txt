@@ -1,0 +1,183 @@
+@@EX 1 | Comparando estratégias de decodificação | básico
+Treine `modelos.NgramaLM(n=3, k=0.05)` com as 2 400 primeiras frases de `corpus.frases_lm(3000, seed=0)`. Gere 300 frases para cada uma de seis configurações (gulosa, T=0,7, T=1,0, T=1,3, top-k=3, top-p=0,9) com **duas sementes** (0 e 1). Para cada uma, mostre a fração de frases válidas (`corpus.frase_valida`) e a de frases distintas. Calcule também a fração de frases geradas que aparecem **literalmente** no conjunto de treino (memorização).
+
+*Pergunta:* as conclusões são estáveis entre as sementes? O que a fração "no treino" revela?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus, modelos
+
+frases = corpus.frases_lm(3000, seed=0)
+treino = frases[:2400]
+lm = modelos.NgramaLM(n=3, k=0.05).ajustar(treino)
+V = lm.vocab
+vistas = {" ".join(f) for f in treino}
+
+def gerar(rng, T=1.0, top_k=None, top_p=None, guloso=False, maxlen=14):
+    ctx = []
+    for _ in range(maxlen):
+        lp = np.log(lm.distribuicao(ctx) + 1e-12)
+        i = int(np.argmax(lp)) if guloso else modelos.amostrar(lp, rng, T=T, top_k=top_k, top_p=top_p)
+        if V[i] == "<s>":
+            continue
+        ctx.append(V[i])
+        if V[i] == ".":
+            break
+    return ctx
+
+configs = {"gulosa": dict(guloso=True), "T=0,7": dict(T=0.7), "T=1,0": dict(T=1.0), "T=1,3": dict(T=1.3),
+           "top-k=3": dict(top_k=3), "top-p=0,9": dict(top_p=0.9)}
+print(f"{'estratégia':<11} {'semente':>7} {'válidas':>8} {'distintas':>10} {'no treino':>10}")
+for nome, c in configs.items():
+    for semente in (0, 1):
+        rng = np.random.default_rng(semente)
+        am = [gerar(rng, **c) for _ in range(300)]
+        val = np.mean([corpus.frase_valida(s) for s in am])
+        dist = len({" ".join(s) for s in am}) / 300
+        no_treino = np.mean([" ".join(s) in vistas for s in am])
+        print(f"{nome:<11} {semente:>7} {val:>8.2f} {dist:>10.2f} {no_treino:>10.2f}")
+```
+@@NOTE As duas sementes dão valores muito parecidos (diferenças de poucos pontos percentuais), então as conclusões qualitativas são estáveis: a gulosa tem diversidade praticamente nula; a temperatura mais alta aumenta a diversidade e derruba a validade; top-p e top-k mantêm validade alta com diversidade intermediária. A fração "no treino" mostra o quanto o modelo **reproduz frases do treino**: em um corpus pequeno e regular, boa parte das frases possíveis já foi vista, então muitas frases geradas válidas são cópias. Em LLMs reais, a memorização literal é um risco de privacidade e de direitos autorais (Capítulo 17).
+@@EX 2 | Simulando latência e o efeito de limitar a saída | intermediário
+Simule 10 000 requisições com comprimento de prompt $\sim$ lognormal (média do log = ln 800, desvio 0,6) e de resposta desejada $\sim$ lognormal (média do log = ln 250, desvio 0,7), com `default_rng(0)`, arredondados para inteiros $\ge1$. Use o modelo de latência $t=L_{\text{ent}}/5000+L_{\text{saída}}\times0{,}03$ s. Calcule a média e os percentis 50, 95 e 99 da latência (a) sem limite de saída e (b) com o limite de 300 tokens. Informe também a fração de respostas que seriam cortadas pelo limite.
+
+*Pergunta:* o que o limite faz com a cauda da distribuição de latência? Qual o custo em qualidade?
+@@SOL
+```python
+import numpy as np
+
+rng = np.random.default_rng(0)
+N = 10_000
+l_ent = np.maximum(1, rng.lognormal(np.log(800), 0.6, N).round()).astype(int)
+l_sai = np.maximum(1, rng.lognormal(np.log(250), 0.7, N).round()).astype(int)
+
+def latencia(l_ent, l_sai, prefill_tps=5000, s_por_token=0.03):
+    return l_ent / prefill_tps + l_sai * s_por_token
+
+def resumo(nome, t):
+    p50, p95, p99 = np.percentile(t, [50, 95, 99])
+    print(f"{nome:<22} média {t.mean():6.2f} s | p50 {p50:6.2f} | p95 {p95:6.2f} | p99 {p99:6.2f}")
+
+resumo("sem limite de saída", latencia(l_ent, l_sai))
+limitado = np.minimum(l_sai, 300)
+resumo("limite de 300 tokens", latencia(l_ent, limitado))
+print(f"respostas cortadas pelo limite: {np.mean(l_sai > 300):.1%}")
+print(f"mediana do prompt: {np.median(l_ent):.0f} tokens | mediana da resposta: {np.median(l_sai):.0f} tokens")
+```
+@@NOTE O limite de saída achata a **cauda**: p95 e p99 caem muito, enquanto a mediana quase não muda. O custo é alto neste cenário: cerca de 40% das respostas desejadas seriam **cortadas** pelo limite, o que degradaria a qualidade (respostas incompletas); na prática, o limite deveria ser acompanhado de instruções para respostas mais concisas ou de um valor mais folgado. A decisão de limite deve equilibrar a latência da cauda e o risco de truncamento, ajustando o prompt para respostas mais concisas. As distribuições e velocidades são hipotéticas.
+@@EX 3 | O cache KV: igualdade e economia | intermediário
+Reimplemente a atenção de uma cabeça com e sem cache KV (como na Seção 6.9), com $d=64$ e pesos aleatórios (`default_rng(0)`). Para $T\in\{64,128,256,512\}$, verifique a igualdade das saídas, meça os tempos (mediana de 3 repetições) e estime o expoente do crescimento do tempo em função de $T$ para cada versão com `LinearRegression` em escala log-log.
+
+*Pergunta:* os expoentes medidos concordam com a expectativa teórica?
+@@SOL
+```python
+import time
+import numpy as np
+from sklearn.linear_model import LinearRegression
+
+def softmax(z):
+    z = z - z.max(axis=-1, keepdims=True)
+    e = np.exp(z)
+    return e / e.sum(axis=-1, keepdims=True)
+
+d = 64
+rng = np.random.default_rng(0)
+WQ, WK, WV = (rng.normal(size=(d, d)) / np.sqrt(d) for _ in range(3))
+
+def sem_cache(X):
+    out = []
+    for t in range(1, len(X) + 1):
+        pref = X[:t]
+        Q, K, V = pref @ WQ, pref @ WK, pref @ WV
+        out.append(softmax(Q[-1] @ K.T / np.sqrt(d)) @ V)
+    return np.array(out)
+
+def com_cache(X):
+    Kc = np.zeros((len(X), d)); Vc = np.zeros((len(X), d)); out = []
+    for t, x in enumerate(X):
+        Kc[t] = x @ WK; Vc[t] = x @ WV
+        out.append(softmax((x @ WQ) @ Kc[:t + 1].T / np.sqrt(d)) @ Vc[:t + 1])
+    return np.array(out)
+
+def mediana_tempo(f, X, rep=3):
+    ts = []
+    for _ in range(rep):
+        t0 = time.perf_counter(); f(X); ts.append(time.perf_counter() - t0)
+    return float(np.median(ts))
+
+Ts = [64, 128, 256, 512]
+tA, tB = [], []
+print(f"{'T':>5} {'iguais':>7} {'sem cache (ms)':>15} {'com cache (ms)':>15} {'razão':>7}")
+for T in Ts:
+    X = rng.normal(size=(T, d))
+    igual = np.allclose(sem_cache(X), com_cache(X))
+    tA.append(mediana_tempo(sem_cache, X)); tB.append(mediana_tempo(com_cache, X))
+    print(f"{T:>5} {str(igual):>7} {1000 * tA[-1]:>15.1f} {1000 * tB[-1]:>15.1f} {tA[-1] / tB[-1]:>7.1f}")
+
+for nome, ts in (("sem cache", tA), ("com cache", tB)):
+    a = LinearRegression().fit(np.log(Ts).reshape(-1, 1), np.log(ts)).coef_[0]
+    print(f"expoente de T ({nome}): {a:.2f}")
+```
+@@NOTE As saídas coincidem em todos os tamanhos. Sem cache, o trabalho total de geração cresce com $T^2$ nas projeções (recalcula-se o prefixo a cada passo); com cache, o crescimento das projeções é linear e o da atenção, quadrático em operações de leitura, porém com constante pequena em NumPy. Por isso, o expoente medido sem cache fica próximo de 2 e o com cache, menor, e a razão entre os tempos cresce com $T$. Os valores absolutos dependem da máquina; em implementações reais, o cache tem também o custo de memória discutido no capítulo.
+@@ALEM
+- **UCI Machine Learning Repository:** conjuntos de séries temporais ou de eventos para praticar simulação de filas e de latência.
+- **scikit-learn:** `sklearn.model_selection` e `sklearn.metrics` ajudam a montar avaliações estatísticas dos experimentos de geração.
+- **Kaggle:** registros públicos de latência de serviços ou de uso de APIs, quando disponíveis, para estudar distribuições com cauda longa (verifique a licença).
+@@PROJ Painel de decisão: que parâmetros de geração usar? | intermediário
+**Contexto.** Duas equipes usam o mesmo modelo de trigramas para tarefas diferentes. A equipe **A** precisa de frases **sempre válidas** (validade ≥ 0,99), com a **menor** diversidade necessária (extração). A equipe **B** quer frases **variadas** (diversidade ≥ 0,70) mantendo validade ≥ 0,95 (escrita criativa controlada). Sua missão é encontrar, por varredura, as configurações que satisfazem cada restrição e relatar a incerteza.
+
+**Tarefas.**
+
+1. Varra temperaturas $T\in\{0{,}3;\ 0{,}5;\ 0{,}7;\ 1{,}0;\ 1{,}3\}$ combinadas com top-p $\in\{1{,}0;\ 0{,}9;\ 0{,}8\}$ (1,0 = sem top-p).
+2. Para cada configuração, gere 300 frases (semente fixa) e calcule validade e diversidade.
+3. Calcule um **intervalo de confiança de 95%** para a validade com `avaliacao.bootstrap_ic` (sobre o vetor 0/1 de validade).
+4. Selecione, para cada equipe, as configurações que atendem às restrições (considere a **margem inferior** do intervalo para a validade) e indique a recomendada.
+5. Escreva um parágrafo discutindo o que mudaria em um modelo real (sem verificador automático de validade).
+
+**Entregáveis.** Código, tabela completa da varredura, recomendações e o parágrafo.
+@@RUBRICA
+- Varredura completa com métricas corretas (3 pontos).
+- Intervalos de confiança por bootstrap na validade (2 pontos).
+- Seleção coerente com as restrições, usando a margem do intervalo (3 pontos).
+- Discussão crítica sobre a ausência de verificador em texto real (2 pontos).
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus, modelos, avaliacao as av
+
+frases = corpus.frases_lm(3000, seed=0)
+lm = modelos.NgramaLM(n=3, k=0.05).ajustar(frases[:2400])
+V = lm.vocab
+
+def gerar(rng, T, top_p, maxlen=14):
+    ctx = []
+    for _ in range(maxlen):
+        lp = np.log(lm.distribuicao(ctx) + 1e-12)
+        i = modelos.amostrar(lp, rng, T=T, top_p=None if top_p >= 1.0 else top_p)
+        if V[i] == "<s>":
+            continue
+        ctx.append(V[i])
+        if V[i] == ".":
+            break
+    return ctx
+
+linhas = []
+print(f"{'T':>4} {'top-p':>6} {'validade':>9} {'IC95% (validade)':>20} {'diversidade':>12}")
+for T in (0.3, 0.5, 0.7, 1.0, 1.3):
+    for tp in (1.0, 0.9, 0.8):
+        rng = np.random.default_rng(0)
+        am = [gerar(rng, T, tp) for _ in range(300)]
+        v = np.array([float(corpus.frase_valida(s)) for s in am])
+        m, lo, hi = av.bootstrap_ic(v, n=1000, seed=0)
+        div = len({" ".join(s) for s in am}) / 300
+        linhas.append((T, tp, m, lo, hi, div))
+        print(f"{T:>4} {tp:>6} {m:>9.3f} {f'[{lo:.3f}; {hi:.3f}]':>20} {div:>12.2f}")
+
+A = [l for l in linhas if l[3] >= 0.99]
+B = [l for l in linhas if l[3] >= 0.95 and l[5] >= 0.70]
+print("\nEquipe A (margem inferior da validade >= 0,99): ", [(l[0], l[1]) for l in A])
+if A: print("  recomendada (menor diversidade, mais previsível):", min(A, key=lambda l: l[5])[:2])
+print("Equipe B (validade >= 0,95 e diversidade >= 0,70):", [(l[0], l[1]) for l in B])
+if B: print("  recomendada (maior diversidade):", max(B, key=lambda l: l[5])[:2])
+```
+@@NOTE O cálculo seleciona por **limite inferior** do intervalo de confiança, o que é mais conservador que usar apenas a média: por exemplo, $T=0{,}7$ sem top-p tem validade média de 0,997, mas limite inferior de 0,990, e só passa porque o critério é $\ge0{,}99$. Para a equipe A, a configuração menos diversa que cumpre a restrição é $T=0{,}3$ com top-p 0,8 (previsível). Para a equipe B, a de maior diversidade que mantém validade é $T=0{,}7$ sem top-p (diversidade 0,81). Note também que $T=1{,}0$ sem top-p é reprovado (validade 0,89), mas $T=1{,}0$ com top-p 0,9 ou 0,8 passa: o top-p permite usar temperaturas mais altas sem perder validade. Em um modelo real, **não há** verificador automático de validade como `frase_valida`: seria preciso usar métricas por tarefa, avaliação humana e conjuntos de teste (Capítulo 16), e as conclusões não se transfeririam de um modelo ou domínio a outro.

@@ -1,0 +1,360 @@
+MC: Por que se diz que a geração de texto por um modelo de linguagem é autorregressiva?
+= Porque a saída de cada passo (o token escolhido) é acrescentada ao contexto e usada como entrada do passo seguinte.
+- Porque o modelo gera todos os tokens ao mesmo tempo, sem usar os anteriores.
+- Porque o modelo regride automaticamente para versões anteriores de si mesmo.
+- Porque cada token é gerado por um modelo diferente.
+- Porque a geração depende apenas do último caractere digitado.
+J: O laço de geração condiciona cada novo token em todos os anteriores, inclusive nos que o próprio modelo produziu.
+
+MC: Qual é uma consequência da natureza autorregressiva da geração?
+= Erros se propagam: um token ruim altera o contexto de todos os tokens seguintes.
+- A geração pode ser paralelizada em todos os tokens de saída.
+- O modelo corrige automaticamente tokens ruins anteriores.
+- O tamanho da saída não influencia a latência.
+- A geração nunca precisa de critério de parada.
+J: Como cada passo depende dos anteriores, um desvio inicial tende a contaminar o restante do texto.
+
+MC: O que faz a decodificação gulosa?
+= Escolhe, em cada passo, o token de maior probabilidade.
+- Sorteia um token segundo a distribuição.
+- Mantém várias sequências parciais em paralelo.
+- Escolhe sempre o token de menor probabilidade.
+- Ignora a distribuição do modelo.
+J: É determinística, dada a distribuição, e míope: não considera a probabilidade total da sequência.
+
+MC: Qual a principal limitação da decodificação gulosa em geração aberta?
+= Tende a repetições e respostas genéricas, pois a sequência de melhores tokens individuais não é a melhor sequência.
+- Exige mais memória que a busca em feixe com B grande.
+- Não funciona com vocabulários pequenos.
+- Produz sempre texto muito diverso.
+- Só pode ser usada em modelos bidirecionais.
+J: A gulosa não explora alternativas e pode ficar presa em padrões repetitivos (Holtzman et al., 2020).
+
+MC: Como se relaciona a busca em feixe com $B=1$ e a decodificação gulosa?
+= São equivalentes.
+- A busca em feixe com $B=1$ sorteia os tokens.
+- A gulosa mantém $B=5$ sequências.
+- A busca em feixe com $B=1$ sempre produz texto mais diverso.
+- Não há relação entre elas.
+J: Com um único candidato mantido, o feixe escolhe o melhor token a cada passo, como a gulosa.
+
+MC: Qual a desvantagem comum da busca em feixe em geração aberta de texto?
+= Favorece textos repetitivos e de baixa diversidade.
+- Gera textos aleatórios sem relação com o contexto.
+- Não considera a probabilidade das sequências.
+- Exige que o modelo seja treinado de novo.
+- Só funciona para saídas de um token.
+J: O feixe procura alta probabilidade total, e textos muito prováveis tendem a ser genéricos.
+
+MC: O que ocorre com a distribuição de probabilidade quando a temperatura $T$ é reduzida de 1 para 0,5?
+= Fica mais concentrada nos tokens mais prováveis.
+- Fica mais uniforme.
+- Permanece a mesma.
+- Inverte a ordem dos tokens.
+- Deixa de somar 1.
+J: Dividir os logits por $T<1$ amplia as diferenças entre eles.
+
+MC: Qual comportamento limite aproxima o uso de temperatura muito próxima de zero?
+= A decodificação gulosa.
+- A amostragem uniforme.
+- A busca em feixe com $B=100$.
+- A remoção do softmax.
+- A geração aleatória de caracteres.
+J: Quando $T\to0$, a probabilidade se concentra no token de maior logit.
+
+MC: Qual problema a amostragem pura, com $T=1$, pode apresentar?
+= A cauda longa: muitos tokens improváveis, somados, têm massa relevante e podem ser sorteados, gerando texto incoerente.
+- Sempre gera o mesmo texto.
+- Só sorteia o token mais provável.
+- Não usa a distribuição do modelo.
+- Elimina a variabilidade entre execuções.
+J: Mesmo tokens individualmente improváveis são sorteados com frequência considerável quando há muitos deles.
+
+MC: Qual a principal limitação do top-k?
+= O valor de $k$ é fixo e não se adapta à incerteza do modelo a cada passo.
+- Não permite renormalizar as probabilidades.
+- Só funciona com temperatura zero.
+- Elimina completamente a aleatoriedade.
+- Aumenta a cauda da distribuição.
+J: Com $k$ fixo, passos muito seguros admitem tokens ruins, e passos incertos perdem opções válidas.
+
+MC: O que caracteriza o top-p (amostragem do núcleo)?
+= Mantém o menor conjunto de tokens cuja probabilidade acumulada atinge $p$, adaptando seu tamanho à incerteza do modelo.
+- Mantém sempre exatamente $p$ tokens.
+- Sorteia $p$ por cento dos tokens do vocabulário.
+- Elimina os tokens mais prováveis.
+- Mantém todos os tokens com probabilidade acima de 0,5.
+J: O "núcleo" é maior quando a distribuição é achatada e menor quando é concentrada.
+
+MC: Para $\mathbf{p}=(0{,}5;\ 0{,}3;\ 0{,}15;\ 0{,}05)$, aplicando top-p com $p=0{,}8$, qual a distribuição após renormalização?
+= $(0{,}625;\ 0{,}375;\ 0;\ 0)$
+- $(0{,}5;\ 0{,}3;\ 0{,}15;\ 0)$
+- $(0{,}5;\ 0{,}3;\ 0{,}2;\ 0)$
+- $(0{,}8;\ 0{,}2;\ 0;\ 0)$
+- $(0{,}625;\ 0{,}375;\ 0{,}15;\ 0)$
+J: O acumulado atinge 0,8 já com os dois primeiros; renormalizando, $0{,}5/0{,}8=0{,}625$ e $0{,}3/0{,}8=0{,}375$.
+
+MC: Para $\mathbf{p}=(0{,}4;\ 0{,}3;\ 0{,}2;\ 0{,}1)$, qual a distribuição após top-k com $k=3$ e renormalização?
+= Aproximadamente $(0{,}444;\ 0{,}333;\ 0{,}222;\ 0)$
+- $(0{,}4;\ 0{,}3;\ 0{,}2;\ 0)$
+- $(0{,}5;\ 0{,}3;\ 0{,}2;\ 0)$
+- $(0{,}333;\ 0{,}333;\ 0{,}333;\ 0)$
+- $(0{,}4;\ 0{,}3;\ 0{,}2;\ 0{,}1)$
+J: A soma dos três primeiros é 0,9; dividindo cada um por 0,9, obtém-se 0,444, 0,333 e 0,222.
+
+MC: Qual o efeito de uma penalidade de repetição?
+= Reduz os logits de tokens já usados, diminuindo a probabilidade de repeti-los.
+- Garante que o texto seja factualmente correto.
+- Aumenta a janela de contexto.
+- Elimina o uso do softmax.
+- Impede qualquer token de aparecer mais de uma vez em qualquer circunstância.
+J: É uma heurística que atua sobre os logits; pode deixar o texto estranho se for forte demais.
+
+MC: Quais critérios costumam encerrar a geração?
+= O token de fim de sequência, uma sequência de parada especificada ou o limite máximo de tokens.
+- Apenas o término da frase na pontuação.
+- Somente o fim da memória do computador.
+- O momento em que o usuário fecha a aba, sempre.
+- Nenhum: a geração é sempre infinita.
+J: Os três critérios existem em praticamente todos os serviços e bibliotecas de geração.
+
+MC: Qual afirmação sobre a janela de contexto é correta?
+= Ela é dividida entre os tokens de entrada (instruções, histórico, documentos) e os de saída gerados.
+- Ela se refere apenas ao texto de saída.
+- Ela se refere apenas ao texto de entrada.
+- Ela não tem limite.
+- Ela é medida em palavras, nunca em tokens.
+J: A soma de entrada e saída precisa caber na janela.
+
+MC: Qual é o risco de truncar o contexto sem critério?
+= Perder justamente a parte essencial do texto, sem que o sistema avise.
+- Aumentar a precisão do modelo.
+- Reduzir o vocabulário.
+- Eliminar a necessidade de validação.
+- Aumentar a janela de contexto.
+J: O sistema deve decidir conscientemente o que cortar, e registrar o corte.
+
+MC: O que Liu et al. (2024) observaram sobre o uso de contextos longos?
+= O desempenho tende a piorar quando a informação relevante está no meio do contexto, em comparação com o início ou o fim.
+- O desempenho sempre melhora com mais contexto.
+- A posição da informação não tem qualquer efeito.
+- Só o final do contexto é lido pelo modelo.
+- O desempenho é melhor com a informação sempre no meio.
+J: Ter espaço de contexto não garante uso eficaz de toda a informação.
+
+MC: Qual a diferença entre as fases de preenchimento (prefill) e decodificação?
+= No preenchimento, processa-se todo o prompt em paralelo; na decodificação, gera-se um token por vez.
+- No preenchimento, gera-se um token por vez; na decodificação, todo o prompt em paralelo.
+- Ambas processam um token por vez.
+- Ambas processam todos os tokens em paralelo.
+- Não existe distinção entre elas.
+J: A máscara causal permite paralelizar o prompt; a geração, por ser autorregressiva, é sequencial.
+
+MC: Por que a decodificação costuma ser limitada pela largura de banda de memória?
+= Porque cada token gerado exige ler todos os pesos do modelo (e o cache) da memória, para pouco cálculo por token.
+- Porque o cálculo por token é enorme e a memória é irrelevante.
+- Porque a decodificação usa mais tokens de entrada que o preenchimento.
+- Porque os pesos são recalculados a cada passo.
+- Porque a memória nunca é lida na decodificação.
+J: A intensidade aritmética da decodificação (cálculo por byte lido) é baixa.
+
+MC: Com preenchimento a 5 000 tokens/s e 30 ms por token gerado, qual a latência para um prompt de 2 000 tokens e uma resposta de 100 tokens?
+= 3,4 s
+- 0,4 s
+- 3,0 s
+- 6,4 s
+- 34 s
+J: Preenchimento: $2\,000/5\,000=0{,}4$ s; decodificação: $100\times0{,}03=3{,}0$ s; total $3{,}4$ s.
+
+MC: Qual fator costuma dominar a latência de uma resposta longa?
+= O número de tokens gerados, pois cada um exige um passo sequencial.
+- O tamanho do vocabulário, apenas.
+- A cor da interface.
+- O número de parágrafos do prompt, apenas.
+- O tipo de teclado do usuário.
+J: A decodificação é sequencial; dobrar a saída aproximadamente dobra o tempo de decodificação.
+
+MC: O que o cache KV armazena?
+= As chaves e os valores de cada camada para todos os tokens já processados.
+- Os pesos do modelo.
+- As probabilidades do vocabulário inteiro.
+- Os embeddings do vocabulário.
+- O texto original em formato comprimido.
+J: Com o cache, o passo seguinte só calcula a consulta, a chave e o valor do token novo.
+
+MC: Qual relação existe entre as saídas com e sem cache KV?
+= São idênticas (a menos de erros numéricos); o cache só evita cálculo repetido.
+- O cache sempre altera a saída para melhor.
+- O cache sempre piora a qualidade.
+- O cache só funciona com temperatura zero.
+- O cache elimina a necessidade da máscara causal.
+J: O cache reaproveita valores que não mudam, pois tokens passados não dependem de tokens futuros.
+
+MC: Na fórmula da memória do cache, $2\cdot N_{\text{camadas}}\cdot T\cdot n_{\text{kv}}\cdot d_{\text{cab}}\cdot b$, o que representa o fator 2?
+= Guardar tanto as chaves quanto os valores.
+- Duas camadas por bloco.
+- Dois usuários simultâneos.
+- Duas casas decimais de precisão.
+- A razão entre entrada e saída.
+J: Cada token tem um vetor de chave e um de valor por camada e por cabeça.
+
+MC: Se um modelo reduz as cabeças de chaves/valores de 32 para 8 (agrupamento), em quanto cai a memória do cache?
+= Para um quarto do valor original.
+- Para a metade.
+- Para um oitavo.
+- Não muda.
+- Aumenta quatro vezes.
+J: A memória é proporcional a $n_{\text{kv}}$; $8/32=1/4$.
+
+MC: Qual a ideia da decodificação especulativa?
+= Um modelo pequeno propõe vários tokens e o modelo grande os verifica em paralelo, acelerando a geração sem alterar a distribuição de saída do grande.
+- Gerar tokens aleatórios para economizar memória.
+- Eliminar o cache KV.
+- Usar o modelo grande para treinar o pequeno durante a geração.
+- Ignorar a distribuição do modelo grande.
+J: A técnica de Leviathan et al. (2023) mantém a distribuição de saída do modelo grande.
+
+MC: Por que temperatura zero em um serviço externo não garante saídas idênticas?
+= Porque diferenças numéricas, de lote, de hardware ou atualizações do serviço podem alterar a escolha entre tokens de probabilidades próximas.
+- Porque temperatura zero ativa amostragem aleatória.
+- Porque o serviço ignora o prompt.
+- Porque temperatura zero só se aplica ao primeiro token.
+- Porque a decodificação gulosa exige sorteio.
+J: Mesmo a decodificação gulosa pode divergir quando duas opções têm logits quase iguais.
+
+MC: O que ilustra o fato de que, em ponto flutuante, $(a+b)+b$ pode diferir de $a+(b+b)$?
+= A soma em ponto flutuante não é associativa; mudar a ordem das operações pode mudar o resultado.
+- Que o computador erra operações simples sempre.
+- Que a soma só funciona com inteiros.
+- Que a precisão aumenta com a ordem das operações.
+- Que a álgebra não vale para números reais.
+J: Arredondamentos acumulados dependem da ordem, o que ajuda a explicar a variabilidade entre execuções paralelas.
+
+MC: Qual conjunto de informações é essencial registrar para tentar reproduzir uma geração?
+= Modelo e versão, data, prompt completo, parâmetros de geração, semente (se houver) e saída integral.
+- Apenas a primeira palavra da resposta.
+- Somente o nome do usuário.
+- Apenas a data, sem o prompt.
+- Nenhuma informação, pois a geração é sempre reproduzível.
+J: Sem esses dados, não se pode auditar, comparar versões nem investigar falhas.
+
+DISC[C]: Descreva o laço de geração autorregressiva e explique duas consequências práticas dessa natureza sequencial.
+R: A cada passo, lê-se o contexto, calcula-se a distribuição do próximo token, escolhe-se um token por uma estratégia, acrescenta-se ao contexto e repete-se até o token de fim ou o limite. Consequências: (1) erros se propagam, pois cada token influencia todos os seguintes; (2) a geração é sequencial e não pode ser paralelizada ao longo da saída, o que faz o comprimento da resposta dominar a latência e motiva técnicas como cache KV e decodificação especulativa.
+
+DISC[C]: Compare gulosa, feixe, temperatura, top-k e top-p quanto à determinismo, diversidade e riscos.
+R: Gulosa: determinística, pouca diversidade, risco de repetição. Feixe: determinístico, favorece alta probabilidade total, baixa diversidade, bom em tarefas com saída bem definida. Temperatura (com amostragem): controla nitidez; alta aumenta diversidade e risco de incoerência. Top-k: corta a cauda com k fixo; não se adapta à incerteza. Top-p: corta a cauda com núcleo adaptativo; geralmente equilibrado, mas ainda aleatório. A escolha depende da tarefa.
+
+DISC[C]: Explique o que é o cache KV, por que ele é válido (não altera o resultado) e qual seu custo.
+R: O cache guarda as chaves e valores de todos os tokens já processados, em cada camada. É válido porque, pela máscara causal, as chaves e valores de um token não dependem de tokens futuros, então os valores calculados antes permanecem corretos. Evita recalcular o prefixo a cada passo. Custo: memória proporcional ao comprimento, ao número de camadas e de cabeças de chaves/valores, e ao número de sequências simultâneas.
+
+DISC[C]: Por que a mesma pergunta pode produzir respostas diferentes, e o que se pode fazer para aumentar a reprodutibilidade em um sistema?
+R: Por amostragem (temperatura maior que zero), por diferenças numéricas e de lote, e por atualizações do serviço. Para aumentar a reprodutibilidade: usar decodificação gulosa ou temperatura baixa quando adequado, fixar semente quando disponível, registrar versão do modelo, prompt e parâmetros, usar múltiplas amostras e métricas agregadas para comparar, e aceitar que reprodução exata pode ser impossível em serviços externos.
+
+DISC[M]: Aplique top-p com $p=0{,}75$ a $\mathbf{p}=(0{,}35;\ 0{,}30;\ 0{,}20;\ 0{,}10;\ 0{,}05)$ e dê a distribuição renormalizada.
+R: Acumulado: $0{,}35$; $0{,}65$; $0{,}85$ (primeiro valor $\ge0{,}75$). Mantêm-se os três primeiros, com soma $0{,}85$. Renormalizando: $(0{,}35;\ 0{,}30;\ 0{,}20)/0{,}85\approx(0{,}412;\ 0{,}353;\ 0{,}235)$.
+
+DISC[M]: Para os logits $\mathbf{z}=(2;\ 1;\ 0)$, calcule o softmax com $T=0{,}5$ e com $T=2$.
+R: $T=0{,}5$: $\mathbf{z}/T=(4;\ 2;\ 0)$; exponenciais $54{,}598;\ 7{,}389;\ 1$; soma $62{,}987$; probabilidades $(0{,}867;\ 0{,}117;\ 0{,}016)$. $T=2$: $\mathbf{z}/T=(1;\ 0{,}5;\ 0)$; exponenciais $2{,}718;\ 1{,}649;\ 1$; soma $5{,}367$; probabilidades $(0{,}507;\ 0{,}307;\ 0{,}186)$. A temperatura baixa concentra e a alta achata.
+
+DISC[M]: Uma janela de 16 384 tokens recebe 500 de instruções, 9 000 de documentos e 3 000 de histórico, e o usuário quer uma resposta de até 2 500 tokens. A resposta cabe? Quantos tokens de documentos adicionais ainda caberiam sem cortar a resposta?
+R: Entrada: $500+9\,000+3\,000=12\,500$. Livre: $16\,384-12\,500=3\,884\ge2\,500$: a resposta cabe. Margem para mais documentos: $3\,884-2\,500=1\,384$ tokens.
+
+DISC[M]: Com preenchimento a 4 000 tokens/s e 25 ms por token gerado, calcule a latência para um prompt de 3 000 tokens e resposta de 300 tokens, e depois com a resposta limitada a 150 tokens. Qual a redução percentual?
+R: Primeiro caso: $3\,000/4\,000=0{,}75$ s $+\,300\times0{,}025=7{,}5$ s: total $8{,}25$ s. Segundo: $0{,}75+150\times0{,}025=0{,}75+3{,}75=4{,}5$ s. Redução: $(8{,}25-4{,}5)/8{,}25\approx45{,}5\%$.
+
+DISC[M]: Calcule a memória do cache KV de um modelo hipotético com 28 camadas, 8 cabeças KV de dimensão 128, `float16`, para $T=8\,192$. Quantos GB para 16 sequências simultâneas?
+R: $2\times28\times8\,192\times8\times128\times2$ bytes $=939\,524\,096$ bytes $\approx0{,}94$ GB por sequência. Para 16 sequências: $16\times0{,}94\approx15{,}0$ GB.
+
+DISC[M]: Uma distribuição atribui 0,6 a um token e 0,001 a cada um de 400 tokens da cauda. Qual a probabilidade de, em uma frase de 20 passos com amostragem pura, **nenhum** token da cauda ser sorteado? O que isso diz sobre a amostragem pura?
+R: A massa da cauda é $400\times0{,}001=0{,}4$. A probabilidade de evitar a cauda em um passo é $0{,}6$; em 20 passos (independentes, por simplificação), $0{,}6^{20}\approx3{,}7\times10^{-5}$. Portanto, quase toda frase conterá algum token da cauda. É por isso que top-p, top-k ou temperatura mais baixa são úteis.
+
+DISC[A]: No experimento do capítulo, a temperatura 1,0 produziu 90% de frases válidas e a 1,5, 34%. Analise o que isso indica sobre escolher a temperatura e que cuidado tomar ao extrapolar.
+R: A validade cai rapidamente com a temperatura porque a cauda passa a ser sorteada; a escolha deve equilibrar diversidade e correção conforme a tarefa. Cuidados: o experimento usa um modelo de trigramas e um verificador de validade que não existe em texto real; a forma da curva é ilustrativa, mas os valores não se transferem. Em aplicações reais, é preciso medir a qualidade na tarefa específica.
+
+DISC[A]: Um serviço de extração de dados de contratos usa temperatura 1,0 e obtém resultados inconsistentes entre execuções. Analise as causas e proponha ajustes.
+R: Alta variabilidade de amostragem; extração pede determinismo. Ajustes: temperatura baixa ou zero (gulosa), top-p moderado, saída estruturada com validação, repetição da extração com votação quando necessário, e testes de regressão com um conjunto fixo de contratos. Mesmo assim, registrar versão e parâmetros, pois a variabilidade pode persistir por razões numéricas.
+
+DISC[A]: Um assistente responde corretamente a perguntas curtas, mas corta respostas no meio quando o histórico fica longo. Analise a causa e proponha duas soluções.
+R: A janela é compartilhada entre entrada e saída: o histórico consome a janela e deixa pouco espaço para a resposta, que é cortada pelo limite. Soluções: medir tokens antes de montar o prompt e reservar espaço para a saída; resumir ou descartar partes antigas do histórico com critério; recuperar apenas os trechos relevantes em vez de reenviar tudo; informar ao usuário quando houver truncamento.
+
+DISC[A]: Analise por que a latência de uma aplicação cresce muito mais com a saída do que com a entrada, e que decisões de projeto isso sugere.
+R: O preenchimento processa o prompt em paralelo, ao passo que cada token de saída exige um passo sequencial com leitura de todos os pesos e do cache. Decisões: pedir respostas concisas, limitar a saída, usar streaming para melhorar a latência percebida, escolher modelos menores quando possível, usar cache de prompts e técnicas de aceleração (decodificação especulativa), e medir o TTFT e a vazão separadamente.
+
+DISC[P]: Implemente `filtrar_top_k(p, k)` e `filtrar_top_p(p, top_p)` que devolvam a distribuição renormalizada, e teste com os exemplos do capítulo.
+CODE:
+import numpy as np
+
+def filtrar_top_k(p, k):
+    p = np.asarray(p, float).copy()
+    p[np.argsort(p)[::-1][k:]] = 0
+    return p / p.sum()
+
+def filtrar_top_p(p, top_p):
+    p = np.asarray(p, float)
+    ordem = np.argsort(p)[::-1]
+    acum = np.cumsum(p[ordem])
+    n = int(np.searchsorted(acum, top_p - 1e-12) + 1)
+    q = np.zeros_like(p)
+    q[ordem[:n]] = p[ordem[:n]]
+    return q / q.sum()
+
+p = [0.50, 0.30, 0.10, 0.05, 0.05]
+assert np.allclose(filtrar_top_k(p, 2), [0.625, 0.375, 0, 0, 0])
+assert np.allclose(filtrar_top_p(p, 0.9), [0.5 / 0.9, 0.3 / 0.9, 0.1 / 0.9, 0, 0])
+print(filtrar_top_k(p, 2).round(3), filtrar_top_p(p, 0.9).round(3))
+ENDCODE
+CRIT: Renormaliza após zerar a cauda.
+CRIT: No top-p, inclui o token que faz o acumulado atingir $p$.
+CRIT: Testa com valores calculados à mão.
+
+DISC[P]: Implemente `montar_historico(mensagens, tokens_por_mensagem, limite)` que mantenha as mensagens **mais recentes** que caibam no limite de tokens, descartando as mais antigas, e teste com um exemplo.
+CODE:
+def montar_historico(mensagens, tokens, limite):
+    usados, escolhidas = 0, []
+    for msg, n in zip(reversed(mensagens), reversed(tokens)):
+        if usados + n > limite:
+            break
+        escolhidas.append(msg)
+        usados += n
+    return list(reversed(escolhidas)), usados
+
+msgs = ["m1", "m2", "m3", "m4", "m5"]
+toks = [400, 300, 500, 200, 250]
+h, u = montar_historico(msgs, toks, 1000)
+assert h == ["m3", "m4", "m5"] and u == 950
+h2, u2 = montar_historico(msgs, toks, 100)
+assert h2 == [] and u2 == 0
+print(h, u)
+ENDCODE
+CRIT: Percorre das mais recentes para as mais antigas.
+CRIT: Interrompe quando o próximo item não cabe e preserva a ordem original.
+CRIT: Testa limites folgado e muito apertado.
+
+DISC[P]: Implemente `memoria_kv_gb(camadas, T, n_kv, d_cab, bytes_num)` e `max_sequencias(gb_disponiveis, camadas, T, n_kv, d_cab, bytes_num)` e teste com o modelo hipotético da questão matemática correspondente.
+CODE:
+import math
+
+def memoria_kv_gb(camadas, T, n_kv, d_cab, bytes_num=2):
+    return 2 * camadas * T * n_kv * d_cab * bytes_num / 1e9
+
+def max_sequencias(gb_disponiveis, camadas, T, n_kv, d_cab, bytes_num=2):
+    return math.floor(gb_disponiveis / memoria_kv_gb(camadas, T, n_kv, d_cab, bytes_num))
+
+m = memoria_kv_gb(28, 8192, 8, 128)
+assert abs(m - 0.939524096) < 1e-9
+assert max_sequencias(15.0, 28, 8192, 8, 128) == 15
+assert max_sequencias(16.0, 28, 8192, 8, 128) == 17
+print(round(m, 3), max_sequencias(16.0, 28, 8192, 8, 128))
+ENDCODE
+CRIT: Inclui o fator 2 (chaves e valores).
+CRIT: Usa o número de cabeças de chave/valor, e não o de cabeças de consulta.
+CRIT: Arredonda para baixo o número de sequências.
+
+DISC[D]: Para cada tarefa, proponha parâmetros de geração e justifique: (a) extração de campos de notas fiscais, (b) respostas de atendimento ao cliente com estilo padronizado, (c) geração de ideias para campanhas.
+R: (a) Temperatura 0 (ou muito baixa), sem top-k/top-p agressivos, saída estruturada com validação e limite de tokens curto: precisão e determinismo. (b) Temperatura baixa a moderada (por exemplo, 0,2 a 0,5) com top-p alto, instruções de estilo e exemplos no prompt, validação de regras: consistência com alguma variação natural. (c) Temperatura moderada a alta com top-p, várias amostras e seleção humana: diversidade é desejável. Em todos os casos, validar empiricamente com um conjunto de testes e registrar parâmetros.
+
+DISC[D]: Você deve dimensionar a memória de cache para um assistente que atende até 50 usuários simultâneos com contextos de até 4 096 tokens, usando um modelo hipotético de 32 camadas, 8 cabeças KV de 128 dimensões, em `float16`. Faça a estimativa e proponha medidas se a memória for insuficiente.
+R: Por sequência: $2\times32\times4\,096\times8\times128\times2\approx0{,}54$ GB. Para 50 usuários: $\approx27$ GB só de cache, além dos pesos e das ativações. Se faltar memória: limitar o contexto ou o número de sessões simultâneas, quantizar o cache, usar cache paginado e compartilhado de prefixos comuns (como instruções), aumentar a agrupação de cabeças KV (se o modelo permitir), usar mais aceleradores ou um modelo menor, e medir a latência real sob carga.
+
+DISC[D]: Defina uma política de registro (logging) e de reprodutibilidade para um assistente corporativo que usa um serviço externo de LLM, incluindo cuidados com privacidade.
+R: Registrar, para cada chamada: carimbo de data e hora, identificador e versão do modelo informados pelo serviço, parâmetros de geração, hash e versão do prompt e dos documentos recuperados, saída, tempo e tokens consumidos, resultado de validações e feedback. Cuidados: minimizar e anonimizar dados pessoais nos logs, controlar acesso, definir retenção e descarte, criptografar, e informar os usuários. Reprodutibilidade: guardar versões de prompts e do código, testar regressões periodicamente com conjunto fixo, comparar versões do modelo antes de migrar e aceitar variação com métricas agregadas.

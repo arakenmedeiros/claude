@@ -1,0 +1,166 @@
+@@EX 1 | Vizinhos mais próximos por cosseno | básico
+Represente os 60 documentos da base fictícia (`llmdidatico.DOCS`, campos título + texto) com `TfidfVectorizer`. Calcule a matriz de similaridade de cosseno com `sklearn.metrics.pairwise.cosine_similarity`. Para os documentos D12 (multas da biblioteca), D02 (trancamento) e D37 (Wi-Fi), mostre os três vizinhos mais próximos (excluindo o próprio documento) com suas similaridades.
+
+*Pergunta:* os vizinhos fazem sentido? Verifique também, com `np.linalg.norm`, que as linhas da matriz TF-IDF já têm norma 1 e explique por que isso torna o cosseno igual ao produto escalar.
+@@SOL
+```python
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from llmdidatico import DOCS
+
+ids = [d[0] for d in DOCS]
+titulos = {d[0]: d[2] for d in DOCS}
+textos = [d[2] + ". " + d[3] for d in DOCS]
+
+X = TfidfVectorizer(sublinear_tf=True).fit_transform(textos)
+S = cosine_similarity(X)
+print("Formato de X:", X.shape)
+print("Normas das 5 primeiras linhas:", np.linalg.norm(X[:5].toarray(), axis=1).round(3))
+print("Cosseno == produto escalar?", np.allclose(S, (X @ X.T).toarray()))
+
+for alvo in ("D12", "D02", "D37"):
+    i = ids.index(alvo)
+    ordem = [j for j in np.argsort(-S[i]) if j != i][:3]
+    print(f"\nVizinhos de {alvo} ({titulos[alvo]}):")
+    for j in ordem:
+        print(f"  {S[i, j]:.3f}  {ids[j]}  {titulos[ids[j]]}")
+```
+@@NOTE O TF-IDF do scikit-learn normaliza cada linha para norma 1 (`norm='l2'`), então o produto escalar entre duas linhas já é o cosseno. Os vizinhos tendem a compartilhar vocabulário (por exemplo, documentos sobre bibliotecas entre si), o que mostra tanto a força quanto o limite de representações baseadas em palavras: documentos sobre o mesmo assunto com vocabulário diferente ficam distantes.
+@@EX 2 | Softmax, entropia cruzada e perplexidade do zero | intermediário
+Implemente, só com NumPy, `softmax` estável, `entropia_cruzada` para um lote de logits `(N, V)` com alvos inteiros e a `perplexidade`. Compare os resultados com `scipy.special.softmax` e com `sklearn.metrics.log_loss`. Use logits aleatórios (`np.random.default_rng(0)`, `N=1000`, `V=50`) e alvos aleatórios.
+
+*Pergunta:* qual deveria ser a perda esperada de um modelo que ignora o contexto e atribui probabilidade uniforme? A perda obtida com logits aleatórios se aproxima disso?
+@@SOL
+```python
+import numpy as np
+from scipy.special import softmax as sp_softmax
+from sklearn.metrics import log_loss
+
+def softmax(Z):
+    Z = Z - Z.max(axis=1, keepdims=True)
+    E = np.exp(Z)
+    return E / E.sum(axis=1, keepdims=True)
+
+def entropia_cruzada(Z, alvos):
+    P = softmax(Z)
+    return float(-np.log(P[np.arange(len(alvos)), alvos]).mean())
+
+rng = np.random.default_rng(0)
+N, V = 1000, 50
+Z = rng.normal(size=(N, V))
+alvos = rng.integers(0, V, size=N)
+
+print("softmax igual ao do SciPy:", np.allclose(softmax(Z), sp_softmax(Z, axis=1)))
+ce = entropia_cruzada(Z, alvos)
+print("entropia cruzada (NumPy):", round(ce, 4))
+print("log_loss (scikit-learn): ", round(log_loss(alvos, softmax(Z), labels=list(range(V))), 4))
+print("perplexidade:", round(float(np.exp(ce)), 2))
+print("perda do modelo uniforme (ln V):", round(float(np.log(V)), 4), "| perplexidade V =", V)
+```
+@@NOTE A perda de um modelo uniforme é $\ln V$ (perplexidade $V$): é o "piso de ignorância". Logits aleatórios com desvio 1 produzem uma perda **maior** que $\ln V$, pois concentram, ao acaso, probabilidade em tokens errados. O `log_loss` do scikit-learn concorda com a implementação própria, o que valida o código.
+@@EX 3 | Treinando uma regressão logística multiclasse com gradientes | intermediário
+Gere 3 grupos em 2D com `make_blobs` (`n_samples=600`, `centers=3`, `cluster_std=2.0`, `random_state=0`). Implemente a descida do gradiente para a regressão logística multiclasse usando o gradiente $\nabla_{\mathbf{W}} = \mathbf{X}^\top(\mathbf{P}-\mathbf{Y})/N$ e $\nabla_{\mathbf{b}} = \text{média}(\mathbf{P}-\mathbf{Y})$. Treine por 200 épocas com taxas $\eta \in \{0{,}001;\ 0{,}05;\ 1;\ 50\}$. Mostre perda e acurácia finais e compare com `LogisticRegression` do scikit-learn.
+
+*Pergunta:* o que acontece com cada taxa? Qual você escolheria, e por que a acurácia nunca chega perto de 100% neste problema?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import make_blobs
+from sklearn.linear_model import LogisticRegression
+
+X, y = make_blobs(n_samples=600, centers=3, cluster_std=2.0, random_state=0)
+Y = np.eye(3)[y]
+
+def softmax(Z):
+    Z = Z - Z.max(axis=1, keepdims=True)
+    E = np.exp(Z)
+    return E / E.sum(axis=1, keepdims=True)
+
+def treinar(eta, epocas=200):
+    W = np.zeros((2, 3)); b = np.zeros(3); hist = []
+    for _ in range(epocas):
+        P = softmax(X @ W + b)
+        hist.append(float(-np.log(P[np.arange(len(y)), y] + 1e-12).mean()))
+        W -= eta * X.T @ (P - Y) / len(y)
+        b -= eta * (P - Y).mean(axis=0)
+    acc = float(((X @ W + b).argmax(axis=1) == y).mean())
+    return hist, acc
+
+print(f"{'eta':>7} {'perda inicial':>14} {'perda final':>12} {'acurácia':>9}")
+for eta in (0.001, 0.05, 1.0, 50.0):
+    h, acc = treinar(eta)
+    print(f"{eta:>7} {h[0]:>14.4f} {h[-1]:>12.4f} {acc:>9.3f}")
+
+ref = LogisticRegression(max_iter=1000).fit(X, y)
+print("scikit-learn LogisticRegression: acurácia =", round(float(ref.score(X, y)), 3))
+```
+@@NOTE Com $\eta=0{,}001$, a perda cai pouco em 200 épocas (de 1,10 para cerca de 0,94): o passo é pequeno demais. Com $\eta=0{,}05$ a perda desce de forma estável até cerca de 0,71, o melhor resultado da tabela. Com $\eta=1$ e $\eta=50$, os passos são grandes demais para estes dados com grupos sobrepostos: a perda final fica **acima** da inicial, sinal de oscilação ou divergência, e a acurácia despenca para o nível do palpite da classe majoritária (cerca de 0,61 na tabela). A escolha prática é a maior taxa que permanece estável, o que aqui está perto de 0,05. A acurácia do melhor treino (0,69) é próxima à do scikit-learn, que usa o otimizador L-BFGS e regularização; os grupos se sobrepõem, então não se espera acurácia alta.
+@@ALEM
+- **scikit-learn (dados incluídos):** `load_digits`, `load_wine` e `load_iris` funcionam sem internet e servem para treinar classificadores com softmax.
+- **UCI Machine Learning Repository:** conjuntos tabulares clássicos (por exemplo, *Wine Quality* e *Adult*) para praticar regressão logística multiclasse.
+- **Kaggle:** competições introdutórias de classificação com dados tabulares, úteis para praticar a descida do gradiente.
+@@PROJ Mini-laboratório de otimização reprodutível | intermediário
+**Contexto.** Antes de treinar modelos grandes, é preciso dominar o ciclo "definir perda, calcular gradiente, atualizar" e registrar experimentos de forma reprodutível. Você usará o conjunto de dígitos manuscritos do scikit-learn (`load_digits`, 1797 imagens 8×8) como problema de classificação com 10 classes.
+
+**Tarefas.**
+
+1. Padronize os atributos dividindo por 16 e separe treino/teste (70%/30%, estratificado) com 5 sementes diferentes.
+2. Implemente a regressão logística multiclasse (softmax) com gradiente em NumPy e treine por 300 épocas com $\eta=0{,}5$.
+3. Para cada semente, registre em uma lista de dicionários: semente, perda final de treino e acurácia de teste.
+4. Reporte a **média ± desvio-padrão** da acurácia de teste nas 5 sementes e compare com `LogisticRegression` do scikit-learn nas mesmas divisões.
+5. Salve o registro em JSON, incluindo versões de Python, NumPy e scikit-learn. Explique, em um parágrafo, por que reportar uma única execução seria insuficiente.
+
+**Entregáveis.** Código, o JSON e o parágrafo.
+@@RUBRICA
+- Gradiente e atualização corretos, com softmax estável (3 pontos).
+- Cinco divisões independentes e métricas por semente (2 pontos).
+- Média e desvio-padrão reportados e comparados com a referência do scikit-learn (2 pontos).
+- Registro JSON com versões e parâmetros (2 pontos).
+- Justificativa sobre variabilidade e reprodutibilidade (1 ponto).
+@@SOL
+```python
+import json, sys
+import numpy as np, sklearn
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_digits(return_X_y=True)
+X = X / 16.0
+
+def softmax(Z):
+    Z = Z - Z.max(axis=1, keepdims=True)
+    E = np.exp(Z)
+    return E / E.sum(axis=1, keepdims=True)
+
+def treinar(Xtr, ytr, eta=0.5, epocas=300):
+    K = 10; W = np.zeros((Xtr.shape[1], K)); b = np.zeros(K); Y = np.eye(K)[ytr]
+    for _ in range(epocas):
+        P = softmax(Xtr @ W + b)
+        W -= eta * Xtr.T @ (P - Y) / len(ytr)
+        b -= eta * (P - Y).mean(axis=0)
+    P = softmax(Xtr @ W + b)
+    perda = float(-np.log(P[np.arange(len(ytr)), ytr] + 1e-12).mean())
+    return W, b, perda
+
+registro = []; acc_prop = []; acc_ref = []
+for semente in range(5):
+    Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, stratify=y, random_state=semente)
+    W, b, perda = treinar(Xtr, ytr)
+    acc = float(((Xte @ W + b).argmax(axis=1) == yte).mean())
+    ref = LogisticRegression(max_iter=2000).fit(Xtr, ytr)
+    acc_prop.append(acc); acc_ref.append(float(ref.score(Xte, yte)))
+    registro.append({"semente": semente, "perda_treino": round(perda, 4), "acuracia_teste": round(acc, 4)})
+    print(registro[-1])
+
+print(f"NumPy (softmax + gradiente): {np.mean(acc_prop):.4f} ± {np.std(acc_prop, ddof=1):.4f}")
+print(f"scikit-learn LogisticRegression: {np.mean(acc_ref):.4f} ± {np.std(acc_ref, ddof=1):.4f}")
+
+saida = {"python": sys.version.split()[0], "numpy": np.__version__, "scikit-learn": sklearn.__version__,
+         "parametros": {"eta": 0.5, "epocas": 300, "teste": 0.3}, "execucoes": registro}
+with open("registro_digits.json", "w", encoding="utf-8") as f:
+    json.dump(saida, f, ensure_ascii=False, indent=2)
+print("registro salvo em registro_digits.json")
+```
+@@NOTE O modelo próprio, com 300 épocas de descida do gradiente, atinge cerca de 95% de acurácia de teste, e a regressão logística do scikit-learn, cerca de 96,5%. A diferença (aproximadamente 1,4 ponto percentual) é maior que o desvio-padrão entre sementes, então é plausível que ela seja real: o otimizador de referência converge mais e usa regularização, enquanto nosso treino com passo fixo ainda não convergiu totalmente (a perda de treino ainda é cerca de 0,22). O desvio-padrão entre sementes mostra a variabilidade devida apenas à divisão treino/teste: diferenças menores que ele entre dois métodos não devem ser tratadas como melhora real. Esse princípio retorna no Capítulo 16.

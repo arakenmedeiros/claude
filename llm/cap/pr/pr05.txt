@@ -1,0 +1,148 @@
+@@EX 1 | Curvas de perda com pouco e com muito dado | básico
+Gere 12 000 frases com `corpus.frases_lm(12000, seed=0)` e separe as últimas 1 000 para validação. Treine o `MLPLM` (`ctx=3`, `d=16`, `h=64`, `seed=0`) por 20 épocas (lote 64, `lr=0.01`) com (a) as primeiras 200 frases e (b) as primeiras 3 000. Registre a perda de treino e de validação a cada época e imprima as épocas 1, 5, 10, 15 e 20, além da **lacuna** (validação menos treino) ao final.
+
+*Pergunta:* o que as duas lacunas revelam? Qual é o papel da perda irredutível?
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus, modelos
+
+frases = corpus.frases_lm(12000, seed=0)
+val = frases[-1000:]
+vocab = sorted({t for f in frases for t in f} | {"<s>"})
+
+def perda(m, dados):
+    X, y = m.dados(dados); _, _, z = m.frente(X)
+    return float(-modelos.log_softmax(z)[np.arange(len(y)), y].mean())
+
+for n in (200, 3000):
+    m = modelos.MLPLM(vocab, ctx=3, d=16, h=64, seed=0)
+    curva = []
+    for ep in range(20):
+        m.treinar(frases[:n], epocas=1, lote=64, lr=0.01, seed=ep)
+        curva.append((perda(m, frases[:n]), perda(m, val)))
+    print(f"\ntreino com {n} frases")
+    print(f"{'época':>6} {'treino':>8} {'validação':>10}")
+    for ep in (1, 5, 10, 15, 20):
+        print(f"{ep:>6} {curva[ep - 1][0]:>8.3f} {curva[ep - 1][1]:>10.3f}")
+    print(f"lacuna final (validação - treino): {curva[-1][1] - curva[-1][0]:.3f}")
+```
+@@NOTE Com 200 frases, a perda de validação chega a cerca de 0,98 na época 10 e depois **volta a subir** (1,02 na época 20), enquanto a de treino se mantém perto de 0,86: a lacuna final é de cerca de 0,15, sinal de sobreajuste. Com 3 000 frases, as duas curvas ficam muito próximas (lacuna de cerca de 0,01) e continuam descendo devagar até um patamar. Esse patamar é a perda irredutível do corpus (a entropia da gramática sintética): mesmo com dados infinitos, a perda não chega a zero.
+@@EX 2 | Capacidade do modelo: tamanho da camada oculta | intermediário
+Com 800 frases de treino e 1 000 de validação (mesmo corpus), treine modelos com `h` em {4, 16, 64, 256} unidades ocultas, por 25 épocas cada. Mostre o número de parâmetros, o tempo de treino (`time.perf_counter`) e as perdas de treino e de validação ao final.
+
+*Pergunta:* mais parâmetros sempre significam melhor validação? Que papel têm os dados?
+@@SOL
+```python
+import time
+import numpy as np
+from llmdidatico import corpus, modelos
+
+frases = corpus.frases_lm(12000, seed=0)
+val = frases[-1000:]; treino = frases[:800]
+vocab = sorted({t for f in frases for t in f} | {"<s>"})
+
+def perda(m, dados):
+    X, y = m.dados(dados); _, _, z = m.frente(X)
+    return float(-modelos.log_softmax(z)[np.arange(len(y)), y].mean())
+
+print(f"{'h':>5} {'parâmetros':>11} {'tempo (s)':>10} {'treino':>8} {'validação':>10}")
+for h in (4, 16, 64, 256):
+    m = modelos.MLPLM(vocab, ctx=3, d=16, h=h, seed=0)
+    t0 = time.perf_counter()
+    m.treinar(treino, epocas=25, lote=64, lr=0.01)
+    dt = time.perf_counter() - t0
+    print(f"{h:>5} {sum(p.size for p in m.P.values()):>11} {dt:>10.2f} {perda(m, treino):>8.3f} {perda(m, val):>10.3f}")
+```
+@@NOTE Com poucos parâmetros (h=4), o modelo não tem capacidade para capturar a estrutura e a validação fica alta (subajuste). Aumentar h melhora a validação até certo ponto; depois, o ganho se esgota, e o tempo cresce. Aqui, a diferença entre h=16, h=64 e h=256 é pequena, mas em geral, com dados limitados, modelos grandes demais tendem a sobreajustar. Essa é a versão em miniatura do equilíbrio entre parâmetros e dados discutido por Kaplan et al. (2020) e Hoffmann et al. (2022). Os tempos dependem da máquina.
+@@EX 3 | Curvas de aprendizagem com scikit-learn | intermediário
+Use `sklearn.model_selection.learning_curve` com o conjunto de dígitos (`load_digits`, atributos divididos por 16) e dois modelos: `DecisionTreeClassifier(random_state=0)` e `LogisticRegression(max_iter=2000)`. Com validação cruzada de 5 partes e tamanhos de treino de 10% a 100%, imprima a acurácia média de treino e de validação para cada tamanho.
+
+*Pergunta:* qual modelo tem maior lacuna? O que a forma das curvas sugere sobre coletar mais dados?
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import learning_curve
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+
+X, y = load_digits(return_X_y=True)
+X = X / 16.0
+fracs = np.linspace(0.1, 1.0, 5)
+for nome, modelo in [("Árvore de decisão", DecisionTreeClassifier(random_state=0)), ("Regressão logística", LogisticRegression(max_iter=2000))]:
+    tam, tr, va = learning_curve(modelo, X, y, train_sizes=fracs, cv=5, random_state=0, shuffle=True)
+    print(f"\n{nome}")
+    print(f"{'exemplos':>9} {'treino':>8} {'validação':>10} {'lacuna':>8}")
+    for t, a, b in zip(tam, tr.mean(1), va.mean(1)):
+        print(f"{t:>9} {a:>8.3f} {b:>10.3f} {a - b:>8.3f}")
+```
+@@NOTE A árvore de decisão memoriza o treino (acurácia de treino 1,0) e tem lacuna grande, que diminui devagar com mais dados; a regressão logística tem acurácia de treino menor e lacuna menor. Se a curva de validação ainda sobe quando o treino chega a 100%, mais dados provavelmente ajudariam; se estabilizou, o limite é o modelo ou os atributos. É o mesmo raciocínio dos LLMs: diagnosticar se o problema é falta de dados, de capacidade ou de ruído.
+@@ALEM
+- **UCI Machine Learning Repository:** conjuntos de texto curto, como *SMS Spam Collection*, para praticar curvas de aprendizagem com TF-IDF.
+- **scikit-learn:** `fetch_20newsgroups` (baixa dados na primeira execução; requer internet) para experimentar divisões treino/teste por documento.
+- **Kaggle:** conjuntos de avaliações de produtos em português, para estudar efeitos de volume de dados na qualidade de classificadores.
+@@PROJ Auditoria de dados: deduplicação e contaminação | intermediário
+**Contexto.** Você foi contratado para auditar um conjunto de dados antes do treinamento de um modelo. O "corpus de treino" contém documentos da base fictícia da universidade, alguns **duplicados** ou **quase duplicados**, e o "conjunto de teste" contém itens que podem ter **vazado** do treino. Seu relatório deve quantificar os problemas e recomendar ações.
+
+**Tarefas.**
+
+1. Construa o corpus de treino com os documentos D01 a D40 e acrescente: (a) cópias exatas de D05, D12 e D27; (b) versões levemente alteradas (troque um número) de D10, D18 e D33.
+2. Implemente a deduplicação por Jaccard de shingles de 3 palavras com limiar 0,6. Relate quantos documentos foram removidos e quais.
+3. Construa o conjunto de teste com D41 a D50 mais os documentos D12, D18 e D33 (potencialmente contaminados). Calcule, para cada item de teste, a **sobreposição máxima de 4-gramas** com o corpus de treino deduplicado.
+4. Classifique como "suspeito de contaminação" os itens com sobreposição ≥ 0,5 e calcule a taxa de itens suspeitos.
+5. Redija recomendações: o que remover do teste, o que mudar no processo e que limitação tem a detecção por n-gramas.
+
+**Entregáveis.** Código, tabela de resultados e relatório (um parágrafo por item da tarefa 5).
+@@RUBRICA
+- Corpus construído conforme o enunciado, com duplicatas exatas e quase duplicatas (2 pontos).
+- Deduplicação correta, com contagem e identificação dos removidos (3 pontos).
+- Cálculo de sobreposição de 4-gramas e taxa de suspeitos (3 pontos).
+- Recomendações coerentes e reconhecimento das limitações (2 pontos).
+@@SOL
+```python
+import re
+from llmdidatico import DOCS, modelos
+
+D = {d[0]: d[3] for d in DOCS}
+treino = [(i, D[i]) for i in [f"D{k:02d}" for k in range(1, 41)]]
+for i in ("D05", "D12", "D27"):
+    treino.append((i + "_copia", D[i]))
+alterados = {"D10": ("90 dias", "60 dias"), "D18": ("R$ 400,00", "R$ 450,00"), "D33": ("30 dias", "45 dias")}
+for i, (a, b) in alterados.items():
+    assert a in D[i], (i, a)
+    treino.append((i + "_alterado", D[i].replace(a, b)))
+print("documentos no corpus de treino bruto:", len(treino))
+
+def shingles(t, k=3):
+    p = t.lower().split()
+    return {tuple(p[i:i + k]) for i in range(len(p) - k + 1)}
+
+def jaccard(a, b):
+    return len(a & b) / len(a | b) if (a | b) else 0.0
+
+S = [shingles(t) for _, t in treino]
+manter, removidos = [], []
+for i, s in enumerate(S):
+    dup = [treino[j][0] for j in manter if jaccard(s, S[j]) >= 0.6]
+    if dup:
+        removidos.append((treino[i][0], dup[0]))
+    else:
+        manter.append(i)
+print("mantidos:", len(manter), "| removidos:", len(removidos))
+for r, de in removidos:
+    print(f"  removido {r:<14} (duplicata de {de})")
+
+treino_dedup = [treino[i] for i in manter]
+ng_treino = [{tuple(w[i:i + 4]) for i in range(len(w) - 3)} for w in (modelos.tokenizar(t) for _, t in treino_dedup)]
+teste = [(f"D{k:02d}", D[f"D{k:02d}"]) for k in range(41, 51)] + [("D12", D["D12"]), ("D18", D["D18"]), ("D33", D["D33"])]
+print(f"\n{'item de teste':<14} {'sobreposição máx. de 4-gramas':>30}")
+suspeitos = 0
+for nome, t in teste:
+    w = modelos.tokenizar(t); ng = {tuple(w[i:i + 4]) for i in range(len(w) - 3)}
+    sobre = max(len(ng & g) / len(ng) for g in ng_treino)
+    suspeitos += sobre >= 0.5
+    print(f"{nome:<14} {sobre:>30.2f}{'   <- suspeito' if sobre >= 0.5 else ''}")
+print(f"\ntaxa de itens suspeitos: {suspeitos}/{len(teste)} = {suspeitos / len(teste):.0%}")
+```
+@@NOTE Esperam-se removidas as três cópias exatas e as três versões alteradas (a troca de um número mantém a maioria dos shingles, então o Jaccard fica alto), restando os 40 originais. Entre os itens de teste, D12, D18 e D33 aparecem com sobreposição 1,00 em relação aos originais mantidos, e os demais (D41 a D50) ficam com valores baixos. Recomendações: retirar do teste os itens contaminados; deduplicar treino contra teste antes de treinar; registrar versão e data; e lembrar que n-gramas só detectam cópias literais: paráfrases ou traduções dos itens de teste passariam despercebidas, e embeddings de similaridade podem complementar a verificação.

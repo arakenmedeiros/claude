@@ -1,0 +1,373 @@
+MC: Uma matriz $\mathbf{W}$ de formato $5\times3$ multiplica um vetor $\mathbf{x}$ de dimensão 3. Qual o formato de $\mathbf{W}\mathbf{x}$?
+= Um vetor de dimensão 5.
+- Um vetor de dimensão 3.
+- Uma matriz de formato $5\times3$.
+- Um escalar.
+- A operação é inválida, pois os formatos são incompatíveis.
+J: Cada uma das 5 linhas de $\mathbf{W}$ faz produto escalar com $\mathbf{x}$ (dimensão 3), produzindo 5 números.
+
+MC: Qual o formato do produto $\mathbf{A}\mathbf{B}$ se $\mathbf{A}$ é $4\times6$ e $\mathbf{B}$ é $6\times2$?
+= $4\times2$
+- $6\times6$
+- $4\times6$
+- $6\times2$
+- O produto não está definido.
+J: $(m\times n)(n\times p)=(m\times p)$. Aqui $m=4$, $n=6$, $p=2$.
+
+MC: Qual a similaridade de cosseno entre $(1,0)$ e $(0,1)$?
+= 0
+- 1
+- -1
+- 0,5
+- Não é possível calcular.
+J: O produto escalar é 0, então o cosseno é 0. Os vetores são perpendiculares.
+
+MC: Se $\mathbf{b}=3\mathbf{a}$ com $\mathbf{a}\neq\mathbf{0}$, qual o cosseno entre $\mathbf{a}$ e $\mathbf{b}$?
+= 1
+- 3
+- 0
+- 1/3
+- -1
+J: Multiplicar por um número positivo muda o comprimento, não a direção. O cosseno só depende da direção.
+
+MC: Qual o produto escalar de $(2,-1,3)$ e $(1,4,0)$?
+= -2
+- 2
+- 6
+- 10
+- 0
+J: $2\cdot1+(-1)\cdot4+3\cdot0=2-4+0=-2$.
+
+MC: Qual a norma (comprimento) do vetor $(3,4)$?
+= 5
+- 7
+- 12
+- 25
+- 3,5
+J: $\sqrt{3^2+4^2}=\sqrt{25}=5$.
+
+MC: Qual propriedade do softmax justifica o truque de subtrair o máximo dos logits antes de calcular?
+= Somar ou subtrair a mesma constante de todos os logits não altera as probabilidades.
+- O softmax só funciona com logits negativos.
+- A subtração torna a soma das probabilidades igual a 2.
+- O máximo é sempre igual a zero.
+- A subtração aumenta a precisão do modelo.
+J: A constante se cancela entre numerador e denominador. Subtrair o máximo evita overflow na exponencial.
+
+MC: Para logits $(1000, 999, 998)$, o que ocorre com um softmax ingênuo, sem subtrair o máximo?
+= A exponencial estoura (overflow), produzindo infinitos e resultados não numéricos (nan).
+- O resultado é exatamente $(1/3, 1/3, 1/3)$.
+- O resultado é $(1, 0, 0)$.
+- O cálculo é correto, pois números grandes não são problema.
+- O resultado é negativo.
+J: $e^{1000}$ excede o maior valor representável em ponto flutuante; a divisão infinito/infinito resulta em nan.
+
+MC: Reduzir a temperatura $T$ de $0{,}5$ para $0{,}1$ no softmax $\mathrm{softmax}(\mathbf{z}/T)$ tende a:
+= Concentrar a distribuição ainda mais no token de maior logit.
+- Tornar a distribuição uniforme.
+- Inverter a ordem dos tokens.
+- Aumentar a entropia da distribuição.
+- Não alterar a distribuição.
+J: Dividir por um $T$ pequeno amplia as diferenças entre logits, deixando a distribuição mais "nítida".
+
+MC: O que ocorre com $\mathrm{softmax}(\mathbf{z}/T)$ quando $T\to\infty$?
+= A distribuição tende à uniforme.
+- A distribuição tende a um vetor one-hot.
+- Os logits tornam-se infinitos.
+- O softmax deixa de somar 1.
+- O token de menor logit passa a ser o mais provável.
+J: Com $T$ muito grande, todos os $z_i/T$ tendem a 0, e $e^0=1$ para todos.
+
+MC: Qual o softmax de $(0,0,0,0)$?
+= $(0{,}25;\ 0{,}25;\ 0{,}25;\ 0{,}25)$
+- $(0;\ 0;\ 0;\ 0)$
+- $(1;\ 0;\ 0;\ 0)$
+- $(0{,}5;\ 0{,}5;\ 0;\ 0)$
+- Não está definido.
+J: Todos os expoentes valem $e^0=1$, a soma é 4, e cada probabilidade é $1/4$.
+
+MC: Qual a surpresa, em bits, de um evento de probabilidade 0,5?
+= 1 bit
+- 0 bit
+- 2 bits
+- 0,5 bit
+- 0,693 bit
+J: $-\log_2 0{,}5=1$. Em nats seria $0{,}693$.
+
+MC: Entre distribuições sobre 4 opções, qual tem a maior entropia?
+= A distribuição uniforme $(0{,}25;\ 0{,}25;\ 0{,}25;\ 0{,}25)$.
+- $(1;\ 0;\ 0;\ 0)$
+- $(0{,}7;\ 0{,}1;\ 0{,}1;\ 0{,}1)$
+- $(0{,}5;\ 0{,}5;\ 0;\ 0)$
+- $(0{,}9;\ 0{,}05;\ 0{,}05;\ 0)$
+J: A entropia é máxima quando a incerteza é máxima, isto é, quando todas as opções são igualmente prováveis ($\ln 4$ nats ou 2 bits).
+
+MC: Se o modelo atribui probabilidade 0,25 ao token correto, qual a perda de entropia cruzada (em nats)?
+= $-\ln 0{,}25\approx 1{,}386$
+- $\ln 0{,}25\approx -1{,}386$
+- $0{,}25$
+- $0{,}75$
+- $1{,}0$
+J: A perda é $-\ln p_k$. A surpresa de um evento com probabilidade 1/4 é $\ln 4\approx1{,}386$.
+
+MC: Uma perda média de entropia cruzada de 2,0 nats por token corresponde a uma perplexidade de aproximadamente:
+= 7,39
+- 2,0
+- 4,0
+- 0,135
+- 20
+J: $\mathrm{PPL}=e^{\mathcal{L}}=e^{2}\approx7{,}39$.
+
+MC: Sobre a divergência de Kullback-Leibler $D_{\mathrm{KL}}(\mathbf{p}\Vert\mathbf{q})$, é correto afirmar:
+= É não negativa, vale zero apenas se $\mathbf{p}=\mathbf{q}$, e em geral não é simétrica.
+- É sempre simétrica, portanto é uma distância.
+- Pode ser negativa quando $\mathbf{q}$ é muito diferente de $\mathbf{p}$.
+- Só se aplica a distribuições uniformes.
+- É igual à entropia de $\mathbf{p}$.
+J: A KL é uma medida de diferença assimétrica, com $D_{\mathrm{KL}}\ge0$.
+
+MC: Qual relação liga entropia, entropia cruzada e KL?
+= $H(\mathbf{p},\mathbf{q})=H(\mathbf{p})+D_{\mathrm{KL}}(\mathbf{p}\Vert\mathbf{q})$
+- $H(\mathbf{p},\mathbf{q})=H(\mathbf{p})-D_{\mathrm{KL}}(\mathbf{p}\Vert\mathbf{q})$
+- $H(\mathbf{p},\mathbf{q})=D_{\mathrm{KL}}(\mathbf{p}\Vert\mathbf{q})\cdot H(\mathbf{p})$
+- $H(\mathbf{p},\mathbf{q})=H(\mathbf{q})$
+- $H(\mathbf{p},\mathbf{q})=0$
+J: A entropia cruzada é a entropia da distribuição verdadeira mais o custo extra de usar $\mathbf{q}$ no lugar de $\mathbf{p}$.
+
+MC: Para softmax seguido de entropia cruzada com rótulo one-hot $\mathbf{y}$, o gradiente da perda em relação aos logits é:
+= $\mathbf{p}-\mathbf{y}$
+- $\mathbf{y}-\mathbf{p}$
+- $\mathbf{p}\odot\mathbf{y}$
+- $\ln\mathbf{p}$
+- $\mathbf{p}/\mathbf{y}$
+J: Dedução: $\mathcal{L}=-z_k+\ln\sum_j e^{z_j}$, logo $\partial\mathcal{L}/\partial z_i=p_i-y_i$.
+
+MC: Na descida do gradiente $\theta\leftarrow\theta-\eta\nabla\mathcal{L}$, o sinal negativo existe porque:
+= O gradiente aponta para onde a perda mais cresce; queremos reduzi-la.
+- O gradiente aponta para o mínimo da perda.
+- A taxa de aprendizado é sempre negativa.
+- Os parâmetros precisam diminuir a cada passo.
+- O sinal é apenas uma convenção sem efeito.
+J: O gradiente indica o sentido de maior aumento. Andar no sentido oposto reduz a perda (para passos suficientemente pequenos).
+
+MC: O que pode ocorrer se a taxa de aprendizado $\eta$ for grande demais?
+= A perda pode oscilar ou divergir, em vez de diminuir.
+- O treinamento sempre converge mais rápido e melhor.
+- Os gradientes se anulam.
+- O modelo memoriza os dados com perda zero.
+- A taxa de aprendizado não influencia a convergência.
+J: Passos grandes "pulam" sobre o mínimo e podem aumentar a perda a cada atualização.
+
+MC: Qual a derivada de $f(x)=x^2$ em $x=3$?
+= 6
+- 3
+- 9
+- 2
+- 0
+J: $f'(x)=2x$, logo $f'(3)=6$.
+
+MC: Qual a principal diferença entre descida do gradiente em lote completo e estocástica (SGD)?
+= O SGD estima o gradiente com um minilote de exemplos, o que é mais barato por passo e ainda aponta aproximadamente na direção certa.
+- O SGD usa derivadas de segunda ordem e o lote completo, não.
+- O lote completo não usa gradientes.
+- O SGD usa sempre um único parâmetro.
+- Não há diferença: ambos calculam exatamente o mesmo gradiente.
+J: O gradiente de minilote é uma estimativa ruidosa do gradiente completo, com custo por passo muito menor.
+
+MC: A retropropagação (*backpropagation*) é, essencialmente:
+= A aplicação sistemática da regra da cadeia, da saída para a entrada, reaproveitando cálculos para obter gradientes de todos os parâmetros.
+- Um método de gerar texto da direita para a esquerda.
+- Uma técnica de compressão de modelos.
+- O processo de escolher o vocabulário.
+- A inicialização aleatória dos pesos.
+J: Ela calcula eficientemente $\partial\mathcal{L}/\partial\theta$ para todas as camadas encadeando derivadas.
+
+MC: Qual a característica do otimizador Adam, em comparação ao SGD simples?
+= Adapta o tamanho do passo de cada parâmetro com base em médias móveis do gradiente e de seu quadrado.
+- Não usa gradientes.
+- Usa taxa de aprendizado negativa.
+- Elimina a necessidade de dados de treinamento.
+- Garante convergência ao mínimo global.
+J: Adam mantém estimativas de primeiro e segundo momentos do gradiente (Kingma; Ba, 2015). Não há garantia de mínimo global.
+
+MC: Qual a memória mínima, apenas para os pesos, de um modelo hipotético de 13 bilhões de parâmetros em `float16`?
+= 26 GB
+- 13 GB
+- 52 GB
+- 6,5 GB
+- 104 GB
+J: $13\times10^9\times2$ bytes $=26\times10^9$ bytes $=26$ GB.
+
+MC: O que resulta de somar um vetor de formato $(4,)$ a uma matriz de formato $(3,4)$ em NumPy?
+= Uma matriz $(3,4)$, em que o vetor é somado a cada linha (broadcasting).
+- Um erro de formato incompatível.
+- Um vetor de formato $(4,)$.
+- Uma matriz $(4,4)$.
+- Um escalar.
+J: O *broadcasting* estende o vetor ao longo do eixo das linhas quando as dimensões finais coincidem.
+
+MC: Por que fixar a semente aleatória é importante em experimentos?
+= Para que a mesma execução produza os mesmos números aleatórios, permitindo reproduzir e comparar resultados.
+- Para tornar o modelo mais preciso.
+- Para evitar o uso de GPU.
+- Para eliminar a necessidade de registrar parâmetros.
+- Para garantir que o modelo nunca erre.
+J: A semente fixa o gerador pseudoaleatório. Isso não melhora o modelo, mas permite repetir o experimento. Mesmo assim, outras fontes de variabilidade podem existir.
+
+MC: Qual a principal função de um arquivo `requirements.txt` com versões fixadas?
+= Permitir recriar o ambiente com as mesmas versões das bibliotecas, reduzindo diferenças de resultados entre máquinas.
+- Acelerar a execução dos códigos.
+- Armazenar os dados de treinamento.
+- Impedir o uso de bibliotecas novas.
+- Substituir o controle de versão do código.
+J: Versões diferentes de bibliotecas podem mudar resultados e comportamento. Registrar versões é parte da reprodutibilidade.
+
+MC: Se $P(B)=0{,}4$ e $P(A\mid B)=0{,}5$, qual é $P(A,B)$?
+= 0,2
+- 0,9
+- 0,8
+- 0,5
+- 0,1
+J: $P(A,B)=P(A\mid B)P(B)=0{,}5\times0{,}4=0{,}2$.
+
+MC: Se $\mathbf{A}$ tem formato $3\times5$, qual o formato de $\mathbf{A}^\top$ (a transposta)?
+= $5\times3$
+- $3\times5$
+- $3\times3$
+- $5\times5$
+- $15\times1$
+J: A transposta troca linhas por colunas: de $m\times n$ para $n\times m$.
+
+DISC[C]: Explique, com suas palavras, o que o softmax faz, por que usamos a exponencial e o que significa dizer que ele "preserva a ordem" dos logits.
+R: O softmax converte um vetor de números reais (logits) em uma distribuição de probabilidade: valores positivos que somam 1. A exponencial garante positividade e amplia diferenças entre logits (um logit maior recebe proporcionalmente mais massa). A divisão pela soma normaliza. Como a exponencial é crescente, se $z_i>z_j$ então $p_i>p_j$: a ordem se preserva, ainda que as diferenças sejam transformadas.
+
+DISC[C]: Distinga logit, probabilidade e perda de entropia cruzada, indicando em que faixa de valores cada um pode estar.
+R: Logit é a pontuação bruta de um token, qualquer número real. Probabilidade é o resultado do softmax, entre 0 e 1, somando 1 sobre o vocabulário. A perda de entropia cruzada, para o token correto $k$, é $-\ln p_k$, um número maior ou igual a 0 (zero se $p_k=1$, tendendo a infinito quando $p_k\to0$).
+
+DISC[C]: Por que erros de formato são tão frequentes ao implementar Transformers e que hábito ajuda a preveni-los?
+R: Os modelos manipulam tensores com vários eixos (lote, posição, dimensão, cabeças) e várias operações trocam ou combinam esses eixos; trocar a ordem passa despercebido se os tamanhos coincidem. Hábito: anotar o formato esperado ao lado de cada operação, usar nomes de eixos em comentários, testar com dimensões distintas (por exemplo, $B=2$, $T=5$, $d=7$) e verificar com asserções de formato.
+
+DISC[C]: Explique, em um parágrafo, a ideia da descida do gradiente e o papel da taxa de aprendizado.
+R: O gradiente da perda indica a direção de maior aumento da perda em relação aos parâmetros. A descida do gradiente atualiza os parâmetros no sentido oposto, em pequenos passos de tamanho controlado por $\eta$. Com $\eta$ pequeno, o progresso é seguro porém lento; com $\eta$ grande, a perda pode oscilar ou divergir. O equilíbrio depende do problema e geralmente exige experimentação, com agendas de variação da taxa durante o treino.
+
+DISC[M]: Calcule o cosseno entre $\mathbf{a}=(2,1,2)$ e $\mathbf{b}=(1,2,2)$.
+R: Produto escalar: $2\cdot1+1\cdot2+2\cdot2=2+2+4=8$. Normas: $\lVert\mathbf{a}\rVert=\sqrt{4+1+4}=3$ e $\lVert\mathbf{b}\rVert=\sqrt{1+4+4}=3$. Cosseno: $8/(3\cdot3)=8/9\approx0{,}889$. Os vetores são bastante alinhados.
+
+DISC[M]: Calcule o softmax de $\mathbf{z}=(1,2,3)$ e de $\mathbf{z}/T$ com $T=2$. Compare a entropia qualitativamente.
+R: Para $\mathbf{z}$: exponenciais $2{,}718;\ 7{,}389;\ 20{,}086$, soma $30{,}193$; probabilidades $(0{,}090;\ 0{,}245;\ 0{,}665)$. Para $T=2$: $\mathbf{z}/T=(0{,}5;\ 1;\ 1{,}5)$, exponenciais $1{,}649;\ 2{,}718;\ 4{,}482$, soma $8{,}849$; probabilidades $(0{,}186;\ 0{,}307;\ 0{,}507)$. A temperatura maior achata a distribuição: a entropia aumenta (menor concentração no token líder).
+
+DISC[M]: Calcule a entropia, em bits, de (a) uma distribuição uniforme sobre 8 opções e (b) de $(0{,}5;\ 0{,}25;\ 0{,}25)$. Converta (a) para nats.
+R: (a) $H=\log_2 8=3$ bits. Em nats: $3\ln2=\ln8\approx2{,}079$. (b) $H=-(0{,}5\log_2 0{,}5+2\cdot0{,}25\log_2 0{,}25)=0{,}5\cdot1+2\cdot0{,}25\cdot2=0{,}5+1=1{,}5$ bits.
+
+DISC[M]: Com logits $\mathbf{z}=(0,0,0)$ e token correto o segundo, calcule o gradiente de $p-y$, o novo vetor de logits após um passo com $\eta=1$ e a nova probabilidade do token correto.
+R: $\mathbf{p}=(1/3,1/3,1/3)$, $\mathbf{y}=(0,1,0)$, gradiente $=(1/3,-2/3,1/3)$. Novo $\mathbf{z}'=\mathbf{z}-\eta\,\text{gradiente}=(-1/3,\ 2/3,\ -1/3)$. Exponenciais: $e^{-0{,}333}\approx0{,}7165$, $e^{0{,}667}\approx1{,}9477$; soma $=2\cdot0{,}7165+1{,}9477=3{,}3807$. Nova probabilidade do token correto: $1{,}9477/3{,}3807\approx0{,}576$ (de 0,333 para 0,576).
+
+DISC[M]: (a) Uma perda média de 3,0 nats corresponde a qual perplexidade? (b) Qual perda média corresponde a uma perplexidade de 50?
+R: (a) $\mathrm{PPL}=e^{3}\approx20{,}09$. (b) $\mathcal{L}=\ln 50\approx3{,}912$ nats. Interpretação: perda e perplexidade são a mesma informação em escalas diferentes; a perplexidade é mais intuitiva (número efetivo de opções).
+
+DISC[M]: Dadas $\mathbf{A}=\begin{bmatrix}1&2\\3&4\end{bmatrix}$ e $\mathbf{B}=\begin{bmatrix}0&1\\1&0\end{bmatrix}$, calcule $\mathbf{A}\mathbf{B}$ e $\mathbf{B}\mathbf{A}$. O produto de matrizes é comutativo?
+R: $\mathbf{A}\mathbf{B}=\begin{bmatrix}1\cdot0+2\cdot1&1\cdot1+2\cdot0\\3\cdot0+4\cdot1&3\cdot1+4\cdot0\end{bmatrix}=\begin{bmatrix}2&1\\4&3\end{bmatrix}$. $\mathbf{B}\mathbf{A}=\begin{bmatrix}0\cdot1+1\cdot3&0\cdot2+1\cdot4\\1\cdot1+0\cdot3&1\cdot2+0\cdot4\end{bmatrix}=\begin{bmatrix}3&4\\1&2\end{bmatrix}$. Como $\mathbf{A}\mathbf{B}\neq\mathbf{B}\mathbf{A}$, o produto de matrizes não é comutativo em geral. Aqui, $\mathbf{B}$ troca as colunas (em $\mathbf{A}\mathbf{B}$) ou as linhas (em $\mathbf{B}\mathbf{A}$).
+
+DISC[A]: Um colega compara o gradiente analítico com o numérico e obtém diferença máxima de $10^{-10}$. Outro obtém $0{,}3$. Analise o que cada resultado sugere e quais as causas prováveis de um erro grande.
+R: Diferença de $10^{-10}$ é compatível com erro de arredondamento do método de diferenças finitas, e sugere que o gradiente analítico está correto. Diferença de 0,3 indica provável erro: fórmula analítica incorreta (sinal, falta de fator), erro de formato, esquecimento de termo na regra da cadeia, passo $h$ inadequado, ou função não diferenciável no ponto. O procedimento: testar em exemplos pequenos, reduzir a função, verificar componente a componente e usar double precision.
+
+DISC[A]: Os documentos $\mathbf{d}_1=(2,0,1)$ e $\mathbf{d}_2=(4,0,2)$ têm cosseno 1 e distância euclidiana $\sqrt5$. Analise qual medida é mais adequada para comparar um documento curto com um longo sobre o mesmo tema, e discuta um caso em que o comprimento importa.
+R: O cosseno ignora o comprimento e compara proporções (direção), sendo mais adequado para comparar temas entre textos de tamanhos diferentes. A distância euclidiana mistura diferença de conteúdo com diferença de comprimento. O comprimento importa, por exemplo, quando a magnitude representa intensidade relevante (frequência absoluta de um sinal), ou quando embeddings não normalizados codificam confiança; nesses casos, a escolha deve ser justificada e testada.
+
+DISC[A]: Treinando uma regressão logística, uma curva de perda sobe e vira `nan` após poucas épocas. Liste hipóteses e testes diagnósticos em ordem de custo.
+R: Hipóteses: taxa de aprendizado muito alta; softmax/log sem estabilidade numérica; dados com valores extremos ou `nan`; erro de gradiente; inicialização inadequada. Testes: reduzir $\eta$ por fator 10; verificar `np.isnan` nos dados; usar softmax estável e `log_softmax`; checar o gradiente numericamente em um minilote; normalizar atributos; registrar a perda a cada passo para localizar a primeira divergência.
+
+DISC[P]: Implemente `log_softmax(z)` numericamente estável e compare com `np.log(softmax(z))` para $z=(2,1,0{,}1)$ e para $z=(1000,999,998)$ (nesse caso, apenas a versão estável deve ser finita).
+CODE:
+import numpy as np
+
+def softmax(z):
+    z = np.asarray(z, float)
+    e = np.exp(z - z.max())
+    return e / e.sum()
+
+def log_softmax(z):
+    z = np.asarray(z, float)
+    m = z.max()
+    return z - m - np.log(np.exp(z - m).sum())
+
+z = np.array([2.0, 1.0, 0.1])
+assert np.allclose(log_softmax(z), np.log(softmax(z)))
+g = np.array([1000.0, 999.0, 998.0])
+assert np.all(np.isfinite(log_softmax(g)))
+print(log_softmax(z).round(4), log_softmax(g).round(4))
+ENDCODE
+CRIT: Subtrai o máximo antes da exponencial.
+CRIT: Evita calcular o logaritmo de probabilidades possivelmente zero.
+CRIT: Testa com logits pequenos e grandes.
+
+DISC[P]: Implemente `entropia_cruzada_lote(logits, alvos)` vetorizada, que receba logits de formato $(N,V)$ e alvos inteiros de formato $(N,)$ e devolva a perda média. Teste com um caso calculável à mão.
+CODE:
+import numpy as np
+
+def log_softmax(Z):
+    Z = np.asarray(Z, float)
+    Z = Z - Z.max(axis=1, keepdims=True)
+    return Z - np.log(np.exp(Z).sum(axis=1, keepdims=True))
+
+def entropia_cruzada_lote(logits, alvos):
+    lp = log_softmax(logits)
+    return float(-lp[np.arange(len(alvos)), alvos].mean())
+
+# dois exemplos, três classes, logits todos iguais -> p = 1/3 -> perda = ln 3
+L = np.zeros((2, 3))
+assert abs(entropia_cruzada_lote(L, np.array([0, 2])) - np.log(3)) < 1e-12
+print(entropia_cruzada_lote(L, np.array([0, 2])))
+ENDCODE
+CRIT: Usa indexação avançada para selecionar o log-prob do alvo.
+CRIT: Retorna a média, não a soma.
+CRIT: Inclui teste com resposta conhecida (ln 3).
+
+DISC[P]: Implemente a descida do gradiente para $f(x)=(x-3)^2$ que pare quando $|f'(x)|<10^{-6}$ ou após 10 000 passos, devolvendo o valor final e o número de passos. Teste com $\eta=0{,}1$ e com $\eta=1{,}1$ (que diverge); explique a diferença.
+CODE:
+def descida(x0, eta, tol=1e-6, max_passos=10_000):
+    x = x0
+    for i in range(max_passos):
+        g = 2 * (x - 3)
+        if abs(g) < tol:
+            return x, i
+        x = x - eta * g
+        if abs(x) > 1e12:
+            return float("inf"), i
+    return x, max_passos
+
+x, n = descida(0.0, 0.1)
+assert abs(x - 3) < 1e-5
+print("eta=0.1:", round(x, 6), n, "passos")
+x2, n2 = descida(0.0, 1.1)
+assert x2 == float("inf")
+print("eta=1.1: diverge após", n2, "passos")
+ENDCODE
+CRIT: Condição de parada por gradiente pequeno e por número máximo de passos.
+CRIT: Reconhece a divergência com $\eta=1{,}1$: o fator de contração $|1-2\eta|=1{,}2>1$ amplifica o erro a cada passo.
+
+DISC[P]: Escreva `memoria_gb(n_parametros, bits)` e uma função `cabe(n_parametros, bits, gb_disponiveis, margem=0.2)` que diga se os pesos cabem na memória deixando uma margem percentual livre. Teste com 7 bilhões de parâmetros em 16 bits e 4 bits para uma GPU de 16 GB.
+CODE:
+def memoria_gb(n_parametros, bits):
+    return n_parametros * bits / 8 / 1e9
+
+def cabe(n_parametros, bits, gb_disponiveis, margem=0.2):
+    return memoria_gb(n_parametros, bits) <= gb_disponiveis * (1 - margem)
+
+assert abs(memoria_gb(7e9, 16) - 14.0) < 1e-9
+assert abs(memoria_gb(7e9, 4) - 3.5) < 1e-9
+print("16 bits cabe em 16 GB com 20% de margem?", cabe(7e9, 16, 16))
+print("4 bits cabe em 16 GB com 20% de margem?", cabe(7e9, 4, 16))
+ENDCODE
+CRIT: Converte bits em bytes (divide por 8).
+CRIT: Reconhece que isso é um piso, pois ignora ativações e cache.
+CRIT: Expressa a margem de forma parametrizável.
+
+DISC[D]: Sua equipe precisa executar localmente um modelo hipotético de 13 bilhões de parâmetros em uma máquina com GPU de 16 GB. Compare as opções `float16`, `int8` e 4 bits do ponto de vista de memória dos pesos e discuta riscos de qualidade e como decidir.
+R: Pesos: float16 $\approx26$ GB (não cabe); int8 $\approx13$ GB (cabe apenas se sobrar memória para ativações e cache, o que é apertado); 4 bits $\approx6{,}5$ GB (cabe com folga). Riscos: quantização pode degradar a qualidade, de forma desigual entre tarefas e idiomas. Decisão: medir a qualidade nas tarefas da aplicação com e sem quantização (Capítulo 15 e 16), medir latência e memória reais com contextos típicos, e escolher o menor formato que preserve o desempenho exigido. Alternativas: modelo menor, parcial offloading, serviço externo (avaliando privacidade e custo).
+
+DISC[D]: Defina um protocolo de reprodutibilidade para um projeto com cinco pessoas que treinam pequenos modelos. Indique pelo menos seis elementos obrigatórios e justifique cada um.
+R: (1) Ambiente fixado com versões (requirements/lockfile) — evita divergências por versão. (2) Sementes registradas — permite repetir execuções. (3) Controle de versão do código com identificação do commit por experimento. (4) Registro de parâmetros e métricas em arquivo estruturado. (5) Dados versionados e imutáveis, com descrição da divisão treino/validação/teste. (6) Scripts de execução de ponta a ponta, em vez de passos manuais. (7) Relato de variabilidade (várias sementes) para comparar métodos de modo justo. (8) Documentação do hardware, pois ele pode afetar resultados numéricos.
+
+DISC[D]: Você precisa escolher a taxa de aprendizado para um treinamento custoso. Proponha uma estratégia de busca econômica e critérios de decisão, considerando que cada execução completa é cara.
+R: Executar execuções curtas (poucos passos) em escala logarítmica de taxas (por exemplo, $10^{-5},\ 3\cdot10^{-5},\ 10^{-4},\dots$), observar a perda inicial e a estabilidade; descartar taxas que divergem ou oscilam; escolher a maior taxa estável (às vezes com margem), usar aquecimento e decaimento; repetir com mais de uma semente nas finalistas; registrar todas as tentativas. Critérios: perda de validação, estabilidade, ausência de picos, custo adicional. Cuidado: resultados em escala reduzida nem sempre transferem para a escala completa.

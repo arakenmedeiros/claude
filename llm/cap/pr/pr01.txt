@@ -1,0 +1,152 @@
+@@EX 1 | Contando n-gramas e medindo a esparsidade | básico
+Use o corpus sintético `corpus.frases_lm(3000, seed=0)`. Com `CountVectorizer`, conte os **trigramas** de palavras (use `token_pattern=r"\S+"` e `lowercase=False` para manter o ponto como token). Mostre (a) os 5 trigramas mais frequentes, (b) quantos trigramas **distintos** existem e (c) que fração dos trigramas **possíveis** (vocabulário elevado ao cubo) foi observada.
+
+*Pergunta:* o que acontece com a fração observada se o corpus for 10 vezes maior? E se o vocabulário for de 30 mil palavras?
+@@SOL
+```python
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+from llmdidatico import corpus
+
+frases = corpus.frases_lm(3000, seed=0)
+textos = [" ".join(f) for f in frases]
+
+vec = CountVectorizer(ngram_range=(3, 3), token_pattern=r"\S+", lowercase=False)
+X = vec.fit_transform(textos)
+cont = np.asarray(X.sum(axis=0)).ravel()
+nomes = vec.get_feature_names_out()
+
+print("Trigramas mais frequentes:")
+for i in np.argsort(-cont)[:5]:
+    print(f"  {cont[i]:5d}  {nomes[i]}")
+
+V = len({t for f in frases for t in f})
+distintos = len(nomes)
+print("Vocabulário:", V, "| trigramas distintos observados:", distintos)
+print("Trigramas possíveis (V^3):", V ** 3)
+print(f"Fração observada: {distintos / V**3:.4%}")
+```
+@@NOTE A fração observada é baixa mesmo num corpus pequeno e regular, porque a gramática gera só combinações compatíveis. Com 10 vezes mais frases, os trigramas distintos crescem pouco (a gramática é finita), então a fração quase não muda: o corpus sintético satura. Em línguas reais, ocorre o contrário: novas combinações continuam aparecendo, e com 30 mil palavras há 2,7 × 10^13 trigramas possíveis, de modo que a fração observada é minúscula.
+@@EX 2 | Um classificador simples como linha de base | intermediário
+Gere mensagens de atendimento com `corpus.intencoes(120, seed=0)` (8 intenções). Treine um classificador de **regressão logística** sobre atributos TF-IDF (unigramas e bigramas), com separação treino/teste estratificada (75%/25%, `random_state=0`). Imprima a acurácia e o relatório de classificação, e liste as três mensagens de teste que o modelo mais errou ao classificar (menor probabilidade da classe correta).
+
+*Pergunta:* se um classificador tão simples já acerta quase tudo, quando valeria a pena usar um LLM para essa tarefa?
+@@SOL
+```python
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.pipeline import make_pipeline
+from llmdidatico import corpus
+
+X, y = corpus.intencoes(120, seed=0)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, stratify=y, random_state=0)
+
+clf = make_pipeline(TfidfVectorizer(ngram_range=(1, 2)), LogisticRegression(max_iter=1000))
+clf.fit(Xtr, ytr)
+pred = clf.predict(Xte)
+print("Acurácia no teste:", round(accuracy_score(yte, pred), 4))
+print(classification_report(yte, pred, digits=3))
+
+proba = clf.predict_proba(Xte)
+classes = list(clf.classes_)
+p_correta = np.array([proba[i, classes.index(yte[i])] for i in range(len(yte))])
+print("Três casos mais difíceis:")
+for i in np.argsort(p_correta)[:3]:
+    print(f"  P(correta)={p_correta[i]:.2f} | real={yte[i]} | previsto={pred[i]} | {Xte[i]}")
+```
+@@NOTE Neste conjunto sintético, as mensagens vêm de poucos modelos de frase e a tarefa é fácil: a acurácia fica próxima de 100%. Em dados reais, há mais variedade, ironia e ambiguidade. A decisão de usar um LLM deve se basear em medições num conjunto de teste realista: se o classificador simples já atende, o ganho do LLM precisa justificar custo, latência e perda de previsibilidade.
+@@EX 3 | Plausível não é o mesmo que verdadeiro | intermediário
+Treine um modelo de trigramas (`modelos.NgramaLM(n=3, k=0.05)`) nas frases de treino. Calcule a **probabilidade logarítmica por token** de seis frases escritas por você: três **verdadeiras no mundo real** mas combinando palavras de modos que o corpus não contém (por exemplo, "o estudante corrige a prova ."), e três **falsas** mas com a estrutura do corpus (por exemplo, "o estudante lê o relatório ontem ." é plausível; invente afirmações falsas ou absurdas com a mesma estrutura). Compare as pontuações.
+
+*Pergunta:* o que isso mostra sobre usar a probabilidade do modelo como indicador de verdade?
+@@SOL
+```python
+from llmdidatico import corpus, modelos
+
+frases = corpus.frases_lm(3000, seed=0)
+treino = frases[:2400]
+lm = modelos.NgramaLM(n=3, k=0.05).ajustar(treino)
+
+candidatas = {
+    "verdadeira no mundo, fora do padrão": [
+        "o estudante corrige a prova .",
+        "a professora empresta o livro .",
+        "o bibliotecário escreve o artigo .",
+    ],
+    "sem sentido factual, dentro do padrão": [
+        "o estudante lê o livro hoje .",
+        "a professora explica a prova antes da prova .",
+        "o estudante entrega o relatório na biblioteca .",
+    ],
+}
+for grupo, fs in candidatas.items():
+    print(grupo)
+    for f in fs:
+        toks = f.split()
+        lp = lm.logprob_frase(toks) / len(toks)
+        print(f"   lnP/token = {lp:6.2f} | {f}")
+```
+@@NOTE As frases do primeiro grupo podem ser perfeitamente verdadeiras (professores corrigem provas, professoras emprestam livros), mas recebem pontuação pior porque combinam palavras de modo que o corpus nunca apresentou. Já as frases do segundo grupo, estruturalmente típicas, recebem pontuação melhor, embora algumas sejam estranhas. O modelo mede **familiaridade com os dados de treino**, não verdade. Esse é o mesmo princípio por trás das respostas inventadas dos LLMs, em escala muito maior.
+@@ALEM
+- **UCI Machine Learning Repository:** *SMS Spam Collection* e *Sentiment Labelled Sentences* (textos curtos rotulados, úteis para praticar classificação com TF-IDF).
+- **scikit-learn:** a função `fetch_20newsgroups` baixa o corpus *20 Newsgroups* na primeira execução (requer internet).
+- **Kaggle:** conjuntos públicos de comércio eletrônico brasileiro com avaliações de clientes em português (verifique licença e termos de uso).
+@@PROJ Comparando três formas de achar o documento certo | intermediário
+**Contexto.** A universidade fictícia quer responder perguntas de estudantes. Antes de qualquer LLM, é preciso saber se conseguimos **encontrar o documento certo**. Você vai medir, nas 56 consultas de `llmdidatico.CONSULTAS`, três métodos de recuperação.
+
+**Tarefas.**
+
+1. Implemente três rankeadores: (a) contagem de palavras em comum (sem ponderação), (b) BM25 (`modelos.BM25`) e (c) LSA (`modelos.LSAEmbedder`, 40 dimensões).
+2. Para as consultas com resposta (`tipo != "sem_resposta"`), calcule o **hit@1** e o **hit@3** (o documento relevante aparece nas primeiras posições?), separando consultas **diretas** e **parafraseadas**.
+3. Para cada método, liste duas consultas em que ele falhou no topo e explique, em uma frase, a provável causa.
+4. Escreva um parágrafo: que método você usaria como base de um sistema com LLM, e que cuidado teria com as perguntas sem resposta?
+
+**Entregáveis.** Código, tabela de resultados e o parágrafo.
+@@RUBRICA
+- Os três métodos estão corretamente implementados e usam a mesma base (2 pontos).
+- Métricas calculadas só sobre consultas com resposta, separadas por tipo (2 pontos).
+- Análise de falhas com causas plausíveis e coerentes com os dados (3 pontos).
+- Conclusão que reconhece a diferença entre direta e parafraseada e o problema do "sem resposta" (3 pontos).
+@@SOL
+```python
+import numpy as np
+from llmdidatico import DOCS, CONSULTAS, modelos, avaliacao as av
+
+ids = [d[0] for d in DOCS]
+textos = [d[2] + ". " + d[3] for d in DOCS]
+toks_docs = [set(modelos.tokenizar_sem_stop(t)) for t in textos]
+bm = modelos.BM25([modelos.tokenizar_sem_stop(t) for t in textos])
+emb = modelos.LSAEmbedder(dim=40).ajustar(textos)
+D = emb.transformar(textos)
+
+def rank_palavras(q):
+    qs = set(modelos.tokenizar_sem_stop(q))
+    return np.argsort(-np.array([len(qs & t) for t in toks_docs]), kind="stable")
+
+def rank_bm25(q):
+    return np.argsort(-bm.pontuar(modelos.tokenizar_sem_stop(q)), kind="stable")
+
+def rank_lsa(q):
+    return np.argsort(-(D @ emb.transformar([q])[0]), kind="stable")
+
+metodos = {"palavras em comum": rank_palavras, "BM25": rank_bm25, "LSA (40 dim.)": rank_lsa}
+falhas = {m: [] for m in metodos}
+print(f"{'método':<18}{'tipo':<11}{'n':>3}{'hit@1':>8}{'hit@3':>8}")
+for nome, f in metodos.items():
+    for tipo in ("direta", "parafrase"):
+        h1, h3 = [], []
+        for q, rel, ans, t in CONSULTAS:
+            if t != tipo: continue
+            rk = [ids[i] for i in f(q)]
+            h1.append(av.hit_at_k(rk, rel, 1)); h3.append(av.hit_at_k(rk, rel, 3))
+            if not h1[-1]: falhas[nome].append((q, rk[0], rel))
+        print(f"{nome:<18}{tipo:<11}{len(h1):>3}{np.mean(h1):>8.2f}{np.mean(h3):>8.2f}")
+for nome, lst in falhas.items():
+    print(f"\nFalhas de {nome} no topo (duas primeiras):")
+    for q, top, rel in lst[:2]:
+        print(f"  {q!r} -> recuperou {top}, esperado {rel}")
+```
+@@NOTE Em geral, a contagem simples e o BM25 funcionam bem quando a pergunta reutiliza as palavras do documento (consultas diretas) e sofrem nas paráfrases, em que o vocabulário muda ("pausar o curso" versus "trancamento"). O LSA acerta uma ou duas paráfrases a mais, mas com um corpus de 60 documentos aprende pouco; e, com apenas 8 consultas parafraseadas, uma diferença de 0,38 para 0,50 equivale a **uma única consulta**, o que não permite concluir que um método seja melhor (Capítulo 16). Esse é o motivo de usarmos embeddings neurais e busca híbrida no Capítulo 10. As 10 consultas sem resposta ficaram de fora das métricas, pois não há documento relevante; um sistema real precisa decidir **quando abster-se**, o que é tema dos Capítulos 11 e 16.

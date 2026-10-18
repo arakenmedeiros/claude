@@ -1,0 +1,419 @@
+MC: Na codificação UTF-8, quantos bytes ocupa, em geral, a letra "ã" em forma composta (NFC)?
+= 2 bytes
+- 1 byte
+- 3 bytes
+- 4 bytes
+- 8 bytes
+J: Letras sem acento do alfabeto básico ocupam 1 byte; letras acentuadas do latim, como "ã", ocupam 2 bytes em UTF-8.
+
+MC: Por que "ação" (forma NFC) e "ação" (forma NFD) podem ser consideradas cadeias diferentes por um programa?
+= Porque a forma NFC usa um único ponto de código para "ã" e a NFD usa "a" seguido de um til combinante; a comparação é feita ponto de código a ponto de código.
+- Porque a forma NFD usa outro alfabeto.
+- Porque a forma NFC é sempre mais longa em bytes.
+- Porque programas ignoram acentos ao comparar.
+- Porque só uma das formas existe em português.
+J: Visualmente iguais, as formas diferem na sequência de pontos de código. A normalização (por exemplo, NFC) as unifica.
+
+MC: Qual a principal razão para normalizar o texto de entrada antes da tokenização?
+= Evitar que o mesmo texto, escrito de modos equivalentes, seja tratado como entradas diferentes.
+- Aumentar o número de parâmetros do modelo.
+- Garantir que o modelo responda corretamente.
+- Reduzir o tamanho do vocabulário para zero.
+- Substituir a necessidade de tokenizar.
+J: A normalização padroniza formas equivalentes (Unicode, caixa, às vezes acentos), reduzindo variação irrelevante.
+
+MC: O que o modelo de "saco de palavras" (*bag of words*) descarta?
+= A ordem das palavras no documento.
+- A frequência de cada palavra.
+- O vocabulário.
+- A existência de palavras raras.
+- A dimensão do vetor.
+J: O saco de palavras guarda as contagens por palavra, mas perde a ordem.
+
+MC: No TF-IDF, o que faz um termo receber peso maior?
+= Aparecer muitas vezes no documento e em poucos documentos da coleção.
+- Aparecer em todos os documentos da coleção.
+- Ter muitas letras.
+- Aparecer apenas uma vez em toda a coleção, mesmo que em outra língua.
+- Estar no início do documento.
+J: O TF aumenta com a frequência no documento; o IDF aumenta quando o termo é raro na coleção.
+
+MC: Em uma coleção de $N=10$ documentos, um termo aparece em $\mathrm{df}=2$. Qual o IDF na variante $\ln(N/\mathrm{df})+1$?
+= $\ln 5 + 1 \approx 2{,}609$
+- $\ln 2 + 1 \approx 1{,}693$
+- $\ln 10 + 1 \approx 3{,}303$
+- $5$
+- $1$
+J: $N/\mathrm{df}=10/2=5$ e $\ln5\approx1{,}609$; somando 1, obtemos $2{,}609$.
+
+MC: Por que normalizar vetores TF-IDF para norma 1 é útil em busca?
+= O produto escalar entre dois vetores normalizados passa a ser o cosseno, e o comprimento do documento deixa de dominar o resultado.
+- Torna todas as palavras igualmente importantes.
+- Elimina a necessidade de calcular IDF.
+- Transforma o vetor esparso em denso.
+- Garante que a consulta encontre o documento correto.
+J: Com norma 1, produto escalar e cosseno coincidem, e textos longos não ganham vantagem só por terem mais palavras.
+
+MC: Qual a principal limitação de vetores TF-IDF para busca por significado?
+= Palavras diferentes ocupam dimensões diferentes, então sinônimos sem palavras em comum têm similaridade zero.
+- São densos demais para serem indexados.
+- Exigem GPU para o cálculo.
+- Não permitem calcular similaridade.
+- Só funcionam com textos em inglês.
+J: A representação é lexical: "carro" e "automóvel" são dimensões distintas e não se relacionam.
+
+MC: O que é tokenizar um texto?
+= Dividi-lo em unidades (tokens) e mapear cada unidade para um identificador inteiro por meio de um vocabulário.
+- Traduzi-lo para outra língua.
+- Removê-lo do corpus de treinamento.
+- Criptografá-lo para proteger a privacidade.
+- Calcular a probabilidade da frase completa.
+J: O tokenizador converte texto em sequências de identificadores, que o modelo usa como entrada.
+
+MC: Por que usar o tokenizador errado com um modelo é um problema grave?
+= Porque os identificadores significam outra coisa para aquele modelo, o que degrada o resultado sem produzir erro explícito.
+- Porque o modelo se recusa a funcionar.
+- Porque só altera a cor da interface.
+- Porque aumenta a precisão do modelo.
+- Porque o tokenizador errado nunca altera os identificadores.
+J: O vocabulário define o significado de cada identificador. Trocar o tokenizador equivale a trocar a tabela de correspondência.
+
+MC: Qual o principal inconveniente da tokenização por palavras inteiras?
+= Vocabulário enorme e palavras novas ou raras ficam fora do vocabulário.
+- Gera sequências longas demais.
+- Não permite acentos.
+- Exige conhecer a gramática do idioma.
+- Só funciona em línguas sem espaços.
+J: Palavras não vistas no treinamento viram "desconhecidas", e o vocabulário cresce com a morfologia rica.
+
+MC: Qual o principal inconveniente da tokenização por caracteres?
+= Sequências muito longas, com unidades de pouco significado.
+- Vocabulário gigantesco.
+- Incapacidade de representar palavras novas.
+- Perda dos acentos.
+- Necessidade de dicionário.
+J: O vocabulário é pequeno, mas cada texto gera muitos tokens, o que encarece o processamento.
+
+MC: Qual a vantagem principal da tokenização por subpalavras?
+= Equilibra o tamanho do vocabulário e o comprimento das sequências, representando palavras raras por pedaços frequentes.
+- Elimina a necessidade de vocabulário.
+- Garante que cada token seja um morfema.
+- Torna todos os textos do mesmo comprimento.
+- Impede qualquer fragmentação de palavras.
+J: Palavras frequentes ficam inteiras e as raras são montadas por pedaços, sem sair do vocabulário.
+
+MC: Em cada passo do BPE, qual par de símbolos é fundido?
+= O par de símbolos vizinhos mais frequente no corpus.
+- O par com menos ocorrências.
+- Um par escolhido ao acaso.
+- O par que forma uma palavra do dicionário.
+- O par que contém o marcador de fim de palavra.
+J: A cada iteração, conta-se a frequência dos pares vizinhos e funde-se o mais frequente.
+
+MC: Aumentar o número de fusões do BPE tende a:
+= Aumentar o vocabulário e diminuir o número médio de tokens por palavra.
+- Diminuir o vocabulário e aumentar os tokens por palavra.
+- Não alterar nenhuma das duas medidas.
+- Aumentar o vocabulário e também os tokens por palavra.
+- Eliminar o marcador de fim de palavra.
+J: Cada fusão acrescenta um símbolo ao vocabulário e encurta, em média, as sequências.
+
+MC: O que caracteriza o BPE em nível de bytes?
+= Parte dos 256 valores possíveis de byte, de modo que qualquer texto pode ser representado sem tokens desconhecidos.
+- Usa apenas palavras completas.
+- Funciona apenas para texto em inglês.
+- Ignora caracteres acentuados.
+- Elimina a necessidade de fusões.
+J: Como todo texto UTF-8 é uma sequência de bytes, o vocabulário básico de 256 símbolos cobre tudo.
+
+MC: Por que os limites e o custo de uso de modelos costumam ser expressos em tokens e não em palavras?
+= Porque o modelo processa tokens, e a relação entre palavras e tokens varia com o idioma e o tokenizador.
+- Porque palavras não podem ser contadas por computadores.
+- Porque os tokens sempre equivalem exatamente a uma palavra.
+- Porque tokens são sempre mais baratos que palavras.
+- Porque apenas o inglês possui palavras.
+J: A unidade de processamento é o token; por isso, medir em palavras não prevê custo nem cabimento no contexto.
+
+MC: Qual o formato da tabela de embeddings de um modelo com vocabulário de $V$ tokens e dimensão $d$?
+= $V\times d$
+- $d\times d$
+- $V\times V$
+- $1\times d$
+- $V\times1$
+J: Cada linha é o vetor de um token do vocabulário.
+
+MC: O que significa "buscar o embedding de um token" na tabela?
+= Selecionar a linha correspondente ao identificador do token.
+- Calcular um produto de matrizes de formato $V\times V$.
+- Treinar o modelo do zero.
+- Traduzir o token para outra língua.
+- Normalizar o texto.
+J: A tabela é uma matriz; o embedding é a linha de índice igual ao identificador do token.
+
+MC: O que afirma a hipótese distribucional?
+= O significado de uma palavra se revela, em boa parte, pelos contextos em que ela aparece.
+- Palavras com a mesma grafia sempre têm o mesmo significado.
+- Todo vetor de embedding tem norma 1.
+- Antônimos nunca ocorrem nos mesmos contextos.
+- Palavras raras têm vetores idênticos.
+J: Palavras que ocorrem em contextos parecidos tendem a ter vetores parecidos. Isso explica por que antônimos, que ocorrem em contextos parecidos, ficam próximos.
+
+MC: Qual a diferença entre embeddings estáticos e contextuais?
+= No estático, cada token tem um vetor fixo; no contextual, o vetor depende da frase em que o token aparece.
+- O estático depende da frase; o contextual é fixo.
+- Ambos são idênticos, mudando apenas o nome.
+- O estático usa mais dimensões que o contextual, sempre.
+- O contextual só existe para imagens.
+J: Embeddings contextuais, como os de BERT, distinguem "manga" de fruta de "manga" de camisa.
+
+MC: Qual das abordagens abaixo produz embeddings de sentença treinados especificamente para similaridade semântica?
+= Sentence-BERT.
+- Contagem de caracteres.
+- Saco de palavras sem normalização.
+- Tabela de codificação UTF-8.
+- Decomposição Unicode NFD.
+J: O Sentence-BERT ajusta um modelo tipo BERT para que sentenças semanticamente próximas tenham vetores próximos.
+
+MC: Para vetores normalizados com norma 1, qual afirmação sobre cosseno, produto escalar e distância euclidiana é correta?
+= Os três produzem a mesma ordenação de similaridade.
+- O cosseno e o produto escalar produzem ordenações opostas.
+- A distância euclidiana ordena do menos para o mais similar.
+- Apenas o produto escalar pode ser usado.
+- As ordenações não têm relação entre si.
+J: Com norma 1, $\cos=\mathbf{u}\cdot\mathbf{v}$ e $\lVert\mathbf{u}-\mathbf{v}\rVert^2=2-2\cos$; logo, a ordem é a mesma.
+
+MC: Em uma busca semântica, por que a consulta e os documentos devem ser vetorizados pelo mesmo modelo de embeddings?
+= Porque espaços vetoriais de modelos diferentes são incomparáveis; as distâncias só fazem sentido dentro do mesmo espaço.
+- Para reduzir o tamanho dos documentos.
+- Porque modelos diferentes sempre dão vetores iguais.
+- Para evitar o uso de cosseno.
+- Porque a consulta nunca precisa ser vetorizada.
+J: Cada modelo define seu espaço. Misturar modelos compara coordenadas sem relação.
+
+MC: O que o indicador hit@3 mede em uma busca?
+= A fração das consultas em que pelo menos um documento relevante aparece entre os três primeiros resultados.
+- A média de relevância dos três primeiros documentos.
+- O número de documentos relevantes na coleção.
+- A quantidade de tokens das três primeiras respostas.
+- A similaridade de cosseno média entre a consulta e os documentos.
+J: É uma métrica binária por consulta (acertou ou não nos três primeiros), que depois é calculada em média.
+
+MC: "Hoje" e "ontem" têm vetores quase idênticos em um embedding treinado por coocorrência. Qual a explicação mais adequada?
+= Eles aparecem nos mesmos contextos, e o vetor captura semelhança de uso, não equivalência de significado.
+- O modelo entendeu que os dois significam a mesma coisa.
+- Houve um erro no cálculo do cosseno.
+- Antônimos sempre têm vetores iguais em qualquer modelo.
+- O vocabulário só tem uma dessas palavras.
+J: A hipótese distribucional agrupa palavras de uso parecido, e antônimos de mesma classe gramatical compartilham contextos.
+
+MC: Por que mapas 2D de embeddings (PCA, t-SNE, UMAP) devem ser interpretados com cautela?
+= Porque a redução de dimensionalidade distorce distâncias, e proximidade no mapa não implica proximidade no espaço original.
+- Porque mapas 2D são sempre idênticos ao espaço original.
+- Porque só funcionam para três palavras.
+- Porque eliminam todos os vieses do modelo.
+- Porque o resultado nunca depende dos parâmetros do método.
+J: Ao comprimir muitas dimensões em duas, parte da informação se perde; use os mapas para exploração.
+
+MC: Uma busca literal por "matricula" (sem acento) não encontra textos com "matrícula". Qual a solução mais simples e adequada?
+= Normalizar acentos e caixa tanto nos textos indexados quanto na consulta.
+- Remover o índice de busca.
+- Pedir ao usuário que sempre use acentos.
+- Substituir o português por inglês.
+- Usar um vocabulário de 256 tokens.
+J: Normalizar ambos os lados com a mesma regra permite casar as variantes. Para exibição e geração, mantenha o texto original.
+
+MC: Qual é uma limitação conhecida de obter o embedding de uma sentença pela média simples dos vetores de suas palavras?
+= A ordem das palavras é perdida: "o gato mordeu o cão" e "o cão mordeu o gato" resultam em vetores idênticos.
+- O vetor resultante sempre tem dimensão maior que a das palavras.
+- Só funciona para frases com mais de 100 palavras.
+- O resultado é sempre um vetor esparso.
+- A média elimina a necessidade de normalizar o vetor.
+J: A média é simétrica em relação à ordem; frases com as mesmas palavras em ordens diferentes têm a mesma representação.
+
+MC: O que é uma palavra "fora do vocabulário" (OOV) em um tokenizador por palavras?
+= Uma palavra não vista na construção do vocabulário, que acaba mapeada para um token desconhecido.
+- Uma palavra que aparece em todos os documentos.
+- Uma palavra com acento.
+- Uma palavra com mais de dez letras.
+- Uma palavra que o modelo nunca gera.
+J: Palavras raras, novas ou com erro de digitação não constam do vocabulário; subpalavras reduzem o problema.
+
+DISC[C]: Explique por que, em português, contar o tamanho de um texto em bytes, em caracteres e em tokens gera três números diferentes, e por que isso importa na prática.
+R: Bytes: em UTF-8, letras acentuadas ocupam 2 bytes ou mais, então o total de bytes excede o de caracteres. Caracteres: contam pontos de código (e a forma NFC/NFD altera a contagem). Tokens: dependem do tokenizador, que agrupa pedaços frequentes. Importa porque limites de entrada, custo de serviços e janela de contexto são medidos em tokens, e requisitos de armazenamento em bytes; estimar com a medida errada leva a erros de custo e a textos truncados.
+
+DISC[C]: Compare as três estratégias de tokenização (palavras, caracteres, subpalavras), indicando uma vantagem e uma desvantagem de cada uma, e explique por que as subpalavras predominam em LLMs.
+R: Palavras: sequências curtas e unidades com sentido, mas vocabulário enorme e palavras desconhecidas. Caracteres: vocabulário minúsculo e cobertura total, mas sequências longas e unidades pouco informativas. Subpalavras: equilíbrio entre os dois, palavras frequentes inteiras e raras decompostas, nada fora do vocabulário. Predominam por equilibrarem custo (comprimento da sequência), tamanho de vocabulário e cobertura.
+
+DISC[C]: O que é a hipótese distribucional e como ela explica tanto a utilidade quanto uma limitação dos embeddings?
+R: Palavras que ocorrem em contextos semelhantes tendem a ter significados relacionados; os embeddings aprendem vetores próximos para elas. Utilidade: capturam relações de uso (sinonímia parcial, categorias). Limitação: semelhança de contexto não é equivalência de significado; antônimos e palavras de mesma função sintática ficam próximos ("hoje" e "ontem").
+
+DISC[C]: Diferencie TF-IDF e embeddings densos quanto à interpretabilidade, a sinônimos e ao custo de armazenamento. Quando preferir cada um?
+R: TF-IDF é esparso, cada dimensão corresponde a uma palavra (interpretável), não liga sinônimos, e o armazenamento é eficiente por ser esparso. Embeddings densos têm dimensões sem significado individual, capturam semelhança semântica aprendida, e exigem armazenar vetores densos. TF-IDF é adequado quando o vocabulário do usuário coincide com o do documento, termos exatos importam ou há poucos dados; embeddings quando há paráfrases e variação de vocabulário. Muitas vezes combinam-se ambos.
+
+DISC[M]: Calcule o IDF (na variante $\ln(N/\mathrm{df})+1$) para $N=20$ e (a) $\mathrm{df}=4$, (b) $\mathrm{df}=20$. O que isso mostra?
+R: (a) $\ln(20/4)+1=\ln5+1\approx1{,}609+1=2{,}609$. (b) $\ln(20/20)+1=0+1=1$. Um termo presente em todos os documentos recebe o menor peso possível (1), e um termo mais raro recebe peso maior.
+
+DISC[M]: Um modelo tem vocabulário de 32 000 tokens e embeddings de dimensão 4 096. Quantos parâmetros tem a tabela de embeddings e quanta memória ocupa em `float16`?
+R: Parâmetros: $32\,000\times4\,096=131\,072\,000$. Em `float16` (2 bytes): $262\,144\,000$ bytes $\approx262$ MB, ou cerca de 0,26 GB. Em `float32`: o dobro, cerca de 524 MB.
+
+DISC[M]: Dados $\mathbf{q}=(1,1)$ e os documentos $\mathbf{d}_1=(2,0)$, $\mathbf{d}_2=(1,3)$, $\mathbf{d}_3=(-1,1)$, calcule o ranking por cosseno e o ranking por distância euclidiana. Eles coincidem?
+R: Cossenos: $\mathbf{q}\cdot\mathbf{d}_1=2$, $\lVert\mathbf{q}\rVert=\sqrt2$, $\lVert\mathbf{d}_1\rVert=2$, cos $=2/(\sqrt2\cdot2)\approx0{,}707$. $\mathbf{q}\cdot\mathbf{d}_2=4$, $\lVert\mathbf{d}_2\rVert=\sqrt{10}$, cos $=4/(\sqrt2\sqrt{10})\approx0{,}894$. $\mathbf{q}\cdot\mathbf{d}_3=0$, cos $=0$. Ranking por cosseno: $\mathbf{d}_2,\mathbf{d}_1,\mathbf{d}_3$. Distâncias: $\lVert\mathbf{q}-\mathbf{d}_1\rVert=\sqrt{1+1}\approx1{,}414$; $\lVert\mathbf{q}-\mathbf{d}_2\rVert=\sqrt{0+4}=2$; $\lVert\mathbf{q}-\mathbf{d}_3\rVert=\sqrt{4+0}=2$. Por distância: $\mathbf{d}_1$ primeiro, depois empate entre $\mathbf{d}_2$ e $\mathbf{d}_3$. Os rankings **não** coincidem, porque os vetores não têm norma 1.
+
+DISC[M]: Execute duas fusões de BPE no corpus "lua" (4), "luas" (2), "sol" (3), com marcador `</w>` e desempate pela ordem alfabética do par. Indique as fusões e a segmentação final de cada palavra.
+R: Inicial: `l u a </w>` (4), `l u a s </w>` (2), `s o l </w>` (3). Pares: `(l,u)`: 4+2=6; `(u,a)`: 6; `(a,</w>)`: 4; `(a,s)`: 2; `(s,</w>)`: 2; `(s,o)`: 3; `(o,l)`: 3; `(l,</w>)`: 3. Empate em 6 entre `(l,u)` e `(u,a)`; pela ordem alfabética, funde-se `(l,u)` → `lu`. Agora `(lu,a)`: 6, o maior; segunda fusão: `lua`. Segmentação: "lua" = `lua </w>`; "luas" = `lua s </w>`; "sol" = `s o l </w>`.
+
+DISC[M]: Um texto tem 2 500 palavras e o tokenizador gera em média 1,3 token por palavra. (a) Quantos tokens são? (b) Se a janela de contexto é de 4 096 tokens, quantas palavras (aproximadamente) cabem?
+R: (a) $2\,500\times1{,}3=3\,250$ tokens. (b) $4\,096/1{,}3\approx3\,151$ palavras. Portanto o texto cabe, mas sobra pouco espaço para instruções e para a resposta, que também consomem tokens da janela.
+
+DISC[A]: No experimento do capítulo, "hoje" e "ontem" têm similaridade quase 1. Analise o que isso significa para um sistema de busca que usasse esses vetores para expandir consultas com "palavras parecidas".
+R: A expansão traria "ontem" para consultas sobre "hoje", reunindo resultados com sentido temporal oposto. Embora semelhança de uso seja útil para ampliar recall, antônimos e opostos prejudicam a precisão quando a distinção importa (datas, polaridade, negação). Mitigações: filtros por metadados (data), reordenação com modelo mais forte, listas de exceção e avaliação com consultas que testem esses casos.
+
+DISC[A]: Duas pessoas avaliaram um mecanismo de busca com TF-IDF e com LSA e obtiveram, em 8 paráfrases, hit@3 de 0,50 e 0,62. Analise se é possível concluir que o LSA é melhor e como melhorar a avaliação.
+R: A diferença equivale a uma consulta em 8 (12,5 pontos percentuais), o que pode ser mero acaso. Não é possível concluir. Melhorias: aumentar o número de consultas, com variedade; calcular intervalos de confiança (bootstrap); usar métrica adicional (MRR, nDCG); comparar com teste pareado; garantir independência entre quem escreve as consultas e quem ajusta o sistema.
+
+DISC[A]: Analise como a escolha do tokenizador pode gerar desigualdade entre idiomas em um serviço cobrado por token, e proponha uma forma de medir essa desigualdade.
+R: Tokenizadores treinados predominantemente em uma língua fragmentam mais outras línguas, aumentando tokens por palavra; resultam em maior custo, maior latência, menos conteúdo na janela e possivelmente pior qualidade para as línguas menos representadas. Medir: coletar textos paralelos (mesmo conteúdo em dois idiomas), calcular tokens por palavra e razão de tokens por conteúdo, com o tokenizador real, e comparar custos estimados com intervalos de confiança.
+
+DISC[A]: Um colega usa um mapa 2D t-SNE de embeddings para afirmar que dois grupos de documentos "são muito diferentes". Analise a validade do argumento e o que faria para confirmá-lo.
+R: A projeção distorce distâncias e depende de parâmetros e da semente; grupos separados no mapa podem estar próximos no espaço original (e vice-versa). Para confirmar: comparar distâncias no espaço original (cossenos intra e inter grupos), repetir a projeção com outras sementes e parâmetros, usar métricas de separabilidade (por exemplo, silhueta) no espaço original e examinar exemplos concretos dos documentos.
+
+DISC[P]: Implemente `tfidf(docs)` sem usar scikit-learn, com $\mathrm{idf}=\ln(N/\mathrm{df})+1$ e normalização L2, e verifique que coincide com `TfidfVectorizer(smooth_idf=False)` nos documentos "um gato dorme", "um cachorro dorme", "um gato corre".
+CODE:
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+def tfidf(docs):
+    toks = [d.split() for d in docs]
+    vocab = sorted({t for d in toks for t in d})
+    N = len(docs)
+    df = np.array([sum(t in d for d in toks) for t in vocab])
+    idf = np.log(N / df) + 1
+    M = np.array([[d.count(t) for t in vocab] for d in toks], float) * idf
+    M = M / np.linalg.norm(M, axis=1, keepdims=True)
+    return vocab, M
+
+docs = ["um gato dorme", "um cachorro dorme", "um gato corre"]
+vocab, M = tfidf(docs)
+vec = TfidfVectorizer(smooth_idf=False)
+X = vec.fit_transform(docs).toarray()
+assert list(vec.get_feature_names_out()) == vocab
+assert np.allclose(M, X)
+print(M.round(3))
+ENDCODE
+CRIT: Calcula o df por documento (não por ocorrência).
+CRIT: Aplica a normalização L2 por linha.
+CRIT: Compara com a biblioteca e confirma a igualdade.
+
+DISC[P]: Implemente `bpe_treinar(palavras, n_fusoes)` e `bpe_codificar(palavra, fusoes)` com marcador `</w>` e desempate lexicográfico, e teste com o corpus "lua", "luas", "sol" da questão matemática correspondente.
+CODE:
+from collections import Counter
+
+def bpe_treinar(palavras, n_fusoes):
+    vocab = Counter(tuple(p) + ("</w>",) for p in palavras)
+    fusoes = []
+    for _ in range(n_fusoes):
+        pares = Counter()
+        for w, f in vocab.items():
+            for a, b in zip(w, w[1:]):
+                pares[(a, b)] += f
+        if not pares:
+            break
+        melhor = max(pares, key=lambda p: (pares[p], tuple(-ord(c) for c in "".join(p))))
+        fusoes.append(melhor)
+        novo = Counter()
+        for w, f in vocab.items():
+            out, i = [], 0
+            while i < len(w):
+                if i < len(w) - 1 and (w[i], w[i + 1]) == melhor:
+                    out.append(w[i] + w[i + 1]); i += 2
+                else:
+                    out.append(w[i]); i += 1
+            novo[tuple(out)] += f
+        vocab = novo
+    return fusoes
+
+def bpe_codificar(palavra, fusoes):
+    toks = list(palavra) + ["</w>"]
+    for a, b in fusoes:
+        out, i = [], 0
+        while i < len(toks):
+            if i < len(toks) - 1 and toks[i] == a and toks[i + 1] == b:
+                out.append(a + b); i += 2
+            else:
+                out.append(toks[i]); i += 1
+        toks = out
+    return toks
+
+corpus = ["lua"] * 4 + ["luas"] * 2 + ["sol"] * 3
+f = bpe_treinar(corpus, 2)
+assert f == [("l", "u"), ("lu", "a")]
+assert bpe_codificar("luas", f) == ["lua", "s", "</w>"]
+print(f, bpe_codificar("luas", f), bpe_codificar("sol", f))
+ENDCODE
+CRIT: Conta pares ponderando pela frequência da palavra.
+CRIT: Aplica as fusões na ordem em que foram aprendidas.
+CRIT: Resolve empates de forma determinística e documentada.
+
+DISC[P]: Implemente `embedding_sentenca(frase, E, indice)` (média dos vetores das palavras conhecidas) e `buscar(consulta, docs_vetores, k)` que devolva os índices dos $k$ documentos mais similares por cosseno. Teste com vetores 2D inventados.
+CODE:
+import numpy as np
+
+def embedding_sentenca(frase, E, indice):
+    ids = [indice[p] for p in frase.split() if p in indice]
+    if not ids:
+        return np.zeros(E.shape[1])
+    v = E[ids].mean(axis=0)
+    n = np.linalg.norm(v)
+    return v / n if n > 0 else v
+
+def buscar(consulta_vec, docs_vetores, k=2):
+    D = docs_vetores / np.linalg.norm(docs_vetores, axis=1, keepdims=True)
+    q = consulta_vec / np.linalg.norm(consulta_vec)
+    return list(np.argsort(-(D @ q))[:k])
+
+indice = {"gato": 0, "cachorro": 1, "carro": 2, "moto": 3}
+E = np.array([[1.0, 0.1], [0.9, 0.2], [0.1, 1.0], [0.2, 0.9]])
+docs = ["gato cachorro", "carro moto", "gato moto"]
+DV = np.array([embedding_sentenca(d, E, indice) for d in docs])
+q = embedding_sentenca("cachorro", E, indice)
+assert buscar(q, DV, k=1) == [0]
+print(buscar(q, DV, k=3))
+ENDCODE
+CRIT: Trata palavras desconhecidas e frases vazias.
+CRIT: Normaliza os vetores antes do produto escalar.
+CRIT: Ordena por similaridade decrescente e testa o resultado.
+
+DISC[P]: Implemente `hit_at_k` e `mrr` para uma lista de rankings (listas de ids) e conjuntos de documentos relevantes, ignorando consultas sem relevantes. Teste com três consultas.
+CODE:
+def hit_at_k(rankings, relevantes, k):
+    vals = [float(bool(set(r[:k]) & set(rel))) for r, rel in zip(rankings, relevantes) if rel]
+    return sum(vals) / len(vals)
+
+def mrr(rankings, relevantes):
+    vals = []
+    for r, rel in zip(rankings, relevantes):
+        if not rel:
+            continue
+        pos = next((i for i, d in enumerate(r, 1) if d in rel), None)
+        vals.append(1 / pos if pos else 0.0)
+    return sum(vals) / len(vals)
+
+rankings = [["a", "b", "c"], ["x", "y", "z"], ["m", "n", "o"]]
+relevantes = [["b"], ["z"], []]       # a terceira consulta não tem resposta e é ignorada
+assert hit_at_k(rankings, relevantes, 1) == 0.0
+assert hit_at_k(rankings, relevantes, 3) == 1.0
+assert abs(mrr(rankings, relevantes) - (1/2 + 1/3) / 2) < 1e-12
+print(hit_at_k(rankings, relevantes, 3), round(mrr(rankings, relevantes), 4))
+ENDCODE
+CRIT: Ignora consultas sem documentos relevantes.
+CRIT: Calcula a posição do primeiro relevante a partir de 1.
+CRIT: Testa casos de acerto e erro com valores esperados.
+
+DISC[D]: Uma procuradoria quer um buscador para pareceres em português, com muitos termos técnicos, siglas e citações de leis. Proponha a estratégia de tokenização/normalização e de representação (TF-IDF, embeddings ou híbrida), justificando.
+R: Recomenda-se busca híbrida: léxica (TF-IDF/BM25) para termos exatos, siglas e números de leis, que embeddings costumam tratar mal, e semântica (embeddings multilíngues ou em português) para paráfrases. Normalização: Unicode e caixa para busca; manter versão original para exibição; cuidado com acentos (decidir por consulta de teste); tratar siglas e numeração (por exemplo, "Lei 13.709/2018") como unidades. Tokenização adequada ao modelo de embeddings escolhido. Avaliar com consultas reais e métricas de recuperação; usar filtros por metadados (data, órgão).
+
+DISC[D]: Defina uma política de normalização de acentos para um assistente que (a) busca em documentos e (b) gera respostas ao usuário. Justifique as escolhas e os riscos.
+R: Para busca: normalizar acentos e caixa em consulta e índice (tolerância a erros de digitação), preservando o texto original em campo separado. Para geração/exibição: preservar acentos e a grafia original. Riscos: ambiguidade (pais/país, e/é) pode reduzir a precisão da busca; mitigar com reordenação e testes com consultas ambíguas. Documentar a política e testar com exemplos de pares ambíguos.
+
+DISC[D]: Você precisa escolher um modelo de embeddings para uma busca semântica sobre manuais técnicos em português. Descreva um protocolo de avaliação que permita decidir entre três candidatos, com critérios de qualidade, custo e latência.
+R: Montar um conjunto de consultas reais (ou escritas por especialistas) com documentos relevantes anotados, dividido para ajuste e teste. Medir hit@k, MRR e nDCG com intervalos de confiança (bootstrap), separando consultas diretas e parafraseadas. Medir latência de indexação e consulta, tamanho dos vetores e custo (hardware ou preço por token) com premissas explícitas. Verificar licença e privacidade (dados saem do ambiente?). Escolher o modelo com melhor equilíbrio, avaliando se a diferença é praticamente relevante e repetindo a avaliação periodicamente.

@@ -1,0 +1,166 @@
+@@EX 1 | Modelo de recompensa: quantos pares são necessários? | básico
+Simule preferências com a recompensa verdadeira $\mathbf{w}=(2{,}0;\ 1{,}0;\ -0{,}5)$ sobre as características (correta, cita fonte, comprimento), como no capítulo (`default_rng(0)`; respostas com `correta`~Bernoulli(0,6), `cita`~Bernoulli(0,4), `comprimento`~U(0,1)). Treine `LogisticRegression(fit_intercept=False, C=100)` sobre as diferenças simetrizadas com $n\in\{100, 500, 2\,000, 8\,000\}$ pares. Para cada $n$, imprima os coeficientes, o erro (norma da diferença para $\mathbf{w}$) e a acurácia em 5 000 pares de teste.
+
+*Pergunta:* como o erro cai com $n$? Por que a acurácia não chega a 100% mesmo com muitos dados?
+@@SOL
+```python
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+
+sig = lambda x: 1 / (1 + np.exp(-x))
+w_ver = np.array([2.0, 1.0, -0.5])
+
+def gerar_pares(n, rng):
+    feats = lambda m: np.column_stack([rng.random(m) < 0.6, rng.random(m) < 0.4, rng.random(m)]).astype(float)
+    A, B = feats(n), feats(n)
+    a_vence = rng.random(n) < sig(A @ w_ver - B @ w_ver)
+    return np.where(a_vence[:, None], A, B), np.where(a_vence[:, None], B, A)
+
+rng = np.random.default_rng(0)
+Wt, Lt = gerar_pares(5000, rng)
+print(f"{'pares':>6} {'coeficientes':>26} {'erro ||w-ŵ||':>13} {'acurácia':>9}")
+for n in (100, 500, 2000, 8000):
+    W, L = gerar_pares(n, rng)
+    D = W - L
+    X = np.vstack([D, -D]); y = np.r_[np.ones(n), np.zeros(n)]
+    rm = LogisticRegression(fit_intercept=False, C=100).fit(X, y)
+    c = rm.coef_[0]
+    print(f"{n:>6} {str(c.round(2)):>26} {np.linalg.norm(c - w_ver):>13.3f} {(rm.decision_function(Wt - Lt) > 0).mean():>9.3f}")
+```
+@@NOTE Com apenas 100 pares, o modelo é muito ruim: os coeficientes ficam inflados (cerca de 2,9 e 3,5 em vez de 2 e 1) e a acurácia de teste é de 0,68. A partir de 500 pares, os coeficientes ficam próximos dos verdadeiros e a acurácia se estabiliza em torno de 0,74. O erro dos coeficientes **não** diminui de forma monotônica (0,05, 0,12 e 0,08 para 500, 2 000 e 8 000 pares): há variação amostral. A acurácia **não** chega a 100%: pelo modelo de Bradley-Terry, as preferências são probabilísticas (mesmo conhecendo a recompensa verdadeira, o avaliador "erra" uma fração dos pares), então esse é o teto da tarefa. Esse ruído é um limite intrínseco de qualquer modelo de recompensa treinado com preferências.
+@@EX 2 | DPO tabular e o efeito de $\beta$ | intermediário
+Com as quatro respostas do capítulo ($\pi_{\text{ref}}=(0{,}5;\ 0{,}3;\ 0{,}15;\ 0{,}05)$, $r=(0,1,2,3)$), gere 4 000 comparações por Bradley-Terry (`default_rng(0)`) e treine uma política tabular com o gradiente da perda DPO para $\beta\in\{0{,}25;\ 0{,}5;\ 1;\ 2\}$ (3 000 passos, taxa 1,0 dividida por $\beta$ para estabilidade). Compare, para cada $\beta$, a política aprendida com $\pi^*\propto\pi_{\text{ref}}e^{r/\beta}$ (diferença máxima e recompensa esperada).
+
+*Pergunta:* a política aprendida acompanha $\pi^*$ para todos os $\beta$? O que muda com $\beta$ menor?
+@@SOL
+```python
+import numpy as np
+
+sig = lambda x: 1 / (1 + np.exp(-x))
+def log_softmax(z):
+    z = z - z.max()
+    return z - np.log(np.exp(z).sum())
+
+pref = np.array([0.50, 0.30, 0.15, 0.05]); lref = np.log(pref)
+r = np.array([0.0, 1.0, 2.0, 3.0]); I = np.eye(4)
+rng = np.random.default_rng(0)
+N = 4000
+a, b = rng.integers(0, 4, N), rng.integers(0, 4, N)
+m = a != b
+a, b = a[m], b[m]
+vence_a = rng.random(len(a)) < sig(r[a] - r[b])
+W, L = np.where(vence_a, a, b), np.where(vence_a, b, a)
+
+print(f"{'beta':>5} | {'política DPO':<26} | {'política ótima (teoria)':<26} | {'dif. máx.':>9} | {'recompensa DPO':>14}")
+for beta in (0.25, 0.5, 1.0, 2.0):
+    theta = lref.copy()
+    for _ in range(3000):
+        lp = log_softmax(theta)
+        h = beta * ((lp[W] - lref[W]) - (lp[L] - lref[L]))
+        grad = (-(1 - sig(h))[:, None] * beta * (I[W] - I[L])).mean(axis=0)
+        theta -= (1.0 / beta) * grad
+    pol = np.exp(log_softmax(theta))
+    alvo = pref * np.exp(r / beta); alvo /= alvo.sum()
+    print(f"{beta:>5} | {str(pol.round(3)):<26} | {str(alvo.round(3)):<26} | {np.abs(pol - alvo).max():>9.3f} | {float(pol @ r):>14.3f}")
+```
+@@NOTE Para todos os $\beta$, a política aprendida se aproxima da teórica, com diferença máxima entre 0,01 e 0,03 (não monotônica em $\beta$: parte é variação amostral dos 4 000 pares). A recompensa esperada da política cresce de cerca de 1,2 (com $\beta=2$) a cerca de 2,9 (com $\beta=0{,}25$): $\beta$ menor concentra a massa nas respostas de maior recompensa. Isso ilustra o compromisso: $\beta$ menor rende mais recompensa, ao custo de afastar-se mais da referência e de depender mais da qualidade do modelo de recompensa.
+@@EX 3 | Selecionar a melhor entre $n$ respostas com um modelo de recompensa viesado | intermediário
+Treine um modelo de recompensa com preferências em que avaliadores **preferem** respostas longas (peso verdadeiro de comprimento $+0{,}8$ na recompensa observada), mas suponha que a **qualidade verdadeira** (que queremos maximizar) é $q=2\,\text{correta}+1\,\text{cita}-0{,}5\,\text{comprimento}$. Para $n\in\{1,2,4,8,16,32\}$ candidatas aleatórias por pedido, escolha a de maior recompensa do modelo treinado (seleção *best-of-n*) e calcule, sobre 5 000 pedidos, a qualidade verdadeira média e o comprimento médio das escolhidas.
+
+*Pergunta:* o que acontece com a qualidade verdadeira e com o comprimento quando $n$ cresce? Que relação isso tem com a exploração da recompensa?
+@@SOL
+```python
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+
+sig = lambda x: 1 / (1 + np.exp(-x))
+rng = np.random.default_rng(0)
+feats = lambda *s: np.stack([rng.random(s) < 0.6, rng.random(s) < 0.4, rng.random(s)], axis=-1).astype(float)
+
+w_obs = np.array([2.0, 1.0, 0.8])        # recompensa que os avaliadores usam (preferem respostas longas)
+q_ver = np.array([2.0, 1.0, -0.5])       # qualidade verdadeira que queremos maximizar
+
+A, B = feats(6000), feats(6000)
+a_vence = rng.random(6000) < sig(A @ w_obs - B @ w_obs)
+W, L = np.where(a_vence[:, None], A, B), np.where(a_vence[:, None], B, A)
+D = W - L
+rm = LogisticRegression(fit_intercept=False, C=100).fit(np.vstack([D, -D]), np.r_[np.ones(len(D)), np.zeros(len(D))])
+print("coeficientes do modelo de recompensa (correta, cita, comprimento):", rm.coef_[0].round(2))
+
+print(f"\n{'n':>3} {'qualidade verdadeira média':>27} {'comprimento médio':>18} {'% corretas':>11}")
+for n in (1, 2, 4, 8, 16, 32):
+    C = feats(5000, n)                                  # (pedidos, candidatas, 3)
+    escolha = (C @ rm.coef_[0]).argmax(axis=1)
+    esc = C[np.arange(5000), escolha]
+    print(f"{n:>3} {float((esc @ q_ver).mean()):>27.3f} {float(esc[:, 2].mean()):>18.3f} {float(esc[:, 0].mean()):>11.1%}")
+```
+@@NOTE Com $n$ crescente, a **qualidade verdadeira** melhora rapidamente no início (de 1,36 com $n=1$ a 2,60 com $n=16$, pois o modelo de recompensa prefere respostas corretas e com fonte), mas depois **para de melhorar e cai levemente** (2,56 com $n=32$), enquanto o **comprimento** das escolhidas sobe continuamente (de 0,50 a 0,87) porque o modelo viesado premia o comprimento. As respostas já são todas corretas a partir de $n=16$, então o único grau de liberdade restante é o comprimento, que a qualidade verdadeira penaliza. É a exploração da recompensa descrita por Gao, Schulman e Hilton (2023), em miniatura: otimizar mais contra um substituto imperfeito deixa de ajudar e passa a prejudicar. Mitigações incluem controlar o comprimento nos dados, regularizar e auditar o modelo de recompensa.
+@@ALEM
+- **UCI Machine Learning Repository:** conjuntos de classificação com ruído de rótulos, para estudar o teto de acurácia imposto por rótulos probabilísticos.
+- **scikit-learn:** `LogisticRegression` e `calibration_curve` ajudam a estudar a calibração de probabilidades de preferência.
+- **Kaggle:** conjuntos públicos de comparações de respostas (verifique licença e se há dados sensíveis) para praticar a modelagem de preferências.
+@@PROJ Auditoria de um modelo de recompensa | intermediário
+**Contexto.** Sua equipe treinou um modelo de recompensa linear com preferências de avaliadores e quer usá-lo para selecionar respostas. Antes, você deve **auditar** o modelo à procura de vieses. Nas preferências simuladas, há dois fatores **espúrios**: o comprimento da resposta e um "tom confiante" que não depende da correção. Os avaliadores favorecem ambos.
+
+**Tarefas.**
+
+1. Simule respostas com quatro características: correta (Bernoulli 0,6), cita fonte (Bernoulli 0,4), comprimento (U(0,1)) e tom confiante (Bernoulli 0,5). A recompensa dos avaliadores é $2\,\text{correta}+1\,\text{cita}+0{,}8\,\text{comprimento}+1{,}2\,\text{confiante}$; gere 8 000 pares por Bradley-Terry.
+2. Treine o modelo de recompensa (`LogisticRegression` sobre diferenças simetrizadas) e reporte os coeficientes.
+3. **Teste contrafactual:** para 2 000 respostas, fixe correção e fonte e altere apenas o tom (0 para 1) e o comprimento (de 0,1 para 0,9); reporte o aumento médio da pontuação do modelo.
+4. Avalie a seleção *best-of-8* pela **qualidade verdadeira** $q=2\,\text{correta}+1\,\text{cita}$ (sem espúrios): qual a qualidade média e a fração de escolhidas corretas?
+5. **Mitigação:** retreine o modelo **sem** as características espúrias (apenas correta e cita) e repita a avaliação. Compare.
+6. Escreva um parágrafo sobre limitações: o que você faria em um modelo real, em que as características espúrias não são conhecidas de antemão?
+
+**Entregáveis.** Código, tabelas e o parágrafo.
+@@RUBRICA
+- Simulação de preferências e treino corretos (2 pontos).
+- Teste contrafactual bem construído e interpretado (3 pontos).
+- Avaliação best-of-8 com a qualidade verdadeira, antes e depois da mitigação (3 pontos).
+- Discussão realista sobre vieses desconhecidos (2 pontos).
+@@SOL
+```python
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+
+sig = lambda x: 1 / (1 + np.exp(-x))
+rng = np.random.default_rng(0)
+
+def feats(*s):
+    return np.stack([rng.random(s) < 0.6, rng.random(s) < 0.4, rng.random(s), rng.random(s) < 0.5], axis=-1).astype(float)
+
+w_aval = np.array([2.0, 1.0, 0.8, 1.2])      # correta, cita, comprimento, confiante (usada pelos avaliadores)
+q_ver = np.array([2.0, 1.0, 0.0, 0.0])       # qualidade verdadeira: só correção e fonte
+
+N = 8000
+A, B = feats(N), feats(N)
+a_vence = rng.random(N) < sig(A @ w_aval - B @ w_aval)
+W, L = np.where(a_vence[:, None], A, B), np.where(a_vence[:, None], B, A)
+D = W - L
+
+def treinar(cols):
+    X = np.vstack([D[:, cols], -D[:, cols]]); y = np.r_[np.ones(N), np.zeros(N)]
+    return LogisticRegression(fit_intercept=False, C=100).fit(X, y)
+
+completo = treinar([0, 1, 2, 3]); limpo = treinar([0, 1])
+print("coeficientes do modelo completo (correta, cita, comprimento, confiante):", completo.coef_[0].round(2))
+print("coeficientes do modelo limpo (correta, cita):", limpo.coef_[0].round(2))
+
+# teste contrafactual
+base = feats(2000)
+mudou_tom = base.copy(); mudou_tom[:, 3] = 1.0
+base_tom0 = base.copy(); base_tom0[:, 3] = 0.0
+mudou_comp = base.copy(); mudou_comp[:, 2] = 0.9
+base_comp = base.copy(); base_comp[:, 2] = 0.1
+w = completo.coef_[0]
+print(f"\naumento médio da pontuação ao ligar o tom confiante: {float(((mudou_tom - base_tom0) @ w).mean()):+.2f}")
+print(f"aumento médio da pontuação ao aumentar o comprimento de 0,1 para 0,9: {float(((mudou_comp - base_comp) @ w).mean()):+.2f}")
+
+# seleção best-of-8
+C = feats(5000, 8)
+print(f"\n{'modelo':<22} {'qualidade verdadeira média':>27} {'% corretas':>11} {'comprimento médio':>18}")
+for nome, modelo, cols in [("completo (viesado)", completo, [0, 1, 2, 3]), ("limpo (mitigado)", limpo, [0, 1])]:
+    esc = C[np.arange(5000), (C[:, :, cols] @ modelo.coef_[0]).argmax(axis=1)]
+    print(f"{nome:<22} {float((esc @ q_ver).mean()):>27.3f} {float(esc[:, 0].mean()):>11.1%} {float(esc[:, 2].mean()):>18.3f}")
+print(f"{'aleatório (1 candidata)':<22} {float((C[:, 0] @ q_ver).mean()):>27.3f} {float(C[:, 0, 0].mean()):>11.1%} {float(C[:, 0, 2].mean()):>18.3f}")
+```
+@@NOTE O modelo completo atribui peso aos fatores espúrios (coeficientes cerca de 0,9 para comprimento e 1,25 para tom), e o teste contrafactual confirma: a pontuação sobe cerca de +1,25 ao ligar apenas o tom confiante e cerca de +0,71 ao aumentar apenas o comprimento, **sem** mudar a correção. Na seleção best-of-8, ambos os modelos superam muito a escolha aleatória (qualidade verdadeira média 2,74 e 2,89, contra 1,60), mas o modelo limpo é melhor que o viesado (2,89 contra 2,74) e escolhe respostas mais curtas. A diferença é modesta aqui porque a correção domina a recompensa; ela cresceria se os fatores espúrios tivessem mais peso. Em um modelo real, os fatores espúrios não são conhecidos de antemão: a auditoria usa testes contrafactuais (por exemplo, reescrever respostas com o mesmo conteúdo em tons e comprimentos diferentes), análise de correlação com atributos observáveis e avaliação humana independente; e nem todo viés é detectável.

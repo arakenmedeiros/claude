@@ -1,0 +1,154 @@
+@@EX 1 | Fertilidade do BPE em texto novo | básico
+Treine o BPE didático (`modelos.treinar_bpe`) com as palavras da base fictícia (`DOCS`) usando 50, 200 e 600 fusões. Meça os **tokens por palavra** em dois textos: (a) as próprias palavras de treino e (b) as mensagens de atendimento de `corpus.intencoes(40, seed=1)`, que usam vocabulário diferente. Mostre também a segmentação da palavra "reembolso", que não aparece nos documentos.
+
+*Pergunta:* por que a fertilidade é maior no texto (b)? O que isso sugere sobre treinar o tokenizador com dados do domínio de uso?
+@@SOL
+```python
+import re
+import numpy as np
+from llmdidatico import DOCS, corpus, modelos
+
+pal = lambda t: re.findall(r"[a-zçáàâãéêíóôõú]+", t.lower())
+treino = pal(" ".join(d[2] + " " + d[3] for d in DOCS))
+msgs, _ = corpus.intencoes(40, seed=1)
+novo = pal(" ".join(msgs))
+print("palavras de treino:", len(treino), "| palavras do texto novo:", len(novo))
+
+def fert(palavras, fusoes):
+    return float(np.mean([len(modelos.codificar_bpe(w, fusoes)) for w in palavras]))
+
+print(f"{'fusões':>7} {'treino':>8} {'texto novo':>11}")
+for n in (50, 200, 600):
+    f = modelos.treinar_bpe(treino, n)
+    print(f"{n:>7} {fert(treino, f):>8.2f} {fert(novo, f):>11.2f}")
+f = modelos.treinar_bpe(treino, 200)
+print("reembolso ->", modelos.codificar_bpe("reembolso", f))
+```
+@@NOTE A fertilidade no texto de treino é menor porque o tokenizador "viu" aquelas palavras; no texto novo, palavras como "reembolso", "cancelar" ou "pedido" são fragmentadas em mais pedaços. Isso sugere treinar (ou escolher) o tokenizador com dados próximos do domínio de uso. Observe que os números incluem o marcador de fim de palavra como um símbolo, o que eleva a média.
+@@EX 2 | Embeddings LSA e agrupamento das intenções | intermediário
+Com `corpus.intencoes(120, seed=0)`, represente as 960 mensagens com TF-IDF e reduza para 20 dimensões com `TruncatedSVD` (`random_state=0`). Agrupe com `KMeans(n_clusters=8, n_init=10, random_state=0)` e compare com os rótulos reais usando `adjusted_rand_score` e uma tabela cruzada (`pd.crosstab`). Compare também o agrupamento feito diretamente sobre o TF-IDF (sem SVD).
+
+*Pergunta:* o agrupamento recupera as intenções? Que intenções se misturam?
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import Normalizer
+from sklearn.metrics import adjusted_rand_score
+from llmdidatico import corpus
+
+X, y = corpus.intencoes(120, seed=0)
+T = TfidfVectorizer(ngram_range=(1, 2), strip_accents="unicode").fit_transform(X)
+Z = TruncatedSVD(n_components=20, random_state=0).fit_transform(T)
+Z = Normalizer().fit_transform(Z)
+
+g_svd = KMeans(n_clusters=8, n_init=10, random_state=0).fit_predict(Z)
+g_tf = KMeans(n_clusters=8, n_init=10, random_state=0).fit_predict(T)
+print("ARI com SVD (20 dim.):", round(adjusted_rand_score(y, g_svd), 3))
+print("ARI sobre o TF-IDF  :", round(adjusted_rand_score(y, g_tf), 3))
+print()
+print(pd.crosstab(pd.Series(y, name="intenção"), pd.Series(g_svd, name="grupo")))
+```
+@@NOTE O índice de Rand ajustado (ARI) vale 1 para agrupamento idêntico aos rótulos e fica perto de 0 para agrupamento aleatório. Aqui ele é **moderado**: cerca de 0,38 com SVD e 0,25 sobre o TF-IDF puro, em uma única execução; a redução ajudou, mas não de forma espetacular. A tabela cruzada mostra o que ocorreu: "duvida_plano" foi isolada com nitidez (todas as 120 mensagens num só grupo); "rastreio_pedido" ficou quase toda no grupo 0; já os elogios se espalharam por quatro grupos, e "cancelamento" e "suporte_tecnico" compartilham grupos, porque ambos mencionam produtos ("serviço", "aplicativo", "internet"). O agrupamento é **não supervisionado**: ele encontra estrutura de vocabulário, e não as categorias que nós definimos, e por isso não deve ser tratado como classificação.
+@@EX 3 | O efeito da normalização de acentos na busca | intermediário
+Indexe os 60 documentos com TF-IDF (unigramas) em duas versões: (a) sem tratamento de acentos e (b) com `strip_accents="unicode"`. Gere versões **sem acento** das consultas diretas (remova acentos com `unicodedata`) e meça o hit@3 em cada versão do índice, usando as consultas originais e as sem acento.
+
+*Pergunta:* que combinação é a mais robusta? Que risco tem remover acentos?
+@@SOL
+```python
+import unicodedata
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from llmdidatico import DOCS, CONSULTAS, avaliacao as av
+
+def sem_acentos(s):
+    return "".join(c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn")
+
+ids = [d[0] for d in DOCS]
+textos = [d[2] + ". " + d[3] for d in DOCS]
+diretas = [(q, rel) for q, rel, a, t in CONSULTAS if t == "direta"]
+
+def hit3(vec, consultas):
+    X = vec.fit_transform(textos)
+    hits = []
+    for q, rel in consultas:
+        s = (X @ vec.transform([q]).T).toarray().ravel()
+        hits.append(av.hit_at_k([ids[i] for i in np.argsort(-s, kind="stable")], rel, 3))
+    return float(np.mean(hits))
+
+orig = diretas
+sema = [(sem_acentos(q), rel) for q, rel in diretas]
+print(f"{'índice':<22}{'consultas originais':>21}{'consultas sem acento':>22}")
+print(f"{'sem normalização':<22}{hit3(TfidfVectorizer(), orig):>21.3f}{hit3(TfidfVectorizer(), sema):>22.3f}")
+print(f"{'com strip_accents':<22}{hit3(TfidfVectorizer(strip_accents='unicode'), orig):>21.3f}{hit3(TfidfVectorizer(strip_accents='unicode'), sema):>22.3f}")
+```
+@@NOTE Sem normalização, consultas digitadas sem acento perdem desempenho, pois palavras como "matricula" não casam com "matrícula". Com `strip_accents`, índice e consulta passam pela mesma regra, e o resultado fica estável. O risco é perder distinções legítimas (por exemplo, "pais" e "país"); por isso, avalie com consultas ambíguas e mantenha o texto original para exibição.
+@@ALEM
+- **UCI Machine Learning Repository:** *SMS Spam Collection* e *Sentiment Labelled Sentences*, para praticar tokenização e TF-IDF em textos curtos.
+- **scikit-learn:** `fetch_20newsgroups` (baixa o corpus na primeira execução; requer internet) para praticar agrupamento e busca com TF-IDF.
+- **Kaggle:** conjuntos de avaliações de produtos em português, para estudar fertilidade de tokenizadores e vocabulário informal.
+@@PROJ Explorando embeddings por coocorrência | intermediário
+**Contexto.** Os embeddings por PPMI + SVD do capítulo dependem de duas escolhas: o tamanho da janela de contexto e a dimensão final. Você vai medir, de forma quantitativa, como essas escolhas afetam a qualidade do espaço no corpus sintético, usando como "verdade de referência" a categoria gramatical de cada palavra (sujeito, verbo, objeto, tempo/lugar).
+
+**Tarefas.**
+
+1. Implemente uma função que constrói os embeddings PPMI+SVD para uma janela `J` e dimensão `d`.
+2. Defina as categorias: sujeitos (estudante, professor, professora, coordenadora, bibliotecário), verbos (lê, escreve, entrega, empresta, corrige, explica, devolve, estuda, procura, assina, organiza, prepara), objetos (livro, artigo, relatório, prova, trabalho, aula) e tempo/lugar (hoje, ontem, casa, biblioteca, laboratório, atenção).
+3. Meça a **precisão do vizinho mais próximo**: para cada palavra categorizada, o vizinho mais próximo (por cosseno) pertence à mesma categoria?
+4. Varie $J\in\{1,2,4\}$ e $d\in\{2,4,8,16\}$ e organize os resultados em uma tabela.
+5. Escreva um parágrafo discutindo os resultados e uma limitação do método de avaliação.
+
+**Entregáveis.** Código, tabela e parágrafo.
+@@RUBRICA
+- Embeddings construídos corretamente, com PPMI e SVD (3 pontos).
+- Medida de precisão do vizinho mais próximo bem definida e calculada (3 pontos).
+- Varredura de janela e dimensão com tabela clara (2 pontos).
+- Discussão crítica, reconhecendo que as categorias foram definidas por nós e que o corpus é artificial (2 pontos).
+@@SOL
+```python
+import numpy as np
+from llmdidatico import corpus
+
+frases = corpus.frases_lm(3000, seed=0)
+vocab = sorted({t for f in frases for t in f})
+ix = {t: i for i, t in enumerate(vocab)}
+
+CAT = {
+    "sujeito": ["estudante", "professor", "professora", "coordenadora", "bibliotecário"],
+    "verbo": ["lê", "escreve", "entrega", "empresta", "corrige", "explica", "devolve", "estuda", "procura", "assina", "organiza", "prepara"],
+    "objeto": ["livro", "artigo", "relatório", "prova", "trabalho"],
+    "tempo_lugar": ["hoje", "ontem", "casa", "biblioteca", "laboratório", "atenção"],
+}
+cat_de = {w: c for c, ws in CAT.items() for w in ws if w in ix}
+
+def embeddings(J, d):
+    V = len(vocab); C = np.zeros((V, V))
+    for f in frases:
+        for i, t in enumerate(f):
+            for j in range(max(0, i - J), min(len(f), i + J + 1)):
+                if j != i:
+                    C[ix[t], ix[f[j]]] += 1
+    tot = C.sum(); pw = C.sum(1, keepdims=True) / tot; pc = C.sum(0, keepdims=True) / tot
+    with np.errstate(divide="ignore", invalid="ignore"):
+        pmi = np.log((C / tot) / (pw * pc))
+    ppmi = np.where(np.isfinite(pmi), np.maximum(pmi, 0), 0.0)
+    U, S, _ = np.linalg.svd(ppmi, full_matrices=False)
+    E = U[:, :d] * np.sqrt(S[:d])
+    return E / (np.linalg.norm(E, axis=1, keepdims=True) + 1e-12)
+
+def precisao_vizinho(E):
+    acertos = []
+    for w, c in cat_de.items():
+        sim = E @ E[ix[w]]; sim[ix[w]] = -2
+        acertos.append(cat_de.get(vocab[int(sim.argmax())]) == c)
+    return float(np.mean(acertos))
+
+print(f"palavras categorizadas: {len(cat_de)}")
+print(f"{'janela':>7} | " + " ".join(f"d={d:>2}" for d in (2, 4, 8, 16)))
+for J in (1, 2, 4):
+    print(f"{J:>7} | " + " ".join(f"{precisao_vizinho(embeddings(J, d)):>4.2f}" for d in (2, 4, 8, 16)))
+```
+@@NOTE A precisão do vizinho mais próximo mostra se o espaço organiza as palavras por função gramatical. Com janela 1, o resultado é alto já com 4 dimensões (1,00); com janelas maiores, a precisão **cai**: como as frases do corpus têm de 7 a 10 tokens, uma janela de 4 já inclui quase a frase toda e dilui o contexto sintático local (com $J=4$ e $d=2$, a precisão quase some). Dimensão muito baixa também mistura categorias. Uma limitação importante: as categorias foram definidas por nós a partir da gramática que gerou o corpus; esta avaliação mede o quanto o método **redescobre** a gramática sintética, e não a qualidade de "significado" em língua real. Palavras como "hoje" e "ontem" são contadas como de mesma categoria, o que esconde a questão dos antônimos discutida no capítulo.

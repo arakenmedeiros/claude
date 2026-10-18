@@ -1,0 +1,364 @@
+MC: O que caracteriza o aprendizado autossupervisionado em texto?
+= Os rótulos são extraídos automaticamente do próprio texto, por exemplo, escondendo uma parte e pedindo ao modelo que a preveja.
+- Os rótulos são escritos manualmente por anotadores humanos para cada frase.
+- Não existe nenhum alvo de previsão durante o treinamento.
+- O modelo aprende por tentativa e erro, recebendo recompensas externas.
+- O texto precisa ser traduzido antes do treinamento.
+J: O gabarito está no próprio texto: o token escondido é a resposta, o que elimina o gargalo de anotação humana.
+
+MC: Em um modelo causal, qual é a perda de treinamento por posição?
+= A surpresa $-\ln p$ atribuída pelo modelo ao token correto dado os tokens anteriores.
+- A soma das probabilidades de todos os tokens do vocabulário.
+- A probabilidade do token mais provável, independentemente do correto.
+- A distância euclidiana entre embeddings consecutivos.
+- O número de tokens do contexto.
+J: A perda é a entropia cruzada com o token verdadeiro, média sobre as posições.
+
+MC: O que significa *teacher forcing* no treinamento de modelos de linguagem?
+= Usar o texto verdadeiro como contexto em cada posição, em vez do que o próprio modelo geraria.
+- Obrigar o modelo a gerar o texto inteiro antes de calcular a perda.
+- Usar um professor humano para corrigir cada resposta.
+- Treinar o modelo somente com frases corretas gramaticalmente.
+- Reduzir o conjunto de dados a poucas frases.
+J: Com a máscara causal, todas as posições são calculadas de uma vez, cada uma condicionada ao passado verdadeiro.
+
+MC: No pré-treinamento por mascaramento, como o BERT, onde a perda é calculada?
+= Apenas nas posições que foram mascaradas.
+- Em todas as posições, mascaradas ou não.
+- Somente na última posição.
+- Apenas nos tokens especiais.
+- Somente nas posições não mascaradas.
+J: O modelo é treinado para recuperar os tokens ocultos usando contexto à esquerda e à direita.
+
+MC: Qual é o objetivo típico de pré-treinamento de modelos encoder-decoder como T5 e BART?
+= Receber texto corrompido e gerar o texto original ou os trechos removidos.
+- Prever apenas o próximo token da entrada.
+- Classificar o texto em categorias fixas.
+- Gerar imagens a partir do texto.
+- Comprimir o vocabulário.
+J: A corrupção de trechos combina compreensão (encoder) e geração (decoder).
+
+MC: Uma perda média de 1,0 nat por token corresponde a uma perplexidade de aproximadamente:
+= 2,72
+- 1,0
+- 0,37
+- 10
+- 1,72
+J: $\mathrm{PPL}=e^{1}\approx2{,}72$.
+
+MC: Qual é o papel do lote (*batch*) no treinamento?
+= Um subconjunto de sequências usado em cada passo, cujo gradiente aproxima o gradiente do conjunto completo.
+- O conjunto completo de dados de teste.
+- O número de camadas do modelo.
+- A taxa de aprendizado em cada passo.
+- O conjunto de tokens especiais do vocabulário.
+J: Estimar o gradiente em minilotes é barato e funciona bem na prática (SGD e variantes).
+
+MC: O que a passada para trás (*backward*) calcula?
+= O gradiente da perda em relação a todos os parâmetros, por retropropagação.
+- A próxima palavra a ser gerada.
+- A perda no conjunto de validação.
+- A tokenização do texto.
+- O novo vocabulário.
+J: Esses gradientes alimentam o otimizador, que atualiza os parâmetros.
+
+MC: Por que se usa aquecimento (*warmup*) da taxa de aprendizado?
+= Para evitar instabilidade no início do treinamento, quando as estimativas do otimizador ainda são ruins.
+- Para aumentar o número de parâmetros do modelo.
+- Para que o treinamento termine mais cedo, sempre.
+- Para garantir que a perda de validação seja zero.
+- Para eliminar a necessidade de otimizador.
+J: Começar com passos pequenos e aumentar gradualmente estabiliza o início.
+
+MC: O que o recorte do gradiente (*gradient clipping*) faz?
+= Limita a norma do gradiente a um valor máximo, evitando passos explosivos.
+- Remove os parâmetros com gradiente nulo.
+- Zera o gradiente a cada passo.
+- Normaliza o texto de entrada.
+- Reduz o vocabulário.
+J: Se a norma excede o limite, o gradiente é reescalado para que a norma seja igual ao limite.
+
+MC: Qual a principal finalidade da validação periódica durante o treinamento?
+= Medir a perda em dados não usados no treino para detectar sobreajuste e acompanhar a generalização.
+- Aumentar a perda de treino de propósito.
+- Substituir o conjunto de teste final.
+- Atualizar o vocabulário.
+- Calcular a taxa de aprendizado.
+J: A perda de treino pode cair enquanto o modelo apenas decora; a de validação revela isso.
+
+MC: Qual padrão nas curvas de perda indica sobreajuste?
+= Perda de treino baixa e perda de validação muito mais alta.
+- As duas perdas baixas e próximas.
+- As duas perdas muito altas.
+- Perda de validação menor que a de treino em todas as épocas.
+- Perda de treino constante e igual a zero em todo o texto real.
+J: A lacuna entre validação e treino mostra que o modelo decorou exemplos em vez de generalizar.
+
+MC: O que é a "perda irredutível" em um corpus?
+= O piso de perda imposto pela aleatoriedade intrínseca dos dados, que nenhum modelo supera.
+- A perda de um modelo sem parâmetros.
+- A perda do primeiro passo de treinamento.
+- A diferença entre treino e validação.
+- A perda causada por erros de digitação do usuário.
+J: Se o próximo token é intrinsecamente incerto, nem o melhor modelo prevê melhor que a entropia verdadeira.
+
+MC: Qual é, em geral, o efeito de aumentar o volume de dados de treino sobre a lacuna entre perda de validação e de treino?
+= Tende a reduzi-la, aproximando as duas perdas.
+- Tende a aumentá-la indefinidamente.
+- Não tem relação com a lacuna.
+- Elimina a perda de treino.
+- Torna a perda de validação negativa.
+J: Com mais dados, o modelo tem menos facilidade para decorar, e a generalização melhora.
+
+MC: Qual etapa da preparação de dados remove cópias exatas e quase cópias?
+= Deduplicação.
+- Tokenização.
+- Aquecimento.
+- Recorte de gradiente.
+- Quantização.
+J: Lee et al. (2022) mostram que deduplicar reduz a memorização literal e melhora o modelo.
+
+MC: Se dois conjuntos de shingles têm $A=\{a,b,c\}$ e $B=\{b,c,d\}$, qual a similaridade de Jaccard?
+= 0,5
+- 0,25
+- 0,67
+- 1,0
+- 0,33
+J: $|A\cap B|=2$ e $|A\cup B|=4$, logo $J=2/4=0{,}5$.
+
+MC: O que o estudo de Dodge et al. (2021) ilustra sobre filtragem de corpora da web?
+= Que filtros não são neutros: podem remover desproporcionalmente textos de certos grupos e deixar conteúdo problemático.
+- Que filtros eliminam todos os vieses.
+- Que filtragem é desnecessária em corpora grandes.
+- Que a filtragem sempre melhora a diversidade de idiomas.
+- Que só texto em inglês deve ser filtrado.
+J: A análise mostra efeitos colaterais da filtragem, o que reforça a necessidade de documentar escolhas.
+
+MC: Qual a função de uma ficha de dados (*datasheet*)?
+= Documentar origem, composição, filtros, limitações e usos pretendidos de um conjunto de dados.
+- Armazenar os pesos do modelo.
+- Substituir o conjunto de teste.
+- Comprimir o conjunto de dados.
+- Garantir que o modelo seja imparcial.
+J: A documentação melhora a transparência e a responsabilidade (Gebru et al., 2021).
+
+MC: Qual a diferença entre um modelo-base e um modelo ajustado para instruções?
+= O modelo-base continua texto de forma plausível; o ajustado para instruções foi adaptado para seguir pedidos e responder como assistente.
+- O modelo-base segue instruções, o ajustado apenas continua texto.
+- Não há diferença, só o nome.
+- O modelo-base é sempre menor que o ajustado.
+- O modelo ajustado não passou por pré-treinamento.
+J: O comportamento de assistente vem do pós-treinamento (Capítulo 7).
+
+MC: Qual foi a conclusão central de Hoffmann et al. (2022) sobre computação fixa?
+= Parâmetros e tokens de treino devem crescer em proporção equilibrada, e muitos modelos estavam subtreinados em dados.
+- Só o número de parâmetros importa.
+- Dados adicionais nunca ajudam depois de 1 bilhão de tokens.
+- Modelos maiores devem sempre ser treinados com menos dados.
+- O número de camadas é o único fator relevante.
+J: O modelo Chinchilla (70 bilhões de parâmetros, 1,4 trilhão de tokens) superou modelos maiores treinados com menos dados.
+
+MC: Usando $C\approx6ND$, qual o número de FLOPs para $N=10^9$ parâmetros e $D=2\times10^{10}$ tokens?
+= $1{,}2\times10^{20}$
+- $1{,}2\times10^{19}$
+- $2\times10^{19}$
+- $6\times10^{9}$
+- $1{,}2\times10^{21}$
+J: $6\times10^{9}\times2\times10^{10}=1{,}2\times10^{20}$.
+
+MC: A 16 bytes por parâmetro, qual a memória aproximada do estado de treino de um modelo de 3 bilhões de parâmetros?
+= 48 GB
+- 6 GB
+- 12 GB
+- 96 GB
+- 480 GB
+J: $3\times10^9\times16=4{,}8\times10^{10}$ bytes $=48$ GB, sem contar ativações.
+
+MC: Por que muitos modelos recentes são treinados com mais tokens que o ponto "ótimo" de computação?
+= Porque um modelo menor e mais treinado é mais barato de servir a muitos usuários.
+- Porque o ponto ótimo foi refutado por completo.
+- Porque modelos maiores não podem ser implantados.
+- Porque o treinamento com mais tokens é sempre mais barato.
+- Porque o custo de servir é irrelevante.
+J: O custo total inclui a inferência; investir mais em treino pode reduzir o custo de uso.
+
+MC: O que é contaminação de dados?
+= Quando exemplos do conjunto de teste (ou suas respostas) aparecem nos dados de treino, inflando o desempenho medido.
+- A presença de erros de digitação nos dados de treino.
+- O uso de dados em mais de um idioma.
+- A mistura de dados de treino e de validação, sempre desejável.
+- A remoção de dados duplicados.
+J: O modelo "viu a prova", e a métrica deixa de refletir a capacidade de generalização.
+
+MC: Qual é uma limitação da detecção de contaminação por sobreposição de n-gramas?
+= Só detecta cópias literais; paráfrases e traduções escapam.
+- Só funciona em textos em inglês.
+- Exige acesso aos pesos do modelo.
+- Gera sempre falsos positivos.
+- Não pode ser executada em computadores comuns.
+J: A ausência de sobreposição literal não prova ausência de contaminação.
+
+MC: Qual medida reduz o risco de contaminação em avaliações?
+= Manter conjuntos de teste privados ou criar testes novos e relatar a análise de contaminação.
+- Publicar os conjuntos de teste em páginas abertas e indexadas.
+- Treinar com todos os dados, inclusive os de teste.
+- Usar sempre o mesmo conjunto de teste por vários anos.
+- Evitar qualquer tipo de validação.
+J: Testes novos ou privados e relatórios de contaminação aumentam a confiança nas métricas.
+
+MC: Qual das afirmações sobre custo ambiental do treinamento é a mais adequada?
+= Treinar e servir modelos consome energia que depende do hardware, do tempo e da matriz energética; eficiência é também uma questão ambiental.
+- O custo ambiental é sempre desprezível.
+- Só o treinamento consome energia; a inferência não.
+- O impacto é idêntico para qualquer modelo e hardware.
+- Não há como medir o consumo de energia.
+J: Strubell et al. (2019) chamaram atenção para esse custo; medir e relatar é parte da boa prática.
+
+MC: Qual cuidado é adequado ao usar a regra "cerca de 20 tokens por parâmetro"?
+= Tratá-la como ponto de referência empírico para um objetivo específico (computação ótima de treino), e não como regra universal.
+- Aplicá-la a qualquer modelo, em qualquer cenário, sem ajustes.
+- Concluir que dados adicionais nunca ajudam.
+- Usá-la para garantir a correção das respostas.
+- Considerá-la uma lei física.
+J: A razão deriva de um conjunto específico de experimentos e é discutida na literatura.
+
+MC: O que é uma "época" de treinamento?
+= Uma passada completa por todo o conjunto de treino (formado por vários lotes).
+- Um único passo de atualização com um lote.
+- O conjunto de dados de validação.
+- A taxa de aprendizado inicial.
+- O período em que o modelo é implantado.
+J: Em cada época, todos os exemplos de treino são usados uma vez; cada época contém muitos passos (um por lote).
+
+MC: Por que é importante dividir treino e validação por documento, e não por frase aleatória?
+= Frases do mesmo documento são muito parecidas; misturá-las entre treino e validação vaza informação e infla a métrica.
+- Porque documentos são sempre menores que frases.
+- Porque a validação exige frases mais longas.
+- Porque a divisão por frase reduz o vocabulário.
+- Porque não há diferença prática entre as duas formas de dividir.
+J: A divisão por documento evita que o modelo veja, no treino, trechos quase idênticos aos da validação.
+
+DISC[C]: Explique por que o aprendizado autossupervisionado permite treinar em escala sem anotadores humanos e quais limitações isso carrega.
+R: Os rótulos vêm do próprio texto (prever token oculto ou próximo), então cada documento gera enorme quantidade de exemplos com gabarito automático. Limitações: o modelo aprende o que o texto contém, inclusive vieses, erros e lacunas; o objetivo (prever tokens) não garante veracidade, utilidade ou segurança; é preciso curadoria dos dados e pós-treinamento.
+
+DISC[C]: Compare os objetivos de próximo token, de mascaramento e de corrupção de trechos, indicando a família de arquitetura associada e um uso típico de cada um.
+R: Próximo token: decoder, geração de texto e base dos LLMs de conversação. Mascaramento: encoder bidirecional, classificação e embeddings. Corrupção de trechos: encoder-decoder, texto para texto (tradução, resumo). Diferem no que o modelo vê (apenas o passado, ambos os lados, entrada corrompida) e no tipo de saída.
+
+DISC[C]: O que são sobreajuste, validação e perda irredutível? Como se relacionam nas curvas de treinamento?
+R: Sobreajuste: o modelo decora o treino, e a perda de treino cai enquanto a de validação estaciona ou sobe. Validação: perda medida em dados separados, que estima a generalização. Perda irredutível: piso da perda imposto pela aleatoriedade dos dados. Nas curvas, a validação converge para um patamar (irredutível, se há dados suficientes), e uma grande lacuna entre treino e validação indica sobreajuste.
+
+DISC[C]: Descreva as etapas de preparação de dados e dê um risco associado a cada uma de pelo menos quatro delas.
+R: Coleta (licenças e vieses das fontes), limpeza (remoção de conteúdo útil por engano), filtragem de qualidade (filtros não neutros que removem grupos ou dialetos), deduplicação (remover documentos legitimamente repetidos, como textos legais), remoção de dados sensíveis (falhas deixam dados pessoais), documentação (omissões geram uso inadequado do conjunto). Em todos os casos, registrar os critérios e testar o efeito.
+
+DISC[M]: Um modelo atribui aos tokens corretos de uma frase as probabilidades 0,4; 0,25; 0,5; 0,1. Calcule a perda média e a perplexidade.
+R: Surpresas: $-\ln0{,}4=0{,}916$; $-\ln0{,}25=1{,}386$; $-\ln0{,}5=0{,}693$; $-\ln0{,}1=2{,}303$. Soma $=5{,}298$; média $=1{,}325$ nats. Perplexidade $=e^{1{,}325}\approx3{,}76$.
+
+DISC[M]: Para a agenda com aquecimento de $w=100$ passos, $S=1000$, $\eta_{\max}=10^{-3}$ e $\eta_{\min}=10^{-4}$, calcule a taxa nos passos 50 e 550.
+R: Passo 50 (aquecimento): $\eta=10^{-3}\times50/100=5\times10^{-4}$. Passo 550: $(s-w)/(S-w)=450/900=0{,}5$, $\cos(\pi\cdot0{,}5)=0$, então $\eta=\eta_{\min}+\tfrac12(\eta_{\max}-\eta_{\min})\cdot1=10^{-4}+0{,}5\times9\times10^{-4}=5{,}5\times10^{-4}$.
+
+DISC[M]: Para $N=3\times10^9$ e $D=6\times10^{10}$, calcule os FLOPs de treino ($6ND$) e o tempo, em dias, com 64 aceleradores de $10^{14}$ FLOP/s sustentados a 40% de eficiência.
+R: $C=6\times3\times10^9\times6\times10^{10}=1{,}08\times10^{21}$ FLOPs. Taxa efetiva: $64\times10^{14}\times0{,}4=2{,}56\times10^{15}$ FLOP/s. Tempo: $1{,}08\times10^{21}/2{,}56\times10^{15}\approx4{,}2\times10^{5}$ s $\approx4{,}9$ dias. (Valores de hardware hipotéticos.)
+
+DISC[M]: Estime o estado de treino de um modelo de 13 bilhões de parâmetros a 16 bytes por parâmetro e o número mínimo de aceleradores de 80 GB necessário apenas para esse estado.
+R: $13\times10^9\times16=2{,}08\times10^{11}$ bytes $=208$ GB. Mínimo de $\lceil208/80\rceil=3$ aceleradores, só para o estado; na prática, são necessários mais, por causa de ativações, fragmentação e comunicação.
+
+DISC[M]: Calcule a similaridade de Jaccard entre os shingles de $k=2$ palavras de "o gato dorme no sofá" e "o gato dorme no tapete".
+R: Shingles de A: (o,gato), (gato,dorme), (dorme,no), (no,sofá): 4. De B: (o,gato), (gato,dorme), (dorme,no), (no,tapete): 4. Interseção: 3. União: $4+4-3=5$. $J=3/5=0{,}6$.
+
+DISC[M]: Para um modelo de 13 bilhões de parâmetros, quantos tokens o ponto de "20 tokens por parâmetro" sugere e quantos FLOPs ($6ND$) isso exige?
+R: $D=20\times13\times10^9=2{,}6\times10^{11}$ tokens. $C=6\times13\times10^9\times2{,}6\times10^{11}\approx2{,}03\times10^{22}$ FLOPs.
+
+DISC[A]: Em um treino, a perda de treino é 0,3 e a de validação, 2,0, e a de validação começou a subir. Analise o diagnóstico e proponha três intervenções.
+R: Indica sobreajuste: o modelo memoriza o treino e não generaliza. Intervenções: mais dados (ou aumento de dados) e deduplicação; reduzir a capacidade do modelo ou adicionar regularização (decaimento de pesos, dropout); parada antecipada na época de menor perda de validação; verificar vazamento entre treino e validação.
+
+DISC[A]: Uma empresa afirma que seu modelo alcança 95% em um benchmark público e conclui que ele é excelente. Analise a afirmação considerando contaminação e proponha uma verificação.
+R: O benchmark pode ter sido visto no treino (contaminação), inflando o resultado, e pode não refletir o uso real. Verificações: analisar sobreposição de n-gramas entre teste e dados de treino (quando acessíveis); criar um conjunto de teste novo, privado e do domínio de uso; comparar desempenho em itens publicados antes e depois da data de corte; testar paráfrases dos itens; relatar intervalos de confiança.
+
+DISC[A]: Deduplicar agressivamente pode remover textos legitimamente repetidos (como leis ou licenças). Analise a escolha do limiar de similaridade e os riscos dos dois erros possíveis.
+R: Limiar baixo remove também documentos distintos mas semelhantes (perde diversidade e fontes legítimas); limiar alto deixa passar quase duplicatas (memorização e inflação de métricas). A escolha deve considerar o tipo de conteúdo, medir a taxa de duplicatas e testar o efeito na perda de validação e na memorização; pode-se usar limiares diferentes por domínio e manter listas de exceção.
+
+DISC[A]: Um usuário relata que, ao perguntar "Quais são os planetas do sistema solar?" a um modelo-base, ele responde com outras perguntas. Analise o comportamento e explique como o pós-treinamento o altera.
+R: O modelo-base continua texto de forma plausível; em muitos textos da web, perguntas aparecem em listas de perguntas, de modo que a continuação provável é outra pergunta. Ele não foi treinado para tratar a entrada como pedido. O pós-treinamento (ajuste supervisionado com instruções e ajuste por preferências) o adapta ao formato de resposta de assistente, sem garantir correção factual.
+
+DISC[P]: Implemente `pares_causais(tokens)` (lista de pares contexto-alvo) e `mascarar(tokens, p, seed)` (substitui cada token por `[MASK]` com probabilidade `p` e devolve entrada e alvos). Teste com uma frase curta.
+CODE:
+import numpy as np
+
+def pares_causais(tokens):
+    return [(tokens[:t], tokens[t]) for t in range(1, len(tokens))]
+
+def mascarar(tokens, p=0.15, seed=0):
+    rng = np.random.default_rng(seed)
+    m = rng.random(len(tokens)) < p
+    entrada = ["[MASK]" if x else t for t, x in zip(tokens, m)]
+    alvos = [t for t, x in zip(tokens, m) if x]
+    return entrada, alvos
+
+f = "o aluno lê o livro .".split()
+pc = pares_causais(f)
+assert len(pc) == len(f) - 1 and pc[0] == (["o"], "aluno") and pc[-1][1] == "."
+ent, alv = mascarar(f, p=0.5, seed=1)
+assert len(ent) == len(f) and ent.count("[MASK]") == len(alv)
+print(pc[1], ent, alv)
+ENDCODE
+CRIT: Gera pares de todos os prefixos até o penúltimo token.
+CRIT: Mascara com probabilidade independente por token e semente fixa.
+CRIT: Verifica coerência entre número de máscaras e alvos.
+
+DISC[P]: Implemente `taxa(s, S, eta_max, eta_min, w)` com aquecimento linear e decaimento em cosseno e verifique os valores dos passos 50 e 550 do caso $w=100$, $S=1000$.
+CODE:
+import numpy as np
+
+def taxa(s, S, eta_max=1e-3, eta_min=1e-4, w=100):
+    if s <= w:
+        return eta_max * s / w
+    return eta_min + 0.5 * (eta_max - eta_min) * (1 + np.cos(np.pi * (s - w) / (S - w)))
+
+assert abs(taxa(50, 1000) - 5e-4) < 1e-12
+assert abs(taxa(550, 1000) - 5.5e-4) < 1e-12
+assert abs(taxa(100, 1000) - 1e-3) < 1e-12
+assert abs(taxa(1000, 1000) - 1e-4) < 1e-12
+print(taxa(50, 1000), taxa(550, 1000))
+ENDCODE
+CRIT: Trata os dois regimes (aquecimento e decaimento).
+CRIT: Normaliza o argumento do cosseno entre 0 e $\pi$.
+CRIT: Testa pontos de fronteira (início, pico, final).
+
+DISC[P]: Implemente `deduplicar(docs, k, limiar)` baseado em Jaccard de shingles de $k$ palavras, mantendo o primeiro de cada grupo de quase duplicatas, e teste com quatro documentos (uma cópia exata, uma quase cópia e um distinto).
+CODE:
+def shingles(texto, k=3):
+    p = texto.lower().split()
+    return {tuple(p[i:i + k]) for i in range(len(p) - k + 1)}
+
+def jaccard(a, b):
+    return len(a & b) / len(a | b) if (a | b) else 0.0
+
+def deduplicar(docs, k=3, limiar=0.5):
+    S = [shingles(d, k) for d in docs]
+    manter = []
+    for i, s in enumerate(S):
+        if all(jaccard(s, S[j]) < limiar for j in manter):
+            manter.append(i)
+    return manter
+
+docs = [
+    "a biblioteca central funciona de segunda a sexta das sete às vinte e duas horas",
+    "a biblioteca central funciona de segunda a sexta das sete às vinte e duas horas",
+    "a biblioteca central funciona de segunda a sexta das sete às vinte e três horas",
+    "o restaurante universitário serve almoço e jantar todos os dias da semana letiva",
+]
+assert deduplicar(docs, k=3, limiar=0.5) == [0, 3]
+print(deduplicar(docs, k=3, limiar=0.5))
+ENDCODE
+CRIT: Compara cada documento apenas com os já mantidos.
+CRIT: Usa conjuntos de shingles e Jaccard corretamente.
+CRIT: Testa cópia exata, quase cópia e documento distinto.
+
+DISC[D]: Você vai montar um corpus em português para pré-treinar ou continuar o pré-treinamento de um modelo pequeno para o setor público. Proponha o pipeline de dados e a documentação, indicando riscos jurídicos e éticos.
+R: Fontes: documentos públicos e de domínio aberto, com licenças verificadas; evitar dados pessoais e sigilosos. Pipeline: extração, normalização Unicode, identificação de idioma, filtros de qualidade, deduplicação (exata e aproximada), remoção de dados pessoais (por exemplo, CPF, e-mail) e de conteúdo inadequado, divisão em treino/validação/teste por documento, e verificação de sobreposição entre elas. Documentação: ficha de dados com fontes, licenças, filtros, proporções e limitações. Riscos: licenças e direitos autorais, LGPD (dados pessoais), vieses de fontes (linguagem formal), contaminação com benchmarks internos. Prever auditoria e canal de remoção de dados.
+
+DISC[D]: Com orçamento de computação limitado, você deve decidir entre treinar um modelo de 1 bilhão de parâmetros com 20 bilhões de tokens ou um de 3 bilhões com 7 bilhões de tokens, com custo semelhante ($6ND$). Como decidiria?
+R: Calcular: $6\times10^9\times2\times10^{10}=1{,}2\times10^{20}$ e $6\times3\times10^9\times7\times10^{9}=1{,}26\times10^{20}$, custos semelhantes. Pela referência de 20 tokens por parâmetro, o primeiro está perto do ponto ótimo de treino, e o segundo estaria subtreinado (cerca de 2,3 tokens por parâmetro). Também considerar custo de inferência (o menor é mais barato) e a tarefa. Decidir por experimentos em escala reduzida e avaliação nas tarefas-alvo, reconhecendo que a regra é uma referência.
+
+DISC[D]: Descreva um plano para evitar contaminação em um benchmark interno de uma empresa que ajustará modelos com dados internos.
+R: Separar o conjunto de teste desde o início, com acesso restrito e identificação de versão; criar itens novos e originais; manter o teste fora de repositórios usados para treino; deduplicar treino contra teste (incluindo paráfrases por similaridade de embeddings); registrar a data de criação dos itens; reavaliar com itens novos periodicamente; relatar a análise de contaminação nos resultados; usar intervalos de confiança.
