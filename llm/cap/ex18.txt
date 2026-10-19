@@ -1,0 +1,468 @@
+MC: Qual é a função de escrever os critérios de aceitação antes de medir o sistema?
+= Evitar que o critério seja ajustado ao resultado e permitir um veredito honesto sobre o que foi medido.
+- Garantir que o sistema atinja os valores desejados.
+- Dispensar o uso de intervalos de confiança.
+- Substituir a análise de erros do projeto.
+- Reduzir o número de casos necessários na bancada.
+J: Um critério escrito depois de ver os números tende a se encaixar neles; escrito antes, ele funciona como regra do jogo.
+
+MC: Em um estrato, a taxa observada é 0,90 com n = 30 e o critério é "taxa ≥ 0,80". Qual o veredito correto com o intervalo de Wilson?
+= Inconclusivo, porque o intervalo (de cerca de 0,74 a 0,97) atravessa o critério.
+- Atende, porque a taxa observada passa de 0,80.
+- Não atende, porque o intervalo inclui valores abaixo de 0,80.
+- Atende, porque 30 casos bastam sempre para qualquer critério.
+- Não atende, porque o intervalo inclui o valor 1,00.
+J: O veredito compara o intervalo inteiro, e não só a média, ao critério.
+
+MC: Por que muitos vereditos dos projetos do capítulo saem "inconclusivos"?
+= Porque os conjuntos têm dezenas de casos e os intervalos de confiança são largos demais para decidir.
+- Porque os simuladores são programados para errar de forma aleatória.
+- Porque o intervalo de Wilson não funciona com proporções.
+- Porque os critérios de aceitação foram escritos depois da medição.
+- Porque os projetos usam dados reais com muito ruído.
+J: Com n pequeno, a incerteza é grande; a ação correta é coletar mais casos, e não escolher o lado que agrada.
+
+MC: O que significa dizer que a nota é "otimista" quando as regras foram escritas olhando o conjunto de teste?
+= As regras foram ajustadas aos casos vistos, e a nota deixa de refletir casos novos.
+- O conjunto de teste ficou grande demais para o sistema.
+- O sistema generaliza melhor do que o previsto.
+- O intervalo de confiança ficou estreito demais por acaso.
+- O conjunto de teste foi sorteado de modo aleatório.
+J: No Projeto 2, a revocação de urgência foi 1,000 onde as regras foram escritas e 0,167 no conjunto cego.
+
+MC: No Projeto 1, o que acontece ao aumentar o limiar de abstenção do gerador simulado?
+= A abstenção correta tende a subir, e a resposta correta, a cair (mais abstenções indevidas).
+- A resposta correta e a abstenção correta sobem juntas.
+- Nada muda, porque o limiar só afeta a velocidade.
+- A recuperação do documento passa a ser perfeita.
+- A fidelidade da resposta cai a zero.
+J: O limiar troca um tipo de erro por outro; a escolha depende do custo relativo de cada erro.
+
+MC: Uma "abstenção indevida" no Projeto 1 é um caso em que:
+= O documento relevante foi recuperado, mas o sistema respondeu que não consta.
+- O sistema respondeu algo que não está nos documentos.
+- O documento relevante não foi recuperado e o sistema respondeu errado.
+- O sistema citou um documento inexistente.
+- O sistema recusou uma pergunta sem resposta nos documentos.
+J: É um erro de geração por excesso de cautela, distinto da falha de recuperação.
+
+MC: Qual a conclusão correta da comparação pareada entre BM25 e busca híbrida no Projeto 1?
+= Neste conjunto os dois acertaram os mesmos casos, e não há diferença detectável.
+- A busca híbrida é sempre superior ao BM25.
+- O BM25 é superior porque é mais simples.
+- Os dois métodos são equivalentes em qualquer conjunto.
+- A comparação é inválida por usar os mesmos casos.
+J: Não detectar diferença em n = 46 não prova equivalência geral; os testes pareados usam, de propósito, os mesmos casos.
+
+MC: Qual é o escopo do assistente do Projeto 2 (saúde)?
+= Informar sobre serviços (horários, documentos, agendamento) e encaminhar questões clínicas e urgências, sem diagnóstico.
+- Orientar doses de medicamentos quando o usuário insistir.
+- Interpretar exames e sugerir diagnósticos prováveis.
+- Substituir a triagem feita por profissionais de saúde.
+- Responder qualquer pergunta sobre saúde com citação.
+J: Dados e decisões clínicas exigem profissionais, base legal e supervisão, fora do alcance do exercício.
+
+MC: Por que no Projeto 2 a resposta de urgência é um texto fixo, e não gerada?
+= Para que a mensagem mais crítica não dependa do gerador, que pode errar ou ser manipulado.
+- Para reduzir o custo do prompt do sistema.
+- Para permitir que o gerador a personalize para cada pessoa.
+- Porque textos gerados são proibidos em saúde.
+- Porque o roteador não consegue identificar a urgência.
+J: Texto fixo, revisado por pessoas, é determinístico e auditável.
+
+MC: No conjunto cego do Projeto 2, a revocação de urgência foi 0,167. Qual a decisão coerente?
+= Tratar como bloqueio de liberação e reduzir o risco por projeto, não só por regras.
+- Liberar, pois no desenvolvimento a revocação foi 1,000.
+- Liberar com um aviso pequeno no rodapé.
+- Acrescentar regras até o conjunto cego chegar a 1,000 e liberar sem novo conjunto.
+- Descartar o conjunto cego, por ser pequeno.
+J: Ajustar regras ao conjunto cego o transforma em desenvolvimento; é preciso novas medidas e outras barreiras.
+
+MC: Por que a diferença bruta entre registros formal e coloquial no Projeto 2 não prova desigualdade de tratamento?
+= Porque o registro está confundido com o tipo de pergunta: todas as coloquiais eram paráfrases.
+- Porque o registro coloquial não existe em português.
+- Porque o intervalo de confiança da diferença incluía zero.
+- Porque o simulador trata os dois registros de modo idêntico.
+- Porque o grupo formal tinha menos perguntas que o coloquial.
+J: Subgrupos devem ser comparados em igualdade de condições, com desenho balanceado.
+
+MC: O que o mascaramento de dados pessoais antes do registro garante no Projeto 2?
+= Reduz o risco, mas depende do detector, que no conjunto difícil teve revocação de cerca de 0,5.
+- Elimina qualquer possibilidade de vazamento de dados.
+- Torna os dados anônimos para todos os fins.
+- Dispensa a definição de prazo de retenção.
+- Dispensa a avaliação de impacto à proteção de dados.
+J: Detectores por regras erram em formatos incomuns; mascarar é redução de risco, e não garantia.
+
+MC: Qual é a vantagem do pré-filtro de vigência e perfil sobre o pós-filtro no Projeto 3?
+= O filtro é aplicado antes de escolher os k melhores, e a norma permitida não é perdida.
+- O pré-filtro dispensa metadados de vigência.
+- O pré-filtro torna a busca mais lenta e, por isso, mais segura.
+- O pós-filtro nunca devolve resultados.
+- O pós-filtro vaza documentos acima do perfil do usuário.
+J: No pós-filtro, se a melhor norma é a revogada, ela é removida depois e pode não sobrar nada (com k = 1, 25 de 30).
+
+MC: Por que a resposta ao perfil público é "não consta" mesmo para um ato restrito que existe?
+= Para não revelar a existência do ato restrito a quem não tem permissão.
+- Porque o ato restrito foi apagado do índice.
+- Porque o gerador não sabe ler documentos restritos.
+- Porque a resposta correta é sempre a abstenção.
+- Porque o usuário público não faz perguntas sobre normas.
+J: Mensagens que distinguem "não existe" de "existe, mas você não pode ver" vazam informação.
+
+MC: Que propriedade tem a trilha de auditoria encadeada por hash do Projeto 3?
+= Detecta a alteração posterior de um evento, mas não a impede.
+- Impede que qualquer evento seja alterado.
+- Dispensa o controle de acesso ao armazenamento.
+- Garante que as respostas estavam corretas.
+- Torna os dados pessoais anônimos.
+J: Detecção não é prevenção; a trilha também exige acesso restrito, cópias e retenção definida.
+
+MC: Por que o classificador de intenções do Projeto 4 teve 1,000 nos modelos de frase e 0,833 nas mensagens novas?
+= Treino e teste vinham das mesmas frases-modelo, e o número alto refletia memorização.
+- As mensagens novas eram em outro idioma.
+- O classificador foi treinado com poucas classes.
+- O intervalo de Wilson é pessimista com 24 casos.
+- As mensagens novas tinham mais palavras.
+J: Medir fora do gerador do treino é obrigatório para avaliar generalização.
+
+MC: O que o plano B do agente de atendimento troca, segundo o Projeto 4?
+= Falhas de ferramenta por transferências a atendentes humanos, que também têm custo.
+- Falhas de ferramenta por respostas inventadas.
+- Transferências a humanos por mais chamadas de modelo.
+- Ações irreversíveis por ações reversíveis.
+- Custo de tokens por custo de infraestrutura.
+J: Com 30% de falhas, o sucesso subiu de 0,878 para 0,927, e a fração enviada a humanos subiu de 0,550 para 0,623.
+
+MC: Por que o agente do Projeto 4 não insiste quando o cliente nega a confirmação do cancelamento?
+= Porque a negação é uma decisão de política, e repetir o pedido contornaria a confirmação.
+- Porque o cancelamento é sempre uma ação reversível.
+- Porque a ferramenta de cancelamento está indisponível.
+- Porque o classificador mudou de intenção.
+- Porque o plano B só vale para consultas.
+J: Confirmação humana é um controle; insistir é tentar derrotá-lo.
+
+MC: De onde vem a economia de 31% do desenho B (classificador antes) no Projeto 4?
+= De não chamar o modelo nas conversas cujo destino é sempre um atendente humano.
+- De usar um modelo menor em todas as conversas.
+- De eliminar a latência das ferramentas.
+- De reduzir o número de mensagens por conversa.
+- De cobrar menos por token de saída.
+J: A economia é estrutural e, em números absolutos, depende de preços e latências reais, aqui hipotéticos.
+
+MC: Qual a diferença entre JSON "válido" e "correto" no Projeto 5?
+= Válido segue o esquema; correto coincide com a realidade, e um método HTTP trocado por outro válido passa pelo esquema.
+- Válido e correto são sinônimos quando se usa pydantic.
+- Correto exige apenas que o JSON seja bem formado.
+- Válido significa que um humano revisou a extração.
+- Correto é o que o esquema consegue verificar sozinho.
+J: O esquema barra campos ausentes ou malformados, mas não erros semânticos dentro do formato.
+
+MC: Qual a função do passo de "reparo" no pipeline de extração do Projeto 5?
+= Limpar o texto (cercas de código, prefixos) para extrair o objeto JSON antes de validar.
+- Corrigir os valores semânticos errados do extrator.
+- Substituir o esquema do pydantic.
+- Traduzir o JSON para outro idioma.
+- Inventar os campos que faltam na página.
+J: Parte das falhas é de formato; um reparo determinístico as resolve, sem esconder os erros de conteúdo.
+
+MC: Com sinônimos nas consultas ("incluir", "apagar"), a busca BM25 do Projeto 5 caiu para 0,111 no primeiro lugar. Por quê?
+= A busca lexical depende de palavras em comum, e os sinônimos não aparecem na página.
+- O BM25 ignora verbos em português.
+- As páginas ruidosas estavam em outro idioma.
+- O intervalo de confiança estava calculado errado.
+- O BM25 só funciona com consultas longas.
+J: É a limitação do vocabulário distante; busca híbrida ou expansão com glossário ajudam.
+
+MC: O que o ajuste leve (LoRA didático) do Projeto 5 mostrou além do ganho no estilo novo?
+= A perda no estilo antigo (esquecimento parcial), que também deve ser medida.
+- Que o ajuste leve nunca causa esquecimento.
+- Que o modelo base passou a ser dispensável.
+- Que o ajuste dispensa conjunto de teste.
+- Que treinar 13% dos parâmetros dobra o tamanho do modelo.
+J: A perplexidade no estilo antigo subiu de 2,472 para 4,623 enquanto a do novo caiu de 3,647 para 2,175.
+
+MC: Qual a utilidade da comparação pareada v2 contra v1 no relatório do Projeto 6?
+= Mostrar em quais estratos as camadas mudam o resultado e a que custo para o uso legítimo.
+- Provar que a v2 é segura contra todos os ataques.
+- Dispensar os critérios de aceitação por estrato.
+- Substituir o intervalo de confiança de cada estrato.
+- Garantir que a v1 nunca seja usada.
+J: As camadas ajudaram em ataques, injeção e privacidade, e custaram mensagens legítimas bloqueadas.
+
+MC: Para que serve o portão de regressão na bancada?
+= Comparar cada mudança com a versão aprovada antes de liberá-la.
+- Impedir qualquer mudança no sistema.
+- Substituir o monitoramento em produção.
+- Evitar o uso de testes pareados.
+- Reduzir o tamanho do conjunto de teste.
+J: No exemplo, subir o limiar de 0,5 para 0,6 só piorou as diretas e as paráfrases.
+
+MC: Qual o papel do cartão do sistema gerado a partir da bancada?
+= Resumir finalidade, limites e métricas com intervalos, sem que os números mudem à parte.
+- Substituir o plano de governança.
+- Provar que o sistema é seguro e justo.
+- Listar apenas os acertos do sistema.
+- Dispensar o relatório de avaliação.
+J: Gerar o cartão a partir da bancada evita divergência entre o que se diz e o que se mediu.
+
+MC: Qual das frases abaixo pode constar de um relatório honesto feito com este capítulo?
+= "Neste conjunto de 42 casos, o intervalo de 95% foi de 0,877 a 0,996."
+- "O assistente alcança 97,6% de acerto."
+- "As defesas reduzem os ataques reais em 45%."
+- "O sistema é seguro e está aprovado."
+- "O custo mensal será de 40 unidades."
+J: As demais frases transferem números de simuladores e de preços hipotéticos para o mundo real.
+
+MC: O que o registro de reprodutibilidade do Projeto 6 inclui?
+= Versões das bibliotecas, semente, hash da configuração e hash da lista de casos.
+- Somente a data da execução.
+- As chaves de acesso aos serviços.
+- O texto completo de todas as respostas.
+- A opinião da equipe sobre o resultado.
+J: Com esses itens, outra pessoa reproduz os números; chaves nunca entram em registros.
+
+MC: Por que os trechos com a API Claude do capítulo estão marcados `python-ni`?
+= Porque não foram executados (sem serviço real); só os nomes de classes e campos foram conferidos nos pacotes instalados.
+- Porque a API Claude não pode ser usada com Python.
+- Porque o código tem erros de sintaxe conhecidos.
+- Porque exigem uma versão antiga do pacote.
+- Porque o capítulo proíbe adaptadores reais.
+J: Parâmetros e nomes de modelos mudam; a documentação vigente é a fonte.
+
+MC: O que o livro recomenda fazer com informações voláteis (preços, nomes de modelos, normas)?
+= Conferi-las na documentação vigente, pois os princípios envelhecem devagar e os detalhes, rápido.
+- Memorizar os valores do livro como definitivos.
+- Ignorá-las, por serem irrelevantes aos projetos.
+- Tratá-las como verdade enquanto o livro estiver na estante.
+- Substituí-las por valores medidos em simuladores.
+J: O corte bibliográfico é outubro de 2026; o que é volátil deve ser conferido antes do uso.
+
+DISC[C]: Descreva o molde comum dos projetos do capítulo e explique por que o critério de aceitação deve ser escrito antes da medição.
+R: O molde tem problema e usuários; requisitos com critérios de aceitação; dados com origem declarada (desenvolvimento e teste); arquitetura; implementação executada; avaliação com intervalo e análise de erros; riscos com responsáveis; relatório. O critério vem antes para não ser moldado pelo resultado: critério escrito depois dos números tende a encaixar neles (ajuste ao teste), o que invalida o veredito.
+CRIT: Lista as etapas do molde.
+CRIT: Explica o risco de escrever o critério depois da medição.
+
+DISC[C]: Explique os três vereditos (atende, não atende, inconclusivo) e por que "inconclusivo" é uma resposta legítima.
+R: Compara-se o intervalo (e não só a média) ao critério: se todo o intervalo está do lado bom, atende; se todo está do lado ruim, não atende; se o intervalo atravessa o critério, os dados não decidem. Inconclusivo é legítimo e frequente com n pequeno; a ação é coletar mais casos (planejando o tamanho da amostra), e não declarar o lado que convém.
+CRIT: Define os três vereditos pelo intervalo.
+CRIT: Indica a ação diante de inconclusivo.
+
+DISC[C]: Por que o resultado do conjunto cego no Projeto 2 é mais informativo que o do conjunto de desenvolvimento? O que ele mostra sobre regras por palavras-chave em situações de risco?
+R: O de desenvolvimento mede casos que moldaram as regras, e por isso é otimista (1,000). O cego mede casos não previstos (0,167 para urgência) e estima o desempenho em casos novos. Regras por palavras-chave erram por omissão (paráfrases, descrições indiretas) e por excesso (palavras de aparência clínica em perguntas de serviço); não devem ser a única barreira onde o erro é grave, e exigem outras camadas (texto fixo de urgência em toda resposta, revisão de profissionais, classificador validado, viés a favor de encaminhar).
+CRIT: Distingue ajuste ao desenvolvimento de desempenho em casos novos.
+CRIT: Aponta os dois tipos de erro das regras e propõe camadas adicionais.
+
+DISC[C]: Explique por que o filtro de vigência e de perfil deve ser aplicado antes da recuperação dos k melhores, e o que a resposta "não consta" deve evitar revelar.
+R: Aplicado depois, o filtro pode remover justamente a melhor norma (a revogada ou a restrita) e não sobrar nada; antes, a escolha dos k melhores já considera só normas permitidas e vigentes. A resposta de abstenção deve ser a mesma para "não existe" e "existe, mas você não pode ver", para não revelar a existência de atos restritos.
+CRIT: Explica o efeito de filtrar depois da escolha dos k melhores.
+CRIT: Explica o vazamento por mensagens diferentes.
+
+DISC[C]: Distinga JSON válido de JSON correto e explique o que o esquema do pydantic garante e o que não garante na extração estruturada.
+R: O esquema garante estrutura: campos obrigatórios, tipos, listas fechadas, padrões e limites; recusa o que está ausente ou malformado. Não garante que o valor válido seja o verdadeiro (um método HTTP trocado por outro válido passa). Por isso se combinam esquema, regras de negócio, conferência por amostragem e revisão humana do que é rejeitado.
+CRIT: Lista o que o esquema verifica.
+CRIT: Explica por que "válido" não implica "correto".
+
+DISC[M]: Calcule o intervalo de Wilson de 95% para 14 acertos em 20 casos e dê o veredito para o critério "taxa ≥ 0,70". Repita para 70 acertos em 100.
+R: Com 14/20, $\hat p=0{,}70$ e o intervalo vai de cerca de 0,48 a 0,85 (atravessa 0,70): inconclusivo. Com 70/100, o intervalo vai de cerca de 0,60 a 0,78: também atravessa 0,70, inconclusivo. A mesma taxa com mais casos estreita o intervalo, mas quando a taxa observada é igual ao critério, o veredito só muda se a taxa verdadeira estiver longe dele.
+CODE:
+import math
+
+def wilson(k, n, z=1.96):
+    p = k / n; c = 1 + z * z / n
+    centro = (p + z * z / (2 * n)) / c
+    meia = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / c
+    return centro - meia, centro + meia
+
+def veredito(lo, hi, lim):
+    return "atende" if lo >= lim else "não atende" if hi < lim else "inconclusivo"
+
+for k, n in [(14, 20), (70, 100)]:
+    lo, hi = wilson(k, n)
+    print(f"{k}/{n}: [{lo:.3f}; {hi:.3f}] -> {veredito(lo, hi, 0.70)}")
+lo, hi = wilson(14, 20)
+assert abs(lo - 0.4812) < 0.005 and abs(hi - 0.8541) < 0.005
+lo, hi = wilson(70, 100)
+assert abs(lo - 0.6038) < 0.005 and abs(hi - 0.7820) < 0.005
+assert veredito(*wilson(14, 20), 0.70) == "inconclusivo" and veredito(*wilson(70, 100), 0.70) == "inconclusivo"
+ENDCODE
+CRIT: Aplica a fórmula de Wilson corretamente.
+CRIT: Compara o intervalo, e não só a taxa, ao critério.
+
+DISC[M]: Com margem de erro de 0,05 (semi-largura do intervalo de 95%) e taxa esperada de 0,80, quantos casos são necessários? E se a taxa esperada for 0,95?
+R: Pela aproximação normal, $n=z^{2}p(1-p)/m^{2}$. Com $p=0{,}80$: $1{,}96^{2}\times0{,}16/0{,}0025\approx246$. Com $p=0{,}95$: $1{,}96^{2}\times0{,}0475/0{,}0025\approx73$. Taxas mais perto de 0 ou 1 exigem menos casos para a mesma margem; a aproximação é grosseira nesses extremos, e o intervalo de Wilson é preferível para conferir.
+CODE:
+import math
+
+def n_necessario(p, margem, z=1.96):
+    return math.ceil(z * z * p * (1 - p) / margem ** 2)
+
+n80, n95 = n_necessario(0.80, 0.05), n_necessario(0.95, 0.05)
+print(n80, n95)
+assert n80 == 246 and n95 == 73
+ENDCODE
+CRIT: Usa a fórmula do tamanho de amostra para proporção.
+CRIT: Interpreta o efeito da taxa esperada.
+
+DISC[M]: Uma operadora tem 120 000 conversas por mês; 45% vão sempre a um humano. Se uma conversa com agente custa 0,0005 unidade hipotética e o classificador custa 0,00002 por conversa, qual a economia mensal ao colocar o classificador na frente?
+R: Sem classificador: $120000\times0{,}0005=60$. Com classificador: custo do classificador em todas, $120000\times0{,}00002=2{,}4$, mais o agente nas 55% restantes, $120000\times0{,}55\times0{,}0005=33$, total 35,4. Economia de $24{,}6$ unidades (41%). Os valores são hipotéticos; o ganho real depende de preços, tamanhos de prompt e fração automatizável medidos.
+CODE:
+conversas, frac_humano = 120_000, 0.45
+c_agente, c_clf = 0.0005, 0.00002
+sem = conversas * c_agente
+com = conversas * c_clf + conversas * (1 - frac_humano) * c_agente
+print(f"sem: {sem:.1f} | com: {com:.1f} | economia: {sem - com:.1f} ({(sem - com) / sem:.0%})")
+assert abs(sem - 60.0) < 1e-9 and abs(com - 35.4) < 1e-9
+ENDCODE
+CRIT: Inclui o custo do classificador em todas as conversas.
+CRIT: Declara que os valores são hipotéticos.
+
+DISC[M]: Em um teste de regressão pareado com 40 casos, a versão nova acerta 3 casos que a antiga erra e erra 1 que a antiga acerta. Qual a diferença de taxa e o p-valor exato do teste de McNemar?
+R: A diferença de taxa é $(3-1)/40=0{,}05$. O teste exato considera os $d=4$ casos discordantes e a hipótese de que cada um é igualmente provável de cair de cada lado: $p=2\,P(X\le1)$ com $X\sim\mathrm{Bin}(4;0{,}5)$, que dá $2\times5/16=0{,}625$. Não há evidência de diferença; com 4 discordâncias o teste tem pouquíssimo poder.
+CODE:
+from math import comb
+
+b, c = 3, 1
+d = b + c
+p = min(1.0, 2 * sum(comb(d, i) for i in range(0, min(b, c) + 1)) / 2 ** d)
+print(f"diferença de taxa: {(b - c) / 40:+.3f} | McNemar exato p = {p:.3f}")
+assert abs(p - 0.625) < 1e-9 and abs((b - c) / 40 - 0.05) < 1e-12
+ENDCODE
+CRIT: Usa só os casos discordantes.
+CRIT: Interpreta o p-valor com o poder do teste.
+
+DISC[P]: Implemente `veredito(lo, hi, limiar, maior_melhor=True)` que devolva "atende", "não atende" ou "inconclusivo" e teste os dois sentidos do critério (taxa mínima e taxa máxima).
+R: Para critérios de mínimo, atende se $lo\ge limiar$ e não atende se $hi<limiar$. Para critérios de máximo (por exemplo, alucinação ≤ 0,10), atende se $hi\le limiar$ e não atende se $lo>limiar$. Em todos os outros casos, inconclusivo.
+CODE:
+def veredito(lo, hi, limiar, maior_melhor=True):
+    if maior_melhor:
+        return "atende" if lo >= limiar else "não atende" if hi < limiar else "inconclusivo"
+    return "atende" if hi <= limiar else "não atende" if lo > limiar else "inconclusivo"
+
+assert veredito(0.85, 0.95, 0.80) == "atende"
+assert veredito(0.40, 0.70, 0.80) == "não atende"
+assert veredito(0.70, 0.90, 0.80) == "inconclusivo"
+assert veredito(0.00, 0.08, 0.10, maior_melhor=False) == "atende"
+assert veredito(0.12, 0.30, 0.10, maior_melhor=False) == "não atende"
+assert veredito(0.05, 0.20, 0.10, maior_melhor=False) == "inconclusivo"
+print("ok")
+ENDCODE
+CRIT: Trata os critérios de mínimo e de máximo.
+CRIT: Devolve inconclusivo quando o intervalo atravessa o critério.
+
+DISC[P]: Implemente `vigente_em(meta, data)` para o intervalo [início, fim) com datas ISO e `fim=None` para "sem término", e teste as fronteiras.
+R: Como datas ISO comparam como texto, basta `inicio <= data and (fim is None or data < fim)`. Os testes de fronteira verificam que o dia do início vale e o dia do fim não vale.
+CODE:
+def vigente_em(meta, data):
+    return meta["inicio"] <= data and (meta["fim"] is None or data < meta["fim"])
+
+m = {"inicio": "2024-01-01", "fim": "2026-03-01"}
+assert vigente_em(m, "2024-01-01")            # o dia do início vale
+assert vigente_em(m, "2026-02-28")
+assert not vigente_em(m, "2026-03-01")        # o dia do fim já não vale
+assert not vigente_em(m, "2023-12-31")
+assert vigente_em({"inicio": "2025-02-01", "fim": None}, "2030-01-01")
+print("ok")
+ENDCODE
+CRIT: Usa intervalo fechado no início e aberto no fim.
+CRIT: Testa as fronteiras.
+
+DISC[P]: Implemente uma trilha de auditoria encadeada por hash (`registrar` e `verificar`) e mostre que a alteração de um evento passado é detectada.
+R: Cada evento guarda o hash do anterior e o seu próprio, calculado sobre o conteúdo mais o hash anterior; `verificar` recalcula toda a cadeia. Alterar o conteúdo de um evento passado muda o hash esperado e a verificação falha.
+CODE:
+import hashlib, json
+
+class Trilha:
+    def __init__(self):
+        self.eventos = []
+    def registrar(self, tipo, **dados):
+        ant = self.eventos[-1]["hash"] if self.eventos else "0" * 16
+        corpo = {"seq": len(self.eventos), "tipo": tipo, "dados": dados}
+        h = hashlib.sha256((ant + json.dumps(corpo, sort_keys=True)).encode()).hexdigest()[:16]
+        self.eventos.append({**corpo, "hash": h, "ant": ant})
+    def verificar(self):
+        ant = "0" * 16
+        for e in self.eventos:
+            corpo = {k: e[k] for k in ("seq", "tipo", "dados")}
+            h = hashlib.sha256((ant + json.dumps(corpo, sort_keys=True)).encode()).hexdigest()[:16]
+            if e["ant"] != ant or e["hash"] != h:
+                return False
+            ant = h
+        return True
+
+t = Trilha()
+for i in range(3):
+    t.registrar("consulta", n=i)
+assert t.verificar()
+t.eventos[1]["dados"]["n"] = 99
+assert not t.verificar()
+print("ok")
+ENDCODE
+CRIT: Encadeia cada evento ao hash do anterior.
+CRIT: Demonstra a detecção da alteração.
+
+DISC[P]: Defina com pydantic um esquema `Pedido` (código com 4 dígitos, quantidade inteira entre 1 e 10, método de entrega em uma lista fechada) e mostre que valores inválidos são rejeitados e que campos extras são proibidos.
+R: Um `BaseModel` com `Field(pattern=...)`, `Field(ge=1, le=10)`, `Literal[...]` e `ConfigDict(extra="forbid")` valida a entrada e recusa o que foge ao esquema. Os testes capturam `ValidationError`.
+CODE:
+from typing import Literal
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
+
+class Pedido(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    codigo: str = Field(pattern=r"^\d{4}$")
+    quantidade: int = Field(ge=1, le=10)
+    entrega: Literal["retirada", "correios", "motoboy"]
+
+ok = Pedido.model_validate_json('{"codigo": "1042", "quantidade": 3, "entrega": "correios"}')
+assert ok.quantidade == 3
+for ruim in ['{"codigo": "42", "quantidade": 3, "entrega": "correios"}',
+             '{"codigo": "1042", "quantidade": 11, "entrega": "correios"}',
+             '{"codigo": "1042", "quantidade": 3, "entrega": "drone"}',
+             '{"codigo": "1042", "quantidade": 3, "entrega": "correios", "extra": 1}']:
+    try:
+        Pedido.model_validate_json(ruim)
+        raise AssertionError("deveria ter sido rejeitado")
+    except ValidationError:
+        pass
+print("ok")
+ENDCODE
+CRIT: Declara padrão, limites e lista fechada.
+CRIT: Proíbe campos extras e testa rejeições.
+
+DISC[A]: Uma equipe apresenta: "o sistema acerta 97% das perguntas (33 de 34); logo, está aprovado para todos os cursos". Aponte ao menos cinco problemas e diga o que mudaria no relatório.
+R: Faltam o intervalo (33/34 tem Wilson de cerca de 0,85 a 0,995); o critério de aceitação prévio; o tipo das perguntas (diretas, paráfrases, sem resposta); a análise de erros; a origem dos dados (sintéticos? escritos pela equipe?); a separação de desenvolvimento e teste; a generalização "todos os cursos" (o conjunto cobre outros cursos?); a comparação com uma linha de base; e riscos e limites. O relatório deve trazer tabela por estrato com IC e veredito, erros com exemplos e as limitações.
+CRIT: Aponta a ausência de intervalo e de critério prévio.
+CRIT: Questiona a generalização e a origem dos dados.
+CRIT: Propõe relatório por estrato com análise de erros.
+
+DISC[A]: Uma equipe de atendimento mede o acerto do classificador de intenções com mensagens geradas pelos mesmos modelos de frase do treino e relata 100%. Analise e proponha uma avaliação melhor.
+R: O teste herda o formato do treino (vazamento de formato), então mede memorização. Propor: mensagens escritas à mão por pessoas fora da equipe de construção, ou amostras anônimas de atendimentos reais autorizadas, com rótulos conferidos; separar desenvolvimento e teste; relatar intervalo e erros por classe (matriz de confusão); incluir a classe "indefinido" que vai a humano; e repetir periodicamente (deriva).
+CRIT: Identifica o vazamento de formato entre treino e teste.
+CRIT: Propõe teste com mensagens independentes e relatório por classe.
+
+DISC[A]: No Projeto 6, a versão v2 reduz muito a taxa de sucesso dos ataques, mas bloqueia 25% das mensagens legítimas do estrato correspondente. Discuta como decidir se a v2 deve ir ao piloto.
+R: Segurança e utilidade se negociam. Decidir com critérios escritos: o custo de uma legítima bloqueada (frustração, canal alternativo) contra o de um ataque bem-sucedido (depende da gravidade e do privilégio); considerar o intervalo (-0,500 a 0,000 é largo); reduzir falsos positivos (ajustar o filtro, ajuda para o usuário, caminho para humano); liberar apenas para piloto restrito com monitoramento; ampliar a bancada; e decidir por pessoas responsáveis, registrando a decisão.
+CRIT: Apresenta o trade-off entre segurança e utilidade.
+CRIT: Considera a incerteza (intervalo) e propõe piloto com monitoramento.
+
+DISC[A]: Um gestor propõe usar o assistente do Projeto 2 (saúde) como primeiro contato clínico "porque o conjunto de desenvolvimento mostrou 100% de revocação de urgência". Analise e responda.
+R: O projeto é informativo e não clínico; o resultado de desenvolvimento é otimista porque as regras foram escritas olhando aqueles casos; no conjunto cego a revocação foi 0,167 (IC de 0,030 a 0,564), o que viola qualquer critério razoável para urgência; faltam validação por profissionais, avaliação de impacto, supervisão e base legal para dados sensíveis. A resposta é não, com plano para reduzir riscos (texto fixo de urgência em toda resposta, classificador validado, revisão humana) antes de qualquer piloto restrito.
+CRIT: Distingue o escopo informativo do uso clínico.
+CRIT: Usa o resultado cego e a ausência de validação profissional.
+
+DISC[D]: Projete o plano de projeto de quatro semanas de uma equipe de cinco pessoas para um assistente de consulta a normas de uma prefeitura (fictícia), com entregas, papéis, critérios de aceitação e marcos de decisão.
+R: Semana 1: problema, usuários, requisitos e critérios escritos e aprovados; plano de dados. Semana 2: dados e bancada por estrato, separação desenvolvimento e teste, linha de base. Semana 3: arquitetura (vigência, perfis, RAG, trilha), implementação, primeira medição com IC, análise de erros. Semana 4: segurança, riscos, custo, relatório, cartão, ensaio. Papéis: dono do produto, engenharia, dados e avaliação (não é quem otimiza), segurança e privacidade, redação. Marcos: aprovação dos critérios (fim da semana 1), congelar o teste (semana 2), decisão de piloto (semana 4) pelo veredito por estrato. Inclui registro de decisões e reprodutibilidade.
+CRIT: Entregas semanais coerentes com o molde.
+CRIT: Papéis, incluindo a separação entre quem constrói e quem avalia.
+CRIT: Marcos de decisão baseados em critérios e vereditos.
+
+DISC[D]: Elabore o desenho de uma bancada de avaliação para um sistema que combina RAG e agente, com estratos, critérios, tamanho mínimo por estrato, regressão automática e relatório.
+R: Estratos: RAG direto, RAG parafraseado, sem resposta, tarefas de agente por tipo, injeção indireta, ataques de catálogo com variantes, mensagens legítimas que não devem ser bloqueadas, privacidade no registro, por subgrupo relevante. Critérios por estrato, escritos antes (mínimo ou máximo). Tamanho: calcular por margem desejada (por exemplo, cerca de 250 casos para margem de 0,05 com p = 0,8) e começar menor, relatando inconclusivos. Regressão: a cada mudança, executar a bancada, comparar pareado com a versão aprovada (bootstrap pareado, McNemar), com portão por estrato. Relatório automático com taxa, IC, veredito, custo, latência, comparação e limites; cartão gerado da bancada.
+CRIT: Define estratos e critérios por estrato.
+CRIT: Trata o tamanho mínimo e a incerteza.
+CRIT: Inclui regressão pareada e relatório automático.
+
+DISC[D]: Proponha um plano para migrar um dos projetos do capítulo de componentes simulados para componentes reais, camada por camada, preservando a avaliação e a governança.
+R: Trocar uma camada por vez atrás da mesma interface (porta): primeiro o gerador (adaptador para um serviço de LLM com modelo e credenciais do ambiente), repetindo a bancada; depois o extrator ou o agente. Em cada troca: fixar a versão do modelo e a data, registrar parâmetros, refazer limiares e critérios, repetir execuções (há variabilidade), comparar pareado com a versão simulada, rever segurança (injeção) e custo com medições reais, e atualizar o cartão e o plano de governança. Conferir a documentação vigente de cada serviço, pois parâmetros, preços e modelos mudam. Manter a revisão humana por amostragem após a implantação.
+CRIT: Propõe troca incremental com a mesma interface e bancada.
+CRIT: Registra versões, repete execuções e atualiza segurança, custo e governança.

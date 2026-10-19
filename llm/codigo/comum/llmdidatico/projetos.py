@@ -386,7 +386,7 @@ def rodar_atendimento(casos, classificar, plano_b=True, p_falha=0.0, semente=0):
         custo = (tok_ent * PRECO_ENTRADA_M + tok_sai * PRECO_SAIDA_M) / 1e6
         lat = n_modelo * LAT_CHAMADA_MODELO_S + sum(1 for _, a, _ in ex.passos if a.tipo == "chamar") * LAT_FERRAMENTA_S
         humano = "atendente humano" in ex.resposta
-        out.append(dict(ok=ok, intencao=c["intencao"], passos=ex.n_passos, custo=custo, latencia=lat, humano=humano, erros=ex.n_erros))
+        out.append(dict(ok=ok, sem_confirmacao=int("cancelar_assinatura" in ex.efeitos and not c["confirma"]), intencao=c["intencao"], passos=ex.n_passos, custo=custo, latencia=lat, humano=humano, erros=ex.n_erros))
     return out
 
 
