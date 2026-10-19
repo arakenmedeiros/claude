@@ -29,7 +29,7 @@ def prop_ic(valores):
         return (float("nan"),) * 3 + (0,)
     k, n = sum(v), len(v)
     lo, hi = ic_wilson(k, n)
-    return k / n, lo, hi, n
+    return k / n, max(0.0, lo), min(1.0, hi), n
 
 
 def fmt_ic(t):
@@ -335,12 +335,15 @@ class ModeloAtendimento:
         return A("responder", texto="Preciso do código do pedido ou do cliente; encaminhei a um atendente humano.")
 
 
-def gerar_casos_atendimento(n_por_intencao=10, seed=0):
+def gerar_casos_atendimento(n_por_intencao=10, seed=0, fonte="corpus"):
     """Casos (texto, intenção real, esperado, confirma_cancelamento). O texto reaproveita `corpus.intencoes` e acrescenta o código quando preciso."""
     import random
     from . import corpus
     rnd = random.Random(seed)
     X, y = corpus.intencoes(n_por_intencao * 3, seed=seed + 100)
+    if fonte == "novas":                      # mensagens escritas à mão, fora dos modelos de frase do corpus
+        X, y = [t for t, _ in MENSAGENS_NOVAS], [r for _, r in MENSAGENS_NOVAS]
+        n_por_intencao = 3
     por = defaultdict(list)
     for x, lab in zip(X, y):
         por[lab].append(x)
@@ -730,7 +733,7 @@ def relatorio_automatico(titulo, cfg, res, res_base=None, nome_base="v1", nome_a
 
 # --------------------------------------------------------------------------------------- cartão do sistema e governança
 def cartao_sistema(cfg, res, casos):
-    tab = {t["estrato"]: (round(t["p"], 3), [round(t["lo"], 3), round(t["hi"], 3)], t["veredito"]) for t in tabela_estratos(res)}
+    tab = {t["estrato"]: f"{t['p']:.3f} [{t['lo']:.3f}; {t['hi']:.3f}] n={t['n']} -> {t['veredito']}" for t in tabela_estratos(res)}
     sha = hashlib.sha256(json.dumps([c["pedido"]["texto"] for c in casos], ensure_ascii=False).encode()).hexdigest()[:12]
     return {
         "nome": "Assistente integrado da secretaria (simulado, fictício)", "versao": "v2-" + hashlib.sha256(json.dumps(cfg.como_dict(), sort_keys=True).encode()).hexdigest()[:8],

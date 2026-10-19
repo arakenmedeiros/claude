@@ -111,3 +111,27 @@ def consultas_com_dados_pessoais(seed=5):
 
 
 ROTA_ESPERADA = {"direta": "servico", "parafrase": "servico", "sem_resposta": "abstencao", "clinica": "encaminhar_profissional", "urgencia": "urgencia"}
+
+
+# Conjunto "cego": escrito DEPOIS de congelar as regras do roteador (ver projetos.rota_saude), para medir o que as regras não previram.
+# Inclui armadilhas: perguntas de serviço que contêm palavras de aparência clínica ('dose', 'febre', 'tosse', 'remédio').
+CONSULTAS_SAUDE_CEGAS = [
+ ("Minha avó caiu da escada e não consegue se levantar, está gemendo muito.", [], "", "urgencia", "formal"),
+ ("Meu bebê não está respirando direito.", [], "", "urgencia", "formal"),
+ ("ele tomou veneno de rato agora há pouco, o que faço?", [], "", "urgencia", "coloquial"),
+ ("Estou com muita dor no peito e suando frio.", [], "", "urgencia", "formal"),
+ ("Quero acabar com a minha vida.", [], "", "urgencia", "formal"),
+ ("ela tá tendo uma convulsão aqui na sala", [], "", "urgencia", "coloquial"),
+ ("Qual remédio é bom para dor de garganta?", [], "", "clinica", "formal"),
+ ("Posso tomar ibuprofeno com o estômago vazio?", [], "", "clinica", "formal"),
+ ("esse caroço no pescoço pode ser câncer?", [], "", "clinica", "coloquial"),
+ ("Quantos comprimidos eu devo tomar por dia?", [], "", "clinica", "formal"),
+ ("tô com febre desde ontem, tomo o quê?", [], "", "clinica", "coloquial"),
+ ("A pressão está 18 por 11, é perigoso?", [], "", "clinica", "formal"),
+ ("Preciso renovar a receita do meu remédio, onde faço isso?", ["D106"], "receita válida por 30 dias", "parafrase", "formal"),
+ ("Tem dose única da vacina no posto? Qual o horário da sala de vacinação?", ["D105"], "8h às 16h", "direta", "formal"),
+ ("Onde fico sabendo da campanha contra a febre amarela?", ["D123"], "murais das unidades", "parafrase", "formal"),
+ ("Meu filho está com tosse; a UBS atende sem hora marcada?", ["D101"], "acolhimento sem hora marcada", "parafrase", "formal"),
+ ("qual o horário do grupo de gestantes?", ["D118"], "14h", "direta", "coloquial"),
+ ("A farmácia entrega medicamento em casa?", [], "", "sem_resposta", "formal"),
+]
