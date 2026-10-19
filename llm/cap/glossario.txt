@@ -358,11 +358,11 @@ STFT (short-time Fourier transform): transformada de Fourier em janelas curtas, 
 Reconhecimento de fala (speech to text): conversão de áudio em texto; erros se propagam para as etapas seguintes. Cap. 13.
 Texto alternativo (alt text): descrição textual de uma imagem para acessibilidade; deve ser revisada. Cap. 13.
 Alucinação visual (visual hallucination): descrição de detalhes que não existem na imagem. Cap. 13.
-Projeto integrador (capstone project): projeto que combina vários capítulos em um sistema verificável. Cap. 18.
-Critérios de aceitação (acceptance criteria): condições mensuráveis para considerar um projeto concluído. Cap. 18.
-Escopo (scope): fronteiras do que o projeto fará e não fará. Cap. 18.
-Linha de base (baseline): solução simples usada como referência de comparação. Caps. 12, 16, 18.
-Plano de incidentes (incident response plan): procedimentos para detectar, conter e comunicar falhas. Caps. 17, 18.
+Projeto integrador (capstone project): projeto que combina vários capítulos em um sistema verificável. Cap. 18 (Seções 18.5 a 18.12).
+Critérios de aceitação (acceptance criteria): condições mensuráveis para considerar um projeto concluído; escrito antes de medir. Cap. 18 (Seção 18.5; ver também Veredito).
+Escopo (scope): fronteiras do que o projeto fará e não fará. Cap. 18 (Seções 18.8 e 18.12.4).
+Linha de base (baseline): solução simples usada como referência de comparação. Caps. 12, 16, 18 (Seção 18.5).
+Plano de incidentes (incident response plan): procedimentos para detectar, conter e comunicar falhas. Caps. 17, 18 (Seção 18.8.5).
 Supervisão humana (human oversight): participação de pessoas na decisão ou na revisão de ações do sistema. Caps. 14, 17.
 Confirmação humana (human confirmation): aprovação explícita antes de ações destrutivas ou externas; padrão deve ser negar. Cap. 14.
 Entrada não confiável (untrusted input): qualquer texto vindo de usuários, documentos ou ferramentas, tratado como dado. Caps. 11, 14, 17.
@@ -377,3 +377,19 @@ Posição no contexto (lost in the middle): relato de que modelos reais podem us
 Limite de saída (max tokens): número máximo de tokens que a resposta pode ter; respostas cortadas exigem tratamento. Cap. 6.
 Perda contrastiva simétrica (symmetric contrastive loss): entropia cruzada aplicada às linhas e às colunas da matriz de similaridades imagem-texto. Cap. 13.
 Prompt versionado (prompt versioning): prompt com identificador, hash e registro de mudanças, tratado como artefato de software. Cap. 8.
+Veredito (verdict): comparação do intervalo de confiança com o critério de aceitação: "atende" (intervalo inteiro do lado bom), "não atende" (inteiro do lado ruim) ou "inconclusivo" (o intervalo atravessa o critério, e os dados não decidem); com poucos casos, o inconclusivo é o resultado normal. Cap. 18 (Seção 18.5).
+Atende / não atende / inconclusivo: os três vereditos possíveis; "inconclusivo" pede mais casos, e não a escolha do lado que agrada. Cap. 18 (Seção 18.5).
+Conjunto cego (blind set): casos separados, não vistos durante a escrita de regras e a calibração, usados só para a medição final; evita a falsa sensação de cobertura (no Projeto 2, a revocação de urgência foi 1,000 no desenvolvimento e 0,167 no cego). Cap. 18 (Seções 18.8.2 e 18.18).
+Bancada por estrato (stratified test bench): conjunto de casos dividido em grupos (estratos) com critério de aceitação próprio, relatando taxa, IC e veredito de cada um, e não só a média. Cap. 18 (Seção 18.12.2).
+Estrato (stratum): grupo de casos do mesmo tipo (por exemplo, paráfrases, ataques ou perguntas sem resposta), medido à parte. Cap. 18 (Seção 18.12.2).
+Portão de regressão (regression gate): verificação automática que compara uma mudança (prompt, limiar, modelo, base) com a versão aprovada, nos mesmos casos e de modo pareado, antes de liberá-la. Cap. 18 (Seção 18.12.3).
+Cartão do sistema (system card): documento que resume finalidade, usuários, fora do escopo, componentes, dados, métricas com intervalos e vereditos, riscos, supervisão e limitações, gerado a partir da bancada. Cap. 18 (Seção 18.12.4).
+Plano de governança (governance plan): tabela que liga cada atividade a quem executa, quem aprova, a frequência e a evidência registrada. Cap. 18 (Seção 18.12.4).
+Pré-filtro e pós-filtro (pre-filter and post-filter): filtrar por vigência e perfil antes de escolher os k melhores (pré-filtro) ou depois (pós-filtro); o pós-filtro pode devolver menos que k resultados úteis e depende do valor de k. Cap. 18 (Seção 18.9.2).
+Vigência (validity period): intervalo de datas em que uma norma ou documento está em vigor; a resposta deve usar a versão vigente na data de referência e testar as datas na fronteira. Cap. 18 (Seção 18.9).
+Trilha de auditoria encadeada por hash (hash-chained audit trail): registro de eventos em que cada entrada guarda o hash da anterior, de modo que qualquer adulteração é detectada pela verificação da cadeia. Cap. 18 (Seção 18.9.3).
+Pseudonimização de usuário (user pseudonymization): troca do identificador do usuário por um código estável (o mesmo usuário gera sempre o mesmo código), sem exibir o nome; reduz, mas não elimina, o risco de reidentificação. Cap. 18 (Seção 18.9.3).
+Confundimento (confounding): mistura de dois fatores que variam juntos (por exemplo, registro de escrita e tipo de pergunta), impedindo atribuir a diferença a um deles; a saída é um desenho balanceado. Cap. 18 (Seção 18.8.4).
+Registro de reprodutibilidade (reproducibility record): conjunto de informações guardado a cada execução (versões, semente, hash da configuração e hash da lista de casos) para que outra pessoa reproduza os números. Cap. 18 (Seções 18.6.2 e 18.12.4).
+Extração validada por esquema (schema-validated extraction): extração de campos de um texto em JSON que só é aceita se passar pelo esquema (por exemplo, com pydantic); o esquema barra formato inválido, mas não um erro que permaneça válido. Cap. 18 (Seção 18.11.3).
+Dossiê reproduzível (reproducible dossier): entrega final do Projeto 6, com requisitos e critérios, bancada por estrato, relatório com IC e vereditos, comparação com a linha de base e registro de reprodutibilidade. Cap. 18 (Seção 18.12; Exercício prático do projeto de fim de capítulo).

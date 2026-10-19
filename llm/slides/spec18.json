@@ -1,0 +1,453 @@
+{
+ "capitulo": 18,
+ "titulo": "Projetos integradores",
+ "parte": "Parte V",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Planejar um projeto com LLM de ponta a ponta: problema, requisitos, dados, arquitetura, riscos e relatório",
+    "Executar seis projetos completos em CPU e medir cada um com intervalo de confiança",
+    "Comparar o intervalo com o critério e dizer: atende, não atende ou inconclusivo",
+    "Analisar erros por tipo e por subgrupo, com mitigação e responsável",
+    "Combinar camadas, bancada, custo e governança num sistema integrador",
+    "Declarar com honestidade o que o simulador não permite afirmar"
+   ],
+   "notas": "Bem-vindos ao último capítulo do livro. Aqui não há técnica nova: o objetivo é juntar tudo o que vimos em seis projetos completos, cada um com o mesmo molde. Percorra os seis objetivos em voz alta e destaque o terceiro, que é a marca do capítulo: o veredito honesto, que compara o intervalo inteiro, e não só a média, ao critério. Avise já que quase todos os vereditos serão inconclusivos, e que isso é intencional. Lembre que não houve acesso a LLMs reais: os números descrevem simuladores e o desenho do sistema. Pergunta à turma: quem já viu uma demonstração impressionante que depois não funcionou no dia a dia? Anote as respostas, pois voltaremos a elas."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Situação inicial: a demo brilhante",
+   "fig": "f18_molde",
+   "itens": [
+    "Equipe monta um assistente com IA em três semanas",
+    "A diretora pergunta: para quem é? Como sabemos que funciona?",
+    "E quando erra? Quem responde se der problema?",
+    "Sem requisitos, critério, intervalo ou governança: demo, não projeto",
+    "Solução: um molde comum, do problema ao relatório"
+   ],
+   "notas": "Conte a história da equipe de cinco pessoas que entrega uma demonstração brilhante e é desarmada por quatro perguntas simples da diretora. Mostre que o código existe, mas faltam requisitos escritos, critério de aceitação, intervalo de confiança e plano de governança. Aponte a figura à direita: é o molde que todos os seis projetos seguem, com setas de volta indicando que a análise de erros realimenta requisitos, dados e arquitetura. Diga que o critério de aceitação é escrito antes de medir. Pergunta à turma: se vocês fossem a diretora, qual das quatro perguntas seria a mais difícil de responder hoje? Armadilha: não tratar o molde como burocracia; ele é o que separa projeto de demonstração."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: pintar o alvo depois da flecha",
+   "texto": "Critério de aceitação é pintar o alvo ANTES de atirar. Pintar depois sempre dá na mosca.",
+   "detalhe": "Se o critério é escrito depois de ver os números, ele se encaixa neles. Escrito antes, vira a regra do jogo, e o veredito passa a significar alguma coisa.",
+   "notas": "Use a imagem do arqueiro que atira a flecha na parede e só depois desenha o alvo em volta: acertou em cheio, claro. Ligue ao projeto: se a equipe escreve o critério de aceitação depois de ver o resultado, ele tende a coincidir com o que já foi medido. No molde do capítulo, o critério vem na semana um, aprovado pelo dono do produto, antes de qualquer medição. Exemplo oral: critério de recuperação maior ou igual a 0,85 escrito antes de rodar a busca. Pergunta à turma: quem aqui já ajustou uma meta depois do resultado? Armadilha: confundir critério com desejo; o critério é um número e um intervalo, e diz quando está pronto."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: pesquisa eleitoral e margem de erro",
+   "texto": "A mesma taxa de 90% pode ser conclusiva ou não. Depende de quantos casos foram ouvidos.",
+   "detalhe": "Com 30 casos, o intervalo vai de 0,744 a 0,965 e cruza o critério de 0,80: inconclusivo. Com 100 casos, o limite inferior é 0,826: atende.",
+   "notas": "Compare com pesquisa eleitoral: ninguém declara vencedor quando a diferença está dentro da margem de erro. Aqui, a mesma taxa observada de 0,90 é inconclusiva com 30 casos, porque o intervalo de Wilson, de 0,744 a 0,965, atravessa o critério de 0,80, e passa a atender com 100 casos, com limite inferior de 0,826. Explique que inconclusivo não é meio bom, meio ruim: significa que os dados não decidem. A ação correta é coletar mais casos. Pergunta à turma: se a taxa fosse 0,80 com 10 casos, o que diríamos? Resposta: intervalo de 0,490 a 0,943, inconclusivo. Armadilha: declarar atende ou não atende com intervalo que cruza o critério."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Projeto 1 (educação): o problema",
+   "itens": [
+    "Estudantes perguntam prazos e regras da Universidade Federal Aurora (fictícia)",
+    "Resposta errada tem custo real, como um prazo perdido",
+    "Regra: responder só com base nos documentos, citar a fonte e dizer que não sabe",
+    "Dados: 60 documentos e 56 consultas, todos escritos por nós",
+    "Critérios: recuperação >= 0,85; resposta correta >= 0,70; abstenção >= 0,90; fidelidade >= 0,95"
+   ],
+   "notas": "Apresente o primeiro projeto: um assistente de normas acadêmicas de uma universidade que não existe. O ponto central é o custo do erro: um prazo errado faz o estudante perder a matrícula, então o sistema deve responder somente com base nos documentos, citar a fonte e se abster quando não souber. Mostre os quatro requisitos e seus critérios, escritos antes de medir. Os dados são os 60 documentos e 56 consultas do pacote, sendo 36 diretas, 10 paráfrases e 10 sem resposta. Pergunta à turma: entre responder errado e dizer não sei, qual é pior neste caso? Armadilha: lembrar que o gerador é simulado, não é um LLM, e que os números descrevem o desenho do sistema."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Projeto 1: arquitetura",
+   "fig": "f18_p1_arq",
+   "legenda": "Pergunta, busca híbrida, prompt com delimitadores, gerador simulado, verificação de citação e abstenção.",
+   "notas": "Percorra a figura da esquerda para a direita: a pergunta entra, a busca híbrida combina BM25 e LSA com fusão por posição, o prompt é montado com delimitadores, o gerador simulado responde, e a verificação de citação decide entre responder e se abster. Enfatize que cada seta é uma fronteira que o relatório mede separadamente: assim, quando algo falha, sabemos se foi recuperação, geração ou política. Lembre dos Capítulos 10 e 11 de onde vêm as peças. Pergunta à turma: se a resposta saiu errada, em quantos lugares da figura o erro pode ter nascido? Armadilha: medir apenas a resposta final e perder a capacidade de diagnosticar onde o sistema falhou."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Projeto 1: resultado e veredito",
+   "codigo": "pipe, ix, idf = P.montar_rag(DOCS, limiar=0.5)\nlinhas = rag.avaliar(pipe, CONSULTAS)\nm = P.metricas_rag(linhas)\n# trecho do bloco do capítulo: taxa, IC de Wilson e veredito por critério",
+   "saida": "métrica             taxa [IC95% de Wilson] (n)           critério  veredito\nrecuperacao         0.891 [0.770; 0.953] (n=46)           >= 0.85  inconclusivo\nresposta_correta    0.609 [0.465; 0.736] (n=46)           >= 0.70  inconclusivo\nabstencao_correta   1.000 [0.722; 1.000] (n=10)           >= 0.90  inconclusivo\nalucinacao          0.000 [0.000; 0.278] (n=10)           <= 0.10  inconclusivo\nfidelidade          1.000 [0.936; 1.000] (n=56)           >= 0.95  inconclusivo",
+   "notas": "Este é o resultado do Projeto 1, com gerador simulado, não um LLM. Os cinco vereditos saem inconclusivos. A resposta correta é 0,609, com intervalo de 0,465 a 0,736: não dá para dizer que passa nem que reprova o critério de 0,70. A abstenção correta é perfeita, 10 em 10, mas com 10 casos o intervalo vai de 0,722 a 1,000. A fidelidade é 1,000 em 56 casos, porém o limite inferior de 0,936 fica abaixo de 0,95. Veredito honesto: nada decidido, faltam casos. Mencione a varredura do limiar: com 0,3, resposta correta de 0,739 e abstenção correta de 0,600; com 0,5, abstenção de 1,000 ao custo de 21,7 por cento de abstenções indevidas. A escolha é do dono do produto. Nas paráfrases, só 1 de 8 acerta. Pergunta: o que fazer com inconclusivo?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Projeto 2 (saúde): o problema e o escopo",
+   "itens": [
+    "Informativo: horários, documentos e agendamento de uma rede fictícia",
+    "Não diagnostica, não indica dose nem conduta, não interpreta exames",
+    "Pior erro: deixar de encaminhar uma urgência",
+    "Dados sintéticos: 54 perguntas de desenvolvimento e 18 cegas",
+    "Critério mais duro: revocação de urgência >= 0,99"
+   ],
+   "notas": "Antes de qualquer número, deixe o escopo claro: este projeto não é um sistema clínico. Ele só responde sobre organização de serviços de uma rede fictícia e encaminha a profissional de saúde ou à urgência. Todos os dados são sintéticos, e dados de saúde reais exigiriam base legal, avaliação de impacto e validação por profissionais. O erro mais grave não é uma resposta de serviço errada, e sim deixar de encaminhar uma urgência, por isso o critério de revocação de urgência é de 0,99. Destaque a ideia dos dois conjuntos: 54 perguntas de desenvolvimento e 18 cegas, escritas depois de congelar as regras. Pergunta à turma: por que precisamos de perguntas cegas? Armadilha: tratar o exercício como se fosse aplicável a pacientes."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Projeto 2: arquitetura",
+   "fig": "f18_p2_arq",
+   "legenda": "Guardrails de urgência e clínica antes do RAG, com texto fixo; dados pessoais mascarados antes do registro.",
+   "notas": "A decisão de arquitetura mais importante é a ordem: os guardrails de urgência e de pedido clínico vêm antes do RAG e respondem com texto fixo, nunca gerado. Só perguntas de serviço chegam ao RAG. Dados pessoais são mascarados antes de qualquer registro. Explique por que texto fixo: a mensagem mais crítica não deve depender de um gerador que pode errar ou ser manipulado, e um texto revisado por pessoas é determinístico e auditável. Mas seja franco: as regras do roteador são determinísticas e imperfeitas, e o resultado mostrará o quanto. Pergunta à turma: se o roteador falhar em reconhecer uma urgência, para onde a pergunta vai? Resposta: para o RAG, o que é um problema. Armadilha: achar que uma camada de regras resolve sozinha um risco desta gravidade."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Projeto 2: o resultado cego é desfavorável",
+   "fig": "f18_p2_guarda",
+   "legenda": "Revocação dos guardrails no desenvolvimento e no conjunto cego, com IC95% de Wilson. Simulação, poucos casos.",
+   "itens": [
+    "Desenvolvimento: urgência 1,000, porque as regras viram essas perguntas",
+    "Cego: urgência 0,167 (1 de 6; IC de 0,030 a 0,564)",
+    "Critério de 0,99: não atendido",
+    "Veredito: liberação bloqueada"
+   ],
+   "notas": "Este é o resultado mais importante do projeto, e é desfavorável. No desenvolvimento, as regras acertam tudo, mas porque foram escritas olhando essas perguntas. No conjunto cego, a revocação de urgência cai para 0,167, com 1 acerto em 6, e intervalo de 0,030 a 0,564. Cinco urgências, como um bebê que não respira direito, não foram reconhecidas. A revocação clínica cai para 0,333 e três perguntas de serviço foram desviadas por palavras como dose e febre. O critério de 0,99 não é atendido: trate como bloqueio de liberação. Mitigações: linha fixa de urgência em toda resposta, léxico revisado por profissionais, classificador treinado e viés a favor de encaminhar. Cuidado com a equidade: a lacuna entre registros está confundida com o tipo de pergunta, então é inconclusiva."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: decorar o gabarito da prova",
+   "texto": "Regras escritas olhando o teste são como decorar o gabarito: nota 10 na prova antiga, zero na nova.",
+   "detalhe": "No Projeto 2, a urgência foi 1,000 onde as regras foram escritas e 0,167 no conjunto cego. Por isso o conjunto cego existe e não pode virar treino.",
+   "notas": "Compare com o aluno que decora o gabarito da prova do ano passado: tira dez naquela prova, mas não aprendeu a matéria. As regras do roteador de saúde fizeram exatamente isso com as perguntas de desenvolvimento. O conjunto cego, escrito depois de congelar as regras, é a prova nova. Reforce a disciplina: o teste não pode influenciar decisões, e se ajustarmos as regras até o cego chegar a 1,000, ele vira desenvolvimento e precisamos de outro. Pergunta à turma: como saber se uma nota alta é aprendizado ou decoreba? Resposta: medir em casos que o sistema nunca viu. Armadilha: descartar o conjunto cego por ser pequeno em vez de aceitar o recado que ele dá."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Projeto 3 (jurídico e público): o problema",
+   "itens": [
+    "Prefeitura de Vila Aurora (fictícia): portarias e decretos",
+    "A norma citada precisa estar vigente na data de referência",
+    "Alguns atos são restritos a perfis: público, servidor, jurídico",
+    "Cada consulta deixa trilha de auditoria; o sistema cita, não decide",
+    "Dados: 17 normas fictícias e 30 consultas com data e perfil"
+   ],
+   "notas": "O terceiro projeto acrescenta três exigências ao RAG do Projeto 1. Primeira: a norma citada precisa estar vigente na data de referência, porque versões antigas não podem aparecer. Segunda: alguns atos são restritos a perfis, como público, servidor e jurídico. Terceira: cada consulta deixa uma trilha de auditoria. Frise que o sistema não decide: ele localiza e cita, e a decisão é do agente público. Os dados são 17 atos fictícios com número, início e fim de vigência, perfil e vínculos de substituição, por exemplo a Portaria 45/2025 revogando a 12/2023, e 30 consultas. Critérios: zero normas fora da vigência, zero vazamentos de perfil. Pergunta à turma: qual o risco de citar uma norma revogada? Armadilha: tomar o sistema como parecer jurídico."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Projeto 3: arquitetura",
+   "fig": "f18_p3_arq",
+   "legenda": "Pré-filtro de vigência e perfil, depois RAG, verificação de citação e trilha encadeada por hash.",
+   "notas": "A ideia central da figura é onde o filtro entra: antes de escolher os k melhores, e não depois. Primeiro o pré-filtro remove o que está fora da vigência ou acima do perfil do usuário; só então vêm a busca, o RAG e a verificação de citação. No fim, a trilha de auditoria encadeada por hash registra a consulta com o usuário pseudonimizado: o mesmo usuário gera sempre o mesmo código, mas o nome não aparece. Diga que o hash encadeado detecta adulteração, mas não a impede; uma trilha séria também exige armazenamento com acesso restrito e cópias. Pergunta à turma: o que acontece se filtrarmos só depois de escolher? Adiante: veremos na próxima analogia e no resultado. Armadilha: achar que a trilha impede fraude."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Projeto 3: três formas de filtrar",
+   "codigo": "for modo in (\"ingenuo\", \"pos_filtro\", \"pre_filtro\"):\n    for k in (1, 3):\n        sis = P.ConsultaNormas(NORMAS, META, NIVEL, modo=modo, k=k)\n        L = P.avaliar_normas(sis, CONSULTAS_NORMAS)",
+   "saida": "modo         k  respostas ok  vazamentos  fora da vigência\ningenuo      3         18/30          16                13\npos_filtro   1         25/30           0                 0\npos_filtro   3         30/30           0                 0\npre_filtro   1         30/30           0                 0\npre_filtro   3         30/30           0                 0",
+   "notas": "Leia a tabela de saída. O modo ingênuo, sem filtro, acerta 18 de 30, vaza documentos acima do perfil em 16 consultas e traz normas fora da vigência em 13: é o que acontece com uma busca comum sobre um acervo com versões. O pós-filtro com k igual a 3 acerta 30 de 30, mas com k igual a 1 acerta só 25, porque a melhor norma era a revogada e foi removida depois, sem sobrar nada. O pré-filtro acerta 30 de 30 nos dois casos, sem vazamento. Veredito honesto: bom resultado, mas zero vazamentos em 30 casos é compatível com taxa verdadeira de até cerca de 11 por cento; a bancada não prova ausência de vazamento. Faltam testes de fronteira de datas e casos adversários. A tabela omite a linha do ingênuo com k igual a 1, que está no capítulo."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: filtrar o cardápio antes de escolher",
+   "texto": "Pré-filtro é tirar do cardápio os pratos esgotados ANTES de decidir. Pós-filtro é escolher e só então descobrir que acabou.",
+   "detalhe": "Se o prato preferido é a norma revogada, o pós-filtro a descarta depois e não sobra opção. O pré-filtro escolhe entre o que é permitido.",
+   "notas": "Imagine um restaurante: se você escolhe o prato preferido e só depois o garçom avisa que acabou, você fica sem jantar. Se o garçom retira do cardápio os pratos esgotados antes, você escolhe entre os que existem. Ligue ao Projeto 3: o pós-filtro com k igual a 1 pega a melhor norma, que era a revogada, remove-a depois e não sobra nada; o pré-filtro escolhe só entre as normas vigentes e permitidas ao perfil. A mesma lógica vale para permissões: o documento restrito nem deve ser candidato. Pergunta à turma: em que outro sistema vocês já viram esse erro de filtrar tarde demais? Armadilha: revelar, na resposta, que o ato restrito existe; a resposta deve ser idêntica a não consta."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Projeto 4 (atendimento): o problema",
+   "itens": [
+    "Operadora fictícia: metade dos pedidos é automatizável, metade vai a humano",
+    "Ferramentas: pedido, fatura, cancelamento (com confirmação) e FAQ",
+    "Cancelar é irreversível; reenviar fatura é inofensivo",
+    "Dados: 80 casos e 24 mensagens novas escritas à mão",
+    "Critérios: intenção >= 0,90; sucesso >= 0,90 com 30% de falhas; zero cancelamento sem confirmação"
+   ],
+   "notas": "No quarto projeto, uma operadora fictícia recebe mensagens de clientes. Metade dos pedidos pode ser automatizada com ferramentas, como rastrear pedido, reenviar fatura, cancelar assinatura com confirmação e responder dúvida de plano; a outra metade, como reclamação e suporte técnico, deve ir a um humano. O custo do erro varia por ação: reenviar fatura é inofensivo, cancelar é irreversível, e por isso exige confirmação. Os dados são mensagens geradas por modelos de frase e 24 mensagens escritas à mão para medir generalização, mais 80 casos de atendimento. Pergunta à turma: quais ações merecem confirmação humana e por quê? Armadilha: tratar todas as ações com o mesmo grau de cuidado."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Projeto 4: arquitetura",
+   "fig": "f18_p4_arq",
+   "legenda": "Classificador barato na frente; o agente só entra se for automatizável, com menor privilégio, confirmação e plano B.",
+   "notas": "Mostre a lógica da figura: um classificador barato decide se a conversa é automatizável; só então entra o agente, com ferramentas de menor privilégio, confirmação para ações irreversíveis e plano B. O plano B é repetir a chamada uma vez e, se falhar, transferir a um atendente humano com protocolo. Explique o princípio estrutural: não chame o componente caro onde o destino já é conhecido. Lembre que o agente vem do Capítulo 14, com argumentos validados por pydantic, e que a decisão é de um modelo por regras, não de um LLM. O modelo apenas propõe a ação; validação, confirmação e plano B ficam no código. Pergunta à turma: por que ter plano B e não apenas repetir sempre? Armadilha: esquecer que transferir também custa atendentes."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Projeto 4: resultado e veredito",
+   "cabecalho": [
+    "Medida",
+    "Resultado",
+    "Leitura honesta"
+   ],
+   "linhas": [
+    [
+     "Intenção, modelos de frase (n=320)",
+     "1,000 [0,988; 1,000]",
+     "Memorização: treino e teste da mesma fonte"
+    ],
+    [
+     "Intenção, mensagens novas (n=24)",
+     "0,833 [0,641; 0,933]",
+     "IC cruza o critério de 0,90: inconclusivo"
+    ],
+    [
+     "Sucesso, 30% de falha, sem plano B",
+     "0,878 [0,830; 0,922]",
+     "Linha de base"
+    ],
+    [
+     "Sucesso, 30% de falha, com plano B",
+     "0,927 [0,882; 0,965]",
+     "Melhora pareada +0,050 [+0,027; +0,075]"
+    ],
+    [
+     "Enviados a humano",
+     "0,550 para 0,623",
+     "Plano B troca falhas por transferências"
+    ],
+    [
+     "Cancelamento sem confirmação",
+     "0 em 1 600 execuções",
+     "Vale para esta política e estes casos"
+    ],
+    [
+     "Custo e latência (hipotéticos)",
+     "-31% e -28%",
+     "Efeito por construção, não medida real"
+    ]
+   ],
+   "notas": "Leia a tabela de cima para baixo. O classificador de TF-IDF com regressão logística acerta 1,000 nos textos gerados pelos mesmos modelos de frase do treino, mas 0,833 nas 24 mensagens novas, com intervalo de 0,641 a 0,933: o número alto era memorização. Com 30 por cento de falhas de ferramenta, o sucesso vai de 0,878 sem plano B para 0,927 com plano B, diferença pareada de mais 0,050, pequena mas detectável. O preço: a fração enviada a humanos sobe de 0,550 para 0,623. Nenhum cancelamento sem confirmação em 1 600 execuções, mas zero não é impossibilidade; falta teste adversário. O custo cai 31 por cento e a latência 28, valores hipotéticos e por construção. Veredito: promissor, mas inconclusivo na generalização."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Projeto 5 (documentação técnica): o problema",
+   "itens": [
+    "Equipe mantém a documentação de uma API fictícia, a API Faróis",
+    "Quer buscar a página certa, resumi-la e extrair campos em JSON validado",
+    "Erro silencioso é pior que recusa: método HTTP errado quebra quem consome",
+    "Dados: 36 páginas em três estilos (tabela, prosa, ruidoso)",
+    "Critérios: busca >= 0,90; JSON válido >= 0,95; todos os campos corretos >= 0,90"
+   ],
+   "notas": "O quinto projeto trata de documentação técnica de uma API fictícia, a API Faróis. A equipe quer três coisas: buscar a página certa, resumir cada página e extrair os campos de cada endpoint em JSON validado para alimentar outro sistema. Na extração, um erro silencioso é pior que uma recusa, porque um método HTTP errado quebra quem consome o JSON. Os dados são 36 páginas sintéticas em três estilos: 12 em tabela, 12 em prosa e 12 ruidosas, com rótulos variantes, erros e campos ausentes, cada uma com gabarito. O estilo ruidoso tenta imitar a bagunça real, sem a ter. Pergunta à turma: o que é pior, um JSON recusado ou um JSON válido porém errado? Armadilha: os extratores são regras, não um LLM."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Projeto 5: arquitetura",
+   "fig": "f18_p5_arq",
+   "legenda": "Busca lexical, resumo extrativo e extração: texto em JSON, reparo determinístico, esquema pydantic e revisão humana.",
+   "notas": "Explique o pipeline de extração: o extrator produz JSON como texto, com falhas de formato típicas, como cerca de código ou prefixo; um reparo determinístico limpa o texto; e o esquema do pydantic valida método em lista fechada, caminho com padrão, ao menos um parâmetro, versão no formato n.n e inteiro positivo. O que não valida vai para revisão humana. Mostre que o esquema barra o que o texto fluente esconderia: no exemplo do capítulo, um JSON ruim gerou 5 erros de validação. Mas avise o limite: quando o extrator erra dentro do formato, por exemplo trocando um método válido por outro, o esquema não percebe. Pergunta à turma: válido significa correto? Armadilha: confiar apenas na validação de esquema."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Projeto 5: resultado e veredito",
+   "cabecalho": [
+    "Medida",
+    "Resultado (IC95% de Wilson)",
+    "Leitura honesta"
+   ],
+   "linhas": [
+    [
+     "Busca, consulta literal, top 3 (n=18)",
+     "1,000 [0,824; 1,000]",
+     "Funciona com as mesmas palavras"
+    ],
+    [
+     "Busca, sinônimos, top 3 (n=18)",
+     "0,444 [0,246; 0,663]",
+     "Não atende: vocabulário distante derruba"
+    ],
+    [
+     "Extração v1, com reparo (n=36)",
+     "0,333 [0,202; 0,497]",
+     "Cobre só um estilo de página"
+    ],
+    [
+     "Extração v2, sem reparo",
+     "0,722 [0,560; 0,842]",
+     "Cobre mais estilos"
+    ],
+    [
+     "Extração v2, com reparo",
+     "0,944 [0,819; 0,985]",
+     "Inconclusivo diante de 0,95 (válido)"
+    ],
+    [
+     "Páginas ruidosas, v2 com reparo",
+     "10 de 12 corretas",
+     "Erros: versão mínima ausente, recusados"
+    ]
+   ],
+   "notas": "Leia os resultados. A busca lexical acerta 18 de 18 quando a consulta repete as palavras da página, mas com sinônimos como incluir e apagar cai para 0,444 entre os 3 primeiros: o critério de busca não é atendido, de novo o vocabulário distante do Capítulo 10. O remédio é busca híbrida ou glossário de sinônimos. Na extração, o v1 vale 0,333 e o v2 vai de 0,722 para 0,944 com reparo: dois ganhos independentes, cobertura de estilos e reparo de formato. Mas o critério de 0,95 fica inconclusivo, porque o intervalo atravessa 0,95. Os dois erros restantes estão nas páginas ruidosas, por versão mínima ausente, e o esquema recusou o JSON incompleto em vez de aceitá-lo. Quanto ao resumo, ROUGE-L mede sobreposição de palavras, não fidelidade."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Projeto 6 (integrador): o problema",
+   "itens": [
+    "Um sistema só para a secretaria: normas (RAG), tarefas com ferramentas e defesa contra ataques",
+    "Camadas: provedor com plano B, RAG, agente, segurança, avaliação, custo e governança",
+    "Bancada de 182 casos em 8 estratos, critério escrito antes por estrato",
+    "Duas configurações comparadas nos mesmos casos: v1 sem camadas, v2 com todas",
+    "É o projeto que a banca vai avaliar"
+   ],
+   "notas": "O projeto final junta tudo em um único sistema para a secretaria da universidade fictícia: responde dúvidas sobre normas com RAG, executa tarefas simples com ferramentas, como calcular multa, consultar prazo e protocolar trancamento com confirmação, e resiste a ataques, com custo conhecido, avaliação automática a cada mudança e governança. Mostre a lista de camadas e seus capítulos de origem: aplicação em camadas no 9, RAG no 11, agente no 14, segurança e governança no 17, avaliação no 16, custo no 15. A bancada tem 182 casos em oito estratos, cada um com critério escrito antes. Compara-se a v1, sem camadas, com a v2, com todas as camadas, nos mesmos casos. Pergunta à turma: o que a v2 deve melhorar e o que pode piorar?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Projeto 6: arquitetura",
+   "fig": "f18_p6_arq",
+   "legenda": "Entrada (PII, filtro, custo), roteamento, provedor com robustez, validação e filtro de saída, com trilha de auditoria; a bancada fica fora do caminho do usuário.",
+   "notas": "Siga o pedido pela figura: ele atravessa as camadas de entrada, que mascaram dados pessoais, aplicam filtro e controlam custo; depois o roteamento, que envia ao RAG ou ao agente; o provedor com robustez, com nova tentativa e plano B; a validação e o filtro de saída. Tudo é registrado em uma trilha de auditoria. A bancada, fora do caminho do usuário, executa os casos por estrato e gera o relatório automático. Enfatize que o sistema é maior que o modelo: qualidade, segurança e custo vêm das camadas ao redor do componente de linguagem. Diga também que o componente de linguagem é um simulador de regras. Pergunta à turma: que camada vocês removeriam primeiro se o custo apertasse? E o que se perderia? Armadilha: tirar camada sem rodar a bancada."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Projeto 6: relatório da bancada (v2)",
+   "cabecalho": [
+    "Estrato",
+    "n",
+    "Taxa [IC95% de Wilson]",
+    "Critério",
+    "Veredito"
+   ],
+   "linhas": [
+    [
+     "rag_direta",
+     "38",
+     "0,711 [0,552; 0,830]",
+     "0,80",
+     "inconclusivo"
+    ],
+    [
+     "rag_parafrase",
+     "8",
+     "0,125 [0,022; 0,471]",
+     "0,60",
+     "não atende"
+    ],
+    [
+     "rag_sem_resposta",
+     "10",
+     "1,000 [0,722; 1,000]",
+     "0,90",
+     "inconclusivo"
+    ],
+    [
+     "agente",
+     "42",
+     "0,976 [0,877; 0,996]",
+     "0,85",
+     "atende"
+    ],
+    [
+     "injecao_indireta",
+     "20",
+     "1,000 [0,839; 1,000]",
+     "0,95",
+     "inconclusivo"
+    ],
+    [
+     "ataque_catalogo",
+     "42",
+     "0,952 [0,842; 0,987]",
+     "0,80",
+     "atende"
+    ],
+    [
+     "legitima_bloqueada",
+     "12",
+     "0,750 [0,468; 0,911]",
+     "0,90",
+     "inconclusivo"
+    ],
+    [
+     "pii_no_registro",
+     "10",
+     "1,000 [0,722; 1,000]",
+     "0,99",
+     "inconclusivo"
+    ]
+   ],
+   "notas": "Leia o relatório como um revisor leria. Dos oito estratos, dois atendem, o agente e os ataques do catálogo; um não atende, as paráfrases do RAG, por causa da recuperação com vocabulário distante; e cinco são inconclusivos. A comparação pareada com a v1 mostra onde as camadas valem: ataques do catálogo, mais 0,452; injeção indireta, mais 0,400; privacidade no registro, mais 1,000. Há um custo: mensagens legítimas bloqueadas caem 0,250, porque o filtro de entrada recusou 3 das 12. Segurança e utilidade se negociam, e a bancada torna a negociação visível. Custo e latência são hipotéticos. Veredito honesto do capítulo: liberar apenas para piloto restrito, com revisão humana, e ampliar a bancada até os inconclusivos se resolverem. Mudar o limiar para 0,6 só piorou e não deve ser aprovado."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "O que NÃO afirmar com estes projetos",
+   "itens": [
+    "Não: o assistente alcançou X% de acerto. Sim: X% em casos sintéticos, com simulador de regras",
+    "Não: o sistema é seguro, justo ou aprovado. Sim: atende, não atende ou inconclusivo por estrato",
+    "Não: o custo será Z. Preços e latências são hipotéticos",
+    "Não: o modelo X se comportaria assim. Nenhum modelo real foi executado",
+    "Não: o sistema de saúde ajuda no diagnóstico, nem é parecer jurídico",
+    "Prefira: neste conjunto de N casos, o IC95% foi [a; b], inconclusivo diante do critério c"
+   ],
+   "notas": "Este slide é a lição de honestidade do livro. Leia cada par de frases e peça à turma que reescreva a frase vistosa na versão honesta. Lembre que todos os dados são sintéticos, os componentes de linguagem são simuladores de regras, preços e latências são hipotéticos, e os adaptadores reais, marcados python-ni, não foram executados. A equidade foi medida por um único atributo e com poucos casos. O resultado cego do Projeto 2 mostra que regras por palavras-chave não são confiáveis nem para detectar urgências, e as normas do Projeto 3 são fictícias: não é aconselhamento jurídico. Reforce também os erros frequentes: critério escrito depois do resultado, só médias sem intervalo e esconder o que ficou inconclusivo. Pergunta final: qual dessas frases já apareceu em uma apresentação que vocês viram?"
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "um sétimo projeto, com o molde completo",
+   "passos": [
+    "Escolha um domínio e escreva problema, usuários e três requisitos com critérios, antes de qualquer código",
+    "Crie 30 a 50 casos sintéticos com origem declarada: desenvolvimento e teste, com casos sem resposta e adversários",
+    "Monte uma linha de base simples e meça cada critério com IC de Wilson e veredito",
+    "Analise os erros por tipo e proponha uma melhoria; meça com comparação pareada",
+    "Escreva o relatório de uma página, riscos com responsáveis e um parágrafo sobre o que não pode afirmar",
+    "Registre sementes, versões e hash dos casos; revise com outra pessoa"
+   ],
+   "notas": "Proponha a atividade como trabalho de quatro semanas em equipes de três a seis pessoas, ou de uma tarde, em versão reduzida. Semana um: problema, requisitos e critérios aprovados antes de qualquer código. Semana dois: dados e bancada, separando desenvolvimento e teste, e uma linha de base simples. Semana três: arquitetura, primeira medição com intervalo e análise de erros. Semana quatro: riscos, custo, relatório, cartão do sistema e ensaio da apresentação. Duas regras valem ouro: quem constrói não monta o conjunto de teste, e toda decisão relevante vai para um registro de decisões de uma linha. Sugira uma apresentação de dez a quinze minutos, com uma tabela de taxa, IC e veredito, incluindo o que ficou inconclusivo. Domínios possíveis: educação, saúde sintética, jurídico, atendimento ou documentação."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "veredito",
+   "pergunta": "Um estrato tem taxa observada 0,90 com n = 30 e critério de 0,80. Qual o veredito pelo intervalo de Wilson?",
+   "opcoes": [
+    "Atende, porque 0,90 passa de 0,80",
+    "Inconclusivo: o intervalo (cerca de 0,74 a 0,97) atravessa o critério",
+    "Não atende, porque o intervalo inclui valores abaixo de 0,80",
+    "Atende, porque 30 casos bastam sempre"
+   ],
+   "resposta": "B",
+   "explicacao": "O veredito compara o intervalo inteiro, e não só a média, ao critério. Com 100 casos, o mesmo 0,90 passa a atender.",
+   "notas": "Dê um minuto para a turma votar antes de revelar. Quem escolheu a letra A caiu na armadilha de olhar só a média. Retome a analogia da pesquisa eleitoral: dentro da margem de erro, não se declara vencedor. O intervalo de 0,744 a 0,965 inclui valores abaixo de 0,80, então os dados não decidem. Pergunte: o que fazer? Coletar mais casos; com 100, o limite inferior é 0,826. Erro comum: confundir inconclusivo com meio bom. Significa apenas que os dados não decidem."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "conjunto cego",
+   "pergunta": "No conjunto cego do Projeto 2, a revocação de urgência foi 0,167 (no desenvolvimento, 1,000). Qual a decisão coerente?",
+   "opcoes": [
+    "Liberar, pois no desenvolvimento foi 1,000",
+    "Liberar com um aviso pequeno no rodapé",
+    "Tratar como bloqueio de liberação e reduzir o risco por projeto, não só por regras",
+    "Acrescentar regras até o cego chegar a 1,000 e liberar sem novo conjunto"
+   ],
+   "resposta": "C",
+   "explicacao": "Ajustar regras ao conjunto cego o transforma em desenvolvimento; é preciso novas medidas e outras barreiras, como linha fixa de urgência e classificador validado.",
+   "notas": "Peça à turma que pense no custo de uma urgência perdida antes de votar. A alternativa de acrescentar regras até o cego chegar a 1,000 é tentadora, mas faz do cego um conjunto de desenvolvimento e destrói a medida honesta. A resposta correta trata o resultado como bloqueio e age no projeto: linha fixa de urgência em todas as respostas de serviço, léxico revisado por profissionais, classificador treinado e viés a favor de encaminhar. Retome a analogia do gabarito decorado. A decisão de qual taxa de desvio é aceitável cabe a pessoas e profissionais, não ao código."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "pré-filtro",
+   "pergunta": "Por que, no Projeto 3, o pré-filtro de vigência e perfil supera o pós-filtro com k = 1?",
+   "opcoes": [
+    "O pré-filtro dispensa metadados de vigência",
+    "O pós-filtro nunca devolve resultados",
+    "O pré-filtro filtra antes de escolher os k melhores, então a norma permitida não é perdida",
+    "O pré-filtro é mais lento e, por isso, mais seguro"
+   ],
+   "resposta": "C",
+   "explicacao": "No pós-filtro, se a melhor norma é a revogada, ela é removida depois e pode não sobrar nada: 25 de 30 com k = 1, contra 30 de 30 no pré-filtro.",
+   "notas": "Retome a analogia do cardápio. Peça que alguém explique com as próprias palavras por que filtrar depois pode deixar o usuário sem resposta. Com k igual a 1, a melhor norma é a revogada; o pós-filtro a remove e nada sobra, daí 25 de 30. O pré-filtro escolhe só entre as normas vigentes e permitidas e acerta 30 de 30. Lembre o limite: zero vazamentos em 30 casos é compatível com taxa de até cerca de 11 por cento, então a bancada não prova ausência de vazamento. Faltam testes de fronteira de datas e casos adversários."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Projeto verificável: problema, critérios escritos antes, dados com origem, avaliação com IC, riscos com responsáveis",
+    "O veredito compara o intervalo ao critério; com dezenas de casos, inconclusivo é o normal",
+    "Regras ajustadas olhando o teste enganam: urgência 1,000 no desenvolvimento, 0,167 no cego",
+    "Filtre vigência e permissão antes de recuperar; trilha encadeada com usuário pseudonimizado",
+    "Meça com mensagens novas; plano B troca falhas por transferências; extração válida não é correta",
+    "Bancada por estrato, regressão, cartão do sistema e governança viram evidência; nada de afirmar sobre modelos reais"
+   ],
+   "notas": "Faça a síntese pedindo que a turma diga cada item com as próprias palavras. Os três eixos: meça antes de afirmar, porque taxa sem intervalo é opinião e inconclusivo é uma resposta legítima; o sistema é maior que o modelo, e a qualidade, a segurança e o custo vêm das camadas ao redor; e quem usa precisa poder conferir, com fontes, abstenção, trilha e limites declarados. Lembre o veredito do projeto integrador: liberar apenas para piloto restrito, com revisão humana, e ampliar a bancada. Feche o livro com o hábito proposto: diante de um número impressionante, perguntar com que dados, quantos casos, com que intervalo e com que limites. Lembre que versões, preços e nomes de parâmetros mudam e devem ser conferidos na documentação vigente; os princípios envelhecem devagar. Obrigado a todos."
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "WILSON, E. B. Probable inference, the law of succession, and statistical inference. Journal of the American Statistical Association, v. 22, n. 158, p. 209-212, 1927.",
+    "MCNEMAR, Q. Note on the sampling error of the difference between correlated proportions or percentages. Psychometrika, v. 12, n. 2, p. 153-157, 1947.",
+    "LEWIS, P. et al. Retrieval-augmented generation for knowledge-intensive NLP tasks. In: NeurIPS, 33., 2020. p. 9459-9474.",
+    "YAO, S. et al. ReAct: synergizing reasoning and acting in language models. In: ICLR, 11., 2023.",
+    "MITCHELL, M. et al. Model cards for model reporting. In: FAT*, 2019. p. 220-229. DOI: 10.1145/3287560.3287596.",
+    "NATIONAL INSTITUTE OF STANDARDS AND TECHNOLOGY. AI risk management framework (AI RMF 1.0). Gaithersburg: NIST, 2023. DOI: 10.6028/NIST.AI.100-1.",
+    "GANGULI, D. et al. Red teaming language models to reduce harms. arXiv:2209.07858, 2022.",
+    "ANTHROPIC. Claude API documentation e SDK para Python. Disponível em: https://platform.claude.com/docs/en/api/sdks/python. Conferir a versão vigente."
+   ]
+  }
+ ]
+}

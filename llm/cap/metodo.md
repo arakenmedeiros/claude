@@ -4,7 +4,7 @@ Este apêndice descreve **como o livro foi produzido**, o que foi **verificado**
 
 ## L.1 Data de corte e escopo
 
-A revisão bibliográfica e a verificação de informações voláteis foram feitas **até 18 de outubro de 2026**. Fatos posteriores a essa data não foram incorporados. O livro evita depender de modelos, preços e interfaces específicos; quando os cita, manda **conferir a documentação oficial**. As contagens deste apêndice referem-se aos **capítulos 1 a 17** na data do corte; o Capítulo 18 (projetos integradores) segue as mesmas regras, e suas contagens devem ser somadas na revisão final.
+A revisão bibliográfica e a verificação de informações voláteis foram feitas **até 18 de outubro de 2026**. Fatos posteriores a essa data não foram incorporados. O livro evita depender de modelos, preços e interfaces específicos; quando os cita, manda **conferir a documentação oficial**. As contagens deste apêndice referem-se aos **capítulos 1 a 18** na data do corte; o Capítulo 18 (projetos integradores) segue as mesmas regras e está incluído nelas.
 
 ## L.2 O que foi consultado de Ozdemir (2024; 2025)
 
@@ -23,7 +23,7 @@ Cada referência tem um status no arquivo `cap/referencias.txt`:
 - **C**: **conferida pela memória** do autor e ainda **a verificar na fonte**.
 - **P**: dado fornecido pelo solicitante, **não localizado** na verificação.
 
-Na data do corte, a lista continha **151 entradas**: **149 V, 1 C e 1 P** (C: McCloskey; Cohen, 1989, sobre interferência catastrófica; P: a edição brasileira de Ozdemir, 2025). Das entradas efetivamente citadas nos capítulos 1 a 17 (147), 145 são V, 1 é C e 1 é P. No livro impresso, as entradas que não são V trazem o sinal †, que significa: **confira na fonte original antes de depender do dado**. Para recontar:
+Na data do corte, a lista continha **151 entradas**: **149 V, 1 C e 1 P** (C: McCloskey; Cohen, 1989, sobre interferência catastrófica; P: a edição brasileira de Ozdemir, 2025). Das entradas efetivamente citadas nos capítulos 1 a 18 (147; o Capítulo 18 só reutiliza referências já citadas), 145 são V, 1 é C e 1 é P. No livro impresso, as entradas que não são V trazem o sinal †, que significa: **confira na fonte original antes de depender do dado**. Para recontar:
 
 ```bash
 cut -d'|' -f2 cap/referencias.txt | tr -d ' ' | sort | uniq -c
@@ -33,20 +33,20 @@ cut -d'|' -f2 cap/referencias.txt | tr -d ' ' | sort | uniq -c
 
 ## L.4 O que foi executado de fato
 
-Os experimentos foram executados em um ambiente com **Python 3.13.16** e as bibliotecas do Apêndice H (por exemplo, NumPy 2.5.3 e scikit-learn 1.9.1), **sem GPU e sem acesso a serviços de LLM**. Contagens nos capítulos 1 a 17, a partir dos registros de execução em `build/code_out.json`, `build/ex_ok.json` e `build/pr_out.json`:
+Os experimentos foram executados em um ambiente com **Python 3.13.16** e as bibliotecas do Apêndice H (por exemplo, NumPy 2.5.3 e scikit-learn 1.9.1), **sem GPU e sem acesso a serviços de LLM**. Contagens nos capítulos 1 a 18, a partir dos registros de execução em `build/code_out.json`, `build/ex_ok.json` e `build/pr_out.json`:
 
 | Item | Quantidade | Situação |
 | --- | --- | --- |
-| Blocos de código do texto, `python` (34) e `python+` (150) | 184 | executados; as saídas reais foram registradas e exibidas no livro (183 produzem saída impressa) |
-| Códigos de questões discursivas de programação (`CODE:`) | 70 | executados; todos terminaram sem erro |
-| Resultados de exercícios práticos | 51 exercícios e 17 projetos (68 no total) | executados; as notas de discussão devem citar apenas números realmente impressos |
-| Questões | 850 (510 de múltipla escolha e 340 discursivas) | escritas e validadas quanto ao formato (30 e 20 por capítulo); **não** foram aplicadas a estudantes |
-| Figuras dos capítulos | 125 | 65 baseadas em dados calculados pelos códigos e 60 conceituais (esquemas) |
-| Glossário | 379 termos | redigidos para o livro |
+| Blocos de código do texto, `python` (35) e `python+` (174) | 209 | executados; as saídas reais foram registradas e exibidas no livro (208 produzem saída impressa) |
+| Códigos de questões discursivas de programação (`CODE:`) | 78 | executados; todos terminaram sem erro |
+| Resultados de exercícios práticos | 54 exercícios e 18 projetos (72 no total) | executados; as notas de discussão devem citar apenas números realmente impressos |
+| Questões | 900 (540 de múltipla escolha e 360 discursivas) | escritas e validadas quanto ao formato (30 e 20 por capítulo); **não** foram aplicadas a estudantes |
+| Figuras dos capítulos | 140 | 71 baseadas em dados calculados pelos códigos e 69 conceituais (esquemas) |
+| Glossário | 395 termos | redigidos para o livro |
 
 **O que NÃO foi executado:**
 
-- Os **11 blocos `python-ni`** (adaptadores de API e de modelos locais, `transformers` e `peft`, modelos multimodais reais, servidores de inferência) e **1 bloco `ilustrativo`**. Foram escritos com base na documentação oficial e **não foram testados**.
+- Os **14 blocos `python-ni`** (adaptadores de API e de modelos locais, `transformers` e `peft`, modelos multimodais reais, servidores de inferência, e, no Capítulo 18, adaptadores de API real para o gerador, o agente com ferramentas e a extração estruturada) e **2 blocos `ilustrativo`**. Foram escritos com base na documentação oficial e **não foram testados**.
 - Qualquer **serviço real** de LLM ou de busca, e qualquer **modelo real** (nenhum peso foi baixado).
 - Qualquer uso de **GPU**, e qualquer medição de tempo, custo ou consumo em hardware real. Preços, hardware e tempos dos capítulos 6 e 15 são **hipotéticos** e estão marcados como tal.
 - Não houve **teste com usuários** nem **revisão por pares externos** do texto.
@@ -64,6 +64,7 @@ Um verificador de formato (`build/chk.py`) confere a estrutura das questões, as
 - `ModeloSimulado` e `ModeloRoteirizado` (Capítulo 14): "modelos" que decidem chamadas de ferramentas por regras.
 - `JuizEnviesado` (Capítulo 16): "juiz" com vieses de posição, tamanho e estilo **programados**.
 - `AssistenteSimulado` (Capítulo 17): assistente com probabilidades de obediência **programadas**, para demonstrar ataques e defesas.
+- Módulos dos projetos do Capítulo 18 (`projetos`, `saude_sintetica`, `normas_sinteticas`, entre outros): gerador, classificador, agente e extrator **por regras** (por exemplo, `TriagemSaude`, `ConsultaNormas`, `ExtratorSimulado` e `SistemaIntegrado`), com casos escolhidos por nós; preços e latências são **hipotéticos**.
 - Ferramentas multimodais em NumPy (Capítulo 13), `MLPLMLoRA` (Capítulo 12), `IndiceIVF` e `IndiceLSH` (Capítulo 10), `BM25` e `LSAEmbedder`.
 
 Consequência importante: **os efeitos observados nesses experimentos foram, em boa parte, escritos por nós**. Eles demonstram **procedimentos** (como medir, como calcular intervalos, como detectar um problema), e não o comportamento de modelos reais. Não generalize os números para produtos ou modelos reais.

@@ -781,197 +781,3782 @@
  },
  {
   "level": 1,
-  "text": "Apêndice A — Gabarito comentado das questões objetivas",
+  "text": "Parte II — Treinamento, adaptação e geração",
   "id": "h157"
  },
  {
   "level": 2,
-  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "text": "Capítulo 5 — Como os modelos de linguagem aprendem",
   "id": "h158"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "level": 3,
+  "text": "5.1 Situação inicial",
   "id": "h159"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "level": 3,
+  "text": "5.2 Objetivos de aprendizagem",
   "id": "h160"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "level": 3,
+  "text": "5.3 Pré-requisitos e revisão necessária",
   "id": "h161"
  },
  {
-  "level": 1,
-  "text": "Apêndice B — Soluções das questões matemáticas",
+  "level": 3,
+  "text": "5.4 Mapa conceitual",
   "id": "h162"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "level": 3,
+  "text": "5.5 Aprendizado autossupervisionado",
   "id": "h163"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "level": 3,
+  "text": "5.6 Objetivos de treinamento",
   "id": "h164"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "level": 4,
+  "text": "5.6.1 Predição do próximo token (modelos causais)",
   "id": "h165"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "level": 4,
+  "text": "5.6.2 Modelagem com mascaramento (modelos bidirecionais)",
   "id": "h166"
  },
  {
-  "level": 1,
-  "text": "Apêndice C — Respostas orientadoras, códigos de referência e critérios",
+  "level": 4,
+  "text": "5.6.3 Recuperação de trechos corrompidos (texto para texto)",
   "id": "h167"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "level": 3,
+  "text": "5.7 O ciclo de treinamento",
   "id": "h168"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "level": 4,
+  "text": "5.7.1 As etapas",
   "id": "h169"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "level": 4,
+  "text": "5.7.2 A agenda da taxa de aprendizado",
   "id": "h170"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "level": 4,
+  "text": "5.7.3 Treinando um modelo pequeno",
   "id": "h171"
  },
  {
-  "level": 1,
-  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "level": 4,
+  "text": "5.7.4 Dados, sobreajuste e escala",
   "id": "h172"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "level": 3,
+  "text": "5.8 Preparação e qualidade dos dados",
   "id": "h173"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "level": 4,
+  "text": "5.8.1 Deduplicação: um exemplo",
   "id": "h174"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "level": 3,
+  "text": "5.9 Pré-treinamento e modelos-base",
   "id": "h175"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "level": 4,
+  "text": "5.9.1 Quanto de dados para quantos parâmetros?",
   "id": "h176"
  },
  {
-  "level": 1,
-  "text": "Apêndice E — Soluções de referência dos projetos",
+  "level": 3,
+  "text": "5.10 Recursos computacionais",
   "id": "h177"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "level": 4,
+  "text": "5.10.1 Quantos cálculos?",
   "id": "h178"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "level": 4,
+  "text": "5.10.2 E a memória?",
   "id": "h179"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "level": 4,
+  "text": "5.10.3 Energia e impacto",
   "id": "h180"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "level": 3,
+  "text": "5.11 Contaminação de dados e limitações da avaliação",
   "id": "h181"
  },
  {
-  "level": 1,
-  "text": "Apêndice F — Glossário",
+  "level": 3,
+  "text": "5.12 Exemplos resolvidos",
   "id": "h182"
  },
  {
-  "level": 1,
-  "text": "Apêndice simbolos (provisório)",
+  "level": 4,
+  "text": "Exemplo 1 — Quantos exemplos de treino um texto gera?",
   "id": "h183"
  },
  {
-  "level": 3,
-  "text": "Seção provisória",
+  "level": 4,
+  "text": "Exemplo 2 — Quando 1 tera de tokens é pouco ou muito?",
   "id": "h184"
  },
  {
-  "level": 1,
-  "text": "Apêndice instalacao (provisório)",
+  "level": 4,
+  "text": "Exemplo 3 — Estimando a memória de treino",
   "id": "h185"
  },
  {
   "level": 3,
-  "text": "Seção provisória",
+  "text": "5.13 Atividade prática",
   "id": "h186"
  },
  {
-  "level": 1,
-  "text": "Apêndice prompts (provisório)",
+  "level": 3,
+  "text": "5.14 Erros frequentes",
   "id": "h187"
  },
  {
   "level": 3,
-  "text": "Seção provisória",
+  "text": "5.15 Limitações e cuidados",
   "id": "h188"
  },
  {
-  "level": 1,
-  "text": "Apêndice checklists (provisório)",
+  "level": 3,
+  "text": "5.16 Síntese",
   "id": "h189"
  },
  {
   "level": 3,
-  "text": "Seção provisória",
+  "text": "Exercícios de múltipla escolha",
   "id": "h190"
  },
  {
-  "level": 1,
-  "text": "Apêndice matriz (provisório)",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h191"
  },
  {
   "level": 3,
-  "text": "Seção provisória",
+  "text": "Exercícios práticos em Python",
   "id": "h192"
  },
  {
-  "level": 1,
-  "text": "Apêndice metodo (provisório)",
+  "level": 3,
+  "text": "Projeto do capítulo",
   "id": "h193"
  },
  {
   "level": 3,
-  "text": "Seção provisória",
+  "text": "Referências do capítulo",
   "id": "h194"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Geração de texto e inferência",
+  "id": "h195"
+ },
+ {
+  "level": 3,
+  "text": "6.1 Situação inicial",
+  "id": "h196"
+ },
+ {
+  "level": 3,
+  "text": "6.2 Objetivos de aprendizagem",
+  "id": "h197"
+ },
+ {
+  "level": 3,
+  "text": "6.3 Pré-requisitos e revisão necessária",
+  "id": "h198"
+ },
+ {
+  "level": 3,
+  "text": "6.4 Mapa conceitual",
+  "id": "h199"
+ },
+ {
+  "level": 3,
+  "text": "6.5 Do modelo ao texto: o laço autorregressivo",
+  "id": "h200"
+ },
+ {
+  "level": 3,
+  "text": "6.6 Estratégias de decodificação",
+  "id": "h201"
+ },
+ {
+  "level": 4,
+  "text": "6.6.1 Decodificação gulosa",
+  "id": "h202"
+ },
+ {
+  "level": 4,
+  "text": "6.6.2 Busca em feixe (beam search)",
+  "id": "h203"
+ },
+ {
+  "level": 4,
+  "text": "6.6.3 Amostragem",
+  "id": "h204"
+ },
+ {
+  "level": 4,
+  "text": "6.6.4 Top-k",
+  "id": "h205"
+ },
+ {
+  "level": 4,
+  "text": "6.6.5 Top-p (amostragem do núcleo)",
+  "id": "h206"
+ },
+ {
+  "level": 4,
+  "text": "6.6.6 Outras ferramentas",
+  "id": "h207"
+ },
+ {
+  "level": 4,
+  "text": "6.6.7 Medindo qualidade e diversidade",
+  "id": "h208"
+ },
+ {
+  "level": 4,
+  "text": "6.6.8 Busca em feixe, na prática",
+  "id": "h209"
+ },
+ {
+  "level": 3,
+  "text": "6.7 Janela de contexto e limites de saída",
+  "id": "h210"
+ },
+ {
+  "level": 3,
+  "text": "6.8 Processamento da entrada e geração: duas fases",
+  "id": "h211"
+ },
+ {
+  "level": 3,
+  "text": "6.9 Memória, cache e latência",
+  "id": "h212"
+ },
+ {
+  "level": 4,
+  "text": "6.9.1 O problema da repetição",
+  "id": "h213"
+ },
+ {
+  "level": 4,
+  "text": "6.9.2 O cache de chaves e valores",
+  "id": "h214"
+ },
+ {
+  "level": 4,
+  "text": "6.9.3 Quanto o cache ocupa?",
+  "id": "h215"
+ },
+ {
+  "level": 3,
+  "text": "6.10 Reprodutibilidade e variabilidade",
+  "id": "h216"
+ },
+ {
+  "level": 4,
+  "text": "6.10.1 Fontes de variação",
+  "id": "h217"
+ },
+ {
+  "level": 4,
+  "text": "6.10.2 O que registrar",
+  "id": "h218"
+ },
+ {
+  "level": 3,
+  "text": "6.11 Exemplos resolvidos",
+  "id": "h219"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Top-p com outra distribuição",
+  "id": "h220"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Memória do cache em um serviço",
+  "id": "h221"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Prompt longo ou resposta longa?",
+  "id": "h222"
+ },
+ {
+  "level": 3,
+  "text": "6.12 Atividade prática",
+  "id": "h223"
+ },
+ {
+  "level": 3,
+  "text": "6.13 Erros frequentes",
+  "id": "h224"
+ },
+ {
+  "level": 3,
+  "text": "6.14 Limitações e cuidados",
+  "id": "h225"
+ },
+ {
+  "level": 3,
+  "text": "6.15 Síntese",
+  "id": "h226"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h227"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h228"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h229"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h230"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h231"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Ajuste por instruções e preferências",
+  "id": "h232"
+ },
+ {
+  "level": 3,
+  "text": "7.1 Situação inicial",
+  "id": "h233"
+ },
+ {
+  "level": 3,
+  "text": "7.2 Objetivos de aprendizagem",
+  "id": "h234"
+ },
+ {
+  "level": 3,
+  "text": "7.3 Pré-requisitos e revisão necessária",
+  "id": "h235"
+ },
+ {
+  "level": 3,
+  "text": "7.4 Mapa conceitual",
+  "id": "h236"
+ },
+ {
+  "level": 3,
+  "text": "7.5 Modelos-base, ajustados para instruções e alinhados",
+  "id": "h237"
+ },
+ {
+  "level": 3,
+  "text": "7.6 Ajuste fino supervisionado (SFT)",
+  "id": "h238"
+ },
+ {
+  "level": 4,
+  "text": "7.6.1 A ideia",
+  "id": "h239"
+ },
+ {
+  "level": 4,
+  "text": "7.6.2 Formato e máscara de perda",
+  "id": "h240"
+ },
+ {
+  "level": 4,
+  "text": "7.6.3 Dados importam mais que volume?",
+  "id": "h241"
+ },
+ {
+  "level": 3,
+  "text": "7.7 Dados de preferências",
+  "id": "h242"
+ },
+ {
+  "level": 4,
+  "text": "7.7.1 O que são",
+  "id": "h243"
+ },
+ {
+  "level": 4,
+  "text": "7.7.2 O modelo de Bradley-Terry",
+  "id": "h244"
+ },
+ {
+  "level": 4,
+  "text": "7.7.3 Um modelo de recompensa que aprende (e o viés de comprimento)",
+  "id": "h245"
+ },
+ {
+  "level": 3,
+  "text": "7.8 RLHF: aprendizado por reforço com feedback humano",
+  "id": "h246"
+ },
+ {
+  "level": 4,
+  "text": "7.8.1 A solução em forma fechada",
+  "id": "h247"
+ },
+ {
+  "level": 3,
+  "text": "7.9 DPO: otimização direta de preferências",
+  "id": "h248"
+ },
+ {
+  "level": 4,
+  "text": "7.9.1 Verificação em um exemplo reduzido",
+  "id": "h249"
+ },
+ {
+  "level": 3,
+  "text": "7.10 Papel e limitações do pós-treinamento",
+  "id": "h250"
+ },
+ {
+  "level": 4,
+  "text": "7.10.1 O que ele faz",
+  "id": "h251"
+ },
+ {
+  "level": 4,
+  "text": "7.10.2 O que ele não garante",
+  "id": "h252"
+ },
+ {
+  "level": 4,
+  "text": "7.10.3 Uma matriz de decisão simples",
+  "id": "h253"
+ },
+ {
+  "level": 3,
+  "text": "7.11 Exemplos resolvidos",
+  "id": "h254"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Perda do modelo de recompensa em um lote",
+  "id": "h255"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Efeito do \\beta na política",
+  "id": "h256"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Bajulação em um pedido",
+  "id": "h257"
+ },
+ {
+  "level": 3,
+  "text": "7.12 Atividade prática",
+  "id": "h258"
+ },
+ {
+  "level": 3,
+  "text": "7.13 Erros frequentes",
+  "id": "h259"
+ },
+ {
+  "level": 3,
+  "text": "7.14 Limitações e cuidados",
+  "id": "h260"
+ },
+ {
+  "level": 3,
+  "text": "7.15 Síntese",
+  "id": "h261"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h262"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h263"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h264"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h265"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h266"
+ },
+ {
+  "level": 1,
+  "text": "Parte III — Prompts e aplicações",
+  "id": "h267"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia de prompts",
+  "id": "h268"
+ },
+ {
+  "level": 3,
+  "text": "8.1 Situação inicial",
+  "id": "h269"
+ },
+ {
+  "level": 3,
+  "text": "8.2 Objetivos de aprendizagem",
+  "id": "h270"
+ },
+ {
+  "level": 3,
+  "text": "8.3 Pré-requisitos e revisão necessária",
+  "id": "h271"
+ },
+ {
+  "level": 3,
+  "text": "8.4 Mapa conceitual",
+  "id": "h272"
+ },
+ {
+  "level": 3,
+  "text": "8.5 O que é um prompt",
+  "id": "h273"
+ },
+ {
+  "level": 3,
+  "text": "8.6 Objetivos, contexto, instruções e restrições",
+  "id": "h274"
+ },
+ {
+  "level": 4,
+  "text": "8.6.1 Princípios de especificação",
+  "id": "h275"
+ },
+ {
+  "level": 4,
+  "text": "8.6.2 Reescrevendo um prompt vago",
+  "id": "h276"
+ },
+ {
+  "level": 3,
+  "text": "8.7 Exemplos no prompt",
+  "id": "h277"
+ },
+ {
+  "level": 4,
+  "text": "8.7.1 Como escolher exemplos",
+  "id": "h278"
+ },
+ {
+  "level": 4,
+  "text": "8.7.2 Sensibilidade à ordem e ao formato",
+  "id": "h279"
+ },
+ {
+  "level": 3,
+  "text": "8.8 Estruturação de entradas",
+  "id": "h280"
+ },
+ {
+  "level": 3,
+  "text": "8.9 Decomposição de tarefas e justificativas verificáveis",
+  "id": "h281"
+ },
+ {
+  "level": 4,
+  "text": "8.9.1 Dividir para conferir",
+  "id": "h282"
+ },
+ {
+  "level": 4,
+  "text": "8.9.2 Raciocínio explícito, com cautela",
+  "id": "h283"
+ },
+ {
+  "level": 4,
+  "text": "8.9.3 O que pedir no lugar: justificativas verificáveis",
+  "id": "h284"
+ },
+ {
+  "level": 3,
+  "text": "8.10 Saídas estruturadas",
+  "id": "h285"
+ },
+ {
+  "level": 3,
+  "text": "8.11 Critérios de revisão",
+  "id": "h286"
+ },
+ {
+  "level": 3,
+  "text": "8.12 Avaliação e versionamento de prompts",
+  "id": "h287"
+ },
+ {
+  "level": 4,
+  "text": "8.12.1 Prompts são código",
+  "id": "h288"
+ },
+ {
+  "level": 4,
+  "text": "8.12.2 Um laço de avaliação (com o simulador)",
+  "id": "h289"
+ },
+ {
+  "level": 4,
+  "text": "8.12.3 Registro da execução",
+  "id": "h290"
+ },
+ {
+  "level": 3,
+  "text": "8.13 Exemplos resolvidos",
+  "id": "h291"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Reescrevendo um pedido vago",
+  "id": "h292"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Interpretando uma comparação de prompts",
+  "id": "h293"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Falha de formato",
+  "id": "h294"
+ },
+ {
+  "level": 3,
+  "text": "8.14 Atividade prática",
+  "id": "h295"
+ },
+ {
+  "level": 3,
+  "text": "8.15 Erros frequentes",
+  "id": "h296"
+ },
+ {
+  "level": 3,
+  "text": "8.16 Limitações e cuidados",
+  "id": "h297"
+ },
+ {
+  "level": 3,
+  "text": "8.17 Síntese",
+  "id": "h298"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h299"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h300"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h301"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h302"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h303"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Desenvolvimento de aplicações em Python",
+  "id": "h304"
+ },
+ {
+  "level": 3,
+  "text": "9.1 Situação inicial",
+  "id": "h305"
+ },
+ {
+  "level": 3,
+  "text": "9.2 Objetivos de aprendizagem",
+  "id": "h306"
+ },
+ {
+  "level": 3,
+  "text": "9.3 Pré-requisitos e revisão necessária",
+  "id": "h307"
+ },
+ {
+  "level": 3,
+  "text": "9.4 Mapa conceitual",
+  "id": "h308"
+ },
+ {
+  "level": 3,
+  "text": "9.5 Anatomia de uma aplicação com LLM",
+  "id": "h309"
+ },
+ {
+  "level": 4,
+  "text": "9.5.1 Separar a lógica do provedor",
+  "id": "h310"
+ },
+ {
+  "level": 3,
+  "text": "9.6 Comunicação com APIs",
+  "id": "h311"
+ },
+ {
+  "level": 4,
+  "text": "9.6.1 O que acontece em uma chamada",
+  "id": "h312"
+ },
+ {
+  "level": 4,
+  "text": "9.6.2 Adaptador para o SDK da Anthropic",
+  "id": "h313"
+ },
+ {
+  "level": 4,
+  "text": "9.6.3 Adaptador para um serviço HTTP com interface compatível",
+  "id": "h314"
+ },
+ {
+  "level": 4,
+  "text": "9.6.4 Erros, limites e novas tentativas",
+  "id": "h315"
+ },
+ {
+  "level": 3,
+  "text": "9.7 Execução de modelos locais",
+  "id": "h316"
+ },
+ {
+  "level": 4,
+  "text": "9.7.1 Exemplo com a biblioteca Transformers",
+  "id": "h317"
+ },
+ {
+  "level": 4,
+  "text": "9.7.2 Pesos disponíveis não são o mesmo que modelo aberto",
+  "id": "h318"
+ },
+ {
+  "level": 4,
+  "text": "9.7.3 Cabe na minha máquina?",
+  "id": "h319"
+ },
+ {
+  "level": 3,
+  "text": "9.8 Preparação das entradas",
+  "id": "h320"
+ },
+ {
+  "level": 3,
+  "text": "9.9 Validação das saídas",
+  "id": "h321"
+ },
+ {
+  "level": 3,
+  "text": "9.10 Orçamentos, limites e falhas na prática",
+  "id": "h322"
+ },
+ {
+  "level": 3,
+  "text": "9.11 Gestão segura de credenciais",
+  "id": "h323"
+ },
+ {
+  "level": 3,
+  "text": "9.12 Registro de versões e parâmetros",
+  "id": "h324"
+ },
+ {
+  "level": 3,
+  "text": "9.13 Separar a lógica da aplicação do provedor",
+  "id": "h325"
+ },
+ {
+  "level": 3,
+  "text": "9.14 Verificando os nomes das bibliotecas",
+  "id": "h326"
+ },
+ {
+  "level": 3,
+  "text": "9.15 Exemplos resolvidos",
+  "id": "h327"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Calculando as esperas do recuo",
+  "id": "h328"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Uma chave vazou",
+  "id": "h329"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Memória para atender 20 usuários",
+  "id": "h330"
+ },
+ {
+  "level": 3,
+  "text": "9.16 Atividade prática",
+  "id": "h331"
+ },
+ {
+  "level": 3,
+  "text": "9.17 Erros frequentes",
+  "id": "h332"
+ },
+ {
+  "level": 3,
+  "text": "9.18 Limitações e cuidados",
+  "id": "h333"
+ },
+ {
+  "level": 3,
+  "text": "9.19 Síntese",
+  "id": "h334"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h335"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h336"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h337"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h338"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h339"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Embeddings e busca semântica",
+  "id": "h340"
+ },
+ {
+  "level": 3,
+  "text": "10.1 Situação inicial",
+  "id": "h341"
+ },
+ {
+  "level": 3,
+  "text": "10.2 Objetivos de aprendizagem",
+  "id": "h342"
+ },
+ {
+  "level": 3,
+  "text": "10.3 Pré-requisitos e revisão necessária",
+  "id": "h343"
+ },
+ {
+  "level": 3,
+  "text": "10.4 Mapa conceitual",
+  "id": "h344"
+ },
+ {
+  "level": 3,
+  "text": "10.5 De palavras a vetores de sentenças e documentos",
+  "id": "h345"
+ },
+ {
+  "level": 3,
+  "text": "10.6 Similaridade: cosseno, produto interno e distância euclidiana",
+  "id": "h346"
+ },
+ {
+  "level": 3,
+  "text": "10.7 Métricas de recuperação",
+  "id": "h347"
+ },
+ {
+  "level": 3,
+  "text": "10.8 Busca lexical (BM25) versus busca semântica",
+  "id": "h348"
+ },
+ {
+  "level": 3,
+  "text": "10.9 Embeddings densos reais: o que mudaria no código",
+  "id": "h349"
+ },
+ {
+  "level": 3,
+  "text": "10.10 Busca híbrida e fusão de rankings (RRF)",
+  "id": "h350"
+ },
+ {
+  "level": 3,
+  "text": "10.11 Segmentação (chunking)",
+  "id": "h351"
+ },
+ {
+  "level": 3,
+  "text": "10.12 Índices vetoriais: busca exata e busca aproximada",
+  "id": "h352"
+ },
+ {
+  "level": 4,
+  "text": "10.12.1 Busca exaustiva",
+  "id": "h353"
+ },
+ {
+  "level": 4,
+  "text": "10.12.2 Busca aproximada: trocar um pouco de exatidão por velocidade",
+  "id": "h354"
+ },
+ {
+  "level": 4,
+  "text": "10.12.3 Custo e memória",
+  "id": "h355"
+ },
+ {
+  "level": 3,
+  "text": "10.13 Reranqueamento: bi-encoder e cross-encoder",
+  "id": "h356"
+ },
+ {
+  "level": 3,
+  "text": "10.14 Consultas sem resposta e limiar de similaridade",
+  "id": "h357"
+ },
+ {
+  "level": 3,
+  "text": "10.15 Metadados, filtros e atualização do índice",
+  "id": "h358"
+ },
+ {
+  "level": 4,
+  "text": "10.15.1 Filtros por metadados",
+  "id": "h359"
+ },
+ {
+  "level": 4,
+  "text": "10.15.2 Atualização do índice",
+  "id": "h360"
+ },
+ {
+  "level": 3,
+  "text": "10.16 Armadilhas de domínio, idioma, siglas, negação e números",
+  "id": "h361"
+ },
+ {
+  "level": 3,
+  "text": "10.17 Exemplos resolvidos",
+  "id": "h362"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — RRF com três rankings",
+  "id": "h363"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — nDCG com três relevantes",
+  "id": "h364"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Memória de um índice",
+  "id": "h365"
+ },
+ {
+  "level": 3,
+  "text": "10.18 Atividade prática",
+  "id": "h366"
+ },
+ {
+  "level": 3,
+  "text": "10.19 Erros frequentes",
+  "id": "h367"
+ },
+ {
+  "level": 3,
+  "text": "10.20 Limitações e cuidados",
+  "id": "h368"
+ },
+ {
+  "level": 3,
+  "text": "10.21 Síntese",
+  "id": "h369"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h370"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h371"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h372"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h373"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h374"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Geração aumentada por recuperação (RAG)",
+  "id": "h375"
+ },
+ {
+  "level": 3,
+  "text": "11.1 Situação inicial",
+  "id": "h376"
+ },
+ {
+  "level": 3,
+  "text": "11.2 Objetivos de aprendizagem",
+  "id": "h377"
+ },
+ {
+  "level": 3,
+  "text": "11.3 Pré-requisitos e revisão necessária",
+  "id": "h378"
+ },
+ {
+  "level": 3,
+  "text": "11.4 Mapa conceitual",
+  "id": "h379"
+ },
+ {
+  "level": 3,
+  "text": "11.5 Por que usar RAG",
+  "id": "h380"
+ },
+ {
+  "level": 3,
+  "text": "11.6 O pipeline de ponta a ponta",
+  "id": "h381"
+ },
+ {
+  "level": 3,
+  "text": "11.7 Fragmentação (chunking) e metadados",
+  "id": "h382"
+ },
+ {
+  "level": 4,
+  "text": "11.7.1 Fragmentos e seus metadados",
+  "id": "h383"
+ },
+ {
+  "level": 4,
+  "text": "11.7.2 O tamanho do fragmento é um compromisso",
+  "id": "h384"
+ },
+ {
+  "level": 3,
+  "text": "11.8 Recuperação: reaproveitando o Capítulo 10",
+  "id": "h385"
+ },
+ {
+  "level": 3,
+  "text": "11.9 Montagem do contexto",
+  "id": "h386"
+ },
+ {
+  "level": 3,
+  "text": "11.10 Instrução de abstenção e o gerador simulado",
+  "id": "h387"
+ },
+ {
+  "level": 3,
+  "text": "11.11 Avaliação separada: recuperação, geração, fidelidade e abstenção",
+  "id": "h388"
+ },
+ {
+  "level": 3,
+  "text": "11.12 Análise de falhas",
+  "id": "h389"
+ },
+ {
+  "level": 4,
+  "text": "11.12.1 Recuperação errada",
+  "id": "h390"
+ },
+ {
+  "level": 4,
+  "text": "11.12.2 Contexto ignorado",
+  "id": "h391"
+ },
+ {
+  "level": 4,
+  "text": "11.12.3 Documentos desatualizados e conflitantes",
+  "id": "h392"
+ },
+ {
+  "level": 4,
+  "text": "11.12.4 Posição no contexto (\"perdido no meio\")",
+  "id": "h393"
+ },
+ {
+  "level": 3,
+  "text": "11.13 RAG avançado: reescrita, multiconsulta, reranqueamento",
+  "id": "h394"
+ },
+ {
+  "level": 3,
+  "text": "11.14 RAG com permissões por usuário",
+  "id": "h395"
+ },
+ {
+  "level": 3,
+  "text": "11.15 Injeção de prompt via documentos recuperados",
+  "id": "h396"
+ },
+ {
+  "level": 3,
+  "text": "11.16 Custos, latência e alternativas",
+  "id": "h397"
+ },
+ {
+  "level": 4,
+  "text": "11.16.1 O custo de um prompt RAG",
+  "id": "h398"
+ },
+ {
+  "level": 4,
+  "text": "11.16.2 RAG, ajuste fino ou contexto longo?",
+  "id": "h399"
+ },
+ {
+  "level": 3,
+  "text": "11.17 Governança de dados: LGPD, atualização e exclusão",
+  "id": "h400"
+ },
+ {
+  "level": 3,
+  "text": "11.18 Exemplos resolvidos",
+  "id": "h401"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — De que lado está o erro?",
+  "id": "h402"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Orçamento de tokens",
+  "id": "h403"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Custo comparado",
+  "id": "h404"
+ },
+ {
+  "level": 3,
+  "text": "11.19 Atividade prática",
+  "id": "h405"
+ },
+ {
+  "level": 3,
+  "text": "11.20 Erros frequentes",
+  "id": "h406"
+ },
+ {
+  "level": 3,
+  "text": "11.21 Limitações e cuidados",
+  "id": "h407"
+ },
+ {
+  "level": 3,
+  "text": "11.22 Síntese",
+  "id": "h408"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h409"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h410"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h411"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h412"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h413"
+ },
+ {
+  "level": 1,
+  "text": "Parte IV — Adaptação e sistemas avançados",
+  "id": "h414"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Ajuste fino, LoRA e QLoRA",
+  "id": "h415"
+ },
+ {
+  "level": 3,
+  "text": "12.1 Situação inicial",
+  "id": "h416"
+ },
+ {
+  "level": 3,
+  "text": "12.2 Objetivos de aprendizagem",
+  "id": "h417"
+ },
+ {
+  "level": 3,
+  "text": "12.3 Pré-requisitos e revisão necessária",
+  "id": "h418"
+ },
+ {
+  "level": 3,
+  "text": "12.4 Mapa conceitual",
+  "id": "h419"
+ },
+ {
+  "level": 3,
+  "text": "12.5 Quando ajustar: prompt, RAG ou ajuste fino",
+  "id": "h420"
+ },
+ {
+  "level": 4,
+  "text": "12.5.1 A conta do custo",
+  "id": "h421"
+ },
+ {
+  "level": 3,
+  "text": "12.6 Dados de ajuste",
+  "id": "h422"
+ },
+ {
+  "level": 4,
+  "text": "12.6.1 Formato instrução-resposta",
+  "id": "h423"
+ },
+ {
+  "level": 4,
+  "text": "12.6.2 Qualidade, divisão e vazamento",
+  "id": "h424"
+ },
+ {
+  "level": 4,
+  "text": "12.6.3 Privacidade e dados pessoais",
+  "id": "h425"
+ },
+ {
+  "level": 3,
+  "text": "12.7 Ajuste completo e custo de memória",
+  "id": "h426"
+ },
+ {
+  "level": 3,
+  "text": "12.8 Ajuste eficiente em parâmetros",
+  "id": "h427"
+ },
+ {
+  "level": 3,
+  "text": "12.9 LoRA: a derivação",
+  "id": "h428"
+ },
+ {
+  "level": 4,
+  "text": "12.9.1 A atualização de posto baixo",
+  "id": "h429"
+ },
+ {
+  "level": 4,
+  "text": "12.9.2 Contagem de parâmetros",
+  "id": "h430"
+ },
+ {
+  "level": 4,
+  "text": "12.9.3 Inicialização: A aleatório, B zero",
+  "id": "h431"
+ },
+ {
+  "level": 4,
+  "text": "12.9.4 O fator \\alpha/r",
+  "id": "h432"
+ },
+ {
+  "level": 4,
+  "text": "12.9.5 Onde aplicar e que r escolher",
+  "id": "h433"
+ },
+ {
+  "level": 3,
+  "text": "12.10 LoRA em NumPy: uma camada",
+  "id": "h434"
+ },
+ {
+  "level": 3,
+  "text": "12.11 LoRA no modelo de linguagem minúsculo",
+  "id": "h435"
+ },
+ {
+  "level": 4,
+  "text": "12.11.1 Efeito de r",
+  "id": "h436"
+ },
+ {
+  "level": 3,
+  "text": "12.12 Esquecimento catastrófico",
+  "id": "h437"
+ },
+ {
+  "level": 3,
+  "text": "12.13 Mesclagem de adaptadores",
+  "id": "h438"
+ },
+ {
+  "level": 3,
+  "text": "12.14 Quantização por blocos",
+  "id": "h439"
+ },
+ {
+  "level": 4,
+  "text": "12.14.1 NF4 e dupla quantização (conceito)",
+  "id": "h440"
+ },
+ {
+  "level": 3,
+  "text": "12.15 QLoRA",
+  "id": "h441"
+ },
+ {
+  "level": 4,
+  "text": "12.15.1 Estimativa de memória",
+  "id": "h442"
+ },
+ {
+  "level": 3,
+  "text": "12.16 Ajuste de um LLM real com transformers e peft",
+  "id": "h443"
+ },
+ {
+  "level": 3,
+  "text": "12.17 Avaliação antes/depois",
+  "id": "h444"
+ },
+ {
+  "level": 3,
+  "text": "12.18 Licenças, riscos e responsabilidade",
+  "id": "h445"
+ },
+ {
+  "level": 3,
+  "text": "12.19 Hiperparâmetros e lista de verificação",
+  "id": "h446"
+ },
+ {
+  "level": 3,
+  "text": "12.20 Exemplos resolvidos",
+  "id": "h447"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Contagem de parâmetros de LoRA",
+  "id": "h448"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Memória de um modelo de 13 bilhões",
+  "id": "h449"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Erro máximo de quantização",
+  "id": "h450"
+ },
+ {
+  "level": 3,
+  "text": "12.21 Atividade prática",
+  "id": "h451"
+ },
+ {
+  "level": 3,
+  "text": "12.22 Erros frequentes",
+  "id": "h452"
+ },
+ {
+  "level": 3,
+  "text": "12.23 Limitações e cuidados",
+  "id": "h453"
+ },
+ {
+  "level": 3,
+  "text": "12.24 Síntese",
+  "id": "h454"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h455"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h456"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h457"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h458"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h459"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Modelos multimodais",
+  "id": "h460"
+ },
+ {
+  "level": 3,
+  "text": "13.1 Situação inicial",
+  "id": "h461"
+ },
+ {
+  "level": 3,
+  "text": "13.2 Objetivos de aprendizagem",
+  "id": "h462"
+ },
+ {
+  "level": 3,
+  "text": "13.3 Pré-requisitos e revisão necessária",
+  "id": "h463"
+ },
+ {
+  "level": 3,
+  "text": "13.4 Mapa conceitual",
+  "id": "h464"
+ },
+ {
+  "level": 3,
+  "text": "13.5 O que é uma modalidade",
+  "id": "h465"
+ },
+ {
+  "level": 3,
+  "text": "13.6 Imagem como números",
+  "id": "h466"
+ },
+ {
+  "level": 3,
+  "text": "13.7 Patches e embeddings de imagem: a ideia do ViT",
+  "id": "h467"
+ },
+ {
+  "level": 3,
+  "text": "13.8 Aprendizado contrastivo imagem–texto: a ideia do CLIP",
+  "id": "h468"
+ },
+ {
+  "level": 4,
+  "text": "13.8.1 A ideia",
+  "id": "h469"
+ },
+ {
+  "level": 4,
+  "text": "13.8.2 A perda contrastiva simétrica (InfoNCE com temperatura)",
+  "id": "h470"
+ },
+ {
+  "level": 4,
+  "text": "13.8.3 Pares sintéticos e codificadores lineares",
+  "id": "h471"
+ },
+ {
+  "level": 4,
+  "text": "13.8.4 Treinando e olhando a matriz de similaridades",
+  "id": "h472"
+ },
+ {
+  "level": 4,
+  "text": "13.8.5 Recuperação imagem→texto, texto→imagem e recall@k",
+  "id": "h473"
+ },
+ {
+  "level": 4,
+  "text": "13.8.6 O efeito da temperatura",
+  "id": "h474"
+ },
+ {
+  "level": 4,
+  "text": "13.8.7 Classificação \"zero-shot\" por descrições",
+  "id": "h475"
+ },
+ {
+  "level": 3,
+  "text": "13.9 Da visão ao LLM: o projetor de embeddings visuais",
+  "id": "h476"
+ },
+ {
+  "level": 3,
+  "text": "13.10 Áudio: forma de onda, espectrograma e fala para texto",
+  "id": "h477"
+ },
+ {
+  "level": 4,
+  "text": "13.10.1 Forma de onda e amostragem",
+  "id": "h478"
+ },
+ {
+  "level": 4,
+  "text": "13.10.2 Espectrograma (STFT)",
+  "id": "h479"
+ },
+ {
+  "level": 4,
+  "text": "13.10.3 Fala para texto (reconhecimento de fala)",
+  "id": "h480"
+ },
+ {
+  "level": 3,
+  "text": "13.11 Documentos: OCR, layout e tabelas",
+  "id": "h481"
+ },
+ {
+  "level": 3,
+  "text": "13.12 Geração de imagens: a ideia da difusão",
+  "id": "h482"
+ },
+ {
+  "level": 4,
+  "text": "13.12.1 Demonstração 1D: ruído direto e remoção \"perfeita\"",
+  "id": "h483"
+ },
+ {
+  "level": 3,
+  "text": "13.13 Avaliação multimodal, vieses e alucinações visuais",
+  "id": "h484"
+ },
+ {
+  "level": 3,
+  "text": "13.14 Custo, privacidade e acessibilidade",
+  "id": "h485"
+ },
+ {
+  "level": 4,
+  "text": "13.14.1 Custo: imagens também são tokens",
+  "id": "h486"
+ },
+ {
+  "level": 4,
+  "text": "13.14.2 Privacidade",
+  "id": "h487"
+ },
+ {
+  "level": 4,
+  "text": "13.14.3 Acessibilidade",
+  "id": "h488"
+ },
+ {
+  "level": 3,
+  "text": "13.15 Código com modelos reais (não executado)",
+  "id": "h489"
+ },
+ {
+  "level": 3,
+  "text": "13.16 Casos de uso",
+  "id": "h490"
+ },
+ {
+  "level": 3,
+  "text": "13.17 Exemplos resolvidos",
+  "id": "h491"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Quantos tokens visuais?",
+  "id": "h492"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Perda contrastiva à mão",
+  "id": "h493"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Fórmula fechada da difusão",
+  "id": "h494"
+ },
+ {
+  "level": 3,
+  "text": "13.18 Atividade prática",
+  "id": "h495"
+ },
+ {
+  "level": 3,
+  "text": "13.19 Erros frequentes",
+  "id": "h496"
+ },
+ {
+  "level": 3,
+  "text": "13.20 Limitações e cuidados",
+  "id": "h497"
+ },
+ {
+  "level": 3,
+  "text": "13.21 Síntese",
+  "id": "h498"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h499"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h500"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h501"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h502"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h503"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — Ferramentas, fluxos e agentes",
+  "id": "h504"
+ },
+ {
+  "level": 3,
+  "text": "14.1 Situação inicial",
+  "id": "h505"
+ },
+ {
+  "level": 3,
+  "text": "14.2 Objetivos de aprendizagem",
+  "id": "h506"
+ },
+ {
+  "level": 3,
+  "text": "14.3 Pré-requisitos e revisão necessária",
+  "id": "h507"
+ },
+ {
+  "level": 3,
+  "text": "14.4 Mapa conceitual",
+  "id": "h508"
+ },
+ {
+  "level": 3,
+  "text": "14.5 Chamada de ferramentas",
+  "id": "h509"
+ },
+ {
+  "level": 4,
+  "text": "14.5.1 Quem faz o quê",
+  "id": "h510"
+ },
+ {
+  "level": 4,
+  "text": "14.5.2 O esquema JSON e a validação com pydantic",
+  "id": "h511"
+ },
+ {
+  "level": 3,
+  "text": "14.6 Registro de ferramentas: erros, idempotência e tempo limite",
+  "id": "h512"
+ },
+ {
+  "level": 3,
+  "text": "14.7 O ciclo do agente: observar, decidir, agir",
+  "id": "h513"
+ },
+ {
+  "level": 3,
+  "text": "14.8 Falhas e recuperação",
+  "id": "h514"
+ },
+ {
+  "level": 3,
+  "text": "14.9 Fluxos determinísticos e agentes",
+  "id": "h515"
+ },
+ {
+  "level": 4,
+  "text": "14.9.1 Fluxo ou agente?",
+  "id": "h516"
+ },
+ {
+  "level": 3,
+  "text": "14.10 Planejamento e memória",
+  "id": "h517"
+ },
+ {
+  "level": 3,
+  "text": "14.11 Segurança: o menor privilégio e a confirmação humana",
+  "id": "h518"
+ },
+ {
+  "level": 3,
+  "text": "14.12 Injeção de prompt indireta por saída de ferramenta",
+  "id": "h519"
+ },
+ {
+  "level": 3,
+  "text": "14.13 Avaliação de agentes",
+  "id": "h520"
+ },
+ {
+  "level": 4,
+  "text": "14.13.1 Limite de passos e custo",
+  "id": "h521"
+ },
+ {
+  "level": 4,
+  "text": "14.13.2 Fluxo fixo ou agente, por tipo de tarefa",
+  "id": "h522"
+ },
+ {
+  "level": 4,
+  "text": "14.13.3 O avaliador–otimizador, medido",
+  "id": "h523"
+ },
+ {
+  "level": 3,
+  "text": "14.14 Modos de falha",
+  "id": "h524"
+ },
+ {
+  "level": 3,
+  "text": "14.15 Protocolo de integração de ferramentas (MCP)",
+  "id": "h525"
+ },
+ {
+  "level": 3,
+  "text": "14.16 Adaptador real com a API do Claude",
+  "id": "h526"
+ },
+ {
+  "level": 3,
+  "text": "14.17 Casos de uso",
+  "id": "h527"
+ },
+ {
+  "level": 3,
+  "text": "14.18 Exemplos resolvidos",
+  "id": "h528"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1: o custo quadrático do contexto",
+  "id": "h529"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2: erros que se acumulam",
+  "id": "h530"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3: de quanto é a incerteza?",
+  "id": "h531"
+ },
+ {
+  "level": 3,
+  "text": "14.19 Atividade prática",
+  "id": "h532"
+ },
+ {
+  "level": 3,
+  "text": "14.20 Erros frequentes",
+  "id": "h533"
+ },
+ {
+  "level": 3,
+  "text": "14.21 Limitações e cuidados",
+  "id": "h534"
+ },
+ {
+  "level": 3,
+  "text": "14.22 Síntese",
+  "id": "h535"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h536"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h537"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h538"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h539"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h540"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 15 — Eficiência, custo e implantação",
+  "id": "h541"
+ },
+ {
+  "level": 3,
+  "text": "15.1 Situação inicial",
+  "id": "h542"
+ },
+ {
+  "level": 3,
+  "text": "15.2 Objetivos de aprendizagem",
+  "id": "h543"
+ },
+ {
+  "level": 3,
+  "text": "15.3 Pré-requisitos e revisão necessária",
+  "id": "h544"
+ },
+ {
+  "level": 3,
+  "text": "15.4 Mapa conceitual",
+  "id": "h545"
+ },
+ {
+  "level": 3,
+  "text": "15.5 De onde vêm o custo e a latência",
+  "id": "h546"
+ },
+ {
+  "level": 4,
+  "text": "15.5.1 Duas fases, dois gargalos",
+  "id": "h547"
+ },
+ {
+  "level": 4,
+  "text": "15.5.2 Tokens de entrada e de saída",
+  "id": "h548"
+ },
+ {
+  "level": 3,
+  "text": "15.6 Um modelo de custo (com preços hipotéticos)",
+  "id": "h549"
+ },
+ {
+  "level": 3,
+  "text": "15.7 Quantização",
+  "id": "h550"
+ },
+ {
+  "level": 4,
+  "text": "15.7.1 A ideia",
+  "id": "h551"
+ },
+ {
+  "level": 4,
+  "text": "15.7.2 Erro em pesos sintéticos: por que os valores atípicos atrapalham",
+  "id": "h552"
+ },
+ {
+  "level": 4,
+  "text": "15.7.3 Efeito na perplexidade de um modelo",
+  "id": "h553"
+ },
+ {
+  "level": 3,
+  "text": "15.8 Modelos menores: destilação e esparsidade",
+  "id": "h554"
+ },
+ {
+  "level": 4,
+  "text": "15.8.1 Destilação",
+  "id": "h555"
+ },
+ {
+  "level": 4,
+  "text": "15.8.2 Esparsidade e mistura de especialistas",
+  "id": "h556"
+ },
+ {
+  "level": 3,
+  "text": "15.9 Caches: KV, prefixo e respostas",
+  "id": "h557"
+ },
+ {
+  "level": 4,
+  "text": "15.9.1 Cache de prefixo",
+  "id": "h558"
+ },
+ {
+  "level": 4,
+  "text": "15.9.2 Cache de respostas: exato e semântico",
+  "id": "h559"
+ },
+ {
+  "level": 3,
+  "text": "15.10 Processamento em lote e lote contínuo",
+  "id": "h560"
+ },
+ {
+  "level": 3,
+  "text": "15.11 Filas: latência versus carga",
+  "id": "h561"
+ },
+ {
+  "level": 4,
+  "text": "15.11.1 O efeito do lote e do cache",
+  "id": "h562"
+ },
+ {
+  "level": 3,
+  "text": "15.12 Decodificação especulativa",
+  "id": "h563"
+ },
+ {
+  "level": 3,
+  "text": "15.13 Roteamento entre modelos",
+  "id": "h564"
+ },
+ {
+  "level": 4,
+  "text": "15.13.1 Combinando as alavancas",
+  "id": "h565"
+ },
+ {
+  "level": 3,
+  "text": "15.14 Padrões de implantação",
+  "id": "h566"
+ },
+ {
+  "level": 3,
+  "text": "15.15 Escalonamento, limites de taxa e filas",
+  "id": "h567"
+ },
+ {
+  "level": 3,
+  "text": "15.16 Observabilidade, deriva e metas de serviço",
+  "id": "h568"
+ },
+ {
+  "level": 3,
+  "text": "15.17 Versionamento, reversão e testes de carga",
+  "id": "h569"
+ },
+ {
+  "level": 3,
+  "text": "15.18 Sustentabilidade",
+  "id": "h570"
+ },
+ {
+  "level": 3,
+  "text": "15.19 Exemplos resolvidos",
+  "id": "h571"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Memória e velocidade de um modelo quantizado",
+  "id": "h572"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Quando o cache semântico compensa",
+  "id": "h573"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Decodificação especulativa",
+  "id": "h574"
+ },
+ {
+  "level": 3,
+  "text": "15.20 Atividade prática",
+  "id": "h575"
+ },
+ {
+  "level": 3,
+  "text": "15.21 Erros frequentes",
+  "id": "h576"
+ },
+ {
+  "level": 3,
+  "text": "15.22 Limitações e cuidados",
+  "id": "h577"
+ },
+ {
+  "level": 3,
+  "text": "15.23 Síntese",
+  "id": "h578"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h579"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h580"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h581"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h582"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h583"
+ },
+ {
+  "level": 1,
+  "text": "Parte V — Avaliação e uso responsável",
+  "id": "h584"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 16 — Avaliação de LLMs e de aplicações",
+  "id": "h585"
+ },
+ {
+  "level": 3,
+  "text": "16.1 Situação inicial",
+  "id": "h586"
+ },
+ {
+  "level": 3,
+  "text": "16.2 Objetivos de aprendizagem",
+  "id": "h587"
+ },
+ {
+  "level": 3,
+  "text": "16.3 Pré-requisitos e revisão necessária",
+  "id": "h588"
+ },
+ {
+  "level": 3,
+  "text": "16.4 Mapa conceitual",
+  "id": "h589"
+ },
+ {
+  "level": 3,
+  "text": "16.5 Por que avaliar LLMs é difícil",
+  "id": "h590"
+ },
+ {
+  "level": 3,
+  "text": "16.6 Avaliação intrínseca e extrínseca",
+  "id": "h591"
+ },
+ {
+  "level": 3,
+  "text": "16.7 Desenho do conjunto de teste",
+  "id": "h592"
+ },
+ {
+  "level": 4,
+  "text": "16.7.1 Representatividade e estratos",
+  "id": "h593"
+ },
+ {
+  "level": 4,
+  "text": "16.7.2 Tamanho e poder estatístico",
+  "id": "h594"
+ },
+ {
+  "level": 4,
+  "text": "16.7.3 Separar desenvolvimento e teste",
+  "id": "h595"
+ },
+ {
+  "level": 4,
+  "text": "16.7.4 Contaminação",
+  "id": "h596"
+ },
+ {
+  "level": 3,
+  "text": "16.8 Avaliando classificadores e extração",
+  "id": "h597"
+ },
+ {
+  "level": 3,
+  "text": "16.9 Métricas para textos abertos",
+  "id": "h598"
+ },
+ {
+  "level": 3,
+  "text": "16.10 Avaliando um sistema RAG",
+  "id": "h599"
+ },
+ {
+  "level": 3,
+  "text": "16.11 LLM como juiz",
+  "id": "h600"
+ },
+ {
+  "level": 4,
+  "text": "16.11.1 Protocolo mínimo",
+  "id": "h601"
+ },
+ {
+  "level": 4,
+  "text": "16.11.2 Um juiz simulado com vieses programados",
+  "id": "h602"
+ },
+ {
+  "level": 3,
+  "text": "16.12 Concordância com humanos e calibração do juiz",
+  "id": "h603"
+ },
+ {
+  "level": 4,
+  "text": "16.12.1 Kappa de Cohen",
+  "id": "h604"
+ },
+ {
+  "level": 4,
+  "text": "16.12.2 Alfa de Krippendorff",
+  "id": "h605"
+ },
+ {
+  "level": 4,
+  "text": "16.12.3 Calibrando o juiz com rótulos humanos",
+  "id": "h606"
+ },
+ {
+  "level": 3,
+  "text": "16.13 Avaliação humana",
+  "id": "h607"
+ },
+ {
+  "level": 3,
+  "text": "16.14 Comparando sistemas",
+  "id": "h608"
+ },
+ {
+  "level": 4,
+  "text": "16.14.1 Teste de McNemar",
+  "id": "h609"
+ },
+ {
+  "level": 4,
+  "text": "16.14.2 Bootstrap pareado e múltiplas comparações",
+  "id": "h610"
+ },
+ {
+  "level": 3,
+  "text": "16.15 Variabilidade: sementes, temperatura e ordem",
+  "id": "h611"
+ },
+ {
+  "level": 3,
+  "text": "16.16 Benchmarks públicos",
+  "id": "h612"
+ },
+ {
+  "level": 3,
+  "text": "16.17 Regressão contínua, monitoramento e feedback",
+  "id": "h613"
+ },
+ {
+  "level": 3,
+  "text": "16.18 Segurança e viés: a ponte para o Capítulo 17",
+  "id": "h614"
+ },
+ {
+  "level": 3,
+  "text": "16.19 Relato responsável",
+  "id": "h615"
+ },
+ {
+  "level": 3,
+  "text": "16.20 Casos de uso",
+  "id": "h616"
+ },
+ {
+  "level": 4,
+  "text": "16.20.1 Educação: correção de respostas discursivas com rubrica",
+  "id": "h617"
+ },
+ {
+  "level": 4,
+  "text": "16.20.2 Jurídico e administração pública",
+  "id": "h618"
+ },
+ {
+  "level": 3,
+  "text": "16.21 Exemplos resolvidos",
+  "id": "h619"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Quantos casos para comparar dois prompts?",
+  "id": "h620"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Kappa à mão",
+  "id": "h621"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Corrigindo a taxa de aprovação de um juiz",
+  "id": "h622"
+ },
+ {
+  "level": 3,
+  "text": "16.22 Atividade prática",
+  "id": "h623"
+ },
+ {
+  "level": 3,
+  "text": "16.23 Erros frequentes",
+  "id": "h624"
+ },
+ {
+  "level": 3,
+  "text": "16.24 Limitações e cuidados",
+  "id": "h625"
+ },
+ {
+  "level": 3,
+  "text": "16.25 Síntese",
+  "id": "h626"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h627"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h628"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h629"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h630"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h631"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 17 — Segurança, ética e governança",
+  "id": "h632"
+ },
+ {
+  "level": 3,
+  "text": "17.1 Situação inicial",
+  "id": "h633"
+ },
+ {
+  "level": 3,
+  "text": "17.2 Objetivos de aprendizagem",
+  "id": "h634"
+ },
+ {
+  "level": 3,
+  "text": "17.3 Pré-requisitos e revisão necessária",
+  "id": "h635"
+ },
+ {
+  "level": 3,
+  "text": "17.4 Mapa conceitual",
+  "id": "h636"
+ },
+ {
+  "level": 3,
+  "text": "17.5 Panorama de riscos",
+  "id": "h637"
+ },
+ {
+  "level": 3,
+  "text": "17.6 Modelo de ameaças simples",
+  "id": "h638"
+ },
+ {
+  "level": 3,
+  "text": "17.7 Ameaças a aplicações com LLMs",
+  "id": "h639"
+ },
+ {
+  "level": 4,
+  "text": "17.7.1 Injeção de prompt: direta e indireta",
+  "id": "h640"
+ },
+ {
+  "level": 4,
+  "text": "17.7.2 Uma demonstração em simulação",
+  "id": "h641"
+ },
+ {
+  "level": 4,
+  "text": "17.7.3 Privilégio mínimo e um erro comum",
+  "id": "h642"
+ },
+ {
+  "level": 3,
+  "text": "17.8 Envenenamento de dados e de RAG; cadeia de suprimentos",
+  "id": "h643"
+ },
+ {
+  "level": 4,
+  "text": "17.8.1 Envenenamento da base de consulta",
+  "id": "h644"
+ },
+ {
+  "level": 4,
+  "text": "17.8.2 Cadeia de suprimentos",
+  "id": "h645"
+ },
+ {
+  "level": 3,
+  "text": "17.9 Mitigações em camadas",
+  "id": "h646"
+ },
+ {
+  "level": 4,
+  "text": "17.9.1 Defesa em profundidade",
+  "id": "h647"
+ },
+ {
+  "level": 4,
+  "text": "17.9.2 Medindo as camadas com o catálogo de ataques",
+  "id": "h648"
+ },
+ {
+  "level": 4,
+  "text": "17.9.3 Negação de serviço por custo",
+  "id": "h649"
+ },
+ {
+  "level": 3,
+  "text": "17.10 Red teaming",
+  "id": "h650"
+ },
+ {
+  "level": 3,
+  "text": "17.11 Proteção de dados pessoais e a LGPD",
+  "id": "h651"
+ },
+ {
+  "level": 4,
+  "text": "17.11.1 O que a lei diz, em linhas gerais",
+  "id": "h652"
+ },
+ {
+  "level": 4,
+  "text": "17.11.2 Traduzindo princípios em decisões de projeto",
+  "id": "h653"
+ },
+ {
+  "level": 3,
+  "text": "17.12 Detector e mascarador de dados pessoais",
+  "id": "h654"
+ },
+ {
+  "level": 4,
+  "text": "17.12.1 Mascarar e pseudonimizar",
+  "id": "h655"
+ },
+ {
+  "level": 4,
+  "text": "17.12.2 Anonimização e k-anonimato",
+  "id": "h656"
+ },
+ {
+  "level": 3,
+  "text": "17.13 Viés e justiça",
+  "id": "h657"
+ },
+ {
+  "level": 4,
+  "text": "17.13.1 De onde vem o viés",
+  "id": "h658"
+ },
+ {
+  "level": 4,
+  "text": "17.13.2 Métricas de equidade com um exemplo sintético",
+  "id": "h659"
+ },
+ {
+  "level": 4,
+  "text": "17.13.3 Viés em LLMs",
+  "id": "h660"
+ },
+ {
+  "level": 3,
+  "text": "17.14 Transparência e explicabilidade",
+  "id": "h661"
+ },
+ {
+  "level": 3,
+  "text": "17.15 Direitos autorais, licenças de dados e de modelos",
+  "id": "h662"
+ },
+ {
+  "level": 3,
+  "text": "17.16 Regulação e frameworks",
+  "id": "h663"
+ },
+ {
+  "level": 3,
+  "text": "17.17 Governança organizacional",
+  "id": "h664"
+ },
+ {
+  "level": 3,
+  "text": "17.18 Casos de uso",
+  "id": "h665"
+ },
+ {
+  "level": 4,
+  "text": "Saúde (somente dados sintéticos)",
+  "id": "h666"
+ },
+ {
+  "level": 4,
+  "text": "Jurídico e administração pública",
+  "id": "h667"
+ },
+ {
+  "level": 4,
+  "text": "Educação",
+  "id": "h668"
+ },
+ {
+  "level": 3,
+  "text": "17.19 Checklists de segurança",
+  "id": "h669"
+ },
+ {
+  "level": 3,
+  "text": "17.20 Exemplos resolvidos",
+  "id": "h670"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1 — Intervalo para a taxa de sucesso de um ataque",
+  "id": "h671"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2 — Classificar o risco de um sistema",
+  "id": "h672"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3 — Estimando a energia de um treino",
+  "id": "h673"
+ },
+ {
+  "level": 3,
+  "text": "17.21 Atividade prática",
+  "id": "h674"
+ },
+ {
+  "level": 3,
+  "text": "17.22 Erros frequentes",
+  "id": "h675"
+ },
+ {
+  "level": 3,
+  "text": "17.23 Limitações e cuidados",
+  "id": "h676"
+ },
+ {
+  "level": 3,
+  "text": "17.24 Síntese",
+  "id": "h677"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h678"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h679"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h680"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h681"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h682"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 18 — Projetos integradores",
+  "id": "h683"
+ },
+ {
+  "level": 3,
+  "text": "18.1 Situação inicial",
+  "id": "h684"
+ },
+ {
+  "level": 3,
+  "text": "18.2 Objetivos de aprendizagem",
+  "id": "h685"
+ },
+ {
+  "level": 3,
+  "text": "18.3 Pré-requisitos e revisão necessária",
+  "id": "h686"
+ },
+ {
+  "level": 3,
+  "text": "18.4 Mapa conceitual",
+  "id": "h687"
+ },
+ {
+  "level": 3,
+  "text": "18.5 O molde comum dos seis projetos",
+  "id": "h688"
+ },
+ {
+  "level": 3,
+  "text": "18.6 Repositório, reprodutibilidade e trabalho em equipe",
+  "id": "h689"
+ },
+ {
+  "level": 4,
+  "text": "18.6.1 Organizar o repositório",
+  "id": "h690"
+ },
+ {
+  "level": 4,
+  "text": "18.6.2 Reprodutibilidade",
+  "id": "h691"
+ },
+ {
+  "level": 4,
+  "text": "18.6.3 Roteiro de trabalho em equipe",
+  "id": "h692"
+ },
+ {
+  "level": 3,
+  "text": "18.7 Projeto 1: Educação, assistente de normas acadêmicas",
+  "id": "h693"
+ },
+ {
+  "level": 4,
+  "text": "18.7.1 Problema, usuários e requisitos",
+  "id": "h694"
+ },
+ {
+  "level": 4,
+  "text": "18.7.2 Implementação e avaliação",
+  "id": "h695"
+ },
+ {
+  "level": 4,
+  "text": "18.7.3 Análise de erros",
+  "id": "h696"
+ },
+ {
+  "level": 4,
+  "text": "18.7.4 Riscos, relatório, rubrica e extensões",
+  "id": "h697"
+ },
+ {
+  "level": 3,
+  "text": "18.8 Projeto 2: Saúde, triagem informativa de serviços (dados sintéticos)",
+  "id": "h698"
+ },
+ {
+  "level": 4,
+  "text": "18.8.1 Problema, usuários e requisitos",
+  "id": "h699"
+ },
+ {
+  "level": 4,
+  "text": "18.8.2 Implementação: guardrails por regras, RAG e registro seguro",
+  "id": "h700"
+ },
+ {
+  "level": 4,
+  "text": "18.8.3 Respostas, qualidade do serviço e privacidade",
+  "id": "h701"
+ },
+ {
+  "level": 4,
+  "text": "18.8.4 Equidade entre registros de escrita",
+  "id": "h702"
+ },
+ {
+  "level": 4,
+  "text": "18.8.5 Riscos, relatório, rubrica e extensões",
+  "id": "h703"
+ },
+ {
+  "level": 3,
+  "text": "18.9 Projeto 3: Jurídico e administração pública, normas com vigência e trilha",
+  "id": "h704"
+ },
+ {
+  "level": 4,
+  "text": "18.9.1 Problema, usuários e requisitos",
+  "id": "h705"
+ },
+ {
+  "level": 4,
+  "text": "18.9.2 Implementação: três formas de filtrar",
+  "id": "h706"
+ },
+ {
+  "level": 4,
+  "text": "18.9.3 Trilha de auditoria e pseudonimização",
+  "id": "h707"
+ },
+ {
+  "level": 4,
+  "text": "18.9.4 Riscos, relatório, rubrica e extensões",
+  "id": "h708"
+ },
+ {
+  "level": 3,
+  "text": "18.10 Projeto 4: Atendimento ao cliente, intenções, agente com plano B, custo e latência",
+  "id": "h709"
+ },
+ {
+  "level": 4,
+  "text": "18.10.1 Problema, usuários e requisitos",
+  "id": "h710"
+ },
+ {
+  "level": 4,
+  "text": "18.10.2 Classificador de intenções: modelo de frase não é o mundo real",
+  "id": "h711"
+ },
+ {
+  "level": 4,
+  "text": "18.10.3 O agente de atendimento, com e sem plano B",
+  "id": "h712"
+ },
+ {
+  "level": 4,
+  "text": "18.10.4 Custo e latência (valores hipotéticos)",
+  "id": "h713"
+ },
+ {
+  "level": 4,
+  "text": "18.10.5 Riscos, relatório, rubrica e extensões",
+  "id": "h714"
+ },
+ {
+  "level": 3,
+  "text": "18.11 Projeto 5: Documentação técnica, busca, resumo e extração validada",
+  "id": "h715"
+ },
+ {
+  "level": 4,
+  "text": "18.11.1 Problema, usuários e requisitos",
+  "id": "h716"
+ },
+ {
+  "level": 4,
+  "text": "18.11.2 Busca e resumo",
+  "id": "h717"
+ },
+ {
+  "level": 4,
+  "text": "18.11.3 Extração estruturada com validação pydantic",
+  "id": "h718"
+ },
+ {
+  "level": 4,
+  "text": "18.11.4 Ajuste leve opcional (LoRA didático)",
+  "id": "h719"
+ },
+ {
+  "level": 4,
+  "text": "18.11.5 Riscos, relatório, rubrica e extensões",
+  "id": "h720"
+ },
+ {
+  "level": 3,
+  "text": "18.12 Projeto 6: o projeto final integrador",
+  "id": "h721"
+ },
+ {
+  "level": 4,
+  "text": "18.12.1 Problema, usuários e requisitos",
+  "id": "h722"
+ },
+ {
+  "level": 4,
+  "text": "18.12.2 A bancada e o relatório automático",
+  "id": "h723"
+ },
+ {
+  "level": 4,
+  "text": "18.12.3 Portão de regressão e robustez",
+  "id": "h724"
+ },
+ {
+  "level": 4,
+  "text": "18.12.4 Cartão do sistema, governança e reprodutibilidade",
+  "id": "h725"
+ },
+ {
+  "level": 4,
+  "text": "18.12.5 Riscos, relatório, rubrica e extensões",
+  "id": "h726"
+ },
+ {
+  "level": 3,
+  "text": "18.13 Apresentar os resultados",
+  "id": "h727"
+ },
+ {
+  "level": 3,
+  "text": "18.14 O que NÃO afirmar: os limites do simulador",
+  "id": "h728"
+ },
+ {
+  "level": 3,
+  "text": "18.15 Exemplos resolvidos",
+  "id": "h729"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 1: Quantos casos para um veredito?",
+  "id": "h730"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 2: O mesmo sistema, dois vereditos",
+  "id": "h731"
+ },
+ {
+  "level": 4,
+  "text": "Exemplo 3: A economia do classificador na frente",
+  "id": "h732"
+ },
+ {
+  "level": 3,
+  "text": "18.16 Atividade prática",
+  "id": "h733"
+ },
+ {
+  "level": 3,
+  "text": "18.17 Erros frequentes",
+  "id": "h734"
+ },
+ {
+  "level": 3,
+  "text": "18.18 Limitações e cuidados",
+  "id": "h735"
+ },
+ {
+  "level": 3,
+  "text": "18.19 Fechamento do livro",
+  "id": "h736"
+ },
+ {
+  "level": 3,
+  "text": "18.20 Síntese",
+  "id": "h737"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h738"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h739"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python",
+  "id": "h740"
+ },
+ {
+  "level": 3,
+  "text": "Projetos integradores finais",
+  "id": "h741"
+ },
+ {
+  "level": 3,
+  "text": "Referências do capítulo",
+  "id": "h742"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito comentado das questões objetivas",
+  "id": "h743"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h744"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h745"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h746"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h747"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Como os modelos de linguagem aprendem",
+  "id": "h748"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Geração de texto e inferência",
+  "id": "h749"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Ajuste por instruções e preferências",
+  "id": "h750"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia de prompts",
+  "id": "h751"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Desenvolvimento de aplicações em Python",
+  "id": "h752"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Embeddings e busca semântica",
+  "id": "h753"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Geração aumentada por recuperação (RAG)",
+  "id": "h754"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Ajuste fino, LoRA e QLoRA",
+  "id": "h755"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Modelos multimodais",
+  "id": "h756"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — Ferramentas, fluxos e agentes",
+  "id": "h757"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 15 — Eficiência, custo e implantação",
+  "id": "h758"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 16 — Avaliação de LLMs e de aplicações",
+  "id": "h759"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 17 — Segurança, ética e governança",
+  "id": "h760"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 18 — Projetos integradores",
+  "id": "h761"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice B — Soluções das questões matemáticas",
+  "id": "h762"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h763"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h764"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h765"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h766"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Como os modelos de linguagem aprendem",
+  "id": "h767"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Geração de texto e inferência",
+  "id": "h768"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Ajuste por instruções e preferências",
+  "id": "h769"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia de prompts",
+  "id": "h770"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Desenvolvimento de aplicações em Python",
+  "id": "h771"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Embeddings e busca semântica",
+  "id": "h772"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Geração aumentada por recuperação (RAG)",
+  "id": "h773"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Ajuste fino, LoRA e QLoRA",
+  "id": "h774"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Modelos multimodais",
+  "id": "h775"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — Ferramentas, fluxos e agentes",
+  "id": "h776"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 15 — Eficiência, custo e implantação",
+  "id": "h777"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 16 — Avaliação de LLMs e de aplicações",
+  "id": "h778"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 17 — Segurança, ética e governança",
+  "id": "h779"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 18 — Projetos integradores",
+  "id": "h780"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice C — Respostas orientadoras, códigos de referência e critérios",
+  "id": "h781"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h782"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h783"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h784"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h785"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Como os modelos de linguagem aprendem",
+  "id": "h786"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Geração de texto e inferência",
+  "id": "h787"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Ajuste por instruções e preferências",
+  "id": "h788"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia de prompts",
+  "id": "h789"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Desenvolvimento de aplicações em Python",
+  "id": "h790"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Embeddings e busca semântica",
+  "id": "h791"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Geração aumentada por recuperação (RAG)",
+  "id": "h792"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Ajuste fino, LoRA e QLoRA",
+  "id": "h793"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Modelos multimodais",
+  "id": "h794"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — Ferramentas, fluxos e agentes",
+  "id": "h795"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 15 — Eficiência, custo e implantação",
+  "id": "h796"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 16 — Avaliação de LLMs e de aplicações",
+  "id": "h797"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 17 — Segurança, ética e governança",
+  "id": "h798"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 18 — Projetos integradores",
+  "id": "h799"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h800"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h801"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h802"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h803"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h804"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Como os modelos de linguagem aprendem",
+  "id": "h805"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Geração de texto e inferência",
+  "id": "h806"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Ajuste por instruções e preferências",
+  "id": "h807"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia de prompts",
+  "id": "h808"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Desenvolvimento de aplicações em Python",
+  "id": "h809"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Embeddings e busca semântica",
+  "id": "h810"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Geração aumentada por recuperação (RAG)",
+  "id": "h811"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Ajuste fino, LoRA e QLoRA",
+  "id": "h812"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Modelos multimodais",
+  "id": "h813"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — Ferramentas, fluxos e agentes",
+  "id": "h814"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 15 — Eficiência, custo e implantação",
+  "id": "h815"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 16 — Avaliação de LLMs e de aplicações",
+  "id": "h816"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 17 — Segurança, ética e governança",
+  "id": "h817"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 18 — Projetos integradores",
+  "id": "h818"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos",
+  "id": "h819"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução aos Grandes Modelos de Linguagem",
+  "id": "h820"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e computacionais",
+  "id": "h821"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Texto, tokens e embeddings",
+  "id": "h822"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Atenção e arquitetura Transformer",
+  "id": "h823"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Como os modelos de linguagem aprendem",
+  "id": "h824"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Geração de texto e inferência",
+  "id": "h825"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Ajuste por instruções e preferências",
+  "id": "h826"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Engenharia de prompts",
+  "id": "h827"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Desenvolvimento de aplicações em Python",
+  "id": "h828"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Embeddings e busca semântica",
+  "id": "h829"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Geração aumentada por recuperação (RAG)",
+  "id": "h830"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Ajuste fino, LoRA e QLoRA",
+  "id": "h831"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Modelos multimodais",
+  "id": "h832"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — Ferramentas, fluxos e agentes",
+  "id": "h833"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 15 — Eficiência, custo e implantação",
+  "id": "h834"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 16 — Avaliação de LLMs e de aplicações",
+  "id": "h835"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 17 — Segurança, ética e governança",
+  "id": "h836"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 18 — Projetos integradores",
+  "id": "h837"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice F — Glossário",
+  "id": "h838"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice G — Símbolos e notação",
+  "id": "h839"
+ },
+ {
+  "level": 3,
+  "text": "Convenções gerais (Capítulos 1 e 2)",
+  "id": "h840"
+ },
+ {
+  "level": 3,
+  "text": "Capítulo 3: texto e embeddings",
+  "id": "h841"
+ },
+ {
+  "level": 3,
+  "text": "Capítulo 4: atenção e Transformer",
+  "id": "h842"
+ },
+ {
+  "level": 3,
+  "text": "Capítulos 5 a 7: treinamento, geração e pós-treinamento",
+  "id": "h843"
+ },
+ {
+  "level": 3,
+  "text": "Capítulos 8 a 11: prompts, aplicações, busca e RAG",
+  "id": "h844"
+ },
+ {
+  "level": 3,
+  "text": "Capítulos 12 e 13: ajuste fino e multimodalidade",
+  "id": "h845"
+ },
+ {
+  "level": 3,
+  "text": "Capítulos 14 a 17: agentes, implantação, avaliação e segurança",
+  "id": "h846"
+ },
+ {
+  "level": 3,
+  "text": "Símbolos com mais de um sentido",
+  "id": "h847"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice H — Instalação e execução",
+  "id": "h848"
+ },
+ {
+  "level": 3,
+  "text": "H.1 O que você precisa",
+  "id": "h849"
+ },
+ {
+  "level": 3,
+  "text": "H.2 Ambiente virtual e bibliotecas",
+  "id": "h850"
+ },
+ {
+  "level": 3,
+  "text": "H.3 O pacote didático llmdidatico",
+  "id": "h851"
+ },
+ {
+  "level": 3,
+  "text": "H.4 Rodando os códigos de cada capítulo",
+  "id": "h852"
+ },
+ {
+  "level": 3,
+  "text": "H.5 Google Colab e CPU",
+  "id": "h853"
+ },
+ {
+  "level": 3,
+  "text": "H.6 Uso opcional de APIs (sem chave no código)",
+  "id": "h854"
+ },
+ {
+  "level": 3,
+  "text": "H.7 Uso opcional de modelos locais",
+  "id": "h855"
+ },
+ {
+  "level": 3,
+  "text": "H.8 Solução de problemas",
+  "id": "h856"
+ },
+ {
+  "level": 3,
+  "text": "H.9 Reproduzindo o livro (opcional)",
+  "id": "h857"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice I — Banco de prompts comentados",
+  "id": "h858"
+ },
+ {
+  "level": 3,
+  "text": "I.1 Como usar o banco",
+  "id": "h859"
+ },
+ {
+  "level": 3,
+  "text": "I.2 Estrutura de um prompt (Capítulo 8)",
+  "id": "h860"
+ },
+ {
+  "level": 3,
+  "text": "I.3 Papel, tarefa e formato",
+  "id": "h861"
+ },
+ {
+  "level": 4,
+  "text": "P1. Classificação de mensagens com saída em JSON (Capítulo 8, do livro)",
+  "id": "h862"
+ },
+ {
+  "level": 4,
+  "text": "P2. Versões comparáveis do mesmo prompt (Capítulo 8, do livro)",
+  "id": "h863"
+ },
+ {
+  "level": 4,
+  "text": "P3. Extração com abstenção e evidência literal (modelo sugerido)",
+  "id": "h864"
+ },
+ {
+  "level": 3,
+  "text": "I.4 Delimitação de dados e abstenção",
+  "id": "h865"
+ },
+ {
+  "level": 4,
+  "text": "P4. Resposta apenas com os documentos fornecidos (Capítulo 8, do livro)",
+  "id": "h866"
+ },
+ {
+  "level": 4,
+  "text": "P5. Instrução de sistema do RAG com delimitadores e citação (Capítulo 11, do livro)",
+  "id": "h867"
+ },
+ {
+  "level": 4,
+  "text": "P6. Mensagem de sistema do adaptador de API (Capítulo 9, do livro)",
+  "id": "h868"
+ },
+ {
+  "level": 3,
+  "text": "I.5 Etapas verificáveis e revisão",
+  "id": "h869"
+ },
+ {
+  "level": 4,
+  "text": "P7. Cadeia de três etapas: extrair, validar, redigir (Capítulo 8, descrito no texto; modelo sugerido)",
+  "id": "h870"
+ },
+ {
+  "level": 4,
+  "text": "P8. Segunda passada de revisão com critérios concretos (Capítulo 8, modelo sugerido)",
+  "id": "h871"
+ },
+ {
+  "level": 3,
+  "text": "I.6 Agentes e ferramentas (Capítulo 14)",
+  "id": "h872"
+ },
+ {
+  "level": 4,
+  "text": "P9. Instrução de sistema de um agente com ferramentas (Capítulo 14, do livro, código python-ni)",
+  "id": "h873"
+ },
+ {
+  "level": 4,
+  "text": "P10. Resultado de ferramenta embrulhado como dado (Capítulo 14, do livro)",
+  "id": "h874"
+ },
+ {
+  "level": 3,
+  "text": "I.7 Avaliação com juiz (Capítulo 16)",
+  "id": "h875"
+ },
+ {
+  "level": 4,
+  "text": "P11. Juiz com rubrica e saída estruturada (modelo sugerido a partir do protocolo da Seção 16.11.1)",
+  "id": "h876"
+ },
+ {
+  "level": 4,
+  "text": "P12. Comparação de pares com troca de ordem (modelo sugerido)",
+  "id": "h877"
+ },
+ {
+  "level": 3,
+  "text": "I.8 Segurança e red teaming (Capítulo 17)",
+  "id": "h878"
+ },
+ {
+  "level": 4,
+  "text": "P13. Instrução de sistema com segredo-canário (Capítulo 17, do livro; assistente simulado)",
+  "id": "h879"
+ },
+ {
+  "level": 4,
+  "text": "P14. Catálogo de casos de red teaming (Capítulo 17, do livro)",
+  "id": "h880"
+ },
+ {
+  "level": 3,
+  "text": "I.9 Extração estruturada com esquema (Capítulo 18)",
+  "id": "h881"
+ },
+ {
+  "level": 4,
+  "text": "P15. Extração em JSON com esquema pydantic no system, validando sempre a saída (Capítulo 18, modelo sugerido)",
+  "id": "h882"
+ },
+ {
+  "level": 3,
+  "text": "I.10 Lista de verificação de um prompt (Capítulo 8)",
+  "id": "h883"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice J — Listas de verificação",
+  "id": "h884"
+ },
+ {
+  "level": 3,
+  "text": "J.1 Avaliação (Capítulos 8, 10, 11, 16)",
+  "id": "h885"
+ },
+ {
+  "level": 3,
+  "text": "J.2 Segurança e privacidade (Capítulos 9, 11, 14, 17)",
+  "id": "h886"
+ },
+ {
+  "level": 3,
+  "text": "J.3 RAG (Capítulos 10 e 11)",
+  "id": "h887"
+ },
+ {
+  "level": 3,
+  "text": "J.4 Agentes e ferramentas (Capítulo 14)",
+  "id": "h888"
+ },
+ {
+  "level": 3,
+  "text": "J.5 Ajuste fino (Capítulo 12)",
+  "id": "h889"
+ },
+ {
+  "level": 3,
+  "text": "J.6 Multimodal (Capítulo 13)",
+  "id": "h890"
+ },
+ {
+  "level": 3,
+  "text": "J.7 Implantação (Capítulos 9 e 15)",
+  "id": "h891"
+ },
+ {
+  "level": 3,
+  "text": "J.8 Governança (Capítulo 17)",
+  "id": "h892"
+ },
+ {
+  "level": 3,
+  "text": "J.9 Projetos integradores (Capítulo 18)",
+  "id": "h893"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice K — Matrizes de decisão e de rastreabilidade",
+  "id": "h894"
+ },
+ {
+  "level": 3,
+  "text": "K.1 As cinco estratégias em uma frase",
+  "id": "h895"
+ },
+ {
+  "level": 3,
+  "text": "K.2 Matriz de decisão: conhecimento, custo, latência e controle",
+  "id": "h896"
+ },
+ {
+  "level": 3,
+  "text": "K.3 Matriz de decisão: risco, esforço e avaliação",
+  "id": "h897"
+ },
+ {
+  "level": 3,
+  "text": "K.4 Como decidir, passo a passo",
+  "id": "h898"
+ },
+ {
+  "level": 3,
+  "text": "K.5 Quando evitar cada estratégia",
+  "id": "h899"
+ },
+ {
+  "level": 3,
+  "text": "K.6 Matriz de rastreabilidade: capítulos e competências",
+  "id": "h900"
+ },
+ {
+  "level": 3,
+  "text": "K.7 Como usar a matriz de rastreabilidade",
+  "id": "h901"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice L — Nota metodológica e guia de reprodução",
+  "id": "h902"
+ },
+ {
+  "level": 3,
+  "text": "L.1 Data de corte e escopo",
+  "id": "h903"
+ },
+ {
+  "level": 3,
+  "text": "L.2 O que foi consultado de Ozdemir (2024; 2025)",
+  "id": "h904"
+ },
+ {
+  "level": 3,
+  "text": "L.3 Status de verificação das referências",
+  "id": "h905"
+ },
+ {
+  "level": 3,
+  "text": "L.4 O que foi executado de fato",
+  "id": "h906"
+ },
+ {
+  "level": 3,
+  "text": "L.5 Declaração: simuladores e modelos didáticos, nenhum LLM real",
+  "id": "h907"
+ },
+ {
+  "level": 3,
+  "text": "L.6 Limites dos experimentos",
+  "id": "h908"
+ },
+ {
+  "level": 3,
+  "text": "L.7 Como reproduzir o livro",
+  "id": "h909"
+ },
+ {
+  "level": 3,
+  "text": "L.8 Política de atualização",
+  "id": "h910"
+ },
+ {
+  "level": 3,
+  "text": "L.9 Como relatar erros",
+  "id": "h911"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h195"
+  "id": "h912"
  }
 ]

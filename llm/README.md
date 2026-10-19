@@ -1,6 +1,6 @@
 # Grandes Modelos de Linguagem — livro didático e material de apoio
 
-Livro didático em português do Brasil, de **Araken de Medeiros Santos**, com 18 capítulos, apêndices, exercícios, projetos, código executável e slides. Público misto, sem conhecimentos prévios de aprendizado de máquina. Data de corte bibliográfico: **18 de outubro de 2026**.
+Livro didático em português do Brasil, de **Araken de Medeiros Santos**, com 18 capítulos (o último com seis projetos integradores), apêndices, exercícios, projetos, código executável e slides. Público misto, sem conhecimentos prévios de aprendizado de máquina. Data de corte bibliográfico: **18 de outubro de 2026**.
 
 ## Aviso importante sobre o que este repositório é e não é
 
@@ -13,7 +13,7 @@ Livro didático em português do Brasil, de **Araken de Medeiros Santos**, com 1
 
 | Caminho | Conteúdo |
 | --- | --- |
-| `cap/chNN.md` | texto dos capítulos 1 a 17 (o capítulo 18, de projetos, está em elaboração à parte) |
+| `cap/chNN.md` | texto dos capítulos 1 a 18 (o capítulo 18 reúne os seis projetos integradores) |
 | `cap/exNN.txt` | questões do capítulo: 30 de múltipla escolha e 20 discursivas |
 | `cap/pr/prNN.txt` | exercícios práticos e projeto de fim de capítulo, com soluções |
 | `cap/referencias.txt` | referências, com status de verificação (V, C ou P) |
@@ -56,11 +56,11 @@ Os scripts de `build/` usam o caminho absoluto `/home/user/claude/llm`; ajuste `
 
 **Executado, com saída real registrada** (contagens nos arquivos JSON de `build/`, na data do corte):
 
-- 184 blocos de código `python`/`python+` dos capítulos 1 a 17 (`code_out.json`);
-- 70 códigos de questões discursivas de programação, todos com resultado verdadeiro (`ex_ok.json`);
-- 68 resultados de práticos: 51 exercícios e 17 projetos (`pr_out.json`).
+- 209 blocos de código `python`/`python+` dos capítulos 1 a 18 (`code_out.json`);
+- 78 códigos de questões discursivas de programação, todos com resultado verdadeiro (`ex_ok.json`);
+- 72 resultados de práticos: 54 exercícios e 18 projetos (`pr_out.json`).
 
-**Não executado:** blocos `python-ni` (11 nos capítulos 1 a 17: adaptadores de API e de modelos locais, `transformers` e `peft`, modelos multimodais reais, servidores de inferência), qualquer chamada a serviço real, qualquer modelo real, qualquer uso de GPU. O capítulo 18 não está incluído nessas contagens.
+**Não executado:** blocos `python-ni` (14 nos capítulos 1 a 18: adaptadores de API e de modelos locais, `transformers` e `peft`, modelos multimodais reais, servidores de inferência e, no capítulo 18, adaptadores de API real para gerador, agente e extração), qualquer chamada a serviço real, qualquer modelo real, qualquer uso de GPU.
 
 ## Licença e uso
 

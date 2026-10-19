@@ -8,7 +8,7 @@ Este apêndice reúne a notação usada nos capítulos. Convenções gerais: let
 | --- | --- | --- |
 | $w_t$ | token na posição $t$ de uma sequência | Cap. 1 |
 | $P(w_t \mid w_1,\ldots,w_{t-1})$ | probabilidade do token $w_t$ dados os anteriores | Caps. 1, 5 |
-| $n$, $N$ | comprimento de sequência, número de exemplos ou de documentos (conforme o contexto) | Caps. 1 a 17 |
+| $n$, $N$ | comprimento de sequência, número de exemplos ou de documentos (conforme o contexto) | Caps. 1 a 18 |
 | $V$ | tamanho do vocabulário | Caps. 2, 3, 4 |
 | $d$ | dimensão dos vetores (embeddings, modelo) | Caps. 2, 3, 4 |
 | $\mathbf{a}\cdot\mathbf{b}$ | produto escalar | Cap. 2 |

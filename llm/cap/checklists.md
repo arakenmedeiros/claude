@@ -129,3 +129,17 @@ Uma lista de verificação **não garante** qualidade, segurança nem conformida
 - [ ] Há auditoria periódica e reteste a cada mudança relevante (16, 17).
 - [ ] A conformidade com leis e normas aplicáveis (LGPD e demais) foi **confirmada na fonte oficial vigente** e com profissionais habilitados; este livro não substitui aconselhamento jurídico (17).
 - [ ] Uso em saúde, jurídico e administração pública tem supervisão profissional, sem aconselhamento clínico ou decisão automática sem revisão (1, 17).
+
+## J.9 Projetos integradores (Capítulo 18)
+
+- [ ] Os **critérios de aceitação** (número e intervalo que dizem "pronto") foram escritos **antes** de medir, e o relatório os compara por **veredito**: atende, não atende ou inconclusivo (16, 18).
+- [ ] Existe um **conjunto cego**, separado do de desenvolvimento, que não foi usado para escrever regras nem ajustar limiares, e o resultado dele aparece ao lado do de desenvolvimento (16, 18).
+- [ ] Os **estratos críticos** (urgência, ataques, perguntas sem resposta, grupos de usuários) são medidos à parte, cada um com **IC e veredito**, e não só na média (16, 18).
+- [ ] Se o sistema usa normas ou documentos com datas, há **teste de fronteira de vigência** (o dia exato de início e de fim) e a resposta informa a norma e a data de referência (11, 18).
+- [ ] Em serviços de saúde, a resposta a **urgência** e o encaminhamento a profissional são **texto fixo**, nunca gerado, e a revocação de urgência é medida no conjunto cego, com informação de que o sistema não faz aconselhamento clínico (17, 18).
+- [ ] Mudanças de prompt, limiar, modelo ou base passam por um **portão de regressão** com **comparação pareada** com a versão aprovada, nos mesmos casos (16, 18).
+- [ ] Cada resultado guarda o **hash dos casos e da configuração**, sementes e versões, no **registro de reprodutibilidade** (16, 18).
+- [ ] Diferenças entre subgrupos só são atribuídas ao grupo depois de checar **confundimento** com outro fator (por exemplo, tipo de pergunta) (17, 18).
+- [ ] A trilha de auditoria é íntegra (hash encadeado), o usuário aparece **pseudonimizado** e há retenção definida (17, 18).
+- [ ] O relatório declara o que o simulador **não** permite afirmar e que os números não valem para modelos ou produtos reais (18).
+

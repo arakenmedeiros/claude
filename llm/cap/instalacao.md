@@ -59,7 +59,7 @@ No Windows (PowerShell): `$env:PYTHONPATH = "$PWD\codigo\comum"`. Se a última l
 
 ## H.4 Rodando os códigos de cada capítulo
 
-Cada capítulo tem uma pasta `codigo/capNN/` (NN de 01 a 17) com três arquivos gerados a partir do livro:
+Cada capítulo tem uma pasta `codigo/capNN/` (NN de 01 a 18) com três arquivos gerados a partir do livro:
 
 - `capNN_texto.py`: os blocos `python` e `python+` do texto, em ordem; cada `# %%` marca uma célula (funciona em VS Code, Spyder e Jupyter com `jupytext`, ou simplesmente como um script).
 - `capNN_questoes.py`: os códigos de referência das questões discursivas de programação.

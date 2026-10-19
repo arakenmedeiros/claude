@@ -15,7 +15,7 @@ O livro tem **cinco partes** e **dezoito capítulos**.
 - **Parte IV — Adaptação e sistemas avançados:** ajuste fino eficiente; IA multimodal; ferramentas, fluxos e agentes; eficiência e implantação.
 - **Parte V — Avaliação e uso responsável:** avaliação de modelos e aplicações; segurança, ética e governança; projetos integradores.
 
-Cada capítulo segue o mesmo roteiro: situação inicial; objetivos de aprendizagem; pré-requisitos; mapa conceitual; desenvolvimento; exemplos resolvidos; atividade prática; erros frequentes; limitações e cuidados; síntese; **30 questões de múltipla escolha**; **20 questões discursivas**; exercícios práticos em Python; um projeto; e as referências do capítulo. O **Capítulo 18** reúne seis projetos integradores.
+Cada capítulo segue o mesmo roteiro: situação inicial; objetivos de aprendizagem; pré-requisitos; mapa conceitual; desenvolvimento; exemplos resolvidos; atividade prática; erros frequentes; limitações e cuidados; síntese; **30 questões de múltipla escolha**; **20 questões discursivas**; exercícios práticos em Python; um projeto; e as referências do capítulo. O **Capítulo 18** reúne **seis projetos integradores** (educação, saúde, jurídico e administração pública, atendimento ao cliente, documentação técnica e um sistema integrador), cada um com critérios de aceitação escritos antes da medição e com resultados classificados como "atende", "não atende" ou "inconclusivo", a partir de intervalos de confiança; ele também segue o roteiro acima, com as mesmas 30 e 20 questões, três exercícios práticos e um projeto final do livro.
 
 ## Ferramentas pedagógicas
 

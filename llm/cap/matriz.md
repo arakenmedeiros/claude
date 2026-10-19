@@ -98,9 +98,9 @@ As competências abaixo são as que o livro pretende desenvolver. Cada uma é li
 | 15. Eficiência, custo e implantação | C13 | C6, C10 | práticos de orçamento, quantização e cache semântico; projeto: plano de capacidade, custo e metas |
 | 16. Avaliação de LLMs e de aplicações | C14 | C7, C9, C16 | práticos de intervalos de Wilson, viés do juiz e comparação pareada; projeto: bancada de avaliação com relatório automático |
 | 17. Segurança, ética e governança | C15 | C8, C9, C12, C14 | práticos de ataques e camadas, detector de dados pessoais e equidade; projeto: relatório de risco e bateria de segurança |
-| 18. Projetos integradores | C1 a C16 (integração) | todas | critérios de aceitação de cada projeto, no próprio Capítulo 18 |
+| 18. Projetos integradores | C14, C16 | C7 a C13, C15 (integra todas as anteriores) | práticos de tamanho de amostra e veredito, testes de fronteira de vigência e escolha de k, e plano B sob falhas crescentes; projeto: dossiê reproduzível (bancada por estrato, relatório com IC e vereditos, portão de regressão, cartão do sistema e plano de governança); critérios de aceitação de cada projeto, no próprio Capítulo 18 |
 
-Todo capítulo de 1 a 17 tem **30 questões de múltipla escolha, 20 discursivas, três exercícios práticos e um projeto**; as questões de programação e os práticos têm solução de referência nos Apêndices.
+Todo capítulo de 1 a 18 tem **30 questões de múltipla escolha, 20 discursivas, três exercícios práticos e um projeto**; as questões de programação e os práticos têm solução de referência nos Apêndices.
 
 ## K.7 Como usar a matriz de rastreabilidade
 
