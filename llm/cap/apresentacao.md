@@ -29,7 +29,7 @@ Ao longo do texto, você encontrará quadros com funções específicas.
 
 ## Código, dados e reprodutibilidade
 
-Todos os códigos do livro rodam em **CPU**, sem internet, com Python, NumPy e scikit-learn. Os dados usados são **sintéticos ou fictícios**, escritos para o livro e reunidos no pacote `llmdidatico`, que acompanha o material. Cada bloco de código vem identificado:
+Os códigos **executados** do livro rodam em **CPU**, sem internet, com Python, NumPy e scikit-learn (os códigos não executados, para modelos e serviços reais, podem exigir outros recursos). Os dados usados são **sintéticos ou fictícios**, escritos para o livro e reunidos no pacote `llmdidatico`, que acompanha o material. Cada bloco de código vem identificado:
 
 - **PYTHON · EXECUTADO:** foi realmente executado na elaboração do livro, e a **saída** mostrada logo abaixo é a saída obtida.
 - **PYTHON · NÃO EXECUTADO NESTE AMBIENTE:** código ilustrativo para modelos e serviços que o ambiente de elaboração não permitia acessar (por exemplo, modelos de grande escala e APIs). Ele foi escrito com base na documentação oficial, mas **não foi testado**; confira as versões antes de usar.
