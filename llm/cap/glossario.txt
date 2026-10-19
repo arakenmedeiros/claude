@@ -1,1 +1,379 @@
-Token: unidade de texto manipulada pelo modelo; pode ser palavra, pedaço de palavra ou caractere.
+Ablação (ablation): experimento em que se remove ou desliga um componente do sistema para medir sua contribuição isolada. Cap. 16.
+Abstenção: resposta legítima de "não consta" ou "não sei" quando o contexto não traz a informação; deve ser medida junto com a abstenção indevida. Caps. 8, 11.
+Acurácia (accuracy): fração de previsões corretas; engana quando as classes são desbalanceadas. Cap. 16.
+Adam: otimizador que usa médias móveis do gradiente e do seu quadrado para ajustar o passo de cada parâmetro; AdamW separa o decaimento de pesos. Caps. 2, 5.
+Adaptador (adapter): em engenharia de software, camada que traduz a interface do provedor para a da aplicação; em ajuste fino, pequeno conjunto de pesos treináveis acrescentado ao modelo (ver LoRA). Caps. 9, 12.
+Agente (agent): sistema em que um modelo decide, em ciclo, qual ação tomar (por exemplo, chamar ferramentas) até concluir a tarefa ou atingir um limite. Cap. 14.
+Ajuste fino (fine-tuning): continuar o treinamento de um modelo já pré-treinado com dados específicos para mudar seu comportamento. Caps. 7, 12.
+Ajuste fino supervisionado (SFT): ajuste com pares de instrução e resposta desejada, com perda calculada nos tokens da resposta. Cap. 7.
+Alinhamento (alignment): conjunto de técnicas que aproximam o comportamento do modelo do que pessoas desejam; não garante veracidade nem segurança. Cap. 7.
+Alucinação (hallucination): resposta fluente e plausível, mas não sustentada por fatos ou pelo contexto fornecido. Caps. 1, 13.
+Amostragem (sampling): escolher o próximo token sorteando-o da distribuição de probabilidade, em vez de tomar sempre o mais provável. Cap. 6.
+Ambiente virtual (virtual environment): pasta isolada com as bibliotecas de um projeto, para evitar conflito de versões. Caps. 2, 9.
+Aprendizado autossupervisionado (self-supervised learning): treinamento em que os rótulos são extraídos do próprio texto, como o token seguinte. Cap. 5.
+Aprendizado contrastivo (contrastive learning): treinamento que aproxima representações de pares correspondentes e afasta as de pares não correspondentes. Cap. 13.
+Aprendizado de máquina (machine learning): área em que programas aprendem padrões a partir de exemplos em vez de regras escritas à mão. Cap. 1.
+Aprendizado não supervisionado (unsupervised learning): aprendizado sem rótulos externos, em busca de estrutura nos dados. Cap. 5.
+Aprendizado por reforço (reinforcement learning): aprendizado em que uma política é ajustada para aumentar uma recompensa. Cap. 7.
+Aprendizado profundo (deep learning): aprendizado de máquina com redes neurais de muitas camadas. Cap. 1.
+Aprendizado supervisionado (supervised learning): aprendizado com exemplos rotulados. Cap. 5.
+Aprendizagem em contexto (in-context learning): capacidade de adaptar o comportamento a partir de instruções e exemplos colocados no prompt, sem alterar os pesos. Caps. 1, 8.
+Arquivo de pesos (weights file): arquivo com os parâmetros treinados de um modelo; pesos disponíveis não equivalem a modelo aberto. Cap. 9.
+Atenção (attention): mecanismo que calcula, para cada posição, uma média ponderada dos valores de todas as posições visíveis, com pesos que dependem do conteúdo. Cap. 4.
+Atenção cruzada (cross-attention): atenção em que as consultas vêm de uma sequência e as chaves e valores vêm de outra. Cap. 4.
+Atenção por produto escalar escalonado (scaled dot-product attention): softmax de QK transposto dividido por raiz de d_k, multiplicado por V. Cap. 4.
+Auditoria encadeada: registro de ações em que cada entrada inclui o hash da anterior, de modo que alterações se tornam detectáveis. Cap. 14.
+Autorregressivo (autoregressive): que gera um token por vez, condicionando cada um aos anteriores. Caps. 1, 6.
+Bajulação (sycophancy): tendência do modelo a concordar com o usuário ou agradá-lo mesmo quando isso o leva ao erro. Cap. 7.
+Banco de prompts: coleção versionada de prompts com finalidade, riscos e testes. Apêndice I.
+Base de conhecimento (knowledge base): conjunto de documentos consultados por um sistema de recuperação. Caps. 10, 11.
+Benchmark público: conjunto de testes divulgado para comparar modelos; serve de triagem, pode saturar e estar contaminado. Cap. 16.
+Bi-encoder: modelo que codifica consulta e documento separadamente e compara os vetores; é rápido e permite índice prévio. Cap. 10.
+Bootstrap: reamostragem com reposição dos dados observados para estimar a incerteza de uma métrica. Caps. 8, 10, 16.
+BM25: função de pontuação lexical que combina frequência do termo, raridade e normalização pelo tamanho do documento. Cap. 10.
+BPE (Byte Pair Encoding): algoritmo de tokenização que funde iterativamente os pares de símbolos mais frequentes para formar subpalavras. Cap. 3.
+Broadcasting: regra do NumPy que estende arrays de formas compatíveis em operações elemento a elemento. Cap. 2.
+Busca aproximada (approximate nearest neighbor): busca de vizinhos que troca parte do recall por menos tempo e memória. Cap. 10.
+Busca híbrida (hybrid search): combinação de busca lexical e semântica, por exemplo por fusão de rankings. Caps. 10, 11.
+Busca lexical (lexical search): busca baseada em termos em comum entre consulta e documento. Cap. 10.
+Busca semântica (semantic search): busca por proximidade de embeddings, que captura semelhança de uso e não só palavras idênticas. Caps. 3, 10.
+Cabeça de atenção (attention head): uma das atenções paralelas de uma camada, com projeções próprias. Cap. 4.
+Cache de prefixo (prefix cache): reaproveitamento do cálculo de um prefixo de prompt idêntico entre requisições. Cap. 15.
+Cache de respostas (response cache): armazenamento de respostas para reutilização; o cache semântico pode errar. Cap. 15.
+Cache KV (KV cache): memória das chaves e valores de tokens já processados, para não recalculá-los a cada novo token. Caps. 4, 6, 15.
+Cadeia de pensamento (chain of thought): pedir ao modelo que escreva passos intermediários; a explicação não é visão fiel do processamento interno. Cap. 8.
+Cadeia de suprimentos (supply chain): dependências externas de um sistema, como bibliotecas, dados e modelos, que podem ser comprometidas. Cap. 17.
+Canário (canary release): liberação de uma nova versão para pequena fração do tráfego antes da liberação total. Cap. 15.
+Cartão de avaliação (evaluation card): documento que registra versão, sementes, dados de teste, intervalos e limitações de uma avaliação. Cap. 16.
+Cartão de modelo (model card): documento que descreve uso pretendido, dados, desempenho e limitações de um modelo. Caps. 12, 17.
+Chamada de ferramenta (tool calling): o modelo propõe nome e argumentos de uma função; o código valida, autoriza, executa e devolve o resultado. Cap. 14.
+Checkpoint: cópia dos parâmetros do modelo salva durante o treinamento. Cap. 5.
+Chunking (fragmentação): divisão de documentos em pedaços para indexação, com tamanho, sobreposição e metadados. Caps. 10, 11.
+Cobertura ponderada: fração do peso (idf) dos radicais da pergunta presentes em uma frase; usada pelo gerador simulado do Cap. 11. Cap. 11.
+Codificador (encoder): parte da arquitetura que transforma a entrada em representações, vendo todas as posições. Cap. 4.
+Codificador-decodificador (encoder-decoder): arquitetura com um codificador e um decodificador ligados por atenção cruzada. Cap. 4.
+Colab: serviço de notebooks hospedado; oferece CPU e, conforme a disponibilidade, GPU. Apêndice H.
+Comitê de juízes: uso de vários juízes automáticos para reduzir vieses de um só. Cap. 16.
+Concordância entre avaliadores: grau de acordo entre pessoas ou juízes, medido por kappa ou alfa de Krippendorff. Cap. 16.
+Conexão residual (residual connection): soma da entrada de um sub-bloco à sua saída, y = x + F(x). Cap. 4.
+Conjunto de teste (test set): dados reservados para medir o desempenho final, sem uso no ajuste. Caps. 5, 16.
+Conjunto de validação (validation set): dados usados para escolher hiperparâmetros e acompanhar o treinamento. Cap. 5.
+Contaminação (contamination): presença de dados de teste no treinamento, que infla métricas. Caps. 5, 16.
+Contexto longo (long context): uso de janelas grandes para colocar muito material no prompt; não substitui avaliação nem recuperação. Caps. 6, 11.
+Corpus (corpus): coleção de textos usada para treinar ou avaliar. Cap. 1.
+Corpus sintético (synthetic corpus): textos gerados por regras com semente fixa, usados nos experimentos do livro. Caps. 1, 3.
+Cosseno (cosine similarity): produto escalar dividido pelo produto das normas; mede o ângulo entre vetores. Caps. 2, 10.
+Cross-encoder: modelo que lê consulta e documento juntos e dá uma nota; mais preciso e mais caro que o bi-encoder. Cap. 10.
+Custo quadrático da atenção: crescimento do cálculo e da memória da atenção com o quadrado do comprimento da sequência. Cap. 4.
+Dados pessoais (personal data): informação relacionada a pessoa natural identificada ou identificável, tratada pela LGPD. Caps. 9, 11, 17.
+Dados sintéticos (synthetic data): dados gerados artificialmente, sem origem em pessoas reais. Cap. 1.
+Decodificação (decoding): processo de escolher os tokens de saída a partir das distribuições do modelo. Cap. 6.
+Decodificação especulativa (speculative decoding): um modelo pequeno propõe tokens que o grande verifica de uma vez, sem mudar a distribuição da saída. Caps. 6, 15.
+Decodificação gulosa (greedy decoding): escolher sempre o token de maior probabilidade. Cap. 6.
+Decodificação restrita (constrained decoding): limitar a geração a saídas que obedeçam a um esquema ou gramática. Cap. 8.
+Decodificador (decoder): parte da arquitetura que gera a saída token a token com máscara causal. Cap. 4.
+Delimitador (delimiter): marca que separa instruções de dados no prompt; defesa útil, mas insuficiente contra injeção. Caps. 8, 11, 17.
+Deriva (drift): mudança na distribuição dos dados ou do comportamento ao longo do tempo, que degrada o desempenho sem erro visível. Cap. 15.
+Derivada (derivative): taxa de variação de uma função em relação a uma variável. Cap. 2.
+Derivada parcial (partial derivative): derivada em relação a uma variável, mantendo as outras fixas. Cap. 2.
+Descida do gradiente (gradient descent): atualizar parâmetros no sentido oposto ao gradiente da perda. Cap. 2.
+Descida do gradiente estocástica (SGD): descida do gradiente com gradientes estimados em lotes pequenos. Caps. 2, 5.
+Destilação (distillation): treinar um modelo menor com as saídas suaves de um modelo maior. Cap. 15.
+Difusão (diffusion): geração que parte de ruído e o remove passo a passo, com uma rede treinada para prever o ruído. Cap. 13.
+Dimensão (dimension): número de componentes de um vetor ou de um eixo de um tensor. Cap. 2.
+Disjuntor (circuit breaker): mecanismo que interrompe chamadas a um serviço que falha repetidamente. Cap. 9.
+Distância euclidiana (Euclidean distance): comprimento da diferença entre dois vetores. Caps. 3, 10.
+Distribuição de probabilidade (probability distribution): atribuição de probabilidades não negativas que somam 1. Cap. 2.
+Divergência KL (Kullback-Leibler divergence): medida assimétrica da diferença entre duas distribuições; usada como penalidade no RLHF. Caps. 2, 7.
+Documentação oficial: manual do fornecedor de um serviço ou biblioteca; fonte a consultar para versões, preços e limites. Cap. 9.
+DPO (Direct Preference Optimization): ajuste direto com pares preferido e rejeitado, sem modelo de recompensa explícito. Cap. 7.
+Embedding (incorporação): vetor denso que representa um token, texto ou imagem. Caps. 3, 10.
+Embedding contextual (contextual embedding): vetor de um token que depende do contexto da frase. Cap. 3.
+Embedding estático (static embedding): vetor fixo por palavra, independente do contexto, como no word2vec. Cap. 3.
+Entropia (entropy): incerteza média de uma distribuição, H = menos a soma de p ln p. Cap. 2.
+Entropia cruzada (cross-entropy): perda que mede a surpresa do modelo diante do alvo correto. Caps. 2, 5.
+Envenenamento de dados (data poisoning): inserção de dados maliciosos no treinamento ou no índice para manipular o sistema. Cap. 17.
+Equidade (fairness): propriedade de tratamento ou resultados comparáveis entre grupos; há várias definições incompatíveis. Cap. 17.
+Equalização de oportunidades (equal opportunity): critério em que a taxa de verdadeiros positivos é a mesma entre grupos. Cap. 17.
+Erro permanente (permanent error): falha que não se resolve repetindo a chamada, como credencial inválida. Cap. 9.
+Erro transitório (transient error): falha temporária que pode ser resolvida com nova tentativa, como sobrecarga. Cap. 9.
+Esparsidade (sparsity): predomínio de zeros em vetores ou matrizes, típico de contagens de n-gramas. Caps. 1, 3, 15.
+Espectrograma (spectrogram): representação do conteúdo de frequências do áudio ao longo do tempo. Cap. 13.
+Esquecimento catastrófico (catastrophic forgetting): perda de capacidades anteriores após ajuste fino em uma nova tarefa. Cap. 12.
+Estratificação (stratification): divisão de amostras por categorias para garantir representatividade em cada uma. Cap. 16.
+Exploração da recompensa (reward hacking): o modelo aprende a maximizar o modelo de recompensa sem melhorar de fato o que importa. Cap. 7.
+Exatidão (exact match, EM): fração de respostas idênticas à resposta de referência após normalização. Cap. 16.
+Extração de informação (information extraction): obter campos ou entidades estruturados de texto livre. Cap. 16.
+F1 (F1 score): média harmônica de precisão e revocação. Cap. 16.
+F1 macro (macro F1): média do F1 por classe, tratando todas as classes com o mesmo peso. Cap. 16.
+Fatiamento (slicing): avaliação separada por subgrupos ou tipos de caso para revelar falhas escondidas na média. Cap. 16.
+Few-shot: prompt com poucos exemplos da tarefa. Cap. 8.
+FFN (feed-forward network): rede alimentada adiante aplicada a cada posição dentro do bloco Transformer. Cap. 4.
+Fidelidade (faithfulness): grau em que a resposta é sustentada pelos documentos recuperados. Cap. 11.
+Filtro de saída (output filter): verificação da resposta antes de entregá-la, para bloquear segredos, links ou dados pessoais. Cap. 17.
+Fluxo de trabalho (workflow): sequência pré-definida de chamadas e verificações, mais previsível que um agente. Cap. 14.
+FLOP (floating-point operation): operação de ponto flutuante; usada para estimar custo de cálculo. Cap. 5.
+Fragmento (chunk): pedaço de documento indexado individualmente. Caps. 10, 11.
+Fusão de rankings (rank fusion): combinação de listas ordenadas em uma só. Cap. 10.
+Função de perda (loss function): número que mede o erro do modelo e que o treinamento procura reduzir. Caps. 2, 5.
+Geração aumentada por recuperação (RAG, retrieval-augmented generation): incluir no prompt trechos recuperados de uma base para que a resposta se apoie neles. Cap. 11.
+Gerador simulado: componente por regras que imita um gerador de respostas nos experimentos; não é um LLM. Caps. 11, 17.
+Governança (governance): papéis, políticas e processos que orientam o uso responsável de sistemas de IA. Cap. 17.
+GPU (graphics processing unit): acelerador com muitos núcleos, adequado a multiplicação de matrizes. Caps. 5, 15.
+Gradiente (gradient): vetor das derivadas parciais da perda em relação aos parâmetros. Cap. 2.
+Hash: resumo de tamanho fixo de um conteúdo, usado para versionar prompts e verificar integridade. Caps. 8, 14, 17.
+Hiperparâmetro (hyperparameter): configuração escolhida antes do treinamento, como taxa de aprendizado ou posto do LoRA. Caps. 5, 12.
+Hipótese distribucional (distributional hypothesis): ideia de que palavras em contextos parecidos têm significados parecidos. Cap. 3.
+Hit@k: fração de consultas com algum documento relevante entre os k primeiros. Cap. 10.
+Idempotência (idempotency): propriedade de uma operação que, repetida, produz o mesmo efeito que uma única execução. Cap. 14.
+IDF (inverse document frequency): medida de raridade de um termo na coleção. Caps. 3, 10.
+Índice vetorial (vector index): estrutura que armazena embeddings para busca por similaridade. Cap. 10.
+Inferência (inference): uso de um modelo treinado para produzir saídas. Cap. 6.
+Injeção de prompt (prompt injection): texto que tenta fazer o modelo tratar dados como instruções; pode ser direta ou indireta. Caps. 11, 14, 17.
+Injeção indireta (indirect prompt injection): instrução escondida em conteúdo recuperado ou em saída de ferramenta. Caps. 11, 14.
+Instrução do sistema (system prompt): texto de papel e regras fornecido pelo desenvolvedor; deve ser tratado como legível. Caps. 8, 17.
+Intervalo de confiança (confidence interval): faixa plausível para uma quantidade estimada, que expressa a incerteza da amostra. Caps. 8, 16.
+Intervalo de Wilson (Wilson interval): intervalo de confiança para proporções, preferível ao normal simples com n pequeno. Caps. 16, 17.
+IVF (inverted file index): índice aproximado que agrupa vetores em células e busca só nas mais próximas. Cap. 10.
+Jaccard (Jaccard similarity): razão entre a interseção e a união de dois conjuntos. Cap. 5.
+JSON: formato textual de dados estruturados, usado em saídas validáveis e em chamadas de ferramentas. Caps. 8, 14.
+Juiz automático (LLM-as-judge): modelo usado para avaliar respostas segundo uma rubrica; sofre vieses de posição, tamanho e autopreferência. Cap. 16.
+k-anonimato (k-anonymity): propriedade em que cada combinação de atributos quase identificadores aparece em ao menos k registros. Cap. 17.
+k-means: algoritmo de agrupamento que particiona vetores em k grupos por centroides. Cap. 10.
+Kappa de Cohen (Cohen's kappa): concordância entre dois avaliadores corrigida pelo acaso. Cap. 16.
+Alfa de Krippendorff (Krippendorff's alpha): medida de concordância para vários avaliadores e escalas variadas. Cap. 16.
+Latência (latency): tempo entre a requisição e a resposta. Caps. 6, 15.
+Laço do agente (agent loop): ciclo observar, decidir, agir, com paradas por limite de passos, orçamento ou resposta final. Cap. 14.
+Leis de escala (scaling laws): relações empíricas entre perda, tamanho do modelo, dados e cálculo; não são garantias. Cap. 5.
+LGPD (Lei Geral de Proteção de Dados Pessoais): lei brasileira sobre tratamento de dados pessoais. Caps. 11, 17.
+Licença de modelo (model license): termos que regem o uso de um modelo e dos seus pesos; conferir na fonte. Caps. 9, 12, 17.
+Limiar (threshold): valor de corte para decidir, por exemplo, abstenção por similaridade; deve ser calibrado em dados à parte. Caps. 10, 11.
+Limite de taxa (rate limit): restrição ao número de requisições ou tokens por período. Caps. 9, 15.
+LLM (large language model): modelo de linguagem de grande escala, treinado com grande volume de texto. Cap. 1.
+Log-probabilidade (log probability): logaritmo da probabilidade de um token ou sequência. Caps. 1, 6.
+Logit: pontuação bruta do modelo antes do softmax; não é probabilidade. Cap. 2.
+LoRA (Low-Rank Adaptation): ajuste que congela W e treina uma atualização de posto baixo, delta W = (alfa/r) B A. Cap. 12.
+Lote (batch): conjunto de exemplos processados juntos. Caps. 2, 5, 15.
+Lote contínuo (continuous batching): inserção e remoção de requisições do lote a cada passo de geração. Cap. 15.
+LSA (latent semantic analysis): redução de dimensão de contagens por decomposição em valores singulares para obter embeddings densos. Caps. 3, 10.
+LSH (locality-sensitive hashing): famílias de hash em que vetores próximos tendem a colidir; usada em busca aproximada. Cap. 10.
+Máscara causal (causal mask): máscara que impede cada posição de ver as posteriores. Cap. 4.
+Máscara de perda (loss mask): indicador de quais tokens entram no cálculo da perda. Cap. 7.
+Mascaramento de dados pessoais (PII masking): substituição de dados pessoais por marcadores antes de registro ou envio; regras simples são insuficientes. Caps. 9, 17.
+Mascaramento de tokens (masked language modeling): objetivo em que tokens escondidos devem ser previstos. Cap. 5.
+Matriz (matrix): arranjo retangular de números. Cap. 2.
+MCP (Model Context Protocol): protocolo aberto para conectar assistentes a fontes de dados e ferramentas. Cap. 14.
+McNemar: teste pareado para comparar dois classificadores com base nos casos discordantes. Cap. 16.
+Memória de agente (agent memory): informação mantida entre passos ou sessões, de curto prazo (janela) ou de longo prazo (fora do contexto). Cap. 14.
+Menor privilégio (least privilege): dar a cada componente só as permissões necessárias. Caps. 9, 14, 17.
+Mesclagem de adaptadores (adapter merging): soma da atualização do adaptador aos pesos base, para eliminar o adaptador na inferência. Cap. 12.
+Metadados (metadata): informações sobre fragmentos, como fonte, vigência e permissão. Caps. 10, 11.
+Métrica extrínseca (extrinsic metric): medida de desempenho na tarefa final. Cap. 16.
+Métrica intrínseca (intrinsic metric): medida do modelo isolado, como a perplexidade. Cap. 16.
+Mistura de especialistas (MoE, mixture of experts): arquitetura em que um roteador escolhe poucos especialistas por token; reduz cálculo, não memória. Cap. 15.
+Modalidade (modality): tipo de dado com estrutura própria, como texto, imagem ou áudio. Cap. 13.
+Modelo ajustado para instruções (instruction-tuned model): modelo-base refinado para seguir instruções. Cap. 7.
+Modelo alinhado (aligned model): modelo refinado também com preferências humanas. Cap. 7.
+Modelo-base (base model): modelo apenas pré-treinado, que continua texto. Caps. 5, 7.
+Modelo de ameaças (threat model): descrição de ativos, atacantes, superfícies e impactos de um sistema. Cap. 17.
+Modelo de brinquedo (toy model): modelo minúsculo usado para ilustrar um mecanismo. Cap. 1.
+Modelo de espaço vetorial (vector space model): representação de documentos como vetores de termos. Cap. 10.
+Modelo de linguagem (language model): modelo que atribui probabilidades a sequências de tokens. Cap. 1.
+Modelo de recompensa (reward model): modelo treinado com preferências para pontuar respostas. Cap. 7.
+Modelo de referência (reference model): modelo congelado usado como âncora no RLHF e no DPO. Cap. 7.
+Modelo local (local model): modelo executado na própria infraestrutura, com pesos obtidos separadamente. Cap. 9.
+Modelo multimodal (multimodal model): modelo que processa mais de uma modalidade. Cap. 13.
+Monitoramento (monitoring): acompanhamento contínuo de métricas, custos, reclamações e abusos em operação. Caps. 15, 16.
+Multiconsulta (multi-query): gerar variações da pergunta para ampliar a recuperação. Cap. 11.
+n-grama (n-gram): sequência de n tokens consecutivos; modelos de n-gramas estimam probabilidades por contagem. Cap. 1.
+nDCG (normalized discounted cumulative gain): métrica de ranking que pondera relevância por posição e normaliza pelo ideal. Cap. 10.
+Norma (norm): comprimento de um vetor. Cap. 2.
+Normalização de camada (layer normalization): padronização das ativações de cada posição, com escala e deslocamento aprendidos. Cap. 4.
+Normalização de texto (text normalization): padronização de caixa, espaços e acentos antes de tokenizar ou comparar. Cap. 3.
+Nucleus sampling: ver Top-p. Cap. 6.
+OCR (optical character recognition): reconhecimento óptico de caracteres; erra de forma silenciosa e exige validação. Cap. 13.
+One-shot: prompt com um exemplo da tarefa. Cap. 8.
+Orçamento (budget): limite de tokens, tempo ou custo por requisição ou período. Caps. 9, 14.
+Ordem no contexto (context ordering): posição dos documentos no prompt, que pode afetar o uso por modelos reais. Cap. 11.
+Otimizador (optimizer): algoritmo que atualiza os parâmetros a partir dos gradientes. Cap. 5.
+Padrão-ouro (gold standard): rótulos de referência confiáveis, geralmente humanos. Caps. 10, 16.
+Papel (role): descrição da função do assistente no prompt, como parte do contexto. Cap. 8.
+Parâmetros (parameters): números aprendidos do modelo. Caps. 1, 5.
+Parâmetros de geração (generation parameters): temperatura, top-p, top-k, semente e limite de saída. Caps. 6, 9.
+Patch: pequeno recorte quadrado da imagem tratado como um token no ViT. Cap. 13.
+Penalidade de KL (KL penalty): termo que impede a política de se afastar demais do modelo de referência. Cap. 7.
+Perda (loss): ver Função de perda. Caps. 2, 5.
+Perplexidade (perplexity): exponencial da perda média por token; menor é melhor e só é comparável com o mesmo tokenizador. Caps. 1, 2, 16.
+Piso irredutível (irreducible loss): perda mínima que permanece mesmo com modelo e dados ilimitados, por causa da incerteza do próprio texto. Cap. 5.
+Plano B (fallback): caminho alternativo quando o serviço falha ou excede limites. Cap. 9.
+PMI (pointwise mutual information): logaritmo da razão entre a coocorrência observada e a esperada; PPMI trunca valores negativos em zero. Cap. 3.
+Poder estatístico (statistical power): probabilidade de detectar uma diferença real. Cap. 16.
+Política (policy): no aprendizado por reforço, a distribuição de saídas do modelo. Cap. 7.
+Ponto flutuante (floating point): representação numérica aproximada de reais; causa pequenas diferenças entre execuções. Cap. 6.
+Portas e adaptadores (ports and adapters): padrão que isola a lógica da aplicação dos provedores externos. Cap. 9.
+Posição (positional encoding): informação de ordem somada aos embeddings; sem ela a atenção não percebe a ordem. Cap. 4.
+Posição rotacional (RoPE, rotary position embedding): codificação de posição aplicada por rotação de consultas e chaves. Cap. 4.
+Posto (rank): em LoRA, a dimensão r da atualização de baixo posto; em álgebra, o número de colunas independentes. Cap. 12.
+Pré-LN e pós-LN: posição da normalização de camada antes ou depois do sub-bloco. Cap. 4.
+Pré-treinamento (pretraining): fase inicial de treinamento autossupervisionado em grande volume de texto. Caps. 5, 7.
+Precisão (precision): fração dos itens previstos como positivos que de fato o são; em ponto flutuante, número de bits de um formato numérico. Caps. 15, 16.
+Prefill: fase em que todo o prompt é processado de uma vez, antes da geração token a token. Caps. 6, 15.
+Preferência (preference): comparação humana entre duas respostas, que fornece o sinal do RLHF e do DPO. Cap. 7.
+Probabilidade condicional (conditional probability): probabilidade de um evento dado que outro ocorreu. Cap. 2.
+Procedência (provenance): origem e histórico de um dado ou documento; base da confiança em um índice RAG. Cap. 17.
+Processamento de Linguagem Natural (PLN, NLP): área que trata linguagem humana por computador. Cap. 1.
+Produto escalar (dot product): soma dos produtos componente a componente de dois vetores. Cap. 2.
+Programação de taxa de aprendizado (learning rate schedule): variação da taxa ao longo do treino, com aquecimento e decaimento. Cap. 5.
+Prompt: texto de entrada fornecido ao modelo, com papel, tarefa, contexto, restrições e formato. Cap. 8.
+Prompt chaining (encadeamento de prompts): dividir uma tarefa em etapas com entrada, saída e verificação próprias. Cap. 8.
+Python-ni: rótulo do livro para código Python não executado neste ambiente, por depender de serviços ou modelos reais. Caps. 9, 10, 13.
+Quantização (quantization): representar pesos com menos bits; reduz memória, com erro que cresce rápido abaixo de certo número de bits. Caps. 12, 15.
+QLoRA: LoRA aplicado sobre um modelo-base quantizado. Cap. 12.
+Rastro (trace): registro encadeado das etapas de uma requisição, usado em observabilidade. Caps. 9, 15.
+RAG avançado: variações como reescrita de consulta, multiconsulta e reranqueamento, que precisam ser medidas. Cap. 11.
+Recall@k (revocação em k): fração dos documentos relevantes encontrados entre os k primeiros. Caps. 10, 13.
+Recuo exponencial com jitter (exponential backoff with jitter): esperas crescentes e aleatorizadas entre tentativas. Cap. 9.
+Recompensa (reward): nota numérica atribuída a uma resposta pelo modelo de recompensa. Cap. 7.
+Red teaming: teste planejado do sistema como um adversário faria, para encontrar falhas antes dos atacantes. Cap. 17.
+Redução de dimensão (dimensionality reduction): projeção de vetores em menos dimensões, com perda de informação. Caps. 3, 10.
+Registro (log): histórico estruturado de chamadas, sem texto do usuário quando houver risco de privacidade. Caps. 9, 15.
+Regra da cadeia (chain rule): derivada de uma composição de funções como produto de derivadas. Cap. 2.
+Regressão contínua (continuous regression testing): reexecutar testes a cada mudança, com portão de liberação. Cap. 16.
+Relato responsável (responsible reporting): documentar versão, dados, intervalos e limitações ao divulgar resultados. Cap. 16.
+Reprodutibilidade (reproducibility): capacidade de obter os mesmos resultados com os mesmos dados, código e configuração. Caps. 2, 6.
+Reranqueamento (reranking): reordenação de poucos candidatos por um modelo mais preciso. Caps. 10, 11.
+Retropropagação (backpropagation): aplicação da regra da cadeia para calcular gradientes de todas as camadas. Caps. 2, 5.
+Revisão humana (human review): verificação feita por pessoas, necessária em casos de risco. Caps. 8, 17.
+RLHF (reinforcement learning from human feedback): aprendizado por reforço a partir de preferências humanas, com modelo de recompensa e penalidade de KL. Cap. 7.
+RMSNorm: normalização pela raiz do valor quadrático médio, sem subtrair a média. Cap. 4.
+Roteamento (routing): enviar cada requisição ao modelo ou fluxo mais adequado; entre modelos, do barato ao caro conforme a confiança. Caps. 14, 15.
+Rubrica (rubric): lista de critérios verificáveis usada para avaliar respostas. Cap. 16.
+RRF (reciprocal rank fusion): fusão de rankings por soma de 1 sobre (k + posição). Caps. 10, 11.
+Saco de palavras (bag of words): representação de texto por contagem de palavras, sem ordem. Cap. 3.
+Saída estruturada (structured output): resposta em formato legível por máquina, como JSON, validada por código. Caps. 8, 9.
+Sandbox: ambiente isolado, com limites de tempo e memória, para executar código ou ferramentas. Cap. 14.
+Sanitização (sanitization): remoção ou neutralização de sequências perigosas, como delimitadores falsos. Cap. 11.
+Self-consistency (autoconsistência): amostrar várias cadeias de raciocínio e votar na resposta mais frequente. Cap. 8.
+Semente (seed): valor que inicializa um gerador pseudoaleatório, para repetir os resultados. Caps. 2, 6.
+SentencePiece: biblioteca de tokenização que opera sobre texto bruto, sem pré-segmentação em palavras. Cap. 3.
+Sentence-BERT: família de codificadores treinados para produzir embeddings de sentenças comparáveis por cosseno. Cap. 10.
+Simulador (simulator): componente por regras que imita um modelo ou serviço nos experimentos; não é um LLM. Caps. 8, 14, 16, 17.
+Sistema (system): conjunto de modelo, aplicação, interface, dados e processos que entrega a solução. Cap. 1.
+SLO (service level objective): meta de nível de serviço, como um percentil de latência, com orçamento de erro. Cap. 15.
+Sobreajuste (overfitting): quando o modelo decora o treino e generaliza mal. Cap. 5.
+Softmax: função que transforma logits em probabilidades positivas que somam 1. Cap. 2.
+Subpalavra (subword): pedaço de palavra usado como token. Cap. 3.
+Superfície de ataque (attack surface): conjunto de pontos de entrada pelos quais um sistema pode ser atacado. Cap. 17.
+Surpresa (surprisal): informação de um evento, I = menos ln p. Cap. 2.
+Taxa de aprendizado (learning rate): tamanho do passo na atualização dos parâmetros. Caps. 2, 5.
+Taxa de sucesso do ataque (attack success rate): fração de tentativas que atingem o objetivo do atacante, relatada com intervalo. Cap. 17.
+Teacher forcing: treinar prevendo cada token com o contexto verdadeiro, e não o gerado pelo modelo. Cap. 5.
+Temperatura (temperature): parâmetro que divide os logits antes do softmax; maior temperatura, distribuição mais plana. Caps. 2, 6, 13.
+Tempo até o primeiro token (TTFT): latência até aparecer o primeiro token da resposta. Caps. 6, 15.
+Tempo limite (timeout): duração máxima de uma chamada antes de ser abortada. Caps. 9, 14.
+Tensor: arranjo de números com um número qualquer de eixos. Cap. 2.
+TF-IDF: ponderação que multiplica a frequência do termo no documento pela sua raridade na coleção. Cap. 3.
+Token: unidade de texto manipulada pelo modelo; pode ser palavra, pedaço de palavra ou caractere. Caps. 1, 3.
+Token especial (special token): token reservado para marcar início, fim, papel ou preenchimento. Cap. 3.
+Tokenização (tokenization): conversão de texto em sequência de tokens. Cap. 3.
+Tokenizador (tokenizer): componente que realiza a tokenização; cada modelo tem o seu. Cap. 3.
+Top-k: restringir a amostragem aos k tokens mais prováveis. Cap. 6.
+Top-p (nucleus sampling): restringir a amostragem ao menor conjunto de tokens cuja probabilidade acumulada atinge p. Cap. 6.
+Transformer: arquitetura de rede baseada em atenção, residuais, normalização e redes alimentadas adiante. Cap. 4.
+Transparência (transparency): informar usuários sobre o uso de IA, seus limites e como pedir revisão. Cap. 17.
+Transposta (transpose): matriz com linhas e colunas trocadas. Cap. 2.
+Truncamento (truncation): corte de texto que excede um limite de tokens, de preferência por fragmentos inteiros. Caps. 6, 11.
+Unicode: padrão que atribui um número a cada caractere; UTF-8 o codifica em bytes. Cap. 3.
+Unigram (modelo de tokenização): método que escolhe um vocabulário de subpalavras por verossimilhança. Cap. 3.
+Validação de saída (output validation): verificação por código do formato e do conteúdo da resposta. Caps. 8, 9.
+Vazão (throughput): quantidade de tokens ou requisições atendidas por segundo. Cap. 6.
+Vetor (vector): lista ordenada de números. Cap. 2.
+Vetorização (vectorization): escrever cálculos como operações sobre arrays, sem laços explícitos. Cap. 2.
+Viés (bias): desvio sistemático, dos dados, do modelo ou da avaliação, que prejudica certos grupos ou resultados. Caps. 1, 3, 17.
+Viés de comprimento (length bias): preferência por respostas mais longas em avaliadores humanos, modelos de recompensa ou juízes. Caps. 7, 16.
+Viés de posição (position bias): preferência do juiz pela resposta apresentada primeiro ou por último. Cap. 16.
+ViT (Vision Transformer): Transformer que recebe patches de imagem como sequência de tokens. Cap. 13.
+Vocabulário (vocabulary): conjunto de tokens que o modelo conhece. Cap. 3.
+Word2vec: método que aprende embeddings estáticos de palavras prevendo contexto. Cap. 3.
+WordPiece: algoritmo de tokenização por subpalavras baseado em verossimilhança. Cap. 3.
+Zero-shot: prompt sem exemplos, só com instruções. Cap. 8.
+Janela de contexto (context window): número máximo de tokens que o modelo processa de uma vez, somando entrada e saída. Caps. 6, 8.
+Interface de conversação (chat interface): camada pela qual o usuário conversa com o sistema; não é o modelo. Cap. 1.
+Instrução negativa: pedido do que não fazer, em geral menos eficaz que a instrução positiva. Cap. 8.
+Frequência de termo (term frequency): contagem de um termo em um documento. Caps. 3, 10.
+Documento relevante (relevant document): documento que contém a resposta, segundo o padrão-ouro. Cap. 10.
+Consulta sem resposta (unanswerable query): pergunta cuja resposta não está na base; exige abstenção. Caps. 10, 11.
+Consulta (query): na atenção, vetor que pergunta; na busca, texto que o usuário procura. Caps. 4, 10.
+Chave e valor (key and value): na atenção, a chave é comparada à consulta e o valor é o conteúdo combinado. Cap. 4.
+Bloco Transformer (Transformer block): unidade que combina atenção, FFN, residuais e normalização, repetida em pilha. Cap. 4.
+Arquitetura (architecture): organização das camadas do modelo; há as famílias somente encoder, somente decoder e encoder-decoder. Cap. 4.
+Anonimização (anonymization): processo irreversível que impede identificar a pessoa; diferente de pseudonimização. Cap. 17.
+Pseudonimização (pseudonymization): substituição de identificadores diretos por códigos, ainda reversível com informação adicional. Cap. 17.
+Minimização de dados (data minimization): coletar e enviar apenas os dados necessários à finalidade. Caps. 9, 17.
+RIPD (relatório de impacto à proteção de dados): documento que descreve riscos de um tratamento de dados e as medidas de mitigação. Cap. 17.
+Encarregado (DPO, data protection officer): pessoa indicada para atuar como canal entre controlador, titulares e autoridade. Cap. 17.
+Paridade demográfica (demographic parity): critério em que a taxa de decisões positivas é igual entre grupos. Cap. 17.
+NIST AI RMF: estrutura voluntária de gestão de riscos de IA, organizada em Govern, Map, Measure e Manage. Cap. 17.
+AI Act: regulamento da União Europeia sobre IA, baseado em níveis de risco; verificar a versão vigente. Cap. 17.
+OWASP: comunidade que publica listas de riscos de segurança, incluindo para aplicações com LLMs. Cap. 17.
+PSI (population stability index): índice que compara a distribuição atual de categorias com a de referência para detectar deriva. Cap. 15.
+Teste de Kolmogorov-Smirnov (KS test): teste que compara duas distribuições contínuas, usado na deriva. Cap. 15.
+Fila (queue): espera por atendimento; a latência explode perto da capacidade. Cap. 15.
+Intensidade aritmética (arithmetic intensity): razão entre operações e bytes lidos; define se o gargalo é memória ou cálculo. Cap. 15.
+Gargalo de memória (memory-bound): situação em que a leitura de pesos e cache limita a velocidade, típica da decodificação. Caps. 6, 15.
+Largura de banda de memória (memory bandwidth): bytes por segundo que o hardware lê da memória. Caps. 6, 15.
+Escala de quantização (quantization scale): fator que mapeia valores reais para inteiros, calculado por tensor ou por bloco. Caps. 12, 15.
+Valor atípico (outlier): valor muito distante do restante, que prejudica a quantização com escala única. Cap. 15.
+Observabilidade (observability): capacidade de entender o comportamento de um sistema por métricas, logs e rastros. Cap. 15.
+Teste de carga (load test): teste com volume de requisições crescente para medir limites. Cap. 15.
+Energia por requisição: estimativa da energia gasta, potência vezes tempo, para raciocinar sobre sustentabilidade. Cap. 15.
+Dimensionamento de amostra (sample size): cálculo do número de casos necessário para uma precisão ou poder desejados. Cap. 16.
+Múltiplas comparações (multiple comparisons): risco de falsos positivos ao fazer muitos testes; corrigido por Holm ou Benjamini-Hochberg. Cap. 16.
+Margem de relevância (equivalence margin): diferença mínima que importa na prática. Cap. 16.
+Calibração (calibration): ajuste da correspondência entre confiança declarada e acerto observado, ou do juiz contra humanos. Cap. 16.
+Deduplicação (deduplication): remoção de documentos idênticos ou quase idênticos do conjunto de treino. Cap. 5.
+Filtragem de qualidade (quality filtering): seleção de documentos por critérios de qualidade; os filtros não são neutros. Cap. 5.
+Aquecimento (warmup): fase inicial com taxa de aprendizado crescente. Cap. 5.
+Recorte do gradiente (gradient clipping): limitar a norma do gradiente para estabilizar o treino. Cap. 5.
+Passada para frente e para trás (forward and backward pass): cálculo da saída e depois dos gradientes. Cap. 5.
+Memória de treinamento (training memory): memória para pesos, gradientes e estados do otimizador; cerca de 16 bytes por parâmetro com Adam em precisão mista. Cap. 5.
+Pós-treinamento (post-training): etapas após o pré-treinamento, como SFT e preferências. Caps. 5, 7.
+Feixe (beam search): decodificação que mantém várias hipóteses de sequência e escolhe a de maior probabilidade total. Cap. 6.
+Esquema (schema): descrição formal da estrutura esperada de uma saída ou de argumentos de ferramenta. Caps. 8, 14.
+pydantic: biblioteca Python de validação de dados por esquemas. Caps. 9, 14.
+Provedor (provider): serviço que oferece modelos por API; o código deve poder trocá-lo sem mudar a lógica. Cap. 9.
+API (application programming interface): interface de comunicação entre programas. Cap. 9.
+Variável de ambiente (environment variable): valor configurado fora do código, usado para guardar chaves e nomes de modelos. Caps. 9, 14.
+Segredo (secret): credencial ou chave que nunca deve ser escrita no código nem registrada em logs. Cap. 9.
+Rotação de credenciais (credential rotation): troca periódica ou imediata de chaves; revogar ao suspeitar de vazamento. Cap. 9.
+Streaming: entrega da resposta em partes, à medida que é gerada. Cap. 9.
+Hugging Face Transformers: biblioteca para carregar e executar modelos; neste livro sem pesos baixados. Caps. 9, 12.
+PEFT (parameter-efficient fine-tuning): ajuste eficiente em parâmetros, que treina uma fração pequena dos pesos. Cap. 12.
+Ajuste completo (full fine-tuning): atualização de todos os parâmetros do modelo. Cap. 12.
+Dados de ajuste (tuning data): pares instrução-resposta com origem, licença e ausência de dados pessoais registradas. Cap. 12.
+Avaliação antes e depois (before-after evaluation): comparação pareada do modelo base com o ajustado, com intervalos. Cap. 12.
+CLIP (ideia): aprendizado contrastivo entre imagens e textos, com codificadores separados. Cap. 13.
+Projetor visual (visual projector): camada que leva embeddings de imagem ao espaço de tokens de um LLM. Cap. 13.
+STFT (short-time Fourier transform): transformada de Fourier em janelas curtas, que produz o espectrograma. Cap. 13.
+Reconhecimento de fala (speech to text): conversão de áudio em texto; erros se propagam para as etapas seguintes. Cap. 13.
+Texto alternativo (alt text): descrição textual de uma imagem para acessibilidade; deve ser revisada. Cap. 13.
+Alucinação visual (visual hallucination): descrição de detalhes que não existem na imagem. Cap. 13.
+Projeto integrador (capstone project): projeto que combina vários capítulos em um sistema verificável. Cap. 18.
+Critérios de aceitação (acceptance criteria): condições mensuráveis para considerar um projeto concluído. Cap. 18.
+Escopo (scope): fronteiras do que o projeto fará e não fará. Cap. 18.
+Linha de base (baseline): solução simples usada como referência de comparação. Caps. 12, 16, 18.
+Plano de incidentes (incident response plan): procedimentos para detectar, conter e comunicar falhas. Caps. 17, 18.
+Supervisão humana (human oversight): participação de pessoas na decisão ou na revisão de ações do sistema. Caps. 14, 17.
+Confirmação humana (human confirmation): aprovação explícita antes de ações destrutivas ou externas; padrão deve ser negar. Cap. 14.
+Entrada não confiável (untrusted input): qualquer texto vindo de usuários, documentos ou ferramentas, tratado como dado. Caps. 11, 14, 17.
+Direitos autorais (copyright): proteção de obras que afeta dados de treino e saídas; consultar orientação jurídica. Cap. 17.
+Licença de dados (data license): termos de uso de um conjunto de dados. Caps. 12, 17.
+Explicabilidade (explainability): capacidade de justificar decisões; explicações geradas por LLM não são visão fiel do processamento interno. Cap. 17.
+Poda (pruning): remoção de pesos ou estruturas pouco importantes para reduzir o tamanho e o custo do modelo. Cap. 15.
+Filas M/M/c (Erlang C): modelo de fila com chegadas aleatórias e c servidores, usado para estimar a espera em função da carga. Cap. 15.
+Reversão (rollback): retorno rápido à versão anterior de modelo, prompt ou índice quando uma liberação falha. Cap. 15.
+Datasheet para conjuntos de dados: documentação da origem, composição, coleta e usos recomendados de um conjunto de dados. Cap. 5.
+Posição no contexto (lost in the middle): relato de que modelos reais podem usar pior as informações do meio de contextos longos; o gerador simulado do livro não tem esse efeito. Cap. 11.
+Limite de saída (max tokens): número máximo de tokens que a resposta pode ter; respostas cortadas exigem tratamento. Cap. 6.
+Perda contrastiva simétrica (symmetric contrastive loss): entropia cruzada aplicada às linhas e às colunas da matriz de similaridades imagem-texto. Cap. 13.
+Prompt versionado (prompt versioning): prompt com identificador, hash e registro de mudanças, tratado como artefato de software. Cap. 8.

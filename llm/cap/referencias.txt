@@ -1,138 +1,138 @@
 # chave | status | referência (ABNT NBR 6023). status: V = existência/dados conferidos online nesta revisão; C = conferido pela memória do autor, a verificar na fonte; P = dado fornecido pelo solicitante, não localizado
 ozdemir2025 | P | OZDEMIR, S. *Guia rápido para modelos de linguagem de grande escala*: estratégias e melhores práticas para ChatGPT, Embeddings, Ajuste Fino e IA multimodal. São Paulo: Pearson, 2025.
 ozdemir2024 | V | OZDEMIR, S. *Quick start guide to large language models*. 2. ed. Boston: Addison-Wesley Professional, 2024.
-vaswani2017 | C | VASWANI, A. et al. Attention is all you need. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 30., 2017, Long Beach. *Proceedings* [...]. Red Hook: Curran Associates, 2017. p. 5998-6008.
-bengio2003 | C | BENGIO, Y.; DUCHARME, R.; VINCENT, P.; JAUVIN, C. A neural probabilistic language model. *Journal of Machine Learning Research*, v. 3, p. 1137-1155, 2003.
-mikolov2013 | C | MIKOLOV, T. et al. Distributed representations of words and phrases and their compositionality. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 26., 2013, Lake Tahoe. *Proceedings* [...]. Red Hook: Curran Associates, 2013. p. 3111-3119.
-mikolov2013a | C | MIKOLOV, T. et al. Efficient estimation of word representations in vector space. *arXiv:1301.3781*, 2013.
-devlin2019 | C | DEVLIN, J. et al. BERT: pre-training of deep bidirectional transformers for language understanding. In: CONFERENCE OF THE NORTH AMERICAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS (NAACL-HLT), 2019, Minneapolis. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 4171-4186.
-radford2019 | C | RADFORD, A. et al. *Language models are unsupervised multitask learners*. San Francisco: OpenAI, 2019. Relatório técnico.
-brown2020 | C | BROWN, T. B. et al. Language models are few-shot learners. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 33., 2020. *Proceedings* [...]. Red Hook: Curran Associates, 2020. p. 1877-1901.
-ouyang2022 | C | OUYANG, L. et al. Training language models to follow instructions with human feedback. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022. p. 27730-27744.
-christiano2017 | C | CHRISTIANO, P. F. et al. Deep reinforcement learning from human preferences. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 30., 2017. *Proceedings* [...]. Red Hook: Curran Associates, 2017. p. 4299-4307.
-rafailov2023 | C | RAFAILOV, R. et al. Direct preference optimization: your language model is secretly a reward model. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
-schulman2017 | C | SCHULMAN, J. et al. Proximal policy optimization algorithms. *arXiv:1707.06347*, 2017.
-lewis2020rag | C | LEWIS, P. et al. Retrieval-augmented generation for knowledge-intensive NLP tasks. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 33., 2020. *Proceedings* [...]. Red Hook: Curran Associates, 2020. p. 9459-9474.
-hu2022 | C | HU, E. J. et al. LoRA: low-rank adaptation of large language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 10., 2022. *Proceedings* [...]. 2022.
-dettmers2023 | C | DETTMERS, T. et al. QLoRA: efficient finetuning of quantized LLMs. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
-sennrich2016 | C | SENNRICH, R.; HADDOW, B.; BIRCH, A. Neural machine translation of rare words with subword units. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 54., 2016, Berlin. *Proceedings* [...]. Stroudsburg: ACL, 2016. p. 1715-1725.
-kudo2018 | C | KUDO, T.; RICHARDSON, J. SentencePiece: a simple and language independent subword tokenizer and detokenizer for neural text processing. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING: SYSTEM DEMONSTRATIONS, 2018, Bruxelas. *Proceedings* [...]. Stroudsburg: ACL, 2018. p. 66-71.
-gage1994 | C | GAGE, P. A new algorithm for data compression. *The C Users Journal*, v. 12, n. 2, p. 23-38, 1994.
-holtzman2020 | C | HOLTZMAN, A. et al. The curious case of neural text degeneration. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 8., 2020. *Proceedings* [...]. 2020.
-fan2018 | C | FAN, A.; LEWIS, M.; DAUPHIN, Y. Hierarchical neural story generation. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 56., 2018, Melbourne. *Proceedings* [...]. Stroudsburg: ACL, 2018. p. 889-898.
-kaplan2020 | C | KAPLAN, J. et al. Scaling laws for neural language models. *arXiv:2001.08361*, 2020.
-hoffmann2022 | C | HOFFMANN, J. et al. Training compute-optimal large language models. *arXiv:2203.15556*, 2022.
-wei2022 | C | WEI, J. et al. Chain-of-thought prompting elicits reasoning in large language models. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022. p. 24824-24837.
-wang2023 | C | WANG, X. et al. Self-consistency improves chain of thought reasoning in language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 11., 2023. *Proceedings* [...]. 2023.
-turpin2023 | C | TURPIN, M. et al. Language models don't always say what they think: unfaithful explanations in chain-of-thought prompting. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
-yao2023 | C | YAO, S. et al. ReAct: synergizing reasoning and acting in language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 11., 2023. *Proceedings* [...]. 2023.
-schick2023 | C | SCHICK, T. et al. Toolformer: language models can teach themselves to use tools. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
-reimers2019 | C | REIMERS, N.; GUREVYCH, I. Sentence-BERT: sentence embeddings using Siamese BERT-networks. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING AND INTERNATIONAL JOINT CONFERENCE ON NATURAL LANGUAGE PROCESSING, 2019, Hong Kong. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 3982-3992.
-karpukhin2020 | C | KARPUKHIN, V. et al. Dense passage retrieval for open-domain question answering. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING, 2020. *Proceedings* [...]. Stroudsburg: ACL, 2020. p. 6769-6781.
-robertson2009 | C | ROBERTSON, S.; ZARAGOZA, H. The probabilistic relevance framework: BM25 and beyond. *Foundations and Trends in Information Retrieval*, v. 3, n. 4, p. 333-389, 2009.
-manning2008 | C | MANNING, C. D.; RAGHAVAN, P.; SCHÜTZE, H. *Introduction to information retrieval*. Cambridge: Cambridge University Press, 2008.
-jurafsky2024 | C | JURAFSKY, D.; MARTIN, J. H. *Speech and language processing*. 3. ed. (rascunho). Stanford, 2024. Disponível em: https://web.stanford.edu/~jurafsky/slp3/.
-goodfellow2016 | C | GOODFELLOW, I.; BENGIO, Y.; COURVILLE, A. *Deep learning*. Cambridge: MIT Press, 2016.
-hastie2009 | C | HASTIE, T.; TIBSHIRANI, R.; FRIEDMAN, J. *The elements of statistical learning*. 2. ed. New York: Springer, 2009.
-bishop2006 | C | BISHOP, C. M. *Pattern recognition and machine learning*. New York: Springer, 2006.
-murphy2022 | C | MURPHY, K. P. *Probabilistic machine learning*: an introduction. Cambridge: MIT Press, 2022.
-radford2021 | C | RADFORD, A. et al. Learning transferable visual models from natural language supervision. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 38., 2021. *Proceedings of Machine Learning Research*, v. 139, p. 8748-8763, 2021.
-dosovitskiy2021 | C | DOSOVITSKIY, A. et al. An image is worth 16x16 words: Transformers for image recognition at scale. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 9., 2021. *Proceedings* [...]. 2021.
-radford2023 | C | RADFORD, A. et al. Robust speech recognition via large-scale weak supervision. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 40., 2023. *Proceedings of Machine Learning Research*, v. 202, p. 28492-28518, 2023.
-alayrac2022 | C | ALAYRAC, J.-B. et al. Flamingo: a visual language model for few-shot learning. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022.
-liu2023 | C | LIU, H. et al. Visual instruction tuning. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
-hinton2015 | C | HINTON, G.; VINYALS, O.; DEAN, J. Distilling the knowledge in a neural network. *arXiv:1503.02531*, 2015.
-dettmers2022 | C | DETTMERS, T. et al. LLM.int8(): 8-bit matrix multiplication for transformers at scale. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022.
-frantar2023 | C | FRANTAR, E. et al. GPTQ: accurate post-training quantization for generative pre-trained transformers. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 11., 2023. *Proceedings* [...]. 2023.
-jacob2018 | C | JACOB, B. et al. Quantization and training of neural networks for efficient integer-arithmetic-only inference. In: IEEE CONFERENCE ON COMPUTER VISION AND PATTERN RECOGNITION (CVPR), 2018, Salt Lake City. *Proceedings* [...]. Piscataway: IEEE, 2018. p. 2704-2713.
-dao2022 | C | DAO, T. et al. FlashAttention: fast and memory-efficient exact attention with IO-awareness. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022.
-kwon2023 | C | KWON, W. et al. Efficient memory management for large language model serving with PagedAttention. In: ACM SYMPOSIUM ON OPERATING SYSTEMS PRINCIPLES (SOSP), 29., 2023, Koblenz. *Proceedings* [...]. New York: ACM, 2023. p. 611-626.
-leviathan2023 | C | LEVIATHAN, Y.; KALMAN, M.; MATIAS, Y. Fast inference from transformers via speculative decoding. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 40., 2023. *Proceedings of Machine Learning Research*, v. 202, 2023.
-ainslie2023 | C | AINSLIE, J. et al. GQA: training generalized multi-query transformer models from multi-head checkpoints. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING, 2023. *Proceedings* [...]. Stroudsburg: ACL, 2023.
-su2024 | C | SU, J. et al. RoFormer: enhanced transformer with rotary position embedding. *Neurocomputing*, v. 568, art. 127063, 2024.
-ba2016 | C | BA, J. L.; KIROS, J. R.; HINTON, G. E. Layer normalization. *arXiv:1607.06450*, 2016.
-zhang2019 | C | ZHANG, B.; SENNRICH, R. Root mean square layer normalization. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 32., 2019. *Proceedings* [...]. Red Hook: Curran Associates, 2019.
-xiong2020 | C | XIONG, R. et al. On layer normalization in the Transformer architecture. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 37., 2020. *Proceedings of Machine Learning Research*, v. 119, p. 10524-10533, 2020.
-he2016 | C | HE, K. et al. Deep residual learning for image recognition. In: IEEE CONFERENCE ON COMPUTER VISION AND PATTERN RECOGNITION (CVPR), 2016, Las Vegas. *Proceedings* [...]. Piscataway: IEEE, 2016. p. 770-778.
-shannon1948 | C | SHANNON, C. E. A mathematical theory of communication. *Bell System Technical Journal*, v. 27, n. 3, p. 379-423, 1948.
-papineni2002 | C | PAPINENI, K. et al. BLEU: a method for automatic evaluation of machine translation. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 40., 2002, Philadelphia. *Proceedings* [...]. Stroudsburg: ACL, 2002. p. 311-318.
-lin2004 | C | LIN, C.-Y. ROUGE: a package for automatic evaluation of summaries. In: TEXT SUMMARIZATION BRANCHES OUT, 2004, Barcelona. *Proceedings* [...]. Stroudsburg: ACL, 2004. p. 74-81.
-zhang2020 | C | ZHANG, T. et al. BERTScore: evaluating text generation with BERT. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 8., 2020. *Proceedings* [...]. 2020.
-liang2023 | C | LIANG, P. et al. Holistic evaluation of language models. *Transactions on Machine Learning Research*, 2023.
-hendrycks2021 | C | HENDRYCKS, D. et al. Measuring massive multitask language understanding. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 9., 2021. *Proceedings* [...]. 2021.
-zheng2023 | C | ZHENG, L. et al. Judging LLM-as-a-judge with MT-Bench and Chatbot Arena. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023 (Datasets and Benchmarks Track). *Proceedings* [...]. Red Hook: Curran Associates, 2023.
-ji2023 | C | JI, Z. et al. Survey of hallucination in natural language generation. *ACM Computing Surveys*, v. 55, n. 12, art. 248, 2023.
-bender2021 | C | BENDER, E. M. et al. On the dangers of stochastic parrots: can language models be too big? In: ACM CONFERENCE ON FAIRNESS, ACCOUNTABILITY, AND TRANSPARENCY (FAccT), 2021. *Proceedings* [...]. New York: ACM, 2021. p. 610-623.
-strubell2019 | C | STRUBELL, E.; GANESH, A.; MCCALLUM, A. Energy and policy considerations for deep learning in NLP. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 57., 2019, Florença. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 3645-3650.
-perez2022 | C | PEREZ, F.; RIBEIRO, I. Ignore previous prompt: attack techniques for language models. *arXiv:2211.09527*, 2022.
-greshake2023 | C | GRESHAKE, K. et al. Not what you've signed up for: compromising real-world LLM-integrated applications with indirect prompt injection. In: ACM WORKSHOP ON ARTIFICIAL INTELLIGENCE AND SECURITY (AISec), 16., 2023. *Proceedings* [...]. New York: ACM, 2023.
-carlini2021 | C | CARLINI, N. et al. Extracting training data from large language models. In: USENIX SECURITY SYMPOSIUM, 30., 2021. *Proceedings* [...]. Berkeley: USENIX Association, 2021. p. 2633-2650.
-bai2022 | C | BAI, Y. et al. Constitutional AI: harmlessness from AI feedback. *arXiv:2212.08073*, 2022.
-lin2022 | C | LIN, S.; HILTON, J.; EVANS, O. TruthfulQA: measuring how models mimic human falsehoods. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 60., 2022, Dublin. *Proceedings* [...]. Stroudsburg: ACL, 2022. p. 3214-3252.
-liu2024 | C | LIU, N. F. et al. Lost in the middle: how language models use long contexts. *Transactions of the Association for Computational Linguistics*, v. 12, p. 157-173, 2024.
-zhao2023 | C | ZHAO, W. X. et al. A survey of large language models. *arXiv:2303.18223*, 2023.
-gao2023 | C | GAO, Y. et al. Retrieval-augmented generation for large language models: a survey. *arXiv:2312.10997*, 2023.
-es2024 | C | ES, S. et al. RAGAs: automated evaluation of retrieval augmented generation. In: CONFERENCE OF THE EUROPEAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS: SYSTEM DEMONSTRATIONS, 18., 2024. *Proceedings* [...]. Stroudsburg: ACL, 2024.
-souza2020 | C | SOUZA, F.; NOGUEIRA, R.; LOTUFO, R. BERTimbau: pretrained BERT models for Brazilian Portuguese. In: BRAZILIAN CONFERENCE ON INTELLIGENT SYSTEMS (BRACIS), 9., 2020. *Lecture Notes in Computer Science*, v. 12319. Cham: Springer, 2020. p. 403-417.
-pires2023 | C | PIRES, R. et al. Sabiá: Portuguese large language models. In: BRAZILIAN CONFERENCE ON INTELLIGENT SYSTEMS (BRACIS), 12., 2023. *Lecture Notes in Computer Science*, v. 14197. Cham: Springer, 2023.
-raffel2020 | C | RAFFEL, C. et al. Exploring the limits of transfer learning with a unified text-to-text transformer. *Journal of Machine Learning Research*, v. 21, n. 140, p. 1-67, 2020.
-lewis2020bart | C | LEWIS, M. et al. BART: denoising sequence-to-sequence pre-training for natural language generation, translation, and comprehension. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 58., 2020. *Proceedings* [...]. Stroudsburg: ACL, 2020. p. 7871-7880.
-sanh2019 | C | SANH, V. et al. DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter. *arXiv:1910.01108*, 2019.
-touvron2023 | C | TOUVRON, H. et al. LLaMA: open and efficient foundation language models. *arXiv:2302.13971*, 2023.
-jiang2023 | C | JIANG, A. Q. et al. Mistral 7B. *arXiv:2310.06825*, 2023.
-gebru2021 | C | GEBRU, T. et al. Datasheets for datasets. *Communications of the ACM*, v. 64, n. 12, p. 86-92, 2021.
-mitchell2019 | C | MITCHELL, M. et al. Model cards for model reporting. In: ACM CONFERENCE ON FAIRNESS, ACCOUNTABILITY, AND TRANSPARENCY (FAT*), 2019, Atlanta. *Proceedings* [...]. New York: ACM, 2019. p. 220-229.
-efron1993 | C | EFRON, B.; TIBSHIRANI, R. J. *An introduction to the bootstrap*. New York: Chapman & Hall, 1993.
-lee2022 | C | LEE, K. et al. Deduplicating training data makes language models better. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 60., 2022, Dublin. *Proceedings* [...]. Stroudsburg: ACL, 2022. p. 8424-8445.
-dodge2021 | C | DODGE, J. et al. Documenting large webtext corpora: a case study on the Colossal Clean Crawled Corpus. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING, 2021. *Proceedings* [...]. Stroudsburg: ACL, 2021. p. 1286-1305.
-kingma2015 | C | KINGMA, D. P.; BA, J. Adam: a method for stochastic optimization. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 3., 2015. *Proceedings* [...]. 2015.
-loshchilov2019 | C | LOSHCHILOV, I.; HUTTER, F. Decoupled weight decay regularization. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 7., 2019. *Proceedings* [...]. 2019.
-rumelhart1986 | C | RUMELHART, D. E.; HINTON, G. E.; WILLIAMS, R. J. Learning representations by back-propagating errors. *Nature*, v. 323, p. 533-536, 1986.
-hochreiter1997 | C | HOCHREITER, S.; SCHMIDHUBER, J. Long short-term memory. *Neural Computation*, v. 9, n. 8, p. 1735-1780, 1997.
-bahdanau2015 | C | BAHDANAU, D.; CHO, K.; BENGIO, Y. Neural machine translation by jointly learning to align and translate. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 3., 2015. *Proceedings* [...]. 2015.
-sutskever2014 | C | SUTSKEVER, I.; VINYALS, O.; LE, Q. V. Sequence to sequence learning with neural networks. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 27., 2014. *Proceedings* [...]. Red Hook: Curran Associates, 2014. p. 3104-3112.
-peters2018 | C | PETERS, M. E. et al. Deep contextualized word representations. In: CONFERENCE OF THE NORTH AMERICAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS (NAACL-HLT), 2018, Nova Orleans. *Proceedings* [...]. Stroudsburg: ACL, 2018. p. 2227-2237.
-chowdhery2023 | C | CHOWDHERY, A. et al. PaLM: scaling language modeling with pathways. *Journal of Machine Learning Research*, v. 24, n. 240, p. 1-113, 2023.
-schaeffer2023 | C | SCHAEFFER, R.; MIRANDA, B.; KOYEJO, S. Are emergent abilities of large language models a mirage? In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
-wei2022em | C | WEI, J. et al. Emergent abilities of large language models. *Transactions on Machine Learning Research*, 2022.
-openai2023 | C | OPENAI. GPT-4 technical report. *arXiv:2303.08774*, 2023.
-cobbe2021 | C | COBBE, K. et al. Training verifiers to solve math word problems. *arXiv:2110.14168*, 2021.
-pedregosa2011 | C | PEDREGOSA, F. et al. Scikit-learn: machine learning in Python. *Journal of Machine Learning Research*, v. 12, p. 2825-2830, 2011.
-harris2020 | C | HARRIS, C. R. et al. Array programming with NumPy. *Nature*, v. 585, p. 357-362, 2020.
-hunter2007 | C | HUNTER, J. D. Matplotlib: a 2D graphics environment. *Computing in Science & Engineering*, v. 9, n. 3, p. 90-95, 2007.
-paszke2019 | C | PASZKE, A. et al. PyTorch: an imperative style, high-performance deep learning library. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 32., 2019. *Proceedings* [...]. Red Hook: Curran Associates, 2019.
-wolf2020 | C | WOLF, T. et al. Transformers: state-of-the-art natural language processing. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING: SYSTEM DEMONSTRATIONS, 2020. *Proceedings* [...]. Stroudsburg: ACL, 2020. p. 38-45.
-brasil2018 | C | BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais (LGPD). *Diário Oficial da União*, Brasília, 15 ago. 2018.
-brasil1998 | C | BRASIL. Lei nº 9.610, de 19 de fevereiro de 1998. Altera, atualiza e consolida a legislação sobre direitos autorais e dá outras providências. *Diário Oficial da União*, Brasília, 20 fev. 1998.
-ue2024 | C | UNIÃO EUROPEIA. Regulamento (UE) 2024/1689 do Parlamento Europeu e do Conselho, de 13 de junho de 2024 (Regulamento da Inteligência Artificial). *Jornal Oficial da União Europeia*, 12 jul. 2024.
-nist2023 | C | NATIONAL INSTITUTE OF STANDARDS AND TECHNOLOGY. *Artificial intelligence risk management framework (AI RMF 1.0)*. Gaithersburg: NIST, 2023. (NIST AI 100-1).
-owasp | C | OWASP FOUNDATION. *OWASP top 10 for large language model applications*. Disponível em: https://owasp.org/www-project-top-10-for-large-language-model-applications/. A lista é revisada periodicamente; consultar a versão vigente.
-jain2019 | C | JAIN, S.; WALLACE, B. C. Attention is not explanation. In: CONFERENCE OF THE NORTH AMERICAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS (NAACL-HLT), 2019, Minneapolis. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 3543-3556.
-wiegreffe2019 | C | WIEGREFFE, S.; PINTER, Y. Attention is not not explanation. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING AND INTERNATIONAL JOINT CONFERENCE ON NATURAL LANGUAGE PROCESSING, 2019, Hong Kong. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 11-20.
-rajbhandari2020 | C | RAJBHANDARI, S. et al. ZeRO: memory optimizations toward training trillion parameter models. In: INTERNATIONAL CONFERENCE FOR HIGH PERFORMANCE COMPUTING, NETWORKING, STORAGE AND ANALYSIS (SC), 2020. *Proceedings* [...]. Piscataway: IEEE, 2020. art. 20.
-gao2020 | C | GAO, L. et al. The Pile: an 800GB dataset of diverse text for language modeling. *arXiv:2101.00027*, 2020.
-zhou2023 | C | ZHOU, C. et al. LIMA: less is more for alignment. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
-sharma2024 | C | SHARMA, M. et al. Towards understanding sycophancy in language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 12., 2024. *Proceedings* [...]. 2024.
-gao2023ro | C | GAO, L.; SCHULMAN, J.; HILTON, J. Scaling laws for reward model overoptimization. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 40., 2023. *Proceedings of Machine Learning Research*, v. 202, 2023.
-zhao2021 | C | ZHAO, Z. et al. Calibrate before use: improving few-shot performance of language models. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 38., 2021. *Proceedings of Machine Learning Research*, v. 139, p. 12697-12706, 2021.
-lu2022 | C | LU, Y. et al. Fantastically ordered prompts and where to find them: overcoming few-shot prompt order sensitivity. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 60., 2022, Dublin. *Proceedings* [...]. Stroudsburg: ACL, 2022. p. 8086-8098.
-anthropicdocs | C | ANTHROPIC. *Claude API documentation* e SDK oficial para Python (pacote `anthropic`). Documentação do fornecedor, consultada na elaboração por meio do material de referência do SDK; versão e interfaces mudam com frequência: conferir a documentação vigente.
-hfdocs | C | HUGGING FACE. *Transformers documentation*. Documentação do fornecedor; verificar a versão instalada, pois nomes de parâmetros mudam entre versões principais.
-pydanticdocs | C | PYDANTIC. *Pydantic documentation*. Documentação oficial; verificar a versão instalada.
+vaswani2017 | V | VASWANI, A. et al. Attention is all you need. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 30., 2017, Long Beach. *Proceedings* [...]. Red Hook: Curran Associates, 2017. p. 5998-6008.
+bengio2003 | V | BENGIO, Y.; DUCHARME, R.; VINCENT, P.; JAUVIN, C. A neural probabilistic language model. *Journal of Machine Learning Research*, v. 3, p. 1137-1155, 2003.
+mikolov2013 | V | MIKOLOV, T. et al. Distributed representations of words and phrases and their compositionality. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 26., 2013, Lake Tahoe. *Proceedings* [...]. Red Hook: Curran Associates, 2013. p. 3111-3119.
+mikolov2013a | V | MIKOLOV, T. et al. Efficient estimation of word representations in vector space. *arXiv:1301.3781*, 2013.
+devlin2019 | V | DEVLIN, J. et al. BERT: pre-training of deep bidirectional transformers for language understanding. In: CONFERENCE OF THE NORTH AMERICAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS (NAACL-HLT), 2019, Minneapolis. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 4171-4186. DOI: 10.18653/v1/N19-1423.
+radford2019 | V | RADFORD, A. et al. *Language models are unsupervised multitask learners*. San Francisco: OpenAI, 2019. Relatório técnico.
+brown2020 | V | BROWN, T. B. et al. Language models are few-shot learners. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 33., 2020. *Proceedings* [...]. Red Hook: Curran Associates, 2020.
+ouyang2022 | V | OUYANG, L. et al. Training language models to follow instructions with human feedback. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022.
+christiano2017 | V | CHRISTIANO, P. F. et al. Deep reinforcement learning from human preferences. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 30., 2017. *Proceedings* [...]. Red Hook: Curran Associates, 2017. p. 4299-4307.
+rafailov2023 | V | RAFAILOV, R. et al. Direct preference optimization: your language model is secretly a reward model. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
+schulman2017 | V | SCHULMAN, J. et al. Proximal policy optimization algorithms. *arXiv:1707.06347*, 2017.
+lewis2020rag | V | LEWIS, P. et al. Retrieval-augmented generation for knowledge-intensive NLP tasks. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 33., 2020. *Proceedings* [...]. Red Hook: Curran Associates, 2020. p. 9459-9474.
+hu2022 | V | HU, E. J. et al. LoRA: low-rank adaptation of large language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 10., 2022. *Proceedings* [...]. 2022.
+dettmers2023 | V | DETTMERS, T. et al. QLoRA: efficient finetuning of quantized LLMs. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
+sennrich2016 | V | SENNRICH, R.; HADDOW, B.; BIRCH, A. Neural machine translation of rare words with subword units. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 54., 2016, Berlin. *Proceedings* [...]. Stroudsburg: ACL, 2016. p. 1715-1725.
+kudo2018 | V | KUDO, T.; RICHARDSON, J. SentencePiece: a simple and language independent subword tokenizer and detokenizer for neural text processing. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING: SYSTEM DEMONSTRATIONS, 2018, Bruxelas. *Proceedings* [...]. Stroudsburg: ACL, 2018. p. 66-71.
+gage1994 | V | GAGE, P. A new algorithm for data compression. *The C Users Journal*, v. 12, n. 2, p. 23-38, 1994.
+holtzman2020 | V | HOLTZMAN, A. et al. The curious case of neural text degeneration. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 8., 2020. *Proceedings* [...]. 2020.
+fan2018 | V | FAN, A.; LEWIS, M.; DAUPHIN, Y. Hierarchical neural story generation. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 56., 2018, Melbourne. *Proceedings* [...]. Stroudsburg: ACL, 2018. p. 889-898.
+kaplan2020 | V | KAPLAN, J. et al. Scaling laws for neural language models. *arXiv:2001.08361*, 2020.
+hoffmann2022 | V | HOFFMANN, J. et al. Training compute-optimal large language models. *arXiv:2203.15556*, 2022.
+wei2022 | V | WEI, J. et al. Chain-of-thought prompting elicits reasoning in large language models. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022. p. 24824-24837.
+wang2023 | V | WANG, X. et al. Self-consistency improves chain of thought reasoning in language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 11., 2023. *Proceedings* [...]. 2023.
+turpin2023 | V | TURPIN, M. et al. Language models don't always say what they think: unfaithful explanations in chain-of-thought prompting. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
+yao2023 | V | YAO, S. et al. ReAct: synergizing reasoning and acting in language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 11., 2023. *Proceedings* [...]. 2023.
+schick2023 | V | SCHICK, T. et al. Toolformer: language models can teach themselves to use tools. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
+reimers2019 | V | REIMERS, N.; GUREVYCH, I. Sentence-BERT: sentence embeddings using Siamese BERT-networks. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING AND INTERNATIONAL JOINT CONFERENCE ON NATURAL LANGUAGE PROCESSING, 2019, Hong Kong. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 3982-3992.
+karpukhin2020 | V | KARPUKHIN, V. et al. Dense passage retrieval for open-domain question answering. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING, 2020. *Proceedings* [...]. Stroudsburg: ACL, 2020. p. 6769-6781.
+robertson2009 | V | ROBERTSON, S.; ZARAGOZA, H. The probabilistic relevance framework: BM25 and beyond. *Foundations and Trends in Information Retrieval*, v. 3, n. 4, p. 333-389, 2009. DOI: 10.1561/1500000019.
+manning2008 | V | MANNING, C. D.; RAGHAVAN, P.; SCHÜTZE, H. *Introduction to information retrieval*. Cambridge: Cambridge University Press, 2008.
+jurafsky2024 | V | JURAFSKY, D.; MARTIN, J. H. *Speech and language processing*. 3. ed. (rascunho em revisão contínua). Stanford: Stanford University, [2026]. Disponível em: https://web.stanford.edu/~jurafsky/slp3/. Acesso em: 19 out. 2026.
+goodfellow2016 | V | GOODFELLOW, I.; BENGIO, Y.; COURVILLE, A. *Deep learning*. Cambridge: MIT Press, 2016.
+hastie2009 | V | HASTIE, T.; TIBSHIRANI, R.; FRIEDMAN, J. *The elements of statistical learning*. 2. ed. New York: Springer, 2009.
+bishop2006 | V | BISHOP, C. M. *Pattern recognition and machine learning*. [S. l.]: Springer, 2006.
+murphy2022 | V | MURPHY, K. P. *Probabilistic machine learning*: an introduction. Cambridge: MIT Press, 2022.
+radford2021 | V | RADFORD, A. et al. Learning transferable visual models from natural language supervision. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 38., 2021. *Proceedings of Machine Learning Research*, v. 139, p. 8748-8763, 2021.
+dosovitskiy2021 | V | DOSOVITSKIY, A. et al. An image is worth 16x16 words: Transformers for image recognition at scale. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 9., 2021. *Proceedings* [...]. 2021.
+radford2023 | V | RADFORD, A. et al. Robust speech recognition via large-scale weak supervision. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 40., 2023. *Proceedings of Machine Learning Research*, v. 202, p. 28492-28518, 2023.
+alayrac2022 | V | ALAYRAC, J.-B. et al. Flamingo: a visual language model for few-shot learning. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022.
+liu2023 | V | LIU, H. et al. Visual instruction tuning. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
+hinton2015 | V | HINTON, G.; VINYALS, O.; DEAN, J. Distilling the knowledge in a neural network. *arXiv:1503.02531*, 2015.
+dettmers2022 | V | DETTMERS, T. et al. LLM.int8(): 8-bit matrix multiplication for transformers at scale. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022. (Nos anais do NeurIPS o título aparece como *GPT3.int8()*; a versão arXiv 2208.07339 usa LLM.int8().)
+frantar2023 | V | FRANTAR, E. et al. GPTQ: accurate post-training quantization for generative pre-trained transformers. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 11., 2023. *Proceedings* [...]. 2023.
+jacob2018 | V | JACOB, B. et al. Quantization and training of neural networks for efficient integer-arithmetic-only inference. In: IEEE CONFERENCE ON COMPUTER VISION AND PATTERN RECOGNITION (CVPR), 2018, Salt Lake City. *Proceedings* [...]. Piscataway: IEEE, 2018. p. 2704-2713.
+dao2022 | V | DAO, T. et al. FlashAttention: fast and memory-efficient exact attention with IO-awareness. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 35., 2022. *Proceedings* [...]. Red Hook: Curran Associates, 2022.
+kwon2023 | V | KWON, W. et al. Efficient memory management for large language model serving with PagedAttention. In: ACM SYMPOSIUM ON OPERATING SYSTEMS PRINCIPLES (SOSP), 29., 2023, Koblenz. *Proceedings* [...]. New York: ACM, 2023. DOI: 10.1145/3600006.3613165.
+leviathan2023 | V | LEVIATHAN, Y.; KALMAN, M.; MATIAS, Y. Fast inference from transformers via speculative decoding. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 40., 2023. *Proceedings of Machine Learning Research*, v. 202, p. 19274-19286, 2023.
+ainslie2023 | V | AINSLIE, J. et al. GQA: training generalized multi-query transformer models from multi-head checkpoints. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING, 2023, Singapura. *Proceedings* [...]. Stroudsburg: ACL, 2023. p. 4895-4901.
+su2024 | V | SU, J. et al. RoFormer: enhanced transformer with rotary position embedding. *Neurocomputing*, 2024. (Preprint: arXiv:2104.09864, 2021; volume e artigo da versão de periódico não conferidos.)
+ba2016 | V | BA, J. L.; KIROS, J. R.; HINTON, G. E. Layer normalization. *arXiv:1607.06450*, 2016.
+zhang2019 | V | ZHANG, B.; SENNRICH, R. Root mean square layer normalization. In: CONFERENCE ON NEURAL INFORMATION PROCESSING SYSTEMS (NeurIPS), 2019, Vancouver. *Proceedings* [...]. Red Hook: Curran Associates, 2019.
+xiong2020 | V | XIONG, R. et al. On layer normalization in the Transformer architecture. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 37., 2020. *Proceedings of Machine Learning Research*, v. 119, p. 10524-10533, 2020.
+he2016 | V | HE, K. et al. Deep residual learning for image recognition. In: IEEE CONFERENCE ON COMPUTER VISION AND PATTERN RECOGNITION (CVPR), 2016, Las Vegas. *Proceedings* [...]. Piscataway: IEEE, 2016. p. 770-778.
+shannon1948 | V | SHANNON, C. E. A mathematical theory of communication. *Bell System Technical Journal*, v. 27, n. 3, p. 379-423, 1948.
+papineni2002 | V | PAPINENI, K. et al. BLEU: a method for automatic evaluation of machine translation. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 40., 2002, Philadelphia. *Proceedings* [...]. Stroudsburg: ACL, 2002. p. 311-318.
+lin2004 | V | LIN, C.-Y. ROUGE: a package for automatic evaluation of summaries. In: TEXT SUMMARIZATION BRANCHES OUT, 2004, Barcelona. *Proceedings* [...]. Stroudsburg: ACL, 2004. p. 74-81.
+zhang2020 | V | ZHANG, T. et al. BERTScore: evaluating text generation with BERT. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 8., 2020. *Proceedings* [...]. 2020.
+liang2023 | V | LIANG, P. et al. Holistic evaluation of language models. *Transactions on Machine Learning Research*, 2023.
+hendrycks2021 | V | HENDRYCKS, D. et al. Measuring massive multitask language understanding. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 9., 2021. *Proceedings* [...]. 2021.
+zheng2023 | V | ZHENG, L. et al. Judging LLM-as-a-judge with MT-Bench and Chatbot Arena. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023 (Datasets and Benchmarks Track). *Proceedings* [...]. Red Hook: Curran Associates, 2023.
+ji2023 | V | JI, Z. et al. Survey of hallucination in natural language generation. *arXiv:2202.03629*, 2022. (Versão de periódico publicada na *ACM Computing Surveys*; volume e artigo não conferidos na verificação.)
+bender2021 | V | BENDER, E. M. et al. On the dangers of stochastic parrots: can language models be too big? In: ACM CONFERENCE ON FAIRNESS, ACCOUNTABILITY, AND TRANSPARENCY (FAccT), 2021. *Proceedings* [...]. New York: ACM, 2021. p. 610-623. DOI: 10.1145/3442188.3445922.
+strubell2019 | V | STRUBELL, E.; GANESH, A.; MCCALLUM, A. Energy and policy considerations for deep learning in NLP. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 57., 2019, Florença. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 3645-3650. DOI: 10.18653/v1/P19-1355.
+perez2022 | V | PEREZ, F.; RIBEIRO, I. Ignore previous prompt: attack techniques for language models. In: NEURIPS ML SAFETY WORKSHOP, 2022. *arXiv:2211.09527*, 2022.
+greshake2023 | V | GRESHAKE, K. et al. Not what you've signed up for: compromising real-world LLM-integrated applications with indirect prompt injection. In: ACM WORKSHOP ON ARTIFICIAL INTELLIGENCE AND SECURITY (AISec), 16., 2023. *Proceedings* [...]. New York: ACM, 2023.
+carlini2021 | V | CARLINI, N. et al. Extracting training data from large language models. In: USENIX SECURITY SYMPOSIUM, 30., 2021. *Proceedings* [...]. Berkeley: USENIX Association, 2021.
+bai2022 | V | BAI, Y. et al. Constitutional AI: harmlessness from AI feedback. *arXiv:2212.08073*, 2022.
+lin2022 | V | LIN, S.; HILTON, J.; EVANS, O. TruthfulQA: measuring how models mimic human falsehoods. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 60., 2022, Dublin. *Proceedings* [...]. Stroudsburg: ACL, 2022. p. 3214-3252.
+liu2024 | V | LIU, N. F. et al. Lost in the middle: how language models use long contexts. *Transactions of the Association for Computational Linguistics*, v. 12, p. 157-173, 2024.
+zhao2023 | V | ZHAO, W. X. et al. A survey of large language models. *arXiv:2303.18223*, 2023.
+gao2023 | V | GAO, Y. et al. Retrieval-augmented generation for large language models: a survey. *arXiv:2312.10997*, 2023.
+es2024 | V | ES, S.; JAMES, J.; ESPINOSA-ANKE, L.; SCHOCKAERT, S. RAGAs: automated evaluation of retrieval augmented generation. In: CONFERENCE OF THE EUROPEAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS: SYSTEM DEMONSTRATIONS, 18., 2024, St. Julian's. *Proceedings* [...]. Stroudsburg: ACL, 2024. p. 150-158.
+souza2020 | V | SOUZA, F.; NOGUEIRA, R.; LOTUFO, R. BERTimbau: pretrained BERT models for Brazilian Portuguese. In: BRAZILIAN CONFERENCE ON INTELLIGENT SYSTEMS (BRACIS), 9., 2020. *Lecture Notes in Computer Science*. Cham: Springer, 2020. DOI: 10.1007/978-3-030-61377-8_28.
+pires2023 | V | PIRES, R. et al. Sabiá: Portuguese large language models. In: BRAZILIAN CONFERENCE ON INTELLIGENT SYSTEMS (BRACIS), 12., 2023, Belo Horizonte. *Proceedings* [...]. 2023. p. 226-240. (Preprint: arXiv:2304.07880.)
+raffel2020 | V | RAFFEL, C. et al. Exploring the limits of transfer learning with a unified text-to-text transformer. *Journal of Machine Learning Research*, v. 21, n. 140, p. 1-67, 2020.
+lewis2020bart | V | LEWIS, M. et al. BART: denoising sequence-to-sequence pre-training for natural language generation, translation, and comprehension. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 58., 2020. *Proceedings* [...]. Stroudsburg: ACL, 2020. p. 7871-7880.
+sanh2019 | V | SANH, V. et al. DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter. *arXiv:1910.01108*, 2019.
+touvron2023 | V | TOUVRON, H. et al. LLaMA: open and efficient foundation language models. *arXiv:2302.13971*, 2023.
+jiang2023 | V | JIANG, A. Q. et al. Mistral 7B. *arXiv:2310.06825*, 2023.
+gebru2021 | V | GEBRU, T. et al. Datasheets for datasets. *Communications of the ACM*, v. 64, n. 12, p. 86-92, 2021. DOI: 10.1145/3458723.
+mitchell2019 | V | MITCHELL, M. et al. Model cards for model reporting. In: ACM CONFERENCE ON FAIRNESS, ACCOUNTABILITY, AND TRANSPARENCY (FAT*), 2019, Atlanta. *Proceedings* [...]. New York: ACM, 2019. p. 220-229. DOI: 10.1145/3287560.3287596.
+efron1993 | V | EFRON, B.; TIBSHIRANI, R. J. *An introduction to the bootstrap*. New York: Chapman & Hall, 1993. (Monographs on Statistics and Applied Probability, 57).
+lee2022 | V | LEE, K. et al. Deduplicating training data makes language models better. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 60., 2022, Dublin. *Proceedings* [...]. Stroudsburg: ACL, 2022. p. 8424-8445.
+dodge2021 | V | DODGE, J. et al. Documenting large webtext corpora: a case study on the Colossal Clean Crawled Corpus. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING, 2021. *Proceedings* [...]. Stroudsburg: ACL, 2021. p. 1286-1305.
+kingma2015 | V | KINGMA, D. P.; BA, J. Adam: a method for stochastic optimization. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 3., 2015. *Proceedings* [...]. 2015.
+loshchilov2019 | V | LOSHCHILOV, I.; HUTTER, F. Decoupled weight decay regularization. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 7., 2019. *Proceedings* [...]. 2019.
+rumelhart1986 | V | RUMELHART, D. E.; HINTON, G. E.; WILLIAMS, R. J. Learning representations by back-propagating errors. *Nature*, v. 323, p. 533-536, 1986.
+hochreiter1997 | V | HOCHREITER, S.; SCHMIDHUBER, J. Long short-term memory. *Neural Computation*, v. 9, n. 8, p. 1735-1780, 1997.
+bahdanau2015 | V | BAHDANAU, D.; CHO, K.; BENGIO, Y. Neural machine translation by jointly learning to align and translate. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 3., 2015. *Proceedings* [...]. 2015.
+sutskever2014 | V | SUTSKEVER, I.; VINYALS, O.; LE, Q. V. Sequence to sequence learning with neural networks. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 27., 2014. *Proceedings* [...]. Red Hook: Curran Associates, 2014. p. 3104-3112.
+peters2018 | V | PETERS, M. E. et al. Deep contextualized word representations. In: CONFERENCE OF THE NORTH AMERICAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS (NAACL-HLT), 2018, Nova Orleans. *Proceedings* [...]. Stroudsburg: ACL, 2018. p. 2227-2237.
+chowdhery2023 | V | CHOWDHERY, A. et al. PaLM: scaling language modeling with pathways. *Journal of Machine Learning Research*, v. 24, n. 240, p. 1-113, 2023.
+schaeffer2023 | V | SCHAEFFER, R.; MIRANDA, B.; KOYEJO, S. Are emergent abilities of large language models a mirage? In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
+wei2022em | V | WEI, J. et al. Emergent abilities of large language models. *Transactions on Machine Learning Research*, 2022.
+openai2023 | V | OPENAI. GPT-4 technical report. *arXiv:2303.08774*, 2023.
+cobbe2021 | V | COBBE, K. et al. Training verifiers to solve math word problems. *arXiv:2110.14168*, 2021.
+pedregosa2011 | V | PEDREGOSA, F. et al. Scikit-learn: machine learning in Python. *Journal of Machine Learning Research*, v. 12, n. 85, p. 2825-2830, 2011.
+harris2020 | V | HARRIS, C. R. et al. Array programming with NumPy. *Nature*, v. 585, p. 357-362, 2020.
+hunter2007 | V | HUNTER, J. D. Matplotlib: a 2D graphics environment. *Computing in Science & Engineering*, v. 9, n. 3, p. 90-95, 2007.
+paszke2019 | V | PASZKE, A. et al. PyTorch: an imperative style, high-performance deep learning library. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 32., 2019. *Proceedings* [...]. Red Hook: Curran Associates, 2019.
+wolf2020 | V | WOLF, T. et al. Transformers: state-of-the-art natural language processing. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING: SYSTEM DEMONSTRATIONS, 2020. *Proceedings* [...]. Stroudsburg: ACL, 2020. p. 38-45.
+brasil2018 | V | BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais (LGPD). Brasília, 2018. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/L13709compilado.htm. Acesso em: 19 out. 2026. O texto vigente é o compilado, com alterações posteriores.
+brasil1998 | V | BRASIL. Lei nº 9.610, de 19 de fevereiro de 1998. Altera, atualiza e consolida a legislação sobre direitos autorais e dá outras providências. *Diário Oficial da União*, Brasília, 20 fev. 1998.
+ue2024 | V | UNIÃO EUROPEIA. Regulamento (UE) 2024/1689 do Parlamento Europeu e do Conselho, de 13 de junho de 2024 (Regulamento da Inteligência Artificial). *Jornal Oficial da União Europeia*, 12 jul. 2024.
+nist2023 | V | NATIONAL INSTITUTE OF STANDARDS AND TECHNOLOGY. *Artificial intelligence risk management framework (AI RMF 1.0)*. Gaithersburg: NIST, 2023. (NIST AI 100-1). DOI: 10.6028/NIST.AI.100-1.
+owasp | V | OWASP FOUNDATION. *OWASP top 10 for large language model applications*. Disponível em: https://owasp.org/www-project-top-10-for-large-language-model-applications/. A lista é revisada periodicamente; consultar a versão vigente.
+jain2019 | V | JAIN, S.; WALLACE, B. C. Attention is not explanation. In: CONFERENCE OF THE NORTH AMERICAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS (NAACL-HLT), 2019, Minneapolis. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 3543-3556.
+wiegreffe2019 | V | WIEGREFFE, S.; PINTER, Y. Attention is not not explanation. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING AND INTERNATIONAL JOINT CONFERENCE ON NATURAL LANGUAGE PROCESSING, 2019, Hong Kong. *Proceedings* [...]. Stroudsburg: ACL, 2019. p. 11-20.
+rajbhandari2020 | V | RAJBHANDARI, S. et al. ZeRO: memory optimizations toward training trillion parameter models. In: INTERNATIONAL CONFERENCE FOR HIGH PERFORMANCE COMPUTING, NETWORKING, STORAGE AND ANALYSIS (SC), 2020. *Proceedings* [...]. Piscataway: IEEE, 2020. (Preprint: arXiv:1910.02054.)
+gao2020 | V | GAO, L. et al. The Pile: an 800GB dataset of diverse text for language modeling. *arXiv:2101.00027*, 2020.
+zhou2023 | V | ZHOU, C. et al. LIMA: less is more for alignment. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. *Proceedings* [...]. Red Hook: Curran Associates, 2023.
+sharma2024 | V | SHARMA, M. et al. Towards understanding sycophancy in language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 12., 2024. *Proceedings* [...]. 2024.
+gao2023ro | V | GAO, L.; SCHULMAN, J.; HILTON, J. Scaling laws for reward model overoptimization. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 40., 2023. *Proceedings of Machine Learning Research*, v. 202, p. 10835-10866, 2023.
+zhao2021 | V | ZHAO, Z. et al. Calibrate before use: improving few-shot performance of language models. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 38., 2021. *Proceedings of Machine Learning Research*, v. 139, p. 12697-12706, 2021.
+lu2022 | V | LU, Y. et al. Fantastically ordered prompts and where to find them: overcoming few-shot prompt order sensitivity. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 60., 2022, Dublin. *Proceedings* [...]. Stroudsburg: ACL, 2022. p. 8086-8098.
+anthropicdocs | V | ANTHROPIC. *Claude API documentation* e SDK oficial para Python (pacote `anthropic`). Disponível em: https://platform.claude.com/docs/en/api/sdks/python. Acesso em: 19 out. 2026. Documentação do fornecedor, também consultada por meio do material de referência do SDK; versão, modelos e interfaces mudam com frequência: conferir a documentação vigente.
+hfdocs | V | HUGGING FACE. *Transformers documentation*. Disponível em: https://huggingface.co/docs/transformers. Acesso em: 19 out. 2026. Documentação do fornecedor; verificar a versão instalada, pois nomes de parâmetros mudam entre versões principais.
+pydanticdocs | V | PYDANTIC. *Pydantic documentation*. Disponível em: https://docs.pydantic.dev. Acesso em: 19 out. 2026. Documentação oficial; verificar a versão instalada.
 salton1975 | V | SALTON, G.; WONG, A.; YANG, C. S. A vector space model for automatic indexing. *Communications of the ACM*, v. 18, n. 11, p. 613-620, 1975.
 cormack2009 | V | CORMACK, G. V.; CLARKE, C. L. A.; BÜTTCHER, S. Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. In: INTERNATIONAL ACM SIGIR CONFERENCE ON RESEARCH AND DEVELOPMENT IN INFORMATION RETRIEVAL, 32., 2009, Boston. *Proceedings* [...]. New York: ACM, 2009. p. 758-759.
 johnson2019 | V | JOHNSON, J.; DOUZE, M.; JÉGOU, H. Billion-scale similarity search with GPUs. *IEEE Transactions on Big Data*, v. 7, n. 3, p. 535-547, 2021.
 jarvelin2002 | V | JÄRVELIN, K.; KEKÄLÄINEN, J. Cumulated gain-based evaluation of IR techniques. *ACM Transactions on Information Systems*, v. 20, n. 4, p. 422-446, 2002.
 deerwester1990 | V | DEERWESTER, S. et al. Indexing by latent semantic analysis. *Journal of the American Society for Information Science*, v. 41, n. 6, p. 391-407, 1990.
 nogueira2019 | V | NOGUEIRA, R.; CHO, K. Passage re-ranking with BERT. *arXiv:1901.04085*, 2019.
-indyk1998 | C | INDYK, P.; MOTWANI, R. Approximate nearest neighbors: towards removing the curse of dimensionality. In: ANNUAL ACM SYMPOSIUM ON THEORY OF COMPUTING, 30., 1998, Dallas. *Proceedings* [...]. New York: ACM, 1998. p. 604-613.
+indyk1998 | V | INDYK, P.; MOTWANI, R. Approximate nearest neighbors: towards removing the curse of dimensionality. In: ANNUAL ACM SYMPOSIUM ON THEORY OF COMPUTING (STOC), 1998. *Proceedings* [...]. New York: ACM, 1998. p. 604-613.
 houlsby2019 | V | HOULSBY, N. et al. Parameter-efficient transfer learning for NLP. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING (ICML), 36., 2019. *Proceedings of Machine Learning Research*, v. 97, p. 2790-2799, 2019.
 li2021prefix | V | LI, X. L.; LIANG, P. Prefix-tuning: optimizing continuous prompts for generation. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 59., 2021. *Proceedings* [...]. Stroudsburg: ACL, 2021. p. 4582-4597.
 lester2021 | V | LESTER, B.; AL-RFOU, R.; CONSTANT, N. The power of scale for parameter-efficient prompt tuning. In: CONFERENCE ON EMPIRICAL METHODS IN NATURAL LANGUAGE PROCESSING (EMNLP), 2021. *Proceedings* [...]. Stroudsburg: ACL, 2021. p. 3045-3059.
 aghajanyan2021 | V | AGHAJANYAN, A.; GUPTA, S.; ZETTLEMOYER, L. Intrinsic dimensionality explains the effectiveness of language model fine-tuning. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 59., 2021. *Proceedings* [...]. Stroudsburg: ACL, 2021. p. 7319-7328.
 biderman2024 | V | BIDERMAN, D. et al. LoRA learns less and forgets less. *Transactions on Machine Learning Research*, 2024. arXiv:2405.09673.
 kirkpatrick2017 | V | KIRKPATRICK, J. et al. Overcoming catastrophic forgetting in neural networks. *Proceedings of the National Academy of Sciences*, v. 114, n. 13, p. 3521-3526, 2017.
-mccloskey1989 | C | MCCLOSKEY, M.; COHEN, N. J. Catastrophic interference in connectionist networks: the sequential learning problem. In: BOWER, G. H. (ed.). *The psychology of learning and motivation*. San Diego: Academic Press, 1989. v. 24, p. 109-165.
+mccloskey1989 | C | MCCLOSKEY, M.; COHEN, N. J. Catastrophic interference in connectionist networks: the sequential learning problem. In: BOWER, G. H. (ed.). *The psychology of learning and motivation*. San Diego: Academic Press, 1989. v. 24, p. 109-165. †
 hardt2016 | V | HARDT, M.; PRICE, E.; SREBRO, N. Equality of opportunity in supervised learning. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 29., 2016. *Proceedings* [...]. 2016. p. 3315-3323.
 kleinberg2017 | V | KLEINBERG, J.; MULLAINATHAN, S.; RAGHAVAN, M. Inherent trade-offs in the fair determination of risk scores. In: INNOVATIONS IN THEORETICAL COMPUTER SCIENCE CONFERENCE (ITCS), 8., 2017. *Leibniz International Proceedings in Informatics (LIPIcs)*, v. 67, art. 43, p. 43:1-43:23, 2017.
 chouldechova2017 | V | CHOULDECHOVA, A. Fair prediction with disparate impact: a study of bias in recidivism prediction instruments. *Big Data*, v. 5, n. 2, p. 153-163, 2017.
@@ -142,11 +142,11 @@ senado2023pl | V | BRASIL. Senado Federal. *Projeto de Lei nº 2.338, de 2023*: 
 ho2020 | V | HO, J.; JAIN, A.; ABBEEL, P. Denoising diffusion probabilistic models. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 33., 2020. *Proceedings* [...]. Red Hook: Curran Associates, 2020. (arXiv:2006.11239; verificada nos anais do NeurIPS.)
 cohen1960 | V | COHEN, J. A coefficient of agreement for nominal scales. *Educational and Psychological Measurement*, v. 20, n. 1, p. 37-46, 1960.
 dietterich1998 | V | DIETTERICH, T. G. Approximate statistical tests for comparing supervised classification learning algorithms. *Neural Computation*, v. 10, n. 7, p. 1895-1923, 1998.
-mcnemar1947 | C | MCNEMAR, Q. Note on the sampling error of the difference between correlated proportions or percentages. *Psychometrika*, v. 12, n. 2, p. 153-157, 1947.
-krippendorff2004 | C | KRIPPENDORFF, K. *Content analysis*: an introduction to its methodology. 2. ed. Thousand Oaks: Sage, 2004.
-landis1977 | C | LANDIS, J. R.; KOCH, G. G. The measurement of observer agreement for categorical data. *Biometrics*, v. 33, n. 1, p. 159-174, 1977.
-wilson1927 | C | WILSON, E. B. Probable inference, the law of succession, and statistical inference. *Journal of the American Statistical Association*, v. 22, n. 158, p. 209-212, 1927.
-holm1979 | C | HOLM, S. A simple sequentially rejective multiple test procedure. *Scandinavian Journal of Statistics*, v. 6, n. 2, p. 65-70, 1979.
-benjamini1995 | C | BENJAMINI, Y.; HOCHBERG, Y. Controlling the false discovery rate: a practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society: Series B*, v. 57, n. 1, p. 289-300, 1995.
+mcnemar1947 | V | MCNEMAR, Q. Note on the sampling error of the difference between correlated proportions or percentages. *Psychometrika*, v. 12, n. 2, p. 153-157, 1947.
+krippendorff2004 | V | KRIPPENDORFF, K. *Content analysis*: an introduction to its methodology. 2. ed. Thousand Oaks: Sage, 2004.
+landis1977 | V | LANDIS, J. R.; KOCH, G. G. The measurement of observer agreement for categorical data. *Biometrics*, v. 33, n. 1, p. 159-174, 1977.
+wilson1927 | V | WILSON, E. B. Probable inference, the law of succession, and statistical inference. *Journal of the American Statistical Association*, v. 22, n. 158, p. 209-212, 1927.
+holm1979 | V | HOLM, S. A simple sequentially rejective multiple test procedure. *Scandinavian Journal of Statistics*, v. 6, n. 2, p. 65-70, 1979.
+benjamini1995 | V | BENJAMINI, Y.; HOCHBERG, Y. Controlling the false discovery rate: a practical and powerful approach to multiple testing. *Journal of the Royal Statistical Society: Series B*, v. 57, n. 1, p. 289-300, 1995. DOI: 10.1111/j.2517-6161.1995.tb02031.x.
 anthropic2024agents | V | ANTHROPIC. *Building effective agents*. 19 dez. 2024. Publicação de engenharia/pesquisa do fornecedor. Disponível em: https://www.anthropic.com/research/building-effective-agents. Acesso em: 18 out. 2026.
-anthropic2024mcp | C | ANTHROPIC. Anúncio do *Model Context Protocol* (MCP). 25 nov. 2024. Disponível em: https://www.anthropic.com/news/model-context-protocol. Acesso em: 18 out. 2026. Data e conteúdo geral conferidos online; título exato conferido de memória.
+anthropic2024mcp | V | ANTHROPIC. Introducing the Model Context Protocol. 25 nov. 2024. Disponível em: https://www.anthropic.com/news/model-context-protocol. Acesso em: 18 out. 2026. Título e data conferidos em fontes secundárias; a página original não foi localizada na busca de verificação.

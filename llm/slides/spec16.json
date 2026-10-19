@@ -1,0 +1,344 @@
+{
+ "capitulo": 16,
+ "titulo": "Avaliação de LLMs e de aplicações",
+ "parte": "Parte V — Avaliação e uso responsável",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Explicar por que avaliar LLMs é mais difícil que avaliar um classificador",
+    "Desenhar um teste representativo, calcular o número de casos e evitar contaminação",
+    "Escolher métricas adequadas e saber o que cada uma não enxerga",
+    "Avaliar separadamente recuperação e geração em um RAG, com abstenção",
+    "Usar um LLM como juiz com protocolo e medir concordância (kappa, alfa)",
+    "Comparar sistemas com testes pareados e montar regressão e relato responsável"
+   ],
+   "notas": "Abra com a pergunta do capítulo: como saber, com dados e com margem de erro declarada, se um sistema funciona, se a nova versão é melhor e se continua funcionando em produção. Leia os seis objetivos e destaque três palavras: método, cuidado e honestidade sobre a incerteza. Não é preciso estatística avançada. Avise que, como não havia acesso a LLMs reais, os experimentos usam o SimuladorLLM, um simulador de regras que não é um LLM, um gerador extrativo simulado e um juiz simulado cujos vieses nós programamos; a vantagem é conhecer a verdade e conferir se o método a recupera. Pergunta à turma: como vocês decidem que uma resposta de assistente está boa? Armadilha: tomar os números das simulações como comportamento de modelos reais."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Dez perguntas e uma conclusão apressada",
+   "itens": [
+    "A equipe troca o prompt e testa com umas dez perguntas",
+    "As dez eram as mais fáceis, escolhidas por quem escreveu o prompt",
+    "Ninguém conferiu o valor correto nas respostas",
+    "Ninguém comparou com a versão anterior nos mesmos casos",
+    "Duas semanas depois, as reclamações sobem"
+   ],
+   "notas": "Conte a história. Uma equipe troca o prompt do assistente da secretaria e anuncia que ficou melhor, porque testou dez perguntas e as respostas estavam ótimas. Duas semanas depois, as reclamações sobem. As dez perguntas eram as mais fáceis e escolhidas por quem escreveu o prompt; ninguém conferiu se havia o valor correto; ninguém comparou com a versão anterior nas mesmas perguntas; e a melhora percebida era em boa parte acaso da geração. Avaliar separa uma demonstração de um sistema em que se pode confiar. Pergunta: quantos erros aparecem nessa história? Peça que a turma liste. Armadilha: achar que o problema era falta de estatística sofisticada; era falta de cuidado e de método."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: medir a mesa com régua elástica",
+   "texto": "Medir um sistema com LLM é medir uma mesa com uma régua que muda de tamanho a cada medida.",
+   "detalhe": "A mesa também muda de forma a cada vez. Não adianta medir uma vez e anunciar: meça várias vezes, em vários lugares, e diga quanto a medida balança. Três causas: saídas abertas, variabilidade e sensibilidade ao prompt.",
+   "notas": "A régua elástica resume as três dificuldades. Primeiro, saídas abertas: existem muitas respostas corretas escritas de modos diferentes, então comparar por igualdade subestima o acerto e comparar por semelhança superficial pode superestimar. Segundo, variabilidade: com amostragem, a mesma entrada gera saídas diferentes, e uma execução é uma única amostra de um processo aleatório. Terceiro, sensibilidade ao prompt: pequenas mudanças de redação ou de ordem dos exemplos mudam o resultado, de modo que quem compara dois modelos com um prompt pode estar comparando dois prompts. Há ainda uma quarta: o que é bom depende do uso e do custo de cada tipo de erro. Pergunta: no seu trabalho, qual erro custa mais? Armadilha: medir uma vez e declarar vitória."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: perplexidade não compara tokenizadores",
+   "codigo": "bi  = NgramaLM(n=2, k=0.1).ajustar(treino)    # palavras\ntri = NgramaLM(n=3, k=0.1).ajustar(treino)\ncar = NgramaLM(n=5, k=0.05).ajustar(chars_treino)  # caracteres\nprint(bi.perplexidade(teste), tri.perplexidade(teste))\nprint(car.perplexidade(chars_teste))\n# converter log-probabilidade em bits por caractere (mesma unidade)",
+   "saida": "perplexidade por TOKEN (palavra): bigramas 3.19 | trigramas 2.43\nperplexidade por CARACTERE: modelo de caracteres (5-gramas) 1.29\nbigramas (palavras)      bits por caractere = 0.323\ntrigramas (palavras)     bits por caractere = 0.247\n5-gramas de caracteres   bits por caractere = 0.367",
+   "notas": "A perplexidade é a avaliação intrínseca, medida no modelo isolado; a extrínseca mede o desempenho na tarefa. No experimento, o modelo de caracteres tem perplexidade 1,29, menor que a dos modelos de palavras, 3,19 e 2,43, mas isso é só porque cada caractere é mais fácil de prever que cada palavra. Na escala justa, bits por caractere, a ordem muda: o trigrama de palavras, 0,247, supera o modelo de caracteres, 0,367. O modelo de caracteres é uma simplificação e a comparação é aproximada. Lição: não compare perplexidade sem conferir a unidade, e não use perplexidade para decidir se um assistente serve para uma tarefa; meça a tarefa. Pergunta: por que os tokens de tamanhos diferentes atrapalham?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a prova só com questões fáceis",
+   "texto": "Um conjunto de teste é a prova do sistema. Se só tem questões fáceis, a nota alta não diz nada.",
+   "detalhe": "A prova deve parecer com o uso real: mesmos tipos de pergunta, erros de digitação, casos difíceis e perguntas sem resposta. Divida em estratos e relate cada um. Na base fictícia: 38 diretas, 8 por paráfrase e 10 sem resposta.",
+   "notas": "Compare com um professor que aplica uma prova só com as questões que os alunos já treinaram. Todo mundo vai bem e ninguém aprende nada sobre o que falta. O teste deve parecer com o uso real, com a mesma proporção de casos fáceis e difíceis, e incluir deliberadamente casos ambíguos, com erros de digitação, contraditórios e fora do escopo. Quando há subgrupos importantes, divida em estratos e relate cada um, porque a média esconde onde o sistema falha. Na base fictícia da Universidade Federal Aurora há 38 perguntas diretas, 8 por paráfrase e 10 sem resposta; um sistema que acerta todas as diretas e falha nas demais parece bom na média e é ruim onde mais importa. Armadilha: casos difíceis demais subestimam a nota geral; por isso se relata por estrato."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: quantos casos são necessários",
+   "codigo": "from llmdidatico.aval_llm import n_proporcao, ic_wilson, n_pareado\n# n = z^2 p(1-p) / e^2, z = 1,96\nfor p in (0.5, 0.8, 0.9, 0.95):\n    print(p, [n_proporcao(p, m) for m in (0.10, 0.05, 0.03, 0.02)])\nfor n in (10, 30, 100, 300):\n    print(n, ic_wilson(n, n))      # n acertos em n\nprint(n_pareado(0.03, 0.20))       # delta = 3 pp, discordância 20%",
+   "saida": "    p ±10.0pp ± 5.0pp ± 3.0pp ± 2.0pp\n 0.50      97     385    1068    2401\n 0.80      62     246     683    1537\n  30 acertos em  30: IC95% [0.886; 1,000]\n 100 acertos em 100: IC95% [0.963; 1,000]\n 0.03      870      1742      2614",
+   "notas": "Para estimar uma proporção com margem de erro e e confiança de 95%, o número de casos é o quadrado de 1,96 vezes p vezes um menos p, dividido por e ao quadrado; o pior caso é p igual a 0,5, que dá 385 casos para mais ou menos 5 pontos. Três lições. Precisão custa caro: passar de 5 para 2 pontos, com p igual a 0,8, vai de 246 para 1 537 casos. Zero erro não é zero de risco: 30 acertos em 30 são compatíveis com uma taxa verdadeira de apenas 88,6%. Detectar diferenças pequenas exige muitos casos: 3 pontos de diferença com 20% de discordância pedem cerca de 1 742 casos. Se for impossível rotular tanto, seja honesto e diga que o teste só distingue diferenças maiores. A tabela mostra só algumas linhas da saída."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Reduzir a incerteza pela metade custa quatro vezes",
+   "fig": "f16_amostra",
+   "legenda": "Largura do IC de 95% (Wilson) para a taxa de acerto em função do número de casos.",
+   "itens": [
+    "A largura cai com a raiz de n",
+    "Metade da incerteza: quadruplicar o teste",
+    "Wilson é melhor que o normal simples com n pequeno",
+    "Informe o IC, não só o acerto"
+   ],
+   "notas": "O gráfico mostra a largura do intervalo de confiança de 95%, calculado pelo método de Wilson, para três taxas verdadeiras de acerto. A largura cai com a raiz do número de casos, e por isso reduzir a incerteza pela metade exige quadruplicar o conjunto de teste. O intervalo de Wilson é preferível ao intervalo normal simples quando n é pequeno ou quando a proporção está perto de 0 ou 1. A mensagem prática é sempre relatar o intervalo junto com o acerto: dizer 94% sem dizer em quantos casos esconde se a incerteza é de dois ou de vinte pontos. Pergunta à turma: se vocês só podem rotular 100 casos, que tipo de conclusão é honesto? Armadilha: confundir um número alto com uma conclusão firme."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: vazar a prova antes",
+   "texto": "Contaminação é o aluno ter visto a prova antes: a nota mede memória, não capacidade.",
+   "detalhe": "O conteúdo do teste já foi visto: no treino, nos exemplos do prompt, na base do RAG ou em quase-duplicatas do desenvolvimento. Defesa mais segura: dados privados e recentes. Separe desenvolvimento e teste antes de ajustar qualquer coisa.",
+   "notas": "Se o aluno recebeu as questões da prova na véspera, a nota não diz o que ele sabe. Na contaminação, o conteúdo do teste já foi visto pelo sistema: nos dados de treinamento do modelo, nos exemplos do prompt, na base de documentos do RAG ou em casos quase idênticos aos do desenvolvimento. Carlini e colegas mostram que modelos podem memorizar trechos dos dados de treinamento. Com modelos de terceiros normalmente não se sabe o que há no treino; por isso a defesa mais segura é usar dados privados e recentes. E há um vazamento mais sutil: olhar o teste a cada versão do prompt e escolher a melhor nota transforma o teste em desenvolvimento. Regra: separe os conjuntos antes de começar e consulte o teste raramente. Pergunta: quem já ajustou algo olhando o teste?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: medindo a sobreposição e a memória",
+   "codigo": "def ngr(t, n=4):                 # 4-gramas de palavras\n    w = tokens(t); return {tuple(w[i:i+n]) for i in range(max(1, len(w)-n+1))}\nvistos = set().union(*(ngr(t) for t in Xdev))\n# sobreposição de cada mensagem de teste com o desenvolvimento\nmemoria = {\" \".join(tokens(t)): r for t, r in zip(Xdev, ydev)}\npred = [memoria.get(\" \".join(tokens(t)), \"indefinido\") for t in Xte]\n# 'memorizador': só repete o rótulo de mensagens já vistas",
+   "saida": "mensagens de teste com 80% ou mais dos 4-gramas já vistos no desenvolvimento: 0.675\nmensagens de teste idênticas a alguma do desenvolvimento: 0.254\nacerto de um 'memorizador' no teste inteiro: 0.254\n  nas mensagens repetidas: 1.000 (n=122) | nas inéditas: 0.000 (n=358)",
+   "notas": "O procedimento é simples e geral: calcular a sobreposição de n-gramas, por exemplo de quatro palavras, entre cada caso de teste e o material de desenvolvimento, exemplos de prompt e documentos; remover ou marcar os casos muito sobrepostos; e dividir os dados por grupos, para que quase-duplicatas não atravessem a fronteira. No experimento sintético, que tem poucos modelos de frase e por isso exagera, 67,5% das mensagens de teste têm 80% ou mais dos 4-gramas já vistos. Um memorizador, que só repete rótulos, acerta 25,4% do teste inteiro: 100% nas mensagens repetidas e 0% nas inéditas. Isso mostra o estrago de uma nota inflada. Pergunta: como dividir dados de um mesmo cliente? Por grupos."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: a acurácia sozinha engana",
+   "codigo": "X, y = corpus.intencoes(60, seed=21)\nsim = SimuladorLLM(\"v3\", semente=0)          # simulador de regras, não é LLM\npred = [json.loads(sim.responder(t))[\"intencao\"] for t in X]\nprint(classification_report(y, pred, labels=INTENCOES, digits=3))\ncm = confusion_matrix(y, pred, labels=rotulos)\n# desbalanceado: 5% de 'fraude'; classificador que diz sempre 'normal'",
+   "saida": "alteracao_cadastro 1.000 0.767 0.868 60\nreclamacao         1.000 0.767 0.868 60\nacurácia 0.942 | F1 micro 0.942 | F1 macro (8 categorias) 0.942\nacurácia com IC de Wilson 95%: 0.942 [0.917; 0.959]\ndesbalanceado (5% de 'fraude'), sempre 'normal': acurácia 0.950, F1 macro 0.487",
+   "notas": "Aqui o sistema é o simulador de regras, não um LLM. A acurácia é 0,942, com intervalo de Wilson de 0,917 a 0,959. A matriz de confusão, que o capítulo imprime inteira, mostra quais classes se confundem: mensagens de alteracao_cadastro que erram viram segunda_via, 14 casos, e as de reclamacao viram elogio, 13 casos, ou indefinido, 1 caso. É essa informação que orienta o próximo passo: mais exemplos nessas fronteiras, uma regra ou um humano na decisão. O último exemplo mostra que a acurácia sozinha engana: um sistema inútil que diz sempre normal acerta 95%, mas o F1 macro cai para 0,487. F1 macro pesa as classes igualmente e revela falha em classes raras. Pergunta: quando usar F1 micro? Armadilha: relatar só a média."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Métricas de texto: o que elas não veem",
+   "cabecalho": [
+    "Candidato",
+    "ROUGE-1 F",
+    "Cosseno LSA"
+   ],
+   "linhas": [
+    [
+     "paráfrase correta",
+     "0,74",
+     "0,97"
+    ],
+    [
+     "número errado (5,00 em vez de 1,50)",
+     "0,93",
+     "0,95"
+    ],
+    [
+     "incompleta",
+     "0,33",
+     "0,98"
+    ],
+    [
+     "irrelevante",
+     "0,09",
+     "0,16"
+    ],
+    [
+     "cópia literal",
+     "1,00",
+     "1,00"
+    ]
+   ],
+   "notas": "Referência: o atraso na devolução gera multa de R$ 1,50 por dia e por exemplar. A paráfrase correta recebe ROUGE-1 de 0,74, menos que a resposta com o número errado, 0,93: para métricas de sobreposição, trocar 1,50 por 5,00 é um erro de um token, embora seja o erro que importa ao usuário. A correspondência exata rejeita a paráfrase correta. A similaridade semântica dá 0,95 ao número errado e 0,98 à resposta incompleta: embeddings capturam o assunto, mas são cegos a números, negações e detalhes. Conclusões: verifique fatos críticos por regra; use sobreposição com várias referências e só quando a forma importa; calibre a métrica com julgamento humano. Embeddings aqui são LSA, não um LLM. Pergunta: qual resposta o usuário preferiria receber?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Diagnóstico de um RAG simulado",
+   "fig": "f16_rag",
+   "legenda": "Recuperação, resposta correta e correta dado que recuperou. Sistema simulado, não um LLM.",
+   "itens": [
+    "Diretas: recuperação 0,97 no top 3",
+    "Paráfrases: apenas 0,62",
+    "Geração dado o contexto: 0,78 nas diretas",
+    "Sem resposta: recusa correta 0,60 com limiar 4,5"
+   ],
+   "notas": "O RAG tem duas partes que falham de formas diferentes, e somar tudo numa nota só esconde onde está o problema. Avalie a recuperação, com hit, recall e MRR, e a geração dado o contexto: correção, fidelidade e abstenção. O gerador aqui é extrativo e simulado, não um LLM. A recuperação é excelente nas perguntas diretas, 0,97, e fraca nas paráfrases, 0,62 no top 3, onde o vocabulário não coincide; o remédio está na busca. A geração, mesmo com o documento certo, acerta só 0,78, porque o gerador escolhe a frase errada; o remédio estaria no prompt ou no modelo. Leia como um médico lê um exame. Pergunta: se a recuperação falhou, a geração pode acertar? Raramente, só por sorte."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Abstenção e fidelidade: sem limiar grátis",
+   "itens": [
+    "Limiar 4,5: recusa correta 0,60; recusas indevidas 0,17",
+    "Limiar 10: recusa correta 0,90; recusas indevidas 0,48",
+    "A escolha do limiar é decisão de política, não só técnica",
+    "Verificador de números pegou as 5 alterações simuladas, sem falso alarme",
+    "Vale neste cenário: número inventado que aparece em outro trecho passaria"
+   ],
+   "notas": "Varra o limiar de abstenção. Com limiar 4,5 no escore do BM25, o sistema recusa corretamente 60% das perguntas sem resposta e recusa indevidamente 17% das respondíveis. Subindo para 10, a recusa correta vai a 90%, mas a recusa indevida sobe para 48%, quase metade das perguntas respondíveis. Não existe limiar sem custo; a escolha depende de qual erro é mais caro, o que se discute no caso jurídico. Sobre fidelidade: o gerador simulado altera um número em 15% das respostas, e o verificador, que confere se todo número aparece no contexto, sinalizou as cinco alterações sem falso alarme. Mas números inventados que por coincidência apareçam em outro trecho do contexto passariam. Pergunta: no caso jurídico, que erro é mais grave?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o árbitro e o time da casa",
+   "texto": "Um juiz automático pode ter preferências que nada têm a ver com a qualidade, como um árbitro que favorece o time da casa.",
+   "detalhe": "Viés de posição: favorece a primeira resposta. Verbosidade: favorece a mais longa. Autopreferência: favorece o estilo que ele mesmo produziria. Os tamanhos variam com juiz, tarefa e prompt: meça os do seu caso.",
+   "notas": "Quando um LLM julga a resposta de outro, Zheng e colegas relatam que um juiz forte pode concordar com preferências humanas num grau comparável à concordância entre humanos, mas o mesmo trabalho descreve vieses sistemáticos. Posição: tende a favorecer a resposta apresentada em certa posição. Verbosidade: favorece respostas mais longas, mesmo sem mais conteúdo. Autopreferência: favorece respostas parecidas com as que ele mesmo produziria. São também limitações conhecidas a dificuldade de julgar raciocínio que o próprio juiz não domina e a sensibilidade à redação da rubrica. Compare ao árbitro que, sem perceber, favorece o time da casa. Pergunta: como descobrir o viés de um árbitro? Pondo-o para julgar jogos de qualidade idêntica. Armadilha: tratar a nota do juiz como verdade."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: um juiz simulado com vieses programados",
+   "codigo": "# JuizEnviesado: SIMULAÇÃO por regras (não é um LLM)\niguais = [(resposta(2, 80, \"outro\"), resposta(2, 80, \"outro\"))] * 500\nfor vp in (0.0, 0.3, 0.6, 1.0):\n    j = JuizEnviesado(vies_posicao=vp, semente=1)\n    primeira = np.mean([j.comparar(a, b) == 1 for a, b in iguais])\n# comparar_protocolo(a, b, True): julga nas duas ordens; discordância = empate",
+   "saida": " viés de posição   prefere a 1ª (sem troca)\n             0.0                      0.468\n             1.0                      0.974\nsem troca de ordem   decididos 1.000 | concordância nos decididos 0.868\ncom troca de ordem   decididos 0.793 | concordância nos decididos 0.950\nviés 1.0: o juiz escolhe a melhor (curta) em 0.208 dos pares",
+   "notas": "Como não havia LLM real, usamos uma classe de simulação por regras, em que os vieses estão no código e por isso conhecemos a resposta certa. Com pares de qualidade idêntica, um juiz sem viés escolhe a primeira resposta em cerca de metade das vezes, 0,47; com viés de posição 1,0, escolhe a primeira em 97% dos pares. A troca de ordem faz o viés desaparecer: nos 600 pares com qualidade diferente e viés 0,8, a concordância com humanos nos casos decididos sobe de 0,868 para 0,950, mas só 79% dos pares ficam decididos, e o resto vira empate. O viés de verbosidade não se corrige trocando a ordem: com viés 1,0, o juiz escolhe a melhor resposta, a curta, em apenas 21% dos pares. Não interprete os tamanhos como típicos de nenhum juiz real. Pergunta: o que fazer com os empates?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Kappa de Cohen: concordância descontado o acaso",
+   "tex": "κ = (p_o − p_e) / (1 − p_e)",
+   "explicacao": [
+    "p_o: concordância observada; p_e: concordância esperada ao acaso",
+    "Exemplo: p_o = 0,80, p_e = 0,575, logo κ ≈ 0,53 (moderado)",
+    "Faixas como 0,41 a 0,60 são convenções, não leis",
+    "Notas ordenadas: use o kappa ponderado ou o alfa de Krippendorff"
+   ],
+   "notas": "Se dois avaliadores concordam em 90% dos casos, isso é bom? Depende do quanto concordariam por acaso. O kappa de Cohen corrige a concordância observada pela esperada ao acaso, calculada a partir da frequência com que cada avaliador usa cada categoria. Resolva o exemplo: 100 respostas, ambos dizem boa em 60 e ruim em 20; A boa e B ruim em 15, o inverso em 5. A concordância observada é 0,80. A diz boa em 75 e B em 65, então o acaso dá 0,75 vezes 0,65 mais 0,25 vezes 0,35, que é 0,575. O kappa é 0,225 dividido por 0,425, cerca de 0,53, moderado: o guia de anotação precisa de revisão. As faixas de Landis e Koch são convenções. Pergunta: por que 80% de concordância bruta engana?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: kappa, alfa e o paradoxo do kappa",
+   "codigo": "# 3 avaliadores humanos SIMULADOS, notas de 0 a 3, 150 itens\nkappa_cohen(a, b)  # conferido contra cohen_kappa_score (diferença < 1e-12)\nalfa_krippendorff(dados)               # nominal\nalfa_krippendorff(dados, 'ordinal')\nalfa_krippendorff(faltantes)           # ~20% de anotações faltantes\n# paradoxo: categoria dominante (95%), concordância bruta alta",
+   "saida": "H1-H2: kappa 0.661 | ponderado quadrático 0.898 | concordância bruta 0.747\nalfa (3 avaliadores, sem faltantes): nominal 0.653 | ordinal 0.884 | intervalo 0.886\ncom ~20% de anotações faltantes:  nominal 0.713 | ordinal 0.914\nconferência por definição: nominal 0.713 | intervalo 0.916 (pacote: 0.916)\nparadoxo do kappa: concordância 0.96, mas kappa 0.579 (prevalência de 95%)",
+   "notas": "Os três avaliadores simulados erram quase sempre por um ponto. Por isso o kappa nominal, 0,66, e o alfa nominal, 0,65, são moderados, enquanto o kappa ponderado, de 0,88 a 0,90, e o alfa ordinal, 0,88, mostram concordância forte. A escolha da escala deve refletir o uso: se um ponto de desacordo é tolerável, use a versão ordinal. O alfa de Krippendorff admite qualquer número de avaliadores, dados faltantes e várias escalas; a implementação do pacote foi conferida contra a definição por força bruta e o kappa, contra o scikit-learn. O paradoxo do kappa: com uma categoria dominante, a concordância bruta é de 96% e o kappa só 0,58, porque o acaso já prevê muita concordância. Relate bruta e kappa juntos, com a distribuição das categorias."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Calibrar o juiz com uma amostra humana",
+   "tex": "π̂ = (p_obs + e − 1) / (s + e − 1)",
+   "explicacao": [
+    "s: sensibilidade; e: especificidade do juiz, medidas em amostra rotulada",
+    "Exemplo: juiz aprova 60%, s = 0,95, e = 0,80, logo π̂ ≈ 0,53",
+    "Simulação: juiz aprovou 59,6%; verdade 48,1%; corrigido 51,7%",
+    "A amostra deve ser aleatória e representativa"
+   ],
+   "notas": "Mesmo um juiz imperfeito é útil se soubermos quanto ele erra. Rotule com humanos uma amostra aleatória, estime a sensibilidade, a fração dos realmente bons que ele aprova, e a especificidade, a fração dos realmente ruins que ele reprova, e corrija a taxa de aprovação observada pela relação de Rogan e Gladen. Exemplo: aprovação de 60%, sensibilidade 0,95, especificidade 0,80; o numerador é 0,40, o denominador 0,75, e a taxa verdadeira estimada é cerca de 0,53, ou seja, 7 pontos eram excesso do juiz. Na simulação com viés de verbosidade, o juiz aprovou 59,6%, a verdade era 48,1% e, com 200 rótulos, a taxa corrigida foi 0,517, com IC de 0,459 a 0,570, que inclui a verdade. O método não é mágico: depende de amostra aleatória e de o juiz errar de modo parecido nos casos rotulados e nos demais."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: comparar duas versões nos mesmos casos",
+   "codigo": "a2, a3 = acertos(\"v2\"), acertos(\"v3\")      # simuladores de regras\nm = mcnemar(a3, a2)                          # b = só v3 certa; c = só v2 certa\nmu, lo, hi = bootstrap_pareado(a3, a2, seed=0)\nps = [mcnemar(v, a2)[\"p_exato\"] for v in variantes]   # 99 equivalentes + v3\n# correções: bonferroni(ps), holm(ps), benjamini_hochberg(ps)",
+   "saida": "acerto v2 0.794 | v3 0.955 | n=800\nMcNemar v3 vs v2: b=129, c=0; p exato 2.94e-39\nbootstrap pareado da diferença: +0.161 IC95% [+0.136; +0.186]\n  sem correção       :  3 falsos positivos entre 99 | v3 detectada: True\n  Holm               :  0 falsos positivos entre 99 | v3 detectada: True",
+   "notas": "A regra de ouro: avalie os dois sistemas nos mesmos casos e use um teste pareado; só os casos discordantes informam a diferença. No exemplo, a v3 acerta 95,5% e a v2, 79,4%; em 129 casos só a v3 acerta e em nenhum só a v2 acerta, o que dá p-valor minúsculo e uma diferença de 16 pontos, com intervalo de 13,6 a 18,6. O McNemar exato foi conferido com a conta manual da binomial. Nas múltiplas comparações, sem correção saíram 3 falsos positivos entre 99 variantes equivalentes; Holm e as demais correções os eliminaram sem perder a variante realmente melhor. Quando a diferença é grande, qualquer método a detecta; as correções importam quando as diferenças são pequenas e há muitas comparações. Armadilha: significativo não é o mesmo que importante; defina uma margem de relevância antes."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: comprar cem bilhetes de loteria",
+   "texto": "Quem compara cem variantes e relata a melhor é como quem compra cem bilhetes e comemora o premiado.",
+   "detalhe": "Com 100 comparações a 5% de nível, esperam-se cerca de 5 falsos positivos. Bonferroni, Holm e Benjamini-Hochberg corrigem isso. Defina também uma margem de relevância: só trocar de sistema se o ganho for de pelo menos 2 pontos.",
+   "notas": "Cada comparação tem 5% de chance de apontar uma diferença que não existe. Com cem comparações a esse nível, espera-se cerca de cinco falsos positivos, como num sorteio em que cada bilhete tem uma pequena chance de premiação e você comprou cem. As correções mais usadas são Bonferroni, que multiplica cada valor-p pelo número de comparações, Holm, mais poderosa com o mesmo controle, e Benjamini-Hochberg, que controla a proporção de falsas descobertas e é menos rigorosa. Combine o teste com uma margem de relevância definida de antemão: com 100 000 casos, uma diferença de 0,2 ponto pode ser significativa e irrelevante para o negócio. Pergunta à turma: quantos prompts já testaram antes de escolher um? Armadilha: relatar só o vencedor."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: variação por semente, ordem e temperatura",
+   "codigo": "accs = np.array([acerto_v2(s, base) for s in range(20)])      # 20 sementes\nords = np.array([acerto_v2(0, rng.permutation(len(X))) for _ in range(20)])\n# classificador de apoio (NÃO é LLM), amostrado com temperatura T\nfor T in (0.25, 0.5, 1.0, 2.0):\n    acc = [np.mean(np.array([amostrar(l, r, T=T) for l in logits]) == yv)\n           for r in rngs]",
+   "saida": "v2 em 20 sementes: média 0.801, desvio-padrão 0.0115, mín 0.782, máx 0.821\nv2, semente fixa, 20 ordens dos casos: média 0.791, desvio 0.0027\n   T   média      dp     mín     máx   (20 execuções, 800 casos)\n0.25   0.996  0.0017   0.994   0.999\n 2.0   0.327  0.0205   0.285   0.369",
+   "notas": "Uma avaliação de um sistema com amostragem é uma amostra de um processo aleatório. A variação entre sementes do simulador v2, desvio de cerca de 1,2 ponto, é da ordem do desvio binomial de 1,4 ponto esperado de um sorteio com 800 casos; a variação por ordem dos casos é menor, 0,3 ponto. A temperatura muda o quadro: com T de 0,25 o acerto médio do classificador de apoio, que não é um LLM, é 0,996 e com T igual a 2 cai para 0,327, e o desvio entre execuções cresce de 0,2 para 2 pontos. Duas mensagens: relate temperatura e semente, pois sem elas o resultado é irreproduzível; e avalie com a configuração de produção, repetida K vezes. A variação entre execuções soma-se à do conjunto de teste, e o intervalo deve cobrir as duas."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: portão de regressão e carta de controle",
+   "codigo": "def portao(base_ok, novo_ok, estratos, margem=0.03, queda_estrato=0.10):\n    m, lo, hi = bootstrap_pareado(novo_ok, base_ok, n=2000)\n    # reprova se lo < -margem ou se algum estrato cair mais que queda_estrato\n    ...\n# carta de controle: referência das semanas 1-6, limites de 3 desvios\n# monitoramento com dados SIMULADOS (abstenção semanal)",
+   "saida": "queda leve (-1%, difusa)            -0.009  APROVADO\nqueda difusa (-5%)                  -0.048  REPROVADO IC da diferença [-0.062; -0.033] passa de -0.03\nqueda concentrada em 'elogio'       -0.015  REPROVADO estrato 'elogio' caiu -0.12\nlimites 3 desvios [0.030; 0.121]\n  semana  9: 0.180 <-- ALERTA",
+   "notas": "A avaliação não termina na entrega. A regressão contínua dispara o conjunto de testes a cada mudança, e um portão decide se ela segue, com margem de não inferioridade e proteção por estrato. Os cenários são simulados: a queda difusa de 5% é barrada pelo intervalo da diferença; a queda concentrada na categoria elogio, de apenas 1,5 ponto na média geral mas 12 pontos naquela categoria, passa pelo critério global e só é pega pela proteção por estrato. Na carta de controle, a abstenção salta de cerca de 8% para 15% a partir da semana 9 e os alertas disparam nas semanas 9, 10 e 12; a semana 11 ficou dentro dos limites por oscilação do acaso. O monitor não diz por que mudou; é um sinal para investigar. O código mostra só o esqueleto do portão."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Benchmarks públicos: triagem, não decisão",
+   "itens": [
+    "Dão linguagem comum e triagem inicial",
+    "Medem uma tarefa específica, não a sua aplicação",
+    "Saturam quando os melhores modelos chegam ao teto",
+    "Podem estar contaminados por serem públicos",
+    "Quando a nota vira alvo, deixa de ser boa medida (lei de Goodhart)"
+   ],
+   "notas": "Benchmarks públicos são conjuntos padronizados que permitem comparar modelos, como perguntas de múltipla escolha de muitas áreas, problemas de matemática do ensino fundamental ou baterias amplas com vários cenários. A utilidade é real, mas os limites também. O que medem não é o que você precisa: geralmente é múltipla escolha, em inglês, com dados públicos. Saturam quando os melhores modelos chegam perto do teto. Podem estar contaminados. São sensíveis ao formato do prompt, ao número de exemplos e ao modo de extrair a resposta. E, quando a nota vira objetivo, o sistema é otimizado para a nota. Neste livro não reproduzimos números de benchmarks de modelos reais, pois mudam com versão e configuração; consulte as fontes primárias, com data. Pergunta: que benchmark representaria a secretaria da sua universidade?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Relato responsável: o cartão de avaliação",
+   "itens": [
+    "Sistema: versão do prompt, modelo, parâmetros, semente, data",
+    "Teste: origem, tamanho, estratos, hash, anotação e concordância",
+    "Métricas com IC, por estrato; número de execuções",
+    "Limitações, usos não recomendados, riscos e salvaguardas",
+    "Comparação com a linha de base e a decisão tomada"
+   ],
+   "notas": "Inspirado nos cartões de modelo e nas fichas de dados, um cartão de avaliação registra o sistema avaliado, com versão do prompt, modelo e versão, parâmetros como temperatura e semente e a data; o conjunto de teste, com origem, tamanho, estratos, hash do conteúdo, como foi anotado e a concordância entre anotadores; as métricas com intervalos de confiança, por estrato e no geral; as limitações e usos não recomendados; os riscos e salvaguardas; e a comparação com a linha de base e a decisão. No exemplo do capítulo, o cartão da v3 do simulador registra 0,955 de acerto, IC de Wilson de 0,938 a 0,967 e diferença de 0,161 sobre a v2, e declara as limitações: dados sintéticos, sem avaliação humana e uma única semente. Com serviços externos, registre o identificador exato do modelo e a data. Normas mudam; consulte a versão vigente."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limites deste capítulo",
+   "itens": [
+    "Poucos casos, só a média, uma única execução",
+    "Ajustar o prompt olhando o teste; ignorar contaminação",
+    "Usar BLEU, ROUGE ou similaridade como prova de correção factual",
+    "Confiar no juiz sem trocar a ordem nem validar com humanos",
+    "Experimentos usam simuladores e dados sintéticos: ilustram métodos, não LLMs reais"
+   ],
+   "notas": "Resuma os erros: avaliar com dez ou vinte casos; ajustar o prompt olhando o teste; comparar sistemas em casos diferentes; relatar só a média, sem estratos nem intervalo; usar uma única execução de sistema com amostragem; tomar BLEU, ROUGE ou similaridade como prova de correção; confiar no juiz sem validação; ignorar contaminação; testar muitas variantes e relatar a melhor sem correção; tratar benchmark público como teste do seu caso; esquecer a abstenção; não registrar versão, semente e data. Reforce as limitações: todos os experimentos usam simuladores, os dados são sintéticos com poucos modelos de frase, os avaliadores humanos e a segunda correção do caso educacional são simulados, as fórmulas de amostra são aproximações normais, bootstrap supõe casos independentes e as faixas de kappa são convenções. Nada aqui é aconselhamento jurídico."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Teste mínimo para duas versões",
+   "passos": [
+    "Escolha uma tarefa com resposta verificável",
+    "Escreva 60 casos em estratos; separe 30 para desenvolvimento e 30 para teste antes de ajustar",
+    "Rode as duas versões nos mesmos casos, 3 vezes, anotando modelo, versão, data, temperatura e semente",
+    "Calcule métricas por estrato com Wilson, a diferença pareada com bootstrap e o McNemar",
+    "Conclua: distinguível do acaso? Relevante? O que o teste não cobre? Preencha o cartão"
+   ],
+   "notas": "Peça que cada dupla escolha uma tarefa com resposta verificável, como classificar mensagens ou extrair valores. No passo dois, o ponto crítico é separar desenvolvimento e teste antes de ajustar qualquer coisa; se possível, uma segunda pessoa rotula uma parte e vocês calculam o kappa. No passo três, as duas versões, que podem ser dois prompts ou um prompt e uma regra, rodam nos mesmos casos, três vezes cada, com tudo registrado. No quatro, métricas por estrato com intervalos de Wilson, diferença pareada com bootstrap e McNemar. O parágrafo final responde se a diferença é distinguível do acaso, se é relevante e o que o teste não cobre. Com 30 casos de teste, avise que só diferenças grandes serão detectáveis. O exercício prático 16.1 e o projeto final trazem versões com os simuladores do livro."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "a acurácia que engana",
+   "pergunta": "Em um teste, 95% dos casos são normais e 5% são fraude. Um sistema que diz sempre normal tem acurácia de 0,95. Que métrica revelaria o problema?",
+   "opcoes": [
+    "A própria acurácia, que já mostra com clareza que o sistema é inútil",
+    "O número médio de tokens por resposta",
+    "O F1 macro, ou a revocação da classe fraude, que pesam as classes por igual",
+    "A temperatura de geração usada"
+   ],
+   "resposta": "C",
+   "explicacao": "A revocação de fraude seria zero, e o F1 macro cairia a cerca de 0,49.",
+   "notas": "Deixe a turma pensar antes. A resposta é o F1 macro ou a revocação da classe fraude. Retome o código: o classificador que diz sempre normal tem acurácia 0,950, mas F1 macro 0,487, porque a revocação da classe fraude é zero. A acurácia sozinha é a alternativa tentadora e é exatamente a que engana quando as classes são desbalanceadas. Tokens por resposta e temperatura não têm relação com o acerto por classe. Pergunta de aprofundamento: e se as duas classes fossem igualmente raras e igualmente graves? Aí a escolha entre F1 macro e micro muda; no problema de rótulo único com todas as previsões válidas, o F1 micro é igual à acurácia."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o viés de posição",
+   "pergunta": "Como se mitiga o viés de posição de um juiz em comparações de pares?",
+   "opcoes": [
+    "Julgando nas duas ordens e aceitando um vencedor só quando os dois julgamentos concordam",
+    "Apresentando sempre a melhor resposta em primeiro lugar",
+    "Usando um único juiz e uma única ordem",
+    "Removendo a rubrica, para o juiz decidir sem critérios"
+   ],
+   "resposta": "A",
+   "explicacao": "Discordância entre as ordens vira empate.",
+   "notas": "Retome o árbitro que favorece o time da casa. A solução é fazê-lo julgar o jogo nas duas ordens e só aceitar o vencedor quando as duas decisões coincidem; discordância vira empate. No experimento, com viés de posição 0,8, a concordância com humanos nos casos decididos subiu de 0,868 para 0,950, mas só 79% dos pares ficaram decididos. Mostre que apresentar sempre a melhor em primeiro lugar pressupõe saber qual é a melhor, o que invalida a avaliação. Lembre que a troca de ordem não corrige o viés de verbosidade. Pergunta de aprofundamento: o que fazer com os empates? Mais julgamentos ou revisão humana."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "cem variantes",
+   "pergunta": "Ao comparar 100 variantes equivalentes a 5% de nível, sem correção, espera-se cerca de quantos falsos positivos?",
+   "opcoes": [
+    "Nenhum, já que as variantes são realmente equivalentes",
+    "50, pois metade das comparações tende a dar diferença",
+    "95, pois o nível vale para cada acerto individual",
+    "5"
+   ],
+   "resposta": "D",
+   "explicacao": "Cada comparação tem 5% de chance de falso positivo; Holm ou Benjamini-Hochberg corrigem isso.",
+   "notas": "Use a loteria de cem bilhetes. A resposta é cerca de 5: cada comparação tem 5% de chance de falso positivo mesmo quando não há diferença real. A alternativa de nenhum falso positivo é a mais tentadora, porque as variantes são mesmo equivalentes, mas é justamente a equivalência que torna cada alarme falso. Na simulação do capítulo, sem correção saíram 3 falsos positivos entre 99, número compatível com o esperado; Bonferroni, Holm e Benjamini-Hochberg zeraram os falsos positivos sem perder a variante realmente melhor. Pergunta de aprofundamento: por que Holm é preferida a Bonferroni? Mais poderosa com o mesmo controle. Armadilha: correção não substitui a margem de relevância."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Avaliar LLMs é difícil: saídas abertas, variabilidade, sensibilidade ao prompt",
+    "O teste é o instrumento: representativo, estratificado, dimensionado e sem contaminação",
+    "ROUGE e similaridade não verificam fatos; em RAG, avalie recuperação, geração e abstenção",
+    "Juiz automático: rubrica, troca de ordem, validação com humanos (kappa, alfa)",
+    "Compare com testes pareados, corrija múltiplas comparações, defina margem de relevância",
+    "Depois da entrega: regressão, monitoramento e cartão de avaliação"
+   ],
+   "notas": "Feche retomando a história das dez perguntas e responda ao que deu errado. Avaliar LLMs é difícil por saídas abertas, variabilidade e sensibilidade ao prompt; por isso meça várias vezes com a configuração de produção e relate a incerteza. A perplexidade é intrínseca e não comparável entre tokenizadores. O conjunto de teste precisa ser representativo, estratificado, com casos difíceis e sem resposta, de tamanho calculado, separado do desenvolvimento e livre de contaminação. Métricas de texto não verificam fatos. Em RAG, separe recuperação, geração, abstenção e fidelidade. O juiz tem vieses e precisa de protocolo e validação humana. Compare com testes pareados e corrija múltiplas comparações. Benchmarks são triagem. Registre tudo em um cartão. Pergunta final: o que vocês mudariam no último teste que fizeram?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "ZHENG, L. et al. Judging LLM-as-a-judge with MT-Bench and Chatbot Arena. NeurIPS, 36., 2023.",
+    "PAPINENI, K. et al. BLEU: a method for automatic evaluation of machine translation. ACL, 40., 2002.",
+    "LIN, C.-Y. ROUGE: a package for automatic evaluation of summaries. 2004. p. 74-81.",
+    "EFRON, B.; TIBSHIRANI, R. J. An introduction to the bootstrap. Nova York: Chapman & Hall, 1993.",
+    "COHEN, J. A coefficient of agreement for nominal scales. Educational and Psychological Measurement, v. 20, n. 1, p. 37-46, 1960.",
+    "KRIPPENDORFF, K. Content analysis: an introduction to its methodology. 2. ed. Thousand Oaks: Sage, 2004.",
+    "MCNEMAR, Q. Note on the sampling error of the difference between correlated proportions or percentages. Psychometrika, v. 12, n. 2, p. 153-157, 1947.",
+    "HOLM, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics, v. 6, n. 2, p. 65-70, 1979."
+   ],
+   "notas": "As referências indicam as fontes dos métodos usados. Zheng e colegas descrevem o uso de LLM como juiz e seus vieses; Papineni e Lin criaram o BLEU e o ROUGE em contextos de tradução e de resumos, o que lembra que usá-los para respostas factuais é extrapolação. Efron e Tibshirani cobrem o bootstrap, Cohen o kappa, Krippendorff o alfa, McNemar o teste pareado e Holm a correção de múltiplas comparações. As referências completas em ABNT estão no final do capítulo. Como as normas e os frameworks de governança mudam, consulte as versões vigentes. Sugira que a turma leia primeiro o trabalho sobre juízes e depois discuta os vieses medidos na simulação."
+  }
+ ]
+}

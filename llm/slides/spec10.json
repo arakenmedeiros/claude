@@ -1,0 +1,379 @@
+{
+ "capitulo": 10,
+ "titulo": "Embeddings e busca semântica",
+ "parte": "Parte III — Prompts e aplicações",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Explicar como textos viram vetores e por que proximidade é semelhança de uso",
+    "Comparar cosseno, produto interno e distância euclidiana, e o papel da normalização",
+    "Comparar busca lexical (BM25) e semântica; combiná-las por RRF",
+    "Segmentar documentos em pedaços e avaliar tamanho e sobreposição",
+    "Medir recall contra a busca exata em índices aproximados e estimar memória",
+    "Avaliar com recall, hit, MRR e nDCG, com intervalo por bootstrap, e tratar consultas sem resposta"
+   ],
+   "notas": "Abra dizendo que este capítulo prepara o terreno do próximo, a geração aumentada por recuperação: antes de entregar trechos ao modelo, precisamos achá-los bem e saber se achamos. Leia os seis objetivos e destaque duas ideias: medir com incerteza e saber dizer não encontrei. Avise as regras de honestidade: não havia internet para baixar modelos, então tudo usa a base sintética de 60 documentos e 56 consultas, o BM25 do pacote e a LSA, um modelo de embeddings modesto e não neural. Os índices aproximados foram testados em uma coleção sintética de 20 000 vetores, e o código com embeddings densos reais não foi executado. Os resultados valem para esta base pequena e não devem ser extrapolados."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Duas buscas, dois defeitos",
+   "itens": [
+    "Secretaria da Universidade Federal Aurora: 60 documentos normativos",
+    "Busca por palavras exatas: \"Perdi meu diploma\" não acha \"segunda via\"",
+    "Busca ingênua por sentido: devolve com ar de certeza o documento errado",
+    "Exemplo: \"qual o telefone do reitor?\" não tem resposta na base",
+    "Ambos os defeitos são previsíveis e se podem medir"
+   ],
+   "notas": "Conte a situação inicial. Uma funcionária da secretaria recebe todo dia as mesmas perguntas, e as respostas estão em 60 documentos normativos. A busca do portal procura palavras exatas: quem escreve perdi meu diploma não encontra o documento que fala em segunda via e emissão. Já a busca por sentido que a equipe de TI testou devolve, com ar de certeza, o documento errado para perguntas sem resposta na base, como o telefone do reitor. Nenhum dos comportamentos é misterioso: decorrem de como textos são representados, comparados e indexados. Pergunta à turma: qual dos dois defeitos é mais perigoso se um modelo de linguagem receber o resultado e responder? O segundo, porque o modelo pode inventar com base em um documento irrelevante."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o mapa da cidade",
+   "texto": "Cada texto vira um ponto em um mapa; textos usados em contextos parecidos ficam no mesmo bairro.",
+   "detalhe": "Um embedding é as coordenadas desse ponto. Buscar é perguntar quais pontos estão mais perto da pergunta. Mas perto no mapa é semelhança de uso, não prova de que o significado seja o mesmo.",
+   "notas": "Use o mapa para introduzir embeddings. Imagine que cada documento recebe um endereço: números que o localizam em um mapa. Documentos sobre multas da biblioteca ficam em um bairro, documentos sobre Wi-Fi em outro. Buscar é colocar a pergunta no mapa e olhar quem está por perto. O cuidado é o que o mapa mede: proximidade de uso, isto é, textos que aparecem em contextos parecidos. Posso trancar e não posso trancar aparecem em contextos quase idênticos e ficam vizinhos, embora signifiquem o oposto. O embedding é um índice de proximidade, não um verificador de verdade. Pergunta à turma: que pares de frases vocês esperariam encontrar vizinhas e, mesmo assim, com sentidos opostos?"
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Quatro maneiras de representar um texto",
+   "cabecalho": [
+    "Família",
+    "Como é",
+    "Limite"
+   ],
+   "linhas": [
+    [
+     "Contagens e TF-IDF",
+     "Uma coordenada por palavra; esparso",
+     "Só acha palavras exatas"
+    ],
+    [
+     "LSA (SVD)",
+     "Poucas dimensões densas, de palavras que aparecem juntas",
+     "Pouca estatística em bases pequenas"
+    ],
+    [
+     "Média de vetores de palavras",
+     "Média dos vetores das palavras do texto",
+     "Perde a ordem das palavras"
+    ],
+    [
+     "Codificadores treinados (Sentence-BERT)",
+     "Vetor denso; paráfrases ficam próximas",
+     "Exige modelo bom, adequado ao idioma"
+    ]
+   ],
+   "notas": "Percorra as quatro famílias, da mais simples à mais poderosa. Contagens e TF-IDF, o modelo de espaço vetorial de Salton, Wong e Yang, têm uma coordenada por palavra, são enormes e esparsos, e só aproximam textos com palavras exatas. A análise semântica latente, de Deerwester e colegas, aplica a decomposição em valores singulares ao TF-IDF e guarda poucas dimensões, aproximando vocabulários parecidos. A média de vetores de palavras é simples, mas perde a ordem: o gato comeu o rato e o rato comeu o gato ficam iguais. Os codificadores treinados para similaridade, como o Sentence-BERT, produzem embeddings densos, em que paráfrases ficam próximas. Neste capítulo usamos contagens, TF-IDF e LSA; o denso neural não foi executado."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: esparso contra denso",
+   "codigo": "cont = CountVectorizer(tokenizer=tok, lowercase=False, token_pattern=None)\nXc = cont.fit_transform(textos)                  # contagens (esparsa)\nlsa = modelos.LSAEmbedder(dim=40).ajustar(textos)\nDl = lsa.transformar(textos)                     # embeddings densos, norma 1\n\nprint(\"contagens:\", Xc.shape, \"| fração de zeros:\", ...)\nprint(\"LSA      :\", Dl.shape, \"| normas:\", ...)\nfor alvo in (\"D12\", \"D37\"):\n    s = Dl @ Dl[ids.index(alvo)]      # vizinhos pelo produto interno",
+   "saida": "contagens: (60, 626) | fração de zeros: 97.0%\nLSA      : (60, 40) | normas: [1. 1. 1.] ...\nvizinhos de D12 (Multas da biblioteca): [('D09', 0.24), ('D17', 0.24), ('D16', 0.21)]\nvizinhos de D37 (Rede Wi-Fi do campus): [('D13', 0.34), ('D39', 0.32), ('D43', 0.26)]",
+   "notas": "O código constrói as duas representações na base de 60 documentos. A saída real mostra que a matriz de contagens tem 60 documentos e 626 palavras diferentes, com 97% de zeros: é esparsa. A LSA a comprime em 40 dimensões densas, com cada vetor de norma 1. Os vizinhos de D12, o documento sobre multas da biblioteca, são D09 e D17 com 0,24 e D16 com 0,21; os de D37, sobre a rede Wi-Fi do campus, são D13, D39 e D43. As similaridades são baixas, de 0,2 a 0,3, porque 60 documentos curtos dão pouca estatística para a SVD aprender. Um codificador neural treinado em grandes volumes de texto seria mais fino; aqui o objetivo é aprender o método. Pergunta: por que a norma 1 será importante daqui a pouco?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: duas lanternas",
+   "texto": "Cosseno compara para onde as lanternas apontam; a distância compara onde estão paradas.",
+   "detalhe": "Produto interno mistura direção e tamanho: uma lanterna potente parece \"mais parecida\" só por ser forte. Se todos os vetores tiverem comprimento 1, as três medidas dão a mesma ordem.",
+   "notas": "Para entender as três medidas, pense em lanternas. O cosseno mede o ângulo, ou seja, se apontam para o mesmo lugar, sem se importar com a potência. A distância euclidiana mede a separação entre as pontas, e o produto interno mistura os dois efeitos: cresce com o comprimento dos vetores. Por isso um documento longo, com contagens grandes, pode vencer pelo produto interno sem ser o mais parecido em direção. A identidade que une tudo: a distância ao quadrado vale a norma de a ao quadrado mais a de b ao quadrado menos duas vezes o produto interno; com norma 1, isso vira 2 menos 2 vezes o cosseno, e as três medidas dão o mesmo ranking. A prática: normalizar uma vez, ao indexar, e usar o produto interno."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: três medidas, três ordens",
+   "codigo": "# vetores NÃO normalizados (contagens): o produto interno favorece textos longos\nlongo = \" \".join(textos[:6])          # documento artificial, longo\ncolecao = textos + [longo]\nfor metrica in (\"produto\", \"cosseno\", \"euclidiana\"):\n    ordem = np.argsort(-pontuar(qv, M, metrica)[0], kind=\"stable\")[:3]\n    print(metrica, \"top-3:\", [...])\n\n# com vetores unitários: ||a-b||² = 2 - 2 cos(a, b)\na, b = Dl[ids.index(\"D12\")], Dl[ids.index(\"D11\")]\nprint(\"||a-b||^2 =\", ..., \"| 2 - 2cos =\", ...)",
+   "saida": "||a-b||^2 = 1.833493 | 2 - 2cos = 1.833493\nproduto     top-3: ['LONGO', 'D01', 'D02']\ncosseno     top-3: ['LONGO', 'D01', 'D03']\neuclidiana  top-3: ['D46', 'D36', 'D55']",
+   "notas": "Duas demonstrações. Na primeira, com contagens não normalizadas, o documento artificial longo, a concatenação de seis documentos, vence pelo produto interno e também pelo cosseno, porque contém muitas palavras da consulta, enquanto a distância euclidiana prefere documentos curtos, D46, D36 e D55, com vetores perto da origem, e ignora o assunto. Escolher a medida e normalizar muda quem aparece no topo. Na segunda, com vetores unitários da LSA, a identidade se confirma: a distância ao quadrado é 1,833493 e dois menos duas vezes o cosseno dá o mesmo valor. A regra prática: use a medida recomendada para o modelo de embeddings e não misture uma medida na indexação e outra na consulta, erro silencioso. Pergunta à turma: por que ninguém percebe esse erro sem medir?"
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Quatro métricas no mesmo exemplo",
+   "cabecalho": [
+    "Métrica",
+    "Definição curta",
+    "Valor no exemplo"
+   ],
+   "linhas": [
+    [
+     "hit@k",
+     "Há algum relevante nos k primeiros?",
+     "hit@1 = 0; hit@3 = 1"
+    ],
+    [
+     "recall@k",
+     "Fração dos relevantes nos k primeiros",
+     "recall@3 = 0,5"
+    ],
+    [
+     "MRR",
+     "Média de 1/posição do primeiro relevante",
+     "1/2 = 0,5"
+    ],
+    [
+     "nDCG@5",
+     "Relevantes no alto valem mais (desconto log₂)",
+     "1,0178 / 1,6309 ≈ 0,624"
+    ]
+   ],
+   "notas": "O exemplo: ranking D05, D12, D03, D40, D11, com relevantes D12 e D11. Hit no 1 é zero porque D05 não é relevante; hit no 3 é um porque D12 aparece. O recall no 3 é meio, pois dos dois relevantes só um está nos três primeiros. O MRR é meio, porque o primeiro relevante está na posição 2. Para o nDCG no 5, os relevantes estão nas posições 2 e 5: DCG é 1 sobre log de 3 mais 1 sobre log de 6, igual a 1,0178; o ranking ideal teria os dois no começo e IDCG vale 1,6309; o nDCG é cerca de 0,624. Atenção: as métricas só fazem sentido nas 46 consultas com resposta; as 10 sem resposta serão tratadas com limiar. Pergunta: qual métrica você escolheria para um assistente que usa só o primeiro resultado?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: índice remissivo ou bibliotecária",
+   "texto": "O índice remissivo acha a palavra exata; a bibliotecária entende o assunto, mas pode se enganar.",
+   "detalhe": "BM25 é o índice remissivo bem feito: rápido, sem treino, ótimo quando você usa as palavras do documento. Busca semântica é a bibliotecária: ajuda quando as palavras mudam, se for boa de verdade.",
+   "notas": "Use esta analogia para o BM25 contra a busca semântica. O índice remissivo de um livro leva você à página em que a palavra aparece: rápido e confiável quando você sabe a palavra. O BM25 é esse índice, mas refinado: dá peso maior a termos raros, satura a contribuição de repetições, porque a décima ocorrência vale pouco mais que a terceira, e penaliza documentos longos. Não precisa de treino. A bibliotecária entende que perdi meu diploma é segunda via, mas depende da qualidade do modelo de embeddings: uma bibliotecária mal treinada, como a LSA em 60 documentos, não ajuda tanto. Pergunta: em que situações você preferiria o índice remissivo? Siglas, nomes raros e números."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: BM25 contra LSA, com intervalos",
+   "codigo": "bm = modelos.BM25([tok(t) for t in textos])\ndef rank_bm25(q): return [ids[i] for i in np.argsort(-bm.pontuar(tok(q)), kind=\"stable\")]\ndef rank_lsa(q):  return [ids[i] for i in np.argsort(-(Dl @ lsa.transformar([q])[0]), kind=\"stable\")]\n\nM_BM, M_LSA = metricas(rank_bm25), metricas(rank_lsa)\nresumo(\"BM25\", M_BM); resumo(\"LSA\", M_LSA)   # média [IC 95% bootstrap]\nm, lo, hi = dif_pareada(M_BM[\"MRR\"], M_LSA[\"MRR\"])",
+   "saida": "método         hit@1                hit@3              recall@3                MRR                nDCG@5       \nBM25    0.870 [0.761;0.957]  0.913 [0.826;0.978]  0.902 [0.815;0.978]  0.897 [0.815;0.969]  0.898 [0.815;0.972]\nLSA     0.870 [0.761;0.957]  0.913 [0.826;0.978]  0.902 [0.815;0.978]  0.899 [0.819;0.971]  0.898 [0.817;0.971]\nparafrase BM25   n=8   MRR = 0.508   hit@3 = 0.625\nparafrase LSA    n=8   MRR = 0.585   hit@3 = 0.625\nMRR(LSA) - MRR(BM25) = +0.002  IC95% [-0.031; +0.033]",
+   "notas": "Compare os dois métodos nas 46 consultas. A saída real, abreviada aqui, mostra que ficam praticamente empatados: hit no 1 de 0,870 em ambos, e MRR de cerca de 0,897 para o BM25 e 0,899 para a LSA, com intervalos largos e quase idênticos. A diferença pareada de MRR é de mais 0,002 com intervalo de menos 0,031 a mais 0,033: inclui o zero, então não há evidência de que um supere o outro. Por tipo, nas 38 perguntas diretas o BM25 é ligeiramente melhor, 0,979 contra 0,965; nas 8 parafraseadas ambos sofrem, com hit no 3 de 0,625, e o MRR é 0,508 contra 0,585. Com só 8 consultas, esse ganho da LSA é incerto. Pergunta: o que faria o intervalo encolher? Mais consultas."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Empate aqui não é derrota dos embeddings",
+   "itens": [
+    "MRR com IC de 95% por bootstrap sobre as 46 consultas: intervalos quase iguais",
+    "A LSA treinada em 60 documentos é fraca; não é um modelo neural",
+    "Codificadores neurais podem superar o BM25 em perguntas abertas (Karpukhin et al., 2020)",
+    "Depende do domínio, do idioma e do modelo: meça na sua base"
+   ],
+   "fig": "f10_metodos",
+   "notas": "Esta é a ressalva de interpretação. O gráfico mostra MRR e hit no 3 de cada método com intervalos de 95% que se sobrepõem quase por completo. Que a LSA não supere o BM25 não significa que embeddings densos não ajudem: ela foi treinada em apenas 60 documentos e não é neural. A literatura, por exemplo Karpukhin e colegas, relata que codificadores densos treinados para recuperação podem superar o BM25 em perguntas abertas, mas o resultado depende do domínio, do idioma e do modelo e precisa ser medido na sua base. Não extrapole estes números para embeddings neurais nem para bases reais. Pergunta à turma: se você tivesse de decidir hoje entre os dois para uma base de contratos, o que faria antes de decidir?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o júri de dois jurados",
+   "texto": "Dois jurados classificam os candidatos; quem fica bem colocado nos dois sobe no placar final.",
+   "detalhe": "O RRF não soma notas, que estão em escalas diferentes. Soma só as posições: 1/(k + posição). Quem foi segundo para um e primeiro para outro costuma vencer quem foi primeiro só para um.",
+   "notas": "Imagine um concurso com dois jurados, um que avalia por palavras exatas e outro por sentido. As notas deles estão em escalas diferentes: o BM25 vai a dezenas, o cosseno fica entre zero e um. Em vez de calibrar escalas, olhamos só a posição que cada candidato recebeu. O rank recíproco fundido, de Cormack, Clarke e Büttcher, dá a cada documento a soma de 1 sobre k mais a posição em cada ranking. Um documento bem colocado em vários rankings sobe. O k controla o quanto o topo é privilegiado: com k pequeno, a posição 1 vale muito mais que a 2; com k grande, o desconto é suave. No trabalho original, k igual a 60. Pergunta à turma: o que acontece se um documento aparece só em um dos rankings?"
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Rank recíproco fundido (RRF)",
+   "tex": "RRF(d) = Σₘ 1 / (k + rₘ(d))",
+   "explicacao": [
+    "rₘ(d) é a posição de d no ranking do método m; k é uma constante (60 no trabalho original)",
+    "Exemplo à mão, k = 60: D1 está em 1º e 2º: 1/61 + 1/62 = 0,03252",
+    "D3: 3º e 1º: 1/63 + 1/61 = 0,03227; D2: 2º e 4º: 0,03175",
+    "Ranking fundido: D1, D3, D2, D5, D4"
+   ],
+   "notas": "Leia a fórmula: para cada documento, somam-se 1 sobre k mais a posição, sobre os métodos. Refaça o exemplo com dois rankings: A com D1, D2, D3, D4 e B com D3, D1, D5, D2. D1 está em primeiro no A e segundo no B: 1 sobre 61 mais 1 sobre 62, que dá 0,03252. D3 está em terceiro e primeiro: 1 sobre 63 mais 1 sobre 61, 0,03227. D2, em segundo e quarto, 0,03175. D5, só no B, em terceiro, tem 0,01587 e D4, só no A, em quarto, tem 0,01563. O ranking é D1, D3, D2, D5, D4. Note que D1 vence sem ser primeiro nos dois. Peça que a turma faça o exemplo com três rankings, como no exemplo resolvido do capítulo, e confira D2 vencendo com 0,04865."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: RRF à mão e na máquina",
+   "codigo": "A = [\"D1\", \"D2\", \"D3\", \"D4\"]            # ranking do método A\nB = [\"D3\", \"D1\", \"D5\", \"D2\"]            # ranking do método B\nfundido, pont = rrf([A, B], k=60)\nfor d in fundido:\n    print(d, round(pont[d], 5))\nprint(\"à mão: D1 =\", round(1/61 + 1/62, 5), \"| D3 =\", ..., \"| D4 =\", ...)\n\ndef rank_rrf(q, k=60):\n    return rrf([rank_bm25(q), rank_lsa(q)], k=k)[0]",
+   "saida": "D1 0.03252\nD3 0.03227\nD2 0.03175\nD5 0.01587\nD4 0.01562\nà mão: D1 = 0.03252 | D3 = 0.03227 | D4 = 0.01562",
+   "notas": "O código reproduz o exemplo à mão. A saída real: D1 com 0,03252, D3 com 0,03227, D2 com 0,03175, D5 com 0,01587 e D4 com 0,01562. A linha à mão confere D1, D3 e D4; D4 aparece como 0,01562 no código e 0,01563 no texto, só por arredondamento. Depois o capítulo usa a função rank_rrf para fundir BM25 e LSA na base de verdade, resultado do próximo slide. Aproveite para falar de empates: documentos com pontuação igual precisam de um critério de desempate explícito, como a ordem alfabética dos identificadores, senão o resultado parece informativo sem ser. Pergunta à turma: qual seria o efeito de colocar k igual a 1 em vez de 60?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "O híbrido não ganhou aqui",
+   "itens": [
+    "RRF: MRR de cerca de 0,885, ligeiramente abaixo do BM25 (0,897)",
+    "Diferença pareada −0,012, IC95% [−0,036; +0,002]",
+    "Fusão por soma normalizada: MRR 0,907, diferença minúscula diante dos intervalos",
+    "k = 1, 10 ou 60 quase não muda: os dois métodos já concordam",
+    "Híbrido é hipótese a testar, não garantia"
+   ],
+   "notas": "Este é o resultado honesto e desconfortável para a tese de que o híbrido sempre ganha. Na base, o RRF obtém MRR de cerca de 0,885, ligeiramente abaixo do BM25, que tem 0,897. A diferença pareada é de menos 0,012, com intervalo de menos 0,036 a mais 0,002. A fusão por soma normalizada, com MRR de 0,907, fica um pouco acima, mas a diferença é minúscula diante dos intervalos. O valor de k, 1, 10 ou 60, quase não muda nada, porque os dois métodos já concordam muito. A fusão tende a ajudar quando os métodos erram em consultas diferentes, o que se verifica olhando os erros. Na prática, a busca híbrida é uma hipótese a testar na sua base. Pergunta: que análise você faria antes de adotar o híbrido?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: fichas de estudo",
+   "texto": "Fichas pequenas demais perdem o contexto; grandes demais misturam assuntos.",
+   "detalhe": "Chunking é cortar o manual em fichas. A sobreposição repete as últimas linhas de uma ficha na próxima, para a resposta não cair bem na dobra. Cortar por títulos respeita a unidade de sentido.",
+   "notas": "Quem estuda por fichas conhece o dilema. Uma ficha minúscula é precisa, mas pode separar a pergunta de sua resposta; uma ficha enorme carrega a resposta, mas mistura assuntos e, no nosso caso, encarece o contexto enviado ao modelo de linguagem, que custa tokens. Chunking é o corte de documentos longos em pedaços, que são indexados um a um. Três decisões: tamanho, sobreposição e estrutura. A sobreposição repete as últimas palavras de um pedaço no começo do seguinte, evitando que a resposta caia exatamente na fronteira. Cortar por títulos, seções ou parágrafos respeita a unidade de sentido. Cada pedaço deve carregar metadados, como documento de origem, seção e versão, ou o sistema não consegue citar a fonte. Pergunta: que metadado você exigiria em um pedaço de regulamento?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Acerto contra custo de contexto",
+   "fig": "f10_chunks",
+   "legenda": "Resposta inteira nos 3 melhores pedaços contra palavras enviadas ao modelo, para cinco tamanhos, com e sem sobreposição, e corte por documento.",
+   "notas": "O gráfico mostra o compromisso. No eixo horizontal, o custo em palavras enviadas ao modelo; no vertical, a taxa de acerto, medida como a fração de consultas em que algum dos três melhores pedaços contém a passagem inteira da resposta. Pedaços pequenos custam pouco e acertam menos; pedaços grandes acertam mais e custam mais. Chame a atenção para o ponto do corte por estrutura, um documento por pedaço, que fica em um lugar muito favorável, com bom acerto e contexto pequeno. Isso vale para esta base, de documentos curtos e bem delimitados; em manuais longos, combina-se estrutura com limite de tamanho. Pergunta à turma: o que a sobreposição compra e quanto custa? Mais acerto, ao custo de mais pedaços no índice."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: tamanho e sobreposição do pedaço",
+   "codigo": "manual = \" \".join(textos)          # 60 documentos em sequência\ndef avalia_chunks(pedacos, k=3):\n    # hit@k: algum dos k melhores pedaços (BM25) contém INTEIRA a\n    # passagem da resposta? Mede também as palavras enviadas.\n    ...\nfor tam in (10, 20, 40, 80, 160):\n    for sob in (0, tam // 2):\n        p = chunk_palavras(manual, tam, sob); h, w = avalia_chunks(p)\npor_doc = [(a, b, t) for (a, b), t in zip(inicio, textos)]",
+   "saida": "manual: 1932 palavras\nestratégia                 pedaços   hit@3  palavras no contexto\n10 palavras, sobrep. 0         194   0.435                    30\n40 palavras, sobrep. 20         96   0.891                   119\n160 palavras, sobrep. 0         13   0.957                   464\npor estrutura (1 doc)           60   0.913                   100",
+   "notas": "Os números reais mostram o compromisso. O manual tem 1 932 palavras. Com pedaços de 10 palavras sem sobreposição, são 194 pedaços e a resposta inteira aparece nos três melhores em 0,435 das consultas, com 30 palavras de contexto. Com 40 palavras e 50% de sobreposição, o acerto é 0,891, com 119 palavras de contexto. Com 160 palavras sem sobreposição, chega a 0,957, mas com 464 palavras, mais de quatro vezes o contexto. O corte por estrutura, um documento por pedaço, atinge 0,913 com 100 palavras. O capítulo mostra ainda que a sobreposição de 50% eleva, por exemplo, de 0,804 para 0,891 com 40 palavras, sem aumentar o contexto, mas dobra o número de pedaços. Pergunta: quando vale pagar o dobro de pedaços?"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Índice aproximado: recall contra esforço",
+   "fig": "f10_ann",
+   "legenda": "Recall@10 contra a busca exata, em função da fração examinada; IVF e LSH em coleção sintética de 20 000 vetores.",
+   "itens": [
+    "Busca exaustiva: exata, custo cresce com N·d",
+    "IVF: agrupa com k-means; examina só os nprobe grupos mais próximos",
+    "LSH: hiperplanos aleatórios; vetores próximos colidem",
+    "Coleção sintética: o resultado não é uma lei"
+   ],
+   "notas": "Para coleções grandes, comparar a consulta com todos os vetores deixa de ser viável, e entram os índices aproximados: examinam só uma fração dos vetores e aceitam perder, às vezes, um vizinho verdadeiro. Medimos o recall contra a busca exata, que é o padrão-ouro. O IVF agrupa os vetores com k-means e, na consulta, examina só os grupos de centroide mais próximo. O LSH, de Indyk e Motwani, sorteia hiperplanos e usa o lado em que o vetor cai como código; vetores próximos tendem a colidir. A figura mostra o recall em função da fração examinada. Nossas versões são didáticas, para entender; bibliotecas como a FAISS são as de produção. A coleção é sintética, com 20 000 vetores unitários de 64 dimensões. Pergunta: que recall mínimo sua aplicação aceitaria?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: IVF, LSH e memória do índice",
+   "codigo": "D, Q = colecao_sintetica(N=20000, d=64, seed=0)   # SINTÉTICO\nverdade = np.argsort(-(Q @ D.T), axis=1)[:, :10]  # busca exata\nivf = IndiceIVF(n_listas=100).treinar(D)\nfor nprobe in (1, 2, 4, 8, 16, 32):\n    r, f = recall_e_fracao(lambda q: ivf.buscar(q, 10, nprobe))\n# LSH: IndiceLSH(n_tabelas, n_bits); memória = N · d · bytes\n# int8: D8 = np.round(D / esc * 127).astype(np.int8)",
+   "saida": "busca exaustiva: (20000, 64) -> 5.1 MB em float32\nnprobe = 1                 0.313             0.010\nnprobe = 8                 0.648             0.080\nnprobe = 32                0.906             0.320\n32 tabelas, 8 bits         0.655             0.135\nrecall@10 de int8 contra float32: 0.983",
+   "notas": "Leia a saída real como uma troca. Na busca exaustiva, os 20 000 vetores de 64 dimensões ocupam 5,1 MB em float32. No IVF com 100 listas, examinar 1% da coleção, com nprobe igual a 1, recupera apenas 31% dos vizinhos verdadeiros; com 8% examinados, o recall é de 65%; com 32%, 91%. O capítulo acrescenta que o LSH com 8 bits chega a 66% examinando 13,5%, com 32 tabelas, e que nesta coleção o IVF supera o LSH para o mesmo esforço, o que não é uma lei. Quanto à memória, N vezes d vezes bytes: guardar em int8, um quarto do espaço, manteve um recall@10 de 0,983 contra o float32, nestes dados sintéticos. Com embeddings reais, meça. Pergunta: um milhão de vetores de 768 dimensões em float32 ocupa quanto? Cerca de 3,07 GB."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Bi-encoder e cross-encoder",
+   "fig": "f10_bicross",
+   "legenda": "Bi-encoder: dois vetores comparados por cosseno. Cross-encoder: o par entra junto e sai uma nota.",
+   "itens": [
+    "Bi-encoder: busca rápida, vetores pré-calculados",
+    "Cross-encoder: lê consulta e documento juntos; uma passagem por par",
+    "Desenho típico: recuperar com o primeiro, reordenar com o segundo",
+    "Nosso reranqueador é didático (regressão logística), não um cross-encoder"
+   ],
+   "notas": "O bi-encoder codifica consulta e documento separadamente. Como os vetores dos documentos são pré-calculados, a busca é rápida, mas a comparação final é só um cosseno: o modelo nunca lê a consulta junto do documento. O cross-encoder recebe o par e produz uma nota, e a atenção entre as palavras dos dois captura relações finas, como negações e números, ao custo de uma passagem do modelo por par. Nogueira e Cho mostraram o uso de um BERT como reordenador. O desenho típico tem dois estágios: a primeira etapa, barata e de alto recall, traz dezenas de candidatos, e o reranqueador, caro e mais preciso, reordena só os melhores. Não temos um cross-encoder aqui: usamos um reranqueador didático com características do par. Pergunta: por que não usar o cross-encoder em toda a base?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: reranqueador didático com validação cruzada",
+   "codigo": "# 10 candidatos do RRF; características do PAR (consulta, documento):\n# BM25 normalizado, cosseno LSA, termos no título, no texto, bigramas\nfor teste in dobras:               # validação cruzada em 5 partes\n    modelo = LogisticRegression(max_iter=1000).fit(X_treino, y_treino)\n    # cada consulta é reordenada por um modelo que NÃO a viu\nprint(\"MRR (RRF)        :\", round(mrr_base.mean(), 3))\nm, lo, hi = dif_pareada(mrr_base, mrr_rerank)",
+   "saida": "MRR (RRF)        : 0.881\nMRR (reranqueado): 0.903\ndiferença pareada: +0.022  IC95% [+0.000; +0.054]\nconsultas que melhoraram / pioraram: 2 / 0",
+   "notas": "A saída real: o MRR do RRF é 0,881 e o do reranqueado é 0,903. A diferença pareada é de mais 0,022 com intervalo de mais 0,000 a mais 0,054, que encosta no zero, e o ganho vem de duas consultas melhoradas e nenhuma piorada, em 46. A conclusão correta é: sinal fraco, plausível, não conclusivo. Note o cuidado metodológico: a validação cruzada em cinco partes garante que cada consulta seja reordenada por um modelo que não a viu, evitando avaliar com os dados de treino. Duas lições: reranquear é barato de testar, mas precisa de dados rotulados para treinar e avaliar; e, com poucas dezenas de consultas, não se deve vender uma melhoria de dois pontos. Pergunta: o que mais deveria constar no relatório?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: quando dizer \"não encontrei\"",
+   "codigo": "def melhor_pontuacao(q):\n    return float((Dl @ lsa.transformar([q])[0]).max()), float(bm.pontuar(tok(q)).max())\n\nfor lim in (0, 2, 3, 4, 5, 6, 8):\n    # responde (com resposta) = fração de PA[:,1] > lim\n    # recusa (sem resposta)   = fração de PU[:,1] <= lim\n\n# escolher o limiar em metade das consultas e medir na outra\nfor nome, ajuste, teste in ((\"A->B\", A, B), (\"B->A\", B, A)): ...",
+   "saida": "cosseno LSA do 1º colocado: com resposta média 0.84 | sem resposta média 0.60\nBM25 do 1º colocado       : com resposta média 10.08 | sem resposta média 4.44\n limiar BM25  responde (com resp.)  recusa (sem resp.)\n           4                  0.93                0.60\n           8                  0.70                0.80\nA->B: limiar escolhido 3.4 | acerto no ajuste 0.93 | acerto no teste 0.89",
+   "notas": "Toda busca devolve algum ranking, mesmo quando nada responde. O limiar troca dois erros: responder o que não deveria e recusar o que deveria responder. Pela saída real, o BM25 do primeiro colocado tem média 10,08 nas consultas com resposta e 4,44 nas sem resposta, mas as distribuições se sobrepõem. Com limiar de 4, o sistema responde 93% das que têm resposta e recusa 60% das que não têm; com 8, recusa 80% das sem resposta, mas deixa de responder 30% das que têm. Nenhum limiar resolve tudo. A parte final mostra um cuidado: escolher o limiar na mesma amostra em que se mede superestima o desempenho; o limiar 3,4 dá acerto 0,93 no ajuste e 0,89 no teste em uma direção, e 0,89 e 0,93 na outra. Em sistemas de risco, a recusa deve ir a uma pessoa."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Armadilhas: negação, números, siglas, idioma",
+   "cabecalho": [
+    "Armadilha",
+    "O que aconteceu no experimento"
+   ],
+   "linhas": [
+    [
+     "Negação",
+     "Cosseno entre \"Posso trancar\" e \"Não posso trancar\": 0,779"
+    ],
+    [
+     "Números",
+     "\"150 reais\" traz D46 (150 vagas) antes de D20; por extenso, erra"
+    ],
+    [
+     "Siglas",
+     "\"IC\" no BM25 coloca D18 (monitoria) à frente de D19"
+    ],
+    [
+     "Idioma",
+     "Consulta em inglês: D01, D02, D03 por empate em zero"
+    ],
+    [
+     "Domínio",
+     "Embeddings gerais podem representar mal o jargão da sua base"
+    ]
+   ],
+   "notas": "Cinco armadilhas características, mostradas no código do capítulo. Negação: posso trancar e não posso trancar têm vetores quase iguais, com cosseno de 0,779, e a negação praticamente não altera o ranking. Números: para um índice por palavras, 150 é só um símbolo; a consulta com 150 reais traz primeiro D46, o bicicletário com 150 vagas, e só depois D20, o auxílio de R$ 150,00, e com o número por extenso a busca erra totalmente; além disso a tokenização de R$ 1,50 gera r, 1 e 50. Siglas: IC não aparece no documento de iniciação científica. Idioma: a consulta em inglês devolve os primeiros documentos por empate em zero. Domínio: nunca presuma que um modelo em inglês trate bem o português. Pergunta: como verificar números no texto recuperado?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limitações",
+   "itens": [
+    "Não normalizar, ou misturar medidas entre indexação e consulta",
+    "Trocar o modelo de embeddings sem reindexar",
+    "Avaliar só com consultas fáceis; reportar médias sem intervalo",
+    "Escolher o limiar na mesma amostra em que se mede",
+    "Base sintética pequena: resultados inconclusivos; LSA não é neural; sem embeddings densos reais"
+   ],
+   "notas": "Reúna os erros do capítulo: não normalizar ou misturar medidas; trocar o modelo de embeddings sem reindexar, porque espaços de modelos diferentes não são comparáveis; avaliar só com consultas fáceis; reportar médias sem intervalo e declarar vencedor com diferença de poucos pontos; escolher o limiar na mesma amostra; pedaços sem metadados; pós-filtrar e depender de que sobrem resultados; ignorar empates de pontuação zero; confiar na recuperação para números e negações sem verificar o texto; presumir que híbrido ou reranqueador sempre ajudam. Limitações: os resultados valem para uma base sintética de 60 documentos e 46 consultas com resposta; a maioria das comparações é inconclusiva; os índices foram testados em vetores sintéticos; o código com sentence-transformers não foi executado. A busca ancora o contexto, mas não garante a correção da resposta."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Buscador com BM25, LSA e RRF",
+   "passos": [
+    "Indexe os 60 documentos com BM25 e LSA (teste dimensões 20, 40 e 60)",
+    "Escreva a avaliação por consulta: hit@1, hit@3, MRR e nDCG@5, com bootstrap",
+    "Compare BM25, LSA e RRF pela diferença pareada; conclua só o que os intervalos permitirem",
+    "Implemente um limiar de recusa; calibre em uma metade das 56 consultas e teste na outra",
+    "Crie 10 consultas novas com siglas, números e negações e examine as falhas",
+    "Opcional: com um modelo de embeddings real, repita e registre nome, versão e data"
+   ],
+   "notas": "Esta atividade percorre o capítulo inteiro. Os alunos indexam a base, escrevem a avaliação, comparam métodos com diferenças pareadas e implementam o limiar de recusa. Insista em duas disciplinas: concluir apenas o que os intervalos permitirem, e calibrar o limiar em uma metade das consultas, testando na outra. O quinto passo é o mais instrutivo: criar dez consultas novas com siglas, números e negações e olhar onde o sistema falha, porque é aí que se aprende sobre os limites. O sexto passo é opcional e exige acesso a um modelo de embeddings real, com registro de nome, versão e data do modelo. Os Exercícios práticos 10.1 a 10.3 e o Projeto 10 guiam o trabalho. Dê uns vinte minutos."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "vetores de norma 1",
+   "pergunta": "Se todos os vetores têm norma 1, o que se pode afirmar sobre as três medidas de similaridade?",
+   "opcoes": [
+    "O produto interno passa a ser sempre zero",
+    "Produto interno, cosseno e distância euclidiana produzem a mesma ordem",
+    "A distância euclidiana passa a ser sempre 1",
+    "O cosseno deixa de poder ser calculado"
+   ],
+   "resposta": "B",
+   "explicacao": "Com norma 1, a distância ao quadrado vale 2 − 2cos e o produto interno é o cosseno.",
+   "notas": "Dê um minuto e peça voto. A correta é a segunda. Com norma 1, a distância ao quadrado é dois menos duas vezes o cosseno, e o produto interno é o próprio cosseno; logo, quanto maior o cosseno, menor a distância, e as três medidas ordenam igual. As outras são absurdos instrutivos: o produto interno de vetores unitários não é zero, só se forem perpendiculares; a distância não é sempre 1; e o cosseno continua calculável. Retome a regra prática: normalize uma vez, ao indexar, e use o produto interno."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "hit@3",
+   "pergunta": "O que significa hit@3 igual a 0,913 em um conjunto de consultas?",
+   "opcoes": [
+    "Em 91,3% das consultas, os três primeiros são todos relevantes",
+    "O sistema demora 0,913 segundo para responder",
+    "Em 91,3% das consultas, ao menos um relevante está entre os três primeiros",
+    "O terceiro colocado é relevante em todas as consultas"
+   ],
+   "resposta": "C",
+   "explicacao": "O hit@k é binário por consulta: há ou não há algum relevante nos k primeiros.",
+   "notas": "A resposta é a terceira: hit no 3 é binário por consulta, há ou não há algum documento relevante entre os três primeiros, e 0,913 é a fração de consultas em que há. A primeira exigiria que os três fossem relevantes, o que é outra métrica. A segunda confunde com tempo. A quarta exige que o terceiro seja sempre relevante. Retome a diferença para o recall no k: com dois relevantes, recuperar um dá recall de 0,5 e hit igual a 1. Pergunte: em que aplicação o hit no 3 é uma métrica adequada? Quando um usuário vê três resultados e basta um bom."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "diferença pareada",
+   "pergunta": "Por que comparar dois métodos pela diferença pareada, reamostrando as mesmas consultas?",
+   "opcoes": [
+    "Porque assim o intervalo fica sempre mais estreito",
+    "Porque as consultas são as mesmas nos dois métodos e a diferença por consulta captura essa dependência",
+    "Porque dispensa o uso de consultas de teste",
+    "Porque garante que o método novo é melhor"
+   ],
+   "resposta": "B",
+   "explicacao": "Se o intervalo da diferença inclui zero, não há evidência de diferença.",
+   "notas": "A correta é a segunda: as consultas são as mesmas nos dois métodos, então a diferença por consulta respeita o pareamento; reamostrar a diferença dá o intervalo apropriado. A primeira promete um intervalo sempre mais estreito, o que não é garantido. A terceira é falsa: precisamos de consultas. A quarta é perigosa: o método não garante nada, apenas mede. Lembre dos exemplos do capítulo: a diferença de MRR entre LSA e BM25 foi de mais 0,002, com intervalo de menos 0,031 a mais 0,033, que inclui o zero, e portanto não há evidência de diferença. Nunca declare vencedor dentro da incerteza."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Embedding: vetor de texto; proximidade é semelhança de uso, não verdade",
+    "Normalize: com norma 1, produto interno, cosseno e distância dão o mesmo ranking",
+    "BM25 é forte com palavras comuns; RRF funde posições, e precisa ser testado",
+    "Chunking troca acerto por custo de contexto; guarde metadados",
+    "Índices aproximados trocam recall por esforço; memória = N·d·bytes",
+    "Meça com IC por bootstrap; trate consultas sem resposta; verifique números e negações"
+   ],
+   "notas": "Feche com os pontos para levar. Um embedding transforma um texto em um vetor, e a proximidade mede semelhança de uso, não verdade. Normalize os vetores. O BM25 é forte quando há palavras em comum, a busca densa ajuda com paráfrases se o modelo for bom, e a fusão RRF combina rankings sem calibrar escalas, mas precisa ser testada: nesta base, não ganhou. O chunking troca acerto por custo de contexto. Índices aproximados trocam recall por esforço, e a memória é N vezes d vezes b. Reranqueadores reordenam poucos candidatos com mais precisão. Meça com recall, hit, MRR e nDCG, com intervalo por bootstrap e diferenças pareadas. Trate consultas sem resposta com limiar calibrado à parte. Pergunta final: o que sua base precisaria ter para você confiar na avaliação?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "SALTON, G.; WONG, A.; YANG, C. S. A vector space model for automatic indexing. Communications of the ACM, v. 18, n. 11, 1975.",
+    "DEERWESTER, S. et al. Indexing by latent semantic analysis. JASIS, v. 41, n. 6, 1990.",
+    "ROBERTSON, S.; ZARAGOZA, H. The probabilistic relevance framework: BM25 and beyond. FnTIR, v. 3, n. 4, 2009.",
+    "CORMACK, G. V.; CLARKE, C. L. A.; BÜTTCHER, S. Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. SIGIR 32, 2009.",
+    "REIMERS, N.; GUREVYCH, I. Sentence-BERT. EMNLP-IJCNLP, 2019.",
+    "KARPUKHIN, V. et al. Dense passage retrieval for open-domain question answering. EMNLP, 2020.",
+    "JÄRVELIN, K.; KEKÄLÄINEN, J. Cumulated gain-based evaluation of IR techniques. ACM TOIS, v. 20, n. 4, 2002.",
+    "JOHNSON, J.; DOUZE, M.; JÉGOU, H. Billion-scale similarity search with GPUs. IEEE Trans. on Big Data, v. 7, n. 3, 2021."
+   ],
+   "notas": "Apresente as referências como aprofundamento. Salton e colegas e Deerwester e colegas fundamentam o espaço vetorial e a LSA. Robertson e Zaragoza tratam do BM25, e Cormack, Clarke e Büttcher, do RRF. Reimers e Gurevych popularizaram o Sentence-BERT, e Karpukhin e colegas mostram a recuperação densa para perguntas abertas. Järvelin e Kekäläinen definem o nDCG. Johnson, Douze e Jégou descrevem a FAISS. Sugira que a turma leia o resumo do artigo de Cormack e confira por que o k foi fixado em 60, e que repita o experimento do capítulo com um modelo de embeddings real, quando houver acesso, registrando nome, versão e data."
+  }
+ ]
+}

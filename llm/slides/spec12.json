@@ -1,0 +1,353 @@
+{
+ "capitulo": 12,
+ "titulo": "Ajuste fino, LoRA e QLoRA",
+ "parte": "Parte IV — Adaptação e sistemas avançados",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Decidir entre prompt, RAG e ajuste fino com base em custo e medições",
+    "Preparar dados de ajuste: formato, divisão, vazamento e privacidade",
+    "Estimar a memória do ajuste completo e comparar com métodos eficientes",
+    "Entender e implementar LoRA: W' = W + (α/r)·B·A",
+    "Medir esquecimento, mesclagem e erro de quantização; entender o QLoRA",
+    "Avaliar antes e depois, com IC, e reconhecer riscos e licenças"
+   ],
+   "notas": "Abra dizendo que este capítulo responde a uma pergunta prática: quando vale a pena treinar o modelo, e como saber, com dados, se valeu. Percorra os seis objetivos. Avise que vamos implementar o LoRA em NumPy em um modelo minúsculo, de cerca de 6,8 mil parâmetros, com dados sintéticos. Isso não mede o comportamento de LLMs reais: os números serão outros, e o que se reaproveita é o processo de medir. O código com transformers e peft aparece só como exemplo não executado. Pergunte à turma: quem já pensou em treinar um modelo próprio, e por quê?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Treinar o modelo com 5 mil respostas?",
+   "itens": [
+    "Secretaria usa prompt bom e RAG: o conteúdo está certo",
+    "Incômodo 1: o estilo das respostas nunca fica como a instituição quer",
+    "Incômodo 2: prompt longo, com seis exemplos, custa dinheiro e tempo",
+    "Proposta: treinar o modelo com 5 mil respostas aprovadas",
+    "Perguntas: é melhor que o prompt? Quanto custa? O que se esquece?"
+   ],
+   "notas": "Conte a situação inicial. Uma secretaria acadêmica usa um modelo para classificar mensagens e redigir respostas padronizadas. Com prompt bem escrito e RAG sobre o regulamento, o conteúdo está bom. Mas o estilo não fica exatamente como a instituição quer, e cada requisição carrega um prompt longo com seis exemplos. Alguém sugere treinar o modelo com 5 mil respostas aprovadas pela coordenação. A ideia é boa, mas levanta perguntas: é realmente melhor que melhorar o prompt? Quanto de memória e computação custa? Dá para fazer sem uma sala de aceleradores? E o que acontece com o que o modelo já sabia fazer? Peça que a turma aposte em respostas."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o alfaiate e o terno",
+   "texto": "Você não manda fazer um terno novo do zero. Leva um terno pronto ao alfaiate para ajustar.",
+   "detalhe": "O terno pronto é o modelo pré-treinado. O ajuste muda o caimento (estilo, formato), não ensina o corpo a ser outro. E se o ajuste for pesado demais, a roupa pode ficar boa só para uma ocasião e ruim para as outras.",
+   "notas": "Use o alfaiate. O modelo pré-treinado é o terno pronto, feito para muita gente. O ajuste fino é levar esse terno ao alfaiate para mudar o caimento: barra, mangas, cintura. Isso muda o comportamento, o estilo, o formato, mas não ensina fatos novos que mudam toda semana, como um cartaz de promoções. E há o risco: se o ajuste for muito agressivo, o terno fica perfeito para uma ocasião e pior para as demais, que é o esquecimento que mediremos. Pergunte: se o regulamento muda todo mês, o alfaiate resolve? Não, é melhor entregar o regulamento atual, que é o RAG."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Qual ferramenta para qual sintoma?",
+   "cabecalho": [
+    "Sintoma",
+    "Primeira tentativa"
+   ],
+   "linhas": [
+    [
+     "Modelo não sabe uma informação atual ou privada",
+     "RAG (Capítulo 9)"
+    ],
+    [
+     "Instrução ambígua ou formato falha",
+     "Prompt (Capítulo 8)"
+    ],
+    [
+     "Estilo ou formato consistentes em volume, prompt longo e caro",
+     "Ajuste fino"
+    ],
+    [
+     "Tarefa estreita e estável, milhares de exemplos rotulados",
+     "Ajuste fino; meça"
+    ],
+    [
+     "Fato novo que precisa ser citado",
+     "RAG, não ajuste"
+    ]
+   ],
+   "notas": "Esta tabela organiza a decisão. Se o modelo não sabe uma informação atual, privada ou específica, comece pelo RAG, pois conhecimento que muda ou precisa de fonte citável não deve ficar congelado nos pesos. Se ele entende, mas a instrução é ambígua ou o formato falha, comece pelo prompt, o recurso mais barato de testar e de reverter. Se estilo, tom ou formato precisam ser consistentes em grande volume e o prompt fica caro, considere o ajuste. Em tarefas estreitas e estáveis, um modelo menor ajustado pode igualar um maior, mas meça. A regra de ouro é medir primeiro: conjunto de teste, linha de base com prompt e custo por requisição."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Ajuste fino não é para ensinar fatos",
+   "itens": [
+    "Bom para comportamento: formato, tom, critério de decisão",
+    "Ruim para conhecimento que muda ou precisa de citação",
+    "Não garante que o fato seja memorizado corretamente",
+    "Não dá a fonte da resposta",
+    "Esgote o prompt e o RAG antes de ajustar"
+   ],
+   "notas": "Este é o cuidado conceitual do capítulo. O ajuste fino não é bom mecanismo para ensinar fatos. Ele é bom para ensinar comportamento: formato, tom e critério de decisão. Para conhecimento que muda ou que precisa de citação, use recuperação. E antes de ajustar, esgote o prompt e o RAG: muitos problemas atribuídos a um modelo fraco são, na verdade, de especificação, do Capítulo 8, ou de recuperação, do Capítulo 9. Pergunte à turma por que um fato memorizado nos pesos é difícil de atualizar e de auditar. Porque não há como apontar a fonte, e corrigi-lo exige treinar de novo."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: a conta do custo",
+   "codigo": "N_req = 1_000_000\ntok_instr, tok_exemplos, tok_entrada, tok_saida = 150, 6 * 60, 80, 20\npreco_in, preco_out = 1.0, 3.0      # HIPOTÉTICOS, por milhão de tokens\ndef custo(tok_prompt):\n    return N_req * (tok_prompt * preco_in + tok_saida * preco_out) / 1e6\nc_prompt = custo(tok_instr + tok_exemplos + tok_entrada)\nc_ajust = custo(tok_instr // 3 + tok_entrada)     # prompt curto\ncusto_treino = 40.0",
+   "saida": "prompt com 6 exemplos: 650.0 | modelo ajustado (prompt curto): 190.0 | diferença por milhão de requisições: 460.0\nponto de equilíbrio do custo de ajuste (40): 86,957 requisições",
+   "notas": "Uma razão legítima para ajustar é economia: um prompt com muitos exemplos é processado em toda requisição. Com preços hipotéticos, um milhão de requisições custa 650 unidades com seis exemplos e 190 com o modelo ajustado e prompt curto, uma diferença de 460. Com custo de treino de 40, o ajuste se paga depois de cerca de 87 mil requisições. Volume e estabilidade importam: para poucas centenas de requisições por mês, ou uma tarefa que muda toda semana, o ajuste raramente compensa. A conta omite o tempo de preparo dos dados, a avaliação, a hospedagem de um modelo próprio e a manutenção quando o modelo base mudar. Confira os preços reais do seu provedor."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Dados de ajuste: formato e divisão",
+   "itens": [
+    "Registro: instrução, entrada opcional e resposta, em JSON Lines",
+    "Use o mesmo molde de conversa (chat template) no ajuste e no uso",
+    "Perda só na resposta, com máscara sobre o prompt",
+    "Treino ajusta pesos; validação escolhe hiperparâmetros; teste é aberto uma vez",
+    "Qualidade acima de quantidade (Zhou et al., 2023)"
+   ],
+   "notas": "A qualidade do ajuste depende mais do dado que do algoritmo. O formato mais comum é o registro com instrução, entrada opcional e resposta desejada, em JSON Lines, um objeto por linha. Para modelos de conversa, usam-se mensagens com papéis, convertidas por um molde de conversa próprio de cada modelo: use o mesmo no ajuste e no uso, ou o desempenho cai. Na perda, conta-se em geral apenas a resposta. Divida em treino, validação e teste; o teste é aberto uma vez. Zhou e colegas argumentam que poucos exemplos cuidadosamente curados, da ordem de mil, podem bastar para ensinar estilo e formato, no alinhamento de um modelo grande; a lição é qualidade acima de quantidade, não uma regra universal."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: divisão aleatória e vazamento",
+   "codigo": "X, y = corpus.intencoes(120, seed=5)\nregs = [registro_instrucao(t, r, INTENCOES) for t, r in zip(X, y)]\nrng = np.random.default_rng(0); perm = rng.permutation(len(X))\ntr, te = perm[:int(.8*len(X))], perm[int(.9*len(X)):]\ng = divisao_por_hash(X)     # duplicatas sempre no mesmo conjunto",
+   "saida": "registros: 960 | textos distintos (normalizados): 765\ndivisão ALEATÓRIA: vazamento teste->treino = 25.0%\ndivisão POR HASH: tamanhos [759, 101, 100] | vazamento = 0.0%",
+   "notas": "Das 960 mensagens sintéticas, só 765 são textos distintos, porque o gerador reaproveita modelos de frase. Numa divisão aleatória, 25 por cento das mensagens de teste têm um duplicado exato no treino, e qualquer métrica seria otimista. A divisão pelo hash do texto normalizado coloca duplicatas sempre no mesmo conjunto, e o vazamento exato cai a zero. Atenção: isso trata só duplicatas exatas; quase-duplicatas, como paráfrases, exigem técnicas de similaridade. Lee e colegas mostram que duplicatas em dados de treino são frequentes e prejudicam modelos de linguagem. Regra prática: deduplique antes de dividir, ou divida por grupos, por cliente, documento ou data."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a prova que o aluno já viu",
+   "texto": "Se as questões da prova estavam na lista de exercícios, a nota não mede aprendizado.",
+   "detalhe": "Vazamento é isso: exemplos do teste, ou quase iguais, aparecem no treino. A nota sobe, mas só mede memória. Por isso se deduplica antes de dividir e se tranca o conjunto de teste, abrindo-o uma única vez.",
+   "notas": "Compare o vazamento com um aluno que treinou com a lista de exercícios e encontra as mesmas questões na prova. A nota alta não diz se ele aprendeu a matéria, só que se lembra das respostas. No ajuste fino acontece o mesmo quando mensagens do teste, ou quase iguais, estão no treino: a avaliação infla. É comum com textos que se repetem, como respostas padrão. Medidas: deduplicar, dividir por grupos e trancar o teste. Também o teste não pode virar validação: se você olha o teste várias vezes para escolher hiperparâmetros, ele deixa de ser independente. Pergunte à turma: no nosso experimento, qual era a taxa de vazamento com divisão aleatória? Foram 25 por cento."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Ajuste completo: 16 bytes por parâmetro",
+   "itens": [
+    "Pesos em 16 bits: 2 bytes; gradientes: 2 bytes",
+    "Cópia mestre em 32 bits: 4 bytes; dois momentos do Adam: 4 + 4",
+    "Total: cerca de 16 bytes por parâmetro",
+    "7 bilhões de parâmetros: cerca de 112 GB, sem ativações",
+    "Ainda: uma cópia completa do modelo por tarefa"
+   ],
+   "notas": "No ajuste completo, todos os parâmetros são atualizados. Como vimos no Capítulo 5, o treino com Adam em precisão mista guarda, por parâmetro, 2 bytes de pesos, 2 de gradientes, 4 da cópia mestre em 32 bits e 4 mais 4 dos dois momentos do Adam: cerca de 16 bytes. Para 7 bilhões de parâmetros, são aproximadamente 112 gigabytes, sem contar as ativações. Além disso, é preciso uma cópia completa do modelo por tarefa, 14 gigabytes para cada variante de 7 bilhões em 16 bits, e o modelo pode esquecer o que sabia. A ideia do ajuste eficiente é congelar os pesos originais e treinar poucos parâmetros novos. Pergunte: o que é mais caro, os pesos ou o estado do otimizador?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Ajuste eficiente: quatro ideias",
+   "itens": [
+    "Adaptadores (Houlsby et al., 2019): módulos gargalo; latência um pouco maior",
+    "Prefix tuning (Li; Liang, 2021): vetores de prefixo nas camadas de atenção",
+    "Prompt tuning (Lester et al., 2021): vetores treináveis só na entrada",
+    "LoRA (Hu et al., 2022): correção de posto baixo, que pode ser fundida",
+    "Motivo: o ajuste tem dimensão intrínseca baixa (Aghajanyan et al., 2021)"
+   ],
+   "notas": "PEFT, ou ajuste eficiente em parâmetros, treina poucos parâmetros adicionais. Adaptadores são pequenos módulos gargalo inseridos em cada camada; no artigo de Houlsby, ficam a cerca de 0,8 por cento do desempenho do ajuste completo no GLUE, acrescentando cerca de 3,6 por cento de parâmetros por tarefa, ao custo de camadas extras na inferência. Prefix tuning treina vetores contínuos de prefixo, cerca de 0,1 por cento dos parâmetros em geração. Prompt tuning treina vetores só na entrada e, em modelos acima de cerca de um bilhão de parâmetros, se aproxima do ajuste completo. O LoRA soma uma correção de posto baixo e é o mais usado. Aghajanyan e colegas mostram que o ajuste cabe em um subespaço pequeno, o que motiva o LoRA."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: anotações na margem do livro",
+   "texto": "Em vez de reescrever o livro, você cola post-its nas páginas.",
+   "detalhe": "O livro (W) fica intacto. Os post-its (B e A) são pequenos e podem ser removidos, trocados ou combinados. Quer o livro original de volta? Tire os post-its. Quer uma edição definitiva? Imprima o livro com as anotações incorporadas: é a mesclagem.",
+   "notas": "Esta é a analogia do LoRA. O modelo base é um livro que não vamos reescrever, porque seria caro e perderíamos o original. Em vez disso, colamos post-its nas páginas: são anotações pequenas, que corrigem o que precisamos. Quer o comportamento original? Remova os post-its, e o resultado é exatamente o livro de antes. Quer vários estilos? Tenha vários conjuntos de post-its sobre o mesmo livro. Quer uma edição única, sem anotações soltas? Imprima o livro com as anotações incorporadas, que é a mesclagem do adaptador aos pesos, sem latência extra. Pergunte à turma qual é a vantagem de guardar o adaptador separado: reversão e troca fáceis."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "LoRA: a correção de posto baixo",
+   "fig": "f12_lora",
+   "itens": [
+    "W (d × k) fica congelada",
+    "Correção: ΔW = (α/r) · B · A, com B (d × r) e A (r × k)",
+    "Camada: h = Wx + (α/r) · B(Ax)",
+    "Treináveis: r(d + k), em vez de d·k",
+    "4096 × 4096, r = 8: 65 536 parâmetros, cerca de 0,39%"
+   ],
+   "notas": "Seja W uma matriz congelada, d por k. No ajuste completo aprenderíamos uma mudança com d vezes k valores livres. O LoRA restringe a mudança a ter posto no máximo r, escrevendo-a como produto de duas matrizes estreitas, B e A, com um fator de escala alfa sobre r. A camada passa a calcular Wx mais a correção. Note a ordem das contas: primeiro Ax, um vetor de dimensão r, depois B: nunca se forma a matriz d por k durante o treino. Contagem: para uma matriz 4096 por 4096 com r igual a 8, são 8 vezes 8192, ou 65 536 parâmetros, cerca de 0,39 por cento; com r igual a 64, 3,1 por cento. Quanto maior a matriz, menor a fração."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Inicialização: A aleatório, B zero",
+   "itens": [
+    "Com B = 0, ΔW = 0: o modelo começa idêntico ao base",
+    "Primeiro passo: só B recebe gradiente não nulo; depois A também",
+    "Os dois em zero: gradiente zero, nada aprende",
+    "Os dois aleatórios: o modelo começa perturbado",
+    "α/r funciona como multiplicador da taxa de aprendizado (heurística)"
+   ],
+   "notas": "Hu e colegas inicializam A com valores gaussianos e B com zeros. Consequência um: no início, a correção é zero e o modelo ajustado é idêntico ao base, o que verificaremos numericamente. Consequência dois: o gradiente em relação a A é proporcional a B transposto, então com B igual a zero ele é nulo no primeiro passo; só B se move, e depois A passa a receber gradiente. Se ambos fossem zero, nada aprenderia. Se ambos fossem aleatórios, o modelo começaria perturbado. Quanto ao fator alfa sobre r, ele reduz a necessidade de reajustar hiperparâmetros ao variar r; é uma heurística, não teorema, e muitos usam alfa igual a r ou 2r. Teste na sua tarefa."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: LoRA em uma camada, posto 3",
+   "codigo": "alvo = W + 0.5 * U @ V / np.sqrt(3)      # mudança verdadeira com posto 3\nprint(\"B = 0 => saída idêntica à base:\", np.allclose(camada(x,W,A,B,alfa,r), x @ W.T))\nfor r_ in (1, 2, 3, 4, 8):\n    dW, eqm = treina_lora(r_)       # Adam, 3000 passos\n    ...                              # erro relativo em ΔW",
+   "saida": "B = 0 => saída idêntica à base: True\n  r  params   EQM final  erro relativo em ΔW\n  1      56    3.04e+00               0.6383\n  2     112    1.11e+00               0.3926\n  3     168    1.87e-07               0.0001\n  8     448    1.39e-05               0.0013",
+   "notas": "Antes do modelo de linguagem, testamos em uma única camada linear com dados sintéticos. A mudança alvo tem posto exatamente 3. Com B igual a zero, a saída é idêntica à base. Para r igual a 1 e 2, a correção não consegue representar uma mudança de posto 3: o erro relativo em delta W fica em 64 e 39 por cento. A partir de r igual a 3, o posto verdadeiro, o erro cai a praticamente zero, e aumentar r para 4 ou 8 não melhora, só custa mais parâmetros. A regra: o r necessário é o posto efetivo da mudança. Aqui conhecemos o posto porque construímos o problema; em modelos reais ele é desconhecido, por isso se varia r empiricamente. O código mostrado foi resumido."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: LoRA contra ajuste completo",
+   "codigo": "lora = MLPLMLoRA(base, r=4, alfa=8, seed=0)       # MLPLM minúsculo, não é LLM\nh_l = lora.treinar(nov, epocas=10, lr=0.005, val=nov_va)\ncomp, h_c = ajuste_completo(base, nov, epocas=10, lr=0.005, val=nov_va)\ndm, dlo, dhi = av.bootstrap_ic(tab[\"completo\"] - tab[\"LoRA r=4\"], n=1000, seed=0)",
+   "saida": "base      ppl nova  3.826 | acerto top-1 nova 0.554 | ppl original  2.415\nLoRA r=4  ppl nova  2.170 | acerto top-1 nova 0.586 | ppl original  5.180\ncompleto  ppl nova  2.175 | acerto top-1 nova 0.579 | ppl original  6.229\ncompleto - LoRA (pareado, nova): -0.0072 IC95% [-0.0192; +0.0041]",
+   "notas": "Este é o experimento principal. O modelo base de 6 781 parâmetros aprende a gramática original; a tarefa nova usa o mesmo vocabulário com outra regra, que conflita em parte com a antiga. Treinamos LoRA com r igual a 4 em duas matrizes, 884 parâmetros treináveis, 13 por cento do modelo, e também o ajuste completo, com os mesmos dados e a mesma taxa. A perplexidade na tarefa nova cai de 3,826 para 2,170 com LoRA e 2,175 com ajuste completo. A diferença pareada, menos 0,007, tem intervalo que inclui zero: não há evidência de diferença. Mas olhe a última coluna: a perplexidade na tarefa original subiu de 2,415 para 5,180 e 6,229. Isso é o custo oculto, tema do próximo slide."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Curvas de perda e esquecimento",
+   "fig": "f12_curvas",
+   "legenda": "Esquerda: perda de validação na tarefa nova. Direita: perplexidade na tarefa original durante o ajuste. MLPLM minúsculo; não é um LLM.",
+   "notas": "Mostre a figura. À esquerda, as duas curvas de validação do LoRA e do ajuste completo ficam praticamente sobrepostas e caem de cerca de 1,34, o logaritmo de 3,826, para cerca de 0,78; a linha tracejada é o modelo base. À direita, a perplexidade na tarefa original sobe durante o ajuste nos dois métodos. Chame atenção para a lição: olhar só a curva de validação da tarefa nova conta metade da história. A outra metade é o que se perde. Este é um modelo minúsculo, com dados sintéticos, e uma configuração: não generalize para LLMs. Pergunte à turma que curva a equipe de um projeto real costuma esquecer de acompanhar."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Esquecimento catastrófico",
+   "itens": [
+    "Houve esquecimento nos dois métodos: 2,415 para 5,180 (LoRA) e 6,229 (completo)",
+    "LoRA esqueceu menos aqui, mas uma configuração e uma semente: não generalize",
+    "Acerto top-1 original quase não mudou com LoRA (0,551 para 0,541); perplexidade dobrou",
+    "Adaptador desligado: volta exatamente ao base (2,415)",
+    "Mistura de 50% de dados antigos: original em 2,553; nova sobe a 2,416"
+   ],
+   "notas": "O esquecimento catastrófico é a perda de desempenho em tarefas antigas quando se treina em uma nova, descrito por McCloskey e Cohen e por Kirkpatrick e colegas. Para medir, avalie a tarefa original antes e depois, em um teste fixo. Aqui o LoRA esqueceu menos que o ajuste completo, em linha com o que Biderman e colegas relatam para modelos reais, mas em uma configuração minúscula e com uma só semente; o LoRA não evitou o esquecimento. Use mais de uma métrica: o acerto do token mais provável caiu pouco, de 0,551 para 0,541, enquanto a perplexidade mais que dobrou, ou seja, o modelo ficou confiante no erro. Desligar o adaptador restaura o base. Misturar dados antigos ajuda, ao custo da tarefa nova."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: trocar a mão do volante",
+   "texto": "Quem se acostuma a dirigir com a direção do lado oposto estranha o carro de antes.",
+   "detalhe": "Aprender a nova regra conflita com o hábito antigo, porque o mesmo cenário pede respostas diferentes. Praticar um pouco dos dois (mistura de dados antigos) ajuda a manter os dois jeitos. Em LLMs, a instrução no prompt costuma indicar a tarefa e reduz o conflito.",
+   "notas": "Use o exemplo de quem passa um tempo dirigindo em um país com a direção do lado oposto: ao voltar, estranha o carro de antes, porque o mesmo cenário, a rua, pede reações diferentes. No nosso experimento, o mesmo contexto tem respostas diferentes nas duas tarefas, e o modelo não tem como saber qual aplicar. É por isso que a perplexidade original subiu tanto. Misturar 50 por cento de dados antigos, o replay, mantém a perplexidade original em 2,553, perto do base, mas a tarefa nova fica em 2,416, contra 2,170. Em LLMs, a instrução no prompt costuma indicar qual tarefa se aplica, o que reduz o conflito. Outras defesas: taxa de aprendizado menor, menos épocas e r menor."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: mesclar o adaptador",
+   "codigo": "fund = lora.mesclar()          # W' = W + (alfa/r) B A\nXt = lora.dados(nov_te)[0]\nprint(\"max |logits LoRA - logits mesclado|:\", float(np.abs(lora.frente(Xt)[2] - fund.frente(Xt)[2]).max()))\nfor lam in (0.0, 0.5, 1.0):        # interpolação entre base e adaptador\n    Pm = {k: base.P[k] + lam * (lora.pesos_mesclados()[k] - base.P[k]) for k in base.P}",
+   "saida": "max |logits LoRA - logits mesclado|: 1.4210854715202004e-14\nppl mesclado 2.170461 | ppl LoRA 2.170461\nposto de ΔW em W1: 4 | W2: 4\ninterpolação λ=0.0: ppl nova 3.826 | original 2.415\ninterpolação λ=0.5: ppl nova 2.487 | original 2.977",
+   "notas": "Depois do treino, o adaptador pode ser fundido aos pesos: W linha igual a W mais alfa sobre r vezes B A. O modelo resultante tem a mesma arquitetura do original e a mesma latência. A diferença máxima entre os logits é da ordem de 10 elevado a menos 14, ruído de ponto flutuante: a mesclagem é exata em precisão numérica, e a verificação numérica é obrigatória. O posto da correção em cada matriz é 4, como esperado. A interpolação com fator lambda funciona como controle de intensidade: com 0,5, 2,487 na tarefa nova e 2,977 na original, um meio-termo. Somas de vários adaptadores são possíveis, mas devem ser verificadas, pois não há garantia de que correções independentes se combinem sem interferência. Em base quantizada, requantizar custa qualidade."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: quantização por blocos",
+   "codigo": "W2 = base.P[\"W2\"]\nfor bits in (8, 4):\n    for bl in (16, 64, 256, W2.size):\n        e = erro_reconstrucao(W2, desquantizar_blocos(quantizar_blocos(W2, bits, bl)))\n        ...      # RMSE, erro relativo, SQNR e perplexidade original",
+   "saida": "bits  bloco  erro rel.  SQNR dB  ppl original\n   8     64     0.0064     43.9        2.4149\n   4     16     0.0825     21.7        2.4304\n   4     64     0.1142     18.8        2.4320\n   4   2880     0.2175     13.3        2.5074\ncom outliers, bloco 64 / 4096: 0.0104 / 0.0723",
+   "notas": "Quantizar é representar números reais com poucos bits. Na quantização simétrica por absmax, dentro de um bloco calcula-se a escala s como o maior valor absoluto dividido por 127 em 8 bits, ou por 7 em 4 bits, e guarda-se o inteiro arredondado. O erro por elemento é no máximo s sobre 2. Com 8 bits, a perplexidade original praticamente não muda. Com 4 bits, o erro relativo vai de 8,3 por cento, bloco 16, a 21,8 por cento, bloco único, e a perplexidade degrada de 2,430 a 2,507. Com outliers sintéticos, o erro em 8 bits é de 1,0 por cento com bloco 64 e 7,2 por cento com bloco 4096: um valor extremo define a escala de todo o bloco, e blocos pequenos isolam os extremos. O SQNR é a razão sinal-ruído em decibéis; maior é melhor. A tabela foi resumida."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Exemplo resolvido: erro de quantização",
+   "itens": [
+    "Bloco de 64 pesos, maior valor absoluto 0,84",
+    "int8: s = 0,84 ÷ 127 ≈ 0,0066; erro máximo s/2 ≈ 0,0033",
+    "int4: s = 0,84 ÷ 7 = 0,12; erro máximo 0,06",
+    "Erro 18 vezes maior em 4 bits (127 ÷ 7)",
+    "Um outlier de 8,4 multiplicaria os erros por 10 em todo o bloco"
+   ],
+   "notas": "Resolva no quadro. O bloco tem 64 pesos, e o maior valor absoluto é 0,84. Em 8 bits, a escala é 0,84 dividido por 127, cerca de 0,0066, e o erro máximo é metade disso, cerca de 0,0033. Em 4 bits, a escala é 0,84 dividido por 7, igual a 0,12, e o erro máximo é 0,06. O erro máximo é cerca de 18 vezes maior, a razão 127 por 7. Interpretação: se um único valor extremo fosse 8,4 em vez de 0,84, os erros máximos seriam multiplicados por 10 para todo o bloco, e é esse o motivo de usar blocos pequenos. Pergunte à turma: qual o preço de blocos menores? Mais constantes de escala para guardar, em média b mais 32 sobre B bits por parâmetro."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "QLoRA: base em 4 bits, adaptadores em precisão maior",
+   "itens": [
+    "Base quantizada em 4 bits e congelada; adaptadores LoRA treinados",
+    "NF4: 16 níveis a partir de quantis de uma normal (Dettmers et al., 2023)",
+    "Dupla quantização: quantiza também as escalas; 4,5 para cerca de 4,13 bits por parâmetro",
+    "No nosso modelo minúsculo: ppl nova 2,174 (int4) contra 2,170 (base normal)",
+    "Mesclar e requantizar em int4: 2,174 para 2,196"
+   ],
+   "notas": "O QLoRA, de Dettmers e colegas, combina quantização e LoRA: a base fica quantizada em 4 bits e congelada, e os adaptadores ficam em maior precisão e são treinados; o gradiente passa pela base quantizada. Os autores relatam ajustar um modelo de 65 bilhões de parâmetros em uma única GPU de 48 gigabytes. Ingredientes: NF4, dupla quantização e paged optimizers. Nosso livro de códigos é inspirado nessa descrição, não é a tabela de nenhuma biblioteca. Na simulação, a base em int4 praticamente não prejudica: perplexidade nova de 2,174, contra 2,170 em precisão total, porque os adaptadores compensam o pequeno erro. O passo extra de mesclar e requantizar custou um pouco: de 2,174 para 2,196. Em modelos reais, meça."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Memória: 112 GB, 14,6 GB ou 4,3 GB",
+   "fig": "f12_memoria",
+   "legenda": "Modelo hipotético de 7 bilhões de parâmetros, sem ativações. Adaptadores com r=16 em todas as lineares: cerca de 0,6 GB.",
+   "itens": [
+    "Ajuste completo: 16N bytes = 112 GB",
+    "LoRA, base em 16 bits: 14,6 GB (14 + 0,6)",
+    "QLoRA: cerca de 4,3 GB",
+    "Adaptadores: 40 milhões de parâmetros",
+    "Ativações e cache somam a isso: são pisos"
+   ],
+   "notas": "A conta usa um modelo hipotético de 7 bilhões de parâmetros, com 32 camadas, e r igual a 16 em todas as projeções lineares, o que dá 40 milhões de parâmetros nos adaptadores, 0,57 por cento do modelo; só em Wq e Wv seriam 8,4 milhões. O ajuste completo pede 112 gigabytes. O LoRA com base em 16 bits pede cerca de 14,6, sendo 14 da base e 0,6 dos adaptadores. O QLoRA, cerca de 4,3. Em um segundo exemplo, para 13 bilhões: 208 gigabytes no completo, cerca de 27 no LoRA e cerca de 7,7 no QLoRA. Ativações, cache de atenção e fragmentação somam a esses valores: trate-os como pisos, não como previsões. Fica a pergunta para a turma: que outras limitações aparecem, além da memória? Qualidade da quantização e tempo de treino."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Avaliação, riscos e licenças",
+   "itens": [
+    "Antes/depois pareado, com IC, por subgrupo e na tarefa original",
+    "Teste aberto uma vez; linha de base: modelo base com o melhor prompt",
+    "Mascarar dados pessoais antes de treinar; modelo pode memorizar (Carlini et al., 2021)",
+    "Pesos disponíveis não significam modelo aberto: leia a licença",
+    "Termos de uso e regulação mudam: confira os textos vigentes"
+   ],
+   "notas": "Reúna o que a avaliação do ajuste exige. Primeiro, a linha de base: o mesmo teste com o modelo base e o melhor prompt; ajustar só vale se superar essa linha. Segundo, a comparação antes e depois pareada, com intervalo de confiança, por subgrupo, e na tarefa original. Terceiro, o teste aberto uma só vez. Sobre privacidade, minimize e mascare dados pessoais antes de treinar, pois um modelo ajustado pode memorizar e reproduzir trechos, como mostram Carlini e colegas. O detector do capítulo, com expressões regulares, achou CPF, e-mail e telefone fictícios, mas não acha nomes soltos. Sobre licenças, pesos disponíveis não significam modelo aberto; o adaptador herda restrições da base. Em projetos institucionais, consulte a assessoria jurídica."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Sua tarefa nova e o esquecimento",
+   "passos": [
+    "Defina outra tarefa nova para o MLPLM, por exemplo trocar os verbos de um só sujeito",
+    "Treine o base; depois LoRA com r em {1, 2, 4, 8} e o ajuste completo",
+    "Registre perplexidade na nova e na original, com três sementes",
+    "Teste mitigações: mistura de dados antigos (10%, 25%, 50%) e menos épocas",
+    "Verifique a mesclagem e quantize o modelo mesclado em 8 e 4 bits",
+    "Escreva um parágrafo sobre o compromisso e os limites do experimento"
+   ],
+   "notas": "Peça que a turma repita o experimento com uma tarefa nova sua. O ponto central é medir o esquecimento: registre a perplexidade nas duas tarefas, antes e depois, com três sementes, porque vimos que com poucas sementes as oscilações podem ser do tamanho das diferenças. Teste mitigações: misturar 10, 25 e 50 por cento de dados antigos, e treinar por menos épocas. Verifique a mesclagem numericamente e quantize o resultado em 8 e 4 bits para ver o custo. No parágrafo final, descreva o compromisso entre o ganho na tarefa nova e a perda na original, e declare os limites: modelo minúsculo, dados sintéticos. Armadilha: concluir que um r maior esquece mais ou menos a partir de poucas repetições."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "RAG ou ajuste?",
+   "pergunta": "Qual problema é mais adequado para resolver com RAG do que com ajuste fino?",
+   "opcoes": [
+    "Fazer o modelo adotar sempre o tom de voz da instituição",
+    "Responder com base em um regulamento que muda todo mês e precisa ser citado",
+    "Padronizar o formato de uma saída em milhares de requisições",
+    "Reduzir o tamanho do prompt eliminando os exemplos"
+   ],
+   "resposta": "B",
+   "explicacao": "Conhecimento que muda e exige citação deve vir de recuperação, não dos pesos.",
+   "notas": "Dê um minuto e peça votos. A correta é a segunda: um regulamento que muda todo mês e precisa de citação. Conhecimento que muda não deve ficar congelado nos pesos, e o ajuste não dá a fonte. As demais são problemas de comportamento: tom de voz, formato em volume e prompt longo e caro são casos em que o ajuste pode compensar, desde que haja volume e estabilidade. Pergunta de reforço: e se o regulamento mudasse uma vez por ano? Ainda assim a citação continuaria sendo um argumento para RAG. Lembre o que o capítulo diz: o ajuste ensina comportamento; o RAG leva o que o modelo precisa saber agora."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "primeiro passo",
+   "pergunta": "Qual é o primeiro passo recomendado antes de decidir ajustar um modelo?",
+   "opcoes": [
+    "Escolher o maior valor possível de r para o adaptador",
+    "Misturar o conjunto de teste ao de treino para ter mais dados",
+    "Medir uma linha de base com o melhor prompt (e RAG) em um conjunto de teste",
+    "Quantizar o modelo para 2 bits"
+   ],
+   "resposta": "C",
+   "explicacao": "Ajustar só vale se superar a linha de base com prompt e RAG.",
+   "notas": "A resposta correta é a terceira. Antes de gastar tempo e computação, meça o desempenho do modelo base com o melhor prompt, e RAG se for o caso, em um conjunto de teste. Ajustar só vale se superar essa linha de base, e o custo por requisição também entra na conta. As outras são más ideias: escolher o maior r não ajuda além do posto necessário; misturar o teste ao treino é vazamento e infla a avaliação; quantizar para 2 bits não tem relação com a decisão de ajustar. Reforce: muitos problemas atribuídos a um modelo fraco são de especificação ou de recuperação. Peça que alguém cite o que mediria antes de ajustar."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "vazamento",
+   "pergunta": "O que é vazamento (leakage) entre treino e teste?",
+   "opcoes": [
+    "O modelo esquecer a tarefa original",
+    "A GPU perder memória durante o treino",
+    "O adaptador ser mesclado aos pesos",
+    "Exemplos do teste, ou quase iguais a eles, aparecerem no treino, o que infla a avaliação"
+   ],
+   "resposta": "D",
+   "explicacao": "No experimento, a divisão aleatória deixou 25% do teste com duplicata no treino.",
+   "notas": "A correta é a última: exemplos do teste, ou quase iguais, aparecendo no treino, o que infla a avaliação. As outras confundem com termos próximos: esquecer a tarefa original é esquecimento catastrófico; a GPU perder memória é um problema de recursos; mesclar o adaptador é a fusão de W e BA. No experimento, a divisão aleatória deixou 25 por cento das mensagens de teste com duplicata exata no treino, e a divisão por hash reduziu isso a zero. Atenção: o hash trata só duplicatas exatas; paráfrases exigem técnicas de similaridade. Pergunte à turma o que fazer com textos que se repetem muito, como respostas padrão: deduplicar antes de dividir, ou dividir por grupos."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Ajuste fino altera pesos e serve para comportamento; conhecimento citável pede RAG",
+    "Dados valem mais que algoritmo: deduplicar antes de dividir, teste trancado, mascarar dados pessoais",
+    "Ajuste completo: cerca de 16 bytes por parâmetro; LoRA treina r(d + k) por matriz",
+    "W' = W + (α/r)BA, A aleatório e B zero; o r útil é o posto efetivo da mudança",
+    "Esquecimento existe mesmo com LoRA: meça a tarefa original; mesclagem é exata",
+    "Quantização por blocos e QLoRA; avalie antes/depois, pareado, com IC, e confira licenças"
+   ],
+   "notas": "Feche com os pontos para levar. O ajuste fino altera pesos e serve para comportamento, enquanto conhecimento atual ou citável pede RAG; esgote o prompt e meça a linha de base e o custo. Dados valem mais que algoritmo. O ajuste completo custa cerca de 16 bytes por parâmetro, 112 gigabytes para 7 bilhões, sem ativações. O LoRA soma uma correção de posto baixo, com A aleatório e B zero, e o r útil é o posto efetivo da mudança. O esquecimento existe mesmo com LoRA, a mesclagem é exata em precisão numérica e a quantização por blocos isola outliers. Lembre a honestidade: modelo minúsculo, dados sintéticos, o método de medir é o que se transfere. Pergunta final: o que você mediria antes de ajustar?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "HU, E. J. et al. LoRA: low-rank adaptation of large language models. In: INTERNATIONAL CONFERENCE ON LEARNING REPRESENTATIONS (ICLR), 10., 2022. Proceedings [...]. 2022.",
+    "DETTMERS, T. et al. QLoRA: efficient finetuning of quantized LLMs. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. Proceedings [...]. Red Hook: Curran Associates, 2023.",
+    "HOULSBY, N. et al. Parameter-efficient transfer learning for NLP. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING (ICML), 36., 2019. Proceedings of Machine Learning Research, v. 97, p. 2790-2799, 2019.",
+    "BIDERMAN, D. et al. LoRA learns less and forgets less. Transactions on Machine Learning Research, 2024. arXiv:2405.09673.",
+    "LEE, K. et al. Deduplicating training data makes language models better. In: ANNUAL MEETING OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS, 60., 2022, Dublin. Proceedings [...]. Stroudsburg: ACL, 2022. p. 8424-8445.",
+    "ZHOU, C. et al. LIMA: less is more for alignment. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 36., 2023. Proceedings [...]. Red Hook: Curran Associates, 2023.",
+    "KIRKPATRICK, J. et al. Overcoming catastrophic forgetting in neural networks. Proceedings of the National Academy of Sciences, v. 114, n. 13, p. 3521-3526, 2017."
+   ]
+  }
+ ]
+}
