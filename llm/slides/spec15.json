@@ -1,0 +1,400 @@
+{
+ "capitulo": 15,
+ "titulo": "Eficiência, custo e implantação",
+ "parte": "Parte IV — Adaptação e sistemas avançados",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Entender de onde vêm o custo e a latência de um serviço de linguagem",
+    "Medir quantização: bits, erro nos pesos e perda de qualidade",
+    "Distinguir cache KV, de prefixo e de respostas, e seus riscos",
+    "Comparar lote estático e contínuo e simular filas de atendimento",
+    "Calcular ganhos de destilação, MoE, decodificação especulativa e roteamento",
+    "Planejar a implantação: limites, observabilidade, deriva, reversão e energia"
+   ],
+   "notas": "Abra dizendo que um modelo que funciona no caderno de experimentos ainda não é um serviço. Serviço precisa responder rápido para muita gente, custar menos do que entrega e poder ser revertido sem drama. Leia os seis objetivos e destaque a palavra medir: quase tudo neste capítulo se resolve com contas simples e experimentos pequenos. Avise desde já que preços, máquinas e tempos de hardware são hipotéticos, e que os experimentos usam modelos didáticos e simulações, não um LLM real. Pergunta à turma: quem já viu um aplicativo ficar lento em dia de muito uso? Armadilha: sair da aula achando que os números do capítulo valem para algum produto real."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Quando as matrículas abrem",
+   "itens": [
+    "Semana 1: o assistente da secretaria funciona bem e todos elogiam",
+    "Semana 2: as mensagens por minuto quadruplicam",
+    "As respostas passam a levar meio minuto",
+    "No fim do mês, a fatura estoura o orçamento",
+    "A qualidade não mudou: mudaram o preço e o tempo de entregar"
+   ],
+   "notas": "Conte a situação inicial do capítulo. Uma secretaria acadêmica lança um assistente que responde dúvidas dos estudantes. Na primeira semana, tudo certo. Na segunda, as matrículas abrem, o número de mensagens por minuto quadruplica, as respostas levam meio minuto e a fatura passa do orçamento. O ponto central: a qualidade das respostas não mudou, o que mudou foi o preço e o tempo de entregá-las. Pergunta guia: como reduzir custo e latência sem perder muita qualidade, e como operar com segurança quando milhares de pessoas usam ao mesmo tempo? Armadilha: tratar custo como detalhe de engenharia; ele decide se o serviço sobrevive."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o cozinheiro e a despensa",
+   "texto": "Decodificar é como um cozinheiro que, a cada prato, precisa ir buscar todos os ingredientes na despensa.",
+   "detalhe": "A faca é rápida; a ida à despensa é que demora. Servir vários pratos de uma vez aproveita a mesma ida. No acelerador, ler a memória domina, e não calcular. Por isso lote e menos bytes por peso ajudam tanto.",
+   "notas": "Use a cozinha para explicar o gargalo da decodificação. O cozinheiro corta rápido, mas a cada prato precisa ir à despensa buscar os ingredientes; o tempo vai quase todo na caminhada, não no corte. No modelo, cortar é calcular e a despensa é a memória: com lote pequeno, o acelerador passa quase todo o tempo esperando a leitura dos pesos. Se o cozinheiro prepara oito pratos numa só ida, o custo da caminhada se divide, e é isso que o lote faz. Pergunta à turma: o que aconteceria se os ingredientes fossem menores e mais leves de carregar? Resposta: quantização. Armadilha: a analogia não mostra o cache, que também precisa ser lido."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Quem manda no tempo de um passo",
+   "tex": "t_passo ≈ máx( t_mem , t_calc )",
+   "explicacao": [
+    "t_mem = (pesos + cache de cada sequência) ÷ largura de banda da memória",
+    "t_calc = 2·N·b ÷ capacidade de cálculo (N parâmetros, b sequências)",
+    "Com lote pequeno, t_mem é muito maior: o gargalo é a memória"
+   ],
+   "notas": "Apresente a fórmula como a regra do gargalo: o passo dura o maior entre o tempo de ler a memória e o tempo de calcular. Explique cada símbolo com palavras: N é o número de parâmetros, b é quantas sequências andam juntas, e cada token gerado custa cerca de duas operações por parâmetro. Mostre que a razão entre operações e bytes lidos é muito baixa com lote 1, então o acelerador espera a memória. Exemplo oral: a máquina hipotética do capítulo precisaria de cerca de 150 operações por byte lido para ficar saturada de cálculo. Pergunta: se b crescer, quem cresce primeiro? Armadilha: ler o máximo como soma; é o maior dos dois."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: tamanho do lote e vazão",
+   "codigo": "BW, PICO, N = 2.0e12, 3.0e14, 7e9   # máquina e modelo HIPOTÉTICOS\ndef t_passo(b, T_ctx, bytes_param=2.0):\n    t_mem = (N*bytes_param + b*T_ctx*KV_TOKEN) / BW   # pesos + cache\n    t_calc = b * 2 * N / PICO                          # ~2N operações/token\n    return t_mem, t_calc\nfor b in (1, 8, 32, 128, 256):\n    tm, tc = t_passo(b, T_ctx=1000); t = max(tm, tc)\n    print(b, tm*1e3, tc*1e3, b/t, 1/t)   # (trecho; o capítulo formata a tabela)",
+   "saida": " lote  t_mem (ms)  t_calc (ms)   gargalo  tokens/s (total)  tokens/s (por usuário)\n    1         7.3         0.05   memória               138                   137.7\n    8         9.1         0.37   memória               879                   109.9\n   32        15.4         1.49   memória              2079                    65.0\n  128        40.6         5.97   memória              3156                    24.7\n  256        74.1        11.95   memória              3454                    13.5",
+   "notas": "Rode mentalmente a tabela com a turma. Em todos os tamanhos de lote testados, t_mem é maior que t_calc, então a memória manda. Aumentar o lote eleva a vazão total, de 138 para cerca de 3 450 tokens por segundo, porque os pesos são lidos uma vez para todos; mas cada pessoa piora, de cerca de 138 para 14 tokens por segundo, porque o cache de cada sequência também precisa ser lido. Reforce que a máquina é hipotética e os números vêm de um modelo de custo, não de medição. Pergunta: quem prefere um serviço com vazão alta e resposta lenta? Armadilha: concluir que lote maior é sempre melhor."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: quanto custa cada pedido",
+   "codigo": "# PREÇOS HIPOTÉTICOS (u.m. por milhão de tokens)\nPRECO_ENTRADA, PRECO_SAIDA, PRECO_ENTRADA_CACHE = 1.0, 5.0, 0.1\ndef custo_req(t_fixo, t_var, t_saida, prefixo_em_cache=False):\n    p_fixo = PRECO_ENTRADA_CACHE if prefixo_em_cache else PRECO_ENTRADA\n    return (t_fixo*p_fixo + t_var*PRECO_ENTRADA + t_saida*PRECO_SAIDA)/1e6\n# cenários: base (800 fixos, 200 variáveis, 150 de saída), saída 90,\n# prefixo em cache, RAG com +600 tokens, RAG + cache + saída 90",
+   "saida": "base (fixo 800, variável 200, saída 150)                1.750      1.00\nsaída limitada a 90 tokens                              1.450      0.83\nprefixo de 800 tokens em cache                          1.030      0.59\nRAG: +600 tokens de contexto                            2.350      1.34\nRAG + prefixo em cache + saída 90                       1.330      0.76",
+   "notas": "Aqui os tokens viram dinheiro, com preços inventados em unidades monetárias: não são preços de nenhum serviço. A saída é a parte cara, porque é gerada um token por vez. Limitar a resposta a 90 tokens poupa 17%; manter as 800 tokens de instruções em cache poupa 41%; colar mais 600 tokens de contexto por RAG encarece 34%. As alavancas se combinam: a última linha custa 76% da base mesmo com mais contexto. O método é escrever a conta com seus preços e só então otimizar o termo que mais pesa. Pergunta: qual termo pesa mais no seu caso? Armadilha: custo por token não é custo total; compare custo por resultado útil."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: tamanho único de camiseta",
+   "texto": "Quantizar é vestir todo mundo com poucos tamanhos de camiseta. Um gigante na turma estraga o tamanho de todos.",
+   "detalhe": "A escala é definida pelo maior valor. Um peso muito grande (outlier) deixa os pequenos todos no mesmo tamanho. Uma escala por coluna ou por grupo é como ter vários tamanhos: cada um veste o seu.",
+   "notas": "Explique quantização como reduzir o número de tamanhos disponíveis: em vez de guardar cada peso com 16 bits, guardamos um inteiro de poucos bits e uma escala. A escala é decidida pelo maior valor absoluto, então um único valor muito grande, o outlier, faz com que todos os valores pequenos caiam em poucos níveis, como numa loja com um só tamanho feito para o mais alto. Escala por coluna ou por grupo equivale a ter vários tamanhos. Pergunta à turma: o que se perde se só houver dois tamanhos? Armadilha: no capítulo os outliers foram inseridos por nós para ilustrar o mecanismo; a presença deles em modelos reais é uma observação da literatura."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: o erro da quantização",
+   "codigo": "def quantizar(W, bits=8, eixo=None, grupo=None):\n    qmax = 2 ** (bits - 1) - 1\n    if grupo: Wg = W.reshape(-1, grupo); s = np.abs(Wg).max(1, keepdims=True)/qmax\n    elif eixo is None: Wg, s = W, np.abs(W).max()/qmax\n    else: Wg, s = W, np.abs(W).max(axis=eixo, keepdims=True)/qmax\n    return np.clip(np.round(Wg / s), -qmax, qmax), s\n# W: pesos normais 256x512; Wo: mesmas matrizes com 8 colunas 30x maiores\n# erro relativo (RMSE/RMS) por tensor / por coluna / por grupo de 64",
+   "saida": "pesos      bits  por tensor  por coluna  por grupo de 64\nnormais       8      0.0108      0.0070           0.0060\nnormais       4      0.1947      0.1272           0.1083\noutliers      8      0.0593      0.0072           0.0174\noutliers      6      0.2204      0.0296           0.0708\noutliers      2      0.8611      0.8150           0.2548",
+   "notas": "Mostre a função: a escala vem do máximo absoluto, o inteiro é o valor dividido pela escala, arredondado e limitado. Leia as linhas: com pesos normais e 8 bits, o erro relativo é de cerca de 1% por tensor. Com outliers inseridos, a escala única passa a perder 5,9% já em 8 bits e 22% em 6 bits, enquanto a escala por coluna quase não muda, 0,7%, porque isola as colunas atípicas. Em 2 bits, nenhuma granularidade salva a maioria dos pesos. O armazenamento cai a cerca de um oitavo. Pergunta: por que escala por coluna custa mais memória? Porque guarda mais escalas. Armadilha: o erro nos pesos não é a mesma coisa que perda de qualidade."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Quantizar pesos e a perplexidade do MLPLM",
+   "cabecalho": [
+    "Bits",
+    "Por tensor",
+    "Por coluna"
+   ],
+   "linhas": [
+    [
+     "8",
+     "2,452",
+     "2,453"
+    ],
+    [
+     "6",
+     "2,451",
+     "2,451"
+    ],
+    [
+     "4",
+     "2,504",
+     "2,448"
+    ],
+    [
+     "3",
+     "3,649",
+     "2,500"
+    ],
+    [
+     "2",
+     "31,810",
+     "7,605"
+    ]
+   ],
+   "notas": "Aqui está a consequência na qualidade, medida em um modelo didático pequeno, o MLPLM, com perplexidade de referência 2,452 em float64. Há uma zona segura: com 8 e 6 bits a perplexidade quase não muda. Há um precipício: em 4 bits por tensor ela sobe para 2,504, em 3 bits dispara para 3,649 e em 2 bits explode para 31,8. A escala por coluna adia a queda. Perplexidade menor significa que o modelo se surpreende menos com o texto de teste. Deixe claro que o ponto exato do precipício depende do modelo, da tarefa e do método; o que se generaliza é a prática de medir na sua tarefa. Armadilha: a média pode esconder degradação em casos raros ou difíceis."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Exemplo resolvido: o modelo de 13 bilhões",
+   "itens": [
+    "Modelo hipotético de 13 bi de parâmetros; acelerador de 24 GB e 1 TB/s",
+    "float16: 26 GB, não cabe",
+    "8 bits: 13 GB; 4 bits: 6,5 GB, cabem",
+    "Limite de velocidade com lote 1: banda ÷ bytes dos pesos",
+    "8 bits: cerca de 77 tokens/s; 4 bits: cerca de 154 tokens/s"
+   ],
+   "notas": "Resolva no quadro. Treze bilhões de parâmetros vezes dois bytes dão 26 GB, que não cabem em 24 GB. Com 8 bits são 13 GB; com 4 bits, 6,5 GB, sobrando memória para cache e ativações. Como a decodificação com lote 1 lê todos os pesos a cada token, o teto de velocidade é a largura de banda dividida pelos bytes: 1 TB/s sobre 13 GB dá cerca de 77 tokens por segundo, e sobre 6,5 GB dá cerca de 154. Interpretação: quantizar permitiu caber e dobrou o teto, se a qualidade resistir. Todos os valores são hipotéticos. Pergunta: por que o limite real é menor? Cache, ativações e ineficiências."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o aluno que estuda com o professor",
+   "texto": "Destilar é um aluno aprender não só o gabarito, mas como o professor pesa cada alternativa.",
+   "detalhe": "O professor diz: 80% classe 2, 15% classe 0, 5% classe 1. Essa distribuição suave mostra quais classes se parecem. O aluno, menor, treina com muitos exemplos sem rótulo, que são baratos. Aqui: 75 parâmetros contra 387, e acurácia a menos de 1 ponto.",
+   "notas": "Compare com um aluno que estuda com as anotações do professor, e não só com o gabarito. Em vez de só dizer é a classe 2, o professor mostra a distribuição inteira, e isso revela quais classes se parecem. Uma temperatura maior que 1 achata o softmax e realça as classes não vencedoras. Como o professor pode produzir essa distribuição para qualquer entrada, o aluno treina com muitos dados sem rótulo. No experimento didático, o aluno tem 75 parâmetros contra 387; a acurácia é 0,980 contra 0,983 do professor, e 0,975 do aluno treinado só com rótulos. O ganho é pequeno, em problema fácil, com IC da diferença pareada de +0,001 a +0,011. Armadilha: não há garantia de que o aluno herde capacidades fora do que viu."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Mistura de especialistas: ativar só parte",
+   "itens": [
+    "Um roteador envia cada token a poucos especialistas (k de E)",
+    "Parâmetros totais crescem com E; os ativos, só com k",
+    "Exemplo hipotético: 5 bi totais, 2 bi ativos (40%)",
+    "A memória ainda guarda os 5 bi: reduz cálculo, não memória",
+    "Carga desbalanceada: o especialista mais usado recebeu 1,20 vez a ideal"
+   ],
+   "notas": "Explique com a imagem de um hospital com vários especialistas e uma recepção que decide para quem encaminhar cada pessoa. A recepção é o roteador; cada token vai só aos k melhores especialistas. Os parâmetros totais crescem com o número de especialistas, mas o cálculo por token depende só dos ativos. Na configuração hipotética, 5 bilhões no total e 2 bilhões ativos, 40%. Dois custos: a memória precisa guardar todos os especialistas, e o roteador pode sobrecarregar alguns; no experimento sintético o mais usado recebeu 1,20 vez a carga ideal, e em sistema distribuído o grupo espera o mais lento. Pergunta: um MoE cabe em menos memória? Não. Armadilha: confundir parâmetros ativos com memória necessária."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Três caches que não se confundem",
+   "cabecalho": [
+    "Cache",
+    "Reaproveita",
+    "Resultado muda?"
+   ],
+   "linhas": [
+    [
+     "KV",
+     "chaves e valores da mesma geração",
+     "não"
+    ],
+    [
+     "Prefixo",
+     "KV de um prefixo idêntico repetido",
+     "não"
+    ],
+    [
+     "Respostas",
+     "resposta pronta a pedido igual ou parecido",
+     "sim, no semântico"
+    ]
+   ],
+   "notas": "Esta tabela evita a confusão mais comum do capítulo. O cache KV reaproveita o que já foi calculado dentro da mesma geração. O cache de prefixo guarda o KV de um trecho que se repete entre requisições, como as instruções do sistema, e só vale para prefixo idêntico: por isso o texto estável vem primeiro e o variável depois. Nos dois, o resultado é idêntico ao do cálculo completo. O cache de respostas devolve uma resposta pronta; no semântico, a resposta pode ser de um pedido apenas parecido, e aí pode errar. Exemplo oral: com 2 000 tokens de prefixo e 90% de acerto, o tempo até o primeiro token cai a 16% do valor sem cache. Armadilha: muitos prefixos distintos esgotam a memória."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: cache semântico e o limiar",
+   "codigo": "# 800 mensagens sintéticas; embeddings LSA (não é LLM)\ndef cache_semantico(tau, exigir_entidades=False):\n    ...  # reaproveita a resposta da mensagem mais parecida se cos >= tau\n    return acerto, erro_entre_os_acertos\n# 'resposta correta' = intenção + entidades (plano, número do pedido)\nfor tau in (0.99, 0.95, 0.90, 0.80, 0.60):\n    h, e = cache_semantico(tau); h2, e2 = cache_semantico(tau, True)",
+   "saida": "cache exato: taxa de acerto = 0.179\n  tau |  acerto  erro entre os acertos | com verificação de entidades: acerto   erro\n 0.99 |   0.315                  0.159 |                                 0.265  0.000\n 0.95 |   0.641                  0.234 |                                 0.516  0.000\n 0.80 |   0.887                  0.413 |                                 0.654  0.008",
+   "notas": "O cache exato acerta 17,9% dos pedidos. O semântico acerta muito mais, 64% com limiar 0,95, mas 23% das respostas reaproveitadas estão erradas: outro plano, outro número de pedido. Baixar o limiar piora: 41% de erro com 0,80. Mesmo com 0,99, 16% dos acertos são errados, porque o vetor resume o assunto e distingue mal números e nomes. Com verificação de entidades, o erro cai a praticamente zero em 0,95, ao preço de menos acertos: 51,6% contra 64,1%. Embeddings aqui são LSA, não um LLM, e o código mostra apenas o esqueleto da função. Pergunta: quais respostas nunca podem ser reaproveitadas? Dados do usuário, números, datas."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Cuidado com o cache semântico",
+   "itens": [
+    "Ele troca correção por custo",
+    "Meça a taxa de erro entre os acertos, não só a de acerto",
+    "Nunca compartilhe cache entre pessoas sem isolamento",
+    "Exclua respostas com números, datas e dados do usuário",
+    "Dê validade às entradas para que as desatualizadas expirem"
+   ],
+   "notas": "Resuma o risco em uma frase: o cache semântico troca correção por custo. Quem olha só a taxa de acerto do cache se encanta com 64% e não vê que quase um quarto das respostas reaproveitadas pode estar errado. Antes de usar, defina quais respostas jamais podem ser reaproveitadas: as que dependem de dados do usuário e do direito de acesso dele, de números, de datas ou do estado do mundo, como preços e prazos. Escolha o limiar com um conjunto de testes rotulado, prefira regras de exclusão e verificação de entidades, e coloque validade nas entradas. Pergunta à turma: se um estudante receber a resposta de outro, o que acontece? Armadilha: confiar no limiar alto como garantia."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o ônibus e o ponto",
+   "texto": "Lote estático é um ônibus que só sai quando o último passageiro chega. Lote contínuo embarca gente a cada ponto.",
+   "detalhe": "No estático, quem terminou antes fica com o assento vazio até o grupo todo acabar. No contínuo, quando um pedido termina, outro, já na fila, entra no passo seguinte. O ganho é maior quando os comprimentos de saída variam muito.",
+   "notas": "Use o ônibus. No lote estático, o grupo só termina quando o pedido mais longo termina; quem desceu antes deixa o assento vazio e o próximo grupo espera. No lote contínuo o lote é reavaliado a cada passo de decodificação, então o assento vago é ocupado quase na hora. Esse esquema, junto com um gerenciamento paginado do cache KV, é a base de muitos servidores modernos, e o ganho real depende da carga de trabalho. Pergunta à turma: se todos os pedidos tivessem o mesmo comprimento, haveria vantagem? Quase nenhuma. Armadilha: na vida real, cada passo com lote maior é um pouco mais lento, então o ganho de vazão não é grátis para quem espera."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Lote estático versus contínuo",
+   "fig": "f15_lote",
+   "legenda": "Simulação de 400 pedidos, saída média de 67,5 tokens. Ocupação dos espaços do lote.",
+   "itens": [
+    "B = 8: estático usa 39% dos espaços",
+    "B = 8: contínuo usa 98%",
+    "Passos: 8 694 contra 3 446 (2,5 vezes menos)",
+    "B = 32: diferença de 3,4 vezes"
+   ],
+   "notas": "Leia o gráfico com a turma. A simulação tem 400 pedidos com saídas muito variadas, média perto de 67 tokens e máximo de 400. Com lote de tamanho 8, o estático usa só 39% dos espaços e o contínuo usa 98%; o contínuo termina com 2,5 vezes menos passos, 3 446 contra 8 694. Com lote 32, a diferença é de 3,4 vezes. Quanto maior o lote e maior a variação de comprimento, mais o estático desperdiça. No fim do experimento o uso do contínuo cai um pouco, 85% com B igual a 32, porque a fila esvazia. Pergunta: com lote 1, qual a diferença? Nenhuma. Armadilha: é uma simulação, não uma medição de servidor real."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "A parede da latência",
+   "fig": "f15_filas",
+   "legenda": "Latência média versus carga, escala logarítmica; parâmetros hipotéticos. Simulação.",
+   "itens": [
+    "Sem lote: capacidade de cerca de 0,91 pedido/s",
+    "Em 0,9 pedido/s: média de 80 s",
+    "Com lote B = 8: capacidade de 4,4 pedidos/s",
+    "Cache de 40% afasta o colapso",
+    "O p95 é sempre pior que a média"
+   ],
+   "notas": "Pense no caixa de banco: a fila é curta enquanto o caixa atende quase tão rápido quanto as pessoas chegam, e perto da capacidade qualquer imprevisto vira fila enorme. A curva é plana por muito tempo e depois sobe como uma parede. Sem lote, o servidor hipotético tem capacidade de cerca de 0,91 pedido por segundo; em 0,9 a latência média é de 80 segundos e em 1,5 a fila cresce sem limite. Com lote de 8 a capacidade sobe para 4,4 pedidos por segundo e a latência média em 3 pedidos por segundo é de 2,3 segundos. O cache de 40% afasta o colapso, pois a carga que chega ao modelo cai 40%. A latência de cauda, o p95, é sempre pior que a média, e é ela que a pessoa sente. Armadilha: o modelo supõe tempos exponenciais."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Decodificação especulativa: quanto se ganha",
+   "tex": "G = (1 − α^(γ+1)) / ((1 − α)(γ·c + 1))",
+   "explicacao": [
+    "α: taxa de aceitação dos tokens propostos pelo rascunhador; γ: tamanho do rascunho",
+    "c: custo do rascunhador relativo ao modelo grande",
+    "Exemplo: α = 0,8, γ = 4, c = 0,1 dá 3,36 tokens por rodada e ganho de 2,40",
+    "A distribuição da saída é a mesma do modelo grande"
+   ],
+   "notas": "Um modelo pequeno, o rascunhador, propõe γ tokens; o modelo grande verifica todos de uma vez, em paralelo, porque o gargalo é ler os pesos. Cada token é aceito por uma regra probabilística que preserva exatamente a distribuição do modelo grande; no primeiro rejeitado, o alvo amostra o token correto. Resolva o exemplo: a soma geométrica dá 3,3616 tokens por rodada; o custo da rodada é γ vezes c mais 1, que é 1,4; o ganho é cerca de 2,40. O rascunhador não é gratuito, por isso o ganho é menor que 3,36. Se α cair para 0,5, o ganho cai a cerca de 1,38. Pergunta: o que muda na qualidade do texto? Nada, a distribuição é preservada."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: a fórmula confere com a simulação",
+   "codigo": "def tokens_esperados(alfa, gama):\n    return (1 - alfa ** (gama + 1)) / (1 - alfa)\ndef monte_carlo(alfa, gama, n=200_000, seed=0):\n    aceitos = np.random.default_rng(seed).random((n, gama)) < alfa\n    k = np.where(aceitos.all(1), gama, np.argmin(aceitos, 1))\n    return (k + 1).mean()      # + 1 token do modelo grande\n# experimento: alvo = trigramas, rascunhador = bigramas (corpus sintético)",
+   "saida": " alfa  gama  fórmula  Monte Carlo\n  0.5     4    1.938        1.936\n  0.8     4    3.362        3.359\n  0.9     4    4.095        4.093\n  0.8     8    4.329        4.327",
+   "notas": "A simulação de Monte Carlo confere a fórmula até a terceira casa decimal. Depois o capítulo testa o algoritmo completo com modelos de linguagem pequenos, um de trigramas como alvo e um de bigramas como rascunhador, no corpus sintético. A taxa de aceitação medida foi 0,836 e o algoritmo produziu cerca de 3,1 tokens por rodada do alvo, em vez de 1. O mais importante é a verificação de correção: as frases geradas pelo método especulativo são tão gramaticais quanto as do alvo, 98,1% em ambos. Com alfa baixo o ganho pode até cair para gama grande, porque propor muito quando se erra muito é desperdício. Armadilha: modelos didáticos, não LLMs."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Roteamento: barato primeiro, caro se preciso",
+   "fig": "f15_roteamento",
+   "legenda": "Custos hipotéticos; os efeitos foram programados no simulador de regras (não é um LLM).",
+   "itens": [
+    "Barato isolado acerta 37%; caro, 94%",
+    "Com limiar de 0,3 a 0,8, o acerto iguala o do caro",
+    "Custo de 69% a 76% do caro",
+    "Escalonar tudo custa 1,10 do caro"
+   ],
+   "notas": "O roteador tenta primeiro o modelo barato e só escalona para o caro quando a confiança é baixa. No experimento, o barato é o SimuladorLLM v1 e o caro, o v3; a confiança vem de uma regressão logística treinada em uma amostra e avaliada em outra. O barato isolado acerta 37% e o caro 94%. Com limiar entre 0,3 e 0,8, o acerto iguala o do caro, 0,938, por 69 a 76% do custo; o sorteio com a mesma fração escalonada acertaria só 70 a 74%. Alertas: o roteador é quase perfeito porque o simulador é de regras, e com limiar alto demais a cascata custa mais que usar sempre o caro, 1,10. Combinado ao cache com entidades, o custo cai a 36% do caro, em cenário hipotético."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Onde o modelo roda",
+   "cabecalho": [
+    "Padrão",
+    "Vantagem",
+    "Desvantagem"
+   ],
+   "linhas": [
+    [
+     "API gerenciada",
+     "pouca operação; escala fácil",
+     "custo por token; dados saem da rede"
+    ],
+    [
+     "Servidor próprio",
+     "controle de dados, custos e versão",
+     "operação e GPUs são suas"
+    ],
+    [
+     "Borda",
+     "latência baixa; funciona sem rede",
+     "modelos pequenos; atualização difícil"
+    ]
+   ],
+   "notas": "Três famílias de resposta, cada uma com compromissos. A API gerenciada tem pouca operação e escala fácil, mas cobra por token, depende do provedor, leva dados para fora da sua rede e traz limites de taxa e mudanças de versão. O servidor próprio dá controle de dados, custos e versão e pode sair mais barato em volume alto e estável, mas a operação, as GPUs, a segurança e a capacidade ociosa são suas. A borda roda um modelo pequeno quantizado no dispositivo do usuário, com latência baixa e dados locais, mas com modelos limitados e atualização difícil. Muitos sistemas são híbridos. Os trechos de código com API e servidor não foram executados; confira a documentação vigente. Pergunta: qual padrão para dados sensíveis?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Enxergar o serviço: métricas, logs, rastros",
+   "itens": [
+    "Latência em percentis: média 0,85 s, mas p95 de 2,10 s",
+    "Meta (SLO): 99% em até 2 s; só 92,2% cumpriram",
+    "SLO de 99,5% em 30 dias: orçamento de 216 minutos",
+    "Deriva: PSI de 0,006 sem mudança e 0,213 com 3 vezes mais reclamações",
+    "Logs sem dados pessoais; quem decide diante do alerta é uma pessoa"
+   ],
+   "notas": "Os três pilares são métricas agregadas, logs estruturados com uma linha por chamada e rastros do caminho de cada pedido. O exemplo mostra por que a média esconde a cauda: média de 0,85 segundo, mas p95 de 2,10. Um SLO bem formulado usa percentis, por exemplo 99% das requisições em até 2 segundos; nos dados simulados, só 92,2% cumprem, então o SLO não é cumprido. O orçamento de erro de um SLO de disponibilidade de 99,5% em 30 dias é de 216 minutos. O PSI mede deriva dos dados: 0,006 quando nada mudou e 0,213 quando as reclamações triplicam; as faixas 0,1 e 0,25 são convenções. Não registre dados pessoais nos logs. Armadilha: o alerta sinaliza; a decisão é humana."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Operar com segurança",
+   "itens": [
+    "Balde de fichas: 5 req/s sustentadas, rajada de até 10",
+    "Carga de 8 req/s: 24,8% recusadas, com espera sugerida",
+    "Cliente tenta de novo com recuo exponencial",
+    "Lançar em etapas: sombra, canário (por exemplo 5%), expansão",
+    "Reversão pronta e versão registrada de modelo e prompt"
+   ],
+   "notas": "Quando a carga passa da capacidade, o sistema deve proteger-se em vez de colapsar. O limitador por balde de fichas repõe fichas a uma taxa fixa até uma capacidade; permite rajadas, mas limita a taxa sustentada. Na simulação, com 8 pedidos por segundo contra 5 sustentados, aceitou 5,3 por segundo e recusou 24,8%, e uma rajada de 15 pedidos simultâneos teve 10 aceitos. Do lado do cliente, espera e nova tentativa com recuo exponencial. Para lançar versões: avaliação offline, implantação sombra, canário com critérios de parada definidos antes, expansão gradual e reversão que seja um comando, não um projeto. Versione modelo, prompt, índice e regras de cache. Pergunta: o que fazer se o provedor desativar o modelo? Planejar a migração."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limites deste capítulo",
+   "itens": [
+    "Otimizar sem medir; olhar só a média da latência",
+    "Confundir os três caches ou usar cache semântico sem verificar entidades",
+    "Quantizar demais sem reavaliar na tarefa real",
+    "Esquecer que MoE e lotes exigem memória; lançar sem canário",
+    "Todos os preços e máquinas aqui são hipotéticos; os modelos são didáticos"
+   ],
+   "notas": "Fixe os erros mais comuns: escolher a alavanca pela moda em vez de pelo termo dominante do custo; olhar só a média e ignorar p95 e p99; confundir cache KV, de prefixo e de respostas; quantizar demais e concluir pela perplexidade média; esquecer que mistura de especialistas e lotes exigem memória; não limitar saída nem taxa de pedidos; lançar sem canário e sem reversão; registrar dados pessoais em logs; usar números de exemplo como se fossem preços reais. Reforce as limitações: todo hardware e preço é hipotético, os experimentos usam modelos didáticos e simulações, o modelo de fila supõe tempos exponenciais, e os exemplos de API e servidor não foram executados. Pergunta: qual desses erros você já viu?"
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Orçamento de custo e latência",
+   "passos": [
+    "Escolha um caso de uso e estime, com valores hipotéticos explícitos, volume, prompt e saída",
+    "Calcule o custo diário com custo_req e ache o termo dominante",
+    "Meça cache exato e semântico em três limiares, com e sem verificação de entidades",
+    "Use a simulação de fila para achar a carga em que o p95 passa da sua meta",
+    "Recomende uma combinação de alavancas, riscos e métricas, declarando os limites"
+   ],
+   "notas": "Divida a turma em grupos e peça um orçamento de um assistente de perguntas frequentes de secretaria. O passo um exige valores hipotéticos explícitos: quantos pedidos por dia, quantos tokens de instruções fixas, de parte variável e de saída. No passo dois, usem a função de custo do capítulo e identifiquem o termo dominante antes de otimizar. No passo três, meçam com o corpus sintético a taxa de acerto de cache exato e semântico em três limiares e anotem a taxa de erro entre os acertos. No quatro, a simulação de fila mostra onde o p95 ultrapassa a meta. O quinto passo é o parágrafo de recomendação. Armadilha: apresentar números hipotéticos como se fossem reais; o exercício prático 15.1 oferece uma versão guiada."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o gargalo",
+   "pergunta": "Na decodificação com lote pequeno, qual costuma ser o gargalo principal do acelerador?",
+   "opcoes": [
+    "A capacidade de cálculo, pois cada passo multiplica enormes matrizes",
+    "A leitura dos pesos e do cache da memória, pois cada token exige poucas operações por byte lido",
+    "A velocidade da rede entre o usuário e o servidor",
+    "O tamanho do vocabulário, que decide a duração de cada operação"
+   ],
+   "resposta": "B",
+   "explicacao": "Com poucas sequências a intensidade aritmética é baixa; o tempo do passo é dominado por ler a memória.",
+   "notas": "Dê um minuto para a turma votar. A resposta correta é a leitura de pesos e cache da memória. Retome a cozinha: o cozinheiro corta rápido, mas gasta o tempo indo à despensa. Com lote 1 e 2 bytes por parâmetro, são cerca de 1 operação por byte lido, e a máquina hipotética só ficaria saturada de cálculo com cerca de 150. A alternativa do cálculo é a mais tentadora; mostre na tabela que t_mem foi maior que t_calc em todos os lotes. Pergunta de aprofundamento: e no preenchimento do prompt? Ali, com 500 tokens ou mais, o cálculo passa a mandar, porque o prompt entra em paralelo."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o risco do cache",
+   "pergunta": "Qual o principal risco do cache semântico de respostas?",
+   "opcoes": [
+    "Aumentar sempre a latência de todos os pedidos",
+    "Reaproveitar a resposta de um pedido parecido que exige resposta diferente: outro plano, outro número, outro usuário",
+    "Impedir o uso de qualquer outro tipo de cache",
+    "Fazer o modelo esquecer o treinamento"
+   ],
+   "resposta": "B",
+   "explicacao": "Embeddings capturam o assunto, mas distinguem mal números, nomes e datas.",
+   "notas": "Peça que alguém explique com as próprias palavras antes de revelar. A resposta é reaproveitar uma resposta de pedido parecido que pede resposta diferente. Volte ao experimento: com limiar 0,95, o semântico acertou 64% dos pedidos, mas 23% das respostas reaproveitadas estavam erradas. A verificação de entidades derrubou o erro a praticamente zero, ao custo de menos acertos, 51,6%. As outras alternativas confundem o cache com o modelo: ele não altera pesos nem esquece nada, e na verdade tende a reduzir a latência. Pergunta de aprofundamento: que tipo de pergunta nunca deveria usar cache semântico? Aquelas que dependem de dados do usuário, números ou datas."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o lote",
+   "pergunta": "Por que o lote estático desperdiça capacidade quando os comprimentos de saída são muito variados?",
+   "opcoes": [
+    "Porque cada pedido do grupo precisa de um modelo diferente",
+    "Porque os pedidos curtos são recusados",
+    "Porque o grupo só termina quando o pedido mais longo termina, e os espaços dos que acabaram ficam ociosos",
+    "Porque o lote estático impede o uso do cache KV"
+   ],
+   "resposta": "C",
+   "explicacao": "Espaços vazios não podem ser reaproveitados até o grupo inteiro terminar.",
+   "notas": "Use o ônibus da analogia: o ônibus só sai quando o último chega, e os assentos dos que desceram ficam vazios. A resposta é a terceira. Retome os números da simulação: com lote 8, o estático usou só 39% dos espaços e o contínuo, 98%, com 2,5 vezes menos passos. Peça que a turma explique por que a vantagem some com lote 1: não há grupo, então nada espera. Cuidado com a primeira alternativa, que parece técnica mas não tem relação com o mecanismo. Pergunta de aprofundamento: o lote contínuo é sempre grátis? Não; cada passo com lote maior é um pouco mais lento para quem espera."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Custo e latência vêm de tokens, memória e cálculo; na decodificação, manda a memória",
+    "Quantizar poupa memória, mas o erro cresce rápido abaixo de certos bits: meça",
+    "Cache KV e de prefixo não mudam a resposta; o semântico pode errar",
+    "Lote contínuo ocupa o acelerador; perto da capacidade, a fila explode",
+    "Destilação, MoE, especulativa e roteamento reduzem custo de formas diferentes",
+    "Operar: limites, observabilidade, SLO, canário, reversão. Números aqui são hipotéticos"
+   ],
+   "notas": "Feche retomando a pergunta guia: como reduzir custo e latência sem perder muita qualidade e operar com segurança. As respostas do capítulo são alavancas, cada uma atuando em um termo da conta. Custo e latência vêm de tokens de entrada e principalmente de saída, de memória na decodificação e de cálculo no preenchimento. Quantizar economiza memória, com um precipício a ser medido. Caches de KV e de prefixo mantêm o resultado; o de respostas pode errar. Lote contínuo e atenção às filas evitam a parede da latência. Destilação reduz o modelo, MoE reduz o cálculo por token, a decodificação especulativa acelera sem mudar a distribuição, e o roteamento economiza com um bom sinal de confiança. Lembre: preços e hardware são hipotéticos. Pergunta final: qual alavanca você testaria primeiro?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "KWON, W. et al. Efficient memory management for LLM serving with PagedAttention. SOSP, 29., 2023. p. 611-626.",
+    "LEVIATHAN, Y.; KALMAN, M.; MATIAS, Y. Fast inference from transformers via speculative decoding. ICML, 40., 2023.",
+    "HINTON, G.; VINYALS, O.; DEAN, J. Distilling the knowledge in a neural network. arXiv:1503.02531, 2015.",
+    "DETTMERS, T. et al. LLM.int8(): 8-bit matrix multiplication for transformers at scale. NeurIPS, 35., 2022.",
+    "FRANTAR, E. et al. GPTQ: accurate post-training quantization for generative pre-trained transformers. ICLR, 11., 2023.",
+    "JACOB, B. et al. Quantization and training of neural networks for efficient integer-arithmetic-only inference. CVPR, 2018. p. 2704-2713.",
+    "STRUBELL, E.; GANESH, A.; MCCALLUM, A. Energy and policy considerations for deep learning in NLP. ACL, 57., 2019. p. 3645-3650.",
+    "SANH, V. et al. DistilBERT, a distilled version of BERT. arXiv:1910.01108, 2019."
+   ],
+   "notas": "Apresente as referências como ponto de partida para quem quiser se aprofundar. O PagedAttention e a decodificação especulativa são os trabalhos citados nas seções de lote contínuo e de especulação. Hinton e colegas definem a destilação, e Sanh e colegas mostram um exemplo, o DistilBERT. Jacob e colegas, Dettmers e colegas e Frantar e colegas tratam de quantização, e Strubell e colegas discutem energia no treinamento. Lembre que os ganhos relatados nesses trabalhos valem para modelos e sistemas específicos e dependem de implementação e carga; consulte a documentação das ferramentas e confira preços e limites vigentes. As referências completas em ABNT estão no final do capítulo do livro."
+  }
+ ]
+}

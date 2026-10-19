@@ -1,0 +1,329 @@
+{
+ "capitulo": 9,
+ "titulo": "Desenvolvimento de aplicações em Python",
+ "parte": "Parte III — Prompts e aplicações",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Organizar uma aplicação com LLM em camadas, separando a lógica do provedor",
+    "Fazer chamadas robustas: tempo limite, novas tentativas e recuo exponencial",
+    "Estimar a memória de modelos locais e distinguir pesos disponíveis de modelo aberto",
+    "Preparar entradas (mascaramento, limite de tokens) e validar saídas",
+    "Guardar credenciais com segurança e registrar cada chamada",
+    "Testar com provedores simulados e trocar de provedor sem mexer na lógica"
+   ],
+   "notas": "Abra dizendo que este capítulo trata de engenharia de software, não de inteligência artificial. O componente central, o modelo, é caro, externo, probabilístico e muda com o tempo, e isso faz as boas práticas de software pesarem mais. Leia os seis objetivos e peça que a turma marque qual deles lhe parece mais urgente em um projeto real. Avise a regra de honestidade do capítulo: não havia acesso a serviços de LLM nem a modelos neste ambiente, então a arquitetura, o recuo, o mascaramento, o registro e os testes foram executados de verdade com um provedor simulado, enquanto os adaptadores para serviços reais e modelos locais não foram executados. Diga que vamos conferir sempre a documentação vigente."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Do protótipo à produção: a fila de problemas",
+   "itens": [
+    "Duas semanas depois da demonstração, os problemas aparecem em fila",
+    "A chave de acesso estava no código e foi parar no repositório",
+    "O serviço externo caiu por dez minutos e o sistema travou",
+    "Trocar de provedor exigiu mexer em 40 arquivos",
+    "Ninguém soube dizer qual prompt gerou a resposta de terça-feira"
+   ],
+   "notas": "Conte a situação inicial do capítulo como uma história. O protótipo do assistente funcionou na primeira demonstração. Duas semanas depois, em produção, a chave estava escrita no código e foi parar no repositório compartilhado; o serviço externo ficou indisponível por dez minutos e o sistema inteiro travou; um pico de uso estourou o limite de requisições e todos receberam erro; a empresa quis trocar de provedor e descobriu as chamadas espalhadas por 40 arquivos; e ninguém soube responder qual prompt e qual modelo geraram uma resposta antiga. Pergunte à turma qual desses problemas já viveu em outro software. Conclua: nenhum é sobre inteligência artificial, todos são de engenharia, e vamos resolver cada um ao longo do capítulo."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o adaptador de tomada",
+   "texto": "Você não refaz a casa para usar o secador em outro país: troca o adaptador.",
+   "detalhe": "A lógica da aplicação é o secador; o provedor é a tomada do país. A interface é o formato combinado, e cada adaptador traduz esse formato para uma tomada diferente. Trocar de provedor vira trocar uma peça pequena.",
+   "notas": "Use o adaptador de tomada para explicar portas e adaptadores. Quem viaja não manda reformar o secador de cabelo para cada país: leva um adaptador. Na aplicação, a lógica de negócio, que recupera contexto, monta o prompt e valida a saída, é o secador. O provedor do modelo, seja um serviço remoto ou um modelo local, é a tomada. A interface, que no capítulo chamamos de ProvedorLLM, é o encaixe combinado, e cada adaptador traduz esse encaixe para as convenções de um provedor específico. O erro mais caro é espalhar chamadas específicas por todo o código. Pergunte: quantos arquivos você precisaria mudar hoje se trocasse de provedor? Se a resposta for muitos, falta um adaptador."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "As cinco etapas de uma aplicação com LLM",
+   "itens": [
+    "1. Preparar a entrada: limpar, mascarar dados pessoais, montar o prompt",
+    "2. Chamar o modelo, com tempo limite e novas tentativas",
+    "3. Validar a saída: formato, esquema, regras de negócio",
+    "4. Tratar falhas: nova tentativa, plano B, encaminhar a uma pessoa",
+    "5. Registrar: prompt, modelo, parâmetros, métricas, resultado"
+   ],
+   "notas": "Apresente as cinco etapas como a espinha dorsal do capítulo, e diga que cada seção seguinte detalha uma delas. Preparar a entrada inclui limpar o texto, mascarar dados pessoais, montar o prompt e contar tokens. Chamar o modelo exige tempo limite e novas tentativas. Validar a saída retoma o que vimos no Capítulo 8: formato, esquema e regras. Tratar falhas significa decidir o que fazer quando algo dá errado, como repetir, usar um plano B ou chamar uma pessoa. Registrar deixa o rastro que permite responder depois. Pergunta à turma: em qual dessas etapas um erro custaria mais caro em um sistema de atendimento? Não há resposta única, mas vale justificar."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Camadas: a lógica depende da interface",
+   "fig": "f09_camadas",
+   "legenda": "A lógica da aplicação depende de uma interface, e não de um provedor específico; adaptadores traduzem a interface.",
+   "notas": "A figura mostra a arquitetura em camadas. No topo, a lógica da aplicação; no meio, a interface; embaixo, os adaptadores para cada serviço ou modelo local. A seta de dependência aponta sempre para a interface, nunca para um provedor específico. Isso é o padrão de portas e adaptadores. Em Python, typing.Protocol descreve a interface sem exigir herança. Peça que a turma aponte na figura onde ficaria um provedor simulado para testes: ele é só mais um adaptador, o que permite desenvolver e testar tudo sem acessar serviços externos. Reforce que o provedor simulado do capítulo não é um LLM."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: o assistente com provedor simulado",
+   "codigo": "class Assistente:\n    def __init__(self, provedor: ProvedorLLM):\n        self.provedor = provedor\n        self.bm25 = modelos.BM25(...)   # base de 60 documentos\n\n    def responder(self, pergunta):\n        # recupera o melhor documento (BM25), monta o prompt,\n        # chama self.provedor.gerar(...) e devolve resposta e fonte\n\napp = Assistente(ProvedorSimulado())   # simulador, não LLM\nfor p in [\"Qual o valor da multa por atraso na devolução de livros?\",\n          \"Até quando posso trancar a matrícula?\",\n          \"Qual a capital da Austrália?\"]:\n    print(app.responder(p))",
+   "saida": "{'resposta': 'O atraso na devolução gera multa de R$ 1,50 por dia e por exemplar.', 'fonte': 'D12', 'modelo': 'simulado-v1'}\n{'resposta': 'O auxílio-creche de R$ 300,00 mensais por filho de até 5 anos é concedido a estudantes com bolsa permanência, mediante comprovação de...\n{'resposta': 'não consta', 'fonte': None, 'modelo': 'simulado-v1'}",
+   "notas": "Aqui a aplicação roda de ponta a ponta com o provedor simulado, que extrai do contexto a frase mais parecida com a pergunta. Ele não é um LLM e não reproduz suas falhas. A saída real mostra a resposta com a fonte D12 para a pergunta da multa, e, para a capital da Austrália, a resposta não consta, sem fonte. Note quem impôs a abstenção: foi a aplicação, que enviou contexto vazio porque nada na base casava com a pergunta, e o provedor respeitou. A política de abstenção está na classe Assistente, não no provedor. Esse é o benefício de separar as camadas. Pergunta: se trocarmos o provedor, a política de abstenção continua valendo?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Uma chamada de API por dentro",
+   "itens": [
+    "Requisição: autenticação, modelo, mensagens com papéis, parâmetros",
+    "Resposta: texto, razão da parada e contagem de tokens",
+    "Streaming: texto em pedaços, útil para a latência percebida",
+    "Convenções variam: um adaptador por provedor e a documentação oficial",
+    "Adaptadores reais do capítulo: NÃO EXECUTADOS neste ambiente"
+   ],
+   "notas": "Descreva uma chamada típica a um serviço de LLM. A aplicação envia, por HTTP, a autenticação em cabeçalho, o modelo desejado, a lista de mensagens com papéis e os parâmetros. A resposta traz o texto, a razão da parada, como fim natural, limite de tokens ou recusa, e as contagens de tokens usadas. Muitos serviços oferecem streaming. Como as convenções variam, usamos um adaptador por provedor. Sobre os adaptadores do livro, para o SDK da Anthropic e para um serviço HTTP compatível: verificamos que os nomes existem nas versões instaladas, mas nenhuma chamada de rede foi feita. O modelo vem de variável de ambiente e a chave nunca fica no código. Confira sempre a documentação vigente."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Dois tipos de erro, dois tratamentos",
+   "cabecalho": [
+    "Tipo",
+    "Exemplos",
+    "O que fazer"
+   ],
+   "linhas": [
+    [
+     "Transitório",
+     "Tempo esgotado, falha de rede, 5xx, limite de taxa (429)",
+     "Tentar de novo, com recuo exponencial"
+    ],
+    [
+     "Permanente",
+     "400 requisição inválida, 401 credencial, 403 permissão, 404 modelo",
+     "Não repetir: corrigir a causa e alertar"
+    ]
+   ],
+   "notas": "Esta tabela é a decisão central do tratamento de falhas. Erros transitórios podem passar sozinhos: tempo esgotado, falha de rede, indisponibilidade do servidor com códigos 5xx e limite de taxa, o 429. Para eles, a resposta é tentar de novo, respeitando o tempo de espera que o serviço indicar. Erros permanentes não passam: requisição inválida, credencial inválida, falta de permissão e modelo inexistente. Repeti-los só gasta tempo e dinheiro. O inverso também é erro: não repetir um erro transitório deixa o sistema frágil. Pergunta à turma: em qual categoria entra uma chave expirada? Permanente: é preciso corrigir a causa, não insistir."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o telefone que dá ocupado",
+   "texto": "Ligar de novo a cada segundo não resolve; esperar um pouco mais a cada tentativa, sim.",
+   "detalhe": "Recuo exponencial: 1 s, 2 s, 4 s, 8 s... Se mil pessoas ligam no mesmo instante, a linha cai de novo. O jitter é um pouco de aleatoriedade: cada um liga em um momento ligeiramente diferente.",
+   "notas": "Use a ligação para uma central ocupada. Quem rediscar sem parar só piora o congestionamento. A estratégia sensata é esperar um pouco, tentar de novo, e dobrar a espera a cada falha, e isso é o recuo exponencial. Mas há um detalhe: se milhares de clientes falharam ao mesmo tempo, todos voltariam juntos na mesma fração de segundo e derrubariam o serviço outra vez. O jitter, uma parcela aleatória na espera, espalha as tentativas no tempo. O teto impede esperas absurdas. Pergunta à turma: o que acontece com o usuário se o recuo somar mais tempo do que ele tolera? Por isso existe também um tempo limite global."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Recuo exponencial com jitter",
+   "tex": "t_k = min(t_máx, t₀ · 2^k) · (1 + u),   u ~ U(0, j)",
+   "explicacao": [
+    "t₀ é o atraso inicial, t_máx o teto e j o fator de jitter",
+    "Com t₀ = 1 s e sem jitter: 1, 2, 4, 8, 16 s... até o teto",
+    "Exemplo: t₀ = 2 s, teto 20 s: 2, 4, 8, 16, 20; soma 50 s de espera"
+   ],
+   "notas": "Leia a fórmula em voz alta: depois da k-ésima falha, espera-se o menor valor entre o teto e t zero vezes dois elevado a k, multiplicado por um pouco mais de um, com um acréscimo aleatório entre zero e j. Faça o exemplo resolvido do capítulo: com t zero igual a 2 segundos e teto de 20, as esperas são 2, 4, 8, 16 e depois o mínimo entre 20 e 32, que é 20. A soma é 50 segundos de espera, sem contar o tempo de cada tentativa. Interpretação: o teto evita esperas enormes, mas o total precisa caber no que o usuário tolera. Peça que a turma refaça com t zero igual a 1 e teto 30, e confira 1, 2, 4, 8."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: nova tentativa que respeita o tipo de erro",
+   "codigo": "def com_recuo(funcao, max_tentativas=5, t0=1.0, teto=30.0,\n              jitter=0.25, dormir=lambda s: None, rng=None):\n    for k in range(max_tentativas):\n        try:\n            return funcao(), k + 1, esperas\n        except ErroPermanente:\n            raise                      # não repete\n        except ErroTransitorio:\n            if k == max_tentativas - 1:\n                raise                  # esgotou\n            espera = min(teto, t0 * 2 ** k) * (1 + rng.uniform(0, jitter))\n            dormir(espera)             # injetável: testa sem esperar",
+   "saida": "resultado: ok | tentativas: 4 | esperas (s): [1.21, 2.38, 4.42]\nesgotou as tentativas: 429 limite de taxa\nerro permanente, sem repetição: 401 credencial inválida",
+   "notas": "Este trecho é uma versão didática do laço de recuo, resumida aqui. Repare em três decisões: erro permanente é relançado na hora; erro transitório é repetido, e na última tentativa é propagado; e a função dormir é injetável, de modo que os testes rodam sem esperar de verdade. A saída real mostra três casos: um serviço que falha três vezes e funciona na quarta, com esperas de 1,21, 2,38 e 4,42 segundos, isto é, aproximadamente 1, 2 e 4 com jitter; o esgotamento das tentativas, que propaga o erro; e o erro 401, que não é repetido. Pergunta à turma: por que injetar a espera é uma técnica valiosa para testes? Porque o teste verifica o comportamento em milissegundos."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Modelos locais: ganhos, custos e licença",
+   "itens": [
+    "Vantagens: dados no ambiente, custo previsível, independência",
+    "Custos: hardware, manutenção, qualidade em geral menor que os maiores modelos",
+    "Caminhos: biblioteca Transformers, motores otimizados, servidores locais",
+    "Servidor local com API compatível: reaproveita o adaptador HTTP",
+    "Pesos disponíveis não é o mesmo que modelo aberto: leia a licença"
+   ],
+   "notas": "Apresente os três caminhos para executar modelos na própria máquina: a biblioteca Transformers, muito flexível mas exigente em memória; motores otimizados para CPU ou GPU modestas, com modelos quantizados; e servidores locais que expõem uma API HTTP, permitindo reusar o mesmo adaptador do serviço remoto, trocando só a URL. Depois faça a distinção de vocabulário: modelo com pesos disponíveis significa que os parâmetros podem ser baixados, mas nada diz sobre usos permitidos; a licença define isso e muda entre versões; modelo efetivamente aberto, em sentido forte, teria também código de treinamento, descrição dos dados e licença que permita estudar e redistribuir. Poucos modelos grandes cumprem tudo. Mande conferir a licença vigente. O código com Transformers do capítulo não foi executado."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Cuidado com o rótulo \"aberto\"",
+   "itens": [
+    "Pesos disponíveis: dá para baixar e executar localmente",
+    "A licença define o que é permitido, e pode mudar entre versões",
+    "Aberto em sentido forte: pesos, código de treino, dados descritos, licença livre",
+    "A maioria divulga pesos, mas não os dados de treinamento",
+    "Antes de usar comercialmente, leia a licença da versão exata"
+   ],
+   "notas": "Reforce o cuidado com o vocabulário, porque a expressão modelo aberto é usada de forma vaga. Pesos disponíveis dizem que o arquivo pode ser baixado; não dizem que o uso comercial é livre, nem que há acesso aos dados de treinamento ou ao código. Algumas licenças permitem tudo, outras limitam escala, proíbem certos usos ou exigem aceitar políticas. O capítulo cita famílias como as de Touvron e colegas e de Jiang e colegas, que disponibilizaram pesos sob condições que mudam entre versões. A mensagem prática é a de sempre para dados voláteis: confira o texto vigente na página do modelo antes de usar. Pergunta: sua organização tem alguém que lê licenças de modelos? Quem decide?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: o modelo cabe na minha máquina?",
+   "codigo": "def memoria_pesos_gb(n_params, bits):\n    return n_params * bits / 8 / 1e9\n\ndef memoria_kv_gb(camadas, T, n_kv, d_cab, bytes_num=2):\n    return 2 * camadas * T * n_kv * d_cab * bytes_num / 1e9\n\ndef cabe(n_params, bits, camadas, T, n_kv, d_cab, gb, margem=0.15):\n    total = memoria_pesos_gb(n_params, bits) + memoria_kv_gb(\n        camadas, T, n_kv, d_cab)\n    return total, total <= gb * (1 - margem)\n\n# modelos HIPOTÉTICOS; 16 GB; 32 camadas, 4096 tokens, 8 cabeças KV",
+   "saida": "7 bi, 16 bits   pesos+cache ≈  14.5 GB | cabe em 16 GB com 15% de margem? False\n7 bi, 8 bits    pesos+cache ≈   7.5 GB | cabe em 16 GB com 15% de margem? True\n7 bi, 4 bits    pesos+cache ≈   4.0 GB | cabe em 16 GB com 15% de margem? True\n13 bi, 4 bits   pesos+cache ≈   7.0 GB | cabe em 16 GB com 15% de margem? True",
+   "notas": "A memória mínima dos pesos é o número de parâmetros vezes os bits por parâmetro, dividido por oito; é preciso somar o cache KV e uma margem. Os modelos do exemplo são hipotéticos. Pela saída real: o de 7 bilhões em 16 bits precisa de cerca de 14,5 GB e não cabe em 16 GB com 15% de margem; em 8 bits são 7,5 GB e cabe; em 4 bits, 4,0 GB; e o de 13 bilhões em 4 bits, 7,0 GB, também cabe. Note que a quantização reduz memória, mas pode reduzir a qualidade de modo desigual entre tarefas, então é preciso medir. Pergunta à turma: o que acontece com esse total se dobrarmos o contexto para 8 192 tokens? O cache KV dobra."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Com muitos usuários, o cache KV domina",
+   "fig": "f09_memoria",
+   "legenda": "Modelo hipotético de 7 bi de parâmetros (32 camadas, 8 cabeças KV de 128 dim., 4 096 tokens por usuário).",
+   "itens": [
+    "Cada usuário ativo tem seu próprio cache KV",
+    "Exemplo: 7 bi em 4 bits ≈ 3,5 GB de pesos",
+    "Cache por usuário ≈ 0,54 GB; 20 usuários ≈ 10,7 GB",
+    "Total ≈ 14,2 GB: cabe em 24 GB, não em 16 GB com margem de 15%"
+   ],
+   "notas": "A figura mostra a memória total em função do número de usuários simultâneos. Começa pelos pesos e cresce com o cache KV de cada usuário, que passa a dominar quando há muitos. Refaça o exemplo resolvido: modelo hipotético de 7 bilhões em 4 bits, cerca de 3,5 GB; o cache por usuário é 2 vezes 32 camadas vezes 4 096 tokens vezes 8 cabeças vezes 128 dimensões vezes 2 bytes, cerca de 0,54 GB; para 20 usuários, cerca de 10,7 GB; com os pesos, cerca de 14,2 GB, sem ativações. Cabe em 24 GB com folga, mas não em 16 GB com margem de 15%. A lição: dimensionar só pelos pesos subestima a necessidade. Pergunte: e com 50 usuários?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: mascarando dados pessoais",
+   "codigo": "PADROES = [\n    (\"EMAIL\", re.compile(r\"[\\w.+-]+@[\\w-]+\\.[\\w.-]+\")),\n    (\"CPF\", re.compile(r\"\\b\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}\\b\")),\n    (\"TELEFONE\", re.compile(r\"\\(?\\b\\d{2}\\)?\\s?9?\\d{4}-\\d{4}\\b\")),\n]\ndef mascarar(texto): ...   # troca cada achado por [NOME] e conta\n\nlimpo, achados = mascarar(entrada)   # entrada fictícia\nhist, usados = aparar_historico(\n    [\"m1\", \"m2\", \"m3\", \"m4\"], [300, 200, 400, 150], 800)",
+   "saida": "Sou Maria, CPF [CPF], e-mail [EMAIL], telefone [TELEFONE]. Quero cancelar meu plano.\nitens mascarados: {'EMAIL': 1, 'CPF': 1, 'TELEFONE': 1}\nhistórico mantido: ['m2', 'm3', 'm4'] | tokens: 750",
+   "notas": "Antes de chamar o modelo, a aplicação deve enviar só o necessário: é a minimização de dados. O exemplo mascara e-mail, CPF e telefone com expressões regulares, e a saída real mostra os marcadores no lugar dos dados e a contagem de um item de cada tipo. Repare que o nome, Maria, não foi mascarado: expressões regulares simples não detectam nomes, e nenhuma técnica garante remoção completa. Quando a privacidade é requisito forte, combine técnicas e avalie a taxa de falhas. A segunda parte apara o histórico mantendo as mensagens mais recentes que cabem em 800 tokens: ficam m2, m3 e m4, com 750 tokens, e a mais antiga é descartada. Nunca corte instruções em silêncio. Pergunta: que outros dados passariam despercebidos?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Validar a saída em três níveis",
+   "itens": [
+    "Formato: é JSON válido e segue o esquema?",
+    "Conteúdo: regras de negócio, citações, faixas plausíveis",
+    "Política: sem dados pessoais nem instruções proibidas",
+    "A biblioteca pydantic expressa o esquema; regras extras são funções",
+    "Se falhar: nova tentativa limitada, plano B ou uma pessoa"
+   ],
+   "fig": "f09_validacao",
+   "notas": "A validação é o último filtro antes de a saída produzir efeitos. Proponha três níveis. O de formato verifica JSON e esquema, que o pydantic expressa bem. O de conteúdo aplica regras de negócio, confere citações e faixas plausíveis, como vimos no Capítulo 8. O de política impede, por exemplo, que a resposta contenha dados pessoais ou instruções proibidas. A figura mostra a cadeia de proteções ao redor da chamada: preparar a entrada, chamar com tempo limite e recuo, validar e, se necessário, acionar o plano B. Pergunta à turma: se a validação falha três vezes seguidas, o que o sistema deve fazer? Resposta aceitável: plano B ou encaminhar a uma pessoa, e registrar."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: validação com pydantic",
+   "codigo": "class RespostaAtendimento(BaseModel):\n    resposta: str = Field(min_length=1, max_length=500)\n    fonte: Optional[str] = None\n\n    @field_validator(\"resposta\")\n    @classmethod\n    def sem_dados_pessoais(cls, v):\n        _, achados = mascarar(v)\n        if achados:\n            raise ValueError(f\"contém dados pessoais: {achados}\")\n        return v\n\n# três casos: resposta válida, resposta vazia, resposta com telefone",
+   "saida": "OK     | A multa é de R$ 1,50 por dia.              | válida\nFALHA  |                                            | String should have at least 1 character\nFALHA  | Ligue para (61) 98888-7777 para saber mais | Value error, a resposta contém dados pessoais: {'TELEFONE': 1}",
+   "notas": "O esquema impõe tamanho mínimo e máximo à resposta e uma regra de política: a resposta não pode conter dados pessoais, reaproveitando a função de mascaramento. A saída real mostra três casos. A primeira resposta, sobre a multa de R$ 1,50 por dia, é válida. A segunda, vazia, falha porque a string precisa ter ao menos um caractere. A terceira falha porque contém um telefone, e a mensagem de erro cita o achado. Note como a mensagem de erro é útil para registrar ou reenviar ao modelo com limite de tentativas. Limite: passar na validação não prova que a resposta esteja correta, só que respeita as regras. Pergunta: que outra regra de política você acrescentaria?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o disjuntor da casa",
+   "texto": "Quando a rede dá curto, o disjuntor desarma antes de queimar a casa toda.",
+   "detalhe": "No software, depois de várias falhas seguidas o disjuntor abre: para de chamar o serviço e entrega o plano B, rápido. Passado um tempo, testa uma chamada; se der certo, volta ao normal.",
+   "notas": "O disjuntor do quadro elétrico protege a casa: ao detectar problema, desarma, e você troca por uma vela, o plano B, enquanto resolve. No software, o disjuntor, ou circuit breaker, conta falhas seguidas do serviço. Ao chegar ao limite, abre e passa a devolver imediatamente o plano B, sem insistir e sem deixar o usuário esperando. Após um tempo de resfriamento, testa uma chamada; se funcionar, volta ao normal, e se falhar, reabre. O plano B pode ser um modelo menor, uma resposta em cache, uma regra simples ou o encaminhamento a uma pessoa. Pergunta à turma: qual seria o plano B de um assistente de matrículas na semana de inscrição?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: orçamento de tokens e disjuntor",
+   "codigo": "orc = Orcamento(max_tokens_total=500, preco_por_mil_tokens=2.0)  # preço hipotético\nfor n in (200, 200):\n    orc.registrar(n)\nprint(\"tokens usados:\", orc.usado, \"| custo hipotético:\", orc.custo())\ntry:\n    orc.registrar(200)\nexcept RuntimeError as e:\n    print(\"bloqueado:\", e)\n\nd = Disjuntor(limite_falhas=2)\nprint([d.chamar(sempre_falha, lambda: \"resposta padrão\")[1]\n       for _ in range(4)])",
+   "saida": "tokens usados: 400 | custo hipotético: 0.8\nbloqueado: orçamento excedido: 600 > 500 tokens\n['plano_b (falha)', 'plano_b (falha)', 'plano_b (disjuntor aberto)', 'plano_b (disjuntor aberto)']",
+   "notas": "Dois mecanismos de proteção, na versão didática. O orçamento limita os tokens totais: depois de duas chamadas de 200 tokens, o uso é 400 e o custo hipotético, com preço inventado de 2,0 por mil tokens, é 0,8. A terceira chamada de 200 estoura o limite de 500 e é bloqueada, com a mensagem mostrando 600 contra 500. Isso evita fatura inesperada por laços ou ataques. O disjuntor com limite de duas falhas devolve o plano B por falha nas duas primeiras chamadas e, a partir da terceira, com o disjuntor aberto, já nem tenta o serviço. Bibliotecas maduras e os SDKs oferecem versões mais completas. Pergunta: quanto tempo de resfriamento você escolheria, e por quê?"
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a chave é um cartão de crédito",
+   "texto": "Uma chave de acesso é como uma senha com o cartão de crédito anexado.",
+   "detalhe": "Quem a tiver usa o serviço em seu nome. Não a deixe escrita na porta (no código), não a imprima no recibo (nos logs), use uma chave por uso e troque-a se suspeitar de vazamento.",
+   "notas": "Compare a chave de API a uma senha com cartão de crédito anexado: quem a possui usa o serviço em seu nome e a conta chega para você. Daí as regras: nunca escrever credenciais no código nem em arquivos versionados, porque o histórico do repositório guarda a chave para sempre; usar variáveis de ambiente ou gerenciador de segredos, com o arquivo .env no gitignore; menor privilégio, com chaves distintas por aplicação e ambiente; não registrar credenciais em logs; rotacionar e revogar; e varrer commits automaticamente. Se vazar, revogue imediatamente: apagar o commit não desfaz o vazamento. Pergunta à turma: quem aqui já viu uma chave em um repositório? O que foi feito?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: credenciais sem vazar",
+   "codigo": "def obter_credencial(nome_variavel):\n    valor = os.environ.get(nome_variavel)\n    if not valor:\n        raise RuntimeError(f\"variável de ambiente ausente: {nome_variavel} ...\")\n    return valor\n\ndef mascarar_chave(chave):\n    return \"****\" if len(chave) <= 8 else chave[:3] + \"…\" + chave[-2:]\n\nos.environ[\"CHAVE_DEMO_FALSA\"] = \"valor-falso-abcdef123456\"  # FALSO\nprint(\"chave mascarada:\", mascarar_chave(obter_credencial(\"CHAVE_DEMO_FALSA\")))\nprint(procurar_segredos(codigo_ruim))   # varredura de padrões de chave",
+   "saida": "chave mascarada para exibição: val…56\nerro claro: variável de ambiente ausente: VARIAVEL_QUE_NAO_EXISTE (defina-a fora do código; nunca versione)\nsegredos encontrados no código: ['api_key=\"abcdef1234567890XYZ…']\nsegredos encontrados no código bom: []",
+   "notas": "O código demonstra três hábitos. Ler a credencial do ambiente e, se faltar, falhar com clareza, dizendo qual variável falta, sem imprimir valores. Mascarar a chave quando for preciso exibi-la: aparecem só as três primeiras e as duas últimas posições. E varrer o código à procura de padrões de segredo, como api_key igual a uma sequência longa. A saída real mostra a chave falsa mascarada, o erro claro para a variável inexistente, o segredo encontrado no código ruim e nenhum segredo encontrado no código bom, que lê a chave do ambiente. O valor usado na demonstração é falso, de propósito. Pergunta: por que a mensagem de erro não deve mostrar o valor da variável?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: um registro por chamada",
+   "codigo": "def registrar_chamada(arquivo, provedor, prompt_id, params,\n                     resposta, latencia_s, status, entrada_texto):\n    linha = {\"ts\": ..., \"provedor\": provedor, \"modelo\": ...,\n             \"prompt_id\": prompt_id, \"params\": asdict(params),\n             \"tokens_entrada\": ..., \"tokens_saida\": ...,\n             \"latencia_s\": ..., \"status\": status,\n             \"hash_entrada\": sha256(entrada_texto)[:16]}\n    # uma linha JSON por chamada, em arquivo .jsonl\n\n# 20 consultas da base passam por AssistenteRegistrado (simulado)",
+   "saida": "chamadas registradas: 20\nlatência mediana (s): 0.0001 | tokens de saída (soma): 350",
+   "notas": "Cada chamada deve deixar um rastro para responder, depois, qual prompt, qual modelo, quais parâmetros, quanto custou, quanto demorou e se deu certo. Uma linha JSON por chamada é simples e poderosa. Cuidado com privacidade: registre identificadores e hashes do conteúdo, e o texto integral só quando houver necessidade e base legal, com acesso controlado e retenção limitada. A saída real mostra que foram registradas 20 chamadas e a latência mediana do simulador, 0,0001 segundo, com 350 tokens de saída no total; o exemplo de registro, incluindo o hash da entrada, também é impresso pelo código. Latências do simulador não representam as de um serviço real. Pergunta: com esse registro, como responder qual prompt gerou a resposta de terça?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: trocar de provedor sem mexer na lógica",
+   "codigo": "class ProvedorPrimeiraFrase:      # outro provedor simulado\n    nome = \"primeira-frase\"\n    def gerar(self, mensagens, params): ...\n\ndef teste_abstencao(provedor):\n    r = Assistente(provedor).responder(\"Qual a capital da Austrália?\")\n    assert r[\"resposta\"] == \"não consta\" and r[\"fonte\"] is None\n\ndef teste_cita_fonte(provedor): ...   # espera fonte D12 e \"R$ 1,50\"\n\nfor prov in (ProvedorSimulado(), ProvedorPrimeiraFrase()):\n    ...   # roda os dois testes, sem rede",
+   "saida": "simulado        -> {'abstenção': 'passou', 'cita fonte': 'passou'}\nprimeira-frase  -> {'abstenção': 'passou', 'cita fonte': 'passou'}",
+   "notas": "A recompensa da arquitetura: dois provedores diferentes passam nos mesmos testes e a classe Assistente não foi alterada. Os testes não usam rede: um verifica a abstenção para a pergunta sem resposta e outro verifica que a resposta cita a fonte D12 com o valor da multa. A saída real mostra os dois provedores passando nos dois testes. Se um terceiro provedor, como um LLM real, falhar, o teste revela o comportamento dele, e a lógica da aplicação permanece estável. Com modelos reais, os testes devem ser tolerantes à variabilidade, verificando propriedades e usando várias execuções, e não exigir texto idêntico. Pergunta: que outro teste sem rede você escreveria?"
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limitações",
+   "itens": [
+    "Credenciais no código; chamadas espalhadas pela aplicação",
+    "Repetir erro permanente; não repetir erro transitório",
+    "Empilhar repetições do SDK e do seu próprio laço",
+    "Sem tempo limite, sem orçamento, sem limite de concorrência",
+    "Adaptadores reais não executados; simulador não é LLM; regex não basta para privacidade"
+   ],
+   "notas": "Reúna os erros do capítulo. Credenciais no código; chamadas ao provedor espalhadas; repetir erros permanentes e não repetir os transitórios; empilhar repetições, porque muitos SDKs oficiais já repetem automaticamente erros transitórios e um laço próprio multiplica espera e carga, então leia a documentação antes; ausência de tempo limite, de orçamento e de limite de concorrência; registrar texto sensível sem controle; fixar nomes de modelos no código; confiar na saída sem validar; testar só com o serviço real. Depois as limitações honestas: os adaptadores reais não foram executados, o provedor simulado não é um LLM, o mascaramento por regex serve de ilustração, e preços, licenças e versões mudam: confira a documentação."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Aplicação em camadas, robusta e testável",
+   "passos": [
+    "Defina a interface ProvedorLLM e implemente dois provedores simulados diferentes",
+    "Escreva a classe da aplicação dependendo só da interface",
+    "Acrescente recuo exponencial com espera injetável; teste um provedor que falha duas vezes",
+    "Mascare dados pessoais na entrada e valide a saída com pydantic",
+    "Registre cada chamada em JSON Lines, sem texto integral, e calcule métricas do log",
+    "Escreva ao menos cinco testes automáticos que não usem rede",
+    "Opcional: adaptador real conforme a documentação, sem credenciais no código"
+   ],
+   "notas": "Esta atividade espelha o capítulo e leva o grupo a construir a aplicação completa com provedores simulados. Insista nos pontos que mais protegem: a dependência apenas da interface, a espera injetável para testar o recuo sem esperar, o registro sem texto integral e ao menos cinco testes sem rede. O sétimo passo é opcional e só vale para quem tem acesso a um serviço ou a um modelo local: o adaptador deve seguir a documentação oficial, as credenciais ficam fora do código, e os mesmos testes devem rodar, registrando versão do modelo, data e parâmetros. Dê uns quinze minutos para os primeiros passos em duplas e peça que mostrem a saída do teste. O Exercício prático 9.1 guia o trabalho."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o erro 429",
+   "pergunta": "Um serviço devolve o código 429. Como esse erro deve ser tratado?",
+   "opcoes": [
+    "Como transitório: repetir com recuo exponencial, respeitando a espera indicada",
+    "Como permanente: abandonar a requisição sem registrar nada sobre ela",
+    "Como erro de credencial: trocar a chave e reenviar a chamada",
+    "Como requisição inválida: reenviar o mesmo corpo sem esperar"
+   ],
+   "resposta": "A",
+   "explicacao": "O 429 indica limite de taxa excedido; costuma passar com o tempo, e repetir de imediato agravaria a carga.",
+   "notas": "Dê um minuto e peça voto. A correta é a primeira: o 429 é limite de taxa, um erro transitório. A segunda trata como permanente e abandona sem registrar, o que perde informação. A terceira confunde com credencial, que seria 401. A quarta confunde com requisição inválida, 400, e ainda propõe reenviar sem esperar, o que agravaria a sobrecarga. Retome a tabela de erros transitórios e permanentes e o recuo exponencial com jitter. Pergunte: e se o serviço indicar o tempo de espera na resposta? Deve-se respeitá-lo."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "pesos disponíveis",
+   "pergunta": "O que significa dizer que um modelo tem \"pesos disponíveis\"?",
+   "opcoes": [
+    "Que a licença permite qualquer uso comercial, em qualquer escala",
+    "Que o modelo é aberto, com código e dados de treinamento publicados",
+    "Que os parâmetros podem ser baixados e executados, sem definir os usos permitidos",
+    "Que o modelo foi treinado sem dados protegidos por direitos autorais"
+   ],
+   "resposta": "C",
+   "explicacao": "A licença da versão específica define o que se pode fazer; pesos disponíveis não equivalem a modelo aberto.",
+   "notas": "A resposta correta é a terceira: pesos disponíveis significam que os parâmetros podem ser baixados e executados localmente, e nada dizem sobre os usos permitidos. A primeira atribui à expressão uma licença livre, que ela não garante. A segunda descreve o sentido forte de modelo efetivamente aberto, que exige código, descrição dos dados e licença que permita estudar e redistribuir, e poucos modelos grandes o cumprem. A quarta fala de dados de treinamento, tema que a expressão não cobre. Reforce: leia a licença da versão exata e confira a página do modelo no momento do uso."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "memória dos pesos",
+   "pergunta": "Qual a memória mínima, só para os pesos, de um modelo hipotético de 70 bilhões de parâmetros em 4 bits?",
+   "opcoes": [
+    "Cerca de 4 GB",
+    "Cerca de 70 GB",
+    "Cerca de 35 GB",
+    "Cerca de 140 GB"
+   ],
+   "resposta": "C",
+   "explicacao": "N × b/8 = 70×10⁹ × 4/8 = 35×10⁹ bytes, sem contar o cache KV e as ativações.",
+   "notas": "Peça que a turma faça a conta no papel. A memória dos pesos é N vezes b dividido por 8, com b em bits: 70 bilhões vezes 4, dividido por 8, dá 35 bilhões de bytes, ou 35 GB. Os 140 GB seriam em 16 bits, e os 70 GB em 8 bits. A alternativa de 4 GB confunde bits com bilhões de parâmetros. Lembre que esse é só o mínimo: é preciso somar o cache KV, que cresce com o número de usuários e com o contexto, e uma margem para ativações. O modelo é hipotético."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Cinco etapas: preparar, chamar, validar, tratar falhas, registrar",
+    "Portas e adaptadores: a lógica depende da interface, não do provedor",
+    "Transitório: repetir com recuo e jitter; permanente: não repetir",
+    "Tempo limite, orçamento, disjuntor e plano B",
+    "Memória local: pesos mais cache KV; pesos disponíveis não é aberto",
+    "Mascare, limite tokens, valide; credenciais fora do código; registre cada chamada"
+   ],
+   "notas": "Feche com os pontos para levar. Uma aplicação com LLM tem cinco etapas. A lógica depende de uma interface e cada provedor é um adaptador, o que permite trocar de provedor e testar sem rede. Erros transitórios pedem nova tentativa com recuo exponencial e jitter; os permanentes, não. Use tempo limite, orçamento, limite de concorrência, disjuntor e plano B. Em modelos locais, a memória é pesos mais cache KV, e pesos disponíveis não é modelo aberto. Mascare dados pessoais, limite tokens com o tokenizador certo e valide em três níveis. Credenciais nunca no código. Registre versão do prompt, modelo, parâmetros, tokens, latência e status. Pergunta final: o que você mudaria no seu próximo projeto?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "ANTHROPIC. Claude API documentation e SDK oficial para Python. Conferir a documentação vigente.",
+    "HUGGING FACE. Transformers documentation. Verificar a versão instalada.",
+    "PYDANTIC. Pydantic documentation. Verificar a versão instalada.",
+    "OWASP FOUNDATION. OWASP top 10 for large language model applications. Consultar a versão vigente.",
+    "TOUVRON, H. et al. LLaMA: open and efficient foundation language models. arXiv:2302.13971, 2023.",
+    "JIANG, A. Q. et al. Mistral 7B. arXiv:2310.06825, 2023.",
+    "WOLF, T. et al. Transformers: state-of-the-art natural language processing. EMNLP: System Demonstrations, 2020. p. 38-45."
+   ],
+   "notas": "Apresente as referências como leituras de aprofundamento e lembre que a documentação oficial é a fonte para interfaces, parâmetros, limites e licenças, que mudam com frequência. A lista do OWASP é revisada periodicamente, então consulte a versão vigente. Touvron e colegas e Jiang e colegas descrevem famílias de modelos cujos pesos foram disponibilizados sob licenças que variam entre versões. Wolf e colegas apresentam a biblioteca Transformers. Sugira que a turma abra a documentação do SDK ou da biblioteca que pretende usar e confira os nomes dos parâmetros aceitos pelo modelo escolhido antes de escrever o adaptador."
+  }
+ ]
+}

@@ -1,0 +1,424 @@
+{
+ "capitulo": 11,
+ "titulo": "Geração aumentada por recuperação (RAG)",
+ "parte": "Parte III — Prompts e aplicações",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Explicar por que usar RAG e o que ele não garante",
+    "Montar o pipeline: indexação, recuperação, prompt, geração e verificação",
+    "Escolher o tamanho dos fragmentos medindo custo e cobertura",
+    "Avaliar busca e geração separadamente, com intervalos de confiança",
+    "Diagnosticar falhas: documento errado, antigo ou hostil",
+    "Comparar RAG, ajuste fino e contexto longo; cuidar da governança de dados"
+   ],
+   "notas": "Abra dizendo que este capítulo trata de um assistente que responde com base em documentos próprios, citando a fonte. A palavra-chave é avaliar: não basta construir, é preciso medir cada etapa. Percorra os seis objetivos rapidamente e avise a turma de que todos os experimentos usam uma base fictícia, a Universidade Federal Aurora, com 60 documentos, e um gerador de respostas simulado, que não é um LLM. Os números mostram o método de avaliação, não o comportamento de modelos reais. Pergunte: quem já recebeu uma resposta de um assistente que parecia certa, mas estava inventada?"
+  },
+  {
+   "tipo": "topico",
+   "titulo": "A secretaria e as mesmas perguntas",
+   "itens": [
+    "Perguntas repetidas: trancamento, multa da biblioteca, número de disciplinas",
+    "As respostas estão em 60 normas espalhadas por portais e PDFs",
+    "Problema 1: o modelo nunca leu as normas desta universidade",
+    "Problema 2: as normas mudam, e o modelo conhece só um retrato antigo",
+    "Ideia: procurar os trechos e entregá-los ao modelo junto com a pergunta"
+   ],
+   "notas": "Conte a situação inicial. A secretaria da Universidade Federal Aurora, que é fictícia, recebe todo semestre as mesmas perguntas, e as respostas estão em 60 normas. Alguém propõe colocar um modelo de linguagem para responder. Surgem dois problemas: o modelo nunca leu essas normas e pode inventar algo plausível, e as normas mudam, enquanto o modelo foi treinado com um retrato antigo do mundo. A solução é o RAG: procurar os trechos relevantes e entregá-los ao modelo junto com a pergunta. Pergunte à turma que novos problemas podem surgir: busca errada, modelo que ignora o texto, pergunta sem resposta, documento malicioso."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: prova com consulta",
+   "texto": "Responder de cabeça é uma coisa. Fazer a prova com o regulamento aberto é outra.",
+   "detalhe": "Quem consulta erra menos prazos e valores e pode apontar a página. Mas só se achar a página certa, ler direito e não confiar em regulamento velho. Se a pergunta não está lá, o bom candidato escreve: não consta.",
+   "notas": "Use a prova com consulta. Dois estudantes recebem a mesma questão sobre o prazo de trancamento. O primeiro responde de memória, e pode lembrar do prazo do semestre passado. O segundo abre o regulamento, localiza o artigo e responde apontando a página. O segundo tende a errar menos nos detalhes. Mas há condições: precisa achar a página certa, ler direito e usar um regulamento atual. E se a questão não estiver no regulamento, a resposta honesta é não consta. Pergunte: o que acontece se o estudante abrir o regulamento errado? É exatamente o risco de uma busca ruim."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Por que usar RAG",
+   "itens": [
+    "Conhecimento desatualizado: o treino tem data de corte",
+    "Conhecimento privado: documentos internos não estavam no treino",
+    "Falta de rastreabilidade: resposta de memória não aponta a fonte",
+    "RAG acrescenta uma memória externa e consultável",
+    "Hoje: recuperar texto e incluí-lo no prompt (Lewis et al., 2020; Gao et al., 2023)"
+   ],
+   "notas": "O modelo guarda o que aprendeu nos seus parâmetros, a chamada memória paramétrica. Isso traz três limites práticos. Primeiro, a data de corte do treinamento: normas, preços e prazos mudam depois. Segundo, documentos internos de uma organização não estavam no treino e não devem estar no modelo de outra pessoa. Terceiro, uma resposta de memória não cita fonte. O RAG acrescenta uma memória externa, que pode ser consultada. A proposta clássica de Lewis e colegas, de 2020, usava um índice vetorial; hoje o termo designa qualquer arranjo que recupera texto e o coloca no prompt. Gao e colegas organizam as variações em um levantamento."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "RAG ancora, mas não garante",
+   "itens": [
+    "A busca pode trazer o documento errado",
+    "O modelo pode ignorar ou distorcer o que leu",
+    "O documento pode estar desatualizado ou em conflito",
+    "Documentos hostis podem tentar dar ordens ao modelo",
+    "Por isso o capítulo gira em torno de medir, não de supor"
+   ],
+   "notas": "Este é o aviso central do capítulo. O RAG ajuda a ancorar as respostas em documentos e a torná-las rastreáveis, mas não garante correção. Cada item da lista é um modo de falhar que vamos demonstrar com números mais adiante: busca errada, contexto ignorado, versões conflitantes e documentos com instruções maliciosas. Insista na postura: quem vende RAG como cura para respostas inventadas está supondo que esses riscos desapareceram. Nós vamos medi-los. Pergunte à turma: se a busca trouxer o documento errado, melhorar o prompt resolve? Não resolve, e veremos por quê no próximo slide."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O pipeline em cinco etapas",
+   "fig": "f11_pipeline",
+   "legenda": "Linha de cima: indexação, feita uma vez. Linha de baixo: executada a cada pergunta. Cada etapa tem sua pergunta de avaliação.",
+   "notas": "Apresente as cinco etapas. Indexação, feita antes e offline: dividir os documentos em fragmentos, anexar metadados e calcular as representações. Recuperação: buscar os fragmentos mais relevantes, aplicando filtros de acesso e vigência. Montagem do prompt: ordenar, cortar por limite de tokens, delimitar e numerar. Geração: o modelo responde citando os documentos, ou se abstém. Verificação: checar por código se as citações existem. A separação importa porque uma resposta ruim pode ter causas diferentes. Se a busca falhou, melhorar o prompt não adianta; se a busca acertou e o modelo errou, melhorar a busca não adianta. Sem medir etapa por etapa, o time conserta a parte errada."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Fragmentos e seus metadados",
+   "itens": [
+    "Fragmento (chunk): a unidade que o índice guarda e o prompt recebe",
+    "Metadados: documento de origem, título, categoria, data, versão",
+    "Vigência: o documento está em vigor?",
+    "Permissões de acesso: quem pode ver",
+    "Metadados permitem filtrar, citar, auditar e excluir"
+   ],
+   "notas": "Um fragmento é a unidade que o índice guarda e que o prompt recebe. Ele carrega metadados: o identificador do documento, usado na citação entre colchetes, o título, a categoria, a data, a versão, a vigência e as permissões de acesso. Dê um exemplo oral: um fragmento do TCC leva o identificador D27, a categoria Estágio e TCC e o título do documento. Metadados bem planejados permitem filtrar documentos antigos, citar a fonte, auditar uma resposta e excluir um documento quando necessário. Pergunte: que metadado você usaria para evitar que um aluno de graduação veja um documento da pós-graduação? A resposta é a permissão por papel."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: o tamanho do fragmento importa",
+   "codigo": "# 60 documentos agrupados por categoria em 9 \"regulamentos\" longos\nfor nome, tam in [(\"1 frase\",1),(\"2 frases\",2),(\"4 frases\",4),\n                  (\"8 frases\",8),(\"regulamento\",None)]:\n    fr = fragmentar(LONGOS, \"documento\") if tam is None else \\\n         fragmentar(LONGOS, \"frases\", tamanho=tam, passo=max(1, tam//2))\n    ix = Indice(fr, usar_titulo=False)\n    ...   # k=1 e k=3: média de tokens no contexto e fração com o trecho da resposta",
+   "saida": "fragmento     n frag. |  k=1: tokens  trecho |  k=3: tokens  trecho\n1 frase           180 |           10    0.28 |           36    0.65 |\n2 frases          171 |           26    0.74 |           80    0.87 |\n4 frases           79 |           50    0.85 |          156    0.91 |\n8 frases           33 |          103    0.80 |          318    0.89 |\nregulamento         9 |          313    0.87 |          919    0.98 |",
+   "notas": "Este experimento mostra o compromisso do tamanho. Agrupamos os documentos em nove regulamentos longos e medimos, para cada tamanho de fragmento, quantos tokens aproximados vão ao contexto e em que fração das consultas o trecho com a resposta está presente. Com uma frase, o trecho aparece em 28 por cento dos casos com k igual a 1. Com duas a quatro frases, a cobertura salta para 74 e 85 por cento. Com oito frases ou o regulamento inteiro, o custo explode, 919 tokens com k igual a 3 no regulamento, sem ganho proporcional. Não existe tamanho universal: meça. São 46 consultas e documentos sintéticos, então o que vale é o método."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: fichas de estudo",
+   "texto": "Fichas muito curtas perdem o contexto. Fichas enormes viram a apostila inteira.",
+   "detalhe": "Uma ficha com só uma frase pode separar o prazo do assunto a que ele pertence. Uma ficha com o capítulo todo traz muito texto inútil e gasta seu tempo. O tamanho certo você descobre testando com perguntas reais.",
+   "notas": "Peça que a turma imagine estudar para a prova com fichas. Se cada ficha tem uma única frase, pode acontecer de o prazo estar numa ficha e o assunto na anterior: você acha o número, mas não sabe de que se trata. Se cada ficha é o capítulo inteiro, você acha tudo, mas precisa ler páginas para encontrar a resposta, e na prova isso gasta tempo. No RAG, o tempo equivale a tokens, que custam dinheiro e diluem a relevância. Uma prática comum é fragmentar respeitando a estrutura, seções, itens, artigos, e usar sobreposição entre janelas vizinhas. Lembre: a escolha deve vir de medição, não de moda."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Busca: documentos diretos e paráfrases",
+   "fig": "f11_recuperacao",
+   "legenda": "Recall do documento relevante com k=3, por método e tipo de consulta, com IC de 95% (bootstrap).",
+   "itens": [
+    "Diretas (38): quase perfeitas já com k=1",
+    "Paráfrases (8): falham de 25% a 37,5% mesmo com k=5",
+    "Com 8 casos, uma consulta muda a taxa em 12,5 pontos",
+    "Aqui o híbrido não superou BM25 e LSA",
+    "ICs se sobrepõem: diferenças são ruído"
+   ],
+   "notas": "A recuperação reaproveita BM25 e LSA do Capítulo 10, mais a busca híbrida. Medimos o recall do documento relevante, que na prática é o hit em k. As 46 consultas respondíveis são 38 diretas, com vocabulário próximo ao do documento, e 8 paráfrases, com vocabulário distante. Nas diretas, a recuperação é quase perfeita já com k igual a 1. Nas paráfrases, mesmo com k igual a 5 falham de 25 a 37,5 por cento. Atenção: com só 8 consultas, uma única muda a taxa em 12,5 pontos, então as diferenças entre métodos são ruído e os intervalos se sobrepõem. Nesta base o híbrido não foi melhor. Pergunte: o que você faria para tirar uma conclusão sólida? Mais paráfrases."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Montando o contexto",
+   "itens": [
+    "Delimitadores: cada documento entre marcas, tratado como dado, nunca instrução",
+    "Citações no formato [D12], verificáveis por código",
+    "Ordem: do mais para o menos relevante, por padrão",
+    "Limite de tokens: cortar fragmentos inteiros, não pedaços",
+    "Sanitização dos delimitadores e instrução de abstenção"
+   ],
+   "notas": "Recuperados os fragmentos, é preciso transformar uma lista em prompt. Os delimitadores marcam o início e o fim de cada documento, e o sistema diz que o conteúdo entre eles é dado, nunca instrução. As citações pedem o identificador do documento, e o código pode checar se o identificador citado está entre os fornecidos. A ordem, por padrão, vai do mais para o menos relevante. O limite de tokens obriga a decidir o que cortar, de preferência fragmentos inteiros. Antes de inserir, sanitizamos sequências que imitam os delimitadores. E o prompt define uma saída legítima: não consta nos documentos fornecidos. Pergunte à turma: por que numerar e delimitar ajuda tanto o modelo quanto o verificador?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: o que cabe no orçamento de tokens",
+   "codigo": "frs5 = [IX.fr[i] for i, _ in IX.buscar(q, \"hibrido\", 5)]\nfor lim in (None, 120, 80, 50):\n    _, incl, cort = montar_contexto(frs5, limite_tokens=lim)\n    print(f\"limite={str(lim):>4} | incluídos={incl} | cortados={cort}\")",
+   "saida": "limite=None | incluídos=['D10', 'D60', 'D59', 'D45', 'D54'] | cortados=[]\nlimite= 120 | incluídos=['D10', 'D60'] | cortados=['D59', 'D45', 'D54']\nlimite=  80 | incluídos=['D10'] | cortados=['D60', 'D59', 'D45', 'D54']\nlimite=  50 | incluídos=['D60'] | cortados=['D10', 'D59', 'D45', 'D54']",
+   "notas": "A pergunta é quanto custa a segunda via do diploma. Sem limite, entram cinco fragmentos. Com 120 tokens, ficam dois. Com 80, fica só o D10, que é o certo. Com 50, o D10 não cabe e um fragmento menor, porém menos relevante, o D60, entra no lugar. Esse é o risco: cortar sem pensar em tamanho pode remover justamente a melhor evidência. Em termos agregados, com k igual a 5, um limite de 80 tokens mantém o documento relevante em 84,8 por cento das consultas, contra 91,3 sem limite. Alternativas: resumir fragmentos, reduzir k, ou reservar orçamento ao primeiro colocado. A contagem de tokens aqui é aproximada."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: a mala com limite de peso",
+   "texto": "O avião aceita só 23 kg. O que você deixa de fora?",
+   "detalhe": "Não vale cortar a metade de uma blusa: leva-se a peça inteira ou deixa-se em casa. E se a peça mais importante for pesada demais, ela pode ficar para trás, enquanto uma camiseta leve embarca. Por isso o orçamento de tokens exige estratégia.",
+   "notas": "A janela de contexto é uma mala com limite de peso, e cada token pesa. Quando o orçamento acaba, o sistema precisa decidir o que não embarca. O melhor é cortar fragmentos inteiros, menos relevantes, em vez de metade de um fragmento, que pode deixar uma frase sem sentido. E há a armadilha vista no experimento: se o fragmento mais importante é grande demais, ele pode ser pulado e um fragmento pequeno, menos útil, entra no lugar. Peça que a turma proponha soluções: resumir os fragmentos, diminuir k, ou reservar parte do orçamento para o primeiro colocado, como quem garante o espaço do documento mais importante antes de arrumar o resto."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: escolhendo o limiar no DEV",
+   "codigo": "DEV, TESTE = divisao(CONSULTAS)      # metades, alternando dentro de cada tipo\nfor lim in np.arange(0.0, 0.81, 0.1):\n    a, b, s = desempenho(avaliar(pipeline(lim), DEV))\n    ...   # respostas corretas, abstenção correta, média\nLIM = melhor[0]                      # escolhido no DEV, medido só no TESTE",
+   "saida": "limiar |  respostas corretas  abstenção correta  média\n   0.3 |               0.783              0.400  0.591\n   0.4 |               0.739              0.600  0.670\n   0.5 |               0.739              1.000  0.870\n   0.7 |               0.522              1.000  0.761\nlimiar escolhido no DEV: 0.5",
+   "notas": "O gerador é um programa de regras, não um LLM: para cada frase calcula a cobertura ponderada da pergunta, a raridade dos radicais em comum sobre a dos radicais da pergunta, e se abstém quando a melhor frase fica abaixo do limiar lambda. Para não ajustar o limiar nos mesmos dados em que medimos, dividimos as 56 consultas em DEV e TESTE, 28 cada. No DEV, com limiar até 0,3 o sistema responde a tudo e se abstém corretamente em só 40 por cento das perguntas sem resposta: ele alucina frases soltas do contexto. Com 0,5, a abstenção correta chega a 100 por cento e as respostas corretas ficam em 73,9. Em 0,7, as respostas corretas caem a 52,2 por cento: o sistema se abstém de perguntas que tinham resposta. O critério, a média dos dois, é escolha de projeto."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Seis desfechos possíveis",
+   "cabecalho": [
+    "Desfecho",
+    "Significado"
+   ],
+   "linhas": [
+    [
+     "ok",
+     "Resposta contém o trecho esperado"
+    ],
+    [
+     "falha_recuperacao",
+     "O documento relevante não chegou ao contexto"
+    ],
+    [
+     "geracao_errada",
+     "Documento no contexto, resposta errada"
+    ],
+    [
+     "abstencao_indevida",
+     "Havia resposta, mas disse \"não consta\""
+    ],
+    [
+     "ok_abstencao",
+     "Sem resposta na base, e o sistema se absteve"
+    ],
+    [
+     "alucinacao_sem_resposta",
+     "Sem resposta na base, mas respondeu algo"
+    ]
+   ],
+   "notas": "Para cada consulta, classificamos o desfecho em um destes seis tipos. Com isso separamos a recuperação, que falha quando o documento não chega ao contexto, da geração, que falha quando o documento está lá e a resposta sai errada ou o sistema se abstém sem necessidade. Medimos também a fidelidade ao contexto por checagem determinística: o identificador citado existe, a afirmação é trecho literal e os números aparecem no contexto. No TESTE, o documento certo chegou ao contexto em 91,3 por cento, mas só 57,1 por cento tiveram desfecho correto, com intervalo de 39,3 a 75,0. As 5 perguntas sem resposta foram todas tratadas corretamente. A fidelidade é 1,00 por construção, porque o simulador só copia frases."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Exemplo resolvido: de que lado está o erro?",
+   "itens": [
+    "100 perguntas respondíveis; documento certo no contexto em 90; acertos: 72",
+    "Falhas de recuperação: 100 − 90 = 10",
+    "Falhas de geração: 90 − 72 = 18",
+    "Recuperação: 36% dos 28 erros; geração: 64%",
+    "Prompt perfeito: acerto vai de 72% a, no máximo, 90%"
+   ],
+   "notas": "Resolva o exemplo no quadro. De 100 perguntas, o documento relevante está no contexto em 90, então 10 falhas são de recuperação. Dos 90 casos com o documento presente, o sistema acertou 72, então 18 são falhas de geração. A recuperação responde por 10 dos 28 erros, 36 por cento, e a geração por 18, 64 por cento. Se a equipe melhorar o prompt ao máximo, corrige no máximo os 18 erros de geração, e o acerto vai de 72 a 90 por cento. Os 10 restantes só se resolvem melhorando a busca. Interpretação: o teto de acerto de um RAG é o recall da recuperação. Pergunte: onde investir primeiro nesse caso?"
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: duas versões da mesma norma",
+   "codigo": "# D61: nova versão do trancamento (conteúdo FICTÍCIO); D02: a antiga\nr1, ix1 = responder_com({}, DOCS + [DOC_NOVO])\nr3, _   = responder_com({}, DOCS + [DOC_NOVO], ordem=\"inversa\")\nr2, ix2 = responder_com({\"D02\": {\"vigente\": False}}, DOCS + [DOC_NOVO])\nprint(\"conflito:\", detectar_conflito(r1[\"contexto_frs\"]))",
+   "saida": "duas versões no índice        | ... | ... até 3 semestres ... [D61]\nduas versões, ordem inversa   | ... | ... até 4 semestres ... [D02]\nsó a versão vigente           | ... | ... até 3 semestres ... [D61]\nconflito: {'Trancamento de matrícula': ['D02', 'D61']}\nfidelidade das duas respostas: [True, True]",
+   "notas": "Suponha que o prazo de trancamento mudou e que o novo documento, D61, foi indexado sem retirar o antigo, D02. O sistema responde de forma inconsistente: na ordem de relevância cita a versão nova, com 3 semestres; invertendo a ordem do contexto, cita a antiga, com 4. E a checagem de fidelidade aprova as duas, porque cada resposta é fiel ao documento que cita. Fidelidade não significa verdade, nem atualidade. As defesas são de governança: metadados de vigência, retirar do índice o que foi substituído e um detector simples de conflito, mesmo título com identificadores diferentes. Marcando D02 como não vigente, a resposta volta a ser a nova. Os textos mostrados na saída foram abreviados."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Falhas típicas e seus limites",
+   "itens": [
+    "Contexto ignorado: validação por código descarta respostas infiéis (8 de 8), mas não as conserta",
+    "Versões conflitantes: fidelidade aprova as duas respostas",
+    "Perdido no meio (Liu et al., 2024): efeito relatado em modelos reais",
+    "O simulador não tem esse viés e não pode reproduzi-lo",
+    "Meça com o seu modelo, variando a posição do documento"
+   ],
+   "notas": "Reúna as falhas. No experimento do contexto ignorado, configuramos o gerador simulado para responder de memória em 25 por cento das vezes, um comportamento programado, não uma medida de LLM. A validação por código descartou as 8 respostas infiéis, trocando uma resposta errada por uma abstenção; as respostas corretas ficaram em 0,478 com e sem validação. Quanto à posição no contexto, Liu e colegas mostraram em modelos reais que o desempenho costuma ser maior quando a informação está no início ou no fim e menor no meio, variando entre modelos. Nosso simulador leu tudo do mesmo jeito: 0,679 nas três ordens, o que só mostra que ele é incapaz de exibir o efeito."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "RAG avançado: nem sempre ajuda",
+   "cabecalho": [
+    "Variante",
+    "Direta k=1",
+    "Paráfrase k=1",
+    "Paráfrase k=5"
+   ],
+   "linhas": [
+    [
+     "Híbrido (base)",
+     "0,947",
+     "0,375",
+     "0,625"
+    ],
+    [
+     "Reescrita PRF",
+     "0,658",
+     "0,250",
+     "0,625"
+    ],
+    [
+     "Multiconsulta + RRF",
+     "0,947",
+     "0,375",
+     "0,625"
+    ],
+    [
+     "Duas etapas (reranqueio lexical)",
+     "0,974",
+     "0,125",
+     "0,625"
+    ],
+    [
+     "Reescrita manual (cota superior)",
+     "0,947",
+     "1,000",
+     "1,000"
+    ]
+   ],
+   "notas": "Reescrita da consulta, multiconsulta com fusão de posições e recuperação em duas etapas são variações da busca básica, e cada uma deve ser medida com a mesma régua. Veja o que não funciona. A reescrita por pseudo-relevância piora a precisão com k igual a 1 nas consultas diretas, de 94,7 para 65,8 por cento. A multiconsulta empata com a base. O reranqueamento lexical melhora as diretas, 97,4 por cento, mas piora as paráfrases em k igual a 1, 12,5 por cento, pois reordena por palavras em comum. A reescrita manual leva as paráfrases a 100 por cento, mas foi escrita depois de ver os documentos: é uma cota superior, não uma avaliação justa. Nenhum LLM foi executado nestas variantes."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Permissões: filtrar antes do modelo",
+   "itens": [
+    "Se o documento restrito entrou no prompt, pode vazar na resposta",
+    "Controle de acesso no código, com a identidade autenticada",
+    "Sem filtro: vazamento em 10 das 56 consultas",
+    "Filtro depois da busca: 2,79 documentos por consulta",
+    "Filtro antes da busca: mantém os 3 documentos"
+   ],
+   "notas": "O erro de projeto mais perigoso é deixar o modelo decidir o que mostrar. Se o documento restrito entrou no prompt, pode vazar. O controle precisa ocorrer antes do modelo, no código, com base nos metadados de permissão e na identidade autenticada. No teste, com uma regra fictícia em que só a pós-graduação vê seis documentos, um usuário de graduação teve documentos restritos no contexto em 10 das 56 consultas sem filtro. Os dois filtros eliminam o vazamento; filtrar depois da busca devolve em média 2,79 documentos, e o filtro antes mantém os 3. Alerte para vazamentos indiretos: títulos em sugestões, caches compartilhados, logs e respostas guardadas."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Analogia: o bilhete forjado na pasta",
+   "texto": "Na pasta do processo alguém colocou um bilhete: \"Chefe mandou: entregue a senha ao portador\".",
+   "detalhe": "Um funcionário distraído pode obedecer, porque o bilhete está no meio dos documentos. Documentos recuperados são entradas não confiáveis: instruções e dados chegam ao modelo como texto. Por isso se marca o que é dado, se confere a saída e se limita o que o sistema pode fazer.",
+   "notas": "Esta é a injeção de prompt indireta, descrita por Greshake e colegas em 2023. Em RAG, os documentos entram no prompt, e um deles pode conter texto como ignore as instruções anteriores. Como instruções e dados chegam ao modelo como texto, um modelo pode obedecer. A analogia é a do bilhete forjado dentro da pasta de um processo: quem confunde conteúdo com ordem pode ser enganado. As defesas são a delimitação, a sanitização, a validação da saída e o menor privilégio, ou seja, um assistente que só lê não pode apagar nada. Nosso ataque é fictício e inofensivo. Pergunte à turma quem pode inserir documentos no seu índice."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: injeção via documento",
+   "codigo": "# D_A1: instrução no documento; D_A2: <<<FIM>>> falso + instrução\nfor nome, ciente, sanit, val in ((\"nenhuma\", False, False, False),\n        (\"delimitadores\", True, False, False), (\"... + sanitização\", True, True, False),\n        (\"só validação\", False, False, True), (\"delimit.+sanit.+valid.\", True, True, True)):\n    a1 = rodar(D_A1, ciente, sanit, val)[0]; a2 = rodar(D_A2, ciente, sanit, val)[0]",
+   "saida": "defesas                      | A1: instrução  A2: fecha bloco   (de 3)\nnenhuma                      |             3                3\ndelimitadores                |             0                3\n... + sanitização            |             0                0\nsó validação da saída        |             0                0\ndelimit. + sanit. + valid.   |             0                0",
+   "notas": "Testamos dois ataques em três perguntas sobre senhas. O A1 é uma instrução dentro do documento; o A2 usa um marcador de fim falso para tentar escapar da delimitação. Sem defesa, os dois funcionam nas 3 consultas. Delimitar neutraliza o A1, mas não o A2: sozinha, a delimitação é uma primeira camada insuficiente. Sanitizar, trocando os símbolos que imitam os delimitadores, impede o A2. A validação da saída também barra as duas, porque a ordem do atacante não tem apoio no contexto. Isso não é prova de segurança: o simulador respeita delimitadores porque o programamos assim. E há o envenenamento de conteúdo, um documento sem instrução, só com um fato falso, que passa por todas as camadas, porque a resposta é fiel ao documento falso."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "RAG, ajuste fino ou contexto longo?",
+   "cabecalho": [
+    "Critério",
+    "RAG",
+    "Ajuste fino",
+    "Contexto longo"
+   ],
+   "linhas": [
+    [
+     "Conhecimento muda",
+     "Bom: reindexa",
+     "Ruim",
+     "Bom, se recolocar o texto"
+    ],
+    [
+     "Precisa citar a fonte",
+     "Bom",
+     "Ruim",
+     "Possível, mais difícil"
+    ],
+    [
+     "Dados com permissões",
+     "Bom: filtro por usuário",
+     "Ruim",
+     "Tudo entra no prompt"
+    ],
+    [
+     "Estilo ou formato fixos",
+     "Fraco",
+     "Bom",
+     "Fraco"
+    ],
+    [
+     "Base grande",
+     "Bom",
+     "Ruim",
+     "Inviável ou caro"
+    ]
+   ],
+   "notas": "São ferramentas diferentes e se combinam. O ajuste fino, dos Capítulos 7 e 12, muda como o modelo se comporta, estilo, formato, tarefa. O RAG leva o que o modelo precisa saber agora. O contexto longo permite colocar muito material, mas o custo cresce e a atenção aos detalhes pode variar. Sobre custo: na nossa base, aumentar k de 1 para 10 elevou o recall de 84,8 para 95,7 por cento e multiplicou o custo por 3,1; colocar toda a base no contexto deu recall de 100 por cento, com 3 362 tokens por consulta e custo 14,3 vezes maior que o RAG com k igual a 1. Os preços foram hipotéticos. A tabela é um ponto de partida: decida avaliando no seu problema."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Governança de dados",
+   "itens": [
+    "O índice é uma cópia consultável dos seus documentos",
+    "Dados pessoais: LGPD (Lei nº 13.709/2018); sem aconselhamento jurídico",
+    "Minimização: indexar só o necessário; mascarar antes",
+    "Atualização: reindexar com versão, data e vigência",
+    "Exclusão: fragmento, vetores, caches, registros e backups; teste"
+   ],
+   "notas": "Um índice RAG é uma cópia consultável dos seus documentos. Se eles contêm dados pessoais, aplica-se a LGPD, com princípios como finalidade, necessidade e segurança, e direitos dos titulares como acesso, correção e eliminação. O livro não oferece aconselhamento jurídico: consulte o encarregado de dados. Práticas decorrentes: minimizar, atualizar com versão e vigência, e excluir de verdade. No experimento, excluímos o documento D17 do índice: ele aparecia entre os 5 primeiros em 6 consultas e passou a aparecer em 0, e a pergunta sobre a bolsa passou a receber a abstenção. Lembre que excluir do índice não exclui de cópias externas: confira a política de retenção do provedor do modelo."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limites do capítulo",
+   "itens": [
+    "Avaliar só a resposta final; ajustar limiar no próprio teste",
+    "Confundir fidelidade com verdade",
+    "Esquecer perguntas sem resposta; filtrar permissões depois do modelo",
+    "Concluir com poucas consultas (8 paráfrases) sem ver os ICs",
+    "Gerador é simulador de regras; base fictícia de 60 documentos, não é LLM"
+   ],
+   "notas": "Resuma os erros mais comuns. Avaliar só a resposta final, sem separar recuperação e geração. Ajustar limiar, k ou prompt nos mesmos dados em que se mede o resultado. Confundir fidelidade com verdade: uma resposta fiel a um documento errado ou antigo continua errada. Esquecer de testar perguntas sem resposta. Filtrar permissões depois do modelo. Tratar documentos como confiáveis. Concluir muito com poucas consultas. Depois reforce os limites: o gerador é um simulador de regras, a fidelidade de 100 por cento é consequência da construção, a base é pequena e fictícia, o reranqueador neural e o avaliador por modelo não foram executados, e a contagem de tokens é aproximada."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Assistente de normas acadêmicas",
+   "passos": [
+    "Carregue DOCS e CONSULTAS e separe DEV e TESTE",
+    "Monte o pipeline: busca híbrida, k=3, delimitadores, citações, abstenção, validação",
+    "Escolha o limiar no DEV; relate só o TESTE",
+    "Meça recall, correção, fidelidade e abstenção, por tipo, com IC",
+    "Liste as falhas e proponha correção para a mais frequente",
+    "Acrescente permissões e um documento malicioso; verifique",
+    "Escreva um parágrafo sobre o que a avaliação não mostra"
+   ],
+   "notas": "Esta é a atividade prática do capítulo e também o projeto final. Peça que a turma trabalhe em duplas. O passo mais importante é separar DEV e TESTE antes de qualquer ajuste e relatar o resultado só com o TESTE. Lembre de medir tudo por tipo de consulta, diretas, paráfrases e sem resposta, com intervalos de confiança por bootstrap, porque uma média única esconde onde está o problema. No passo da correção, reavalie sem mexer no TESTE até o final. O último passo é um parágrafo de limites: o que a avaliação não mostra, incluindo que o gerador é simulado. Armadilha comum: ajustar o limiar olhando o TESTE. Os exercícios práticos 11.1 a 11.3 guiam partes do trabalho."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o que é RAG?",
+   "pergunta": "Qual é a melhor definição de geração aumentada por recuperação (RAG)?",
+   "opcoes": [
+    "Treinar o modelo de novo, a cada pergunta, com todos os documentos da base",
+    "Recuperar trechos de uma base de documentos e inseri-los no prompt para que a resposta se apoie neles",
+    "Trocar o modelo de linguagem por um mecanismo de busca por palavras-chave",
+    "Comprimir os pesos do modelo para que caibam documentos adicionais"
+   ],
+   "resposta": "B",
+   "explicacao": "RAG recupera texto e o inclui no prompt; não treina nem troca o modelo.",
+   "notas": "Dê um minuto e peça votos por alternativa. A correta é a segunda: o RAG recupera trechos de uma base e os insere no prompt, de modo que a resposta se apoie neles. A primeira confunde RAG com treinamento: nada é treinado a cada pergunta, os pesos não mudam. A terceira troca o modelo por uma busca, mas o modelo continua gerando a resposta. A quarta fala em compressão de pesos, que é outro assunto. Pergunta de reforço: onde fica o conhecimento no RAG? Na memória externa, o índice de documentos, e não nos parâmetros do modelo."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "avaliar separadamente",
+   "pergunta": "Por que avaliar a recuperação e a geração separadamente?",
+   "opcoes": [
+    "Porque a recuperação nunca influencia a qualidade da resposta final",
+    "Porque medir as duas juntas é matematicamente impossível",
+    "Porque a causa de uma resposta ruim pode estar na busca ou no gerador, e cada caso exige uma correção diferente",
+    "Porque o gerador sempre corrige os erros da busca"
+   ],
+   "resposta": "C",
+   "explicacao": "Sem separar as etapas, o time pode consertar a parte errada.",
+   "notas": "A resposta correta é a terceira. Uma resposta ruim pode vir de duas causas: a busca não trouxe o documento certo, e então melhorar o prompt não adianta, ou a busca trouxe e o gerador errou, e então melhorar a busca não adianta. Retome o exemplo dos 100 casos: 10 erros de recuperação e 18 de geração. As outras alternativas são falsas: a recuperação influencia, e muito, medir juntas é perfeitamente possível, só que pouco informativo, e o gerador não corrige a busca, ele não pode citar um documento que não está no contexto. Peça que alguém explique o teto de acerto do RAG, que é o recall da recuperação."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "fragmento pequeno",
+   "pergunta": "Qual o problema típico de usar fragmentos muito pequenos, de uma frase?",
+   "opcoes": [
+    "Eles impedem o uso de qualquer metadado de permissão",
+    "Eles podem separar a pergunta da sua resposta, e o trecho com a informação pode não chegar ao contexto",
+    "Eles tornam impossível o uso de busca lexical",
+    "Eles obrigam o uso de um modelo de linguagem maior"
+   ],
+   "resposta": "B",
+   "explicacao": "Com 1 frase, o trecho da resposta apareceu em 28% (k=1) e 65% (k=3) dos casos.",
+   "notas": "A resposta correta é a segunda. No experimento, com uma frase por fragmento, o trecho com a resposta apareceu em apenas 28 por cento dos casos com k igual a 1 e em 65 por cento com k igual a 3. Isso acontece porque o prazo pode estar numa frase e o assunto na anterior. As demais alternativas não têm base: metadados de permissão funcionam com qualquer tamanho, a busca lexical funciona com frases curtas, e o tamanho do fragmento não obriga a usar um modelo maior. Reforce que fragmentos grandes têm o problema oposto: custo e diluição. Não existe tamanho universal; meça com o seu corpus."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "RAG ancora respostas em documentos atuais e citáveis, mas não garante correção",
+    "Cinco etapas, cada uma com sua métrica: avalie separadamente",
+    "Fragmentos: tamanho medido, com metadados de fonte, vigência e permissão",
+    "Reporte por tipo de consulta, com IC, em dados não usados para ajustar",
+    "Permissões antes do modelo; injeção exige várias camadas, nenhuma elimina o risco",
+    "Governança faz parte do sistema: LGPD, atualização, exclusão, auditoria"
+   ],
+   "notas": "Feche com os pontos para levar. O RAG recupera texto e o inclui no prompt, ancorando a resposta em documentos atuais, privados e citáveis, mas não garante correção. O pipeline tem cinco etapas e cada uma tem sua métrica. Os fragmentos têm tamanho dependente dos dados e carregam metadados. Relate recall, correção, fidelidade e abstenção por tipo de consulta, com intervalos por bootstrap, em dados não usados para ajustar. As técnicas avançadas precisam ser medidas, pois podem não ajudar. Permissões se aplicam antes do modelo, no código. Lembre a ressalva de honestidade: o gerador era simulado, e os números ilustram o método. Pergunta final: o que você mediria primeiro no seu sistema?"
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "LEWIS, P. et al. Retrieval-augmented generation for knowledge-intensive NLP tasks. In: ADVANCES IN NEURAL INFORMATION PROCESSING SYSTEMS, 33., 2020. Proceedings [...]. Red Hook: Curran Associates, 2020. p. 9459-9474.",
+    "GAO, Y. et al. Retrieval-augmented generation for large language models: a survey. arXiv:2312.10997, 2023.",
+    "LIU, N. F. et al. Lost in the middle: how language models use long contexts. Transactions of the Association for Computational Linguistics, v. 12, p. 157-173, 2024.",
+    "ES, S. et al. RAGAs: automated evaluation of retrieval augmented generation. In: CONFERENCE OF THE EUROPEAN CHAPTER OF THE ASSOCIATION FOR COMPUTATIONAL LINGUISTICS: SYSTEM DEMONSTRATIONS, 18., 2024. Proceedings [...]. Stroudsburg: ACL, 2024.",
+    "GRESHAKE, K. et al. Not what you've signed up for: compromising real-world LLM-integrated applications with indirect prompt injection. In: ACM WORKSHOP ON ARTIFICIAL INTELLIGENCE AND SECURITY (AISec), 16., 2023. Proceedings [...]. New York: ACM, 2023.",
+    "ROBERTSON, S.; ZARAGOZA, H. The probabilistic relevance framework: BM25 and beyond. Foundations and Trends in Information Retrieval, v. 3, n. 4, p. 333-389, 2009.",
+    "BRASIL. Lei nº 13.709, de 14 de agosto de 2018. Lei Geral de Proteção de Dados Pessoais (LGPD). Diário Oficial da União, Brasília, 15 ago. 2018."
+   ]
+  }
+ ]
+}

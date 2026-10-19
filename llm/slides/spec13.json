@@ -1,0 +1,362 @@
+{
+ "capitulo": 13,
+ "titulo": "Modelos multimodais",
+ "parte": "Parte IV — Adaptação e sistemas avançados",
+ "slides": [
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Explicar o que é uma modalidade e como imagem, som e documento viram números",
+    "Dividir uma imagem em patches e somar posição, como no ViT",
+    "Calcular a perda contrastiva (a ideia do CLIP) e medir recall@k",
+    "Entender o projetor que liga a visão a um LLM, e o espectrograma do áudio",
+    "Explicar a difusão: pôr e tirar ruído aos poucos",
+    "Avaliar com atenção a vieses, alucinação visual, custo, privacidade e acessibilidade"
+   ],
+   "notas": "Abra com a ideia de que o texto deixou de ser a única porta de entrada: hoje se manda foto, áudio e documento digitalizado para os modelos. Leia os objetivos e destaque três verbos: converter, alinhar e verificar. Avise já que todos os experimentos do capítulo são feitos com dados pequenos e sintéticos e codificadores lineares em NumPy; eles mostram o mecanismo, não medem modelos reais. Pergunte à turma: que tipos de arquivo vocês já enviaram a um assistente de IA, e o resultado era confiável? Anote as respostas, pois voltaremos a elas no fim. Armadilha: prometer que o capítulo ensina a usar um modelo multimodal específico; ele ensina como funcionam as peças e o que checar."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Três situações, três erros silenciosos",
+   "itens": [
+    "Foto do quadro: o assistente conta 3 colunas; eram 4, e a maior valia 54",
+    "Notas fiscais: \"1.250,00\" é lido como \"1.250.00\" e o total sai errado",
+    "Reunião gravada: o nome de um fornecedor vira outro de som parecido",
+    "Nos três casos, a resposta parece fluente e ninguém avisa do erro",
+    "Cada tipo de dado traz seus próprios erros, custos e riscos"
+   ],
+   "notas": "Conte as três histórias da abertura do capítulo com calma, uma de cada vez. A professora que pede descrição do quadro para um aluno com baixa visão: a resposta diz três colunas, mas eram quatro, e o maior valor era 54. A secretaria que digitaliza notas fiscais e vê a vírgula virar ponto. O grupo que grava a reunião e recebe a ata com o fornecedor trocado. Ponto central: o erro é silencioso, o texto sai bonito e plausível. Pergunta à turma: quem confere a saída de um sistema desses antes de usar? Armadilha: concluir que a tecnologia é inútil; a conclusão correta é que ela exige verificação projetada."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Cada modalidade é um array de números",
+   "cabecalho": [
+    "Modalidade",
+    "Array típico",
+    "Estrutura a aproveitar"
+   ],
+   "linhas": [
+    [
+     "Texto",
+     "sequência de ids de tokens",
+     "ordem, gramática, significado"
+    ],
+    [
+     "Imagem",
+     "altura × largura × canais",
+     "vizinhança, bordas, formas"
+    ],
+    [
+     "Áudio",
+     "amostras ao longo do tempo",
+     "periodicidade, frequências"
+    ],
+    [
+     "Vídeo",
+     "quadros × altura × largura × canais",
+     "movimento, continuidade"
+    ],
+    [
+     "Documento digitalizado",
+     "imagem de página",
+     "layout, tabelas, ordem de leitura"
+    ]
+   ],
+   "notas": "Defina modalidade como um tipo de dado com sua própria estrutura e forma de percepção. Um modelo é unimodal se lida com uma só, e multimodal se lê ou produz mais de uma, por exemplo recebe imagem e pergunta em texto e responde em texto. Percorra a tabela linha a linha e insista na mensagem: por baixo, tudo é array de números; muda a forma do array e o tipo de regularidade que dá para aproveitar. A estratégia geral dos modelos atuais é converter cada modalidade em uma sequência de vetores, os embeddings, e deixar um Transformer trabalhar sobre eles. Pergunta: em qual linha da tabela a ordem dos elementos importa mais? Armadilha: achar que imagem e texto precisam de modelos totalmente separados."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Um intérprete para cada idioma",
+   "texto": "Numa reunião com vários idiomas, cada pessoa tem um intérprete que traduz para um idioma comum da sala.",
+   "detalhe": "O intérprete é o codificador de cada modalidade. O idioma comum é o espaço de embeddings. Se um intérprete traduz mal, a conversa inteira sai prejudicada, por melhor que seja o resto do sistema.",
+   "notas": "Use a imagem de uma reunião internacional: o brasileiro, a japonesa e o alemão, cada um com seu intérprete, e todos os intérpretes traduzindo para um idioma comum que a sala inteira entende. Mapeie: o codificador de imagem, o de áudio e o de texto são os intérpretes; o espaço de embeddings é o idioma comum. A consequência prática é importante: se o intérprete de imagens deixa de captar um número pequeno no gráfico, o restante do sistema nunca saberá que ele existia. Pergunta à turma: que detalhe de uma foto se perderia primeiro numa tradução apressada? Armadilha: pensar que o modelo de linguagem tem acesso à imagem original, o que veremos que não é verdade."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: uma imagem é uma grade de números",
+   "codigo": "from sklearn.datasets import load_digits\n\ndg = load_digits()\nimagens, rotulos = dg.images, dg.target\nprint(\"conjunto:\", imagens.shape, \"| tipo:\", imagens.dtype)\nprint(\"pixel mínimo e máximo:\", imagens.min(), imagens.max())\nprint(imagens[0].astype(int))   # dígitos 8x8 do scikit-learn",
+   "saida": "conjunto: (1797, 8, 8) | tipo: float64\npixel mínimo e máximo: 0.0 16.0\n[[ 0  0  5 13  9  1  0  0]\n [ 0  0 13 15 10 15  5  0]\n [ 0  3 15  2  0 11  8  0]\n [ 0  4 12  0  0  8  8  0]",
+   "notas": "Mostre que a imagem do dígito zero, para o computador, é só esta grade de 8 por 8 números entre 0 e 16, vinda do conjunto load_digits do scikit-learn. Cada número é a intensidade de um pixel. A saída mostrada aqui é cortada nas primeiras linhas por falta de espaço, mas a matriz completa tem oito linhas. Lembre o ponto prático do capítulo: em cores, são três números por pixel, um por canal vermelho, verde e azul. Uma imagem 224 por 224 em RGB tem 150 528 números, e uma de 1024 por 768 tem 2 359 296, muito mais que uma frase. Pergunta: o que um pixel isolado diz sobre a imagem? Quase nada; o que importa são os padrões entre vizinhos. Armadilha: achar que mais pixels significam mais informação útil."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "ViT: a imagem vira uma sequência de patches",
+   "tex": "N = (H/p)·(L/p)     z_k = W·vec(patch_k) + pos_k",
+   "explicacao": [
+    "Patch: bloco quadrado de lado p, achatado em vetor e projetado por W",
+    "Posição pos_k diz onde o bloco estava na imagem",
+    "Exemplo: 512×384 com patches 16×16 dá 32 × 24 = 768 patches",
+    "Cada patch tem 16×16×3 = 768 números; o total (589 824) não muda"
+   ],
+   "notas": "Explique a ideia do Vision Transformer de Dosovitskiy e colegas: um Transformer lê uma sequência de vetores, então dividimos a imagem em blocos quadrados, os patches, achatamos cada bloco, projetamos linearmente e somamos a informação de posição. O título do artigo diz que uma imagem vale 16 por 16 palavras, porque os blocos fazem o papel de tokens. Resolva o exemplo: 512 dividido por 16 dá 32, 384 dividido por 16 dá 24, e 32 vezes 24 são 768 patches. Cada patch tem 16 vezes 16 vezes 3, ou seja 768 números; o total da imagem, 589 824, é o mesmo, apenas reorganizado. Pergunta: o que se ganha e o que se perde ao dividir? Armadilha: dizer que patches perdem informação; o gargalo é o custo de processar muitos tokens."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Quebra-cabeça com numeração",
+   "texto": "Patches são as peças de um quebra-cabeça. Sem a numeração das peças, o modelo não sabe onde cada uma vai.",
+   "detalhe": "A atenção sozinha não percebe a ordem: embaralhar os patches não muda a saída. Somar a posição devolve o \"onde\". Peças grandes dão poucos tokens, mas perdem detalhe; peças pequenas preservam detalhe e multiplicam o custo.",
+   "notas": "Peça que a turma imagine um quebra-cabeça de 4 peças que alguém jogou sobre a mesa. Se cada peça não tiver um número ou uma marca de posição, você sabe o que há em cada peça, mas não onde ela encaixa. É exatamente o que acontece com a atenção sem posição: ela trata o conjunto de patches como uma sacola. No experimento do capítulo, embaralhar os patches deu diferença zero na saída sem posição, e 0,089 com posição. Fale também do compromisso do tamanho do patch: peças grandes são baratas e perdem detalhe fino, peças pequenas preservam detalhe, mas o custo da atenção cresce com o quadrado do número de tokens. Pergunta: quando vale a pena pagar por patches pequenos? Armadilha: ignorar a posição."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: patches, projeção e posição",
+   "codigo": "P = patches(img, 4)              # 4 patches de 16 valores\nE = (P - mu) @ W                # projeção PCA 16 -> 8\nseq = np.vstack([cls, E + pos])  # token especial + posição\n...\nprint(\"sem posição, diferença após embaralhar:\", ...)\nprint(\"com posição, diferença após embaralhar:\", ...)",
+   "saida": "patches 4x4: (4, 16) (N patches, p*p valores)  |  patches 2x2: (16, 4)\nvariância dos patches explicada por 8 componentes: 0.901\nsequência entregue ao Transformer: (5, 8) (1 token especial + 4 patches)\nsem posição, diferença após embaralhar: 0.0\ncom posição, diferença após embaralhar: 0.088747",
+   "notas": "Percorra a saída real. Uma imagem 8 por 8 com patches 4 por 4 dá 4 patches de 16 valores; com patches 2 por 2 seriam 16 patches de 4 valores. Para enxergar o mecanismo sem treinar uma rede, a projeção usada é o PCA dos patches, que com 8 componentes explica 0,901 da variância; no ViT real a projeção é aprendida junto com a rede. A sequência entregue ao Transformer tem 5 vetores de 8 dimensões: um token especial de classificação e os 4 patches. O ponto central é a última dupla de linhas: sem posição a diferença após embaralhar é zero, e com posição ela passa a ser 0,089. Pergunta: por que a diferença zero é um problema? Armadilha: ler este PCA como se fosse o ViT real; é um recurso didático."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Pares que dançam juntos",
+   "texto": "Numa festa com 64 casais, cada pessoa tem de reencontrar o seu par entre 64 candidatos, e vice-versa.",
+   "detalhe": "O treino contrastivo aproxima os embeddings de imagem e legenda que combinam e afasta os que não combinam. Não há rótulos de classe: a própria legenda é a supervisão. É a ideia do CLIP.",
+   "notas": "Use a cena de uma festa em que todos chegam em pares, são separados e precisam se reencontrar olhando apenas as características. Em cada lote de n pares, a imagem i deve achar o texto i entre n textos, e o texto j deve achar a imagem j entre n imagens: por isso a perda é simétrica. Os n ao quadrado menos n pares incorretos são os impostores a serem afastados. Radford e colegas treinaram o CLIP assim, com muitos pares imagem-legenda coletados da internet, sem rótulos de classe. No nosso experimento o lote tem 64 pares e os codificadores são lineares. Pergunta: o que acontece se todos os pares tiverem legendas idênticas? O treino não consegue separar. Armadilha: achar que o CLIP gera legendas; ele compara, não escreve."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Perda contrastiva simétrica e temperatura",
+   "tex": "S_ij = cos(u_i, t_j) / τ",
+   "explicacao": [
+    "Perda = média de duas entropias cruzadas: por linhas (imagem→texto) e por colunas (texto→imagem)",
+    "Embeddings ao acaso dão perda perto de ln n; para n = 64, ln 64 ≈ 4,159",
+    "τ pequeno afia o softmax; τ grande o achata",
+    "Exemplo à mão, τ = 0,5: perda ≈ 0,292; com τ muito grande, tende a ln 2 ≈ 0,693"
+   ],
+   "notas": "Monte a fórmula em palavras: a matriz S guarda o cosseno de cada imagem com cada texto, dividido pela temperatura tau. Cada linha passa por um softmax e a entropia cruzada cobra que o texto certo ganhe; o mesmo vale para as colunas, e a perda é a média das duas. Com embeddings ao acaso cada softmax fica quase uniforme e a perda vale cerca de ln n, que para 64 pares é 4,159. Exemplo resolvido do capítulo: lote de 2 pares, cossenos 0,8, 0,2, 0,1 e 0,6, tau 0,5; as linhas dão média 0,2883, as colunas 0,2956, e a perda simétrica é aproximadamente 0,292. Pergunta: o que a temperatura controla? A nitidez. Armadilha: comparar perdas de temperaturas diferentes como se medissem o mesmo."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: treino contrastivo e matriz de similaridades",
+   "codigo": "# gradiente manual; conferido por diferenças finitas\nWi, Wt, hist = treinar_contrastivo(Xi[tr], T[tr], d=16,\n                                   tau=0.1, epocas=60, lote=64, lr=0.05)\nUi, Ut = embutir(Xi[te], Wi), embutir(T[te], Wt)\nS = Ui @ Ut.T                  # cossenos, 497 x 497 no teste\nprint(f\"perda: época 1 = {hist[0]:.3f} | época 60 = {hist[-1]:.3f}\")",
+   "saida": "gradiente analítico: -0.117909 | numérico: -0.117909\nperda esperada com embeddings ao acaso (ln 64): 4.159\nperda: época 1 = 3.393 | época 60 = 1.213\n          zero      um    três    sete    oito    nove\n     zero    0.44   -0.19   -0.54    0.04   -0.03    0.20",
+   "notas": "Explique que usamos 1 300 pares de treino e 497 de teste, imagens de dígitos 8 por 8 e legendas sintéticas do tipo dígito sete, traço leve, à esquerda. O codificador de imagem é linear sobre 64 pixels e o de texto é linear sobre um saco de palavras, ambos com 16 dimensões. Destaque a verificação: o gradiente analítico, escrito à mão, dá -0,117909 e o numérico, por diferenças finitas, dá o mesmo valor. A perda cai de 3,393 na primeira época para 1,213 na sexagésima. A matriz de similaridades mostrada é só um recorte; a diagonal deve ficar acima do resto. Pergunta: por que uma matriz 6 por 6 escolhida a dedo não basta? Porque pode enganar; precisamos medir no teste inteiro. Armadilha: tratar este brinquedo linear como o treino de um CLIP real."
+  },
+  {
+   "tipo": "tabela",
+   "titulo": "Recall@k: o número depende do critério",
+   "cabecalho": [
+    "Critério de \"correto\"",
+    "Direção",
+    "R@1",
+    "R@5"
+   ],
+   "linhas": [
+    [
+     "mesmo dígito",
+     "imagem→texto",
+     "0,976",
+     "0,984"
+    ],
+    [
+     "mesmo dígito",
+     "texto→imagem",
+     "0,996",
+     "1,000"
+    ],
+    [
+     "dígito + atributos",
+     "imagem→texto",
+     "0,823",
+     "0,873"
+    ],
+    [
+     "dígito + atributos",
+     "texto→imagem",
+     "0,952",
+     "1,000"
+    ]
+   ],
+   "notas": "Recall@k é a fração de consultas em que algum item correto aparece entre os k primeiros. Na imagem para texto, ordenamos as 497 descrições do teste para cada imagem; na texto para imagem, o contrário. Com 10 dígitos equiprováveis o acaso daria recall@1 perto de 0,10 no critério do dígito. A tabela mostra os números reais: quase perfeito no critério fácil, e 0,823 no critério estrito que exige acertar também o traço e o lado. As duas direções diferem; o capítulo oferece uma explicação plausível, mas não testada: as palavras do modelo de frase variam entre as candidatas e funcionam como distratores. Pergunta: por que reportar recall sem dizer o critério e o tamanho da galeria engana? Armadilha: comparar sistemas que usam critérios diferentes."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Efeito da temperatura τ",
+   "fig": "f13_temp",
+   "legenda": "Mesmos dados e sementes; codificadores lineares e dados sintéticos.",
+   "itens": [
+    "Perda final: 1,057 com τ = 0,01 e 3,369 com τ = 1,0",
+    "Perdas de τ diferentes não são comparáveis",
+    "R@1 quase não muda de 0,01 a 0,5",
+    "Com τ = 0,01, o cosseno dos pares errados é 0,745: tudo amontoado"
+   ],
+   "notas": "Repetimos o treino com cinco temperaturas e mantivemos todo o resto. Primeira leitura: a perda não é comparável entre temperaturas, porque é uma entropia cruzada sobre pontuações divididas por tau; com tau 0,01 a perda final é 1,057 e com tau 1,0 é 3,369, embora ambas tenham alinhado os pares. Segunda: o recall@1 imagem para texto varia pouco entre 0,968 e 0,976 de tau 0,01 a 0,5, dentro do ruído com 497 itens de teste, e cai a 0,946 com tau 1,0. Terceira: a geometria muda; com tau 0,01 o cosseno médio dos pares errados é 0,745, os embeddings ficam amontoados. Pergunta: o que isso diz sobre olhar só o ranqueamento? Armadilha: concluir que a temperatura não importa em modelos reais; aqui o problema é pequeno e fácil."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: classificação zero-shot por descrições",
+   "codigo": "prompts = [f\"dígito {w}\" for w in PALAVRAS]\nUp = embutir(bow(prompts, voc), Wt)      # 10 descrições\npred = (Ui @ Up.T).argmax(1)\nprint(\"acurácia zero-shot (descrições de classe):\", ...)\nprint(\"acurácia ao acaso:\", 0.1)",
+   "saida": "acurácia zero-shot (descrições de classe) no teste: 0.952\nacurácia ao acaso: 0.1\nconfusões mais frequentes (verdadeiro, previsto, contagem): [('oito', 'três', 3)]",
+   "notas": "Uma vez alinhados os espaços, não precisamos treinar um classificador: escrevemos uma descrição para cada classe, como dígito zero, dígito um e assim por diante, embutimos as descrições e atribuímos cada imagem à descrição mais parecida. É a ideia do uso zero-shot do CLIP. No nosso brinquedo a acurácia foi 0,952, contra 0,10 do acaso, e só uma confusão se repetiu três ou mais vezes: oito previsto como três. Faça a ressalva do capítulo: o sucesso depende de a descrição de classe ser parecida com o que o modelo viu no treino; em modelos reais, a redação da descrição pode alterar a acurácia e deve ser tratada como hiperparâmetro e avaliada. Pergunta: que descrições vocês escreveriam para classificar tipos de documento? Armadilha: chamar de mágico o que é similaridade de embeddings."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Descrever uma foto por telefone",
+   "texto": "Um colega descreve a foto por telefone e você responde. Você nunca viu a foto: só ouviu a descrição.",
+   "detalhe": "O LLM nunca vê pixels. Ele recebe vetores alinhados ao seu espaço de tokens. Se o colega esquece um número pequeno no gráfico, você não tem como saber, e pode completar com o plausível: uma alucinação visual.",
+   "notas": "Peça que alguém da turma descreva uma imagem de memória para outra pessoa que não a viu, e depois que essa pessoa responda uma pergunta sobre ela. Mapeie: o codificador visual é o colega, o projetor é a tradução do que ele diz para a língua do ouvinte, e o LLM é o ouvinte. Explique o projetor: uma camada linear ou pequena rede que leva cada embedding visual de dimensão d_v para a dimensão d_m dos tokens do LLM, e os vetores entram na sequência como se fossem tokens, como no LLaVA; o Flamingo usa outro desenho, com atenção cruzada. No brinquedo ridge do capítulo, o pseudotoken fica mais perto da palavra certa em 0,903 dos casos de teste, e nada além disso. Pergunta: o que o ouvinte faz quando falta um detalhe? Armadilha: dizer que o LLM enxerga."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: do som ao espectrograma",
+   "codigo": "fs = 8000                        # taxa de amostragem (Hz)\n# 0 a 0,8 s: tom de 440 Hz; 1,2 a 2,0 s: sobe de 300 a 1500 Hz\nZ = stft(x, 256, 64)             # janelas de Hann + Fourier\nmag = np.abs(Z)\n...                              # frequência de maior energia por instante",
+   "saida": "espectrograma: (129, 247) (frequências, quadros) | resolução em frequência: 31.25 Hz | passo no tempo: 0.008 s\nfrequência de maior energia perto de t = 0.4 s: 437.5 Hz\nfrequência de maior energia perto de t = 1.6 s: 906.2 Hz\nfrequência esperada em t = 1,6 s (chirp): 900.0000000000002 Hz\ntom de 5000 Hz amostrado a 8000 Hz aparece em: 3000.0 Hz (aliasing)",
+   "notas": "O som é variação de pressão no tempo; o computador mede a pressão fs vezes por segundo. Pelo teorema de Nyquist, só se representam sem ambiguidade frequências até fs sobre 2; aqui, 4 000 Hz. A STFT recorta o sinal em janelas curtas, aplica uma janela de Hann e calcula o espectro de cada uma; empilhado no tempo, o módulo em decibéis vira o espectrograma, uma imagem de frequência por tempo. Na saída: o tom de 440 Hz é localizado em 437,5 Hz, erro esperado porque a resolução é 31,25 Hz; o chirp em 1,6 s aparece em 906,2 Hz contra 900 esperados; e o tom de 5 000 Hz aparece como 3 000 Hz, o aliasing. Fale do ASR, que usa espectrograma, codificador e decodificador, e de que erros de transcrição se propagam ao resumo. Armadilha: ignorar nomes próprios e siglas."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: erro pequeno por caractere, grande por campo",
+   "codigo": "confusao = {\"0\": \"O\", \"1\": \"l\", \"5\": \"S\", \"8\": \"B\", \",\": \".\"}\ndef ocr_simulado(texto, p, rg):   # confusões programadas por nós\n    return \"\".join(confusao[c] if (c in confusao and rg.random() < p)\n                   else c for c in texto)\n# CER = distância de Levenshtein / comprimento da referência",
+   "saida": "p (por caractere confundível)      CER  linhas com erro  totais alterados\n0.005                           0.0009            0.033             0.020\n0.01                            0.0017            0.061             0.037\n0.02                            0.0033            0.115             0.073\n0.05                            0.0082            0.262             0.165",
+   "notas": "Deixe claro que as linhas de notas fiscais são sintéticas e as confusões foram programadas por nós; a taxa não representa nenhum OCR real. O CER, taxa de erro de caracteres, é a distância de edição dividida pelo comprimento do texto de referência. Leia a tabela: com probabilidade de confusão de 1 por cento, o CER é só 0,17 por cento, mas 6,1 por cento das linhas e 3,7 por cento dos totais saem alterados; com 5 por cento, o CER é 0,82 por cento, mas 26,2 por cento das linhas e 16,5 por cento dos totais estão errados. Razão: um valor tem vários caracteres e basta um para mudá-lo. Conclusão prática: validações cruzadas, como somar itens e comparar com o total, e revisão humana por amostragem. Pergunta: que validação protegeria uma nota fiscal? Armadilha: confiar em leitura fluente."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Restaurar uma foto manchada",
+   "texto": "Imagine pingar tinta numa foto, gota a gota, até ela virar uma mancha. Agora aprenda a limpar uma gota por vez.",
+   "detalhe": "Difusão: o processo direto acrescenta ruído aos poucos (sem aprendizado); o reverso, aprendido, remove o ruído passo a passo. Para gerar, parte-se de ruído puro e limpa-se T vezes.",
+   "notas": "Use a imagem de uma foto antiga em que se pinga tinta aos poucos. O processo direto é fixo e não tem aprendizado: sabemos como a tinta cai. O reverso é o que a rede aprende: dado o estado manchado, estimar o que foi acrescentado e removê-lo, um passo de cada vez. Para gerar uma imagem nova partimos de uma mancha de ruído puro e aplicamos a limpeza T vezes; a descrição em texto, na forma de embedding, guia a limpeza. A formulação moderna é a de Ho e colegas, os DDPM. Pergunta: por que é mais fácil aprender a remover uma gota do que a gerar a imagem de uma vez? Porque cada passo é pequeno. Armadilha: pensar que a imagem gerada é verdadeira; ela é apenas plausível."
+  },
+  {
+   "tipo": "formula",
+   "titulo": "Difusão: a fórmula fechada do ruído",
+   "tex": "x_t = √ᾱ_t · x₀ + √(1−ᾱ_t) · ε",
+   "explicacao": [
+    "ε é ruído gaussiano; ᾱ_t é o produto dos α_s até o passo t",
+    "A soma de gaussianas é gaussiana: pula-se direto de x₀ a x_t",
+    "Quando ᾱ_t se aproxima de 0, só resta ruído",
+    "Exemplo: ᾱ_t = 0,64, x₀ = 2, ε = −1 dá x_t = 0,8·2 − 0,6 = 1,0"
+   ],
+   "notas": "Em cada passo direto, x_t é a raiz de alfa_t vezes x anterior mais a raiz de um menos alfa_t vezes ruído. Como a soma de gaussianas independentes é gaussiana, existe um atalho: pular de x zero direto a qualquer x_t com a fórmula fechada, usando o produto acumulado alfa barra. O quadro opcional do capítulo mostra a derivação por indução. Exemplo resolvido: com alfa barra igual a 0,64, raiz é 0,8; raiz de 0,36 é 0,6; então 0,8 vezes 2 menos 0,6 dá 1,0. Quando alfa barra tende a zero, o sinal some e sobra ruído puro. No treino típico, a rede aprende a prever o ruído epsilon somado. Pergunta: com alfa barra alto, quem domina, o sinal ou o ruído? Armadilha: confundir alfa com alfa barra."
+  },
+  {
+   "tipo": "codigo",
+   "titulo": "Código: passo a passo contra fórmula fechada",
+   "codigo": "beta, alpha, abar = agenda_beta(1000)\nx = x0.copy()\nfor t in range(1000):            # passo a passo\n    x = np.sqrt(alpha[t])*x + np.sqrt(beta[t])*rd.standard_normal(n)\nxf, _ = ruido_direto(x0, t, abar, rd)   # fórmula fechada",
+   "saida": "    t  média passo  desvio passo  média fórmula  desvio fórmula\n  100       -0.004         1.944         -0.004           1.943\n  500        0.002         1.120         -0.003           1.116\n 1000        0.003         1.000          0.004           1.000\namostras geradas: média = 0.032, desvio = 2.026\nfração em torno do modo -2 / +2: 0.492 / 0.508",
+   "notas": "Os dados são uma mistura de duas gaussianas 1D com modos em menos 2 e mais 2, desvio de 0,3 e 100 000 amostras. A tabela mostra que o passo a passo e a fórmula fechada produzem a mesma distribuição: em t igual a 100, desvio de 1,944 contra 1,943; em t igual a 1000, desvio 1,000 e média perto de zero, a estrutura de dois modos se perdeu. Depois, usamos um denoiser analítico, que conhece a mistura, no processo reverso a partir de ruído puro: as amostras geradas têm média 0,032 e desvio 2,026, contra menos 0,003 e 2,023 dos dados, com 49,2 e 50,8 por cento nos dois modos. Nenhuma rede foi treinada. Em imagens reais, o estimador é uma rede enorme. Pergunta: o que muda de um denoiser analítico para uma rede? Armadilha: tomar o brinquedo como modelo de imagens."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Difusão em ação",
+   "fig": "f13_difusao",
+   "legenda": "Em cima: histogramas 1D e regeneração. Embaixo: pontos 2D e um dígito com ruído crescente. Dados sintéticos e do load_digits.",
+   "notas": "Use a figura para fixar visualmente o que os números mostraram. Na parte de cima, os histogramas 1D em vários instantes: os dois picos vão se fundindo até virar uma única curva de ruído, e o processo reverso com o denoiser analítico os reconstrói. Embaixo, pontos 2D do make_moons e um dígito do load_digits recebem ruído crescente pela fórmula fechada, até a forma desaparecer. Faça o alerta do capítulo: modelos de difusão geram figuras plausíveis, não verdadeiras; um gráfico de aparência científica gerado por IA não carrega dados reais. Podem reproduzir trechos de dados de treino em certos casos, e há questões de direitos autorais, de uso de imagens de pessoas e de desinformação. Pergunta: o que deveria acompanhar uma imagem gerada em material didático? Armadilha: tratar imagem sintética como evidência."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Avaliar: por fatia, com intervalo, e com abstenção",
+   "itens": [
+    "Cinco fatias ficaram entre 0,932 (à direita, n = 132) e 0,972 (ao centro, n = 217)",
+    "Os intervalos se sobrepõem: não dá para afirmar viés com fatias pequenas",
+    "Sem abstenção o sistema aceita 100% do ruído e devolve algum dígito",
+    "Limiar do percentil 5: ainda aceita 68,7% do ruído e rejeita 5% dos dígitos reais",
+    "Alucinação visual: descrever o que não está na imagem; nada avisa"
+   ],
+   "notas": "Avaliar um sistema multimodal tem as dificuldades da avaliação de LLMs e outras. Uma média alta pode esconder desempenho ruim em subgrupos, por isso medimos por fatia e com intervalo de confiança por bootstrap. No brinquedo, as fatias foram traço forte, traço leve e três posições do centro de massa; a pior e a melhor ficaram em 0,932 e 0,972, com intervalos largos que se sobrepõem, então não se pode afirmar que o modelo é pior para dígitos à direita. Segunda lição: com ruído aleatório como imagem fora do domínio, o classificador sempre devolve algum dígito. A similaridade máxima média do ruído é 0,419 contra 0,603 dos dígitos reais, mas o limiar ainda aceita 68,7 por cento do ruído. O limiar ajuda e não resolve. Pergunta: como calibrar um limiar? Com dados reais do uso pretendido."
+  },
+  {
+   "tipo": "topico",
+   "titulo": "Custo, privacidade e acessibilidade",
+   "itens": [
+    "Imagem também é token: N = (H/p)·(L/p); 224×224 com patch 16 dá 196, com patch 32 dá 49",
+    "1024×768 com patch 16: 3072 tokens; 1 imagem + 200 de texto: 3272 tokens de entrada",
+    "Valores hipotéticos: confira a documentação do serviço",
+    "Privacidade: rostos, placas, vozes e metadados; remova metadados e borre o que não for necessário (LGPD)",
+    "Texto alternativo automático: revise, e ofereça a tabela de dados para gráficos"
+   ],
+   "notas": "Custo: em serviços multimodais a imagem costuma virar tokens cobrados e contados na janela de contexto, mas a conta exata depende do serviço e muda; os valores do capítulo são hipotéticos e servem só para a conta. Com o esquema do ViT, uma imagem 224 por 224 dá 196 tokens com patch 16 e 49 com patch 32; uma de 1024 por 768 dá 3072 tokens com patch 16. Para reduzir custo: baixar resolução quando o detalhe não importa, recortar a região relevante, enviar texto como texto quando existe a versão digital. Privacidade: imagens, áudio e documentos carregam dados pessoais; a LGPD prevê tratamento mais rigoroso para dados sensíveis, como biométricos e de saúde. Acessibilidade: rascunho automático revisado por pessoa. Pergunta: o que vocês removeriam de uma foto antes de enviar? Armadilha: enviar documentos pessoais a serviços externos sem avaliação."
+  },
+  {
+   "tipo": "atencao",
+   "titulo": "Erros frequentes e limitações",
+   "itens": [
+    "Achar que o LLM \"vê\": ele recebe vetores, não pixels",
+    "Ignorar a posição dos patches",
+    "Reportar recall@k sem dizer o critério e o tamanho da galeria",
+    "Acreditar na leitura de documentos por ser fluente: o erro de OCR é silencioso",
+    "Aqui: dígitos 8×8, codificadores lineares, legendas sintéticas; não preveem modelos reais"
+   ],
+   "notas": "Faça uma revisão rápida dos erros mais comuns do capítulo, pedindo que a turma diga em qual seção cada um apareceu. Reforce as limitações de honestidade: os experimentos usam dígitos 8 por 8, codificadores lineares e legendas geradas por regras; o recall alto no critério do dígito é fácil por construção; a projeção por PCA e a posição senoidal são escolhas didáticas, enquanto o ViT real aprende a projeção; o projetor é um brinquedo ridge, não o treino de um LLaVA; o denoiser 1D é analítico; as taxas de OCR foram programadas. O código com modelos reais, como CLIP, Whisper e a API de um provedor, está marcado python-ni e não foi executado. Nada no capítulo é aconselhamento clínico, jurídico ou de segurança. Pergunta: qual desses erros vocês já cometeram? Armadilha: extrapolar os números do brinquedo."
+  },
+  {
+   "tipo": "pratica",
+   "titulo": "Medir a confiabilidade de descrições de figuras",
+   "passos": [
+    "Reúna 20 figuras do seu material, sem pessoas identificáveis",
+    "Escreva uma descrição de referência e 2 a 3 fatos obrigatórios por figura",
+    "Gere descrições com um modelo à sua escolha, registrando modelo, versão, data e instruções; peça abstenção para o ilegível",
+    "Marque fatos corretos, ausentes ou contraditórios, e invenções",
+    "Calcule a taxa de fatos corretos e a de descrições com invenção, com intervalo",
+    "Escreva: onde o sistema falha e que revisão humana você exigiria?"
+   ],
+   "notas": "Apresente a atividade como uma pesquisa de campo sobre o que o capítulo discutiu: medir o quanto uma descrição automática é confiável. Peça figuras do próprio material da turma, gráficos, diagramas e fotos sem pessoas identificáveis, para evitar problemas de privacidade. Insista nos fatos obrigatórios, por exemplo quatro colunas e maior valor 54, porque eles tornam a avaliação objetiva. Registre modelo, versão, data e instruções, pois resultados variam e mudam com o tempo. Use o intervalo de confiança aprendido no Capítulo 8 e não tire conclusões fortes de 20 figuras. Há uma versão com os dados sintéticos do capítulo no Exercício prático 13.1. Pergunta: que revisão humana vocês exigiriam antes de publicar? Armadilha: avaliar só pela fluência do texto."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "patches e posição",
+   "pergunta": "Por que se soma uma informação de posição aos embeddings de patch?",
+   "opcoes": [
+    "Para reduzir o número de patches",
+    "Porque a atenção, sem posição, não distingue a ordem dos blocos",
+    "Para converter a imagem em tons de cinza",
+    "Para aumentar a taxa de amostragem"
+   ],
+   "resposta": "B",
+   "explicacao": "Sem posição, embaralhar os patches não altera a saída da atenção.",
+   "notas": "Dê um minuto para a turma votar antes de revelar. Se alguém escolher a primeira alternativa, lembre que a posição não altera o número de patches. Retome o experimento: sem posição a diferença após embaralhar foi 0, com posição foi 0,089. Pergunte a quem acertou como explicaria a um colega usando a analogia do quebra-cabeça. Comente ainda que no ViT original as posições são vetores aprendidos, enquanto aqui usamos a forma senoidal do Transformer original por não exigir treino. Pergunta extra: o que mudaria se os patches fossem menores?"
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o que mede o recall@5",
+   "pergunta": "O que mede o recall@5 na recuperação imagem→texto?",
+   "opcoes": [
+    "A fração de textos com mais de 5 palavras",
+    "O número de imagens com 5 canais",
+    "A fração de imagens cujo texto correto aparece entre os 5 mais similares",
+    "A similaridade média dos 5 melhores pares"
+   ],
+   "resposta": "C",
+   "explicacao": "É a proporção de consultas com algum item correto no top 5.",
+   "notas": "Peça que a turma explique com as próprias palavras antes de revelar. Reforce que o recall depende do que se chama de correto e do tamanho da galeria. Retome a tabela do capítulo, em que o recall@1 imagem para texto passou de 0,976 no critério do dígito para 0,823 no critério estrito. Pergunte quando um recall@5 de 1,000 é suspeito."
+  },
+  {
+   "tipo": "quiz",
+   "titulo": "o que o LLM vê",
+   "pergunta": "Qual afirmação descreve melhor o que um LLM multimodal \"vê\" de uma imagem?",
+   "opcoes": [
+    "Os pixels originais, um a um",
+    "Uma descrição escrita por uma pessoa",
+    "Apenas os metadados do arquivo",
+    "Vetores do codificador visual alinhados ao seu espaço de tokens"
+   ],
+   "resposta": "D",
+   "explicacao": "O LLM nunca recebe pixels; se o alinhamento perde um detalhe, ele não tem como saber.",
+   "notas": "Esta é a ideia mais importante do capítulo para o uso responsável. Se alguém marcar pixels, volte à analogia da descrição por telefone. Pergunte: o que acontece quando o projetor perde um número pequeno do gráfico? O modelo completa com o plausível, e isso é a alucinação visual. Fixe também que a defesa é pedir abstenção e conferir o trecho lido."
+  },
+  {
+   "tipo": "sintese",
+   "itens": [
+    "Modalidade é um tipo de dado; tudo vira array e depois sequência de embeddings",
+    "ViT: patches + projeção + posição; sem posição a atenção não vê a ordem",
+    "Contraste (ideia do CLIP): aproximar pares certos, afastar os errados; τ muda a nitidez",
+    "Um projetor leva a visão ao espaço de tokens; o LLM não vê pixels e pode alucinar",
+    "Áudio vira espectrograma; OCR erra em silêncio: valide e revise",
+    "Difusão: x_t = √ᾱ_t x₀ + √(1−ᾱ_t) ε; gerar é remover ruído",
+    "Avalie por fatia, com intervalo; cuide de custo, privacidade e acessibilidade"
+   ],
+   "notas": "Faça a síntese em voz alta, pedindo que a turma complete cada frase antes de você ler a seguinte. Conecte com a pergunta guia do capítulo: como imagens, sons e documentos viram números que um modelo de linguagem consegue usar, e que cuidados isso exige. Reforce a honestidade: os números do capítulo vêm de simulações com dados sintéticos e codificadores lineares, e não de modelos reais; o código com modelos reais é python-ni e não foi executado. Peça que cada pessoa escolha o cuidado que considera mais importante para o seu contexto de trabalho e explique por quê. Armadilha: sair da aula achando que multimodal significa confiável por padrão."
+  },
+  {
+   "tipo": "referencias",
+   "itens": [
+    "DOSOVITSKIY, A. et al. An image is worth 16x16 words: Transformers for image recognition at scale. ICLR 9, 2021.",
+    "RADFORD, A. et al. Learning transferable visual models from natural language supervision. ICML 38, 2021.",
+    "ALAYRAC, J.-B. et al. Flamingo: a visual language model for few-shot learning. NeurIPS 35, 2022.",
+    "LIU, H. et al. Visual instruction tuning. NeurIPS 36, 2023.",
+    "RADFORD, A. et al. Robust speech recognition via large-scale weak supervision. ICML 40, 2023.",
+    "HO, J.; JAIN, A.; ABBEEL, P. Denoising diffusion probabilistic models. NeurIPS 33, 2020.",
+    "BRASIL. Lei nº 13.709, de 14 de agosto de 2018 (LGPD). Diário Oficial da União, 15 ago. 2018."
+   ],
+   "notas": ""
+  }
+ ]
+}
