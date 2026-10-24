@@ -1,89 +1,89 @@
 MC: Por que se diz que a geração de texto por um modelo de linguagem é autorregressiva?
-= Porque a saída de cada passo (o token escolhido) é acrescentada ao contexto e usada como entrada do passo seguinte.
-- Porque o modelo gera todos os tokens ao mesmo tempo, sem usar os anteriores.
-- Porque o modelo regride automaticamente para versões anteriores de si mesmo.
-- Porque cada token é gerado por um modelo diferente.
-- Porque a geração depende apenas do último caractere digitado.
+= Porque a saída de cada passo é acrescentada ao contexto e vira entrada do passo seguinte.
+- Porque o modelo gera todos os tokens ao mesmo tempo, em paralelo, sem usar os tokens anteriores como contexto.
+- Porque o modelo regride automaticamente para versões anteriores de si mesmo quando a perda piora.
+- Porque cada token é gerado por um modelo diferente, escolhido por sorteio entre vários especialistas.
+- Porque a geração depende apenas do último caractere digitado pelo usuário, e não do restante do texto.
 J: O laço de geração condiciona cada novo token em todos os anteriores, inclusive nos que o próprio modelo produziu.
 
 MC: Qual é uma consequência da natureza autorregressiva da geração?
-= Erros se propagam: um token ruim altera o contexto de todos os tokens seguintes.
-- A geração pode ser paralelizada em todos os tokens de saída.
-- O modelo corrige automaticamente tokens ruins anteriores.
-- O tamanho da saída não influencia a latência.
-- A geração nunca precisa de critério de parada.
+= Erros se propagam: um token ruim altera o contexto dos tokens seguintes.
+- A geração pode ser paralelizada em todos os tokens de saída, pois cada um independe dos demais.
+- O modelo corrige automaticamente os tokens ruins anteriores ao perceber a incoerência no texto.
+- O tamanho da saída não influencia a latência, que depende somente do tamanho do prompt de entrada.
+- A geração nunca precisa de critério de parada, pois o modelo sempre termina sozinho na frase certa.
 J: Como cada passo depende dos anteriores, um desvio inicial tende a contaminar o restante do texto.
 
 MC: O que faz a decodificação gulosa?
 = Escolhe, em cada passo, o token de maior probabilidade.
-- Sorteia um token segundo a distribuição.
-- Mantém várias sequências parciais em paralelo.
-- Escolhe sempre o token de menor probabilidade.
-- Ignora a distribuição do modelo.
+- Sorteia um token segundo a distribuição de probabilidades, de modo que tokens prováveis saem com mais frequência.
+- Mantém várias sequências parciais em paralelo e escolhe ao final a de maior probabilidade total.
+- Escolhe sempre o token de menor probabilidade, para maximizar a diversidade do texto gerado.
+- Ignora a distribuição do modelo e seleciona o token seguinte por ordem alfabética no vocabulário.
 J: É determinística, dada a distribuição, e míope: não considera a probabilidade total da sequência.
 
 MC: Qual a principal limitação da decodificação gulosa em geração aberta?
-= Tende a repetições e respostas genéricas, pois a sequência de melhores tokens individuais não é a melhor sequência.
-- Exige mais memória que a busca em feixe com B grande.
-- Não funciona com vocabulários pequenos.
-- Produz sempre texto muito diverso.
-- Só pode ser usada em modelos bidirecionais.
+= Tende a repetições e respostas genéricas, pois os melhores tokens isolados não formam a melhor sequência.
+- Exige mais memória que a busca em feixe com B grande, pois guarda o histórico de todos os tokens descartados.
+- Não funciona com vocabulários pequenos, porque o softmax precisa de milhares de classes para ser calculado.
+- Produz sempre texto muito diverso, o que a torna inadequada para tarefas que exigem respostas estáveis.
+- Só pode ser usada em modelos bidirecionais, pois precisa enxergar o contexto à direita de cada token.
 J: A gulosa não explora alternativas e pode ficar presa em padrões repetitivos (Holtzman et al., 2020).
 
 MC: Como se relaciona a busca em feixe com $B=1$ e a decodificação gulosa?
 = São equivalentes.
-- A busca em feixe com $B=1$ sorteia os tokens.
-- A gulosa mantém $B=5$ sequências.
-- A busca em feixe com $B=1$ sempre produz texto mais diverso.
-- Não há relação entre elas.
+- A busca em feixe com $B=1$ sorteia os tokens segundo a distribuição, ao contrário da gulosa.
+- A gulosa mantém $B=5$ sequências parciais em paralelo, ao contrário do feixe com $B=1$.
+- A busca em feixe com $B=1$ sempre produz texto mais diverso do que a decodificação gulosa.
+- Não há relação entre elas, pois a busca em feixe usa probabilidades e a gulosa, não.
 J: Com um único candidato mantido, o feixe escolhe o melhor token a cada passo, como a gulosa.
 
 MC: Qual a desvantagem comum da busca em feixe em geração aberta de texto?
 = Favorece textos repetitivos e de baixa diversidade.
-- Gera textos aleatórios sem relação com o contexto.
-- Não considera a probabilidade das sequências.
-- Exige que o modelo seja treinado de novo.
-- Só funciona para saídas de um token.
+- Gera textos aleatórios sem relação com o contexto, pois descarta as probabilidades do modelo.
+- Não considera a probabilidade das sequências, apenas a do primeiro token de cada candidato.
+- Exige que o modelo seja treinado de novo para cada valor de $B$ usado na geração.
+- Só funciona para saídas de um token, pois o feixe não pode ser estendido a sequências.
 J: O feixe procura alta probabilidade total, e textos muito prováveis tendem a ser genéricos.
 
 MC: O que ocorre com a distribuição de probabilidade quando a temperatura $T$ é reduzida de 1 para 0,5?
 = Fica mais concentrada nos tokens mais prováveis.
-- Fica mais uniforme.
-- Permanece a mesma.
-- Inverte a ordem dos tokens.
-- Deixa de somar 1.
+- Fica mais uniforme, aproximando as probabilidades de todos os tokens do vocabulário.
+- Permanece a mesma, pois a temperatura só altera a escala dos logits e não o softmax.
+- Inverte a ordem dos tokens, passando o menos provável a ser o preferido pelo modelo.
+- Deixa de somar 1, e por isso precisa ser renormalizada antes de qualquer sorteio.
 J: Dividir os logits por $T<1$ amplia as diferenças entre eles.
 
 MC: Qual comportamento limite aproxima o uso de temperatura muito próxima de zero?
 = A decodificação gulosa.
-- A amostragem uniforme.
-- A busca em feixe com $B=100$.
-- A remoção do softmax.
-- A geração aleatória de caracteres.
+- A amostragem uniforme sobre todo o vocabulário, em que cada token tem a mesma chance.
+- A busca em feixe com $B=100$, que mantém cem sequências parciais a cada passo.
+- A remoção do softmax, de modo que os logits brutos sejam usados como probabilidades.
+- A geração aleatória de caracteres, sem qualquer uso da distribuição do modelo.
 J: Quando $T\to0$, a probabilidade se concentra no token de maior logit.
 
 MC: Qual problema a amostragem pura, com $T=1$, pode apresentar?
-= A cauda longa: muitos tokens improváveis, somados, têm massa relevante e podem ser sorteados, gerando texto incoerente.
-- Sempre gera o mesmo texto.
-- Só sorteia o token mais provável.
-- Não usa a distribuição do modelo.
-- Elimina a variabilidade entre execuções.
+= A cauda longa: tokens improváveis, somados, têm massa relevante e podem ser sorteados.
+- Sempre gera o mesmo texto, pois a temperatura 1 torna o sorteio determinístico a cada execução.
+- Só sorteia o token mais provável, o que a faz equivaler à decodificação gulosa.
+- Não usa a distribuição do modelo, pois o sorteio é feito de modo uniforme entre os tokens.
+- Elimina a variabilidade entre execuções, produzindo respostas idênticas mesmo sem fixar semente alguma.
 J: Mesmo tokens individualmente improváveis são sorteados com frequência considerável quando há muitos deles.
 
 MC: Qual a principal limitação do top-k?
 = O valor de $k$ é fixo e não se adapta à incerteza do modelo a cada passo.
-- Não permite renormalizar as probabilidades.
-- Só funciona com temperatura zero.
-- Elimina completamente a aleatoriedade.
-- Aumenta a cauda da distribuição.
+- Não permite renormalizar as probabilidades dos $k$ tokens restantes, que deixam de somar 1.
+- Só funciona com temperatura zero, pois o corte exige que a distribuição seja determinística.
+- Elimina completamente a aleatoriedade, pois sempre seleciona o token de maior probabilidade.
+- Aumenta a cauda da distribuição, porque inclui no sorteio tokens de probabilidade ainda menor.
 J: Com $k$ fixo, passos muito seguros admitem tokens ruins, e passos incertos perdem opções válidas.
 
 MC: O que caracteriza o top-p (amostragem do núcleo)?
-= Mantém o menor conjunto de tokens cuja probabilidade acumulada atinge $p$, adaptando seu tamanho à incerteza do modelo.
-- Mantém sempre exatamente $p$ tokens.
-- Sorteia $p$ por cento dos tokens do vocabulário.
-- Elimina os tokens mais prováveis.
-- Mantém todos os tokens com probabilidade acima de 0,5.
+= Mantém o menor conjunto de tokens cuja probabilidade acumulada atinge $p$.
+- Mantém sempre exatamente $p$ tokens, qualquer que seja a forma da distribuição em cada passo.
+- Sorteia $p$ por cento dos tokens do vocabulário e descarta os demais antes do softmax.
+- Elimina os tokens mais prováveis, que já foram usados, e sorteia entre os restantes.
+- Mantém todos os tokens com probabilidade acima de 0,5, descartando os que ficam abaixo.
 J: O "núcleo" é maior quando a distribuição é achatada e menor quando é concentrada.
 
 MC: Para $\mathbf{p}=(0{,}5;\ 0{,}3;\ 0{,}15;\ 0{,}05)$, aplicando top-p com $p=0{,}8$, qual a distribuição após renormalização?
@@ -104,10 +104,10 @@ J: A soma dos três primeiros é 0,9; dividindo cada um por 0,9, obtém-se 0,444
 
 MC: Qual o efeito de uma penalidade de repetição?
 = Reduz os logits de tokens já usados, diminuindo a probabilidade de repeti-los.
-- Garante que o texto seja factualmente correto.
-- Aumenta a janela de contexto.
-- Elimina o uso do softmax.
-- Impede qualquer token de aparecer mais de uma vez em qualquer circunstância.
+- Garante que o texto seja factualmente correto, ao descartar tokens que já foram escritos.
+- Aumenta a janela de contexto, liberando espaço ao descartar os tokens repetidos.
+- Elimina o uso do softmax, porque as probabilidades passam a ser calculadas por contagem.
+- Impede qualquer token de aparecer mais de uma vez em qualquer circunstância, mesmo se for necessário.
 J: É uma heurística que atua sobre os logits; pode deixar o texto estranho se for forte demais.
 
 MC: Quais critérios costumam encerrar a geração?
@@ -119,43 +119,43 @@ MC: Quais critérios costumam encerrar a geração?
 J: Os três critérios existem em praticamente todos os serviços e bibliotecas de geração.
 
 MC: Qual afirmação sobre a janela de contexto é correta?
-= Ela é dividida entre os tokens de entrada (instruções, histórico, documentos) e os de saída gerados.
-- Ela se refere apenas ao texto de saída.
-- Ela se refere apenas ao texto de entrada.
-- Ela não tem limite.
-- Ela é medida em palavras, nunca em tokens.
+= Ela é compartilhada entre os tokens de entrada e os tokens de saída gerados.
+- Ela se refere apenas ao texto de saída gerado, enquanto a entrada é processada fora dela.
+- Ela se refere apenas ao texto de entrada, e a resposta gerada pode ter tamanho ilimitado.
+- Ela não tem limite, pois a atenção consegue relacionar qualquer número de tokens.
+- Ela é medida em palavras, nunca em tokens, de modo que o limite varia com o idioma.
 J: A soma de entrada e saída precisa caber na janela.
 
 MC: Qual é o risco de truncar o contexto sem critério?
 = Perder justamente a parte essencial do texto, sem que o sistema avise.
-- Aumentar a precisão do modelo.
-- Reduzir o vocabulário.
-- Eliminar a necessidade de validação.
-- Aumentar a janela de contexto.
+- Aumentar a precisão do modelo, pois o contexto menor reduz o ruído nas respostas.
+- Reduzir o vocabulário, já que os tokens do trecho cortado deixam de existir.
+- Eliminar a necessidade de validação, pois o conteúdo cortado não pode mais gerar erros.
+- Aumentar a janela de contexto, porque o espaço liberado fica disponível para a saída.
 J: O sistema deve decidir conscientemente o que cortar, e registrar o corte.
 
 MC: O que Liu et al. (2024) observaram sobre o uso de contextos longos?
-= O desempenho tende a piorar quando a informação relevante está no meio do contexto, em comparação com o início ou o fim.
-- O desempenho sempre melhora com mais contexto.
-- A posição da informação não tem qualquer efeito.
-- Só o final do contexto é lido pelo modelo.
-- O desempenho é melhor com a informação sempre no meio.
+= O desempenho tende a piorar quando a informação relevante está no meio do contexto.
+- O desempenho sempre melhora com mais contexto, qualquer que seja a posição da informação relevante.
+- A posição da informação não tem qualquer efeito, pois a atenção trata todos os tokens de modo igual.
+- Só o final do contexto é lido pelo modelo, e todo o restante do texto é ignorado.
+- O desempenho é melhor com a informação sempre no meio, e pior no início ou no fim.
 J: Ter espaço de contexto não garante uso eficaz de toda a informação.
 
 MC: Qual a diferença entre as fases de preenchimento (prefill) e decodificação?
-= No preenchimento, processa-se todo o prompt em paralelo; na decodificação, gera-se um token por vez.
-- No preenchimento, gera-se um token por vez; na decodificação, todo o prompt em paralelo.
-- Ambas processam um token por vez.
-- Ambas processam todos os tokens em paralelo.
-- Não existe distinção entre elas.
+= Preenchimento: prompt inteiro em paralelo; decodificação: um token por vez.
+- No preenchimento, gera-se um token por vez; na decodificação, todo o prompt é processado em paralelo.
+- Ambas as fases processam um token por vez, porque a máscara causal impede qualquer paralelismo.
+- Ambas as fases processam todos os tokens em paralelo, inclusive os que ainda serão gerados.
+- Não existe distinção entre elas: o tempo de geração é o mesmo por token, do primeiro ao último.
 J: A máscara causal permite paralelizar o prompt; a geração, por ser autorregressiva, é sequencial.
 
 MC: Por que a decodificação costuma ser limitada pela largura de banda de memória?
-= Porque cada token gerado exige ler todos os pesos do modelo (e o cache) da memória, para pouco cálculo por token.
-- Porque o cálculo por token é enorme e a memória é irrelevante.
-- Porque a decodificação usa mais tokens de entrada que o preenchimento.
-- Porque os pesos são recalculados a cada passo.
-- Porque a memória nunca é lida na decodificação.
+= Porque cada token gerado exige ler todos os pesos (e o cache) da memória para pouco cálculo.
+- Porque o cálculo por token é enorme e a memória é irrelevante para a velocidade de geração.
+- Porque a decodificação usa mais tokens de entrada do que o preenchimento, sobrecarregando a memória.
+- Porque os pesos são recalculados a cada passo a partir dos dados de treino armazenados em disco.
+- Porque a memória nunca é lida na decodificação, que opera só sobre o último token em registradores.
 J: A intensidade aritmética da decodificação (cálculo por byte lido) é baixa.
 
 MC: Com preenchimento a 5 000 tokens/s e 30 ms por token gerado, qual a latência para um prompt de 2 000 tokens e uma resposta de 100 tokens?
@@ -168,34 +168,34 @@ J: Preenchimento: $2\,000/5\,000=0{,}4$ s; decodificação: $100\times0{,}03=3{,
 
 MC: Qual fator costuma dominar a latência de uma resposta longa?
 = O número de tokens gerados, pois cada um exige um passo sequencial.
-- O tamanho do vocabulário, apenas.
-- A cor da interface.
-- O número de parágrafos do prompt, apenas.
-- O tipo de teclado do usuário.
+- O tamanho do vocabulário, apenas, já que o softmax é recalculado sobre ele a cada passo.
+- A cor da interface do usuário, que altera o tempo de processamento do modelo no servidor.
+- O número de parágrafos do prompt, apenas, independentemente de quantos tokens eles contenham.
+- O tipo de teclado usado pelo usuário, que determina a velocidade de envio da requisição.
 J: A decodificação é sequencial; dobrar a saída aproximadamente dobra o tempo de decodificação.
 
 MC: O que o cache KV armazena?
 = As chaves e os valores de cada camada para todos os tokens já processados.
-- Os pesos do modelo.
-- As probabilidades do vocabulário inteiro.
-- Os embeddings do vocabulário.
-- O texto original em formato comprimido.
+- Os pesos do modelo, copiados da memória lenta para a rápida a cada requisição.
+- As probabilidades do vocabulário inteiro calculadas em todos os passos anteriores da geração.
+- Os embeddings do vocabulário inteiro, para evitar que sejam relidos da tabela a cada token.
+- O texto original da conversa em formato comprimido, para reduzir o uso de memória do servidor.
 J: Com o cache, o passo seguinte só calcula a consulta, a chave e o valor do token novo.
 
 MC: Qual relação existe entre as saídas com e sem cache KV?
 = São idênticas (a menos de erros numéricos); o cache só evita cálculo repetido.
-- O cache sempre altera a saída para melhor.
-- O cache sempre piora a qualidade.
-- O cache só funciona com temperatura zero.
-- O cache elimina a necessidade da máscara causal.
+- O cache sempre altera a saída para melhor, porque preserva informação que seria perdida sem ele.
+- O cache sempre piora a qualidade, pois armazena valores aproximados em vez dos valores exatos.
+- O cache só funciona com temperatura zero, pois exige que a escolha do token seja determinística.
+- O cache elimina a necessidade da máscara causal, já que os tokens futuros não estão armazenados.
 J: O cache reaproveita valores que não mudam, pois tokens passados não dependem de tokens futuros.
 
 MC: Na fórmula da memória do cache, $2\cdot N_{\text{camadas}}\cdot T\cdot n_{\text{kv}}\cdot d_{\text{cab}}\cdot b$, o que representa o fator 2?
 = Guardar tanto as chaves quanto os valores.
-- Duas camadas por bloco.
-- Dois usuários simultâneos.
-- Duas casas decimais de precisão.
-- A razão entre entrada e saída.
+- Duas camadas por bloco do modelo, uma para atenção e outra para a rede alimentada adiante.
+- Dois usuários simultâneos, cada um com sua cópia independente do cache na memória.
+- Duas casas decimais de precisão usadas para armazenar cada elemento do cache.
+- A razão entre o número de tokens de entrada e o de tokens de saída gerados.
 J: Cada token tem um vetor de chave e um de valor por camada e por cabeça.
 
 MC: Se um modelo reduz as cabeças de chaves/valores de 32 para 8 (agrupamento), em quanto cai a memória do cache?
@@ -207,27 +207,27 @@ MC: Se um modelo reduz as cabeças de chaves/valores de 32 para 8 (agrupamento),
 J: A memória é proporcional a $n_{\text{kv}}$; $8/32=1/4$.
 
 MC: Qual a ideia da decodificação especulativa?
-= Um modelo pequeno propõe vários tokens e o modelo grande os verifica em paralelo, acelerando a geração sem alterar a distribuição de saída do grande.
-- Gerar tokens aleatórios para economizar memória.
-- Eliminar o cache KV.
-- Usar o modelo grande para treinar o pequeno durante a geração.
-- Ignorar a distribuição do modelo grande.
+= Um modelo pequeno propõe vários tokens e o grande os verifica em paralelo, sem alterar sua distribuição.
+- Gerar tokens aleatórios para economizar memória durante o preenchimento do prompt, ignorando o modelo.
+- Eliminar o cache KV para reduzir a memória, recalculando as chaves e os valores a cada passo.
+- Usar o modelo grande para treinar o pequeno durante a geração, atualizando seus pesos a cada token.
+- Ignorar a distribuição do modelo grande e aceitar sempre os tokens propostos pelo modelo pequeno.
 J: A técnica de Leviathan et al. (2023) mantém a distribuição de saída do modelo grande.
 
 MC: Por que temperatura zero em um serviço externo não garante saídas idênticas?
-= Porque diferenças numéricas, de lote, de hardware ou atualizações do serviço podem alterar a escolha entre tokens de probabilidades próximas.
-- Porque temperatura zero ativa amostragem aleatória.
-- Porque o serviço ignora o prompt.
-- Porque temperatura zero só se aplica ao primeiro token.
-- Porque a decodificação gulosa exige sorteio.
+= Porque diferenças numéricas, de lote, de hardware ou de versão podem mudar a escolha entre tokens quase empatados.
+- Porque temperatura zero ativa a amostragem aleatória, que sorteia o token em vez de escolher o mais provável.
+- Porque o serviço ignora o prompt e responde a partir de um conjunto fixo de respostas já armazenadas.
+- Porque temperatura zero só se aplica ao primeiro token, e os demais são sorteados normalmente.
+- Porque a decodificação gulosa exige um sorteio entre todos os tokens do vocabulário a cada passo.
 J: Mesmo a decodificação gulosa pode divergir quando duas opções têm logits quase iguais.
 
 MC: O que ilustra o fato de que, em ponto flutuante, $(a+b)+b$ pode diferir de $a+(b+b)$?
-= A soma em ponto flutuante não é associativa; mudar a ordem das operações pode mudar o resultado.
-- Que o computador erra operações simples sempre.
-- Que a soma só funciona com inteiros.
-- Que a precisão aumenta com a ordem das operações.
-- Que a álgebra não vale para números reais.
+= A soma em ponto flutuante não é associativa: mudar a ordem pode mudar o resultado.
+- Que o computador erra operações simples sempre, e por isso nenhum cálculo numérico é confiável.
+- Que a soma só funciona com números inteiros, e os decimais precisam ser aproximados à mão.
+- Que a precisão sempre aumenta quando se escolhe a ordem das operações pelo tamanho dos termos.
+- Que a álgebra não vale para números reais, e por isso as equações do modelo estão erradas.
 J: Arredondamentos acumulados dependem da ordem, o que ajuda a explicar a variabilidade entre execuções paralelas.
 
 MC: Qual conjunto de informações é essencial registrar para tentar reproduzir uma geração?

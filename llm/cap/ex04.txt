@@ -8,9 +8,9 @@ J: Os pesos dependem do conteúdo (produto escalar consulta-chave) e a saída é
 
 MC: Na analogia da biblioteca, qual elemento corresponde à "consulta" (query)?
 = A pergunta que o leitor leva e compara com as etiquetas dos livros.
-- O conteúdo do livro.
-- A etiqueta na lombada de cada livro.
-- A lista de todos os livros disponíveis.
+- O conteúdo do livro, que é recuperado e combinado com os outros conteúdos depois que a pergunta foi comparada às etiquetas.
+- A etiqueta na lombada de cada livro, que descreve o assunto e é comparada com a pergunta do leitor para definir a similaridade.
+- A lista de todos os livros disponíveis na estante, da qual o leitor escolhe apenas um exemplar para ler por inteiro.
 - O número de páginas de cada livro.
 J: A consulta é comparada com as chaves (etiquetas); os valores (conteúdos) são então combinados segundo a similaridade.
 
@@ -32,9 +32,9 @@ J: Há uma pontuação para cada par (token que consulta, token consultado).
 
 MC: Sobre qual eixo se aplica o softmax na matriz de pontuações?
 = Sobre as chaves (colunas), linha a linha, de modo que cada linha some 1.
-- Sobre as consultas (linhas), coluna a coluna.
-- Sobre toda a matriz de uma vez.
-- Sobre a dimensão $d_k$.
+- Sobre as consultas (linhas), coluna a coluna, de modo que cada coluna da matriz de pontuações some 1 ao final.
+- Sobre toda a matriz de uma vez, de modo que a soma de todas as $T\times T$ entradas seja igual a 1.
+- Sobre a dimensão $d_k$, normalizando cada vetor de consulta ao longo de suas componentes antes do produto com as chaves.
 - Não se aplica softmax na atenção.
 J: Cada token que consulta precisa de uma distribuição de pesos sobre os tokens consultados.
 
@@ -64,26 +64,26 @@ J: A derivada do softmax nas regiões saturadas é próxima de zero, tornando o 
 
 MC: Como a máscara causal é implementada na prática?
 = Substituindo por um número muito negativo (−∞) as pontuações dos pares em que o token consultado vem depois, antes do softmax.
-- Zerando os pesos depois do softmax, sem renormalizar.
-- Removendo os últimos tokens da sequência.
-- Multiplicando os valores por zero depois da soma.
+- Zerando os pesos depois do softmax, sem renormalizar as linhas, o que mantém a posição de cada token mas deixa a soma dos pesos menor que 1.
+- Removendo os últimos tokens da sequência a cada passo, de modo que o modelo nunca receba a entrada completa durante o treinamento.
+- Multiplicando os vetores de valor por zero depois da soma ponderada, o que anula a saída de toda a atenção em cada posição.
 - Reduzindo a dimensão $d_k$.
 J: Como $e^{-\infty}=0$, esses pares recebem peso zero e as linhas continuam somando 1.
 
 MC: Por que aplicar a máscara depois do softmax (zerando pesos) seria incorreto?
 = As linhas deixariam de somar 1, e a média ponderada não seria uma média.
-- O softmax não funciona com zeros.
-- A máscara só funciona se aplicada à saída final do modelo.
-- Zerar pesos aumenta a dimensão do modelo.
+- O softmax não funciona com zeros, pois o logaritmo da probabilidade de um peso nulo é indefinido e interrompe o cálculo.
+- A máscara só funciona se aplicada à saída final do modelo, depois das camadas de atenção e da rede feed-forward.
+- Zerar pesos aumenta a dimensão do modelo, pois cada posição zerada precisa ser preenchida com novas componentes.
 - Não haveria diferença alguma.
 J: A normalização precisa levar em conta apenas os tokens permitidos; por isso a máscara entra antes do softmax.
 
 MC: Qual vantagem do mascaramento causal para o treinamento de modelos de geração?
 = Permite prever o próximo token em todas as posições em uma única passada, cada posição vendo só o seu passado.
-- Elimina a necessidade de dados de treino.
-- Torna o modelo bidirecional.
+- Elimina a necessidade de dados de treino, pois o modelo aprende a prever o próximo token usando apenas as regras da máscara.
+- Torna o modelo bidirecional, permitindo que cada posição consulte tanto o passado quanto o futuro da sequência de entrada.
 - Reduz o vocabulário.
-- Faz o modelo ver o texto inteiro em cada posição.
+- Faz o modelo ver o texto inteiro em cada posição, o que acelera o aprendizado, mas impede a geração token a token.
 J: A estrutura triangular garante que a previsão em cada posição não use o futuro, e todas as posições podem ser calculadas em paralelo.
 
 MC: Em um modelo com $d=768$ e $h=12$ cabeças, qual a dimensão $d_k$ de cada cabeça?
@@ -96,10 +96,10 @@ J: $d_k=d/h=768/12=64$.
 
 MC: Qual o papel da matriz $\mathbf{W}_O$ na atenção multicabeça?
 = Misturar as saídas concatenadas das cabeças, devolvendo a dimensão $d$ do modelo.
-- Calcular as consultas.
-- Aplicar a máscara causal.
+- Calcular as consultas a partir dos embeddings de entrada, projetando cada token para o espaço de dimensão $d_k$ de cada cabeça.
+- Aplicar a máscara causal às pontuações de cada cabeça, impedindo que um token consulte posições futuras da sequência.
 - Normalizar a camada.
-- Produzir os logits do vocabulário.
+- Produzir os logits do vocabulário a partir da saída da última camada, antes do softmax da distribuição do próximo token.
 J: As cabeças são concatenadas e projetadas por $\mathbf{W}_O\in\mathbb{R}^{d\times d}$.
 
 MC: Quantos parâmetros (sem vieses) tem um bloco de atenção com $d=1\,024$?
@@ -112,9 +112,9 @@ J: As quatro matrizes $\mathbf{W}_Q,\mathbf{W}_K,\mathbf{W}_V,\mathbf{W}_O$ têm
 
 MC: Por que são necessárias representações posicionais em um Transformer?
 = Porque a atenção, sozinha, é indiferente à ordem: embaralhar a entrada apenas embaralha a saída do mesmo modo.
-- Porque a atenção só funciona com sequências de comprimento par.
-- Porque os embeddings não têm dimensão suficiente.
-- Porque o softmax depende da posição absoluta.
+- Porque a atenção só funciona com sequências de comprimento par, e a posição é usada para completar a sequência quando ela é ímpar.
+- Porque os embeddings não têm dimensão suficiente para armazenar o significado das palavras sem um vetor adicional de posição.
+- Porque o softmax depende da posição absoluta de cada token, o que faz os pesos mudarem quando o texto é deslocado.
 - Porque a máscara causal elimina a ordem.
 J: Sem informação de posição, "o cachorro mordeu o homem" e "o homem mordeu o cachorro" teriam representações equivalentes por token.
 
@@ -136,42 +136,42 @@ J: A rotação codifica posição de modo que a interação consulta-chave refli
 
 MC: Qual o principal benefício da conexão residual $\mathbf{y}=\mathbf{x}+F(\mathbf{x})$?
 = Facilita o fluxo do gradiente e permite que a camada aprenda apenas uma correção da entrada.
-- Dobra a dimensão do vetor.
-- Elimina a necessidade de normalização.
-- Impede que o modelo aprenda.
+- Dobra a dimensão do vetor, já que a saída da camada passa a concatenar a entrada com a transformação $F(\mathbf{x})$.
+- Elimina a necessidade de normalização, pois o atalho mantém a escala das ativações sempre estável ao longo das camadas.
+- Impede que o modelo aprenda, porque a entrada copiada à saída anula o efeito dos parâmetros da subcamada.
 - Aumenta o vocabulário.
 J: O atalho cria um caminho direto para o gradiente e simplifica o aprendizado de camadas profundas.
 
 MC: O que faz a normalização de camada (LayerNorm) com o vetor de cada token?
 = Subtrai a média e divide pelo desvio-padrão calculados entre as dimensões do vetor, e depois aplica escala e deslocamento aprendidos.
-- Normaliza cada dimensão ao longo de todos os tokens do lote.
-- Divide o vetor pela posição do token.
-- Zera as dimensões menores que a média.
+- Normaliza cada dimensão ao longo de todos os tokens do lote, estimando média e desvio-padrão entre os exemplos do minilote e não dentro do vetor.
+- Divide o vetor pela posição do token na sequência, de modo que tokens finais recebam vetores com norma menor que os iniciais.
+- Zera as dimensões menores que a média do vetor, produzindo uma representação esparsa que mantém apenas os componentes mais fortes.
 - Aplica o softmax ao vetor.
 J: A normalização é por token, entre as $d$ dimensões, e não entre exemplos do lote.
 
 MC: O que distingue a configuração pré-LN da pós-LN?
-= Na pré-LN, a normalização é aplicada antes da subcamada, dentro do ramo residual; costuma treinar de forma mais estável em modelos profundos.
-- Na pré-LN, a normalização é aplicada somente na saída final.
-- Na pós-LN, não há conexões residuais.
-- A pré-LN elimina a atenção.
+= Na pré-LN, a normalização vem antes da subcamada, dentro do ramo residual; costuma treinar de forma mais estável em modelos profundos.
+- Na pré-LN, a normalização é aplicada somente na saída final da rede, depois da última camada, e nunca dentro de cada bloco, o que a torna igual à pós-LN em modelos rasos.
+- Na pós-LN, não há conexões residuais, e cada subcamada recebe diretamente a saída normalizada da subcamada anterior, sem atalho.
+- A pré-LN elimina a atenção, substituindo-a por uma normalização mais barata em cada bloco, o que reduz o custo por camada.
 - A pós-LN só funciona em encoders.
 J: A pré-LN é a escolha mais frequente em LLMs recentes por favorecer a estabilidade.
 
 MC: Qual característica da RMSNorm a distingue da LayerNorm?
 = Não subtrai a média; divide pelo valor quadrático médio (RMS) das ativações.
-- Calcula a média entre todos os tokens do lote.
-- Usa softmax em vez de divisão.
-- Só se aplica à primeira camada.
+- Calcula a média entre todos os tokens do lote, de modo que a normalização de um token dependa dos demais exemplos processados.
+- Usa softmax em vez de divisão, convertendo as ativações do vetor em uma distribuição de probabilidade que soma 1.
+- Só se aplica à primeira camada, preparando os embeddings de entrada, e é substituída por outro método nas camadas seguintes.
 - Não tem parâmetro de escala.
 J: A RMSNorm é uma variante mais simples e barata, que omite a centralização.
 
 MC: Como a rede feed-forward (FFN) de um bloco Transformer é aplicada?
 = Separadamente a cada posição, com expansão da dimensão (tipicamente $4d$) e uma função de ativação não linear.
-- Misturando todas as posições em uma única multiplicação.
-- Somente à última posição da sequência.
-- Sem função de ativação, apenas com multiplicações lineares.
-- Apenas durante a geração, e não no treinamento.
+- Misturando todas as posições em uma única multiplicação, de modo que a saída de cada posição dependa das entradas de todas as demais.
+- Somente à última posição da sequência, já que apenas ela é usada para prever o próximo token durante o treinamento.
+- Sem função de ativação, apenas com duas multiplicações lineares, mantendo a dimensão $d$ em toda a rede.
+- Apenas durante a geração, e não no treinamento, para economizar memória enquanto os pesos são ajustados.
 J: A FFN processa cada posição de forma independente, enquanto a atenção troca informação entre posições.
 
 MC: Qual o número de parâmetros (sem vieses) da FFN com $d=512$ e $d_{ff}=2\,048$?
@@ -200,10 +200,10 @@ J: O encoder permite que cada token veja todos os outros, adequado para entender
 
 MC: Na atenção cruzada (cross-attention) de um modelo encoder-decoder:
 = As consultas vêm do decoder, e as chaves e os valores vêm da saída do encoder.
-- As consultas vêm do encoder, e as chaves e os valores, do decoder.
-- Não há consultas, apenas valores.
-- Todas as matrizes vêm da mesma sequência, sem exceção.
-- A atenção só ocorre entre tokens iguais.
+- As consultas vêm do encoder, e as chaves e os valores, do decoder, de modo que a sequência de entrada consulta a que está sendo gerada.
+- Não há consultas, apenas valores, que são somados com pesos iguais vindos da saída do encoder.
+- Todas as matrizes vêm da mesma sequência, sem exceção, o que a torna idêntica à autoatenção do decoder.
+- A atenção só ocorre entre tokens iguais, isto é, entre posições que contêm exatamente a mesma palavra nas duas sequências.
 J: Isso permite que cada token gerado consulte a sequência de entrada processada pelo encoder.
 
 MC: Se o comprimento $T$ da sequência dobra, o tamanho da matriz de pontuações da atenção:
@@ -216,10 +216,10 @@ J: A matriz é $T\times T$, crescendo com $T^2$.
 
 MC: Qual cuidado é adequado ao interpretar mapas de pesos de atenção?
 = Tratá-los como pistas, não como prova de explicação, pois a literatura contesta que representem a razão da decisão do modelo.
-- Considerá-los explicações completas e fiéis do comportamento.
-- Ignorá-los porque são sempre aleatórios.
-- Usá-los para provar que o modelo não é enviesado.
-- Presumir que cada cabeça tem sempre um papel linguístico bem definido.
+- Considerá-los explicações completas e fiéis do comportamento, já que os pesos mostram exatamente em quais tokens o modelo se baseou para decidir.
+- Ignorá-los porque são sempre aleatórios, sem relação com o conteúdo da entrada nem com o comportamento do modelo treinado.
+- Usá-los para provar que o modelo não é enviesado, pois pesos distribuídos de modo equilibrado indicam ausência de viés nas respostas.
+- Presumir que cada cabeça tem sempre um papel linguístico bem definido, como sintaxe ou correferência, em qualquer modelo treinado.
 J: Jain e Wallace (2019) e Wiegreffe e Pinter (2019) discutem os limites da interpretação por atenção.
 
 MC: Qual a principal vantagem do Transformer sobre redes recorrentes para o treinamento?
@@ -232,9 +232,9 @@ J: Redes recorrentes processam token a token e carregam um estado de tamanho fix
 
 MC: Em modelos somente encoder como o BERT, qual é o objetivo típico de pré-treinamento mencionado no capítulo?
 = Prever palavras que foram mascaradas na entrada, usando o contexto à esquerda e à direita.
-- Prever apenas o próximo token, sem ver o futuro.
-- Traduzir frases entre dois idiomas.
-- Gerar imagens a partir de texto.
+- Prever apenas o próximo token, sem ver o futuro, como nos modelos somente decoder treinados de forma autorregressiva.
+- Traduzir frases entre dois idiomas, usando pares de textos paralelos alinhados em cada idioma.
+- Gerar imagens a partir de texto, associando descrições a pixels em um conjunto de dados multimodal.
 - Reordenar as palavras da frase aleatoriamente.
 J: O encoder é bidirecional; por isso o objetivo de mascaramento (palavras ocultas) é natural para ele.
 

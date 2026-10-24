@@ -8,7 +8,7 @@ J: Em aplicações, o prompt é montado e versionado como um artefato, e não ap
 
 MC: Por que se diz que um prompt condiciona, e não programa, o modelo?
 = Porque ele altera uma distribuição de probabilidade; o modelo pode interpretar mal, ignorar ou seguir só em parte as instruções.
-- Porque o modelo executa cada linha do prompt como um comando exato.
+- Porque o modelo executa cada linha do prompt como um comando exato, na ordem escrita, como um interpretador de linguagem de programação que nunca falha.
 - Porque o prompt altera os pesos do modelo.
 - Porque o prompt é compilado antes de ser enviado.
 - Porque o modelo nunca lê o prompt.
@@ -16,9 +16,9 @@ J: Instruções não são garantias; por isso todo prompt deve ser testado.
 
 MC: Qual a função de especificar o formato de saída no prompt?
 = Tornar a resposta previsível e verificável por código.
-- Aumentar o número de parâmetros do modelo.
-- Impedir que o modelo use o contexto.
-- Reduzir a janela de contexto.
+- Aumentar o número de parâmetros do modelo para que ele consiga reter instruções mais complexas durante a geração.
+- Impedir que o modelo use o contexto recuperado, forçando-o a responder apenas com o que aprendeu no treinamento.
+- Reduzir a janela de contexto disponível, de modo que o modelo precise ignorar parte do material fornecido.
 - Eliminar a necessidade de testes.
 J: Um formato explícito (por exemplo, JSON com campos definidos) permite validação automática.
 
@@ -32,10 +32,10 @@ J: Tamanho, estrutura e citação são critérios que podem ser conferidos.
 
 MC: Qual o risco de incluir muito contexto irrelevante no prompt?
 = Consumir a janela de contexto e distrair o modelo, além de aumentar custo e latência.
-- Reduzir a probabilidade de alucinações a zero.
+- Reduzir a probabilidade de alucinações a zero, porque o modelo passa a ter mais texto de onde copiar as respostas.
 - Impedir o uso de exemplos.
 - Aumentar a precisão sempre.
-- Tornar o modelo mais criativo, sem outros efeitos.
+- Tornar o modelo mais criativo, sem outros efeitos sobre custo, latência ou qualidade da resposta final.
 J: Contexto deve ser necessário e suficiente, e não máximo.
 
 MC: Qual formulação costuma funcionar melhor?
@@ -48,9 +48,9 @@ J: Instruções positivas e concretas costumam ser seguidas com mais consistênc
 
 MC: Por que incluir no prompt a instrução de responder "não consta" quando faltar informação?
 = Para reduzir respostas inventadas, dando ao modelo uma saída legítima de abstenção.
-- Para que o modelo nunca responda a nada.
+- Para que o modelo nunca responda a nada, recusando qualquer pergunta feita pelo usuário durante a conversa.
 - Para aumentar o tamanho das respostas.
-- Para eliminar a necessidade de contexto.
+- Para eliminar a necessidade de contexto, já que o modelo passa a obter todas as informações por conta própria.
 - Para evitar o uso de documentos.
 J: Sem uma opção de abstenção, o modelo tende a produzir alguma resposta plausível.
 
@@ -65,33 +65,33 @@ J: Delimitadores ajudam, mas não são uma defesa completa; a segurança exige v
 MC: O que distingue os usos zero-shot, one-shot e few-shot?
 = O número de exemplos fornecidos no prompt: nenhum, um ou poucos.
 - O tamanho do modelo: pequeno, médio ou grande.
-- O idioma da resposta.
+- O tamanho do modelo utilizado: pequeno, médio ou grande, medido pelo número de parâmetros treinados.
 - A temperatura de geração.
-- O número de camadas do modelo.
+- A temperatura de geração usada: baixa, média ou alta, que controla o grau de aleatoriedade das respostas.
 J: Brown et al. (2020) usam esses termos para descrever a aprendizagem em contexto.
 
 MC: Qual critério é importante ao escolher exemplos few-shot?
 = Que sejam representativos, corretos, diversos e no formato de saída desejado.
-- Que sejam todos iguais, para reforçar o padrão.
-- Que contenham erros para o modelo aprender a corrigi-los.
+- Que sejam todos iguais, para reforçar o padrão e evitar que o modelo se confunda com variações de estilo.
+- Que contenham erros para o modelo aprender a corrigi-los sozinho durante a geração da resposta final.
 - Que sejam o mais longos possível.
 - Que pertençam todos à mesma categoria.
 J: O modelo imita formato e critério dos exemplos; exemplos errados ensinam o erro.
 
 MC: Em um prompt few-shot de classificação, quase todos os exemplos têm o mesmo rótulo. Qual a consequência provável?
 = O modelo tende a favorecer esse rótulo.
-- O modelo ignora os exemplos.
-- O modelo passa a acertar mais.
+- O modelo ignora os exemplos fornecidos e responde apenas com base no que aprendeu durante o treinamento.
+- O modelo passa a acertar mais, pois o padrão repetido deixa a tarefa mais clara e fácil de generalizar.
 - O modelo passa a responder em outro idioma.
 - Não há qualquer efeito.
 J: O viés para o rótulo mais frequente nos exemplos é um efeito documentado (Zhao et al., 2021).
 
 MC: O que a literatura mostra sobre a ordem dos exemplos em prompts few-shot?
 = Permutações dos mesmos exemplos podem alterar bastante o desempenho em alguns modelos.
-- A ordem nunca influencia o resultado.
+- A ordem nunca influencia o resultado, pois o modelo lê todos os exemplos ao mesmo tempo e de forma simétrica.
 - Só o primeiro exemplo é lido.
 - A ordem só influencia modelos pequenos.
-- A melhor ordem é sempre a alfabética.
+- A melhor ordem é sempre a alfabética, independentemente da tarefa, do modelo e do conteúdo dos exemplos.
 J: Lu et al. (2022) e Zhao et al. (2021) documentam sensibilidade à ordem e a outros fatores.
 
 MC: O que é a técnica de cadeia de pensamento (chain of thought)?
@@ -104,10 +104,10 @@ J: Wei et al. (2022) mostraram melhora em tarefas de raciocínio com modelos gra
 
 MC: O que é a técnica de autoconsistência (self-consistency)?
 = Gerar várias respostas com raciocínios diferentes e escolher a mais frequente.
-- Pedir ao modelo que concorde consigo mesmo.
+- Pedir ao modelo que concorde consigo mesmo, repetindo literalmente a resposta anterior até ela se estabilizar.
 - Usar sempre a mesma semente.
 - Forçar a temperatura zero.
-- Repetir o prompt até o modelo desistir.
+- Repetir o prompt até o modelo desistir de variar a resposta e produzir sempre o mesmo texto.
 J: Wang et al. (2023) mostram que votar entre amostras melhora o resultado em várias tarefas de raciocínio.
 
 MC: O que Turpin et al. (2023) mostraram sobre explicações em cadeia de pensamento?
@@ -128,7 +128,7 @@ J: Uma citação pode ser procurada no texto-fonte por um programa ou por uma pe
 
 MC: Como verificar automaticamente se uma citação feita pelo modelo existe no documento?
 = Normalizar espaços e caixa e procurar a citação como subcadeia do documento.
-- Perguntar ao modelo se a citação está certa.
+- Perguntar ao próprio modelo se a citação está certa e aceitar a resposta dele como confirmação.
 - Calcular a temperatura da resposta.
 - Contar o número de tokens da citação.
 - Verificar se a citação tem mais de 10 palavras.
@@ -136,17 +136,17 @@ J: A busca de subcadeia é uma verificação independente, determinística e bar
 
 MC: Por que pedir o cálculo explícito (com os números usados) é útil?
 = Porque permite refazer a conta em código e detectar erros, sem depender de confiança.
-- Porque o modelo sempre calcula certo quando mostra os passos.
+- Porque o modelo sempre calcula certo quando mostra os passos, de modo que a conta nunca precisa ser conferida.
 - Porque elimina a necessidade de validar números.
 - Porque torna a resposta mais longa.
-- Porque reduz a latência.
+- Porque reduz a latência e o custo, já que o modelo gasta menos tokens ao detalhar a conta.
 J: Verificar um cálculo é mais fácil e mais confiável que avaliar uma explicação em texto.
 
 MC: Qual o principal benefício do encadeamento de prompts (prompt chaining)?
 = Cada etapa é mais simples, testável e depurável, e os erros ficam localizados.
-- Reduz sempre o custo e a latência.
+- Reduz sempre o custo e a latência, pois o total de tokens processados é menor do que numa chamada única.
 - Elimina a necessidade de validação.
-- Faz o modelo aprender com cada etapa.
+- Faz o modelo aprender com cada etapa e melhorar seus pesos ao longo da cadeia de chamadas.
 - Evita o uso de dados de entrada.
 J: O custo é mais chamadas; o benefício é a controlabilidade.
 
@@ -160,10 +160,10 @@ J: Instruções de formato não são garantias; a aplicação deve checar.
 
 MC: Qual a prática adequada para tratar falhas de validação de formato?
 = Reenviar o erro ao modelo em novas tentativas limitadas e, esgotadas, usar tratamento alternativo.
-- Repetir indefinidamente até dar certo.
+- Repetir indefinidamente até dar certo, sem limite de tentativas, para garantir que a saída fique válida.
 - Ignorar a falha e usar a saída mesmo assim.
 - Desligar a validação.
-- Aumentar a temperatura sem limite.
+- Aumentar a temperatura sem limite a cada falha, na expectativa de que a variação produza um formato válido.
 J: Novas tentativas controladas equilibram robustez e custo, e evitam laços infinitos.
 
 MC: Uma saída que obedece ao esquema JSON esperado está necessariamente correta?
@@ -175,26 +175,26 @@ MC: Uma saída que obedece ao esquema JSON esperado está necessariamente corret
 J: A validade de formato é condição necessária, mas não suficiente.
 
 MC: Qual a limitação de usar um modelo de linguagem para revisar a resposta de outro (ou de si mesmo)?
-= Ele pode aprovar respostas erradas e favorecer textos parecidos com os seus; não substitui verificação independente.
-- Ele é sempre mais confiável que um humano.
+= Pode aprovar respostas erradas e favorecer textos parecidos com os seus; não substitui verificação independente.
+- Ele é sempre mais confiável que um revisor humano, pois não se cansa e aplica o mesmo critério a todos os casos.
 - Ele só funciona com temperatura zero.
-- Ele corrige todos os erros factuais.
+- Ele corrige todos os erros factuais da resposta, porque conhece os fatos melhor que o modelo avaliado.
 - Ele elimina o viés dos dados.
 J: Zheng et al. (2023) discutem vieses de modelos como avaliadores.
 
 MC: Por que versionar prompts como código?
 = Para saber qual versão produziu quais resultados e permitir testes de regressão e reversão.
-- Para aumentar o tamanho do prompt.
+- Para aumentar o tamanho do prompt, de forma que o modelo tenha mais instruções disponíveis a cada chamada.
 - Para dispensar o conjunto de testes.
-- Para eliminar a variabilidade da geração.
+- Para eliminar a variabilidade da geração, tornando as respostas idênticas em todas as execuções do modelo.
 - Para evitar o uso de modelos.
 J: Mudanças pequenas em prompts podem mudar muito o comportamento; sem histórico, é impossível depurar.
 
 MC: Qual conjunto de testes é mais adequado para avaliar um prompt?
 = Casos representativos, incluindo casos difíceis e casos sem resposta, com respostas esperadas conhecidas.
-- Apenas casos fáceis, para mostrar bom desempenho.
+- Apenas casos fáceis, para mostrar bom desempenho e evitar que falhas isoladas prejudiquem a métrica geral.
 - Os mesmos exemplos usados no prompt.
-- Casos sem resposta esperada definida.
+- Os mesmos exemplos usados no prompt, pois assim o modelo já os conhece e a avaliação fica mais estável.
 - Um único caso, repetido várias vezes.
 J: Avaliar com os exemplos do próprio prompt infla os resultados e esconde falhas.
 
@@ -208,17 +208,17 @@ J: O intervalo de confiança de 95% para cada acerto tem cerca de ±8 pontos per
 
 MC: Quais informações devem ser registradas em cada avaliação de um prompt?
 = Versão do prompt, modelo e versão, data, parâmetros de geração, conjunto de testes e métricas.
-- Apenas a data.
+- Apenas a data, pois as demais informações podem ser reconstruídas a partir dela depois.
 - Apenas o nome do avaliador.
 - Apenas a melhor resposta obtida.
-- Nenhuma, pois a avaliação é sempre reproduzível.
+- Nenhuma, pois a avaliação de um modelo com amostragem é sempre reproduzível e dispensa registro.
 J: Esses dados permitem comparar, auditar e investigar mudanças.
 
 MC: Por que repetir a avaliação várias vezes ao usar um modelo com amostragem?
 = Para estimar a variabilidade devida à aleatoriedade da geração.
-- Para aumentar o tamanho do modelo.
+- Para aumentar o tamanho do modelo e, com isso, melhorar a qualidade de cada resposta gerada.
 - Para reduzir o número de tokens.
-- Para trocar o prompt automaticamente.
+- Para trocar o prompt automaticamente por uma versão melhor a cada nova rodada de avaliação.
 - Para eliminar a necessidade de conjunto de testes.
 J: Uma única execução pode ser favorável ou desfavorável por acaso.
 
@@ -234,8 +234,8 @@ MC: Qual métrica mede, separadamente do acerto, se as respostas do modelo segue
 = A taxa de validade de formato (fração de respostas que passam na validação do esquema).
 - A temperatura média das respostas.
 - O número de tokens do prompt.
-- A perplexidade do modelo.
-- A similaridade de cosseno entre prompt e resposta.
+- O número de tokens do prompt somado ao da resposta, que indica o custo total da chamada à API.
+- A similaridade de cosseno entre prompt e resposta, que mede o quanto os dois textos se aproximam no espaço vetorial.
 J: Um prompt pode acertar o conteúdo e falhar no formato (ou vice-versa); por isso as duas métricas são acompanhadas separadamente.
 
 DISC[C]: Explique por que todo prompt deve ser tratado como uma hipótese a ser testada, e não como uma especificação garantida.

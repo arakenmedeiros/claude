@@ -1,41 +1,41 @@
 MC: Na decodificação com lote pequeno, qual costuma ser o gargalo principal do acelerador?
 = A leitura dos pesos e do cache da memória, pois cada token novo exige poucas operações por byte lido.
-- A capacidade de cálculo, pois cada passo multiplica enormes matrizes de ativações.
+- A capacidade de cálculo, pois cada passo multiplica enormes matrizes de ativações e satura as unidades aritméticas.
 - A velocidade da rede entre o usuário e o servidor, que impede novos passos.
-- O tamanho do vocabulário, que decide a duração de cada operação.
+- O tamanho do vocabulário, que decide a duração de cada operação e, portanto, a de cada passo.
 - A quantidade de tokens do prompt original, mesmo depois de processado.
 J: Com poucas sequências, a intensidade aritmética é baixa; o tempo do passo é dominado por ler a memória, e não por calcular.
 
 MC: Por que o comprimento da saída costuma dominar a latência de uma resposta?
 = Porque os tokens de saída são gerados um a um, cada um ocupando um passo de decodificação.
-- Porque a saída é sempre mais longa que o prompt de entrada.
-- Porque o preenchimento do prompt é sequencial e lento.
+- Porque a saída é sempre mais longa que o prompt de entrada, e o custo cresce com o número de caracteres.
+- Porque o preenchimento do prompt é sequencial e lento, enquanto a geração da saída ocorre em paralelo.
 - Porque a saída precisa ser traduzida de números para texto no fim.
 - Porque os tokens de saída ocupam mais bytes que os de entrada.
 J: O prompt entra em paralelo no preenchimento; a saída exige um passo por token.
 
 MC: Ao aumentar o tamanho do lote na decodificação (em um modelo ainda limitado por memória), o que tende a ocorrer?
 = A vazão total aumenta, mas o tempo por token para cada pessoa tende a piorar.
-- A vazão total cai, mas cada pessoa recebe tokens mais rápido.
+- A vazão total cai, mas cada pessoa recebe tokens mais rápido, pois divide a memória com menos gente.
 - Tanto a vazão total quanto a velocidade individual aumentam sempre.
-- Nada muda, pois os pesos são lidos uma vez por pessoa.
+- Nada muda, pois os pesos são lidos uma vez por pessoa, e não uma vez por passo para todos.
 - Os pesos passam a ocupar menos memória.
 J: Os pesos são lidos uma vez para todos, o que eleva a vazão; o cache de cada sequência adicional aumenta a leitura por passo.
 
 MC: Quanto ocupam só os pesos de um modelo hipotético de 7 bilhões de parâmetros com 4 bits por parâmetro?
 = Cerca de 3,5 GB.
-- Cerca de 14 GB.
-- Cerca de 28 GB.
-- Cerca de 7 GB.
+- Cerca de 14 GB, que seria o valor com 16 bits por parâmetro e não com 4.
+- Cerca de 28 GB, que seria o valor com 32 bits por parâmetro e não com 4.
+- Cerca de 7 GB, que seria o valor com 8 bits por parâmetro e não com 4.
 - Cerca de 0,35 GB.
 J: $7\times10^9\times0{,}5$ byte $=3{,}5\times10^9$ bytes.
 
 MC: Na quantização simétrica com $b$ bits, como se costuma escolher a escala $s$ de um tensor?
 = $s=\max|w|/(2^{b-1}-1)$.
 - $s=\min(w)/b$.
-- $s=2^{b}\cdot\max|w|$.
+- $s=2^{b}\cdot\max|w|$, de modo que o maior peso vire sempre o inteiro máximo.
 - $s=\text{média}(w)/\text{desvio}(w)$.
-- $s=1/\max|w|$, qualquer que seja $b$.
+- $s=1/\max|w|$, qualquer que seja $b$, sem depender do número de bits.
 J: A escala faz o maior valor absoluto corresponder ao maior inteiro representável.
 
 MC: Por que alguns valores muito grandes (outliers) prejudicam a quantização com uma única escala por tensor?
@@ -47,33 +47,33 @@ MC: Por que alguns valores muito grandes (outliers) prejudicam a quantização c
 J: Com o máximo grande, o passo da quantização cresce, e os pesos pequenos viram poucos níveis.
 
 MC: Qual o benefício de usar uma escala por coluna (ou por grupo), em vez de uma por tensor?
-= Adaptar o passo aos valores locais, reduzindo o efeito de colunas atípicas, ao custo de guardar mais escalas.
-- Eliminar a necessidade de guardar qualquer escala.
-- Dobrar o número de bits efetivos de cada peso.
+= Adaptar o passo aos valores locais, reduzindo o efeito de colunas atípicas, ao custo de mais escalas.
+- Eliminar a necessidade de guardar qualquer escala, já que cada coluna passa a usar o mesmo passo unitário.
+- Dobrar o número de bits efetivos de cada peso, sem aumentar o tamanho do modelo na memória.
 - Evitar que o modelo precise de dados de teste depois.
 - Tornar a quantização reversível, sem nenhum erro.
 J: Escalas mais finas seguem melhor as variações de magnitude entre partes do tensor.
 
 MC: Um modelo quantizado em 4 bits apresentou perplexidade média quase igual à original. Qual a conclusão prudente?
-= Ainda é preciso avaliar na tarefa real e em casos difíceis, pois a média pode esconder degradações em casos raros.
-- O modelo está garantidamente equivalente ao original em todas as tarefas.
-- A quantização não pode ter causado nenhum efeito, em nenhum caso.
+= Ainda é preciso avaliar na tarefa real e em casos difíceis, pois a média pode esconder degradações raras.
+- O modelo está garantidamente equivalente ao original em todas as tarefas, pois a perplexidade resume a qualidade.
+- A quantização não pode ter causado nenhum efeito, em nenhum caso, já que a perplexidade praticamente não mudou.
 - A perplexidade média substitui qualquer outra avaliação.
 - O modelo agora pode ser considerado seguro contra alucinações.
 J: A perplexidade é uma média; a qualidade na tarefa e em subgrupos precisa ser verificada separadamente.
 
 MC: O que a destilação de conhecimento (Hinton et al., 2015) usa como alvo para treinar o aluno?
 = As saídas, em geral suavizadas por uma temperatura, produzidas por um modelo professor.
-- Apenas os rótulos duros do conjunto original, sem outra informação.
-- Os pesos do professor, copiados diretamente para o aluno.
+- Apenas os rótulos duros do conjunto original, sem nenhuma outra informação vinda de um professor.
+- Os pesos do professor, copiados diretamente para o aluno antes de qualquer treino adicional.
 - Somente os gradientes do aluno, sem professor.
 - Um conjunto de regras escritas à mão.
 J: As probabilidades suaves informam sobre a semelhança entre classes, o que enriquece o treino do aluno.
 
 MC: Qual o efeito de usar uma temperatura $T>1$ ao calcular as probabilidades do professor na destilação?
 = A distribuição fica mais suave, realçando as probabilidades das classes não vencedoras.
-- A distribuição fica mais concentrada na classe mais provável.
-- O professor passa a escolher sempre a mesma classe.
+- A distribuição fica mais concentrada na classe mais provável, aproximando-se de um vetor one-hot.
+- O professor passa a escolher sempre a mesma classe, independentemente do exemplo apresentado.
 - O número de parâmetros do aluno diminui.
 - A perda do aluno deixa de depender das saídas do professor.
 J: Dividir os logits por $T$ achata o softmax, tornando visíveis as relações entre as classes.
@@ -88,9 +88,9 @@ J: Os parâmetros ativos por token são uma fração do total, mas todos os espe
 
 MC: Qual problema típico surge no roteador de uma mistura de especialistas?
 = O desbalanceamento de carga, com alguns especialistas recebendo muito mais tokens que outros.
-- A impossibilidade de escolher mais de um especialista.
+- A impossibilidade de escolher mais de um especialista por token, o que força o uso de um só.
 - O aumento do vocabulário a cada token.
-- A perda da máscara causal na atenção.
+- A perda da máscara causal na atenção, que deixa o modelo enxergar tokens futuros durante o treino.
 - A necessidade de reiniciar o treino a cada token.
 J: Um especialista sobrecarregado limita a velocidade do conjunto; o treino costuma incluir mecanismos para equilibrar a carga.
 
@@ -120,10 +120,10 @@ J: Embeddings capturam o assunto, mas distinguem mal detalhes como números, nom
 
 MC: O que acontece, em geral, ao reduzir o limiar de similaridade $\tau$ de um cache semântico?
 = A taxa de acerto sobe, mas a fração de respostas reaproveitadas erradas também tende a subir.
-- A taxa de acerto cai e a de erro também cai.
+- A taxa de acerto cai e a de erro também cai, pois o cache passa a aceitar menos pedidos como equivalentes.
 - A taxa de erro cai a zero.
 - Nada muda na taxa de acerto.
-- O cache passa a ser exato.
+- O cache passa a ser exato, devolvendo respostas idênticas às que o modelo geraria a cada pedido.
 J: Um limiar menor aceita pedidos menos parecidos como equivalentes.
 
 MC: Por que o lote estático desperdiça capacidade quando os comprimentos de saída são muito variados?
@@ -136,79 +136,79 @@ J: Espaços vazios não podem ser reaproveitados até o grupo inteiro terminar.
 
 MC: O que caracteriza o lote contínuo (continuous batching)?
 = O lote é reavaliado a cada passo, e um novo pedido entra assim que outro termina.
-- Os pedidos esperam um número fixo de segundos antes de cada grupo.
+- Os pedidos esperam um número fixo de segundos antes de cada grupo ser enviado ao acelerador, sempre completo.
 - O modelo é treinado continuamente durante o atendimento.
-- Todos os pedidos são concatenados em um único prompt.
+- Todos os pedidos são concatenados em um único prompt gigante, processado de uma só vez pelo modelo.
 - Os pedidos longos são sempre recusados.
 J: Isso mantém o acelerador ocupado, aumentando a utilização e a vazão.
 
 MC: Em uma fila M/M/1 com $\lambda=0{,}8$ pedido/s e $\mu=1$ pedido/s, qual o tempo médio no sistema $W=1/(\mu-\lambda)$?
 = 5 segundos.
-- 0,8 segundo.
-- 1,25 segundo.
-- 4 segundos.
+- 0,8 segundo, que é só a taxa de chegada λ, e não o tempo médio no sistema.
+- 1,25 segundo, que é 1/λ, o intervalo médio entre chegadas, e não $W$.
+- 4 segundos, valor que corresponde ao número médio de pedidos no sistema, e não ao tempo.
 - 0,2 segundo.
 J: $W=1/(1-0{,}8)=5$ s; a espera cresce rapidamente quando a utilização se aproxima de 1.
 
 MC: O que ocorre com a latência de um sistema de filas quando a utilização $\rho$ se aproxima de 1?
 = Ela cresce muito rapidamente, e a fila pode crescer sem limite se $\rho\ge1$.
-- Ela diminui, pois o sistema fica mais eficiente.
-- Ela permanece constante, qualquer que seja a carga.
+- Ela diminui, pois o sistema fica mais eficiente quando os aceleradores trabalham quase sem folga.
+- Ela permanece constante, qualquer que seja a carga, desde que o hardware seja o mesmo.
 - Ela se torna exatamente igual ao tempo de atendimento.
 - Ela passa a depender apenas do tamanho do vocabulário.
 J: Perto da capacidade, pequenas variações de chegada geram filas longas.
 
 MC: O que a decodificação especulativa (Leviathan et al., 2023) preserva?
 = A distribuição de saída do modelo grande, mudando apenas o tempo gasto.
-- Apenas a média da qualidade, aceitando saídas diferentes.
-- O vocabulário do modelo pequeno, que substitui o do grande.
+- Apenas a média da qualidade, aceitando que as amostras individuais sejam diferentes das do modelo grande.
+- O vocabulário do modelo pequeno, que substitui o do grande durante toda a geração dos tokens.
 - A temperatura, que passa a ser fixa em zero.
 - O cache KV, que deixa de ser necessário.
 J: A regra de aceitação e a amostragem do resíduo garantem que as amostras venham da distribuição do alvo.
 
 MC: Com taxa de aceitação $\alpha=0{,}5$ e $\gamma=2$ tokens propostos, qual o número esperado de tokens por rodada, $(1-\alpha^{\gamma+1})/(1-\alpha)$?
 = 1,75.
-- 1,00.
-- 1,50.
-- 2,00.
-- 3,00.
+- 1,00, valor que ocorreria se nenhum token proposto fosse aceito, o que exigiria $\alpha=0$.
+- 1,50, valor que corresponde a propor apenas um token por rodada ($\gamma=1$).
+- 2,00, que é o número de tokens propostos, como se todos fossem aceitos sem o token extra.
+- 3,00, valor que ocorreria se todos os tokens propostos fossem aceitos ($\alpha=1$).
 J: $(1-0{,}5^{3})/0{,}5=0{,}875/0{,}5=1{,}75$.
 
 MC: Em um roteador entre um modelo barato e um caro, o que decide se um pedido é escalonado?
 = Um sinal de confiança do modelo barato comparado a um limiar escolhido com dados de teste.
-- O tamanho do arquivo de pesos do modelo caro.
+- O tamanho do arquivo de pesos do modelo caro, que determina o preço de cada chamada em tokens.
 - O horário do dia em que o pedido chega.
-- A preferência do modelo barato por responder sempre.
+- A preferência do modelo barato por responder sempre, que é fixada em tempo de treino e não muda.
 - O número de usuários conectados, e nada mais.
 J: Sem um bom sinal de confiança, o roteamento deixa de ser melhor que um sorteio.
 
 MC: Quando uma cascata barato→caro pode custar mais que usar sempre o modelo caro?
 = Quando quase todos os pedidos são escalonados, pois o modelo barato é chamado à toa.
-- Quando o modelo barato tem menos parâmetros que o caro.
+- Quando o modelo barato tem menos parâmetros que o caro, pois a diferença de tamanho encarece a cascata.
 - Quando o limiar é zero e nenhum pedido é escalonado.
-- Nunca, pois o barato custa sempre menos.
+- Nunca, pois o barato custa sempre menos por token e a cascata só pode reduzir o gasto.
 - Quando o modelo caro é quantizado em 8 bits.
 J: O custo é o do barato (sempre) mais o do caro nos escalonados; se a fração é alta, a soma supera o caro.
 
 MC: Qual é a função de um limitador de taxa do tipo balde de fichas?
 = Permitir rajadas curtas, até a capacidade do balde, e limitar a taxa média sustentada.
-- Garantir que nenhum pedido seja jamais recusado.
-- Aumentar a precisão do modelo sob alta carga.
+- Garantir que nenhum pedido seja jamais recusado, enfileirando todos até que haja ficha disponível.
+- Aumentar a precisão do modelo sob alta carga, reservando mais fichas para as tarefas difíceis.
 - Reduzir o número de parâmetros do modelo servido.
 - Trocar o modelo grande pelo pequeno automaticamente.
 J: As fichas são repostas em taxa fixa; esgotadas, os pedidos são recusados ou adiados.
 
 MC: Qual o objetivo de um lançamento canário?
 = Expor uma pequena fração do tráfego à nova versão, monitorando métricas, antes de ampliar.
-- Substituir a versão antiga de uma só vez, sem monitoramento.
+- Substituir a versão antiga de uma só vez, sem monitoramento, para concluir a mudança o mais rápido possível.
 - Treinar o modelo novamente com os dados do canário.
-- Medir apenas a velocidade, sem olhar qualidade.
+- Medir apenas a velocidade, sem olhar qualidade, já que a qualidade foi avaliada antes do lançamento.
 - Eliminar a necessidade de reversão.
 J: Limita o impacto de uma versão ruim e permite parar com critérios definidos antes.
 
 MC: O que indica um PSI (índice de estabilidade populacional) alto entre a distribuição de referência e a atual?
 = Que a distribuição das categorias mudou, o que sugere investigar a deriva e reavaliar o sistema.
-- Que o modelo está necessariamente errado em todas as respostas.
+- Que o modelo está necessariamente errado em todas as respostas, pois a distribuição de entrada deixou de ser a de referência.
 - Que o servidor está sem memória disponível.
 - Que a temperatura de geração deve ser aumentada.
 - Que o preço por token mudou.
@@ -216,15 +216,15 @@ J: O PSI mede deslocamento de distribuição; é um alerta para investigar, não
 
 MC: Qual das metas abaixo é um objetivo de nível de serviço (SLO) bem formulado?
 = "99% das requisições respondidas em até 2 segundos, medido em janelas de 30 dias."
-- "O sistema deve ser rápido na maior parte do tempo."
+- "O sistema deve ser rápido na maior parte do tempo, com latência considerada boa pela equipe."
 - "A latência média será boa para todos."
-- "Nunca haverá nenhuma falha, de nenhum tipo."
+- "Nunca haverá nenhuma falha, de nenhum tipo, em nenhum dos componentes do sistema, em nenhuma circunstância."
 - "O modelo deve ser o melhor do mercado."
 J: Um SLO bom define um indicador mensurável, um limite, um percentual e uma janela.
 
 MC: Qual a principal vantagem de implantar um modelo pequeno na borda (no dispositivo)?
-= Menor latência e dados que podem permanecer locais, ao custo de modelos menores e atualização mais difícil.
-- Acesso fácil a modelos muito maiores que os de servidor.
+= Menor latência e dados que podem ficar locais, ao custo de modelos menores e atualização mais difícil.
+- Acesso fácil a modelos muito maiores que os de servidor, graças à memória e à bateria abundantes dos dispositivos.
 - Eliminação de qualquer limite de memória ou bateria.
 - Atualização instantânea e centralizada para todos os usuários.
 - Ausência de qualquer necessidade de avaliação.

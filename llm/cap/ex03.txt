@@ -16,8 +16,8 @@ J: Visualmente iguais, as formas diferem na sequência de pontos de código. A n
 
 MC: Qual a principal razão para normalizar o texto de entrada antes da tokenização?
 = Evitar que o mesmo texto, escrito de modos equivalentes, seja tratado como entradas diferentes.
-- Aumentar o número de parâmetros do modelo.
-- Garantir que o modelo responda corretamente.
+- Aumentar o número de parâmetros do modelo, já que cada forma de grafia equivalente passa a exigir uma nova linha na matriz de pesos.
+- Garantir que o modelo responda corretamente, pois textos padronizados nunca levam a erros de interpretação nem a respostas inventadas.
 - Reduzir o tamanho do vocabulário para zero.
 - Substituir a necessidade de tokenizar.
 J: A normalização padroniza formas equivalentes (Unicode, caixa, às vezes acentos), reduzindo variação irrelevante.
@@ -25,9 +25,9 @@ J: A normalização padroniza formas equivalentes (Unicode, caixa, às vezes ace
 MC: O que o modelo de "saco de palavras" (*bag of words*) descarta?
 = A ordem das palavras no documento.
 - A frequência de cada palavra.
-- O vocabulário.
+- O vocabulário, pois o modelo é construído sem uma lista prévia de palavras conhecidas e sem dimensões fixas.
 - A existência de palavras raras.
-- A dimensão do vetor.
+- A dimensão do vetor, que passa a variar de documento para documento conforme o número de palavras de cada texto.
 J: O saco de palavras guarda as contagens por palavra, mas perde a ordem.
 
 MC: No TF-IDF, o que faz um termo receber peso maior?
@@ -56,8 +56,8 @@ J: Com norma 1, produto escalar e cosseno coincidem, e textos longos não ganham
 
 MC: Qual a principal limitação de vetores TF-IDF para busca por significado?
 = Palavras diferentes ocupam dimensões diferentes, então sinônimos sem palavras em comum têm similaridade zero.
-- São densos demais para serem indexados.
-- Exigem GPU para o cálculo.
+- São densos demais para serem indexados, o que torna a busca mais lenta que a de vetores esparsos de poucas dimensões.
+- Exigem GPU para o cálculo da similaridade, pois o produto entre vetores de alta dimensão não pode ser feito em CPU.
 - Não permitem calcular similaridade.
 - Só funcionam com textos em inglês.
 J: A representação é lexical: "carro" e "automóvel" são dimensões distintas e não se relacionam.
@@ -72,33 +72,33 @@ J: O tokenizador converte texto em sequências de identificadores, que o modelo 
 
 MC: Por que usar o tokenizador errado com um modelo é um problema grave?
 = Porque os identificadores significam outra coisa para aquele modelo, o que degrada o resultado sem produzir erro explícito.
-- Porque o modelo se recusa a funcionar.
-- Porque só altera a cor da interface.
+- Porque o modelo se recusa a funcionar e exibe uma mensagem de erro, impedindo que a tokenização incorreta passe despercebida.
+- Porque só altera a cor da interface e a velocidade de resposta, sem relação com os resultados que o modelo produz.
 - Porque aumenta a precisão do modelo.
 - Porque o tokenizador errado nunca altera os identificadores.
 J: O vocabulário define o significado de cada identificador. Trocar o tokenizador equivale a trocar a tabela de correspondência.
 
 MC: Qual o principal inconveniente da tokenização por palavras inteiras?
 = Vocabulário enorme e palavras novas ou raras ficam fora do vocabulário.
-- Gera sequências longas demais.
+- Gera sequências longas demais, com unidades de pouco significado, pois cada palavra é quebrada em vários pedaços pequenos.
 - Não permite acentos.
-- Exige conhecer a gramática do idioma.
-- Só funciona em línguas sem espaços.
+- Exige conhecer a gramática do idioma, com listas de regras de flexão escritas à mão para cada língua tratada.
+- Só funciona em línguas sem espaços entre as palavras, como o japonês, e não pode ser aplicado ao português.
 J: Palavras não vistas no treinamento viram "desconhecidas", e o vocabulário cresce com a morfologia rica.
 
 MC: Qual o principal inconveniente da tokenização por caracteres?
 = Sequências muito longas, com unidades de pouco significado.
-- Vocabulário gigantesco.
-- Incapacidade de representar palavras novas.
+- Vocabulário gigantesco, com uma entrada para cada palavra e cada variação de conjugação existente no idioma.
+- Incapacidade de representar palavras novas, que ficam fora do vocabulário e são trocadas por um token desconhecido.
 - Perda dos acentos.
-- Necessidade de dicionário.
+- Necessidade de dicionário completo da língua, com todas as palavras previamente cadastradas pelo projetista.
 J: O vocabulário é pequeno, mas cada texto gera muitos tokens, o que encarece o processamento.
 
 MC: Qual a vantagem principal da tokenização por subpalavras?
 = Equilibra o tamanho do vocabulário e o comprimento das sequências, representando palavras raras por pedaços frequentes.
-- Elimina a necessidade de vocabulário.
-- Garante que cada token seja um morfema.
-- Torna todos os textos do mesmo comprimento.
+- Elimina a necessidade de vocabulário, pois o modelo opera diretamente sobre o texto bruto, sem mapear unidades para identificadores.
+- Garante que cada token seja um morfema, isto é, a menor unidade de significado da língua, como prefixos, raízes e sufixos.
+- Torna todos os textos do mesmo comprimento em tokens, o que dispensa o uso de preenchimento (padding) nas entradas.
 - Impede qualquer fragmentação de palavras.
 J: Palavras frequentes ficam inteiras e as raras são montadas por pedaços, sem sair do vocabulário.
 
@@ -112,9 +112,9 @@ J: A cada iteração, conta-se a frequência dos pares vizinhos e funde-se o mai
 
 MC: Aumentar o número de fusões do BPE tende a:
 = Aumentar o vocabulário e diminuir o número médio de tokens por palavra.
-- Diminuir o vocabulário e aumentar os tokens por palavra.
+- Diminuir o vocabulário e aumentar os tokens por palavra, pois cada fusão remove símbolos da lista e alonga as sequências.
 - Não alterar nenhuma das duas medidas.
-- Aumentar o vocabulário e também os tokens por palavra.
+- Aumentar o vocabulário e também os tokens por palavra, já que cada fusão cria símbolos novos que dividem as palavras em mais pedaços.
 - Eliminar o marcador de fim de palavra.
 J: Cada fusão acrescenta um símbolo ao vocabulário e encurta, em média, as sequências.
 
@@ -128,10 +128,10 @@ J: Como todo texto UTF-8 é uma sequência de bytes, o vocabulário básico de 2
 
 MC: Por que os limites e o custo de uso de modelos costumam ser expressos em tokens e não em palavras?
 = Porque o modelo processa tokens, e a relação entre palavras e tokens varia com o idioma e o tokenizador.
-- Porque palavras não podem ser contadas por computadores.
-- Porque os tokens sempre equivalem exatamente a uma palavra.
+- Porque palavras não podem ser contadas por computadores, que só conseguem processar unidades numéricas e nunca texto.
+- Porque os tokens sempre equivalem exatamente a uma palavra em qualquer idioma, então a contagem em tokens é apenas outro nome.
 - Porque tokens são sempre mais baratos que palavras.
-- Porque apenas o inglês possui palavras.
+- Porque apenas o inglês possui palavras, de modo que os demais idiomas só podem ser medidos por pedaços de palavras.
 J: A unidade de processamento é o token; por isso, medir em palavras não prevê custo nem cabimento no contexto.
 
 MC: Qual o formato da tabela de embeddings de um modelo com vocabulário de $V$ tokens e dimensão $d$?
@@ -144,26 +144,26 @@ J: Cada linha é o vetor de um token do vocabulário.
 
 MC: O que significa "buscar o embedding de um token" na tabela?
 = Selecionar a linha correspondente ao identificador do token.
-- Calcular um produto de matrizes de formato $V\times V$.
-- Treinar o modelo do zero.
-- Traduzir o token para outra língua.
+- Calcular um produto de matrizes de formato $V\times V$ e treinar novamente todos os valores da tabela a cada consulta.
+- Treinar o modelo do zero para que o token receba um vetor novo, calculado a cada vez que ele aparece no texto.
+- Traduzir o token para outra língua e então procurar o resultado da tradução em um dicionário bilíngue.
 - Normalizar o texto.
 J: A tabela é uma matriz; o embedding é a linha de índice igual ao identificador do token.
 
 MC: O que afirma a hipótese distribucional?
 = O significado de uma palavra se revela, em boa parte, pelos contextos em que ela aparece.
-- Palavras com a mesma grafia sempre têm o mesmo significado.
-- Todo vetor de embedding tem norma 1.
-- Antônimos nunca ocorrem nos mesmos contextos.
+- Palavras com a mesma grafia sempre têm o mesmo significado, e por isso cada palavra deve receber um único vetor em qualquer frase.
+- Todo vetor de embedding tem norma 1, já que os contextos de uma palavra são sempre normalizados antes do treinamento.
+- Antônimos nunca ocorrem nos mesmos contextos, motivo pelo qual seus vetores ficam sempre distantes no espaço.
 - Palavras raras têm vetores idênticos.
 J: Palavras que ocorrem em contextos parecidos tendem a ter vetores parecidos. Isso explica por que antônimos, que ocorrem em contextos parecidos, ficam próximos.
 
 MC: Qual a diferença entre embeddings estáticos e contextuais?
 = No estático, cada token tem um vetor fixo; no contextual, o vetor depende da frase em que o token aparece.
-- O estático depende da frase; o contextual é fixo.
+- O estático depende da frase em que o token aparece; o contextual é fixo e igual para qualquer ocorrência do token.
 - Ambos são idênticos, mudando apenas o nome.
-- O estático usa mais dimensões que o contextual, sempre.
-- O contextual só existe para imagens.
+- O estático usa sempre mais dimensões que o contextual, o que explica por que ele consome mais memória e processamento.
+- O contextual só existe para imagens, pois o texto não tem contexto que mude o significado das palavras.
 J: Embeddings contextuais, como os de BERT, distinguem "manga" de fruta de "manga" de camisa.
 
 MC: Qual das abordagens abaixo produz embeddings de sentença treinados especificamente para similaridade semântica?
@@ -192,10 +192,10 @@ J: Cada modelo define seu espaço. Misturar modelos compara coordenadas sem rela
 
 MC: O que o indicador hit@3 mede em uma busca?
 = A fração das consultas em que pelo menos um documento relevante aparece entre os três primeiros resultados.
-- A média de relevância dos três primeiros documentos.
+- A média de relevância dos três primeiros documentos, calculada sobre uma escala de notas atribuída a cada resultado.
 - O número de documentos relevantes na coleção.
-- A quantidade de tokens das três primeiras respostas.
-- A similaridade de cosseno média entre a consulta e os documentos.
+- A quantidade de tokens das três primeiras respostas, usada para estimar o custo de enviar esses resultados ao modelo.
+- A similaridade de cosseno média entre a consulta e os documentos recuperados, tomada apenas sobre os três primeiros resultados.
 J: É uma métrica binária por consulta (acertou ou não nos três primeiros), que depois é calculada em média.
 
 MC: "Hoje" e "ontem" têm vetores quase idênticos em um embedding treinado por coocorrência. Qual a explicação mais adequada?
@@ -208,18 +208,18 @@ J: A hipótese distribucional agrupa palavras de uso parecido, e antônimos de m
 
 MC: Por que mapas 2D de embeddings (PCA, t-SNE, UMAP) devem ser interpretados com cautela?
 = Porque a redução de dimensionalidade distorce distâncias, e proximidade no mapa não implica proximidade no espaço original.
-- Porque mapas 2D são sempre idênticos ao espaço original.
-- Porque só funcionam para três palavras.
-- Porque eliminam todos os vieses do modelo.
+- Porque mapas 2D são sempre idênticos ao espaço original, já que PCA, t-SNE e UMAP preservam todas as distâncias exatamente.
+- Porque só funcionam para três palavras ao mesmo tempo, limite imposto pelo número de eixos disponíveis no gráfico.
+- Porque eliminam todos os vieses do modelo, razão pela qual a posição de cada palavra no mapa é considerada neutra.
 - Porque o resultado nunca depende dos parâmetros do método.
 J: Ao comprimir muitas dimensões em duas, parte da informação se perde; use os mapas para exploração.
 
 MC: Uma busca literal por "matricula" (sem acento) não encontra textos com "matrícula". Qual a solução mais simples e adequada?
 = Normalizar acentos e caixa tanto nos textos indexados quanto na consulta.
-- Remover o índice de busca.
-- Pedir ao usuário que sempre use acentos.
+- Remover o índice de busca, de modo que cada consulta seja comparada diretamente com os textos originais, sem qualquer preparo.
+- Pedir ao usuário que sempre use acentos ao digitar, em vez de tratar a variação na própria ferramenta de busca.
 - Substituir o português por inglês.
-- Usar um vocabulário de 256 tokens.
+- Usar um vocabulário de 256 tokens, correspondente aos bytes, o que agrupa "matricula" e "matrícula" em um mesmo identificador.
 J: Normalizar ambos os lados com a mesma regra permite casar as variantes. Para exibição e geração, mantenha o texto original.
 
 MC: Qual é uma limitação conhecida de obter o embedding de uma sentença pela média simples dos vetores de suas palavras?
@@ -232,9 +232,9 @@ J: A média é simétrica em relação à ordem; frases com as mesmas palavras e
 
 MC: O que é uma palavra "fora do vocabulário" (OOV) em um tokenizador por palavras?
 = Uma palavra não vista na construção do vocabulário, que acaba mapeada para um token desconhecido.
-- Uma palavra que aparece em todos os documentos.
-- Uma palavra com acento.
-- Uma palavra com mais de dez letras.
+- Uma palavra que aparece em todos os documentos da coleção e, por isso, é descartada do vocabulário por ter IDF nulo.
+- Uma palavra com acento, que o tokenizador por palavras não consegue representar por causa da codificação UTF-8.
+- Uma palavra com mais de dez letras, excluída automaticamente por ultrapassar o comprimento máximo do vocabulário.
 - Uma palavra que o modelo nunca gera.
 J: Palavras raras, novas ou com erro de digitação não constam do vocabulário; subpalavras reduzem o problema.
 

@@ -8,10 +8,10 @@ J: A definição central é probabilística: dado o contexto, o modelo dá a exp
 
 MC: Na expressão $P(w_t \mid w_1, \ldots, w_{t-1})$, o símbolo "|" significa:
 = "dado que", isto é, a probabilidade de $w_t$ condicionada aos tokens anteriores.
-- "ou", isto é, a probabilidade de $w_t$ ou dos tokens anteriores.
+- "ou", isto é, a probabilidade de $w_t$ ou dos tokens anteriores, calculada somando as duas probabilidades individuais e subtraindo a interseção.
 - "dividido por", isto é, uma razão entre dois tokens.
 - "aproximadamente igual a", isto é, uma estimativa grosseira.
-- "diferente de", isto é, uma exclusão de tokens.
+- "diferente de", isto é, uma exclusão de tokens, indicando que $w_t$ não pode coincidir com nenhum dos tokens anteriores da sequência.
 J: A barra vertical indica condicionamento. Lê-se "probabilidade de $w_t$ dado o que veio antes".
 
 MC: Por que, na prática, calculamos a probabilidade de uma frase longa somando logaritmos de probabilidades em vez de multiplicar as probabilidades?
@@ -24,24 +24,24 @@ J: O motivo é numérico (evitar *underflow*). O logaritmo transforma produto em
 
 MC: Uma frase recebe probabilidade alta de um modelo de linguagem. O que se pode concluir?
 = Que a frase é plausível segundo os padrões dos textos de treinamento; não se conclui que seja verdadeira.
-- Que a frase é verdadeira, pois o modelo foi treinado com muitos dados.
-- Que a frase foi vista literalmente no treinamento.
+- Que a frase é verdadeira, pois o modelo foi treinado com muitos dados e, portanto, só atribui probabilidade alta a afirmações verificadas e confirmadas pelos autores dos textos.
+- Que a frase foi vista literalmente no treinamento, já que o modelo só atribui probabilidade alta a sequências que memorizou palavra por palavra.
 - Que a frase é gramaticalmente perfeita em qualquer idioma.
 - Que a frase pode ser usada sem verificação em contextos jurídicos.
 J: Probabilidade mede plausibilidade estatística. Erros comuns em textos de treinamento também recebem probabilidade considerável.
 
 MC: Um modelo de bigramas estima $P(w_t \mid w_{t-1})$ por:
 = contagem do par $(w_{t-1}, w_t)$ dividida pela contagem de $w_{t-1}$ (com alguma suavização).
-- contagem de $w_t$ dividida pelo número total de frases.
+- contagem de $w_t$ dividida pelo número total de frases do corpus, ignorando por completo qual token veio imediatamente antes de $w_t$.
 - soma dos embeddings de todos os tokens da frase.
 - produto das probabilidades de todos os tokens do vocabulário.
-- média das contagens de todos os pares do corpus.
+- média das contagens de todos os pares de tokens do corpus, de modo que o resultado independe do par específico $(w_{t-1}, w_t)$ considerado.
 J: A estimativa por máxima verossimilhança em bigramas é a razão entre a contagem do par e a do token anterior.
 
 MC: O que é "esparsidade" no contexto de n-gramas?
 = A maior parte das combinações possíveis de $n$ tokens nunca aparece nos dados, o que dificulta estimar suas probabilidades.
-- O fato de o vocabulário conter poucas palavras.
-- A tendência de os modelos gerarem frases muito curtas.
+- O fato de o vocabulário conter poucas palavras, o que obriga o modelo a representar muitos conceitos diferentes com o mesmo token e a perder detalhes.
+- A tendência de os modelos gerarem frases muito curtas, com poucos tokens, porque a probabilidade de continuar a frase diminui a cada novo passo.
 - A falta de memória RAM durante a geração de texto.
 - A ausência de pontuação nos textos de treinamento.
 J: Com vocabulário grande e $n$ crescente, o número de n-gramas possíveis explode e quase todos têm contagem zero.
@@ -56,33 +56,33 @@ J: A generalização por similaridade de representações é a vantagem central,
 
 MC: Sobre a expressão "grande" em "grande modelo de linguagem", é correto afirmar que:
 = Não há um limiar oficial; o termo é relativo e mudou com o tempo, referindo-se a escala de parâmetros, dados e computação.
-- Existe um limite padronizado de 1 bilhão de parâmetros.
-- Refere-se exclusivamente ao tamanho da janela de contexto.
+- Existe um limite padronizado de 1 bilhão de parâmetros, definido por norma técnica, abaixo do qual o modelo deixa de poder ser chamado de grande modelo de linguagem.
+- Refere-se exclusivamente ao tamanho da janela de contexto, isto é, ao número máximo de tokens que o modelo consegue receber em uma única entrada.
 - Significa que o modelo foi treinado apenas com texto em inglês.
 - Indica que o modelo é necessariamente de código aberto.
 J: Não há consenso numérico. O termo descreve modelos treinados em larga escala, e o que é "grande" depende da época.
 
 MC: O que Kaplan et al. (2020) mostraram sobre a perda de modelos de linguagem Transformer?
 = Que a perda diminui de forma previsível, seguindo leis de potência, ao aumentar parâmetros, dados e computação.
-- Que a perda é independente do tamanho do modelo.
+- Que a perda é independente do tamanho do modelo, dependendo apenas da qualidade e da diversidade dos dados, de modo que aumentar parâmetros não traz benefício.
 - Que aumentar dados sempre piora o modelo.
-- Que a perda atinge zero com modelos suficientemente grandes.
+- Que a perda atinge zero com modelos suficientemente grandes, de forma que, a partir de certo tamanho, o modelo passa a prever todos os tokens sem erro.
 - Que a perda só depende da qualidade do tokenizador.
 J: As leis de escala descrevem melhoria regular da perda com a escala, dentro das faixas estudadas, sem implicar perda nula.
 
 MC: Qual é a relação correta entre IA, aprendizado de máquina (AM) e aprendizado profundo (AP)?
 = AP é um subconjunto de AM, que por sua vez é um subconjunto de IA.
-- IA é um subconjunto de AP.
-- AM e IA são conjuntos disjuntos.
-- AP engloba toda a IA e o AM.
+- IA é um subconjunto de AP, pois toda técnica de inteligência artificial depende de redes neurais profundas com muitas camadas.
+- AM e IA são conjuntos disjuntos: a IA reúne os sistemas baseados em regras, enquanto o AM reúne apenas os métodos estatísticos.
+- AP engloba toda a IA e o AM, já que redes profundas generalizam todos os demais métodos de aprendizado.
 - AM é um subconjunto de PLN.
 J: A relação é de inclusão: IA ⊃ AM ⊃ AP. O PLN cruza esses conjuntos.
 
 MC: Onde se situam os LLMs, segundo a organização conceitual do capítulo?
 = Na interseção entre aprendizado profundo e processamento de linguagem natural.
-- Fora do aprendizado de máquina, por serem baseados em regras.
+- Fora do aprendizado de máquina, por serem sistemas baseados em regras escritas manualmente e não em parâmetros ajustados a partir de dados.
 - Exclusivamente dentro da visão computacional.
-- Na interseção entre regras manuais e estatística clássica.
+- Na interseção entre regras manuais e estatística clássica, sem uso de redes neurais nem de aprendizado de representações.
 - Dentro do aprendizado por reforço, sem relação com PLN.
 J: LLMs são redes neurais profundas aplicadas a linguagem natural, portanto na interseção de AP com PLN.
 
@@ -96,8 +96,8 @@ J: Brown et al. (2020) descrevem a adaptação via prompt. Os parâmetros perman
 
 MC: Qual afirmação distingue corretamente "modelo" de "produto"?
 = O modelo é o conjunto de parâmetros treinados; o produto (por exemplo, uma interface de chat) é a forma de uso, e os modelos por trás podem mudar.
-- Modelo e produto são sempre o mesmo, pois o nome do chat designa o modelo.
-- O produto é o conjunto de parâmetros, e o modelo é a interface.
+- Modelo e produto são sempre o mesmo, pois o nome exibido pelo chat designa um único conjunto de parâmetros que o fornecedor nunca troca, mesmo entre versões.
+- O produto é o conjunto de parâmetros treinados, e o modelo é a interface por meio da qual o usuário envia perguntas e lê as respostas.
 - O modelo é a janela de chat, e o produto é o tokenizador.
 - Produto é um modelo que nunca muda de versão.
 J: Interfaces e serviços empacotam modelos, instruções e filtros. O nome do produto não identifica um modelo específico.
@@ -112,17 +112,17 @@ J: A aplicação é o código que prepara a entrada, chama o modelo e processa a
 
 MC: Um assistente responde corretamente quando consulta a base de políticas e erra quando não a consulta. Isso evidencia, principalmente, que:
 = A qualidade final depende do sistema completo (recuperação, contexto), e não apenas do modelo.
-- O modelo foi treinado com dados incorretos.
-- A interface de conversação introduz viés político.
+- O modelo foi treinado com dados incorretos sobre as políticas, e a consulta à base apenas esconde esse defeito ao copiar o texto correto.
+- A interface de conversação introduz viés político nas respostas sempre que o assistente fica sem acesso aos documentos da instituição.
 - O tokenizador está corrompido.
 - Modelos nunca devem ser combinados com bases de dados.
 J: A diferença está no acesso à evidência: o componente de recuperação muda a resposta mesmo mantendo o mesmo modelo.
 
 MC: Qual é o uso mais adequado do termo "resposta inventada" (ou não fundamentada) neste livro?
 = Conteúdo fluente que não é fiel à fonte ou aos fatos, evitando sugerir que o modelo "percebe" algo.
-- Qualquer resposta curta do modelo.
+- Qualquer resposta curta do modelo, já que respostas breves têm menos contexto e, por isso, são sempre consideradas inventadas.
 - Respostas que o usuário não entendeu.
-- Respostas produzidas apenas por modelos locais.
+- Respostas produzidas apenas por modelos locais, pois serviços em nuvem passam por filtros que impedem qualquer conteúdo infiel.
 - Qualquer texto gerado, verdadeiro ou não.
 J: A literatura usa "alucinação" para o fenômeno; o livro prefere termo que descreve o comportamento sem antropomorfizar.
 
@@ -136,8 +136,8 @@ J: A confiança em um sistema exige amostra representativa, independência entre
 
 MC: Qual das situações abaixo é a mais adequada para considerar uma solução mais simples que um LLM?
 = Classificar mensagens em poucas categorias estáveis, quando um classificador pequeno atinge bom desempenho e custa menos.
-- Reescrever em diversos estilos textos com vocabulário imprevisível.
-- Responder a perguntas abertas sobre milhares de documentos novos por dia.
+- Reescrever em diversos estilos textos com vocabulário imprevisível e sem categorias fixas, em que regras ou classificadores pequenos teriam de ser refeitos a cada caso.
+- Responder a perguntas abertas sobre milhares de documentos novos por dia, em que não há um conjunto estável de categorias a prever.
 - Gerar rascunhos criativos com revisão humana.
 - Traduzir manuais técnicos entre idiomas com baixa tolerância a erros, usando revisores.
 J: Para categorias poucas e estáveis, modelos pequenos costumam bastar; LLMs agregam custo e imprevisibilidade.
@@ -152,8 +152,8 @@ J: As três perguntas são: existe solução mais simples? como saberei que a re
 
 MC: Qual conclusão é adequada sobre a perplexidade?
 = É uma medida de incerteza média do modelo sobre o texto; menor é melhor, mas não mede verdade nem utilidade.
-- Mede a verdade das frases geradas.
-- Mede a velocidade de geração em tokens por segundo.
+- Mede a verdade das frases geradas, de modo que valores mais baixos indicam que o modelo produz apenas afirmações verificadas e corretas.
+- Mede a velocidade de geração em tokens por segundo, e valores menores indicam um modelo mais rápido e mais barato de executar.
 - É sempre igual ao número de parâmetros.
 - Só pode ser calculada para modelos treinados com aprendizado por reforço.
 J: Perplexidade resume quão surpreso o modelo fica com um texto; é útil para comparar modelos de linguagem, com limitações discutidas no Capítulo 16.
@@ -168,8 +168,8 @@ J: ln P = 3·ln 0,5 = −2,079; dividindo por 3: −0,693; e^{0,693} = 2. Intui�
 
 MC: Em um corpus sintético, o bigrama obtém perplexidade bem menor que o unigrama. Qual a explicação mais direta?
 = O bigrama usa o token anterior como contexto, reduzindo a incerteza sobre o próximo token.
-- O unigrama usa mais memória que o bigrama.
-- O bigrama memoriza a frase inteira.
+- O unigrama usa mais memória que o bigrama, porque precisa guardar uma tabela de contagens para cada par de tokens vistos.
+- O bigrama memoriza a frase inteira de treinamento, por isso reconhece qualquer texto que já tenha visto, sem incerteza.
 - O unigrama foi treinado com menos frases por definição.
 - A perplexidade só diminui quando se remove a pontuação.
 J: Condicionar no token anterior reduz a incerteza porque a estrutura da frase é regular. Isso não implica "entendimento".
@@ -184,32 +184,32 @@ J: O artigo "Attention is all you need" propôs o Transformer baseado em atenç�
 
 MC: Qual a principal função dos dados de preferência humana citados por Ouyang et al. (2022)?
 = Ajustar o modelo para seguir instruções de modo mais útil e aceitável, aproximando-o do formato de assistente.
-- Aumentar o vocabulário do tokenizador.
+- Aumentar o vocabulário do tokenizador, incorporando ao conjunto de tokens as palavras mais usadas nas avaliações feitas por pessoas.
 - Reduzir o número de parâmetros do modelo.
 - Substituir o pré-treinamento por completo.
-- Garantir que o modelo nunca produza erros factuais.
+- Garantir que o modelo nunca produza erros factuais, pois as pessoas que avaliam as respostas corrigem cada fato incorreto.
 J: O pós-treinamento com preferências melhora aderência às instruções, sem garantir correção factual.
 
 MC: Por que a data de corte dos dados de treinamento é relevante para quem usa um LLM?
 = O modelo não tem conhecimento próprio de eventos posteriores; perguntas sobre fatos recentes exigem fontes atualizadas.
-- Ela determina o idioma em que o modelo responde.
+- Ela determina o idioma em que o modelo responde, pois cada corte de dados fixa quais línguas estavam disponíveis no corpus.
 - Ela fixa o número de parâmetros do modelo.
 - Ela impede que o modelo use ferramentas externas.
-- Ela é irrelevante, pois o modelo se atualiza sozinho a cada pergunta.
+- Ela é irrelevante, pois o modelo se atualiza sozinho a cada pergunta, incorporando automaticamente os eventos mais recentes.
 J: Os parâmetros refletem os dados disponíveis até certa data. Recuperação de documentos ou ferramentas podem suprir informação recente.
 
 MC: Qual cuidado é mais importante ao usar LLMs em saúde, direito ou finanças?
 = Tratar o modelo como apoio a profissionais, com verificação humana de toda saída relevante.
-- Confiar na fluência da resposta como critério de correção.
-- Evitar registrar versões e datas para simplificar o processo.
+- Confiar na fluência da resposta como critério de correção, já que textos bem escritos e coerentes quase sempre refletem fatos verificados.
+- Evitar registrar versões e datas para simplificar o processo, evitando a burocracia que atrapalha o uso diário da ferramenta.
 - Usar apenas perguntas curtas para reduzir erros.
 - Remover qualquer citação de fontes para não confundir o usuário.
 J: Erros plausíveis podem causar dano real; a supervisão humana e a rastreabilidade das fontes são requisitos básicos.
 
 MC: Por que um experimento com um serviço externo de conversação nem sempre é reprodutível?
 = Porque o serviço pode mudar de modelo, de instruções ocultas e de políticas sem aviso, e a geração pode ser variável.
-- Porque serviços externos não usam probabilidades.
-- Porque só funcionam em computadores com GPU.
+- Porque serviços externos não usam probabilidades para gerar texto, escolhendo cada palavra por regras fixas escritas pelo fornecedor.
+- Porque só funcionam em computadores com GPU, que produzem resultados diferentes a cada máquina usada pelo pesquisador.
 - Porque nunca guardam registros de uso.
 - Porque o resultado depende apenas da cor da interface.
 J: Registrar data, versão e parâmetros é essencial; mesmo assim, a reprodutibilidade fica limitada em serviços que o usuário não controla.

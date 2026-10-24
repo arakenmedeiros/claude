@@ -1,41 +1,41 @@
 MC: O que caracteriza o aprendizado autossupervisionado em texto?
-= Os rótulos são extraídos automaticamente do próprio texto, por exemplo, escondendo uma parte e pedindo ao modelo que a preveja.
-- Os rótulos são escritos manualmente por anotadores humanos para cada frase.
-- Não existe nenhum alvo de previsão durante o treinamento.
-- O modelo aprende por tentativa e erro, recebendo recompensas externas.
-- O texto precisa ser traduzido antes do treinamento.
+= Os rótulos vêm do próprio texto, como um trecho escondido que o modelo deve prever.
+- Os rótulos são escritos manualmente por anotadores humanos, que marcam cada frase do corpus com a resposta esperada.
+- Não existe nenhum alvo de previsão durante o treinamento, pois o modelo apenas agrupa textos parecidos sem medir erro.
+- O modelo aprende por tentativa e erro em um ambiente, recebendo recompensas externas definidas por avaliadores.
+- O texto precisa ser traduzido para o inglês antes do treinamento, pois só nesse idioma existem rótulos automáticos.
 J: O gabarito está no próprio texto: o token escondido é a resposta, o que elimina o gargalo de anotação humana.
 
 MC: Em um modelo causal, qual é a perda de treinamento por posição?
-= A surpresa $-\ln p$ atribuída pelo modelo ao token correto dado os tokens anteriores.
-- A soma das probabilidades de todos os tokens do vocabulário.
-- A probabilidade do token mais provável, independentemente do correto.
-- A distância euclidiana entre embeddings consecutivos.
-- O número de tokens do contexto.
+= A surpresa $-\ln p$ atribuída ao token correto, dados os tokens anteriores.
+- A soma das probabilidades de todos os tokens do vocabulário, valor que é sempre igual a 1 em qualquer posição.
+- A probabilidade do token mais provável segundo o modelo, independentemente de ser ou não o token correto da posição.
+- A distância euclidiana entre os embeddings de tokens consecutivos, calculada em todas as posições da sequência.
+- O número de tokens do contexto disponível naquela posição, que cresce a cada passo ao longo da sequência.
 J: A perda é a entropia cruzada com o token verdadeiro, média sobre as posições.
 
 MC: O que significa *teacher forcing* no treinamento de modelos de linguagem?
-= Usar o texto verdadeiro como contexto em cada posição, em vez do que o próprio modelo geraria.
-- Obrigar o modelo a gerar o texto inteiro antes de calcular a perda.
-- Usar um professor humano para corrigir cada resposta.
-- Treinar o modelo somente com frases corretas gramaticalmente.
-- Reduzir o conjunto de dados a poucas frases.
+= Usar o texto verdadeiro como contexto em cada posição, e não o que o próprio modelo geraria.
+- Obrigar o modelo a gerar o texto inteiro por conta própria antes de calcular a perda, comparando-o depois com o original.
+- Usar um professor humano que corrige cada resposta do modelo durante o treinamento e fornece a nota de cada posição.
+- Treinar o modelo somente com frases gramaticalmente corretas, descartando qualquer exemplo que contenha erros de escrita.
+- Reduzir o conjunto de dados a poucas frases escolhidas por um professor, repetidas muitas vezes até a perda zerar.
 J: Com a máscara causal, todas as posições são calculadas de uma vez, cada uma condicionada ao passado verdadeiro.
 
 MC: No pré-treinamento por mascaramento, como o BERT, onde a perda é calculada?
 = Apenas nas posições que foram mascaradas.
-- Em todas as posições, mascaradas ou não.
-- Somente na última posição.
-- Apenas nos tokens especiais.
-- Somente nas posições não mascaradas.
+- Em todas as posições da sequência, mascaradas ou não, com o mesmo peso, como em um modelo causal.
+- Somente na última posição da sequência, que concentra o resumo do texto inteiro.
+- Apenas nos tokens especiais de início e fim, que marcam as fronteiras da sequência.
+- Somente nas posições não mascaradas, onde o texto original está visível para o modelo.
 J: O modelo é treinado para recuperar os tokens ocultos usando contexto à esquerda e à direita.
 
 MC: Qual é o objetivo típico de pré-treinamento de modelos encoder-decoder como T5 e BART?
 = Receber texto corrompido e gerar o texto original ou os trechos removidos.
-- Prever apenas o próximo token da entrada.
-- Classificar o texto em categorias fixas.
-- Gerar imagens a partir do texto.
-- Comprimir o vocabulário.
+- Prever apenas o próximo token da entrada, da esquerda para a direita, sem nenhuma etapa de codificação.
+- Classificar o texto de entrada em um pequeno conjunto de categorias fixas definidas antes do treinamento.
+- Gerar imagens a partir do texto, usando o decoder como gerador visual treinado com pares de legenda e figura.
+- Comprimir o vocabulário, fundindo tokens raros em um único símbolo desconhecido antes de cada época.
 J: A corrupção de trechos combina compreensão (encoder) e geração (decoder).
 
 MC: Uma perda média de 1,0 nat por token corresponde a uma perplexidade de aproximadamente:
@@ -56,58 +56,58 @@ J: Estimar o gradiente em minilotes é barato e funciona bem na prática (SGD e 
 
 MC: O que a passada para trás (*backward*) calcula?
 = O gradiente da perda em relação a todos os parâmetros, por retropropagação.
-- A próxima palavra a ser gerada.
-- A perda no conjunto de validação.
-- A tokenização do texto.
-- O novo vocabulário.
+- A próxima palavra a ser gerada, escolhida pelo modelo a partir da distribuição sobre o vocabulário inteiro.
+- A perda média no conjunto de validação, usada para decidir quando interromper o treinamento.
+- A tokenização do texto de entrada, convertendo cada lote em identificadores inteiros antes da passada para frente.
+- O novo vocabulário do modelo, atualizado com os tokens mais frequentes observados no lote.
 J: Esses gradientes alimentam o otimizador, que atualiza os parâmetros.
 
 MC: Por que se usa aquecimento (*warmup*) da taxa de aprendizado?
-= Para evitar instabilidade no início do treinamento, quando as estimativas do otimizador ainda são ruins.
-- Para aumentar o número de parâmetros do modelo.
-- Para que o treinamento termine mais cedo, sempre.
-- Para garantir que a perda de validação seja zero.
-- Para eliminar a necessidade de otimizador.
+= Para evitar instabilidade no início, quando as estimativas do otimizador ainda são ruins.
+- Para aumentar gradualmente o número de parâmetros do modelo ao longo das primeiras etapas do treinamento.
+- Para que o treinamento termine mais cedo, já que passos grandes no começo sempre aceleram a convergência.
+- Para garantir que a perda de validação seja zero após o primeiro ciclo completo de aquecimento.
+- Para eliminar a necessidade de otimizador, pois a taxa crescente já ajusta os parâmetros sozinha.
 J: Começar com passos pequenos e aumentar gradualmente estabiliza o início.
 
 MC: O que o recorte do gradiente (*gradient clipping*) faz?
 = Limita a norma do gradiente a um valor máximo, evitando passos explosivos.
-- Remove os parâmetros com gradiente nulo.
-- Zera o gradiente a cada passo.
-- Normaliza o texto de entrada.
-- Reduz o vocabulário.
+- Remove do modelo os parâmetros cujo gradiente é nulo, reduzindo o número de parâmetros treináveis.
+- Zera o gradiente a cada passo para que o histórico de atualizações anteriores não seja acumulado.
+- Normaliza o texto de entrada, cortando as sequências que excedem o comprimento máximo do contexto.
+- Reduz o vocabulário, eliminando os tokens cujos gradientes têm norma maior que um limite.
 J: Se a norma excede o limite, o gradiente é reescalado para que a norma seja igual ao limite.
 
 MC: Qual a principal finalidade da validação periódica durante o treinamento?
-= Medir a perda em dados não usados no treino para detectar sobreajuste e acompanhar a generalização.
-- Aumentar a perda de treino de propósito.
-- Substituir o conjunto de teste final.
-- Atualizar o vocabulário.
-- Calcular a taxa de aprendizado.
+= Medir a perda em dados não usados no treino, para detectar sobreajuste.
+- Aumentar a perda de treino de propósito, para impedir que o modelo aprenda rápido demais.
+- Substituir o conjunto de teste final, que deixa de ser necessário depois da validação.
+- Atualizar o vocabulário com os tokens novos que aparecem nos dados de validação.
+- Calcular os gradientes que serão usados na atualização dos parâmetros no passo seguinte.
 J: A perda de treino pode cair enquanto o modelo apenas decora; a de validação revela isso.
 
 MC: Qual padrão nas curvas de perda indica sobreajuste?
 = Perda de treino baixa e perda de validação muito mais alta.
-- As duas perdas baixas e próximas.
-- As duas perdas muito altas.
-- Perda de validação menor que a de treino em todas as épocas.
-- Perda de treino constante e igual a zero em todo o texto real.
+- As duas perdas baixas e próximas uma da outra, estáveis durante várias épocas seguidas.
+- As duas perdas muito altas e praticamente constantes, indicando que o modelo ainda não aprendeu.
+- Perda de validação menor que a de treino em todas as épocas, com as duas curvas em queda.
+- Perda de treino constante e igual a zero em todo o texto real, sem qualquer variação entre os lotes.
 J: A lacuna entre validação e treino mostra que o modelo decorou exemplos em vez de generalizar.
 
 MC: O que é a "perda irredutível" em um corpus?
-= O piso de perda imposto pela aleatoriedade intrínseca dos dados, que nenhum modelo supera.
-- A perda de um modelo sem parâmetros.
-- A perda do primeiro passo de treinamento.
-- A diferença entre treino e validação.
-- A perda causada por erros de digitação do usuário.
+= O piso de perda imposto pela aleatoriedade intrínseca dos dados.
+- A perda de um modelo sem parâmetros, que prevê todos os tokens com a mesma probabilidade.
+- A perda do primeiro passo de treinamento, antes de qualquer atualização dos parâmetros.
+- A diferença entre a perda de treino e a de validação, que mede o grau de sobreajuste.
+- A perda causada por erros de digitação do usuário, que o modelo nunca consegue corrigir.
 J: Se o próximo token é intrinsecamente incerto, nem o melhor modelo prevê melhor que a entropia verdadeira.
 
 MC: Qual é, em geral, o efeito de aumentar o volume de dados de treino sobre a lacuna entre perda de validação e de treino?
 = Tende a reduzi-la, aproximando as duas perdas.
-- Tende a aumentá-la indefinidamente.
-- Não tem relação com a lacuna.
-- Elimina a perda de treino.
-- Torna a perda de validação negativa.
+- Tende a aumentá-la indefinidamente, pois o modelo passa a decorar cada vez mais exemplos.
+- Não tem relação com a lacuna, que depende apenas do número de camadas do modelo.
+- Elimina a perda de treino, que cai a zero assim que o volume de dados dobra.
+- Torna a perda de validação negativa, já que a entropia cruzada diminui com mais dados.
 J: Com mais dados, o modelo tem menos facilidade para decorar, e a generalização melhora.
 
 MC: Qual etapa da preparação de dados remove cópias exatas e quase cópias?
@@ -135,27 +135,27 @@ MC: O que o estudo de Dodge et al. (2021) ilustra sobre filtragem de corpora da 
 J: A análise mostra efeitos colaterais da filtragem, o que reforça a necessidade de documentar escolhas.
 
 MC: Qual a função de uma ficha de dados (*datasheet*)?
-= Documentar origem, composição, filtros, limitações e usos pretendidos de um conjunto de dados.
-- Armazenar os pesos do modelo.
-- Substituir o conjunto de teste.
-- Comprimir o conjunto de dados.
-- Garantir que o modelo seja imparcial.
+= Documentar origem, composição, filtros e limitações de um conjunto de dados.
+- Armazenar os pesos do modelo treinado e os hiperparâmetros usados em cada época do treinamento.
+- Substituir o conjunto de teste, reunindo em um só arquivo os exemplos de treino e validação.
+- Comprimir o conjunto de dados para que ocupe menos espaço em disco durante o pré-treinamento.
+- Garantir, por meio de auditoria automática, que o modelo treinado com o conjunto seja imparcial.
 J: A documentação melhora a transparência e a responsabilidade (Gebru et al., 2021).
 
 MC: Qual a diferença entre um modelo-base e um modelo ajustado para instruções?
-= O modelo-base continua texto de forma plausível; o ajustado para instruções foi adaptado para seguir pedidos e responder como assistente.
-- O modelo-base segue instruções, o ajustado apenas continua texto.
-- Não há diferença, só o nome.
-- O modelo-base é sempre menor que o ajustado.
-- O modelo ajustado não passou por pré-treinamento.
+= O base continua texto de forma plausível; o ajustado foi adaptado para seguir pedidos como assistente.
+- O modelo-base segue instruções do usuário, enquanto o ajustado apenas continua o texto de forma plausível.
+- Não há diferença, só o nome: ambos passaram pelas mesmas etapas e se comportam do mesmo modo.
+- O modelo-base é sempre menor que o ajustado, pois o ajuste adiciona camadas e parâmetros novos.
+- O modelo ajustado não passou por pré-treinamento, apenas por treino direto com pares de pergunta e resposta.
 J: O comportamento de assistente vem do pós-treinamento (Capítulo 7).
 
 MC: Qual foi a conclusão central de Hoffmann et al. (2022) sobre computação fixa?
-= Parâmetros e tokens de treino devem crescer em proporção equilibrada, e muitos modelos estavam subtreinados em dados.
-- Só o número de parâmetros importa.
-- Dados adicionais nunca ajudam depois de 1 bilhão de tokens.
-- Modelos maiores devem sempre ser treinados com menos dados.
-- O número de camadas é o único fator relevante.
+= Parâmetros e tokens de treino devem crescer em proporção equilibrada; muitos modelos estavam subtreinados em dados.
+- Só o número de parâmetros importa; com computação fixa, convém sempre construir o maior modelo possível.
+- Dados adicionais nunca ajudam depois de 1 bilhão de tokens, pois o desempenho satura nesse ponto.
+- Modelos maiores devem sempre ser treinados com menos dados, para economizar computação de treino.
+- O número de camadas é o único fator relevante para o desempenho, independentemente de dados e parâmetros.
 J: O modelo Chinchilla (70 bilhões de parâmetros, 1,4 trilhão de tokens) superou modelos maiores treinados com menos dados.
 
 MC: Usando $C\approx6ND$, qual o número de FLOPs para $N=10^9$ parâmetros e $D=2\times10^{10}$ tokens?
@@ -176,34 +176,34 @@ J: $3\times10^9\times16=4{,}8\times10^{10}$ bytes $=48$ GB, sem contar ativaçõ
 
 MC: Por que muitos modelos recentes são treinados com mais tokens que o ponto "ótimo" de computação?
 = Porque um modelo menor e mais treinado é mais barato de servir a muitos usuários.
-- Porque o ponto ótimo foi refutado por completo.
-- Porque modelos maiores não podem ser implantados.
-- Porque o treinamento com mais tokens é sempre mais barato.
-- Porque o custo de servir é irrelevante.
+- Porque o ponto ótimo de computação foi refutado por completo e abandonado pela literatura.
+- Porque modelos maiores não podem ser implantados em nenhum tipo de hardware disponível hoje.
+- Porque o treinamento com mais tokens é sempre mais barato do que com menos tokens.
+- Porque o custo de servir o modelo é irrelevante diante do custo do pré-treinamento.
 J: O custo total inclui a inferência; investir mais em treino pode reduzir o custo de uso.
 
 MC: O que é contaminação de dados?
-= Quando exemplos do conjunto de teste (ou suas respostas) aparecem nos dados de treino, inflando o desempenho medido.
-- A presença de erros de digitação nos dados de treino.
-- O uso de dados em mais de um idioma.
-- A mistura de dados de treino e de validação, sempre desejável.
-- A remoção de dados duplicados.
+= Quando exemplos do teste aparecem nos dados de treino, inflando o desempenho medido.
+- A presença de erros de digitação e de ruído nos dados de treino, que degrada a qualidade do modelo.
+- O uso de dados em mais de um idioma no mesmo corpus, o que mistura as distribuições de treino.
+- A mistura deliberada de dados de treino e de validação, prática desejável para aproveitar todos os dados.
+- A remoção de dados duplicados do corpus, que reduz o volume e prejudica a generalização.
 J: O modelo "viu a prova", e a métrica deixa de refletir a capacidade de generalização.
 
 MC: Qual é uma limitação da detecção de contaminação por sobreposição de n-gramas?
 = Só detecta cópias literais; paráfrases e traduções escapam.
-- Só funciona em textos em inglês.
-- Exige acesso aos pesos do modelo.
-- Gera sempre falsos positivos.
-- Não pode ser executada em computadores comuns.
+- Só funciona em textos em inglês, pois depende de listas de n-gramas definidas para esse idioma.
+- Exige acesso aos pesos do modelo avaliado, pois compara as ativações internas com o texto.
+- Gera sempre falsos positivos, pois qualquer n-grama comum da língua é tratado como contaminação.
+- Não pode ser executada em computadores comuns, pois exige armazenar todos os n-gramas em GPU.
 J: A ausência de sobreposição literal não prova ausência de contaminação.
 
 MC: Qual medida reduz o risco de contaminação em avaliações?
-= Manter conjuntos de teste privados ou criar testes novos e relatar a análise de contaminação.
-- Publicar os conjuntos de teste em páginas abertas e indexadas.
-- Treinar com todos os dados, inclusive os de teste.
-- Usar sempre o mesmo conjunto de teste por vários anos.
-- Evitar qualquer tipo de validação.
+= Manter testes privados ou criar testes novos e relatar a contaminação.
+- Publicar os conjuntos de teste em páginas abertas e indexadas, para que todos possam auditá-los.
+- Treinar o modelo com todos os dados disponíveis, inclusive os de teste, para maximizar a cobertura.
+- Usar sempre o mesmo conjunto de teste por vários anos, para permitir comparações históricas.
+- Evitar qualquer tipo de validação durante o treinamento, para não vazar informação do teste.
 J: Testes novos ou privados e relatórios de contaminação aumentam a confiança nas métricas.
 
 MC: Qual das afirmações sobre custo ambiental do treinamento é a mais adequada?
@@ -223,11 +223,11 @@ MC: Qual cuidado é adequado ao usar a regra "cerca de 20 tokens por parâmetro"
 J: A razão deriva de um conjunto específico de experimentos e é discutida na literatura.
 
 MC: O que é uma "época" de treinamento?
-= Uma passada completa por todo o conjunto de treino (formado por vários lotes).
-- Um único passo de atualização com um lote.
-- O conjunto de dados de validação.
-- A taxa de aprendizado inicial.
-- O período em que o modelo é implantado.
+= Uma passada completa por todo o conjunto de treino.
+- Um único passo de atualização dos parâmetros com um lote de sequências.
+- O conjunto de dados de validação, usado para medir a perda ao final de cada ciclo.
+- A taxa de aprendizado inicial, escolhida antes do aquecimento e mantida fixa até o fim.
+- O período em que o modelo permanece implantado em produção antes de ser substituído.
 J: Em cada época, todos os exemplos de treino são usados uma vez; cada época contém muitos passos (um por lote).
 
 MC: Por que é importante dividir treino e validação por documento, e não por frase aleatória?

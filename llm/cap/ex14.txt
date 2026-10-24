@@ -8,16 +8,16 @@ J: O modelo só gera texto; a execução, a validação e a autorização perten
 
 MC: Para que serve o esquema JSON de uma ferramenta?
 = Descrever ao modelo os argumentos esperados e permitir que o código valide a chamada proposta.
-- Criptografar os argumentos para que ninguém os leia.
+- Criptografar os argumentos enviados pelo modelo, para que somente o servidor da ferramenta consiga lê-los no trajeto.
 - Acelerar a geração de texto do modelo.
-- Substituir a necessidade de descrever a ferramenta em linguagem natural.
+- Substituir a necessidade de descrever a ferramenta em linguagem natural, já que o esquema sozinho basta ao modelo.
 - Garantir que a ferramenta nunca falhe.
 J: O esquema informa o formato e serve de base à validação; a descrição em linguagem natural continua necessária.
 
 MC: Qual a vantagem de gerar o esquema e validar com a mesma classe pydantic?
 = Esquema e validação não se desencontram, pois ambos vêm da mesma definição.
-- A classe executa a ferramenta sem precisar de função.
-- O modelo passa a nunca errar os tipos dos campos.
+- A classe executa a ferramenta sozinha, sem precisar de uma função separada para a lógica.
+- O modelo passa a nunca errar os tipos dos campos, pois a classe o obriga a respeitar o esquema.
 - A validação deixa de ser necessária.
 - O tempo de resposta do modelo cai pela metade.
 J: Uma fonte única reduz inconsistências; o modelo ainda pode errar, por isso a validação segue necessária.
@@ -32,16 +32,16 @@ J: Erros como informação permitem recuperação; o limite de tentativas evita 
 
 MC: O que significa dizer que uma ação é idempotente?
 = Repeti-la com os mesmos dados tem o mesmo efeito que executá-la uma única vez.
-- Ela só pode ser executada uma vez por dia.
+- Ela só pode ser executada uma vez por dia, e as tentativas seguintes são recusadas pelo sistema.
 - Ela não produz nenhum efeito.
-- Ela exige confirmação humana.
+- Ela exige confirmação humana a cada execução, justamente para evitar que seja repetida.
 - Ela é executada sempre em paralelo.
 J: Com idempotência, repetições por laço ou nova tentativa não duplicam o efeito.
 
 MC: Como uma chave de idempotência protege o pedido de trancamento de matrícula?
 = Repetir a mesma chave devolve o protocolo já criado, sem registrar um segundo pedido.
-- A chave criptografa o número de matrícula.
-- A chave impede que o aluno tente de novo no semestre seguinte.
+- A chave criptografa o número de matrícula, de modo que ninguém consiga ler ou repetir o pedido.
+- A chave impede que o aluno faça novo pedido de trancamento no semestre seguinte, bloqueando-o.
 - A chave dispensa a validação dos argumentos.
 - A chave substitui a confirmação humana.
 J: A chave identifica o pedido; o sistema reconhece a repetição e devolve o resultado anterior.
@@ -55,16 +55,16 @@ MC: Por que abandonar a espera de uma ferramenta lenta (tempo limite) pode ser i
 J: O tempo limite interrompe a espera, não necessariamente a execução já iniciada.
 
 MC: Qual é o problema de usar eval para implementar uma calculadora chamada por um modelo?
-= O eval executa qualquer código Python que venha na expressão, o que abre a porta a execução arbitrária.
-- O eval só aceita números inteiros.
-- O eval é lento demais para somas simples.
+= O eval executa qualquer código Python presente na expressão, abrindo a porta à execução arbitrária.
+- O eval só aceita números inteiros e rejeita decimais, o que inviabiliza qualquer cálculo útil com preços ou notas.
+- O eval é lento demais para somas simples, pois compila o programa inteiro a cada chamada, tornando a calculadora impraticável.
 - O eval não aceita parênteses.
 - O eval depende de internet.
 J: Entradas vindas de um modelo (ou de um atacante) não podem ser executadas como código.
 
 MC: Qual a estratégia da calculadora segura que percorre a árvore sintática?
-= Aceitar apenas uma lista de nós permitidos (números, operadores aritméticos, parênteses) e recusar todo o resto.
-- Bloquear uma lista de palavras proibidas, como os nomes das funções perigosas conhecidas.
+= Aceitar só uma lista de nós permitidos (números, operadores aritméticos, parênteses) e recusar o resto.
+- Bloquear uma lista de palavras proibidas, como os nomes de todas as funções perigosas já conhecidas, e liberar o resto.
 - Executar a expressão em outro computador e comparar os resultados.
 - Converter a expressão para texto e procurar a palavra "os".
 - Pedir ao modelo que garanta que a expressão é segura.
@@ -72,17 +72,17 @@ J: Permitir por lista é mais robusto do que tentar listar tudo que é perigoso.
 
 MC: Quais são as três fases do ciclo básico de um agente?
 = Observar, decidir e agir, repetidas até uma condição de parada.
-- Treinar, validar e implantar.
+- Treinar, validar e implantar o modelo, em ciclos repetidos a cada nova versão dos dados.
 - Tokenizar, embutir e decodificar.
-- Ler, escrever e apagar.
+- Ler, escrever e apagar arquivos no disco do servidor até esgotar o espaço disponível.
 - Recuperar, resumir e traduzir.
 J: O agente observa o contexto, o modelo decide a próxima ação e o código a executa.
 
 MC: Qual destas é uma condição de parada de um agente bem projetado?
 = O limite máximo de passos, ao lado de orçamento, detecção de laço e resposta final.
-- A temperatura chegar a zero.
+- A temperatura chegar a zero, momento em que a geração se torna determinística e o laço é encerrado.
 - O tamanho do vocabulário atingir um valor fixo.
-- O número de ferramentas registradas exceder cinco.
+- O número de ferramentas registradas exceder cinco, caso em que o agente se desliga sozinho.
 - O usuário ter feito mais de três perguntas na vida.
 J: Sem paradas explícitas, o laço pode não terminar; o limite de passos é uma delas.
 
@@ -96,50 +96,50 @@ J: Soma de contextos crescentes: $nc_0 + a\,n(n-1)/2$.
 
 MC: Quando um agente atinge o limite de passos sem concluir, qual a conduta mais adequada?
 = Encaminhar a um humano ou informar que não concluiu, sem inventar uma resposta.
-- Responder com a melhor palpite, como se fosse definitivo.
+- Responder com o melhor palpite, como se fosse definitivo, para não deixar o usuário sem resposta.
 - Reiniciar o laço indefinidamente.
 - Apagar o histórico e recomeçar silenciosamente.
-- Aumentar o limite automaticamente até dar certo.
+- Aumentar o limite automaticamente até dar certo, sem avisar ninguém sobre o custo adicional.
 J: Parar e escalar é um desfecho seguro; uma resposta inventada é pior.
 
 MC: Qual a definição pública de fluxo de trabalho (workflow), em oposição a agente, na publicação de engenharia da Anthropic (2024)?
 = Sistema em que modelos e ferramentas são orquestrados por caminhos de código predefinidos.
-- Sistema em que o modelo decide sozinho tudo, inclusive quais ferramentas existem.
+- Sistema em que o modelo decide sozinho tudo, inclusive quais ferramentas existem e quando parar.
 - Sistema que não usa nenhum modelo de linguagem.
 - Sistema que só funciona com um provedor específico.
-- Sistema que depende de uma interface gráfica.
+- Sistema que depende de uma interface gráfica para que o usuário desenhe cada etapa do processo.
 J: Nos fluxos o caminho é definido pelo código; nos agentes, o modelo dirige dinamicamente o processo.
 
 MC: Em qual situação o roteamento é a melhor escolha?
-= Quando as entradas se dividem em categorias distintas, cada uma bem tratada por uma rota especializada.
-- Quando a ordem dos passos depende de resultados imprevisíveis.
-- Quando é preciso que o modelo invente novas ferramentas.
+= Quando as entradas se dividem em categorias distintas, cada uma bem tratada por uma rota própria.
+- Quando a ordem dos passos depende de resultados imprevisíveis, que só são conhecidos durante a execução, passo a passo.
+- Quando é preciso que o modelo invente novas ferramentas à medida que a tarefa avança.
 - Quando não existe nenhuma categoria identificável.
 - Quando se quer evitar qualquer classificação.
 J: Roteamento pressupõe categorias identificáveis; se a classificação falha, a rota errada é seguida.
 
 MC: O que caracteriza o padrão orquestrador–trabalhadores?
 = Um orquestrador divide a tarefa conforme a entrada e delega as subtarefas a trabalhadores.
-- Várias cópias do mesmo prompt votam em uma resposta.
-- Uma sequência fixa de etapas, sempre as mesmas.
+- Várias cópias do mesmo prompt votam em uma resposta, e a mais frequente é escolhida como final.
+- Uma sequência fixa de etapas, sempre as mesmas, na qual a saída de uma é a entrada da próxima.
 - Um modelo gera e o mesmo código avalia, sem iterar.
 - Um humano executa todas as ações.
 J: A diferença para a paralelização simples é que as subtarefas não são predefinidas.
 
 MC: Qual o principal risco de um avaliador–otimizador baseado em um critério automático simples?
-= O critério é um proxy: otimizar contra ele pode piorar respostas que seriam boas segundo o objetivo real.
-- O avaliador nunca discorda do gerador.
+= O critério é um proxy: otimizar contra ele pode piorar respostas boas segundo o objetivo real.
+- O avaliador nunca discorda do gerador, de modo que o laço termina sempre na primeira rodada, sem melhoria.
 - A iteração sempre melhora a resposta.
-- O padrão não pode ser implementado em código.
+- O padrão não pode ser implementado em código, pois exige um avaliador humano em cada iteração do laço.
 - O avaliador precisa de internet.
 J: Todo avaliador automático aproxima o que realmente queremos; seus defeitos aparecem ao otimizar contra ele.
 
 MC: Quando um fluxo fixo é preferível a um agente?
 = Quando os passos são conhecidos de antemão, pois é mais barato, rápido, previsível e fácil de auditar.
-- Quando a tarefa é totalmente imprevisível.
+- Quando a tarefa é totalmente imprevisível e o número de passos necessários não pode ser estimado de antemão.
 - Quando se deseja o maior custo possível.
 - Quando o número de passos é desconhecido por natureza.
-- Quando não há testes disponíveis.
+- Quando não há testes disponíveis, pois um agente dispensa avaliação e se corrige sozinho.
 J: A recomendação pública é começar pela solução mais simples que funcione.
 
 MC: Qual a diferença entre memória de curto e de longo prazo em um agente?
@@ -152,25 +152,25 @@ J: A janela é limitada e cara; fatos persistentes ficam em armazenamento extern
 
 MC: Qual o principal risco de resumir mensagens antigas na memória de curto prazo?
 = Perder informação relevante, ou fixar um resumo errado que contamina o restante da conversa.
-- O resumo sempre aumenta o número de tokens.
+- O resumo sempre aumenta o número de tokens, porque o texto condensado é reenviado junto ao original.
 - O resumo impede o uso de ferramentas.
 - O resumo apaga o esquema JSON.
-- O resumo torna o modelo mais barato e pior em tudo.
+- O resumo torna o modelo mais barato mas pior em tudo, inclusive em tarefas que não usam o histórico.
 J: Resumir comprime e perde detalhes; erros no resumo se propagam.
 
 MC: O que diz o princípio do menor privilégio aplicado a agentes?
 = Cada tarefa deve receber somente as ferramentas e permissões estritamente necessárias para ela.
-- O agente deve ter acesso a todas as ferramentas, para ser útil.
+- O agente deve ter acesso a todas as ferramentas disponíveis, para ser útil em qualquer situação.
 - O privilégio deve ser decidido pelo próprio modelo.
 - Só o administrador do sistema pode usar agentes.
-- As permissões devem aumentar a cada passo.
+- As permissões devem aumentar a cada passo concluído, premiando o agente por seu bom desempenho.
 J: Limitar o poder limita o dano em caso de erro ou de ataque.
 
 MC: Por que ações irreversíveis ou com efeito externo devem exigir confirmação humana?
-= Porque um erro do modelo ou um ataque pode causar dano que não se desfaz, e o padrão seguro é negar sem confirmação.
-- Porque o modelo não consegue chamar ferramentas de escrita.
+= Porque um erro do modelo ou um ataque pode causar dano irreversível, e o padrão seguro é negar sem confirmação.
+- Porque o modelo não consegue chamar ferramentas de escrita sem que uma pessoa autorize cada chamada de leitura.
 - Porque a confirmação deixa o agente mais rápido.
-- Porque a confirmação elimina a necessidade de auditoria.
+- Porque a confirmação deixa o agente mais rápido, já que dispensa a validação dos argumentos feita pelo código da aplicação.
 - Porque ações com efeito não podem ser registradas.
 J: A confirmação é uma camada de código independente do julgamento do modelo.
 
@@ -183,25 +183,25 @@ MC: O que é injeção de prompt indireta?
 J: O atacante controla um dado, e não a conversa; se o modelo o tratar como instrução, é induzido a agir.
 
 MC: Qual tratamento é correto para a saída de uma ferramenta que recuperou texto de fontes externas?
-= Tratá-la como dado não confiável: delimitar, sanitizar quando possível e nunca conceder a ela autoridade de instrução.
-- Tratá-la como instrução do administrador do sistema.
+= Tratá-la como dado não confiável: delimitar, sanitizar se possível e nunca lhe dar autoridade de instrução.
+- Tratá-la como instrução do administrador do sistema, pois veio de uma ferramenta que a própria equipe registrou.
 - Executar qualquer comando que apareça nela.
 - Apagá-la sempre antes de o modelo ler.
-- Confiar nela por vir de uma ferramenta da própria empresa.
+- Confiar nela por vir de uma ferramenta da própria empresa, já que o canal é interno e controlado.
 J: A origem do conteúdo, e não o canal por onde ele chega, determina sua confiabilidade.
 
 MC: No experimento do capítulo, por que o sanitizador por padrões não bastou?
 = Porque barra a frase conhecida, mas uma paráfrase com o mesmo pedido passa sem ser reconhecida.
-- Porque ele removia todos os documentos da base.
+- Porque removia todos os documentos da base, inclusive os legítimos que continham a palavra suspeita.
 - Porque era mais lento que o agente inteiro.
 - Porque só funcionava com o modelo desligado.
-- Porque impedia a calculadora de funcionar.
+- Porque impedia a calculadora de funcionar, já que bloqueava toda expressão com operadores.
 J: Filtros por padrão são frágeis diante de reformulações; camadas sobre a ação complementam.
 
 MC: Por que as defesas sobre a ação (menor privilégio, domínio permitido, confirmação) contiveram o dano mesmo com um modelo 100% obediente?
 = Porque atuam no código, depois da decisão do modelo, e não dependem de ele ter reconhecido o ataque.
-- Porque convenciam o modelo a ignorar a instrução.
-- Porque removiam o documento envenenado da base.
+- Porque convenciam o modelo a ignorar a instrução maliciosa, mudando o que ele decide pedir.
+- Porque removiam o documento envenenado da base antes que o modelo chegasse a lê-lo e ser induzido a obedecer a ele.
 - Porque desligavam o registro de auditoria.
 - Porque tornavam o modelo mais inteligente.
 J: Camadas de código limitam o que pode ser feito, independentemente do que o modelo foi induzido a pedir.
@@ -216,9 +216,9 @@ J: Reamostrar execuções subestima a incerteza; o que varia de verdade é o con
 
 MC: Para uma tarefa que exige 6 passos em sequência, com 95% de acerto independente por passo, a probabilidade de sucesso total é aproximadamente:
 = 0,74, pois 0,95 elevado a 6 fica abaixo de 0,75.
-- 0,95, a mesma de um passo.
+- 0,95, a mesma de um passo isolado, como se os erros dos passos não se acumulassem.
 - 0,57, pois soma-se o erro seis vezes.
-- 0,99, por compensação entre os passos.
+- 0,99, por compensação entre os passos, já que um acerto corrige o erro do passo anterior.
 - 0,30, pois cada passo erra em 5%.
 J: Probabilidades independentes se multiplicam: $0{,}95^6\approx0{,}735$.
 
@@ -231,10 +231,10 @@ MC: O que o MCP (Model Context Protocol), em termos gerais, propõe?
 J: Foi anunciado pela Anthropic em nov. de 2024 como padrão aberto de integração; servidores expõem fontes e clientes as consomem.
 
 MC: Qual a postura correta diante de ferramentas fornecidas por servidores de terceiros via um protocolo de integração?
-= Aplicar as mesmas regras: validação, menor privilégio, confirmação, auditoria e saídas tratadas como dado não confiável.
-- Confiar plenamente, pois seguem um protocolo padronizado.
+= Aplicar as mesmas regras: validação, menor privilégio, confirmação, auditoria e saída tratada como dado não confiável.
+- Confiar plenamente, pois seguem um protocolo padronizado, e dispensar a validação feita no código da aplicação sobre os argumentos.
 - Desligar a auditoria para ganhar desempenho.
-- Conceder acesso total para evitar erros de permissão.
+- Conceder acesso total a todos os recursos, para evitar erros de permissão durante o uso da ferramenta.
 - Dispensar o esquema dos argumentos.
 J: O protocolo padroniza a conexão, não a confiabilidade da ferramenta nem do conteúdo que ela devolve.
 

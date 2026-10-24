@@ -1,8 +1,8 @@
 MC: O que é uma modalidade, no contexto de modelos multimodais?
 = Um tipo de dado com estrutura própria, como texto, imagem ou áudio.
-- Um modo de execução do modelo na GPU.
-- Um hiperparâmetro que controla a criatividade.
-- Um formato de arquivo compactado.
+- Um modo de execução do modelo na GPU, com treinamento em precisão reduzida para economizar memória.
+- Um hiperparâmetro que controla a criatividade, aumentando a aleatoriedade das respostas.
+- Um formato de arquivo compactado, como JPEG ou MP3, usado para armazenar imagens e áudio antes do envio.
 - Um idioma suportado pelo tokenizador.
 J: Texto, imagem, áudio, vídeo e tabelas são modalidades; um modelo multimodal lida com mais de uma.
 
@@ -16,26 +16,26 @@ J: Em RGB há três canais (vermelho, verde, azul) para cada pixel.
 
 MC: Quantos números tem uma imagem RGB de 224×224 pixels?
 = 150 528.
-- 50 176.
+- 50 176, que é o número de pixels (224 × 224) sem contar os três canais de cor.
 - 448.
-- 672.
+- 672, que é a soma 224 + 224 + 224, tratando as dimensões como parcelas.
 - 1 024.
 J: 224 × 224 × 3 = 150 528.
 
 MC: No ViT, o que é um patch?
-= Um bloco quadrado da imagem, achatado em vetor e projetado, que faz o papel de um token.
-- Um filtro convolucional aprendido.
-- Uma correção de segurança do modelo.
+= Um bloco quadrado da imagem, achatado em vetor e projetado, que faz o papel de token.
+- Um filtro convolucional aprendido, que desliza pela imagem e produz mapas de características, como nas CNNs.
+- Uma correção de segurança aplicada ao modelo depois do treino para bloquear respostas indevidas.
 - Uma palavra do texto da pergunta.
 - O rótulo de classe da imagem.
 J: A imagem é dividida em blocos que viram a sequência de entrada do Transformer.
 
 MC: Uma imagem 224×224 é dividida em patches 16×16. Quantos patches resultam?
 = 196.
-- 256.
-- 14.
-- 784.
-- 49.
+- 256, que é 16 × 16, o número de pixels de um patch e não de patches da imagem.
+- 14, que é só o número de patches por lado, e não o total na imagem.
+- 784, que corresponderia a patches de 8×8 pixels e não de 16×16.
+- 49, que corresponderia a patches de 32×32 pixels (7 × 7).
 J: (224/16) × (224/16) = 14 × 14 = 196.
 
 MC: Por que se soma uma informação de posição aos embeddings de patch?
@@ -47,34 +47,34 @@ MC: Por que se soma uma informação de posição aos embeddings de patch?
 J: Sem posição, embaralhar os patches não altera a saída da atenção.
 
 MC: Qual o efeito de diminuir o tamanho do patch (de 32 para 16) em uma mesma imagem?
-= Aumenta o número de tokens visuais e o custo da atenção, preservando mais detalhe.
-- Reduz o número de tokens e o custo, preservando mais detalhe.
-- Não altera o número de tokens.
+= Aumenta o número de tokens e o custo da atenção, preservando mais detalhe.
+- Reduz o número de tokens e o custo da atenção, ao agrupar pixels vizinhos, e ainda preserva mais detalhe.
+- Não altera o número de tokens, pois ele depende apenas da resolução do texto que acompanha a imagem.
 - Elimina a necessidade de posição.
 - Transforma a imagem em áudio.
 J: Cada redução do lado do patch pela metade multiplica por quatro o número de patches.
 
 MC: Qual a ideia central do treinamento contrastivo imagem–texto?
 = Aproximar os embeddings de pares corretos e afastar os de pares incorretos no lote.
-- Gerar legendas palavra por palavra a partir da imagem.
-- Classificar imagens em categorias fixas.
+- Gerar legendas palavra por palavra, a partir da imagem, com um decodificador autorregressivo.
+- Classificar imagens em um conjunto fixo de categorias, definidas antes do treino, usando rótulos de classe.
 - Comprimir a imagem sem perda.
 - Traduzir texto para outro idioma.
 J: Os dois codificadores aprendem um espaço comum em que pares correspondentes ficam próximos.
 
 MC: Na perda contrastiva simétrica, o que significa "simétrica"?
 = Soma-se a entropia cruzada por linhas (imagem→texto) e por colunas (texto→imagem).
-- Imagem e texto usam o mesmo codificador.
+- Imagem e texto passam pelo mesmo codificador, com pesos compartilhados entre as duas modalidades.
 - Todos os pares têm o mesmo peso e o mesmo rótulo.
-- A temperatura é igual a 1.
-- A perda é calculada só na diagonal.
+- A temperatura é fixada em 1 nos dois sentidos, sem parâmetro aprendido.
+- A perda é calculada só na diagonal da matriz, ignorando os pares incorretos do lote.
 J: A classificação do texto correto para cada imagem e da imagem correta para cada texto são tratadas juntas.
 
 MC: Com n pares por lote e embeddings ao acaso, que valor se espera para a perda contrastiva?
 = Cerca de ln n.
-- Cerca de zero.
+- Cerca de zero, pois os embeddings aleatórios já deixam os pares corretos bem alinhados.
 - Cerca de n².
-- Cerca de 1/n.
+- Cerca de 1/n, a probabilidade de acertar o par correto ao acaso.
 - Infinito.
 J: Cada softmax fica quase uniforme sobre n candidatos, e −ln(1/n) = ln n.
 
@@ -87,9 +87,9 @@ MC: O que faz a temperatura τ na matriz S = cos/τ?
 J: Dividir por um τ pequeno torna as pontuações mais afastadas e o softmax mais afiado.
 
 MC: Por que não se deve comparar perdas contrastivas obtidas com temperaturas diferentes?
-= A perda é calculada sobre pontuações em escalas distintas, então não mede a mesma coisa.
-- Porque a perda só existe para τ igual a 1.
-- Porque τ muda o número de pares do lote.
+= A perda é calculada sobre pontuações em escalas distintas e não mede a mesma coisa.
+- Porque a perda só é definida para τ igual a 1; com outros valores o softmax não existe.
+- Porque τ muda o número de pares do lote e, com isso, a quantidade de negativos por imagem.
 - Porque a perda deixa de ser diferenciável.
 - Porque a temperatura é fixada pelo sistema operacional.
 J: Para τ grande o softmax fica achatado e a perda alta mesmo com bom alinhamento.
@@ -103,26 +103,26 @@ MC: O que mede o recall@5 na recuperação imagem→texto?
 J: É a proporção de consultas com algum item correto no top 5.
 
 MC: Por que um recall@k precisa vir acompanhado do critério de "correto" e do tamanho da galeria?
-= Porque o mesmo sistema tem números muito diferentes conforme o critério e o número de candidatos.
-- Porque o recall é sempre igual a 1 em galerias pequenas.
-- Porque o critério é definido pelo tamanho da imagem.
+= Porque o valor muda muito conforme o critério de acerto e o número de candidatos.
+- Porque o recall é sempre igual a 1 em galerias pequenas, o que torna o número inútil para comparação.
+- Porque o critério de acerto é definido pelo tamanho da imagem em pixels e pelo número de canais.
 - Porque o recall não depende dos dados.
 - Porque a galeria é sempre o conjunto de treino.
 J: Critério estrito e galerias grandes tornam o problema mais difícil e mudam o valor.
 
 MC: Como funciona a classificação zero-shot por descrições, na ideia do CLIP?
-= Embutem-se descrições das classes e atribui-se cada imagem à descrição mais similar.
-- Treina-se um novo classificador com rótulos de cada classe.
+= Embutem-se descrições das classes e cada imagem fica com a descrição mais similar.
+- Treina-se um novo classificador com rótulos de cada classe, usando as descrições só como dados extras.
 - Sorteia-se uma classe ao acaso.
 - Usa-se apenas a cor média da imagem.
-- Compara-se o tamanho do arquivo com um limiar.
+- Compara-se o tamanho do arquivo de cada imagem com um limiar escolhido para cada classe.
 J: Nenhum classificador é treinado: a classe vem da similaridade com as descrições.
 
 MC: Qual a função do projetor em modelos tipo LLaVA?
 = Mapear embeddings visuais para o espaço de embeddings de token do LLM.
-- Reduzir a resolução do vídeo.
+- Reduzir a resolução do vídeo antes de ele entrar no codificador, para economizar memória.
 - Traduzir a pergunta para outro idioma.
-- Converter o áudio em espectrograma.
+- Converter o áudio em espectrograma para que o LLM consiga ler as frequências como imagem.
 - Armazenar as chaves da API.
 J: Os vetores projetados entram na sequência do LLM como se fossem tokens.
 
@@ -136,16 +136,16 @@ J: O LLM nunca recebe pixels; se o alinhamento perde um detalhe, ele não tem co
 
 MC: Segundo o teorema de Nyquist, qual a maior frequência representada sem ambiguidade em um sinal amostrado a 16 000 Hz?
 = 8 000 Hz.
-- 16 000 Hz.
-- 32 000 Hz.
+- 16 000 Hz, a própria taxa de amostragem, tomada como se fosse o limite.
+- 32 000 Hz, o dobro da taxa de amostragem, tomado como se fosse o limite.
 - 4 000 Hz.
 - 1 600 Hz.
 J: O limite é fs/2.
 
 MC: O que é o aliasing?
 = Frequências acima de fs/2 que aparecem "dobradas" como frequências menores.
-- Um tipo de compressão do texto.
-- O aumento da taxa de amostragem após o corte.
+- Um tipo de compressão do texto que troca palavras raras por códigos mais curtos.
+- O aumento da taxa de amostragem depois de o sinal ter sido cortado em frequência, para recuperar detalhes.
 - A remoção de ruído por difusão.
 - A troca de canais de cor.
 J: Um tom de 5 000 Hz amostrado a 8 000 Hz aparece como 3 000 Hz.
@@ -160,8 +160,8 @@ J: Empilham-se os espectros de janelas sucessivas, formando uma imagem frequênc
 
 MC: Qual o compromisso ao escolher o tamanho da janela da STFT?
 = Janelas longas resolvem melhor frequências e pior o tempo; janelas curtas, o inverso.
-- Janelas longas melhoram ambos, tempo e frequência.
-- Janelas curtas melhoram ambos, tempo e frequência.
+- Janelas longas melhoram ao mesmo tempo a resolução em tempo e em frequência, sem custo.
+- Janelas curtas melhoram ao mesmo tempo a resolução em tempo e em frequência, sem custo.
 - O tamanho da janela não afeta a resolução.
 - Janelas longas eliminam o ruído.
 J: Resolução em frequência é fs/n_fft, e janelas longas borram os instantes.
@@ -176,9 +176,9 @@ J: O resumo herda o que a transcrição errou e pode apresentá-lo com fluência
 
 MC: Por que um CER baixo ainda pode corromper muitos campos de um documento?
 = Um valor tem vários caracteres, e basta um erro para alterá-lo.
-- O CER mede apenas a cor do texto.
+- O CER só conta erros em palavras com acento, e os números quase nunca têm acento.
 - O CER só conta erros em palavras com acento.
-- O CER é sempre igual à taxa de erro por campo.
+- O CER é sempre igual à taxa de erro por campo, então um valor baixo implica poucos campos errados.
 - O OCR nunca confunde dígitos.
 J: Na simulação do capítulo, um CER de 0,82% deixou 16,5% dos totais errados.
 
@@ -192,26 +192,26 @@ J: É um processo fixo, sem parâmetros aprendidos.
 
 MC: Na fórmula x_t = √ᾱ_t x_0 + √(1−ᾱ_t) ε, o que ocorre quando ᾱ_t se aproxima de 0?
 = O sinal original some e x_t se torna essencialmente ruído puro.
-- O ruído desaparece e x_t se iguala a x_0.
+- O ruído desaparece e x_t se iguala a x_0, como se nenhum passo tivesse sido aplicado.
 - A imagem fica idêntica à anterior.
 - O coeficiente do ruído se anula.
-- A variância de x_t se torna infinita.
+- A variância de x_t se torna infinita, pois o coeficiente do ruído cresce sem limite.
 J: Coeficiente do sinal tende a 0 e o do ruído, a 1.
 
 MC: O que a rede de um modelo de difusão do tipo DDPM aprende a prever, na formulação usual?
 = O ruído ε que foi somado a x_0 para formar x_t.
-- O rótulo de classe da imagem.
-- O número de passos T.
+- O rótulo de classe da imagem, para que o modelo saiba qual conteúdo deve gerar.
+- O número de passos T necessários para que o ruído domine a imagem original.
 - A taxa de amostragem do áudio.
 - O tamanho do patch.
 J: O treino minimiza o erro quadrado entre ε e a previsão da rede.
 
 MC: Qual medida reduz o risco de privacidade ao enviar fotos a um serviço externo?
 = Remover metadados e borrar rostos e placas, se não forem necessários.
-- Aumentar a resolução da imagem.
+- Aumentar a resolução da imagem para que o modelo identifique melhor os detalhes antes do envio.
 - Enviar sempre o original sem edição.
 - Trocar o formato para PNG.
-- Pedir ao modelo que esqueça a imagem.
+- Pedir ao modelo, no próprio prompt, que esqueça a imagem depois de responder, como garantia.
 J: Dados pessoais e sensíveis devem ser minimizados antes do envio, com base legal e avaliação de risco.
 
 MC: Qual boa prática para texto alternativo gerado por IA?
@@ -224,16 +224,16 @@ J: Descrições automáticas erram detalhes que importam, como números e direç
 
 MC: Qual a melhor forma de reduzir alucinações visuais em um pedido a um modelo multimodal?
 = Pedir abstenção ("ilegível") e conferir os trechos lidos, sem tratar a fluência como prova.
-- Pedir que o modelo "tenha certeza" de tudo.
+- Pedir que o modelo "tenha certeza" de tudo o que lê, para que ele não hesite em nenhum trecho.
 - Reduzir a resolução ao mínimo possível.
-- Remover o texto da pergunta.
+- Remover o texto da pergunta para que o modelo se concentre apenas na imagem e não seja influenciado.
 - Aceitar a primeira resposta sempre.
 J: Abstenção e verificação ajudam, mas não eliminam o problema.
 
 MC: Qual a limitação de usar um limiar de similaridade para o sistema se abster diante de entradas fora do domínio?
-= Ele aceita parte do ruído e rejeita parte dos casos válidos, e precisa ser calibrado com dados reais.
-- Ele elimina todas as alucinações visuais.
-- Ele só funciona para áudio.
+= Ele aceita parte do ruído, rejeita parte dos casos válidos e exige calibração com dados reais.
+- Ele elimina todas as alucinações visuais, mas só quando o limiar é calibrado com dados sintéticos.
+- Ele só funciona para áudio, pois a similaridade de cosseno não é definida para vetores de imagem.
 - Ele dispensa a avaliação por fatia.
 - Ele torna a temperatura irrelevante.
 J: No experimento do capítulo, o limiar do percentil 5 ainda aceitou 68,7% do ruído e rejeitou 5% dos dígitos reais.

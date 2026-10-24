@@ -8,7 +8,7 @@ J: O embedding é um vetor cuja proximidade reflete semelhança de uso, e não i
 
 MC: Qual a diferença entre uma representação esparsa e uma densa?
 = A esparsa tem uma dimensão por palavra, quase toda zerada; a densa tem poucas dimensões aprendidas, sem zeros.
-- A esparsa é sempre mais precisa; a densa nunca reconhece sinônimos.
+- A esparsa é sempre mais precisa em qualquer tarefa; a densa nunca reconhece sinônimos nem paráfrases, por mais que seja treinada.
 - A esparsa usa números negativos; a densa usa só positivos.
 - A esparsa guarda apenas imagens; a densa guarda apenas texto.
 - Não há diferença; são nomes de duas marcas.
@@ -16,7 +16,7 @@ J: Contagens e TF-IDF são esparsos (626 dimensões na base, 97% de zeros); a LS
 
 MC: Como a análise semântica latente (LSA) obtém vetores densos?
 = Aplica uma decomposição em valores singulares à matriz de TF-IDF e mantém poucas dimensões.
-- Treina uma rede que gera texto palavra por palavra.
+- Treina uma rede neural que gera texto palavra por palavra, usando o documento inteiro como contexto de cada previsão.
 - Traduz cada documento para vetores de imagem.
 - Ordena os documentos pelo tamanho do arquivo.
 - Pede a um usuário que classifique cada documento.
@@ -25,9 +25,9 @@ J: A SVD truncada agrupa palavras que aparecem nos mesmos documentos, aproximand
 MC: O que o cosseno entre dois vetores mede?
 = O ângulo entre eles, isto é, a semelhança de direção, independentemente do comprimento.
 - A diferença entre as somas de suas coordenadas.
-- A distância entre as pontas dos vetores.
+- A distância entre as pontas dos vetores no espaço, que cresce quando o comprimento dos vetores aumenta.
 - O número de palavras em comum, sempre.
-- O tamanho do documento maior.
+- O tamanho do documento maior entre os dois, medido pelo número de palavras que ele contém.
 J: O cosseno divide o produto interno pelo produto das normas, eliminando o efeito do comprimento.
 
 MC: Por que o produto interno pode favorecer um documento longo em vetores não normalizados?
@@ -40,48 +40,48 @@ J: Sem normalizar, a magnitude entra no valor; no experimento, o documento artif
 
 MC: Se todos os vetores têm norma 1, o que se pode afirmar sobre as três medidas de similaridade?
 = Produto interno, cosseno e distância euclidiana produzem a mesma ordem de documentos.
-- O produto interno passa a ser sempre zero.
+- O produto interno passa a ser sempre zero, porque os vetores unitários ficam ortogonais entre si.
 - A distância euclidiana passa a ser sempre 1.
-- O cosseno deixa de poder ser calculado.
+- O cosseno deixa de poder ser calculado, pois o denominador da fórmula passa a valer zero nesse caso.
 - As três medidas ficam em ordem inversa umas das outras.
 J: Com norma 1, a distância ao quadrado vale 2 menos 2 vezes o cosseno, e o produto interno é o cosseno.
 
 MC: Qual é o erro silencioso mais típico ao usar embeddings em produção?
 = Indexar com um modelo ou medida e consultar com outro, produzindo comparações sem sentido.
-- Guardar os vetores em arquivo.
-- Calcular o cosseno com NumPy.
+- Guardar os vetores em arquivo no disco, em vez de mantê-los apenas na memória durante a execução.
+- Calcular o cosseno com NumPy em vez de usar uma biblioteca especializada de busca vetorial.
 - Dividir os documentos em pedaços.
 - Usar mais de uma consulta de teste.
 J: Espaços de modelos diferentes não são comparáveis; a mistura não gera erro, só resultados ruins.
 
 MC: O que significa hit@3 igual a 0,913 em um conjunto de consultas?
 = Em 91,3% das consultas, ao menos um documento relevante aparece entre os três primeiros.
-- Em 91,3% das consultas, os três primeiros são todos relevantes.
+- Em 91,3% das consultas, os três primeiros documentos são todos relevantes, sem nenhuma exceção entre eles.
 - O sistema demora 0,913 segundo para responder.
 - Em 91,3% dos documentos, há três consultas.
-- O terceiro colocado é relevante em todas as consultas.
+- O terceiro colocado é relevante em todas as consultas do conjunto, e os dois primeiros podem não ser.
 J: O hit@k é binário por consulta: há ou não há algum relevante nos k primeiros.
 
 MC: Em que o recall@k difere do hit@k?
-= O recall@k mede a fração dos relevantes recuperados nos k primeiros; o hit@k só verifica se há algum.
-- O recall@k considera só o primeiro colocado.
+= O recall@k mede a fração dos relevantes achados nos k primeiros; o hit@k só verifica se há algum.
+- O recall@k considera só o primeiro colocado da lista, ignorando os demais documentos recuperados pelo sistema.
 - O recall@k é sempre igual ao hit@k.
 - O hit@k usa a ordem alfabética dos documentos.
-- O recall@k mede o tempo de resposta.
+- O recall@k mede o tempo de resposta do sistema, enquanto o hit@k mede a memória ocupada pelo índice vetorial.
 J: Com vários relevantes, recuperar um de dois dá recall de 0,5 e hit igual a 1.
 
 MC: O que o MRR (rank recíproco médio) recompensa?
 = Colocar o primeiro documento relevante o mais perto possível do topo da lista.
 - Recuperar todos os relevantes, onde quer que estejam.
-- Usar o menor número possível de dimensões.
-- Responder sem consultar o índice.
+- Recuperar todos os relevantes, onde quer que estejam na lista, sem se importar com a posição de cada um.
+- Usar o menor número possível de dimensões nos vetores, reduzindo a memória ocupada pelo índice.
 - Ter documentos curtos.
 J: Para cada consulta vale 1 dividido pela posição do primeiro relevante; depois se faz a média.
 
 MC: Por que o nDCG usa um desconto logarítmico pela posição?
 = Para valorizar mais os relevantes nas primeiras posições do que os que aparecem no fim da lista.
-- Para eliminar os documentos relevantes.
-- Para tornar a métrica igual ao recall.
+- Para eliminar os documentos relevantes que aparecem no fim da lista, deixando apenas os primeiros colocados.
+- Para tornar a métrica igual ao recall@k, ignorando a ordem em que os documentos aparecem na lista.
 - Para ordenar os documentos alfabeticamente.
 - Para medir a memória do índice.
 J: Cada relevante contribui com 1/log2(posição+1), e o total é dividido pelo valor do ranking ideal.
@@ -96,49 +96,49 @@ J: Os quantis das médias reamostradas formam o intervalo de confiança; com 46 
 
 MC: Por que comparar dois métodos pela diferença pareada, com reamostragem das mesmas consultas?
 = Porque as consultas são as mesmas nos dois métodos, e a diferença por consulta captura essa dependência.
-- Porque assim o intervalo fica sempre mais estreito, qualquer que seja o resultado.
+- Porque assim o intervalo fica sempre mais estreito, qualquer que seja o resultado e o número de consultas usado.
 - Porque dispensa o uso de consultas de teste.
-- Porque elimina a necessidade de calcular métricas.
+- Porque elimina a necessidade de calcular as métricas de cada método separadamente em cada consulta.
 - Porque garante que o método novo é melhor.
 J: Reamostrar a diferença por consulta respeita o pareamento; se o intervalo inclui zero, não há evidência de diferença.
 
 MC: O que significa dizer que o BM25 "satura" a frequência dos termos?
 = Que a contribuição de um termo cresce cada vez menos a cada nova ocorrência no documento.
-- Que o termo deixa de ser considerado depois de aparecer uma vez.
+- Que o termo deixa de ser considerado depois de aparecer uma vez no documento, ignorando as demais ocorrências.
 - Que documentos curtos recebem pontuação zero.
 - Que a pontuação diminui à medida que o termo aparece mais vezes.
-- Que o BM25 exige vetores de norma 1.
+- Que o BM25 exige vetores de norma 1 e, por isso, só pode ser aplicado a representações densas.
 J: A fração f(k1+1)/(f+k1(...)) tem limite quando f cresce.
 
 MC: Em qual situação a busca lexical tende a falhar?
 = Quando a consulta usa palavras diferentes das do documento, como em uma paráfrase.
-- Quando a consulta repete as palavras do documento.
+- Quando a consulta repete exatamente as palavras do documento, o que torna a pontuação lexical alta demais.
 - Quando o documento tem um título.
-- Quando há muitos documentos curtos.
+- Quando há muitos documentos curtos na coleção, pois a busca lexical só funciona com textos longos.
 - Quando a consulta contém um número.
 J: Sem palavras em comum, a pontuação é zero, mesmo que o sentido coincida.
 
 MC: O que o RRF calcula para cada documento?
 = A soma, sobre os métodos, de 1 dividido por (k mais a posição do documento no ranking do método).
-- A média das pontuações brutas dos métodos.
+- A média das pontuações brutas dos métodos, depois de normalizadas para a mesma escala entre zero e um.
 - O maior cosseno entre todos os métodos.
-- O número de palavras em comum com a consulta.
+- O número de palavras em comum com a consulta, dividido pelo total de palavras do documento recuperado.
 - A diferença entre a primeira e a última posição.
 J: Só usa posições, e portanto dispensa calibrar escalas de pontuação diferentes.
 
 MC: Qual o efeito de usar um k pequeno no RRF?
 = O topo dos rankings pesa muito mais do que as posições seguintes.
-- Todas as posições passam a valer exatamente o mesmo.
+- Todas as posições passam a valer exatamente o mesmo, de modo que a ordem dos rankings deixa de importar.
 - Os documentos do fim da lista passam a valer mais.
-- O RRF deixa de poder ser calculado.
+- O RRF deixa de poder ser calculado, porque o denominador da fórmula se anula quando k é pequeno.
 - A fusão passa a depender de escalas de pontuação.
 J: Com k pequeno, 1/(k+1) é bem maior que 1/(k+2); com k grande, o desconto é suave.
 
 MC: O que o experimento do capítulo mostrou sobre a busca híbrida na base de 60 documentos?
 = O RRF não superou o BM25 de forma conclusiva, e a diferença ficou dentro da incerteza.
-- O RRF superou o BM25 em todas as métricas, com folga.
+- O RRF superou o BM25 em todas as métricas e em todas as consultas, com folga e intervalos bem afastados de zero.
 - A busca híbrida deixou de funcionar com 60 documentos.
-- O RRF só funciona com índices aproximados.
+- O RRF só funciona com índices aproximados, e por isso não pôde ser avaliado na base exata de 60 documentos.
 - O BM25 teve acerto zero nas paráfrases.
 J: A diferença pareada de MRR foi de -0,012, com intervalo que inclui o zero; híbrido é hipótese a testar.
 
@@ -152,33 +152,33 @@ J: No experimento, 10 palavras contiveram a resposta em 43,5% dos casos; 160 pal
 
 MC: Para que serve a sobreposição entre pedaços vizinhos?
 = Evitar que uma resposta caia exatamente na fronteira entre dois pedaços e fique dividida.
-- Reduzir o número de pedaços no índice.
+- Reduzir o número de pedaços no índice, pois o texto repetido permite descartar os pedaços redundantes.
 - Diminuir a memória dos vetores.
-- Eliminar a necessidade de metadados.
+- Eliminar a necessidade de metadados, já que o contexto de cada pedaço é recuperado pelo trecho vizinho.
 - Garantir que a busca seja exata.
 J: A repetição de parte do texto aumenta a chance de a passagem inteira estar em algum pedaço, ao custo de mais pedaços.
 
 MC: Por que cada pedaço indexado deve carregar metadados?
-= Para citar a fonte, aplicar filtros e permissões, e preservar o contexto do trecho, como a seção e a versão.
-- Para aumentar o número de dimensões do embedding.
-- Para substituir o texto do pedaço.
+= Para citar a fonte, aplicar filtros e permissões e preservar o contexto, como a seção e a versão.
+- Para aumentar o número de dimensões do embedding, de modo que o vetor represente melhor cada pedaço.
+- Para substituir o texto do pedaço no índice, economizando memória e acelerando a busca.
 - Para dispensar o modelo de embeddings.
 - Para tornar a busca aproximada exata.
 J: Sem metadados, "o prazo é de 10 dias" não diz de qual prazo se trata, e a fonte não pode ser citada.
 
 MC: Como funciona, em essência, o índice IVF?
 = Agrupa os vetores com k-means e, na consulta, examina só os grupos de centroide mais próximo da consulta.
-- Compara a consulta com todos os vetores, sem exceção.
+- Compara a consulta com todos os vetores, sem exceção, e depois reordena o resultado pelo tamanho do arquivo.
 - Ordena os documentos por tamanho de arquivo.
 - Sorteia documentos ao acaso.
-- Guarda apenas os vetores de maior norma.
+- Guarda apenas os vetores de maior norma de cada grupo e descarta o restante da coleção para economizar memória.
 J: O parâmetro nprobe controla quantos grupos são examinados e, assim, o equilíbrio entre recall e esforço.
 
 MC: Qual a ideia do LSH com hiperplanos aleatórios?
-= Vetores próximos tendem a cair dos mesmos lados dos hiperplanos, gerando o mesmo código e colidindo na mesma tabela.
-- Vetores próximos recebem códigos sempre opostos.
+= Vetores próximos tendem a gerar o mesmo código (mesmos lados dos hiperplanos) e colidir na mesma tabela.
+- Vetores próximos recebem códigos sempre opostos, de modo que a consulta procura os vetores de código invertido.
 - Os vetores são ordenados pelo comprimento.
-- Os hiperplanos são escolhidos para separar as palavras.
+- Os hiperplanos são escolhidos para separar as palavras de cada documento em grupos temáticos fixos.
 - Os vetores são convertidos em texto.
 J: Os sinais das projeções formam o código; os candidatos são os vetores com o mesmo código da consulta em alguma tabela.
 
@@ -192,25 +192,25 @@ J: A busca exaustiva é o padrão-ouro: dos k vizinhos verdadeiros, vê-se quant
 
 MC: Qual a memória dos vetores de 2 milhões de pedaços com 768 dimensões em float32?
 = Cerca de 6,1 GB, pois 2e6 x 768 x 4 bytes.
-- Cerca de 1,5 GB, pois cada número ocupa 1 byte.
-- Cerca de 61 GB, pois cada número ocupa 40 bytes.
+- Cerca de 1,5 GB, pois cada número ocupa 1 byte em vez dos 4 bytes do formato float32.
+- Cerca de 61 GB, pois cada número ocupa 40 bytes na memória.
 - Cerca de 600 MB, pois só se guarda a norma.
 - Zero, pois o índice não guarda vetores.
 J: M = N d b = 2e6 x 768 x 4 = 6,14e9 bytes.
 
 MC: Qual a principal diferença entre um bi-encoder e um cross-encoder?
-= O bi-encoder codifica consulta e documento separadamente; o cross-encoder processa o par junto, com mais precisão e mais custo.
+= O bi-encoder codifica consulta e documento em separado; o cross-encoder processa o par junto, com mais precisão e custo.
 - O cross-encoder usa vetores pré-calculados dos documentos; o bi-encoder, não.
-- O bi-encoder processa o par junto; o cross-encoder, separados.
+- O bi-encoder processa consulta e documento juntos, em uma só passagem; o cross-encoder os codifica separadamente e com menor custo por par.
 - Os dois são idênticos, mas têm nomes diferentes.
 - O cross-encoder só funciona com imagens.
 J: Por exigir uma passagem do modelo por par, o cross-encoder costuma reordenar poucos candidatos de uma primeira etapa.
 
 MC: Para que serve um limiar de similaridade em um sistema de busca?
-= Recusar a resposta quando o melhor documento é fraco demais, evitando apoiar a resposta em um documento irrelevante.
-- Garantir que toda consulta tenha exatamente uma resposta.
+= Recusar a resposta quando o melhor documento é fraco demais, em vez de apoiá-la em algo irrelevante.
+- Garantir que toda consulta tenha exatamente uma resposta, descartando os documentos abaixo do limite fixado.
 - Aumentar o número de dimensões do embedding.
-- Trocar o modelo de embeddings automaticamente.
+- Trocar o modelo de embeddings automaticamente quando a similaridade média cai abaixo do valor definido.
 - Eliminar a necessidade de avaliar o sistema.
 J: Mas as distribuições de consultas com e sem resposta se sobrepõem; nenhum limiar é perfeito e ele deve ser calibrado e avaliado.
 
@@ -232,7 +232,7 @@ J: Consultas e documentos precisam estar no mesmo espaço; misturar espaços des
 
 MC: Por que a negação é uma armadilha para a busca por embeddings?
 = Porque "posso trancar" e "não posso trancar" usam palavras e contextos quase idênticos e ficam com vetores muito próximos.
-- Porque a negação elimina o documento do índice.
+- Porque a negação elimina o documento do índice, já que o modelo de embeddings descarta as palavras de negação antes de codificar o texto.
 - Porque a negação aumenta a dimensão do vetor.
 - Porque a negação só existe em inglês.
 - Porque a negação torna o cosseno negativo, sempre.

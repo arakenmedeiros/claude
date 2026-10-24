@@ -1,7 +1,7 @@
 MC: Qual é a função de escrever os critérios de aceitação antes de medir o sistema?
 = Evitar que o critério seja ajustado ao resultado e permitir um veredito honesto sobre o que foi medido.
-- Garantir que o sistema atinja os valores desejados.
-- Dispensar o uso de intervalos de confiança.
+- Garantir que o sistema atinja os valores desejados, já que o critério funciona como meta a ser alcançada na bancada.
+- Dispensar o uso de intervalos de confiança, pois o critério já define sozinho o que é aceitável.
 - Substituir a análise de erros do projeto.
 - Reduzir o número de casos necessários na bancada.
 J: Um critério escrito depois de ver os números tende a se encaixar neles; escrito antes, ele funciona como regra do jogo.
@@ -15,41 +15,41 @@ MC: Em um estrato, a taxa observada é 0,90 com n = 30 e o critério é "taxa �
 J: O veredito compara o intervalo inteiro, e não só a média, ao critério.
 
 MC: Por que muitos vereditos dos projetos do capítulo saem "inconclusivos"?
-= Porque os conjuntos têm dezenas de casos e os intervalos de confiança são largos demais para decidir.
-- Porque os simuladores são programados para errar de forma aleatória.
+= Porque os conjuntos têm dezenas de casos e os intervalos são largos demais para decidir.
+- Porque os simuladores são programados para errar de forma aleatória, o que impede qualquer veredito claro.
 - Porque o intervalo de Wilson não funciona com proporções.
-- Porque os critérios de aceitação foram escritos depois da medição.
+- Porque os critérios de aceitação foram escritos depois da medição, ajustados aos números já vistos.
 - Porque os projetos usam dados reais com muito ruído.
 J: Com n pequeno, a incerteza é grande; a ação correta é coletar mais casos, e não escolher o lado que agrada.
 
 MC: O que significa dizer que a nota é "otimista" quando as regras foram escritas olhando o conjunto de teste?
 = As regras foram ajustadas aos casos vistos, e a nota deixa de refletir casos novos.
-- O conjunto de teste ficou grande demais para o sistema.
+- O conjunto de teste ficou grande demais para o sistema, que passou a errar por falta de capacidade.
 - O sistema generaliza melhor do que o previsto.
-- O intervalo de confiança ficou estreito demais por acaso.
+- O intervalo de confiança ficou estreito demais por acaso, fazendo a nota parecer mais precisa do que é.
 - O conjunto de teste foi sorteado de modo aleatório.
 J: No Projeto 2, a revocação de urgência foi 1,000 onde as regras foram escritas e 0,167 no conjunto cego.
 
 MC: No Projeto 1, o que acontece ao aumentar o limiar de abstenção do gerador simulado?
 = A abstenção correta tende a subir, e a resposta correta, a cair (mais abstenções indevidas).
-- A resposta correta e a abstenção correta sobem juntas.
-- Nada muda, porque o limiar só afeta a velocidade.
+- A resposta correta e a abstenção correta sobem juntas, pois o gerador passa a acertar mais casos em geral.
+- Nada muda, porque o limiar só afeta a velocidade de resposta e não o conteúdo gerado.
 - A recuperação do documento passa a ser perfeita.
 - A fidelidade da resposta cai a zero.
 J: O limiar troca um tipo de erro por outro; a escolha depende do custo relativo de cada erro.
 
 MC: Uma "abstenção indevida" no Projeto 1 é um caso em que:
 = O documento relevante foi recuperado, mas o sistema respondeu que não consta.
-- O sistema respondeu algo que não está nos documentos.
-- O documento relevante não foi recuperado e o sistema respondeu errado.
+- O sistema respondeu algo que não está nos documentos recuperados, inventando o conteúdo.
+- O documento relevante não foi recuperado e o sistema respondeu errado com base em outro texto.
 - O sistema citou um documento inexistente.
-- O sistema recusou uma pergunta sem resposta nos documentos.
+- O sistema recusou uma pergunta cuja resposta realmente não existe nos documentos disponíveis.
 J: É um erro de geração por excesso de cautela, distinto da falha de recuperação.
 
 MC: Qual a conclusão correta da comparação pareada entre BM25 e busca híbrida no Projeto 1?
 = Neste conjunto os dois acertaram os mesmos casos, e não há diferença detectável.
-- A busca híbrida é sempre superior ao BM25.
-- O BM25 é superior porque é mais simples.
+- A busca híbrida é sempre superior ao BM25, pois combina sinais lexicais e semânticos em qualquer conjunto.
+- O BM25 é superior porque é mais simples, e a simplicidade garante melhor desempenho em todos os conjuntos.
 - Os dois métodos são equivalentes em qualquer conjunto.
 - A comparação é inválida por usar os mesmos casos.
 J: Não detectar diferença em n = 46 não prova equivalência geral; os testes pareados usam, de propósito, os mesmos casos.
@@ -64,26 +64,26 @@ J: Dados e decisões clínicas exigem profissionais, base legal e supervisão, f
 
 MC: Por que no Projeto 2 a resposta de urgência é um texto fixo, e não gerada?
 = Para que a mensagem mais crítica não dependa do gerador, que pode errar ou ser manipulado.
-- Para reduzir o custo do prompt do sistema.
-- Para permitir que o gerador a personalize para cada pessoa.
+- Para reduzir o custo do prompt do sistema, que seria maior se a mensagem fosse gerada a cada vez.
+- Para permitir que o gerador a personalize para cada pessoa, ajustando o tom e o conteúdo ao caso.
 - Porque textos gerados são proibidos em saúde.
 - Porque o roteador não consegue identificar a urgência.
 J: Texto fixo, revisado por pessoas, é determinístico e auditável.
 
 MC: No conjunto cego do Projeto 2, a revocação de urgência foi 0,167. Qual a decisão coerente?
 = Tratar como bloqueio de liberação e reduzir o risco por projeto, não só por regras.
-- Liberar, pois no desenvolvimento a revocação foi 1,000.
+- Liberar, pois no desenvolvimento a revocação foi 1,000 e o conjunto cego é pequeno demais para valer.
 - Liberar com um aviso pequeno no rodapé.
 - Acrescentar regras até o conjunto cego chegar a 1,000 e liberar sem novo conjunto.
-- Descartar o conjunto cego, por ser pequeno.
+- Descartar o conjunto cego, por ser pequeno, e confiar na medida obtida no conjunto de desenvolvimento.
 J: Ajustar regras ao conjunto cego o transforma em desenvolvimento; é preciso novas medidas e outras barreiras.
 
 MC: Por que a diferença bruta entre registros formal e coloquial no Projeto 2 não prova desigualdade de tratamento?
 = Porque o registro está confundido com o tipo de pergunta: todas as coloquiais eram paráfrases.
-- Porque o registro coloquial não existe em português.
+- Porque o registro coloquial não existe em português escrito e, portanto, não pode ser comparado ao formal.
 - Porque o intervalo de confiança da diferença incluía zero.
 - Porque o simulador trata os dois registros de modo idêntico.
-- Porque o grupo formal tinha menos perguntas que o coloquial.
+- Porque o simulador trata os dois registros de modo idêntico, o que anula qualquer diferença observada.
 J: Subgrupos devem ser comparados em igualdade de condições, com desenho balanceado.
 
 MC: O que o mascaramento de dados pessoais antes do registro garante no Projeto 2?
@@ -104,48 +104,48 @@ J: No pós-filtro, se a melhor norma é a revogada, ela é removida depois e pod
 
 MC: Por que a resposta ao perfil público é "não consta" mesmo para um ato restrito que existe?
 = Para não revelar a existência do ato restrito a quem não tem permissão.
-- Porque o ato restrito foi apagado do índice.
-- Porque o gerador não sabe ler documentos restritos.
+- Porque o ato restrito foi apagado do índice quando o perfil público fez a primeira consulta.
+- Porque o gerador não sabe ler documentos restritos e, por isso, não encontra nenhum trecho para citar.
 - Porque a resposta correta é sempre a abstenção.
 - Porque o usuário público não faz perguntas sobre normas.
 J: Mensagens que distinguem "não existe" de "existe, mas você não pode ver" vazam informação.
 
 MC: Que propriedade tem a trilha de auditoria encadeada por hash do Projeto 3?
 = Detecta a alteração posterior de um evento, mas não a impede.
-- Impede que qualquer evento seja alterado.
-- Dispensa o controle de acesso ao armazenamento.
+- Impede que qualquer evento seja alterado depois de gravado, pois o hash bloqueia a escrita no arquivo.
+- Dispensa o controle de acesso ao armazenamento, já que a cadeia de hashes protege todos os registros.
 - Garante que as respostas estavam corretas.
 - Torna os dados pessoais anônimos.
 J: Detecção não é prevenção; a trilha também exige acesso restrito, cópias e retenção definida.
 
 MC: Por que o classificador de intenções do Projeto 4 teve 1,000 nos modelos de frase e 0,833 nas mensagens novas?
 = Treino e teste vinham das mesmas frases-modelo, e o número alto refletia memorização.
-- As mensagens novas eram em outro idioma.
-- O classificador foi treinado com poucas classes.
+- As mensagens novas eram em outro idioma, o que explicaria a queda de desempenho do classificador.
+- O classificador foi treinado com poucas classes, e por isso errou as mensagens com mais de uma intenção.
 - O intervalo de Wilson é pessimista com 24 casos.
 - As mensagens novas tinham mais palavras.
 J: Medir fora do gerador do treino é obrigatório para avaliar generalização.
 
 MC: O que o plano B do agente de atendimento troca, segundo o Projeto 4?
 = Falhas de ferramenta por transferências a atendentes humanos, que também têm custo.
-- Falhas de ferramenta por respostas inventadas.
-- Transferências a humanos por mais chamadas de modelo.
+- Falhas de ferramenta por respostas inventadas pelo modelo, que passam a ser entregues como se fossem corretas.
+- Transferências a humanos por mais chamadas de modelo, reduzindo o custo de atendimento humano.
 - Ações irreversíveis por ações reversíveis.
 - Custo de tokens por custo de infraestrutura.
 J: Com 30% de falhas, o sucesso subiu de 0,878 para 0,927, e a fração enviada a humanos subiu de 0,550 para 0,623.
 
 MC: Por que o agente do Projeto 4 não insiste quando o cliente nega a confirmação do cancelamento?
 = Porque a negação é uma decisão de política, e repetir o pedido contornaria a confirmação.
-- Porque o cancelamento é sempre uma ação reversível.
-- Porque a ferramenta de cancelamento está indisponível.
+- Porque o cancelamento é sempre uma ação reversível e, portanto, a confirmação nem seria necessária.
+- Porque a ferramenta de cancelamento está indisponível nessa etapa e não pode ser chamada de novo.
 - Porque o classificador mudou de intenção.
 - Porque o plano B só vale para consultas.
 J: Confirmação humana é um controle; insistir é tentar derrotá-lo.
 
 MC: De onde vem a economia de 31% do desenho B (classificador antes) no Projeto 4?
 = De não chamar o modelo nas conversas cujo destino é sempre um atendente humano.
-- De usar um modelo menor em todas as conversas.
-- De eliminar a latência das ferramentas.
+- De usar um modelo menor em todas as conversas, o que reduz o preço por token em cada chamada.
+- De eliminar a latência das ferramentas, que deixam de ser chamadas em qualquer tipo de conversa.
 - De reduzir o número de mensagens por conversa.
 - De cobrar menos por token de saída.
 J: A economia é estrutural e, em números absolutos, depende de preços e latências reais, aqui hipotéticos.
@@ -160,17 +160,17 @@ J: O esquema barra campos ausentes ou malformados, mas não erros semânticos de
 
 MC: Qual a função do passo de "reparo" no pipeline de extração do Projeto 5?
 = Limpar o texto (cercas de código, prefixos) para extrair o objeto JSON antes de validar.
-- Corrigir os valores semânticos errados do extrator.
+- Corrigir os valores semânticos errados do extrator, como um método HTTP trocado por outro válido.
 - Substituir o esquema do pydantic.
 - Traduzir o JSON para outro idioma.
-- Inventar os campos que faltam na página.
+- Inventar os campos que faltam na página, preenchendo-os com valores plausíveis para passar na validação.
 J: Parte das falhas é de formato; um reparo determinístico as resolve, sem esconder os erros de conteúdo.
 
 MC: Com sinônimos nas consultas ("incluir", "apagar"), a busca BM25 do Projeto 5 caiu para 0,111 no primeiro lugar. Por quê?
 = A busca lexical depende de palavras em comum, e os sinônimos não aparecem na página.
-- O BM25 ignora verbos em português.
+- O BM25 ignora verbos em português, pois só indexa substantivos e adjetivos das páginas.
 - As páginas ruidosas estavam em outro idioma.
-- O intervalo de confiança estava calculado errado.
+- O intervalo de confiança estava calculado errado, o que deslocou o resultado para um valor muito baixo.
 - O BM25 só funciona com consultas longas.
 J: É a limitação do vocabulário distante; busca híbrida ou expansão com glossário ajudam.
 
@@ -184,24 +184,24 @@ J: A perplexidade no estilo antigo subiu de 2,472 para 4,623 enquanto a do novo 
 
 MC: Qual a utilidade da comparação pareada v2 contra v1 no relatório do Projeto 6?
 = Mostrar em quais estratos as camadas mudam o resultado e a que custo para o uso legítimo.
-- Provar que a v2 é segura contra todos os ataques.
-- Dispensar os critérios de aceitação por estrato.
+- Provar que a v2 é segura contra todos os ataques, inclusive os que não estavam na bancada.
+- Dispensar os critérios de aceitação por estrato, já que a comparação pareada decide sozinha.
 - Substituir o intervalo de confiança de cada estrato.
 - Garantir que a v1 nunca seja usada.
 J: As camadas ajudaram em ataques, injeção e privacidade, e custaram mensagens legítimas bloqueadas.
 
 MC: Para que serve o portão de regressão na bancada?
 = Comparar cada mudança com a versão aprovada antes de liberá-la.
-- Impedir qualquer mudança no sistema.
+- Impedir qualquer mudança no sistema, congelando a versão aprovada indefinidamente.
 - Substituir o monitoramento em produção.
-- Evitar o uso de testes pareados.
+- Evitar o uso de testes pareados, que seriam substituídos por uma média global da bancada.
 - Reduzir o tamanho do conjunto de teste.
 J: No exemplo, subir o limiar de 0,5 para 0,6 só piorou as diretas e as paráfrases.
 
 MC: Qual o papel do cartão do sistema gerado a partir da bancada?
 = Resumir finalidade, limites e métricas com intervalos, sem que os números mudem à parte.
-- Substituir o plano de governança.
-- Provar que o sistema é seguro e justo.
+- Substituir o plano de governança, reunindo em um só documento todas as decisões de risco do projeto.
+- Provar que o sistema é seguro e justo, pois resume as métricas aprovadas pela equipe responsável.
 - Listar apenas os acertos do sistema.
 - Dispensar o relatório de avaliação.
 J: Gerar o cartão a partir da bancada evita divergência entre o que se diz e o que se mediu.
@@ -216,9 +216,9 @@ J: As demais frases transferem números de simuladores e de preços hipotéticos
 
 MC: O que o registro de reprodutibilidade do Projeto 6 inclui?
 = Versões das bibliotecas, semente, hash da configuração e hash da lista de casos.
-- Somente a data da execução.
+- Somente a data da execução, já que as demais informações mudam a cada rodada da bancada.
 - As chaves de acesso aos serviços.
-- O texto completo de todas as respostas.
+- O texto completo de todas as respostas geradas, mesmo as que contêm dados pessoais dos casos.
 - A opinião da equipe sobre o resultado.
 J: Com esses itens, outra pessoa reproduz os números; chaves nunca entram em registros.
 
