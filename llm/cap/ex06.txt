@@ -223,7 +223,7 @@ MC: Por que temperatura zero em um serviço externo não garante saídas idênti
 J: Mesmo a decodificação gulosa pode divergir quando duas opções têm logits quase iguais.
 
 MC: O que ilustra o fato de que, em ponto flutuante, $(a+b)+b$ pode diferir de $a+(b+b)$?
-= A soma em ponto flutuante não é associativa: mudar a ordem pode mudar o resultado.
+= Que a soma em ponto flutuante não é associativa: mudar a ordem pode mudar o resultado.
 - Que o computador erra operações simples sempre, e por isso nenhum cálculo numérico é confiável.
 - Que a soma só funciona com números inteiros, e os decimais precisam ser aproximados à mão.
 - Que a precisão sempre aumenta quando se escolhe a ordem das operações pelo tamanho dos termos.

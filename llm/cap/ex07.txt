@@ -1,41 +1,41 @@
 MC: O que é o pós-treinamento de um modelo de linguagem?
-= O conjunto de etapas posteriores ao pré-treinamento (como ajuste supervisionado e ajuste por preferências) que moldam o comportamento do modelo.
-- A etapa em que o modelo é treinado do zero com texto sem rótulos.
-- A etapa de implantação do modelo em servidores.
-- A coleta de dados da web para o pré-treinamento.
-- A redução do tamanho do vocabulário.
+= As etapas posteriores ao pré-treinamento, como o ajuste supervisionado e o de preferências.
+- A etapa em que o modelo é treinado do zero com texto sem rótulos, antes de qualquer ajuste de comportamento.
+- A etapa de implantação do modelo em servidores, incluindo a configuração de hardware e de balanceamento de carga.
+- A coleta de dados da web, com deduplicação e filtragem, que prepara o corpus para o pré-treinamento.
+- A redução do tamanho do vocabulário, fundindo tokens raros para diminuir o custo de cada etapa de treino.
 J: O pós-treinamento adapta um modelo já pré-treinado a seguir instruções e a se comportar de modo desejado.
 
 MC: Qual é a diferença de comportamento típica entre um modelo-base e um modelo ajustado para instruções?
-= O modelo-base continua texto de modo plausível; o ajustado responde ao pedido no formato esperado.
-- O modelo-base segue instruções; o ajustado só continua texto.
-- Não há diferença de comportamento.
-- O modelo ajustado nunca erra.
-- O modelo-base é sempre maior que o ajustado.
+= O base continua texto de modo plausível; o ajustado responde ao pedido no formato esperado.
+- O modelo-base segue instruções com precisão; o ajustado apenas continua o texto de modo plausível.
+- Não há diferença de comportamento: ambos respondem aos pedidos do mesmo modo e no mesmo formato.
+- O modelo ajustado nunca erra, pois o ajuste corrige as falhas de conhecimento do modelo-base.
+- O modelo-base é sempre maior que o ajustado, pois o ajuste reduz o número de parâmetros.
 J: O SFT ensina o formato de interação (pergunta e resposta), que o pré-treinamento sozinho não ensina.
 
 MC: Quais são as três etapas do pipeline descrito por Ouyang et al. (2022) para o InstructGPT?
-= Ajuste supervisionado com demonstrações, treino de modelo de recompensa com comparações e otimização por aprendizado por reforço.
-- Tokenização, embeddings e atenção.
-- Coleta de dados, deduplicação e filtragem.
-- Quantização, destilação e implantação.
-- Pré-treinamento, avaliação e descarte.
+= Ajuste supervisionado, modelo de recompensa treinado com comparações e otimização por reforço.
+- Tokenização do corpus, construção dos embeddings e cálculo da atenção em cada camada do modelo.
+- Coleta de dados da web, deduplicação dos documentos e filtragem por qualidade e por idioma.
+- Quantização dos pesos, destilação para um modelo menor e implantação em servidores de produção.
+- Pré-treinamento com texto bruto, avaliação em benchmarks públicos e descarte dos pontos de verificação.
 J: Cada etapa usa dados diferentes: demonstrações, rankings de respostas e a recompensa aprendida.
 
 MC: Qual o formato típico dos dados de ajuste fino supervisionado?
-= Pares de instrução e resposta desejada, organizados com um modelo de conversa que marca os papéis.
-- Textos sem estrutura, retirados da web.
-- Pares de respostas, com uma preferida e outra rejeitada.
-- Vetores de embeddings sem texto.
-- Apenas respostas, sem instruções.
+= Pares de instrução e resposta desejada, organizados por um modelo de conversa.
+- Textos sem estrutura, retirados da web e usados sem qualquer separação entre pergunta e resposta.
+- Pares de respostas ao mesmo pedido, com uma marcada como preferida e outra como rejeitada.
+- Vetores de embeddings sem o texto correspondente, extraídos de uma camada intermediária do modelo.
+- Apenas respostas, sem instruções, escolhidas por anotadores entre saídas geradas pelo próprio modelo.
 J: Os papéis (sistema, usuário, assistente) são indicados por marcadores especiais do modelo de conversa.
 
 MC: Por que, no SFT, a perda é normalmente calculada apenas sobre os tokens da resposta?
 = Para que o modelo aprenda a produzir respostas, e não a gerar instruções.
-- Porque os tokens da instrução não existem.
-- Porque a perda sobre a instrução é sempre zero.
-- Para aumentar o vocabulário.
-- Porque os gradientes dos tokens de instrução são proibidos pelo hardware.
+- Porque os tokens da instrução não passam pela passada para frente e não geram nenhuma perda.
+- Porque a perda sobre a instrução é sempre zero, já que o modelo a recebe como entrada.
+- Para aumentar o vocabulário do modelo com os tokens frequentes que aparecem nas respostas.
+- Porque os gradientes dos tokens de instrução são proibidos pelo hardware durante o ajuste fino.
 J: As instruções servem de contexto; o aprendizado é concentrado no comportamento de resposta.
 
 MC: Uma sequência tem perdas por token $(1;\ 2;\ 3;\ 4)$ e máscara $(0;\ 0;\ 1;\ 1)$. Qual a perda do SFT (média sobre a resposta)?
@@ -47,27 +47,27 @@ MC: Uma sequência tem perdas por token $(1;\ 2;\ 3;\ 4)$ e máscara $(0;\ 0;\ 1
 J: $(3+4)/2=3{,}5$. Sem máscara, a média seria 2,5.
 
 MC: O que sugerem os resultados de Zhou et al. (2023), no trabalho LIMA?
-= Que um conjunto pequeno e bem curado de exemplos pode bastar para ensinar o formato de resposta a um modelo bem pré-treinado.
-- Que nunca é necessário pré-treinamento.
-- Que mais dados sempre pioram o modelo.
-- Que o ajuste supervisionado ensina todo o conhecimento factual.
-- Que dados de baixa qualidade são preferíveis.
+= Que poucos exemplos bem curados podem bastar para ensinar o formato de resposta a um modelo bem pré-treinado.
+- Que nunca é necessário pré-treinamento, pois o ajuste supervisionado sozinho ensina toda a linguagem.
+- Que mais dados de ajuste sempre pioram o modelo, de modo que o ideal é usar apenas um exemplo.
+- Que o ajuste supervisionado ensina todo o conhecimento factual do modelo, e não apenas o formato.
+- Que dados de baixa qualidade são preferíveis, porque aumentam a diversidade das respostas aprendidas.
 J: A hipótese é que o conhecimento vem do pré-treinamento e o ajuste ensina principalmente o estilo; é uma hipótese discutida.
 
 MC: O que compõe um exemplo de preferência?
 = Um pedido, uma resposta preferida e uma resposta rejeitada.
-- Apenas um pedido e uma resposta correta.
-- Um conjunto de embeddings.
-- Um par de tokens consecutivos.
-- Um modelo de recompensa pronto.
+- Apenas um pedido e uma única resposta correta, escrita por um especialista na área.
+- Um conjunto de embeddings do pedido, sem o texto das respostas, extraído do modelo-base.
+- Um par de tokens consecutivos do corpus, com o segundo marcado como o rótulo do primeiro.
+- Um modelo de recompensa pronto, que atribui uma nota numérica a cada resposta do assistente.
 J: Cada comparação indica qual das duas respostas ao mesmo pedido é a melhor.
 
 MC: Por que costuma-se coletar comparações em vez de respostas ideais escritas por pessoas?
-= Comparar é mais fácil, barato e consistente do que escrever respostas.
-- Porque comparações dispensam qualquer avaliador.
-- Porque respostas escritas por pessoas são ilegais.
-- Porque comparações garantem correção factual.
-- Porque modelos não aprendem com respostas escritas.
+= Porque comparar é mais fácil, barato e consistente do que escrever respostas.
+- Porque comparações dispensam qualquer avaliador, já que a preferência é inferida automaticamente.
+- Porque respostas escritas por pessoas são proibidas por lei em dados de treinamento de modelos.
+- Porque comparações garantem a correção factual da resposta escolhida pelo avaliador humano.
+- Porque modelos de linguagem não conseguem aprender com respostas escritas por pessoas.
 J: Escolher entre duas opções é uma tarefa cognitivamente mais simples e gera dados em maior quantidade.
 
 MC: No modelo de Bradley-Terry, qual a probabilidade de a resposta $y_w$ ser preferida à $y_l$?
@@ -103,35 +103,35 @@ MC: O que ocorre com a perda do modelo de recompensa quando a diferença (prefer
 J: Quando o modelo ordena com folga as respostas na direção certa, $-\ln\sigma(d)\to0$.
 
 MC: Qual a consequência de avaliadores preferirem respostas mais longas, independentemente da qualidade?
-= O modelo de recompensa aprende que comprimento é bom, e um modelo otimizado contra ela tende a produzir respostas longas demais.
-- O modelo de recompensa passa a ignorar o conteúdo.
-- O modelo produz respostas mais curtas.
-- Não há consequência sobre o modelo.
-- A recompensa torna-se constante.
+= A recompensa passa a premiar o comprimento, e o modelo otimizado tende a produzir respostas longas demais.
+- O modelo de recompensa passa a ignorar o conteúdo e a avaliar as respostas somente pelo vocabulário usado.
+- O modelo otimizado passa a produzir respostas mais curtas, pois o comprimento passa a ser penalizado.
+- Não há consequência sobre o modelo, pois o viés dos avaliadores desaparece na média das comparações.
+- A recompensa torna-se constante para todas as respostas, e o gradiente da otimização se anula.
 J: É um viés conhecido: o comprimento correlaciona-se com a preferência e pode ser explorado.
 
 MC: O que é exploração da recompensa (*reward hacking*)?
 = Quando a política encontra respostas que maximizam a recompensa aprendida sem melhorar a qualidade real.
-- Quando o modelo de recompensa é treinado com poucos dados.
-- Quando os avaliadores trocam de idioma.
-- Quando o modelo de referência é atualizado.
-- Quando o vocabulário é ampliado.
+- Quando o modelo de recompensa é treinado com poucos dados e por isso erra na ordenação das respostas.
+- Quando os avaliadores trocam de idioma no meio da coleta e passam a produzir comparações inconsistentes.
+- Quando o modelo de referência é atualizado a cada passo e a penalidade de KL perde o sentido.
+- Quando o vocabulário é ampliado após o ajuste, e o modelo precisa aprender os novos tokens.
 J: A recompensa é um substituto imperfeito da qualidade desejada, e a otimização explora suas falhas.
 
 MC: Qual a função da penalidade de KL no RLHF?
-= Impedir que a política se afaste demais do modelo de referência, limitando a exploração da recompensa.
-- Aumentar a recompensa a qualquer custo.
-- Reduzir o tamanho do modelo.
-- Eliminar o modelo de recompensa.
-- Substituir o ajuste supervisionado.
+= Impedir que a política se afaste demais do modelo de referência.
+- Aumentar a recompensa a qualquer custo, estimulando a política a se afastar do modelo de referência.
+- Reduzir o tamanho do modelo, eliminando os parâmetros que menos contribuem para a recompensa.
+- Eliminar a necessidade do modelo de recompensa, pois a divergência já mede a qualidade.
+- Substituir o ajuste supervisionado, de modo que o RLHF comece diretamente do modelo-base.
 J: O termo $-\beta D_{\mathrm{KL}}(\pi\Vert\pi_{\text{ref}})$ funciona como um "elástico" em torno da referência.
 
 MC: O que acontece com a política ótima quando $\beta$ diminui?
 = Concentra-se mais nas respostas de maior recompensa e afasta-se mais da referência.
-- Aproxima-se mais da referência.
-- Torna-se uniforme.
-- Deixa de depender da recompensa.
-- Ignora o modelo de referência.
+- Aproxima-se mais da referência, porque a penalidade passa a pesar mais que a recompensa.
+- Torna-se uniforme sobre todas as respostas possíveis, independentemente de suas recompensas.
+- Deixa de depender da recompensa, pois o termo de KL passa a dominar toda a otimização.
+- Mantém a mesma distância da referência, pois $\beta$ apenas muda a escala da perda.
 J: Em $\pi^*\propto\pi_{\text{ref}}e^{r/\beta}$, $\beta$ pequeno amplifica as diferenças de recompensa.
 
 MC: Qual a forma da política ótima do problema com penalidade de KL?
@@ -151,27 +151,27 @@ MC: Para $\pi_{\text{ref}}=(0{,}5;\ 0{,}5)$, $r=(0;\ 1)$ e $\beta=1$, qual a pol
 J: Pesos $(0{,}5;\ 0{,}5e)=(0{,}5;\ 1{,}359)$; soma $1{,}859$; probabilidades $0{,}269$ e $0{,}731$.
 
 MC: Qual o papel de algoritmos como o PPO no RLHF?
-= Otimizar a política para maximizar a recompensa com passos controlados, evitando atualizações instáveis.
-- Calcular a perda de entropia cruzada do pré-treinamento.
-- Tokenizar o texto.
-- Rotular os dados de preferência automaticamente.
-- Aumentar o contexto do modelo.
+= Otimizar a política para maximizar a recompensa, com passos controlados.
+- Calcular a perda de entropia cruzada do pré-treinamento sobre o corpus, sem usar nenhum sinal de recompensa.
+- Tokenizar o texto das respostas geradas e converter cada uma em uma sequência de identificadores inteiros.
+- Rotular automaticamente os dados de preferência, escolhendo qual das duas respostas é a melhor.
+- Aumentar o contexto do modelo, estendendo as posições para que as respostas possam ser mais longas.
 J: O PPO é um método de aprendizado por reforço que limita o tamanho de cada atualização da política.
 
 MC: Qual a ideia central do DPO?
-= Reescrever a solução do problema de KL de modo que as preferências possam ser aprendidas diretamente, sem modelo de recompensa explícito nem aprendizado por reforço.
-- Treinar o modelo apenas com respostas rejeitadas.
-- Eliminar o modelo de referência.
-- Substituir o ajuste supervisionado pelo pré-treinamento.
-- Maximizar o comprimento das respostas.
+= Aprender as preferências diretamente, sem modelo de recompensa explícito nem aprendizado por reforço.
+- Treinar o modelo apenas com as respostas rejeitadas, para que ele aprenda a evitá-las em todos os casos.
+- Eliminar o modelo de referência e a penalidade de KL, otimizando apenas a probabilidade da resposta preferida.
+- Substituir o ajuste supervisionado pelo pré-treinamento, aplicando a perda de preferências ao corpus bruto.
+- Maximizar o comprimento das respostas, usando o número de tokens como substituto da recompensa.
 J: Ao expressar a recompensa pelas razões de probabilidade, o DPO reduz o problema a uma classificação das preferências.
 
 MC: Por que o DPO ainda precisa de um modelo de referência?
-= Porque a perda é calculada com razões de probabilidade entre a política e a referência, o que mantém o ajuste ancorado.
-- Porque o modelo de referência gera as respostas rejeitadas.
-- Porque a referência substitui o conjunto de dados.
-- Porque sem referência não há como calcular softmax.
-- Porque o DPO não usa preferências.
+= Porque a perda usa razões de probabilidade entre a política e a referência.
+- Porque o modelo de referência gera as respostas rejeitadas usadas em cada par de preferência.
+- Porque a referência substitui o conjunto de dados de preferências durante todo o treinamento.
+- Porque sem um modelo de referência não há como calcular o softmax sobre o vocabulário.
+- Porque o DPO não usa preferências, e a referência fornece o único sinal de aprendizado.
 J: O termo $\beta\ln(\pi_\theta/\pi_{\text{ref}})$ depende explicitamente da referência.
 
 MC: Qual a perda DPO quando a política é igual à referência?
@@ -184,58 +184,58 @@ J: As razões são 1, a margem é 0, e $-\ln\sigma(0)=\ln2$.
 
 MC: No DPO, o que o treinamento tende a fazer, em relação ao modelo de referência?
 = Aumentar a probabilidade das respostas preferidas e diminuir a das rejeitadas.
-- Diminuir a probabilidade de todas as respostas.
-- Aumentar a probabilidade das rejeitadas.
-- Igualar a probabilidade de todas as respostas.
-- Manter todas as probabilidades inalteradas.
+- Diminuir a probabilidade de todas as respostas, para aproximar o modelo de uma distribuição uniforme.
+- Aumentar a probabilidade das respostas rejeitadas e reduzir a das preferidas pelos avaliadores.
+- Igualar a probabilidade de todas as respostas do conjunto, preferidas ou rejeitadas.
+- Manter todas as probabilidades inalteradas, já que a referência impede qualquer mudança da política.
 J: A perda é menor quando a margem entre as razões logarítmicas da preferida e da rejeitada é grande e positiva.
 
 MC: O que o exemplo numérico tabular do capítulo mostrou?
-= Que, em um caso reduzido, a política aprendida pelo DPO se aproxima da solução teórica do RLHF com penalidade de KL.
-- Que o DPO é sempre superior ao RLHF em modelos reais.
-- Que o RLHF não funciona.
-- Que o modelo de recompensa é desnecessário em qualquer cenário.
-- Que $\beta$ não influencia a política.
+= Que, num caso reduzido, o DPO se aproxima da solução teórica do RLHF com KL.
+- Que o DPO é sempre superior ao RLHF em modelos reais, de qualquer tamanho e com quaisquer dados.
+- Que o RLHF não funciona, pois a política ótima do problema com KL não pode ser calculada.
+- Que o modelo de recompensa é desnecessário em qualquer cenário de ajuste por preferências.
+- Que $\beta$ não influencia a política, que depende só da recompensa e da referência.
 J: É uma verificação em um caso minúsculo; em modelos reais, não há vencedor universal.
 
 MC: O que é bajulação (*sycophancy*) em um modelo de linguagem?
-= A tendência de concordar com o usuário ou adaptar a resposta às suas opiniões, mesmo quando incorretas.
-- A tendência de responder sempre em uma só língua.
-- A recusa de qualquer pedido.
-- A repetição de tokens.
-- O uso excessivo de memória.
+= A tendência de concordar com o usuário, mesmo quando ele está errado.
+- A tendência de responder sempre em uma só língua, qualquer que seja o idioma do pedido.
+- A recusa sistemática de qualquer pedido que mencione temas sensíveis ou pouco comuns.
+- A repetição de tokens em laço durante a geração, até atingir o limite de tokens.
+- O uso excessivo de memória pelo cache KV quando o contexto atinge o limite da janela.
 J: Pode surgir porque avaliadores preferem respostas que concordam com eles (Sharma et al., 2024).
 
 MC: Qual afirmação sobre o pós-treinamento é a mais adequada?
 = Ele molda estilo e disposição do modelo, mas não garante correção factual.
-- Ele garante que todas as respostas sejam verdadeiras.
-- Ele elimina todos os riscos de segurança.
-- Ele dispensa a avaliação.
-- Ele substitui o pré-treinamento.
+- Ele garante que todas as respostas sejam verdadeiras, pois os avaliadores corrigem os erros factuais.
+- Ele elimina todos os riscos de segurança do modelo, pois treina a recusa de pedidos nocivos.
+- Ele dispensa a avaliação posterior, pois a recompensa já mede o desempenho em tarefas reais.
+- Ele substitui o pré-treinamento, já que o conhecimento factual do modelo vem dos dados de preferência.
 J: Preferências humanas premiam respostas convincentes, o que não é o mesmo que respostas corretas.
 
 MC: Qual uma vantagem e um risco de usar IA para gerar feedback (como na IA Constitucional)?
 = Reduz o custo de anotação, mas pode herdar os vieses do modelo avaliador.
-- Elimina qualquer viés dos dados.
-- Aumenta o custo, mas elimina erros.
-- Dispensa princípios ou critérios.
-- Garante que o modelo seja imparcial.
+- Elimina qualquer viés dos dados, pois o modelo avaliador não tem as preferências de pessoas.
+- Aumenta o custo de anotação, mas elimina os erros do feedback humano por completo.
+- Dispensa princípios ou critérios explícitos, pois o modelo avaliador já sabe o que é melhor.
+- Garante que o modelo treinado seja imparcial, pois o avaliador automático segue regras fixas.
 J: O feedback automatizado escala, mas a qualidade depende do avaliador e dos princípios usados.
 
 MC: Uma universidade quer que seu assistente responda corretamente sobre regulamentos que mudam todo semestre. Qual a estratégia mais indicada primeiro?
-= Fornecer os documentos atuais por recuperação (RAG), em vez de ajustar o modelo com os fatos.
-- Realizar um novo pré-treinamento a cada semestre.
-- Aplicar DPO com preferências sobre os regulamentos.
-- Ajustar a temperatura para zero.
-- Não usar documentos, só prompts curtos.
+= Fornecer os documentos atuais por recuperação (RAG), em vez de ajustar o modelo.
+- Realizar um novo pré-treinamento completo a cada semestre, com os regulamentos incluídos no corpus.
+- Aplicar DPO com preferências sobre os regulamentos, premiando as respostas que citam as normas vigentes.
+- Ajustar a temperatura para zero, o que faz o modelo reproduzir fielmente os regulamentos vigentes.
+- Não usar documentos e confiar em prompts curtos, deixando o modelo responder com o que memorizou.
 J: Fatos mutáveis e específicos pedem recuperação de documentos atualizados; o ajuste fino é mal adequado a conhecimento volátil.
 
 MC: Qual costuma ser o modelo de referência $\pi_{\text{ref}}$ no RLHF e no DPO?
 = O modelo após o ajuste supervisionado, mantido fixo durante a otimização de preferências.
-- O modelo-base sem nenhum ajuste, alterado a cada passo.
-- Um modelo escolhido ao acaso, sem relação com o modelo ajustado.
-- O modelo de recompensa.
-- O conjunto de dados de preferências.
+- O modelo-base sem nenhum ajuste, alterado a cada passo para acompanhar a política em treinamento.
+- Um modelo escolhido ao acaso, sem relação com o modelo ajustado, trocado a cada época.
+- O modelo de recompensa, que fornece a nota de cada resposta e é atualizado junto com a política.
+- O conjunto de dados de preferências, de onde se extraem os pares de respostas preferidas e rejeitadas.
 J: A referência ancora o ajuste e define o ponto de partida; ela não é atualizada durante o treino.
 
 DISC[C]: Descreva o pipeline típico de pós-treinamento (SFT, modelo de recompensa, otimização com preferências) e indique que dados cada etapa usa.
