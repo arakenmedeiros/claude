@@ -6,7 +6,7 @@ Data: 19/out/2026 · Corte bibliográfico: 18/out/2026
 Considerados: (1) *Grandes Modelos de Linguagem: do básico à aplicação*; (2) *Entendendo e Construindo com LLMs*; (3) *LLMs na Prática: fundamentos, aplicações e responsabilidade*. Adotado na capa/arquivo: **Grandes Modelos de Linguagem** (subtítulo: "Dos fundamentos aos sistemas, com Python").
 
 ## Entregue
-- `Grandes_Modelos_de_Linguagem.docx` (944 páginas, sumário como campo Word com páginas verificadas em duas passagens: "PAGINAS ESTAVEIS") e cópia em PDF.
+- `Grandes_Modelos_de_Linguagem.docx` (947 páginas, sumário como campo Word com páginas verificadas em duas passagens: "PAGINAS ESTAVEIS") e cópia em PDF.
 - 18 capítulos (`cap/chNN.md`), 18 conjuntos de 30 questões de múltipla escolha + 20 discursivas (`cap/exNN.txt`, gabarito no Apêndice A), 18 listas de exercícios práticos + projeto (`cap/pr/prNN.txt`), 12 apêndices, 140 figuras.
 - 18 apresentações `slides/CapNN.pptx` com notas do apresentador.
 - `codigo/capNN/`: scripts (`.py`) e notebooks (`.ipynb`) por capítulo; pacote `codigo/comum/llmdidatico`; `requirements.txt`; `README.md`.

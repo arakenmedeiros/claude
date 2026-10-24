@@ -1,5 +1,5 @@
 MC: Qual é o principal objetivo de fazer a lógica da aplicação depender de uma interface de provedor, e não de um serviço específico?
-= Trocar de provedor, ou usar um simulado nos testes, sem alterar a lógica da aplicação.
+= Trocar de provedor, ou usar um simulado nos testes, sem mudar a lógica.
 - Aumentar o número de parâmetros do modelo usado pela aplicação em produção.
 - Dispensar a validação das respostas, pois a interface já garante o conteúdo.
 - Garantir que o modelo escolhido nunca produza respostas incorretas ou inventadas.
@@ -8,14 +8,14 @@ J: A interface isola o que muda (o provedor) do que permanece (a lógica); os ad
 
 MC: Em uma aplicação com LLM, qual é a ordem típica das cinco etapas descritas no capítulo?
 = Preparar a entrada, chamar o modelo, validar a saída, tratar falhas e registrar.
-- Registrar, validar a saída, chamar o modelo, preparar a entrada e tratar falhas.
+- Registrar a chamada, validar a saída, chamar o modelo, preparar a entrada e tratar falhas.
 - Chamar o modelo, preparar a entrada, registrar, tratar falhas e validar a saída.
 - Tratar falhas, registrar, preparar a entrada, chamar o modelo e validar a saída.
 - Validar a saída, preparar a entrada, tratar falhas, chamar o modelo e registrar.
 J: A entrada precisa estar limpa e mascarada antes da chamada; a saída é validada antes de ser usada; falhas e registro cercam o processo.
 
 MC: Qual é o papel de um adaptador na arquitetura em camadas?
-= Traduzir a interface comum da aplicação para as convenções de um serviço específico.
+= Traduzir a interface comum para as convenções de um serviço específico.
 - Armazenar os pesos do modelo na memória da própria aplicação durante a execução.
 - Substituir o tokenizador do modelo por outro com vocabulário maior e mais rápido.
 - Treinar o modelo com os dados da aplicação para melhorar as respostas futuras.
@@ -23,7 +23,7 @@ MC: Qual é o papel de um adaptador na arquitetura em camadas?
 J: Campos, formato de mensagens e parâmetros variam entre provedores; o adaptador concentra essas diferenças em um único lugar.
 
 MC: Um serviço devolve o código 429. Como esse erro deve ser tratado?
-= Como transitório: repetir com recuo exponencial, respeitando a espera indicada pelo serviço.
+= Como transitório: repetir com recuo exponencial e respeitar a espera pedida.
 - Como permanente: abandonar a requisição e não registrar nenhuma informação sobre ela.
 - Como erro de credencial: trocar a chave de acesso imediatamente e reenviar a chamada.
 - Como requisição inválida: reenviar o mesmo corpo da chamada sem esperar nenhum tempo.
@@ -39,7 +39,7 @@ MC: Qual dos erros abaixo NÃO deve ser repetido automaticamente?
 J: Repetir um erro permanente gasta tempo e dinheiro sem chance de sucesso; é preciso corrigir a causa.
 
 MC: Qual é a função do jitter (a parcela aleatória) no recuo exponencial?
-= Evitar que muitos clientes repitam as tentativas no mesmo instante e sobrecarreguem o serviço.
+= Evitar que muitos clientes repitam as tentativas no mesmo instante.
 - Aumentar o teto máximo de espera para além do valor que foi configurado na aplicação.
 - Transformar erros permanentes em transitórios para que possam ser repetidos depois.
 - Reduzir a zero o tempo total de espera acumulado entre todas as tentativas feitas.
@@ -82,7 +82,7 @@ MC: Qual das afirmações sobre execução local de modelos é a mais adequada?
 = Mantém os dados no ambiente e dá custo previsível, mas exige hardware e costuma ter qualidade menor.
 - Dispensa qualquer avaliação, pois todo modelo local equivale a um modelo comercial grande.
 - Não permite o uso de interfaces HTTP, sendo acessível somente por bibliotecas internas.
-- Sempre custa menos que um serviço remoto, em qualquer escala e para qualquer volume de uso.
+- Sempre custa menos que um serviço remoto, pois o hardware próprio é gratuito após a compra, em qualquer escala de uso.
 - Elimina todos os riscos de segurança da aplicação, pois nada passa pela internet pública.
 J: Há vantagens e custos; a decisão depende de privacidade, escala, hardware e qualidade exigida, e deve ser baseada em medições.
 
@@ -96,7 +96,7 @@ J: A licença do modelo e da versão específica define o que se pode fazer; pes
 
 MC: Qual conjunto de itens caracteriza um modelo "efetivamente aberto" em sentido forte, segundo o capítulo?
 = Pesos, código de treinamento, descrição dos dados e licença que permita estudar e redistribuir.
-- Apenas os pesos do modelo, publicados com uma licença de uso restrito a pesquisa.
+- Apenas os pesos do modelo, publicados com licença restrita à pesquisa e sem o código de treinamento nem os dados.
 - Apenas uma API gratuita, com limite de uso mensal e sem acesso aos parâmetros do modelo.
 - Apenas o tokenizador e o arquivo de configuração, sem os pesos nem a descrição dos dados.
 - Apenas o relatório técnico em formato de artigo, descrevendo a arquitetura e os resultados.
@@ -111,7 +111,7 @@ MC: Qual é a memória mínima aproximada apenas para os pesos de um modelo hipo
 J: $N\times b/8 = 70\times10^9\times4/8 = 35\times10^9$ bytes, ou 35 GB, sem contar o cache KV e as ativações.
 
 MC: Por que, ao dimensionar a memória para muitos usuários simultâneos, não basta somar apenas o tamanho dos pesos?
-= Porque cada usuário ativo ocupa um cache KV próprio, que cresce com o contexto e pode superar os pesos.
+= Porque cada usuário ativo ocupa um cache KV próprio, que cresce com o contexto.
 - Porque os pesos são copiados para cada usuário simultâneo, em precisão total, durante a geração.
 - Porque o tokenizador consome mais memória que o modelo quando há muitos usuários ativos.
 - Porque a quantização aumenta o número de parâmetros do modelo à medida que chegam usuários.

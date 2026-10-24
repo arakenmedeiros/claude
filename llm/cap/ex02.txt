@@ -48,25 +48,25 @@ J: $\sqrt{3^2+4^2}=\sqrt{25}=5$.
 
 MC: Qual propriedade do softmax justifica o truque de subtrair o máximo dos logits antes de calcular?
 = Somar ou subtrair a mesma constante de todos os logits não altera as probabilidades.
-- O softmax só funciona com logits negativos.
-- A subtração torna a soma das probabilidades igual a 2.
+- O softmax só funciona com logits negativos, e subtrair o máximo garante que todos sejam negativos ou nulos.
+- A subtração faz a soma das probabilidades valer 2, compensando a perda de precisão da exponencial.
 - O máximo é sempre igual a zero.
 - A subtração aumenta a precisão do modelo.
 J: A constante se cancela entre numerador e denominador. Subtrair o máximo evita overflow na exponencial.
 
 MC: Para logits $(1000, 999, 998)$, o que ocorre com um softmax ingênuo, sem subtrair o máximo?
-= A exponencial estoura (overflow), produzindo infinitos e resultados não numéricos (nan).
-- O resultado é exatamente $(1/3, 1/3, 1/3)$.
+= A exponencial estoura (overflow) e o resultado vira infinito ou nan.
+- O resultado é exatamente $(1/3, 1/3, 1/3)$, porque as diferenças entre os logits são pequenas perto da magnitude deles.
 - O resultado é $(1, 0, 0)$.
-- O cálculo é correto, pois números grandes não são problema.
+- O cálculo funciona, pois o tipo `float64` representa $e^{1000}$ sem perda de precisão.
 - O resultado é negativo.
 J: $e^{1000}$ excede o maior valor representável em ponto flutuante; a divisão infinito/infinito resulta em nan.
 
 MC: Reduzir a temperatura $T$ de $0{,}5$ para $0{,}1$ no softmax $\mathrm{softmax}(\mathbf{z}/T)$ tende a:
-= Concentrar a distribuição ainda mais no token de maior logit.
-- Tornar a distribuição uniforme.
+= Concentrar a distribuição no token de maior logit.
+- Tornar a distribuição mais uniforme, pois dividir por um $T$ pequeno aproxima os logits entre si.
 - Inverter a ordem dos tokens.
-- Aumentar a entropia da distribuição.
+- Aumentar a entropia da distribuição, ampliando a variedade dos tokens amostrados.
 - Não alterar a distribuição.
 J: Dividir por um $T$ pequeno amplia as diferenças entre logits, deixando a distribuição mais "nítida".
 
@@ -119,9 +119,9 @@ MC: Uma perda média de entropia cruzada de 2,0 nats por token corresponde a uma
 J: $\mathrm{PPL}=e^{\mathcal{L}}=e^{2}\approx7{,}39$.
 
 MC: Sobre a divergência de Kullback-Leibler $D_{\mathrm{KL}}(\mathbf{p}\Vert\mathbf{q})$, é correto afirmar:
-= É não negativa, vale zero apenas se $\mathbf{p}=\mathbf{q}$, e em geral não é simétrica.
-- É sempre simétrica, portanto é uma distância.
-- Pode ser negativa quando $\mathbf{q}$ é muito diferente de $\mathbf{p}$.
+= Não é negativa, é zero só se $\mathbf{p}=\mathbf{q}$ e em geral é assimétrica.
+- É sempre simétrica, portanto satisfaz a desigualdade triangular e é uma distância no sentido métrico.
+- Pode ser negativa quando $\mathbf{q}$ é muito diferente de $\mathbf{p}$, indicando que as distribuições divergem.
 - Só se aplica a distribuições uniformes.
 - É igual à entropia de $\mathbf{p}$.
 J: A KL é uma medida de diferença assimétrica, com $D_{\mathrm{KL}}\ge0$.
@@ -152,9 +152,9 @@ J: O gradiente indica o sentido de maior aumento. Andar no sentido oposto reduz 
 
 MC: O que pode ocorrer se a taxa de aprendizado $\eta$ for grande demais?
 = A perda pode oscilar ou divergir, em vez de diminuir.
-- O treinamento sempre converge mais rápido e melhor.
-- Os gradientes se anulam.
-- O modelo memoriza os dados com perda zero.
+- O treinamento sempre converge mais rápido e melhor, pois cada passo cobre mais distância na superfície da perda.
+- Os gradientes se anulam, porque os passos grandes levam os parâmetros direto ao mínimo.
+- O modelo passa a memorizar os dados de treino, levando a perda de treino a zero.
 - A taxa de aprendizado não influencia a convergência.
 J: Passos grandes "pulam" sobre o mínimo e podem aumentar a perda a cada atualização.
 
@@ -167,27 +167,27 @@ MC: Qual a derivada de $f(x)=x^2$ em $x=3$?
 J: $f'(x)=2x$, logo $f'(3)=6$.
 
 MC: Qual a principal diferença entre descida do gradiente em lote completo e estocástica (SGD)?
-= O SGD estima o gradiente com um minilote de exemplos, o que é mais barato por passo e ainda aponta aproximadamente na direção certa.
-- O SGD usa derivadas de segunda ordem e o lote completo, não.
+= O SGD estima o gradiente com um minilote: é mais barato por passo e aponta aproximadamente na direção certa.
+- O SGD usa derivadas de segunda ordem, calculadas a cada passo, enquanto o lote completo usa só a de primeira ordem.
 - O lote completo não usa gradientes.
-- O SGD usa sempre um único parâmetro.
+- O SGD calcula o gradiente de um único parâmetro por vez, escolhido ao acaso, e o lote completo atualiza todos.
 - Não há diferença: ambos calculam exatamente o mesmo gradiente.
 J: O gradiente de minilote é uma estimativa ruidosa do gradiente completo, com custo por passo muito menor.
 
 MC: A retropropagação (*backpropagation*) é, essencialmente:
-= A aplicação sistemática da regra da cadeia, da saída para a entrada, reaproveitando cálculos para obter gradientes de todos os parâmetros.
-- Um método de gerar texto da direita para a esquerda.
-- Uma técnica de compressão de modelos.
+= A regra da cadeia aplicada da saída para a entrada, reaproveitando cálculos intermediários.
+- Um método de gerar texto da direita para a esquerda, usando a saída do modelo como nova entrada.
+- Uma técnica de compressão que remove os parâmetros com menor gradiente, da saída para a entrada.
 - O processo de escolher o vocabulário.
 - A inicialização aleatória dos pesos.
 J: Ela calcula eficientemente $\partial\mathcal{L}/\partial\theta$ para todas as camadas encadeando derivadas.
 
 MC: Qual a característica do otimizador Adam, em comparação ao SGD simples?
 = Adapta o tamanho do passo de cada parâmetro com base em médias móveis do gradiente e de seu quadrado.
-- Não usa gradientes.
+- Não usa gradientes: estima a direção de descida por diferenças finitas em cada parâmetro, sem retropropagação.
 - Usa taxa de aprendizado negativa.
 - Elimina a necessidade de dados de treinamento.
-- Garante convergência ao mínimo global.
+- Garante convergência ao mínimo global em qualquer problema, pois combina momento e passo adaptativo.
 J: Adam mantém estimativas de primeiro e segundo momentos do gradiente (Kingma; Ba, 2015). Não há garantia de mínimo global.
 
 MC: Qual a memória mínima, apenas para os pesos, de um modelo hipotético de 13 bilhões de parâmetros em `float16`?
@@ -200,16 +200,16 @@ J: $13\times10^9\times2$ bytes $=26\times10^9$ bytes $=26$ GB.
 
 MC: O que resulta de somar um vetor de formato $(4,)$ a uma matriz de formato $(3,4)$ em NumPy?
 = Uma matriz $(3,4)$, em que o vetor é somado a cada linha (broadcasting).
-- Um erro de formato incompatível.
+- Um erro de formato incompatível, pois as duas dimensões precisam ser idênticas para somar.
 - Um vetor de formato $(4,)$.
-- Uma matriz $(4,4)$.
+- Uma matriz $(4,4)$, em que o vetor é repetido e a dimensão menor é ampliada até ficar quadrada.
 - Um escalar.
 J: O *broadcasting* estende o vetor ao longo do eixo das linhas quando as dimensões finais coincidem.
 
 MC: Por que fixar a semente aleatória é importante em experimentos?
-= Para que a mesma execução produza os mesmos números aleatórios, permitindo reproduzir e comparar resultados.
-- Para tornar o modelo mais preciso.
-- Para evitar o uso de GPU.
+= Para repetir os mesmos números aleatórios e poder reproduzir e comparar resultados.
+- Para tornar o modelo mais preciso, pois uma boa semente reduz o erro de generalização.
+- Para evitar o uso de GPU, pois a semente torna o treino determinístico apenas na CPU.
 - Para eliminar a necessidade de registrar parâmetros.
 - Para garantir que o modelo nunca erre.
 J: A semente fixa o gerador pseudoaleatório. Isso não melhora o modelo, mas permite repetir o experimento. Mesmo assim, outras fontes de variabilidade podem existir.
