@@ -125,7 +125,7 @@ async function build(n) {
       foot(s);
     } else if (sl.t === "lembrar") {
       s = addS(COR, notes); title(s, sl.titulo || "O que vale a pena lembrar", true);
-      const it = sl.itens.slice(0, 6), k = it.length, h = Math.min(0.9, 5.0 / k);
+      const it = sl.itens.slice(0, 6), k = it.length, h = Math.min(0.9, 5.2 / k - 0.12);
       it.forEach((t, i) => { const y = 1.55 + i * (h + 0.12);
         s.addShape(pres.ShapeType.roundRect, { x: 0.6, y, w: 12.1, h, fill: { color: "FFFFFF", transparency: 12 }, line: { color: "FFFFFF", transparency: 12 }, rectRadius: 0.12 });
         s.addText("✓", { x: 0.8, y, w: 0.6, h, align: "center", valign: "middle", bold: true, fontSize: 24, color: COR, margin: 0, isTextBox: true });
