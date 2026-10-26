@@ -4,7 +4,7 @@ const SK = fs.readdirSync("/root/.claude/skills/synced").map((d) => path.join("/
 const { applyTheme } = require(SK);
 const FIGS = path.join(__dirname, "..", "..", "figs"), OUT = path.join(__dirname, "..", "..", "slides");
 fs.mkdirSync(OUT, { recursive: true });
-const data = { ...require("./data1.js"), ...require("./data2.js") };
+const data = { ...require("./data1.js"), ...require("./data2.js") }; const extras = require("./data3.js");
 const THEME = { name: "RedesNeurais", headFontFace: "Calibri", bodyFontFace: "Calibri", colors: { dk1: "1F2937", lt1: "FFFFFF", dk2: "1E1B4B", lt2: "EEF2FF", accent1: "4F46E5", accent2: "F59E0B", accent3: "10B981", accent4: "06B6D4", accent5: "EF4444", accent6: "8B5CF6", hlink: "4F46E5", folHlink: "8B5CF6" } };
 const pngSize = (f) => { const b = fs.readFileSync(f); return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) }; };
 const AUTOR = "Araken de Medeiros Santos", LIVRO = "Backpropagation e Redes Neurais";
@@ -27,9 +27,15 @@ async function deck(n) {
   s.addShape(pres.ShapeType.rect, { x: 0.7, y: 4.1, w: 1.6, h: 0.06, fill: { color: "F59E0B" }, line: { color: "F59E0B", width: 0 } });
   s.addText(`${LIVRO} — ${AUTOR}`, { x: 0.7, y: 4.4, w: 8.6, h: 0.4, fontSize: 14, color: "A5B4FC", isTextBox: true, margin: 0 });
   s.addNotes(`Abertura do Capítulo ${n}: ${d.titulo}. Apresente o objetivo da aula e o que os estudantes serão capazes de fazer ao final.`);
-  for (const sl of d.slides) {
-    s = pres.addSlide({ masterName: sl.t === "sum" ? "CAPA" : "CONTEUDO" });
-    if (sl.t === "sum") {
+  const ex = extras[n]; const base = d.slides.slice(); const iAct = base.findIndex((x) => x.t === "act"); const iSum = base.findIndex((x) => x.t === "sum");
+  const seq = [ { t: "agenda", title: "Roteiro da aula", note: "Apresente o roteiro e o tempo estimado de cada bloco (cerca de 2 minutos por slide)." }, ...base.slice(0, 2), { t: "ana", ...ex.ana }, ...base.slice(2, iAct), ...ex.extra, ...ex.quiz.map((q, i) => ({ t: "quiz", title: `Quiz relâmpago ${i + 1}`, ...q })), base[iAct], base[iSum], { t: "quote", text: ex.quote, note: "Feche com a frase e peça que os estudantes a expliquem com as próprias palavras." } ];
+  for (const sl of seq) {
+    s = pres.addSlide({ masterName: (sl.t === "sum" || sl.t === "quote") ? "CAPA" : "CONTEUDO" });
+    if (sl.t === "quote") {
+      s.addShape(pres.ShapeType.rect, { x: 0.7, y: 1.3, w: 0.12, h: 2.4, fill: { color: "F59E0B" }, line: { color: "F59E0B", width: 0 } });
+      s.addText("“" + sl.text + "”", { x: 1.1, y: 1.2, w: 8.2, h: 2.6, fontSize: 34, bold: true, color: "FFFFFF", valign: "middle", isTextBox: true, margin: 0, fit: "shrink" });
+      s.addText(`${LIVRO} · Capítulo ${n}`, { x: 1.1, y: 4.3, w: 8, h: 0.4, fontSize: 14, color: "A5B4FC", isTextBox: true, margin: 0 });
+    } else if (sl.t === "sum") {
       s.addText(sl.title, { x: 0.7, y: 0.5, w: 8.6, h: 0.8, fontSize: 32, bold: true, color: "FFFFFF", isTextBox: true, margin: 0 });
       s.addText(sl.bullets.map((b, i) => ({ text: b, options: { bullet: true, breakLine: i < sl.bullets.length - 1 } })), { x: 0.9, y: 1.5, w: 8.2, h: 3.2, fontSize: 22, color: "E0E7FF", valign: "top", paraSpaceAfter: 12, isTextBox: true, margin: 0 });
     } else {
@@ -48,6 +54,17 @@ async function deck(n) {
           s.addText(`${i + 1}. ${st[0]}`, { x: 0.65, y, w: 3.0, h: hh, fontSize: 14, bold: true, color: "312E81", valign: "middle", isTextBox: true, margin: 0, fit: "shrink" });
           s.addText(st[1], { x: 3.7, y, w: 5.7, h: hh, fontSize: 17, fontFace: "Cambria Math", color: "1F2937", valign: "middle", isTextBox: true, margin: 0, fit: "shrink" });
         });
+      } else if (sl.t === "ana") {
+        s.addShape(pres.ShapeType.roundRect, { x: 0.6, y: 1.3, w: 8.8, h: 3.4, fill: { color: "ECFEFF" }, line: { color: "06B6D4", width: 2 }, rectRadius: 0.12 });
+        s.addText("NO SEU DIA A DIA", { x: 0.9, y: 1.45, w: 4, h: 0.4, fontSize: 14, bold: true, color: "0E7490", charSpacing: 3, isTextBox: true, margin: 0 });
+        s.addText(sl.text, { x: 0.9, y: 1.95, w: 8.2, h: 2.6, fontSize: 21, color: "1F2937", valign: "top", isTextBox: true, margin: 0, fit: "shrink" });
+      } else if (sl.t === "quiz") {
+        s.addText(sl.q, { x: 0.6, y: 1.15, w: 8.8, h: 0.9, fontSize: 22, bold: true, color: "312E81", valign: "middle", isTextBox: true, margin: 0, fit: "shrink" });
+        sl.o.forEach((o, i) => { const y = 2.15 + i * 0.7; s.addShape(pres.ShapeType.roundRect, { x: 0.6, y, w: 8.8, h: 0.6, fill: { color: "EEF2FF" }, line: { color: "C7D2FE", width: 1 }, rectRadius: 0.08 }); s.addText("ABCD"[i] + ")  " + o, { x: 0.85, y, w: 8.4, h: 0.6, fontSize: 18, color: "1F2937", valign: "middle", isTextBox: true, margin: 0, fit: "shrink" }); });
+        sl.note = `Resposta: ${"ABCD"[sl.a]}) ${sl.o[sl.a]}. ${sl.why} Dê um minuto para votação antes de revelar.`;
+      } else if (sl.t === "agenda") {
+        const itens = ["Situação inicial e objetivos", "Analogia do dia a dia", "Conceitos, demonstrações e figuras", "Exemplos e resultados do livro", "Quiz relâmpago", "Atividade mão na massa e síntese"];
+        s.addText(itens.map((b, i) => ({ text: b, options: { bullet: { type: "number" }, breakLine: i < itens.length - 1 } })), { x: 0.8, y: 1.3, w: 8.4, h: 3.6, fontSize: 22, color: "1F2937", valign: "top", paraSpaceAfter: 12, isTextBox: true, margin: 0 });
       } else if (sl.t === "act") {
         s.addShape(pres.ShapeType.roundRect, { x: 0.6, y: 1.3, w: 8.8, h: 3.4, fill: { color: "FFFBEB" }, line: { color: "F59E0B", width: 2 }, rectRadius: 0.12 });
         s.addText("MÃO NA MASSA", { x: 0.9, y: 1.45, w: 4, h: 0.4, fontSize: 14, bold: true, color: "B45309", charSpacing: 3, isTextBox: true, margin: 0 });
