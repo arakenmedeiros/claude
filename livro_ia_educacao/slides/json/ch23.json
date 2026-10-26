@@ -1,26 +1,298 @@
-{"n":23,"titulo":"Acessibilidade na prática, organização do trabalho docente e desenvolvimento profissional","parte":"Parte IV — Aplicações práticas no trabalho docente","fecho":"Planejar para todos é planejar melhor.",
-"slides":[
-{"t":"objetivos","notas":"Apresente os objetivos. O capítulo junta três temas que se encontram na rotina do professor: acessibilidade, organização do trabalho e formação entre pares. Pergunte quem se reconhece na cena de domingo à noite. Tempo: 2 minutos.","itens":["Ligar acessibilidade e desenho universal à rotina de sala","Aplicar uma lista de verificação a materiais didáticos","Proteger dados sensíveis de estudantes com deficiência","Organizar o trabalho com triagem, banco de materiais e limites","Planejar ciclos de formação entre pares"]},
-{"t":"pergunta","notas":"Conte a cena de Marta: slides com letras pequenas e imagens sem descrição, uma estudante com dislexia, um estudante com baixa visão. A IA devolveu texto com datas trocadas e descrições de imagens que não correspondem. Pergunte: e agora? Deixe 2 minutos.","rotulo":"DOMINGO À NOITE","texto":"'Adapte tudo para acessibilidade.' A IA devolveu datas trocadas e imagens mal descritas.","apoio":"Cena fictícia: a coordenadora propõe um grupo de estudo quinzenal. Marta tem tempo?"},
-{"t":"conceito","notas":"Acessibilidade é acesso com autonomia. A LBI e as políticas de educação especial são o piso de direitos; a sala de aula é onde ele se concretiza. Ideia central: as barreiras estão no material e no ambiente, não na pessoa. Isso não elimina apoios individuais.","titulo":"Barreiras estão no material","definicao":"Acessibilidade é acesso, com autonomia, à informação e à aprendizagem. A barreira está no ambiente e no material, não na pessoa.","analogia":"uma rampa: feita para cadeiras de rodas, ajuda também carrinho de bebê, mala pesada e perna machucada.","destaque":"Planejar com acessibilidade é planejar melhor para todos."},
-{"t":"cartoes","notas":"Dois referenciais. O desenho universal para a aprendizagem: múltiplos meios de engajamento, representação, ação e expressão. As diretrizes de acessibilidade da web: conteúdo perceptível, operável, compreensível e robusto. Úteis para documentos, slides e vídeos, embora voltadas à web.","titulo":"Dois referenciais para a prática","cartoes":[{"cab":"Desenho universal (UDL)","txt":"Vários meios de engajamento, representação e ação e expressão, desde o planejamento."},{"cab":"Diretrizes da web (WCAG)","txt":"Conteúdo perceptível, operável, compreensível e robusto."},{"cab":"Apoios individuais","txt":"Planejados com o estudante, a família e o atendimento especializado."}]},
-{"t":"figura","notas":"A escada de cinco camadas da acessibilidade na prática docente. Peça que a turma indique em que degrau seus materiais estão hoje. Suba um degrau por vez.","titulo":"Camadas da acessibilidade","fig":"f23_camadas","legenda":"Figura 23.2 — Camadas da acessibilidade na prática docente."},
-{"t":"cartoes","notas":"Resuma a tabela de verificação. Estrutura: títulos reais e ordem lógica. Texto: fonte legível, parágrafos curtos. Contraste: não usar só a cor. Imagens: texto alternativo. Vídeo e áudio: legendas e transcrição. Linguagem: frases diretas. A IA pode rascunhar, você verifica.","titulo":"O que verificar em um material","cartoes":[{"cab":"Estrutura e texto","txt":"Títulos reais, listas, fonte legível, parágrafos curtos."},{"cab":"Contraste e imagens","txt":"Contraste suficiente; texto alternativo que corresponda à imagem."},{"cab":"Vídeo e áudio","txt":"Legendas e transcrição revisadas: nomes e termos técnicos."},{"cab":"Linguagem e formatos","txt":"Frases diretas; mais de um formato dizendo a mesma coisa."}]},
-{"t":"frase","notas":"Frase de impacto: rascunho sim, verdade não. Uma descrição de imagem por IA pode parecer correta e estar errada; uma simplificação pode alterar fatos; uma transcrição pode errar nomes. Confira com o original diante dos olhos.","texto":"Rascunho, sim. Verdade, só depois de conferir.","apoio":"Descrição de imagem, simplificação e legenda por IA: confira com o original."},
-{"t":"cuidado","notas":"Pare e verifique antes de distribuir um material adaptado com IA. Peça que a turma aplique ao material de Marta. Em textos longos, cheque ao menos todas as datas, nomes e relações de causa. Teste com o estudante: ele sabe o que o ajuda.","titulo":"Pare e verifique o material adaptado","itens":["O conteúdo é o mesmo do original?","As descrições de imagens correspondem ao que se precisa perceber?","Legendas e transcrições foram revisadas?","O estudante ou o profissional de apoio testou? Há alternativa sem IA?"]},
-{"t":"comparar","notas":"Tecnologias assistivas são recursos do cotidiano do estudante, com treinamento e escolha pessoal. A IA pode complementá-las, não substituí-las. Libras é língua com gramática própria e traduções automáticas ainda são limitadas. Envolva intérpretes, professores bilíngues e a comunidade surda. Ouça os estudantes.","titulo":"Tecnologias assistivas e Libras","esq":{"cab":"O estudante já usa","itens":["Leitor de tela e ampliador","Teclado adaptado","Comunicação alternativa","Intérpretes e professores bilíngues"]},"dir":{"cab":"A IA pode complementar","itens":["Mas não substitui os recursos pessoais","Tradução automática de Libras ainda é limitada","Ouvir o estudante: o que ajuda um pode atrapalhar outro","Comunidade surda sabe o que funciona"]}},
-{"t":"cuidado","notas":"Dados sensíveis. Informações sobre saúde e deficiência têm proteção reforçada pela LGPD. Para pedir ajuda à IA não é preciso informar nome, laudo ou história. Melhor ainda: não inclua nada sobre a pessoa e peça só uma versão acessível do material. O plano individual é feito com a família e o atendimento especializado, fora dos sistemas de IA.","titulo":"Dados sensíveis: laudos ficam de fora","itens":["Saúde e deficiência são dados pessoais sensíveis","Não informe nome, laudo ou história do estudante","Descreva a necessidade em termos gerais, ou nada","Plano individual: com família e atendimento, fora da IA"]},
-{"t":"cartoes","notas":"Tempo de geração não é tempo de trabalho. Um experimento de campo com consultores mostra ganho dentro da fronteira de capacidade da IA e piora fora dela, sem que as pessoas notem. Não foi com professores, mas é um lembrete. Práticas: triagem em três colunas, banco pessoal, diário de prompts, limites de tempo.","titulo":"Rotina sustentável com IA","cartoes":[{"cab":"Triagem em 3 colunas","txt":"Usar IA, adaptar o que já tem, ou dispensar."},{"cab":"Banco de materiais","txt":"Pasta com atividades e versões acessíveis já revisadas. Reutilizar é mais seguro."},{"cab":"Limites de tempo","txt":"Se em dez minutos o rascunho não ficou bom, faça à mão."},{"cab":"Fronteira da jornada","txt":"Resposta à noite não obriga a trabalhar à noite."}]},
-{"t":"figura","notas":"Fluxo do pedido ao material usado: triagem, rascunho, verificação, adaptação à turma e registro no banco. Aponte que a verificação vem antes do uso. Peça que a turma diga onde costuma pular etapas.","titulo":"Do pedido ao material usado","fig":"f23_fluxo","legenda":"Figura 23.3 — Fluxo de trabalho docente com verificação."},
-{"t":"conceito","notas":"Experimento de um mês: escolha uma tarefa recorrente, teste uma rotina com IA e outra sem, medindo tempo total, incluindo a revisão, e sua confiança no material. Os dados serão seus e valem mais do que qualquer propaganda de produtividade. Ainda há poucas evidências robustas sobre ganho de tempo para professores brasileiros.","titulo":"Teste de tempo: com e sem IA","definicao":"Escolha uma tarefa recorrente e meça por um mês duas coisas: tempo total, incluindo a revisão, e a sua confiança no material.","analogia":"o preço de uma promoção: só vale se você somar o frete e o tempo de devolver.","destaque":"Tempo de gerar não é tempo de trabalhar."},
-{"t":"cartoes","notas":"Formação docente em IA não pode virar curso de ferramentas, que muda a cada trimestre. O durável: critérios de decisão, conhecimento pedagógico do conteúdo, hábitos de verificação. Características frequentes de formações associadas a mudança de prática: foco no conteúdo, aprendizagem ativa, colaboração, acompanhamento, reflexão, duração sustentada. Participação imposta rende menos.","titulo":"Formação docente que funciona","cartoes":[{"cab":"Foco no conteúdo","txt":"Critérios de decisão e conhecimento pedagógico, não só ferramentas."},{"cab":"Ativa e colaborativa","txt":"Aprendizagem ativa, colaboração e modelagem de práticas."},{"cab":"Acompanhada e reflexiva","txt":"Acompanhamento de pares ou especialistas, feedback e reflexão."},{"cab":"Sustentada e voluntária","txt":"Duração contínua; a participação imposta tende a render menos."}]},
-{"t":"passos","notas":"O ciclo de estudo entre pares: pergunta de prática, planejar juntos uma tentativa pequena, experimentar e coletar uma evidência simples, analisar juntos (inclusive os erros da IA), registrar e decidir o próximo ciclo. Funciona mesmo com vinte minutos semanais.","titulo":"Ciclo de estudo entre pares","passos":["Escolher uma pergunta de prática","Planejar uma tentativa pequena","Experimentar e coletar evidência simples","Analisar juntos, inclusive erros da IA","Registrar e decidir o próximo ciclo"],"rodape":"Até 20 minutos semanais entre dois colegas já são um ciclo."},
-{"t":"atividade","notas":"Atividade 1: auditoria de acessibilidade de um material seu. Percorra a lista de verificação, priorize três mudanças de maior impacto e menor custo, use a IA só como rascunho, verifique com o original, peça revisão a um colega e teste com estudantes. Sem estigma: versões acessíveis para todos.","titulo":"Atividade 1: auditoria de acessibilidade","tempo":"2 sessões de 60 min, com intervalo de uma semana","passos":["Escolher um material e percorrer a lista de verificação","Priorizar três mudanças de maior impacto e menor custo","Rascunhar descrições ou simplificação (IA opcional)","Comparar cada trecho com o original","Revisão por um colega e teste com dois estudantes","Guardar a versão no banco e anotar o aprendizado"],"produto":"Material revisado, lista antes e depois, notas da revisão e do teste","poucos":"Material impresso: letras maiores, blocos curtos, leitura em voz alta e colegas."},
-{"t":"atividade","notas":"Atividade 2: ciclo de estudo entre pares sobre planejamento acessível e uso crítico de IA. Quatro encontros quinzenais com tentativa em sala entre o segundo e o terceiro. Registre os erros da IA, não só os acertos, conte o tempo de revisão e respeite recusas fundamentadas.","titulo":"Atividade 2: ciclo de estudo entre pares","tempo":"4 encontros de 60 a 90 min, quinzenais","passos":["Escolher a pergunta de prática e a evidência","Planejar uma tentativa pequena por participante","Aplicar em sala e anotar imprevistos","Apresentar em 3 minutos: fez, viu, corrigiu","Montar banco compartilhado e decidir o próximo ciclo"],"produto":"Registro de decisões, banco compartilhado e pergunta do ciclo seguinte","poucos":"Encontros no horário coletivo, anotações em papel; sem IA, só adaptações dos professores."},
-{"t":"comparar","notas":"Respeitar a autonomia docente inclui reconhecer que alguns professores decidam não usar IA em certas tarefas. Distinga recusa fundamentada, que é decisão profissional, de falta de informação, que se resolve com estudo e prática. Convide a uma tentativa pequena e a registrar resultados.","titulo":"Quem não quer usar IA","esq":{"cab":"Recusa fundamentada","itens":["Razões pedagógicas, éticas ou de contexto","É decisão profissional","Merece espaço de discussão","Escola precisa de quem decide não usar"]},"dir":{"cab":"Falta de informação","itens":["Resolve-se com estudo e prática","Convide para uma tentativa pequena","Registre os resultados juntos","Não imponha a adoção"]}},
-{"t":"cartoes","notas":"O que a pesquisa permite afirmar. Formação: revisões associam características a mudança de prática, com variação e cautela na transferência ao Brasil. Ganhos de tempo com IA: poucas evidências robustas para professores. Acessibilidade e IA: desenho universal é consolidado, mas estudos controlados sobre IA para materiais acessíveis na escola são escassos.","titulo":"O que a pesquisa permite afirmar","cartoes":[{"cab":"Formação docente","txt":"Ativa, colaborativa e sustentada se associa a mudança de prática, com variação."},{"cab":"Ganho de tempo","txt":"Poucas evidências robustas para professores brasileiros; depende da tarefa."},{"cab":"Acessibilidade e IA","txt":"Desenho universal é consolidado; estudos controlados sobre IA ainda são escassos."}]},
-{"t":"cuidado","notas":"Riscos do capítulo: adaptações erradas, exposição de dados, estigma, excesso de confiança em ferramentas como substitutas de intérpretes e profissionais de apoio, intensificação do trabalho e pressão por adoção. Quando dispensar: pedido com dados identificáveis, material crítico para segurança ou saúde, ou quando não se pode verificar.","titulo":"Riscos e quando dispensar a IA","itens":["Adaptação errada: imagem mal descrita, fato alterado, legenda errada","Estigma: material diferente que marca o estudante","Dispense se o pedido exigir dados ou laudos identificáveis","Dispense em material crítico de segurança ou saúde, ou sem como verificar"]},
-{"t":"figura","notas":"Síntese: acessibilidade, trabalho e formação, ligados por uma pequena caixa tracejada: IA, rascunhos sob verificação. Peça que cada um diga qual bloco fortalecerá primeiro.","titulo":"Síntese: apoio entre estudantes, professores e colegas","fig":"f23_sintese","legenda":"Figura 23.4 — Acessibilidade, trabalho e formação, com a IA como ferramenta."},
-{"t":"lembrar","notas":"Releia os pontos. Sugira o bilhete anônimo para os estudantes: qual formato ajuda você mais a estudar, texto, esquema, áudio ou vídeo? O que atrapalha?","itens":["Acessibilidade é direito e prática: barreiras estão no material","Desenho universal planeja para muitos ao mesmo tempo","A IA rascunha; você verifica com o original e testa com o estudante","Dados de saúde e deficiência são sensíveis: não os insira","Conte a revisão no tempo; use triagem, banco e limites","Formação efetiva é ativa, colaborativa e contínua"]},
-{"t":"reflexao","notas":"Dê 5 minutos. Convide pares a combinar uma pergunta de prática para um ciclo de estudo.","perguntas":["Que barreira de acesso você reduziria esta semana, sem tecnologia?","Como você verifica uma descrição de imagem produzida por IA?","Que tarefa recorrente merece um teste de tempo com e sem IA?","Que pergunta de prática você levaria a um grupo de estudo?"]}
-]}
+{
+"n": 23,
+"titulo": "Acessibilidade na prática, organização do trabalho docente e desenvolvimento profissional",
+"parte": "Parte IV — Aplicações práticas no trabalho docente",
+"fecho": "Planejar para todos é planejar melhor.",
+"slides": [
+{
+"t": "objetivos",
+"notas": "Apresente os objetivos. O capítulo junta três temas que se encontram na rotina do professor: acessibilidade, organização do trabalho e formação entre pares. Pergunte quem se reconhece na cena de domingo à noite. Tempo: 2 minutos.",
+"itens": [
+"Ligar acessibilidade e desenho universal à rotina de sala",
+"Aplicar uma lista de verificação a materiais didáticos",
+"Proteger dados sensíveis de estudantes com deficiência",
+"Organizar o trabalho com triagem, banco de materiais e limites",
+"Planejar ciclos de formação entre pares"
+]
+},
+{
+"t": "pergunta",
+"notas": "Conte a cena de Marta: slides com letras pequenas e imagens sem descrição, uma estudante com dislexia, um estudante com baixa visão. A IA devolveu texto com datas trocadas e descrições de imagens que não correspondem. Pergunte: e agora? Deixe 2 minutos.",
+"rotulo": "DOMINGO À NOITE",
+"texto": "'Adapte tudo para acessibilidade.' A IA devolveu datas trocadas e imagens mal descritas.",
+"apoio": "Cena fictícia: a coordenadora propõe um grupo de estudo quinzenal. Marta tem tempo?"
+},
+{
+"t": "conceito",
+"notas": "Acessibilidade é acesso com autonomia. A LBI e as políticas de educação especial são o piso de direitos; a sala de aula é onde ele se concretiza. Ideia central: as barreiras estão no material e no ambiente, não na pessoa. Isso não elimina apoios individuais.",
+"titulo": "Barreiras estão no material",
+"definicao": "Acessibilidade é acesso, com autonomia, à informação e à aprendizagem. A barreira está no ambiente e no material, não na pessoa.",
+"analogia": "uma rampa: feita para cadeiras de rodas, ajuda também carrinho de bebê, mala pesada e perna machucada.",
+"destaque": "Planejar com acessibilidade é planejar melhor para todos."
+},
+{
+"t": "cartoes",
+"notas": "Dois referenciais. O desenho universal para a aprendizagem: múltiplos meios de engajamento, representação, ação e expressão. As diretrizes de acessibilidade da web: conteúdo perceptível, operável, compreensível e robusto. Úteis para documentos, slides e vídeos, embora voltadas à web.",
+"titulo": "Dois referenciais para a prática",
+"cartoes": [
+{
+"cab": "Desenho universal (UDL)",
+"txt": "Vários meios de engajamento, representação e ação e expressão, desde o planejamento."
+},
+{
+"cab": "Diretrizes da web (WCAG)",
+"txt": "Conteúdo perceptível, operável, compreensível e robusto."
+},
+{
+"cab": "Apoios individuais",
+"txt": "Planejados com o estudante, a família e o atendimento especializado."
+}
+]
+},
+{
+"t": "figura",
+"notas": "A escada de cinco camadas da acessibilidade na prática docente. Peça que a turma indique em que degrau seus materiais estão hoje. Suba um degrau por vez.",
+"titulo": "Camadas da acessibilidade",
+"fig": "f23_camadas",
+"legenda": "Figura 23.2 — Camadas da acessibilidade na prática docente."
+},
+{
+"t": "cartoes",
+"notas": "Resuma a tabela de verificação. Estrutura: títulos reais e ordem lógica. Texto: fonte legível, parágrafos curtos. Contraste: não usar só a cor. Imagens: texto alternativo. Vídeo e áudio: legendas e transcrição. Linguagem: frases diretas. A IA pode rascunhar, você verifica.",
+"titulo": "O que verificar em um material",
+"cartoes": [
+{
+"cab": "Estrutura e texto",
+"txt": "Títulos reais, listas, fonte legível, parágrafos curtos."
+},
+{
+"cab": "Contraste e imagens",
+"txt": "Contraste suficiente; texto alternativo que corresponda à imagem."
+},
+{
+"cab": "Vídeo e áudio",
+"txt": "Legendas e transcrição revisadas: nomes e termos técnicos."
+},
+{
+"cab": "Linguagem e formatos",
+"txt": "Frases diretas; mais de um formato dizendo a mesma coisa."
+}
+]
+},
+{
+"t": "frase",
+"notas": "Frase de impacto: rascunho sim, verdade não. Uma descrição de imagem por IA pode parecer correta e estar errada; uma simplificação pode alterar fatos; uma transcrição pode errar nomes. Confira com o original diante dos olhos.",
+"texto": "Rascunho, sim. Verdade, só depois de conferir.",
+"apoio": "Descrição de imagem, simplificação e legenda por IA: confira com o original."
+},
+{
+"t": "cuidado",
+"notas": "Pare e verifique antes de distribuir um material adaptado com IA. Peça que a turma aplique ao material de Marta. Em textos longos, cheque ao menos todas as datas, nomes e relações de causa. Teste com o estudante: ele sabe o que o ajuda.",
+"titulo": "Pare e verifique o material adaptado",
+"itens": [
+"O conteúdo é o mesmo do original?",
+"As descrições de imagens correspondem ao que se precisa perceber?",
+"Legendas e transcrições foram revisadas?",
+"O estudante ou o profissional de apoio testou? Há alternativa sem IA?"
+]
+},
+{
+"t": "comparar",
+"notas": "Tecnologias assistivas são recursos do cotidiano do estudante, com treinamento e escolha pessoal. A IA pode complementá-las, não substituí-las. Libras é língua com gramática própria e traduções automáticas ainda são limitadas. Envolva intérpretes, professores bilíngues e a comunidade surda. Ouça os estudantes.",
+"titulo": "Tecnologias assistivas e Libras",
+"esq": {
+"cab": "O estudante já usa",
+"itens": [
+"Leitor de tela e ampliador",
+"Teclado adaptado",
+"Comunicação alternativa",
+"Intérpretes e professores bilíngues"
+]
+},
+"dir": {
+"cab": "A IA pode complementar",
+"itens": [
+"Mas não substitui os recursos pessoais",
+"Tradução automática de Libras ainda é limitada",
+"Ouvir o estudante: o que ajuda um pode atrapalhar outro",
+"Comunidade surda sabe o que funciona"
+]
+}
+},
+{
+"t": "cuidado",
+"notas": "Dados sensíveis. Informações sobre saúde e deficiência têm proteção reforçada pela LGPD. Para pedir ajuda à IA não é preciso informar nome, laudo ou história. Melhor ainda: não inclua nada sobre a pessoa e peça só uma versão acessível do material. O plano individual é feito com a família e o atendimento especializado, fora dos sistemas de IA.",
+"titulo": "Dados sensíveis: laudos ficam de fora",
+"itens": [
+"Saúde e deficiência são dados pessoais sensíveis",
+"Não informe nome, laudo ou história do estudante",
+"Descreva a necessidade em termos gerais, ou nada",
+"Plano individual: com família e atendimento, fora da IA"
+]
+},
+{
+"t": "cartoes",
+"notas": "Tempo de geração não é tempo de trabalho. Um experimento de campo com consultores mostra ganho dentro da fronteira de capacidade da IA e piora fora dela, sem que as pessoas notem. Não foi com professores, mas é um lembrete. Práticas: triagem em três colunas, banco pessoal, diário de prompts, limites de tempo.",
+"titulo": "Rotina sustentável com IA",
+"cartoes": [
+{
+"cab": "Triagem em 3 colunas",
+"txt": "Usar IA, adaptar o que já tem, ou dispensar."
+},
+{
+"cab": "Banco de materiais",
+"txt": "Pasta com atividades e versões acessíveis já revisadas. Reutilizar é mais seguro."
+},
+{
+"cab": "Limites de tempo",
+"txt": "Se em dez minutos o rascunho não ficou bom, faça à mão."
+},
+{
+"cab": "Fronteira da jornada",
+"txt": "Resposta à noite não obriga a trabalhar à noite."
+}
+]
+},
+{
+"t": "figura",
+"notas": "Fluxo do pedido ao material usado: triagem, rascunho, verificação, adaptação à turma e registro no banco. Aponte que a verificação vem antes do uso. Peça que a turma diga onde costuma pular etapas.",
+"titulo": "Do pedido ao material usado",
+"fig": "f23_fluxo",
+"legenda": "Figura 23.3 — Fluxo de trabalho docente com verificação."
+},
+{
+"t": "conceito",
+"notas": "Experimento de um mês: escolha uma tarefa recorrente, teste uma rotina com IA e outra sem, medindo tempo total, incluindo a revisão, e sua confiança no material. Os dados serão seus e valem mais do que qualquer propaganda de produtividade. Ainda há poucas evidências robustas sobre ganho de tempo para professores brasileiros.",
+"titulo": "Teste de tempo: com e sem IA",
+"definicao": "Escolha uma tarefa recorrente e meça por um mês duas coisas: tempo total, incluindo a revisão, e a sua confiança no material.",
+"analogia": "o preço de uma promoção: só vale se você somar o frete e o tempo de devolver.",
+"destaque": "Tempo de gerar não é tempo de trabalhar."
+},
+{
+"t": "cartoes",
+"notas": "Formação docente em IA não pode virar curso de ferramentas, que muda a cada trimestre. O durável: critérios de decisão, conhecimento pedagógico do conteúdo, hábitos de verificação. Características frequentes de formações associadas a mudança de prática: foco no conteúdo, aprendizagem ativa, colaboração, acompanhamento, reflexão, duração sustentada. Participação imposta rende menos.",
+"titulo": "Formação docente que funciona",
+"cartoes": [
+{
+"cab": "Foco no conteúdo",
+"txt": "Critérios de decisão e conhecimento pedagógico, não só ferramentas."
+},
+{
+"cab": "Ativa e colaborativa",
+"txt": "Aprendizagem ativa, colaboração e modelagem de práticas."
+},
+{
+"cab": "Acompanhada e reflexiva",
+"txt": "Acompanhamento de pares ou especialistas, feedback e reflexão."
+},
+{
+"cab": "Sustentada e voluntária",
+"txt": "Duração contínua; a participação imposta tende a render menos."
+}
+]
+},
+{
+"t": "passos",
+"notas": "O ciclo de estudo entre pares: pergunta de prática, planejar juntos uma tentativa pequena, experimentar e coletar uma evidência simples, analisar juntos (inclusive os erros da IA), registrar e decidir o próximo ciclo. Funciona mesmo com vinte minutos semanais.",
+"titulo": "Ciclo de estudo entre pares",
+"passos": [
+"Escolher uma pergunta de prática",
+"Planejar uma tentativa pequena",
+"Experimentar e coletar evidência simples",
+"Analisar juntos, inclusive erros da IA",
+"Registrar e decidir o próximo ciclo"
+],
+"rodape": "Até 20 minutos semanais entre dois colegas já são um ciclo."
+},
+{
+"t": "atividade",
+"notas": "Atividade 1: auditoria de acessibilidade de um material seu. Percorra a lista de verificação, priorize três mudanças de maior impacto e menor custo, use a IA só como rascunho, verifique com o original, peça revisão a um colega e teste com estudantes. Sem estigma: versões acessíveis para todos.",
+"titulo": "Atividade 1: auditoria de acessibilidade",
+"tempo": "2 sessões de 60 min, com intervalo de uma semana",
+"passos": [
+"Escolher um material e percorrer a lista de verificação",
+"Priorizar três mudanças de maior impacto e menor custo",
+"Rascunhar descrições ou simplificação (IA opcional)",
+"Comparar cada trecho com o original",
+"Revisão por um colega e teste com dois estudantes",
+"Guardar a versão no banco e anotar o aprendizado"
+],
+"produto": "Material revisado, lista antes e depois, notas da revisão e do teste",
+"poucos": "Material impresso: letras maiores, blocos curtos, leitura em voz alta e colegas."
+},
+{
+"t": "atividade",
+"notas": "Atividade 2: ciclo de estudo entre pares sobre planejamento acessível e uso crítico de IA. Quatro encontros quinzenais com tentativa em sala entre o segundo e o terceiro. Registre os erros da IA, não só os acertos, conte o tempo de revisão e respeite recusas fundamentadas.",
+"titulo": "Atividade 2: ciclo de estudo entre pares",
+"tempo": "4 encontros de 60 a 90 min, quinzenais",
+"passos": [
+"Escolher a pergunta de prática e a evidência",
+"Planejar uma tentativa pequena por participante",
+"Aplicar em sala e anotar imprevistos",
+"Apresentar em 3 minutos: fez, viu, corrigiu",
+"Montar banco compartilhado e decidir o próximo ciclo"
+],
+"produto": "Registro de decisões, banco compartilhado e pergunta do ciclo seguinte",
+"poucos": "Encontros no horário coletivo, anotações em papel; sem IA, só adaptações dos professores."
+},
+{
+"t": "cartoes",
+"notas": "O que a pesquisa permite afirmar. Formação: revisões associam características a mudança de prática, com variação e cautela na transferência ao Brasil. Ganhos de tempo com IA: poucas evidências robustas para professores. Acessibilidade e IA: desenho universal é consolidado, mas estudos controlados sobre IA para materiais acessíveis na escola são escassos.",
+"titulo": "O que a pesquisa permite afirmar",
+"cartoes": [
+{
+"cab": "Formação docente",
+"txt": "Ativa, colaborativa e sustentada se associa a mudança de prática, com variação."
+},
+{
+"cab": "Ganho de tempo",
+"txt": "Poucas evidências robustas para professores brasileiros; depende da tarefa."
+},
+{
+"cab": "Acessibilidade e IA",
+"txt": "Desenho universal é consolidado; estudos controlados sobre IA ainda são escassos."
+}
+]
+},
+{
+"t": "cuidado",
+"notas": "Riscos do capítulo: adaptações erradas, exposição de dados, estigma, excesso de confiança em ferramentas como substitutas de intérpretes e profissionais de apoio, intensificação do trabalho e pressão por adoção. Quando dispensar: pedido com dados identificáveis, material crítico para segurança ou saúde, ou quando não se pode verificar.",
+"titulo": "Riscos e quando dispensar a IA",
+"itens": [
+"Adaptação errada: imagem mal descrita, fato alterado, legenda errada",
+"Estigma: material diferente que marca o estudante",
+"Dispense se o pedido exigir dados ou laudos identificáveis",
+"Dispense em material crítico de segurança ou saúde, ou sem como verificar"
+]
+},
+{
+"t": "figura",
+"notas": "Síntese: acessibilidade, trabalho e formação, ligados por uma pequena caixa tracejada: IA, rascunhos sob verificação. Peça que cada um diga qual bloco fortalecerá primeiro.",
+"titulo": "Síntese: apoio entre estudantes, professores e colegas",
+"fig": "f23_sintese",
+"legenda": "Figura 23.4 — Acessibilidade, trabalho e formação, com a IA como ferramenta."
+},
+{
+"t": "lembrar",
+"notas": "Releia os pontos. Sugira o bilhete anônimo para os estudantes: qual formato ajuda você mais a estudar, texto, esquema, áudio ou vídeo? O que atrapalha?",
+"itens": [
+"Acessibilidade é direito e prática: barreiras estão no material",
+"Desenho universal planeja para muitos ao mesmo tempo",
+"A IA rascunha; você verifica com o original e testa com o estudante",
+"Dados de saúde e deficiência são sensíveis: não os insira",
+"Conte a revisão no tempo; use triagem, banco e limites",
+"Formação efetiva é ativa, colaborativa e contínua"
+]
+},
+{
+"t": "reflexao",
+"notas": "Dê 5 minutos. Convide pares a combinar uma pergunta de prática para um ciclo de estudo.",
+"perguntas": [
+"Que barreira de acesso você reduziria esta semana, sem tecnologia?",
+"Como você verifica uma descrição de imagem produzida por IA?",
+"Que tarefa recorrente merece um teste de tempo com e sem IA?",
+"Que pergunta de prática você levaria a um grupo de estudo?"
+]
+}
+]
+}

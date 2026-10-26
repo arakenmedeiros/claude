@@ -22,7 +22,7 @@ def f31_diag():
 
 def f31_formacao():
     camadas("f31_formacao", [
-        ("Comunidade de prática e autonomia", "troca, revisão e decisão do grupo"),
+        ("Comunidade e autonomia", "troca, revisão e decisão"),
         ("Prática guiada com acompanhamento", "atividades da própria disciplina, observação entre pares"),
         ("Sensibilização e escuta", "conhecer usos, dúvidas e critérios"),
     ][::-1], w=8.0, h=4.6, base_larga=True)
