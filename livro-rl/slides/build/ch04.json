@@ -1,0 +1,339 @@
+[
+ {
+  "t": "title",
+  "num": 4,
+  "title": "Programação Dinâmica",
+  "banner": "/home/user/claude/livro-rl/figs/banner4.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar o que é programação dinâmica e quando ela pode ser usada.",
+   "Implementar a avaliação iterativa de uma política (predição).",
+   "Aplicar o teorema da melhoria de política e a política gulosa.",
+   "Implementar iteração de política e iteração de valor.",
+   "Explicar a ideia de iteração de política generalizada e de bootstrapping.",
+   "Reconhecer os limites da programação dinâmica e a maldição da dimensionalidade.",
+   "Resolver o CartPole com um modelo estimado a partir de dados e discretizado com scikit-learn."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Planejando com o mapa na mão",
+   "Avaliação de política (predição)",
+   "Melhoria de política",
+   "Iteração de política",
+   "Iteração de valor",
+   "Iteração de política generalizada",
+   "Bootstrapping e convergência",
+   "Limites da programação dinâmica",
+   "Mão na massa",
+   "Projeto do capítulo: a melhor ação para reter clientes",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Planejando com o mapa na mão",
+  "items": [
+   "Imagine que você tem um mapa perfeito de uma cidade, com todas as ruas, distâncias e semáforos.",
+   "Em AR, quando conhecemos completamente o MDP (a tabela p do Capítulo 3), podemos calcular a política ótima apenas com contas",
+   "Para que serve se quase nunca temos o MDP?: É uma pergunta justa"
+  ],
+  "notes": "Imagine que você tem um mapa perfeito de uma cidade, com todas as ruas, distâncias e semáforos. Sem sair de casa, você pode calcular a melhor rota até qualquer lugar. Isso é planejar. Em AR, quando conhecemos completamente o MDP (a tabela p do Capítulo 3), podemos calcular a política ótima apenas com contas, sem nenhuma interação com o mundo. O conjunto de métodos que faz isso se chama programação dinâmica (PD). É uma pergunta justa. Há três razões para estudar a PD:",
+  "num": "4.1"
+ },
+ {
+  "t": "bullets",
+  "title": "Planejando com o mapa na mão (cont.)",
+  "items": [
+   "– Fundamento: todos os algoritmos de AR podem ser vistos como aproximações da PD, que funcionam sem o modelo",
+   "– Uso direto: em problemas com modelo conhecido (logística, estoques, jogos pequenos)",
+   "– Modelos aprendidos: podemos estimar o modelo a partir de dados e depois aplicar a PD, como faremos com o CartPole."
+  ],
+  "notes": "",
+  "num": "4.1"
+ },
+ {
+  "t": "cotidiano",
+  "title": "O nome engana",
+  "items": [
+   "O matemático Richard Bellman batizou \"programação dinâmica\" nos anos 1950."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "Avaliação de política (predição)",
+  "items": [
+   "Pergunta: dada uma política π, qual o valor vπ(s) de cada estado?",
+   "O exemplo do gridworld: Num tabuleiro 4×4, um agente precisa chegar a uma das duas casas ★ (cantos opostos)."
+  ],
+  "notes": "Pergunta: dada uma política π, qual o valor vπ(s) de cada estado? Do Capítulo 3, sabemos que vπ satisfaz a equação de Bellman. A PD a transforma numa regra de atualização: começamos com um palpite qualquer (por exemplo, zeros) e repetimos: Em palavras: \"o novo valor de s é a média de [recompensa + γ × valor antigo do próximo estado]\". Cada passada por todos os estados é uma varredura (sweep). Com varreduras suficientes, Vₖ converge para vπ. Num tabuleiro 4×4, um agente precisa chegar a uma das duas casas ★ (cantos opostos). Cada passo custa −1. Ele pode ir para cima, baixo, esquerda e direita; se bater na parede, fica onde está. A política é aleatória: cada direção com 25%. Vamos calcular a mão a casa ao lado da ★ no canto superior esquerdo (chame-a de s): Note que a informação sobre onde está o destino se propaga a cada varredura, como uma onda saindo dos cantos.",
+  "num": "4.2"
+ },
+ {
+  "t": "formula",
+  "title": "Avaliação de política (predição)",
+  "formula": "Vₖ₊₁(s) = Σₐ π(a | s) Σ(s′, r) p(s′, r | s, a) [ r + γ Vₖ(s′) ]",
+  "words": "Em palavras: \"o novo valor de s é a média de [recompensa + γ × valor antigo do próximo estado]\". Cada passada por todos os estados é uma varredura (sweep). Com varreduras suficientes, Vₖ converge para vπ."
+ },
+ {
+  "t": "fig",
+  "title": "Avaliação de política (predição)",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f4_avaliacao.png",
+   "w": 1714,
+   "h": 1121
+  },
+  "cap": "Avaliação iterativa da política aleatória.",
+  "notes": "Figura 4.1 — Avaliação iterativa da política aleatória. Em k = ∞ os valores indicam quantos passos, em média, o agente leva para chegar a uma ★; as setas mostram a política gulosa em relação a esses valores."
+ },
+ {
+  "t": "bullets",
+  "title": "Melhoria de política",
+  "items": [
+   "O teorema da melhoria de política garante que π′ é melhor ou igual a π em todos os estados (SUTTON; BARTO, 2018).",
+   "No gridworld, uma única melhoria a partir da política aleatória já gera a política ótima (as setas da Figura 4.1)."
+  ],
+  "notes": "Sabendo vπ, podemos melhorar a política? Sim! Em cada estado, olhamos o valor q de cada ação e escolhemos a melhor. Essa nova política se chama gulosa em relação a vπ: O teorema da melhoria de política garante que π′ é melhor ou igual a π em todos os estados (SUTTON; BARTO, 2018). Em palavras: se em cada estado eu escolhesse a melhor ação uma vez e depois seguisse a política antiga, já ficaria melhor; então passar a escolher essa ação sempre só pode ajudar. No gridworld, uma única melhoria a partir da política aleatória já gera a política ótima (as setas da Figura 4.1).",
+  "num": "4.3"
+ },
+ {
+  "t": "bullets",
+  "title": "Iteração de política",
+  "items": [
+   "Combinando as duas ideias, obtemos o algoritmo de iteração de política (policy iteration):",
+   "– Inicialize uma política qualquer.",
+   "– Avalie a política: calcule vπ."
+  ],
+  "notes": "Combinando as duas ideias, obtemos o algoritmo de iteração de política (policy iteration), cuja origem remonta a Howard (1960): Como o número de políticas é finito e cada passo melhora (ou mantém) a política, o algoritmo termina na política ótima. Costuma convergir em poucas iterações externas, mesmo que cada avaliação exija várias varreduras.",
+  "num": "4.4"
+ },
+ {
+  "t": "bullets",
+  "title": "Iteração de política (cont.)",
+  "items": [
+   "– Melhore a política: torne-a gulosa em relação a vπ.",
+   "– Repita 2 e 3 até a política parar de mudar.",
+   "Como o número de políticas é finito e cada passo melhora (ou mantém) a política, o algoritmo termina na política ótima."
+  ],
+  "notes": "",
+  "num": "4.4"
+ },
+ {
+  "t": "formula",
+  "title": "Iteração de valor",
+  "formula": "Vₖ₊₁(s) = maxₐ Σ(s′, r) p(s′, r | s, a) [ r + γ Vₖ(s′) ]",
+  "words": "Em palavras: \"o novo valor de s é o valor da melhor ação, calculado com os valores antigos\". Quando as mudanças ficam abaixo de um limite pequeno θ, paramos e extraímos a política gulosa."
+ },
+ {
+  "t": "bullets",
+  "title": "Iteração de política generalizada",
+  "items": [
+   "Há um padrão por trás de tudo: duas forças em ciclo.",
+   "– Avaliação: deixa os valores consistentes com a política.",
+   "– Melhoria: deixa a política gulosa em relação aos valores.",
+   "Elas \"puxam\" em direções opostas, mas convergem a um ponto onde ambas concordam: v* e π*."
+  ],
+  "notes": "Há um padrão por trás de tudo: duas forças em ciclo. Elas \"puxam\" em direções opostas, mas convergem a um ponto onde ambas concordam: v* e π*. Sutton e Barto (2018) chamam isso de iteração de política generalizada (GPI). Quase todos os métodos de AR, de Monte Carlo ao PPO, seguem esse esquema.",
+  "num": "4.6"
+ },
+ {
+  "t": "fig",
+  "title": "Iteração de política generalizada",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f4_gpi.png",
+   "w": 1389,
+   "h": 609
+  },
+  "cap": "GPI: a avaliação aproxima v de vπ; a melhoria torna π gulosa em relação a v.",
+  "notes": "Figura 4.2 — GPI: a avaliação aproxima v de vπ; a melhoria torna π gulosa em relação a v. O processo termina quando ambas coincidem."
+ },
+ {
+  "t": "bullets",
+  "title": "Bootstrapping e convergência",
+  "items": [
+   "Note que a atualização usa estimativas (Vₖ(s′)) para melhorar estimativas (Vₖ₊₁(s)).",
+   "A convergência é garantida: cada varredura reduz o erro máximo por um fator de pelo menos γ (a atualização é uma contração)",
+   "Variantes: PD assíncrona: não precisa varrer todos os estados na mesma ordem."
+  ],
+  "notes": "Note que a atualização usa estimativas (Vₖ(s′)) para melhorar estimativas (Vₖ₊₁(s)). Isso é o bootstrapping: \"levantar-se puxando os próprios cadarços\". Parece circular, mas funciona porque cada atualização introduz informação real (a recompensa r e a dinâmica p). A convergência é garantida: cada varredura reduz o erro máximo por um fator de pelo menos γ (a atualização é uma contração) (PUTERMAN, 1994; BERTSEKAS; TSITSIKLIS, 1996). Por isso, quanto mais perto de 1 for o γ, mais lenta é a convergência.",
+  "num": "4.7"
+ },
+ {
+  "t": "fig",
+  "title": "Bootstrapping e convergência",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f4_convergencia.png",
+   "w": 1712,
+   "h": 627
+  },
+  "cap": "O erro cai geometricamente a cada varredura (escala logarítmica).",
+  "notes": "Figura 4.3 — O erro cai geometricamente a cada varredura (escala logarítmica). À direita, com γ maior, são necessárias mais varreduras."
+ },
+ {
+  "t": "bullets",
+  "title": "Limites da programação dinâmica",
+  "items": [
+   "A PD é eficiente em comparação com a busca direta entre políticas: cada varredura custa tempo proporcional ao número de pares estado-ação vezes o",
+   "– Exige o modelo p.",
+   "– Maldição da dimensionalidade (BELLMAN, 1957): o número de estados cresce exponencialmente com o número de variáveis do",
+   "Os capítulos seguintes respondem a essas duas barreiras: aprender sem o modelo (Capítulos 5 e 6) e aproximar a função valor (Capítulos 7 a 10)."
+  ],
+  "notes": "A PD é eficiente em comparação com a busca direta entre políticas: cada varredura custa tempo proporcional ao número de pares estado-ação vezes o número de próximos estados possíveis, e o número de varreduras necessário é razoável. Mas ela esbarra em duas barreiras. Os capítulos seguintes respondem a essas duas barreiras: aprender sem o modelo (Capítulos 5 e 6) e aproximar a função valor (Capítulos 7 a 10).",
+  "num": "4.8"
+ },
+ {
+  "t": "fig",
+  "title": "Limites da programação dinâmica",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f4_maldicao.png",
+   "w": 1322,
+   "h": 722
+  },
+  "cap": "Número de estados cresce exponencialmente com as variáveis do estado.",
+  "notes": "Figura 4.4 — Número de estados cresce exponencialmente com as variáveis do estado. Acima de 1 bilhão, a tabela de valores não cabe na memória."
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "Gridworld: avaliação, iteração de política e de valor",
+   "FrozenLake: o plano ótimo no gelo escorregadio",
+   "CartPole: discretizar, estimar um modelo e planejar"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f4_frozenlake.png",
+   "w": 1038,
+   "h": 794
+  },
+  "cap": "Valores ótimos e política ótima do FrozenLake.",
+  "notes": "Figura 4.5 — Valores ótimos e política ótima do FrozenLake. Note que o agente às vezes \"se afasta\" da meta para evitar escorregar para um buraco."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "a melhor ação para reter clientes"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Atenção: os dados não registram ações da empresa.",
+   "Entrega: notebook com a tabela de sensibilidade e o texto de conclusão, destacando a diferença entre o que vem dos dados e o que vem das hipóteses.",
+   "Carregue as matrizes salvas no Capítulo 3 (P_clientes.npy e r_clientes.npy).",
+   "Crie o MDP com 2 ações por estado: sem cupom (a dinâmica estimada) e cupom"
+  ],
+  "notes": "Contexto. No Capítulo 3, estimamos, com a base Online Retail (UCI), uma cadeia de Markov de cinco estados de clientes e o gasto médio de cada um. Agora vamos acrescentar uma decisão e usar a iteração de valor para escolher a melhor política. Atenção: os dados não registram ações da empresa. O efeito do \"cupom\" será uma hipótese sua, e as conclusões valem condicionadas a ela. O objetivo é aprender o método e a análise de sensibilidade. Tarefas: Ponto de partida: Entrega: notebook com a tabela de sensibilidade e o texto de conclusão, destacando a diferença entre o que vem dos dados e o que vem das hipóteses."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Programação dinâmica calcula políticas ótimas quando o MDP é conhecido.",
+   "Avaliação de política: repetir a equação de Bellman de expectativa até convergir.",
+   "Melhoria de política: tornar a política gulosa em relação aos valores; nunca piora.",
+   "Iteração de política alterna avaliação e melhoria; iteração de valor usa a equação de otimalidade como regra de atualização."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "GPI: avaliação e melhoria \"puxam\" em sentidos opostos até concordarem em v* e π*.",
+   "Bootstrapping: atualizar estimativas a partir de estimativas; a convergência é garantida por contração.",
+   "Limites: exige o modelo e sofre da maldição da dimensionalidade."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "Por que estudamos a PD mesmo quando raramente conhecemos o modelo?",
+  "opts": [
+   "Porque ela é a única técnica de AR.",
+   "Porque os algoritmos de AR podem ser vistos como aproximações da PD.",
+   "Porque ela dispensa recompensas.",
+   "Porque funciona em qualquer escala."
+  ],
+  "ans": "b",
+  "exp": "Os métodos sem modelo aproximam o que a PD calcula exatamente."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "A política gulosa em relação a v é aquela que:",
+  "opts": [
+   "escolhe sempre uma ação aleatória.",
+   "escolhe em cada estado a ação de maior valor esperado segundo v.",
+   "nunca muda.",
+   "escolhe a ação de menor valor."
+  ],
+  "ans": "b",
+  "exp": "π′(s) = argmax_a Σ p [r + γ v(s′)]."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "Bootstrapping, em AR, significa:",
+  "opts": [
+   "reamostrar dados para calcular intervalos de confiança.",
+   "atualizar uma estimativa usando outra estimativa.",
+   "iniciar o programa.",
+   "escolher ações ao acaso."
+  ],
+  "ans": "b",
+  "exp": "A atualização usa V_k(s′) para calcular V_(k+1)(s)."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "No FrozenLake escorregadio, a política ótima não vence em 100% dos casos porque:",
+  "opts": [
+   "o algoritmo está errado.",
+   "o ambiente é estocástico e o gelo faz o agente escorregar.",
+   "não existe política ótima.",
+   "o desconto é zero."
+  ],
+  "ans": "b",
+  "exp": "Nenhum plano elimina o acaso das transições."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) b  —  Os métodos sem modelo aproximam o que a PD calcula exatamente.",
+   "2) b  —  π′(s) = argmaxₐ Σ p [r + γ v(s′)].",
+   "3) b  —  A atualização usa Vₖ(s′) para calcular Vₖ₊₁(s).",
+   "4) b  —  Nenhum plano elimina o acaso das transições."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Explique o que é programação dinâmica e em que condição ela pode ser usada em AR.",
+   "Mostre que, se a atualização reduz o erro máximo por um fator γ a cada varredura, o número de varreduras para atingir erro ε é aproximadamente log(ε/e₀)/log γ.",
+   "Quais as limitações de estimar o modelo apenas com dados aleatórios?"
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Programação Dinâmica"
+ }
+]

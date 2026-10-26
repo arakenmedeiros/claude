@@ -1,0 +1,461 @@
+[
+ {
+  "t": "title",
+  "num": 8,
+  "title": "Deep Q-Networks e suas Extensões",
+  "banner": "/home/user/claude/livro-rl/figs/banner8.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar, em linguagem simples, o que é uma rede neural e como ela é treinada.",
+   "Descrever por que combinar redes neurais com Q-learning é instável.",
+   "Explicar a repetição de experiência e a rede-alvo e o papel de cada uma.",
+   "Implementar um DQN em PyTorch e usá-lo no CartPole.",
+   "Descrever as extensões Double DQN, repetição priorizada, dueling, multi-step, distribucional, ruído e Rainbow.",
+   "Usar o Stable-Baselines3 para treinar e avaliar um DQN em um ambiente próprio."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Do Q-learning à rede Q",
+   "Redes neurais em dez minutos",
+   "Por que redes + Q-learning dão problema",
+   "Truque 1: repetição de experiência",
+   "Truque 2: a rede-alvo",
+   "O algoritmo DQN, passo a passo",
+   "O DQN que jogou Atari",
+   "Extensões do DQN",
+   "Hiperparâmetros e depuração",
+   "Mão na massa",
+   "Projeto do capítulo: um DQN para o estoque de uma loja",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Do Q-learning à rede Q",
+  "items": [
+   "No Capítulo 7, vimos que tabelas não escalam e que a aproximação de funções permite generalizar.",
+   "A ideia é simples:",
+   "– A entrada da rede é o estado (por exemplo, os 4 números do CartPole ou os pixels de um jogo).",
+   "– A saída é um valor Q para cada ação.",
+   "– A ação escolhida é a de maior Q (com um pouco de exploração)."
+  ],
+  "notes": "No Capítulo 7, vimos que tabelas não escalam e que a aproximação de funções permite generalizar. Agora damos o passo decisivo: usar redes neurais como aproximador de q(s, a). O resultado é o Deep Q-Network (DQN), de Mnih e colegas (2015), considerado o marco inicial do aprendizado por reforço profundo (deep reinforcement learning). A ideia é simples:",
+  "num": "8.1"
+ },
+ {
+  "t": "fig",
+  "title": "Do Q-learning à rede Q",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f8_rede.png",
+   "w": 1414,
+   "h": 647
+  },
+  "cap": "Rede Q para o CartPole: 4 números entram; dois valores Q (um por ação) saem.",
+  "notes": "Figura 8.1 — Rede Q para o CartPole: 4 números entram; dois valores Q (um por ação) saem."
+ },
+ {
+  "t": "bullets",
+  "title": "Redes neurais em dez minutos",
+  "items": [
+   "O neurônio artificial: Um neurônio artificial faz três coisas",
+   "– Multiplica cada entrada por um peso (w).",
+   "– Soma tudo e acrescenta um número chamado viés (b).",
+   "– Passa o resultado por uma função de ativação f, que acrescenta curvas ao cálculo.",
+   "Camadas e profundidade: Juntando muitos neurônios em camadas, obtemos uma rede neural."
+  ],
+  "notes": "Um neurônio artificial faz três coisas: A ativação mais comum hoje é a ReLU: devolve o número se for positivo e zero caso contrário, ou seja, max(0, x). Juntando muitos neurônios em camadas, obtemos uma rede neural. A saída de uma camada é a entrada da seguinte. Redes com várias camadas ocultas são profundas. Cada camada aprende a combinar o que a anterior descobriu, de características simples a conceitos complexos (LECUN; BENGIO; HINTON, 2015). Uma rede com camadas suficientes pode aproximar praticamente qualquer função contínua. É por isso que redes neurais são aproximadores tão poderosos (GOODFELLOW; BENGIO; COURVILLE, 2016). O treinamento repete quatro ideias que você já conhece:",
+  "num": "8.2"
+ },
+ {
+  "t": "bullets",
+  "title": "Redes neurais em dez minutos (cont.)",
+  "items": [
+   "Como a rede aprende: O treinamento repete quatro ideias que você já conhece",
+   "– Prever com os pesos atuais.",
+   "– Medir o erro (a perda): por exemplo, (alvo − previsão)².",
+   "– Calcular o gradiente do erro em relação a cada peso."
+  ],
+  "notes": "",
+  "num": "8.2"
+ },
+ {
+  "t": "fig",
+  "title": "Redes neurais em dez minutos",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f8_neuronio.png",
+   "w": 1714,
+   "h": 613
+  },
+  "cap": "À esquerda, o neurônio artificial.",
+  "notes": "Figura 8.2 — À esquerda, o neurônio artificial. À direita, três funções de ativação populares."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Treinar uma rede é como afinar uma orquestra",
+  "items": [
+   "Cada peso é um botão de afinação."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "Por que redes + Q-learning dão problema",
+  "items": [
+   "Se treinássemos a rede Q com o Q-learning \"ingênuo\", encontraríamos dois problemas principais, que se somam ao triângulo mortal do Capítulo 7.",
+   "– Dados correlacionados.",
+   "O DQN propõe dois remédios engenhosos."
+  ],
+  "notes": "Se treinássemos a rede Q com o Q-learning \"ingênuo\", encontraríamos dois problemas principais, que se somam ao triângulo mortal do Capítulo 7. O DQN propõe dois remédios engenhosos.",
+  "num": "8.3"
+ },
+ {
+  "t": "bullets",
+  "title": "Truque 1: repetição de experiência",
+  "items": [
+   "Em vez de aprender com a transição que acabou de acontecer, o agente a guarda numa memória de experiências (replay buffer) e, a cada passo",
+   "– Quebra a correlação entre amostras consecutivas.",
+   "– Reaproveita cada experiência muitas vezes, aumentando a eficiência dos dados.",
+   "– Torna o treino mais estável e parecido com o aprendizado supervisionado.",
+   "Em compensação, só funciona com métodos off-policy (o Q-learning é), pois os dados antigos vêm de políticas passadas."
+  ],
+  "notes": "Em vez de aprender com a transição que acabou de acontecer, o agente a guarda numa memória de experiências (replay buffer) e, a cada passo, sorteia um lote aleatório de transições antigas para treinar (LIN, 1992). Vantagens: Em compensação, só funciona com métodos off-policy (o Q-learning é), pois os dados antigos vêm de políticas passadas.",
+  "num": "8.4"
+ },
+ {
+  "t": "fig",
+  "title": "Truque 1: repetição de experiência",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f8_replay.png",
+   "w": 1381,
+   "h": 471
+  },
+  "cap": "A memória de experiências embaralha o passado: o lote usado no treino é quase independente em vez de uma sequência correlacionada.",
+  "notes": "Figura 8.3 — A memória de experiências embaralha o passado: o lote usado no treino é quase independente em vez de uma sequência correlacionada."
+ },
+ {
+  "t": "bullets",
+  "title": "Truque 2: a rede-alvo",
+  "items": [
+   "O DQN mantém duas redes com a mesma arquitetura:",
+   "– a rede online (parâmetros θ), que é treinada a cada passo e decide as ações;",
+   "– a rede-alvo (parâmetros θ⁻), uma cópia congelada da online, usada só para calcular o alvo y.",
+   "Com o alvo parado por um tempo, o problema vira um aprendizado supervisionado temporariamente estável."
+  ],
+  "notes": "O DQN mantém duas redes com a mesma arquitetura: Com o alvo parado por um tempo, o problema vira um aprendizado supervisionado temporariamente estável. Em vez de perseguir o próprio rabo, a rede persegue um alvo que muda devagar.",
+  "num": "8.5"
+ },
+ {
+  "t": "fig",
+  "title": "Truque 2: a rede-alvo",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f8_dqn.png",
+   "w": 1419,
+   "h": 714
+  },
+  "cap": "Visão geral do DQN: o agente age, guarda as transições, sorteia lotes da memória, calcula o alvo com a rede-alvo e atualiza a rede online.",
+  "notes": "Figura 8.4 — Visão geral do DQN: o agente age, guarda as transições, sorteia lotes da memória, calcula o alvo com a rede-alvo e atualiza a rede online."
+ },
+ {
+  "t": "bullets",
+  "title": "O algoritmo DQN, passo a passo",
+  "items": [
+   "Dois detalhes práticos importantes:",
+   "– Perda de Huber (smooth_l1_loss): quadrática para erros pequenos e linear para grandes.",
+   "– Recorte do gradiente (gradient clipping): limita o tamanho do passo, outra proteção contra instabilidade."
+  ],
+  "notes": "Dois detalhes práticos importantes:",
+  "num": "8.6"
+ },
+ {
+  "t": "cotidiano",
+  "title": "O DQN em oito passos",
+  "items": [
+   "1.",
+   "2.",
+   "3.",
+   "4.",
+   "5.",
+   "6."
+  ],
+  "head": "Memorize"
+ },
+ {
+  "t": "bullets",
+  "title": "O DQN que jogou Atari",
+  "items": [
+   "O DQN original aprendeu a jogar dezenas de jogos de Atari a partir apenas dos pixels e da pontuação",
+   "Detalhes de pré-processamento (resumidos):",
+   "– A imagem é convertida para tons de cinza e reduzida para 84 × 84.",
+   "– Empilham-se 4 quadros consecutivos, para o estado conter movimento (velocidade e direção)."
+  ],
+  "notes": "O DQN original aprendeu a jogar dezenas de jogos de Atari a partir apenas dos pixels e da pontuação, usando o mesmo algoritmo e os mesmos hiperparâmetros em todos os jogos (MNIH et al., 2015). Os jogos vêm do Arcade Learning Environment (BELLEMARE et al., 2013). Em 29 dos 49 jogos testados, o DQN atingiu ao menos 75% do escore de um testador humano profissional. Detalhes de pré-processamento (resumidos): As camadas convolucionais são o tipo de camada usado em imagens: filtros pequenos \"deslizam\" sobre a imagem detectando padrões (bordas, formas) e compartilham pesos, o que reduz muito o número de parâmetros.",
+  "num": "8.7"
+ },
+ {
+  "t": "bullets",
+  "title": "O DQN que jogou Atari (cont.)",
+  "items": [
+   "– A cada ação, repete-se o movimento por 4 quadros (frame skip).",
+   "– As recompensas são recortadas para −1, 0 e +1, para padronizar a escala entre jogos.",
+   "As camadas convolucionais são o tipo de camada usado em imagens: filtros pequenos \"deslizam\" sobre a imagem detectando padrões"
+  ],
+  "notes": "",
+  "num": "8.7"
+ },
+ {
+  "t": "fig",
+  "title": "O DQN que jogou Atari",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f8_cnn.png",
+   "w": 1381,
+   "h": 551
+  },
+  "cap": "A rede do DQN para Atari: uma pilha de 4 imagens passa por 3 camadas convolucionais e uma camada totalmente conectada, produzindo um valor Q por ação.",
+  "notes": "Figura 8.5 — A rede do DQN para Atari: uma pilha de 4 imagens passa por 3 camadas convolucionais e uma camada totalmente conectada, produzindo um valor Q por ação."
+ },
+ {
+  "t": "bullets",
+  "title": "Extensões do DQN",
+  "items": [
+   "Depois de 2015, vieram várias melhorias, quase todas combináveis.",
+   "Double DQN: É uma mudança de uma linha de código, com ganho consistente.",
+   "Repetição de experiência priorizada: Nem toda transição ensina o mesmo.",
+   "Dueling: A arquitetura dueling separa a rede em dois ramos: o valor do estado V(s) e a vantagem A(s, a), quanto cada ação supera a média."
+  ],
+  "notes": "Depois de 2015, vieram várias melhorias, quase todas combináveis. O viés de maximização (Capítulo 6) também afeta o DQN, que superestima valores. O Double DQN usa a rede online para escolher a melhor ação em s′ e a rede-alvo para avaliá-la (VAN HASSELT; GUEZ; SILVER, 2016): É uma mudança de uma linha de código, com ganho consistente. Nem toda transição ensina o mesmo. A repetição priorizada sorteia com maior probabilidade as transições com maior erro TD (as mais \"surpreendentes\"), aprendendo mais rápido (SCHAUL et al., 2016). Um fator de correção (peso de importância) evita viés. A arquitetura dueling separa a rede em dois ramos: o valor do estado V(s) e a vantagem A(s, a), quanto cada ação supera a média. Os dois se combinam em Q (WANG et al., 2016). Isso ajuda quando em muitos estados a escolha da ação importa pouco. Em vez de olhar um passo à frente, usa-se o n-step (Capítulo 6): somam-se n recompensas reais antes de estimar com a rede-alvo. Propaga recompensas mais rápido. Em vez de aprender só a média do retorno, aprende-se a distribuição inteira (BELLEMARE; DABNEY; MUNOS, 2017). Isso fornece mais informação ao aprendizado, mesmo que a decisão use a média. Em vez da exploração ε-gulosa, acrescenta-se ruído aprendido aos pesos da rede. A rede aprende a quanto explorar em cada situação (FORTUNATO et al., 2018). O Rainbow combina seis dessas ideias num só agente e supera cada",
+  "num": "8.8"
+ },
+ {
+  "t": "bullets",
+  "title": "Extensões do DQN (cont.)",
+  "items": [
+   "Alvos de múltiplos passos: Em vez de olhar um passo à frente, usa-se o n-step (Capítulo 6): somam-se n recompensas reais antes de estimar com a rede-alvo.",
+   "DQN distribucional: Em vez de aprender só a média do retorno, aprende-se a distribuição inteira (BELLEMARE; DABNEY; MUNOS, 2017).",
+   "Redes com ruído (Noisy Nets): Em vez da exploração ε-gulosa, acrescenta-se ruído aprendido aos pesos da rede.",
+   "Rainbow: O Rainbow combina seis dessas ideias num só agente e supera cada uma isolada em Atari (HESSEL et al., 2018)."
+  ],
+  "notes": "",
+  "num": "8.8"
+ },
+ {
+  "t": "fig",
+  "title": "Extensões do DQN",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f8_dueling.png",
+   "w": 1381,
+   "h": 577
+  },
+  "cap": "Arquitetura dueling: um ramo estima o valor do estado, outro a vantagem de cada ação; a soma dá os valores Q.",
+  "notes": "Figura 8.6 — Arquitetura dueling: um ramo estima o valor do estado, outro a vantagem de cada ação; a soma dá os valores Q."
+ },
+ {
+  "t": "fig",
+  "title": "Extensões do DQN",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f8_extensoes.png",
+   "w": 1381,
+   "h": 551
+  },
+  "cap": "O Rainbow reúne o DQN e seis extensões.",
+  "notes": "Figura 8.7 — O Rainbow reúne o DQN e seis extensões."
+ },
+ {
+  "t": "bullets",
+  "title": "Hiperparâmetros e depuração",
+  "items": [
+   "Dicas de depuração:",
+   "– Verifique o ambiente com um agente aleatório e um agente manual.",
+   "– Monitore o retorno por episódio, a perda e a média dos valores Q: valores Q explodindo indicam instabilidade.",
+   "– Reduza o problema: ache um ambiente mais simples em que o algoritmo funcione.",
+   "– Várias sementes: o desempenho varia muito (HENDERSON et al., 2018)."
+  ],
+  "notes": "Dicas de depuração:",
+  "num": "8.9"
+ },
+ {
+  "t": "table",
+  "title": "Hiperparâmetros e depuração",
+  "rows": [
+   [
+    "Hiperparâmetro",
+    "Valores típicos",
+    "Efeito"
+   ],
+   [
+    "Taxa de aprendizado",
+    "10⁻⁴ a 10⁻³",
+    "Muito alta: instável; muito baixa: lento"
+   ],
+   [
+    "γ",
+    "0,95 a 0,99",
+    "Horizonte de planejamento"
+   ],
+   [
+    "Tamanho da memória",
+    "10⁴ a 10⁶",
+    "Mais memória, mais diversidade"
+   ],
+   [
+    "Lote",
+    "32 a 256",
+    "Estabilidade do gradiente"
+   ],
+   [
+    "Troca da rede-alvo (C)",
+    "250 a 10.000 passos",
+    "Maior: mais estável, mais lento"
+   ],
+   [
+    "ε inicial → final",
+    "1 → 0,01 a 0,1",
+    "Exploração"
+   ]
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "DQN em PyTorch",
+   "Avaliando a política treinada",
+   "Ablação: o que acontece sem memória e sem rede-alvo?",
+   "Double DQN",
+   "DQN com o Stable-Baselines3"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f8_ablacao.png",
+   "w": 1485,
+   "h": 753
+  },
+  "cap": "Ablação no CartPole (3 sementes por configuração, 300 episódios): a configuração completa chega a retornos de centenas de passos, enquanto, sem memória ou sem rede-alvo",
+  "notes": "Figura 8.8 — Ablação no CartPole (3 sementes por configuração, 300 episódios): a configuração completa chega a retornos de centenas de passos, enquanto, sem memória ou sem rede-alvo, o agente fica estagnado em retornos em torno de 10 (pior que o agente aleatório, ≈ 22). O Double DQN tem desempenho semelhante ao do DQN completo neste problema. As faixas mostram o mínimo e o máximo entre sementes."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "um DQN para o estoque de uma loja"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "O que observar: com poucos passos de treino (15.000), é comum o DQN ficar atrás de uma política (s, S) bem ajustada, que é um baseline forte para estoques.",
+   "Entrega: notebook com a análise da série, a curva de aprendizado, a comparação com (s, S) e a conclusão sobre as limitações do simulador.",
+   "Construa a série de demanda diária do produto mais frequente (dias sem venda contam como 0).",
+   "Complete o ambiente EstoqueEnv (abaixo), com estado = estoque, demanda do dia anterior, média de 7 dias e dia da semana; ações = quantidade a pedir"
+  ],
+  "notes": "Contexto. Uma loja precisa decidir, a cada dia, quanto repor de um produto. Se pedir demais, paga estoque parado; se pedir de menos, perde vendas. Vamos construir um ambiente próprio (no padrão do Gymnasium, Apêndice F) usando a demanda diária real do produto mais vendido da base Online Retail (UCI), e treinar um DQN com o Stable-Baselines3. Tarefas: Ponto de partida: O que observar: com poucos passos de treino (15.000), é comum o DQN ficar atrás de uma política (s, S) bem ajustada, que é um baseline forte para estoques. Aumente o treino, ajuste os hiperparâmetros e compare com várias sementes antes de concluir. Saber que um baseline simples é difícil de bater é parte da lição. Entrega: notebook com a análise da série, a curva de aprendizado, a comparação com (s, S) e a conclusão sobre as limitações do simulador."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "O DQN usa uma rede neural que recebe o estado e devolve um valor Q para cada ação.",
+   "Dois truques estabilizam o treino: a repetição de experiência (quebra correlações) e a rede-alvo (torna o alvo menos móvel).",
+   "O DQN aprendeu Atari a partir de pixels (Mnih et al., 2015)."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Extensões: Double DQN, repetição priorizada, dueling, n-step, distribucional, ruído e Rainbow.",
+   "O treino é instável e variável: monitore os valores Q e use várias sementes.",
+   "O Stable-Baselines3 oferece implementações prontas para aplicações práticas."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "A função de ativação ReLU é definida como:",
+  "opts": [
+   "max(0, x).",
+   "1/(1 + e^(−x)).",
+   "x².",
+   "tanh(x)."
+  ],
+  "ans": "a",
+  "exp": "Devolve x se positivo e zero caso contrário."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "Um benefício da memória de experiências é:",
+  "opts": [
+   "quebrar a correlação entre amostras e reaproveitar dados.",
+   "eliminar a necessidade de exploração.",
+   "tornar o método on-policy.",
+   "reduzir o número de ações."
+  ],
+  "ans": "a",
+  "exp": "O lote sorteado é quase independente e cada experiência é usada várias vezes."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "O recorte do gradiente (gradient clipping) serve para:",
+  "opts": [
+   "limitar o tamanho do passo de atualização e evitar instabilidade.",
+   "aumentar o gradiente.",
+   "eliminar a memória.",
+   "escolher ações."
+  ],
+  "ans": "a",
+  "exp": "Impede passos gigantes."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "A arquitetura dueling separa a rede em:",
+  "opts": [
+   "valor do estado V(s) e vantagem A(s, a).",
+   "política e modelo.",
+   "entrada e saída.",
+   "memória e rede-alvo."
+  ],
+  "ans": "a",
+  "exp": "Os dois ramos se combinam para formar Q."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) a  —  Devolve x se positivo e zero caso contrário.",
+   "2) a  —  O lote sorteado é quase independente e cada experiência é usada várias vezes.",
+   "3) a  —  Impede passos gigantes.",
+   "4) a  —  Os dois ramos se combinam para formar Q."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Explique, em linguagem simples, como uma rede neural aprende.",
+   "Qual o papel da perda de Huber e do recorte de gradiente no DQN?",
+   "Por que o desempenho do DQN costuma oscilar durante o treino, e que cuidados tomar ao avaliá-lo?"
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Deep Q-Networks e suas Extensões"
+ }
+]

@@ -1,0 +1,447 @@
+[
+ {
+  "t": "title",
+  "num": 13,
+  "title": "Sistemas Multiagente, RLHF e Fronteiras",
+  "banner": "/home/user/claude/livro-rl/figs/banner13.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Descrever jogos de Markov, equilíbrio de Nash e os desafios do aprendizado multiagente.",
+   "Explicar aprendizes independentes, treinamento centralizado com execução descentralizada e autojogo.",
+   "Descrever o pipeline do RLHF, o modelo de Bradley–Terry e a otimização com penalidade KL.",
+   "Explicar o DPO e o fenômeno da sobre-otimização da recompensa (lei de Goodhart).",
+   "Discutir segurança, alinhamento, ética e limites do aprendizado por reforço.",
+   "Mapear as fronteiras de pesquisa e traçar um plano de estudos."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Quando há mais de um agente",
+   "Teoria dos jogos em poucas linhas",
+   "Por que o AR multiagente é difícil",
+   "Abordagens",
+   "RLHF: aprender a partir de preferências humanas",
+   "Segurança, alinhamento e ética",
+   "Fronteiras da pesquisa",
+   "Para continuar estudando",
+   "Mão na massa",
+   "Projeto do capítulo: um modelo de recompensa mais robusto",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Quando há mais de um agente",
+  "items": [
+   "Até aqui, só o agente mudava; o ambiente era \"o resto do mundo\".",
+   "O modelo matemático é o jogo de Markov (também chamado de jogo estocástico)"
+  ],
+  "notes": "Até aqui, só o agente mudava; o ambiente era \"o resto do mundo\". Mas, muitas vezes, o ambiente contém outros agentes que também aprendem: jogadores num jogo, carros no trânsito, empresas num mercado, robôs numa equipe, inteligências artificiais em conversação. O modelo matemático é o jogo de Markov (também chamado de jogo estocástico), uma generalização do MDP em que vários agentes escolhem ações ao mesmo tempo, e a recompensa de cada um depende da combinação de ações (LITTMAN, 1994).",
+  "num": "13.1"
+ },
+ {
+  "t": "fig",
+  "title": "Quando há mais de um agente",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_tipos.png",
+   "w": 1714,
+   "h": 544
+  },
+  "cap": "Três tipos de situação multiagente: cooperativa (objetivo comum), competitiva (interesses opostos) e mista.",
+  "notes": "Figura 13.1 — Três tipos de situação multiagente: cooperativa (objetivo comum), competitiva (interesses opostos) e mista."
+ },
+ {
+  "t": "table",
+  "title": "Quando há mais de um agente",
+  "rows": [
+   [
+    "Tipo",
+    "Relação entre recompensas",
+    "Exemplos"
+   ],
+   [
+    "Cooperativo",
+    "Todos recebem a mesma recompensa",
+    "Equipe de robôs, logística"
+   ],
+   [
+    "Competitivo (soma zero)",
+    "O ganho de um é a perda do outro",
+    "Xadrez, Go, pôquer a dois"
+   ],
+   [
+    "Misto",
+    "Interesses parcialmente comuns",
+    "Trânsito, leilões, negociações"
+   ]
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Teoria dos jogos em poucas linhas",
+  "items": [
+   "– Dilema do prisioneiro: cada jogador ganharia mais cooperando, mas, individualmente, sempre compensa trair.",
+   "– Cara ou coroa (matching pennies): um quer combinar, o outro quer desencontrar.",
+   "O equilíbrio de Nash é o conceito central de solução: um conjunto de estratégias em que cada jogador está dando a melhor resposta às dos outros."
+  ],
+  "notes": "Num jogo matricial, cada jogador escolhe uma ação ao mesmo tempo, e uma tabela mostra o pagamento de cada um. Dois jogos clássicos: O equilíbrio de Nash é o conceito central de solução: um conjunto de estratégias em que cada jogador está dando a melhor resposta às dos outros.",
+  "num": "13.2"
+ },
+ {
+  "t": "fig",
+  "title": "Teoria dos jogos em poucas linhas",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_jogos.png",
+   "w": 1708,
+   "h": 639
+  },
+  "cap": "Dilema do prisioneiro (esquerda) e cara ou coroa (direita).",
+  "notes": "Figura 13.2 — Dilema do prisioneiro (esquerda) e cara ou coroa (direita). Cada célula mostra o pagamento do jogador da linha e do jogador da coluna."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Dilema do prisioneiro no dia a dia",
+  "items": [
+   "Dois postos de gasolina vizinhos: se ambos mantêm preços altos, ganham bem; se um baixa o preço, ganha todos os clientes; se ambos baixam"
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "Por que o AR multiagente é difícil",
+  "items": [
+   "– Não estacionariedade.",
+   "– Atribuição de crédito multiagente.",
+   "– Escalabilidade.",
+   "– Observação parcial."
+  ],
+  "notes": "",
+  "num": "13.3"
+ },
+ {
+  "t": "bullets",
+  "title": "Abordagens",
+  "items": [
+   "Aprendizes independentes: A solução mais simples é tratar os outros como parte do ambiente e cada um aprende com seu Q-learning.",
+   "Treinamento centralizado, execução descentralizada (CTDE): Um truque poderoso: durante o treino, usar um crítico centralizado que vê informação de todos os agentes (observações e ações)",
+   "Autojogo e populações: Em jogos competitivos, o agente pode jogar contra si mesmo (como no AlphaZero, Capítulo 11) ou contra uma população de versões de si"
+  ],
+  "notes": "A solução mais simples é tratar os outros como parte do ambiente e cada um aprende com seu Q-learning. Funciona surpreendentemente bem em alguns casos, mas sem garantias: pode oscilar, falhar em cooperar ou convergir a equilíbrios ruins. Um truque poderoso: durante o treino, usar um crítico centralizado que vê informação de todos os agentes (observações e ações), o que estabiliza o aprendizado; na execução, cada agente usa apenas sua política local. Exemplos: MADDPG (LOWE et al., 2017), com atores e críticos centralizados, e QMIX (RASHID et al., 2018), que decompõe o valor da equipe numa combinação monotônica de valores individuais. Em jogos competitivos, o agente pode jogar contra si mesmo (como no AlphaZero, Capítulo 11) ou contra uma população de versões de si, o que cria um \"currículo\" automático de oponentes cada vez mais fortes. O AlphaStar alcançou o nível de grandes mestres no jogo StarCraft II com ligas de agentes (VINYALS et al., 2019), e o Pluribus venceu profissionais de pôquer com mais de dois jogadores (BROWN; SANDHOLM, 2019).",
+  "num": "13.4"
+ },
+ {
+  "t": "fig",
+  "title": "Abordagens",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_ctde.png",
+   "w": 1381,
+   "h": 586
+  },
+  "cap": "CTDE: o crítico centralizado ajuda no treino, mas cada agente executa a própria política com informação local.",
+  "notes": "Figura 13.3 — CTDE: o crítico centralizado ajuda no treino, mas cada agente executa a própria política com informação local."
+ },
+ {
+  "t": "bullets",
+  "title": "RLHF: aprender a partir de preferências humanas",
+  "items": [
+   "Por que RLHF?: Como escrever uma recompensa para \"uma boa resposta\", \"um texto útil e honesto\", \"uma conduta de direção agradável\"?",
+   "O pipeline em três etapas: Ajuste supervisionado: o modelo de linguagem é treinado com demonstrações humanas de boas respostas.",
+   "O modelo de Bradley–Terry: Treinar o modelo de recompensa é, então, uma regressão logística sobre as diferenças: maximiza a verossimilhança das preferências",
+   "Sobre-otimização e a lei de Goodhart: O modelo de recompensa é um proxy imperfeito do que as pessoas realmente querem."
+  ],
+  "notes": "Como escrever uma recompensa para \"uma boa resposta\", \"um texto útil e honesto\", \"uma conduta de direção agradável\"? É muito difícil. Mas é fácil para uma pessoa comparar duas respostas e dizer qual prefere. O aprendizado por reforço a partir de feedback humano (reinforcement learning from human feedback, RLHF) aproveita isso: aprende a recompensa das comparações (CHRISTIANO et al., 2017). Em palavras: \"obtenha respostas que o modelo de recompensa aprecie, mas não mude demais em relação ao modelo de referência\". A penalidade KL (Apêndice I) evita que o modelo desvie para respostas estranhas que enganam o avaliador. Como transformar comparações em recompensa? O modelo clássico de Bradley–Terry (1952) diz que a probabilidade de uma pessoa preferir A a B é uma sigmoide da diferença de recompensas: Treinar o modelo de recompensa é, então, uma regressão logística sobre as diferenças: maximiza a verossimilhança das preferências observadas. O DPO (Direct Preference Optimization) mostra que a otimização com penalidade KL tem uma solução em forma fechada, e permite treinar a política diretamente com as preferências, sem modelo de recompensa separado e sem laço de AR (RAFAILOV et al., 2023). A perda, para um par (resposta preferida yw, rejeitada yₗ), é: Em palavras: \"aumente a probabilidade da resposta preferida em relação ao modelo de referência e diminua a da rejeitada\". O modelo de re",
+  "num": "13.5"
+ },
+ {
+  "t": "fig",
+  "title": "RLHF: aprender a partir de preferências humanas",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_rlhf.png",
+   "w": 1381,
+   "h": 630
+  },
+  "cap": "O pipeline do RLHF, como usado em modelos de linguagem (STIENNON et al., 2020; OUYANG et al., 2022).",
+  "notes": "Figura 13.4 — O pipeline do RLHF, como usado em modelos de linguagem (STIENNON et al., 2020; OUYANG et al., 2022)."
+ },
+ {
+  "t": "formula",
+  "title": "RLHF: aprender a partir de preferências humanas",
+  "formula": "maximizar   E[ r(x, y) ] − β × KL( π(· | x) ‖ π_ref(· | x) )",
+  "words": "Em palavras: \"obtenha respostas que o modelo de recompensa aprecie, mas não mude demais em relação ao modelo de referência\". A penalidade KL (Apêndice I) evita que o modelo desvie para respostas estranhas que enganam o avaliador."
+ },
+ {
+  "t": "fig",
+  "title": "RLHF: aprender a partir de preferências humanas",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_bradley.png",
+   "w": 1245,
+   "h": 689
+  },
+  "cap": "Modelo de Bradley–Terry: quanto maior a diferença de recompensa, maior a chance de preferência.",
+  "notes": "Figura 13.5 — Modelo de Bradley–Terry: quanto maior a diferença de recompensa, maior a chance de preferência."
+ },
+ {
+  "t": "formula",
+  "title": "RLHF: aprender a partir de preferências humanas",
+  "formula": "L = − ln σ( β [ ln( π(yw | x) / π_ref(yw | x) ) − ln( π(yₗ | x) / π_ref(yₗ | x) ) ] )",
+  "words": "Em palavras: \"aumente a probabilidade da resposta preferida em relação ao modelo de referência e diminua a da rejeitada\"."
+ },
+ {
+  "t": "fig",
+  "title": "RLHF: aprender a partir de preferências humanas",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_goodhart.png",
+   "w": 1470,
+   "h": 824
+  },
+  "cap": "Simulação: a recompensa proxy sobe com a pressão de otimização (melhor de N), mas a recompensa verdadeira sobe e depois cai.",
+  "notes": "Figura 13.6 — Simulação: a recompensa proxy sobe com a pressão de otimização (melhor de N), mas a recompensa verdadeira sobe e depois cai."
+ },
+ {
+  "t": "bullets",
+  "title": "Segurança, alinhamento e ética",
+  "items": [
+   "Um agente de AR otimiza o que lhe pedimos, não o que queremos:",
+   "– Especificação ruim da recompensa e hackeamento de recompensa (Capítulos 1 e 10).",
+   "– Efeitos colaterais: o agente ignora o que não está na recompensa (derruba o vaso do caminho).",
+   "– Exploração segura: como experimentar sem causar danos?"
+  ],
+  "notes": "Um agente de AR otimiza o que lhe pedimos, não o que queremos. Amodei e colegas (2016) organizaram os problemas concretos de segurança em torno de ideias que já vimos: Questões éticas e sociais:",
+  "num": "13.6"
+ },
+ {
+  "t": "bullets",
+  "title": "Segurança, alinhamento e ética (cont.)",
+  "items": [
+   "– Deslocamento de distribuição: o que ocorre quando o mundo muda depois do treino (Capítulo 12).",
+   "– Supervisão escalável: como avaliar tarefas complexas demais para o avaliador humano?",
+   "Questões éticas e sociais:",
+   "– Quem define a recompensa?"
+  ],
+  "notes": "",
+  "num": "13.6"
+ },
+ {
+  "t": "bullets",
+  "title": "Segurança, alinhamento e ética (cont.)",
+  "items": [
+   "– Vieses e justiça: dados e avaliadores podem ter vieses, que o agente pode amplificar.",
+   "– Transparência e responsabilização: políticas de redes profundas são difíceis de interpretar.",
+   "– Supervisão humana: em saúde, finanças e segurança, a decisão final deve poder ser auditada e contestada.",
+   "– Custos ambientais: treinar grandes agentes consome energia significativa."
+  ],
+  "notes": "",
+  "num": "13.6"
+ },
+ {
+  "t": "cotidiano",
+  "title": "Uma lista de verificação antes de implantar",
+  "items": [
+   "1.",
+   "2.",
+   "3.",
+   "4."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "bullets",
+  "title": "Fronteiras da pesquisa",
+  "items": [
+   "– Exploração com motivação intrínseca: recompensas internas de curiosidade",
+   "– Aprendizado hierárquico: decompor tarefas em opções (sub-habilidades reutilizáveis) (SUTTON; PRECUP; SINGH, 1999).",
+   "– Generalização e transferência: agentes que treinam num conjunto de ambientes e falham em variantes novas",
+   "– Do simulador ao mundo real (sim-to-real): randomização de domínio"
+  ],
+  "notes": "",
+  "num": "13.7"
+ },
+ {
+  "t": "bullets",
+  "title": "Fronteiras da pesquisa (cont.)",
+  "items": [
+   "– Modelos de fundação e AR: combinar modelos pré-treinados em grandes volumes de dados com AR para ajustar comportamentos",
+   "– Eficiência, reprodutibilidade e ciência aberta: benchmarks melhores",
+   "– Segurança e interpretabilidade: entender o que o agente aprendeu e garantir limites de comportamento."
+  ],
+  "notes": "",
+  "num": "13.7"
+ },
+ {
+  "t": "bullets",
+  "title": "Para continuar estudando",
+  "items": [
+   "– Livros: Reinforcement Learning: An Introduction (SUTTON; BARTO, 2018), referência de toda a Parte I e II",
+   "– Artigos-chave: os citados em cada capítulo.",
+   "– Prática: reimplemente algoritmos do zero, use o Stable-Baselines3",
+   "– Hábitos: várias sementes, intervalos de confiança, baselines simples e uma lista de limitações em cada relatório."
+  ],
+  "notes": "",
+  "num": "13.8"
+ },
+ {
+  "t": "fig",
+  "title": "Para continuar estudando",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_roteiro.png",
+   "w": 1381,
+   "h": 630
+  },
+  "cap": "O caminho percorrido neste livro e os próximos passos: o projeto integrador reúne tudo, e o passo final é aplicar a um problema seu.",
+  "notes": "Figura 13.7 — O caminho percorrido neste livro e os próximos passos: o projeto integrador reúne tudo, e o passo final é aplicar a um problema seu."
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "Dilema do prisioneiro com aprendizes independentes",
+   "Cara ou coroa: aprendizes que giram",
+   "Modelo de recompensa por preferências (Bradley–Terry)",
+   "A perda do DPO, número a número"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_ipd.png",
+   "w": 1711,
+   "h": 621
+  },
+  "cap": "À esquerda, a distribuição da cooperação final em 40 sementes.",
+  "notes": "Figura 13.8 — À esquerda, a distribuição da cooperação final em 40 sementes. À direita, duas execuções com resultados opostos."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f13_pennies.png",
+   "w": 1383,
+   "h": 692
+  },
+  "cap": "Probabilidades de \"coroa\" ao longo do tempo (média móvel): oscilam em torno do equilíbrio 0,5 sem se fixar.",
+  "notes": "Figura 13.9 — Probabilidades de \"coroa\" ao longo do tempo (média móvel): oscilam em torno do equilíbrio 0,5 sem se fixar."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "um modelo de recompensa mais robusto"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Entrega: notebook com as tabelas (média e desvio de 20 repetições), os gráficos e a reflexão.",
+   "Gere poucos pares de preferência (por exemplo, 300) com viés dos anotadores = 1 e treine um modelo de recompensa.",
+   "Treine um conjunto de 10 modelos em amostras bootstrap dos pares (sklearn.utils.resample).",
+   "Defina a recompensa conservadora r = média − λ × desvio-padrão do conjunto, para λ ∈ {0; 0,5; 1; 2}."
+  ],
+  "notes": "Contexto. Na Seção 13.9.3, vimos que otimizar um modelo de recompensa aprendido de poucos dados enviesados pode não melhorar o que realmente importa. Seu projeto é mitigar isso com um conjunto de modelos de recompensa (a ideia dos conjuntos do Capítulo 11): penalizar a incerteza na seleção. Tarefas: Ponto de partida: Entrega: notebook com as tabelas (média e desvio de 20 repetições), os gráficos e a reflexão."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Multiagente: jogos de Markov; equilíbrio de Nash; cooperação é possível, mas frágil; aprendizes independentes podem oscilar ou não convergir.",
+   "CTDE (MADDPG, QMIX) estabiliza o treino; autojogo e populações deram AlphaStar e Pluribus.",
+   "RLHF: aprende a recompensa de preferências (Bradley–Terry) e otimiza com PPO + penalidade KL; o DPO dispensa o laço de AR."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Lei de Goodhart: otimizar demais um proxy imperfeito piora o que importa; mitigue com KL, conjuntos e boa avaliação.",
+   "Segurança e ética: recompensas mal especificadas, efeitos colaterais, deslocamento de distribuição e supervisão humana.",
+   "Fronteiras: curiosidade, hierarquia, generalização, sim-to-real, modelos de fundação."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "Em um jogo de soma zero entre dois jogadores:",
+  "opts": [
+   "o ganho de um é a perda do outro.",
+   "ambos ganham sempre.",
+   "ambos perdem sempre.",
+   "não há ações."
+  ],
+  "ans": "a",
+  "exp": "A soma dos pagamentos é zero."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "A atribuição de crédito multiagente refere-se a:",
+  "opts": [
+   "descobrir quanto cada agente contribuiu para o resultado comum.",
+   "escolher a taxa de aprendizado.",
+   "calcular o desconto.",
+   "discretizar estados."
+  ],
+  "ans": "a",
+  "exp": "Numa equipe, é difícil saber quem merece o crédito."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "O AlphaStar alcançou desempenho de grande mestre no jogo:",
+  "opts": [
+   "StarCraft II.",
+   "Xadrez.",
+   "Pac-Man.",
+   "Damas."
+  ],
+  "ans": "a",
+  "exp": "Vinyals et al. (2019)."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "A lei de Goodhart afirma, em essência, que:",
+  "opts": [
+   "quando uma medida vira meta, deixa de ser uma boa medida.",
+   "toda medida é perfeita.",
+   "otimizar sempre melhora o objetivo real.",
+   "as recompensas devem ser aleatórias."
+  ],
+  "ans": "a",
+  "exp": "Otimizar demais um proxy imperfeito pode piorar o objetivo real."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) a  —  A soma dos pagamentos é zero.",
+   "2) a  —  Numa equipe, é difícil saber quem merece o crédito.",
+   "3) a  —  Vinyals et al.",
+   "4) a  —  Otimizar demais um proxy imperfeito pode piorar o objetivo real."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Explique o que é um jogo de Markov e como ele generaliza o MDP.",
+   "Descreva o pipeline do RLHF em três etapas.",
+   "Dê quatro riscos de segurança do AR descritos por Amodei et al."
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Sistemas Multiagente, RLHF e Fronteiras"
+ }
+]

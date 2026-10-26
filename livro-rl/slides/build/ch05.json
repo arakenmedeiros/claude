@@ -1,0 +1,419 @@
+[
+ {
+  "t": "title",
+  "num": 5,
+  "title": "Métodos de Monte Carlo",
+  "banner": "/home/user/claude/livro-rl/figs/banner5.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar como estimar valores por amostragem de episódios, sem conhecer o modelo.",
+   "Diferenciar Monte Carlo de primeira visita e de toda visita.",
+   "Implementar a predição e o controle por Monte Carlo com políticas ε-gulosas.",
+   "Explicar o dilema do \"início exploratório\" e a ideia das políticas on-policy e off-policy.",
+   "Aplicar amostragem por importância para aprender sobre uma política observando outra.",
+   "Interpretar uma política aprendida com uma árvore de decisão do scikit-learn."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Aprendendo jogando",
+   "A ideia básica",
+   "Predição: estimando vπ",
+   "Controle: aprendendo a jogar bem",
+   "Implementação incremental",
+   "Aprendizado off-policy e amostragem por importância",
+   "Vantagens e limitações",
+   "Mão na massa",
+   "Projeto do capítulo: simulando o valor de vida do cliente",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Aprendendo jogando",
+  "items": [
+   "No Capítulo 4, a programação dinâmica exigia o mapa completo do mundo.",
+   "Pense em um jogador de cartas que quer saber: \"se eu pedir carta com 15 pontos contra um 10 do crupiê, quanto vou ganhar, em média?\".",
+   "Essa é a ideia dos métodos de Monte Carlo (MC)."
+  ],
+  "notes": "No Capítulo 4, a programação dinâmica exigia o mapa completo do mundo. Mas e se não tivermos o mapa? E se só pudermos jogar e ver o que acontece? Pense em um jogador de cartas que quer saber: \"se eu pedir carta com 15 pontos contra um 10 do crupiê, quanto vou ganhar, em média?\". Ele não precisa calcular probabilidades de cartas. Basta jogar muitas mãos e anotar o resultado. Depois de milhares de partidas, a média é uma boa estimativa. Essa é a ideia dos métodos de Monte Carlo (MC). O nome vem do cassino de Monte Carlo e foi popularizado por cientistas que usavam sorteios para resolver problemas matemáticos (METROPOLIS; ULAM, 1949).",
+  "num": "5.1"
+ },
+ {
+  "t": "quote",
+  "text": "Monte Carlo estima o valor de um estado pela média dos retornos reais obtidos nos episódios que passaram por ele.",
+  "title": "Em uma frase"
+ },
+ {
+  "t": "bullets",
+  "title": "A ideia básica",
+  "items": [
+   "Lembre-se de que o valor de um estado é o retorno esperado ao partir dele.",
+   "Duas características definem os métodos MC:",
+   "– Sem modelo: só usam experiência (amostras de episódios).",
+   "– Só episódios completos: o retorno só é conhecido quando o episódio termina.",
+   "MC versus programação dinâmica: Uma vantagem útil do MC: ele pode focar nos estados que importam, pois só atualiza o que visita."
+  ],
+  "notes": "Lembre-se de que o valor de um estado é o retorno esperado ao partir dele. Se o retorno esperado é uma média, podemos estimá-lo com uma média amostral: jogue muitos episódios, calcule o retorno de cada um e tire a média. Duas características definem os métodos MC: Uma vantagem útil do MC: ele pode focar nos estados que importam, pois só atualiza o que visita. E o custo de estimar um estado não depende do tamanho do espaço de estados.",
+  "num": "5.2"
+ },
+ {
+  "t": "fig",
+  "title": "A ideia básica",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f5_idea.png",
+   "w": 1406,
+   "h": 551
+  },
+  "cap": "Monte Carlo: jogam-se vários episódios a partir de um estado e tiram-se as médias dos retornos.",
+  "notes": "Figura 5.1 — Monte Carlo: jogam-se vários episódios a partir de um estado e tiram-se as médias dos retornos."
+ },
+ {
+  "t": "fig",
+  "title": "A ideia básica",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f5_backup.png",
+   "w": 1288,
+   "h": 713
+  },
+  "cap": "A PD olha um passo à frente, usando estimativas (bootstrapping).",
+  "notes": "Figura 5.2 — A PD olha um passo à frente, usando estimativas (bootstrapping). O MC percorre o episódio inteiro e usa o retorno real, sem bootstrapping."
+ },
+ {
+  "t": "table",
+  "title": "A ideia básica",
+  "rows": [
+   [
+    "Aspecto",
+    "Programação dinâmica",
+    "Monte Carlo"
+   ],
+   [
+    "Precisa do modelo?",
+    "Sim",
+    "Não"
+   ],
+   [
+    "Bootstrapping?",
+    "Sim",
+    "Não"
+   ],
+   [
+    "Atualiza",
+    "Todos os estados, por varredura",
+    "Só os estados visitados"
+   ],
+   [
+    "Tipo de tarefa",
+    "Qualquer",
+    "Episódica"
+   ]
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Predição: estimando vπ",
+  "items": [
+   "Tarefa: dada uma política π, estimar vπ.",
+   "Para cada episódio gerado por π, percorremos os passos de trás para frente, acumulando o retorno G:",
+   "– Primeira visita (first-visit): usa só o retorno a partir da primeira vez que o estado aparece no episódio.",
+   "– Toda visita (every-visit): usa o retorno de todas as visitas.",
+   "Ambas convergem para vπ conforme o número de episódios cresce (SINGH; SUTTON, 1996)."
+  ],
+  "notes": "Tarefa: dada uma política π, estimar vπ. Para cada episódio gerado por π, percorremos os passos de trás para frente, acumulando o retorno G. Para cada estado visitado, guardamos o retorno. Existem duas variantes: Ambas convergem para vπ conforme o número de episódios cresce (SINGH; SUTTON, 1996). A de primeira visita é a mais estudada, e é a que usaremos. O Blackjack (vinte-e-um) é o exemplo clássico. O jogador recebe cartas tentando chegar o mais perto possível de 21, sem estourar. O estado é descrito por três números: As ações são parar (0) ou pedir carta (1). A recompensa vem ao final: +1 (vitória), 0 (empate) ou −1 (derrota). Calcular as probabilidades exatas é trabalhoso, mas simular é fácil. Vamos avaliar uma política ingênua: parar só com 20 ou 21.",
+  "num": "5.3"
+ },
+ {
+  "t": "bullets",
+  "title": "Predição: estimando vπ (cont.)",
+  "items": [
+   "O caso do Blackjack: O Blackjack (vinte-e-um) é o exemplo clássico",
+   "– a soma das cartas do jogador;",
+   "– a carta visível do crupiê;",
+   "– se o jogador tem um ás \"usável\" (que pode valer 11 sem estourar)."
+  ],
+  "notes": "",
+  "num": "5.3"
+ },
+ {
+  "t": "fig",
+  "title": "Predição: estimando vπ",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f5_visita.png",
+   "w": 1381,
+   "h": 471
+  },
+  "cap": "O estado B aparece duas vezes.",
+  "notes": "Figura 5.3 — O estado B aparece duas vezes. Primeira visita conta só a primeira; toda visita conta as duas."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Calculando um retorno de trás para frente",
+  "items": [
+   "Um episódio de Blackjack: três jogadas com recompensas 0, 0 e +1 (vitória no final), γ = 1.",
+   "Retorno do passo 3: G₃ = +1.",
+   "Retorno do passo 2: G₂ = 0 + 1 = +1.",
+   "Retorno do passo 1: G₁ = 0 + 1 = +1.",
+   "Todos os estados desse episódio receberão +1."
+  ],
+  "head": "Exemplo"
+ },
+ {
+  "t": "fig",
+  "title": "Predição: estimando vπ",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f5_blackjack_v.png",
+   "w": 1687,
+   "h": 599
+  },
+  "cap": "Valores estimados pela política \"parar com 20 ou 21\".",
+  "notes": "Figura 5.4 — Valores estimados pela política \"parar com 20 ou 21\". Com poucos episódios (esquerda) a estimativa é ruidosa; com muitos (centro e direita) ela se estabiliza. Somas 20 e 21 têm valor alto; as demais, baixo."
+ },
+ {
+  "t": "bullets",
+  "title": "Controle: aprendendo a jogar bem",
+  "items": [
+   "Tarefa: encontrar a política ótima.",
+   "O esquema é o da GPI (Capítulo 4):",
+   "– Avaliação: estimar q com a média dos retornos."
+  ],
+  "notes": "Tarefa: encontrar a política ótima. Com o modelo, bastava usar v e olhar um passo à frente. Sem modelo, v não basta: para escolher uma ação precisamos saber o valor de cada ação em cada estado. Por isso o MC estima qπ(s, a) (função valor de ação). O esquema é o da GPI (Capítulo 4): Para estimar q(s, a), é preciso visitar todos os pares estado-ação. Se a política é gulosa e determinística, ela só visita os pares \"preferidos\". A solução teórica clássica, o início exploratório (exploring starts), sorteia o par inicial de cada episódio. Mas isso é raro no mundo real: você não escolhe a primeira carta do baralho. A alternativa prática é usar uma política ε-gulosa (Capítulo 2): quase sempre escolhe a ação de maior q, mas com probabilidade ε sorteia ao acaso. Assim, todos os pares continuam sendo visitados. É um método on-policy: aprende o valor da mesma política que usa para jogar. Na versão mais simples, ε diminui ao longo do treino. A política aprendida lembra a \"estratégia básica\" que jogadores profissionais memorizam: com somas baixas, pedir carta; entre 12 e 16, pedir só se o crupiê mostra uma carta forte (de 7 a ás), pois ele provavelmente chegará a uma boa soma, e parar se mostra uma carta fraca (2 a 6), pois o crupiê tende a estourar; com 17 ou mais, parar. Com um ás usável o agente arrisca mais, pois não estoura ao pedir. O agente descobriu isso sozinho, apenas jogando.",
+  "num": "5.4"
+ },
+ {
+  "t": "bullets",
+  "title": "Controle: aprendendo a jogar bem (cont.)",
+  "items": [
+   "– Melhoria: tornar a política gulosa em relação a q.",
+   "O problema do início exploratório: Para estimar q(s, a), é preciso visitar todos os pares estado-ação.",
+   "Política ε-gulosa (on-policy): A alternativa prática é usar uma política ε-gulosa (Capítulo 2): quase sempre escolhe a ação de maior q"
+  ],
+  "notes": "",
+  "num": "5.4"
+ },
+ {
+  "t": "cotidiano",
+  "title": "A política final",
+  "items": [
+   "Treinando com ε-gulosa, o agente aprende a melhor política ε-gulosa, que é um pouco pior que a ótima (pois ainda sorteia ações)."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "fig",
+  "title": "Controle: aprendendo a jogar bem",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f5_controle.png",
+   "w": 1714,
+   "h": 680
+  },
+  "cap": "À esquerda, o retorno médio da política gulosa durante o treino, bem acima da regra ingênua.",
+  "notes": "Figura 5.5 — À esquerda, o retorno médio da política gulosa durante o treino, bem acima da regra ingênua. À direita, a política aprendida: o agente aprende a pedir carta com somas baixas e a parar com somas altas."
+ },
+ {
+  "t": "bullets",
+  "title": "Implementação incremental",
+  "items": [
+   "Com passo constante α no lugar de 1/N, o método se adapta a ambientes que mudam."
+  ],
+  "notes": "Em vez de guardar todos os retornos, atualizamos a média incrementalmente, como no Capítulo 2: Com passo constante α no lugar de 1/N, o método se adapta a ambientes que mudam.",
+  "num": "5.5"
+ },
+ {
+  "t": "bullets",
+  "title": "Aprendizado off-policy e amostragem por importância",
+  "items": [
+   "Há uma ideia poderosa: aprender sobre uma política observando outra.",
+   "– Política-alvo (π): aquela cujo valor queremos estimar (por exemplo, a ótima).",
+   "– Política de comportamento (b): aquela que de fato gera os dados (por exemplo, aleatória ou exploratória).",
+   "Há duas versões:"
+  ],
+  "notes": "Há uma ideia poderosa: aprender sobre uma política observando outra. Isso é aprendizado off-policy (\"fora da política\"). É útil para aprender a partir de dados já existentes, de outros agentes ou de humanos. Para corrigir a diferença entre as políticas, usa-se a amostragem por importância: cada episódio é ponderado pela razão entre a probabilidade de a trajetória ocorrer sob π e sob b: Em palavras: \"quanto mais provável a trajetória seria sob a política que me interessa, mais peso ela ganha\". Se π nunca faria uma das ações do episódio, ρ = 0 e o episódio é descartado. Há duas versões: Por isso a versão ponderada costuma ser preferida (PRECUP; SUTTON; SINGH, 2000).",
+  "num": "5.6"
+ },
+ {
+  "t": "bullets",
+  "title": "Aprendizado off-policy e amostragem por importância (cont.)",
+  "items": [
+   "– Ordinária: média de ρ × G.",
+   "– Ponderada: Σ ρ G / Σ ρ.",
+   "Por isso a versão ponderada costuma ser preferida (PRECUP; SUTTON; SINGH, 2000)."
+  ],
+  "notes": "",
+  "num": "5.6"
+ },
+ {
+  "t": "formula",
+  "title": "Aprendizado off-policy e amostragem por importância",
+  "formula": "ρ = Πₜ [ π(Aₜ | Sₜ) / b(Aₜ | Sₜ) ]",
+  "words": "Em palavras: \"quanto mais provável a trajetória seria sob a política que me interessa, mais peso ela ganha\". Se π nunca faria uma das ações do episódio, ρ = 0 e o episódio é descartado."
+ },
+ {
+  "t": "fig",
+  "title": "Aprendizado off-policy e amostragem por importância",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f5_is.png",
+   "w": 1405,
+   "h": 727
+  },
+  "cap": "Estimando o valor de \"parar com 20 ou 21\" a partir de episódios de uma política aleatória.",
+  "notes": "Figura 5.6 — Estimando o valor de \"parar com 20 ou 21\" a partir de episódios de uma política aleatória. A estimativa ponderada tende a ser mais estável que a ordinária."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Off-policy no dia a dia",
+  "items": [
+   "Você pode aprender como seria dirigir bem assistindo a vídeos de motoristas (a política de comportamento) e depois julgando o que você faria"
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "Vantagens e limitações",
+  "items": [
+   "– Aprende sem modelo, direto da experiência.",
+   "– Pode aprender em simuladores, mesmo que a dinâmica seja complexa.",
+   "– Não sofre de erros de bootstrapping: usa retornos reais.",
+   "– Atualiza apenas o que visita."
+  ],
+  "notes": "Vantagens Limitações Os métodos de diferença temporal (Capítulo 6) combinam o melhor de MC (sem modelo) e de PD (bootstrapping), atualizando a cada passo.",
+  "num": "5.7"
+ },
+ {
+  "t": "bullets",
+  "title": "Vantagens e limitações (cont.)",
+  "items": [
+   "– Só funciona em tarefas episódicas (precisa do fim do episódio).",
+   "– Variância alta: o retorno depende de muitas jogadas aleatórias; são necessários muitos episódios.",
+   "– Aprende só no fim: não aproveita informação parcial durante o episódio.",
+   "Os métodos de diferença temporal (Capítulo 6) combinam o melhor de MC (sem modelo) e de PD (bootstrapping), atualizando a cada passo."
+  ],
+  "notes": "",
+  "num": "5.7"
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "Predição no Blackjack",
+   "Controle por Monte Carlo com ε-gulosa",
+   "Entendendo a política aprendida com uma árvore (scikit-learn)",
+   "Amostragem por importância"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "simulando o valor de vida do cliente"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Entrega: notebook com tabela de convergência (nº de trajetórias × erro), a comparação entre variantes e a conclusão.",
+   "Carregue P_clientes.npy e r_clientes.npy (salvos no Capítulo 3).",
+   "Para cada estado inicial s, simule N trajetórias de 200 passos",
+   "Estime v(s) como a média dos retornos e calcule um intervalo de confiança de 95% por bootstrap (sklearn.utils.resample)."
+  ],
+  "notes": "Contexto. No Capítulo 3, estimamos com a base Online Retail (UCI) uma cadeia de Markov de clientes e calculamos o valor de vida de cada segmento analiticamente (álgebra linear). Agora vamos obter os mesmos valores por simulação de Monte Carlo e comparar. Tarefas: Ponto de partida: Entrega: notebook com tabela de convergência (nº de trajetórias × erro), a comparação entre variantes e a conclusão."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Monte Carlo estima valores pela média dos retornos reais de episódios completos, sem modelo.",
+   "Primeira visita e toda visita são as duas variantes de predição; ambas convergem.",
+   "Para controle estimamos q(s, a) e tornamos a política gulosa (GPI).",
+   "On-policy aprende sobre a política que joga; off-policy aprende sobre uma política jogando outra",
+   "Limitações: só episódios completos e alta variância."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "Os métodos MC básicos exigem que a tarefa seja:",
+  "opts": [
+   "contínua.",
+   "episódica.",
+   "determinística.",
+   "de uma só ação."
+  ],
+  "ans": "b",
+  "exp": "O retorno só é conhecido ao fim do episódio."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "A política \"parar só com 20 ou 21\" é ruim porque:",
+  "opts": [
+   "o jogador quase nunca pede carta.",
+   "o jogador pede carta com somas como 16 ou 19, estourando com frequência.",
+   "o crupiê sempre vence.",
+   "ela é estocástica."
+  ],
+  "ans": "b",
+  "exp": "Pedir carta com somas altas leva a estourar muitas vezes."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "A razão de importância ρ = Π π(A_t|S_t)/b(A_t|S_t) serve para:",
+  "opts": [
+   "comparar a duração de episódios.",
+   "corrigir a diferença entre as probabilidades das trajetórias sob π e sob b.",
+   "calcular o desconto.",
+   "escolher ε."
+  ],
+  "ans": "b",
+  "exp": "Pondera cada episódio pela plausibilidade sob a política-alvo."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "Na prática com ε-gulosa decrescente, a política final é testada com ε = 0 porque:",
+  "opts": [
+   "queremos medir o desempenho da política gulosa, sem sorteios.",
+   "ε = 0 aumenta a exploração.",
+   "o Gymnasium exige.",
+   "para eliminar o desconto."
+  ],
+  "ans": "a",
+  "exp": "A política ε-gulosa ainda sorteia ações; o teste usa a gulosa."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) b  —  O retorno só é conhecido ao fim do episódio.",
+   "2) b  —  Pedir carta com somas altas leva a estourar muitas vezes.",
+   "3) b  —  Pondera cada episódio pela plausibilidade sob a política-alvo.",
+   "4) a  —  A política ε-gulosa ainda sorteia ações; o teste usa a gulosa."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Explique, com suas palavras, por que a média dos retornos de muitos episódios estima o valor de um estado.",
+   "Explique a amostragem por importância e por que a versão ponderada costuma ser preferida.",
+   "Interprete a Figura de valores do Blackjack: por que somas 20 e 21 têm valores altos na política \"parar em 20\"?"
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Métodos de Monte Carlo"
+ }
+]

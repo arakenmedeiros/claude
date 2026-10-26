@@ -1,0 +1,496 @@
+[
+ {
+  "t": "title",
+  "num": 1,
+  "title": "Introdução ao Aprendizado por Reforço",
+  "banner": "/home/user/claude/livro-rl/figs/banner1.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar, com exemplos do cotidiano, o que é aprender por tentativa e erro.",
+   "Distinguir aprendizado supervisionado, não supervisionado e por reforço.",
+   "Identificar agente, ambiente, estado, ação e recompensa em situações reais.",
+   "Calcular o retorno de uma sequência de recompensas, com e sem desconto.",
+   "Descrever os três componentes de um agente: política, função valor e modelo.",
+   "Reconhecer os grandes desafios da área e os marcos históricos que a moldaram.",
+   "Executar seu primeiro agente em Python, com Gymnasium e scikit-learn."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Aprendendo tentando",
+   "O que é aprendizado por reforço?",
+   "Os três paradigmas do aprendizado de máquina",
+   "Os personagens da história",
+   "O objetivo: maximizar o retorno",
+   "Os três componentes de um agente",
+   "Os grandes desafios do AR",
+   "Uma breve história",
+   "Onde o AR é usado",
+   "As ferramentas deste livro",
+   "Mão na massa",
+   "Projeto do capítulo: ajustando o seu primeiro agente"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Aprendendo tentando",
+  "items": [
+   "Pense em como você aprendeu a andar de bicicleta.",
+   "Agora pense num cachorro aprendendo a sentar.",
+   "Em 1911, o psicólogo Edward Thorndike descreveu essa ideia como a lei do efeito: comportamentos seguidos de consequências agradáveis tendem a se"
+  ],
+  "notes": "Pense em como você aprendeu a andar de bicicleta. Ninguém lhe entregou uma tabela dizendo \"incline 3 graus à esquerda quando a velocidade for 8 km/h\". Você subiu, pedalou, caiu, ajustou e tentou de novo. Aos poucos, o corpo descobriu o que funciona. Agora pense num cachorro aprendendo a sentar. Cada vez que ele senta e ouve \"muito bem!\", ganha um petisco. Com o tempo, ele senta mais vezes. Ninguém explicou o que é \"sentar\". O cachorro associou uma ação a uma consequência boa. Em 1911, o psicólogo Edward Thorndike descreveu essa ideia como a lei do efeito: comportamentos seguidos de consequências agradáveis tendem a se repetir; os seguidos de consequências desagradáveis tendem a desaparecer (THORNDIKE, 1911). Essa é a semente do aprendizado por reforço.",
+  "num": "1.1"
+ },
+ {
+  "t": "cotidiano",
+  "title": "Você já fez isso hoje",
+  "items": [
+   "Escolher o caminho para o trabalho é aprendizado por reforço."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "O que é aprendizado por reforço?",
+  "items": [
+   "> Aprendizado por reforço (AR) é aprender a decidir, por tentativa e erro, para acumular o máximo de recompensa ao longo do tempo.",
+   "Sutton e Barto (2018), autores do livro mais influente da área:",
+   "– Busca por tentativa e erro: o agente precisa experimentar para descobrir o que é bom.",
+   "– Recompensa atrasada: uma ação de agora pode afetar não só o resultado imediato, mas também todos os resultados futuros."
+  ],
+  "notes": "Em termos simples: > Aprendizado por reforço (AR) é aprender a decidir, por tentativa e erro, para acumular o máximo de recompensa ao longo do tempo. Sutton e Barto (2018), autores do livro mais influente da área, dizem que o aprendiz \"não é informado de quais ações tomar, e sim deve descobrir quais ações rendem mais recompensa ao experimentá-las\". Duas características tornam o AR único:",
+  "num": "1.2"
+ },
+ {
+  "t": "quote",
+  "text": "Aprendizado por reforço é aprender o que fazer (uma estratégia de decisão) a partir do resultado das próprias ações.",
+  "title": "Em uma frase"
+ },
+ {
+  "t": "bullets",
+  "title": "Os três paradigmas do aprendizado de máquina",
+  "items": [
+   "O aprendizado de máquina (a área de IA em que computadores aprendem a partir de dados) tem três grandes famílias.",
+   "Veja a diferença-chave com um professor de música:",
+   "– Supervisionado: o professor toca a nota certa e você copia.",
+   "– Por reforço: você toca, e o professor só diz \"gostei\" ou \"não gostei\"."
+  ],
+  "notes": "O aprendizado de máquina (a área de IA em que computadores aprendem a partir de dados) tem três grandes famílias. A diferença está no tipo de feedback que o aprendiz recebe. Veja a diferença-chave com um professor de música:",
+  "num": "1.3"
+ },
+ {
+  "t": "fig",
+  "title": "Os três paradigmas do aprendizado de máquina",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f1_paradigmas.png",
+   "w": 1714,
+   "h": 556
+  },
+  "cap": "Três formas de aprender.",
+  "notes": "Figura 1.1 — Três formas de aprender. No supervisionado há um gabarito; no não supervisionado, nenhum feedback; no reforço, apenas uma nota (recompensa) após agir."
+ },
+ {
+  "t": "table",
+  "title": "Os três paradigmas do aprendizado de máquina",
+  "rows": [
+   [
+    "Paradigma",
+    "O que o aprendiz recebe",
+    "Pergunta que responde",
+    "Exemplo"
+   ],
+   [
+    "Supervisionado",
+    "Exemplos com a resposta certa",
+    "\"Qual é o rótulo disso?\"",
+    "Dizer se uma foto é de gato ou cão"
+   ],
+   [
+    "Não supervisionado",
+    "Exemplos sem resposta",
+    "\"Que estrutura existe aqui?\"",
+    "Agrupar clientes parecidos"
+   ],
+   [
+    "Por reforço",
+    "Uma recompensa após agir",
+    "\"O que devo fazer agora?\"",
+    "Aprender a jogar xadrez"
+   ]
+  ]
+ },
+ {
+  "t": "cotidiano",
+  "title": "Diferença importante",
+  "items": [
+   "No aprendizado supervisionado, os dados não dependem do que o modelo decide."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "bullets",
+  "title": "Os personagens da história",
+  "items": [
+   "Todo problema de AR tem os mesmos personagens.",
+   "– Agente: quem aprende e decide.",
+   "– Ambiente: tudo o que está fora do agente e reage às suas ações.",
+   "– Estado (S): uma descrição da situação atual, ou seja, o que o agente percebe.",
+   "– Ação (A): uma escolha que o agente pode fazer."
+  ],
+  "notes": "Todo problema de AR tem os mesmos personagens. O ciclo acontece em passos de tempo, numerados por t = 0, 1, 2, … No passo t: O pequeno t é só um carimbo de horário: Sₜ é \"o estado agora\", Sₜ₊₁ é \"o estado no passo seguinte\". Note que você, projetista, escolhe as recompensas. O robô não sabe o que é \"limpar\". Ele só tenta acumular números. Algumas tarefas têm começo e fim claros, como uma partida de xadrez. Cada partida é um episódio, que termina num estado terminal (vitória, derrota ou empate). Outras não acabam, como o controle de temperatura de um prédio; são tarefas contínuas.",
+  "num": "1.4"
+ },
+ {
+  "t": "bullets",
+  "title": "Os personagens da história (cont.)",
+  "items": [
+   "– Recompensa (R): um número que informa, logo após a ação, se o resultado foi bom ou ruim.",
+   "O ciclo acontece em passos de tempo, numerados por t = 0, 1, 2, … No passo t:",
+   "– O agente observa o estado Sₜ.",
+   "– Escolhe uma ação Aₜ.",
+   "– O ambiente responde com uma recompensa Rₜ₊₁ e um novo estado Sₜ₊₁."
+  ],
+  "notes": "",
+  "num": "1.4"
+ },
+ {
+  "t": "bullets",
+  "title": "Os personagens da história (cont.)",
+  "items": [
+   "O pequeno t é só um carimbo de horário: Sₜ é \"o estado agora\", Sₜ₊₁ é \"o estado no passo seguinte\".",
+   "Um exemplo completo: o robô aspirador: Note que você, projetista, escolhe as recompensas.",
+   "Episódios e tarefas contínuas: Algumas tarefas têm começo e fim claros, como uma partida de xadrez."
+  ],
+  "notes": "",
+  "num": "1.4"
+ },
+ {
+  "t": "fig",
+  "title": "Os personagens da história",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f1_ciclo.png",
+   "w": 1381,
+   "h": 689
+  },
+  "cap": "O ciclo do AR: o agente age; o ambiente devolve um novo estado e uma recompensa; o ciclo se repete.",
+  "notes": "Figura 1.2 — O ciclo do AR: o agente age; o ambiente devolve um novo estado e uma recompensa; o ciclo se repete."
+ },
+ {
+  "t": "bullets",
+  "title": "O objetivo: maximizar o retorno",
+  "items": [
+   "O agente não quer só a próxima recompensa.",
+   "Imagine três recompensas seguidas: 1, 0 e 5.",
+   "Por que dar menos peso ao futuro?: Um real hoje vale mais que um real daqui a dez anos: você pode gastá-lo já, e o futuro é incerto.",
+   "A hipótese da recompensa: Todo o AR repousa sobre uma ideia ousada, que Sutton e Barto (2018) chamam de hipótese da recompensa: tudo o que entendemos por \"objetivos\""
+  ],
+  "notes": "O agente não quer só a próxima recompensa. Quer a soma de todas que virão. Essa soma se chama retorno e é escrita Gₜ. Imagine três recompensas seguidas: 1, 0 e 5. O retorno simples é 1 + 0 + 5 = 6. Um real hoje vale mais que um real daqui a dez anos: você pode gastá-lo já, e o futuro é incerto. Em AR, aplicamos o mesmo raciocínio com o fator de desconto, representado pela letra grega γ (gama), um número entre 0 e 1. Uma recompensa que chega k passos depois é multiplicada por γ elevado a k. Em palavras: some as recompensas futuras, mas diminua o peso de cada uma conforme ela fica mais distante. O desconto serve a três propósitos: reflete a incerteza do futuro, expressa preferência por ganhos rápidos e, matematicamente, garante que a soma infinita seja um número finito. Todo o AR repousa sobre uma ideia ousada, que Sutton e Barto (2018) chamam de hipótese da recompensa: tudo o que entendemos por \"objetivos\" pode ser descrito como a maximização do valor esperado da soma de um sinal escalar (a recompensa). Isso é poderoso, mas exige cuidado. Quem escolhe mal a recompensa obtém um agente que cumpre a letra e trai o espírito.",
+  "num": "1.5"
+ },
+ {
+  "t": "formula",
+  "title": "O objetivo: maximizar o retorno",
+  "formula": "Gₜ = Rₜ₊₁ + γ Rₜ₊₂ + γ^2 Rₜ₊₃ + γ^3 Rₜ₊₄ + …",
+  "words": "Em palavras: some as recompensas futuras, mas diminua o peso de cada uma conforme ela fica mais distante."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Calculando um retorno com desconto",
+  "items": [
+   "Recompensas: 1, 0, 0, 5, com γ = 0,9.",
+   "G = 1 + 0,9 × 0 + 0,9² × 0 + 0,9³ × 5 = 1 + 0 + 0 + 0,729 × 5 = 4,645.",
+   "Com γ = 0,5, a mesma sequência vale 1 + 0,125 × 5 = 1,625."
+  ],
+  "head": "Exemplo"
+ },
+ {
+  "t": "fig",
+  "title": "O objetivo: maximizar o retorno",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f1_desconto.png",
+   "w": 1714,
+   "h": 613
+  },
+  "cap": "À esquerda, quanto o desconto reduz o peso de recompensas distantes.",
+  "notes": "Figura 1.3 — À esquerda, quanto o desconto reduz o peso de recompensas distantes. À direita, o retorno de dez recompensas iguais a 1 cresce com γ."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Exemplo hipotético: a recompensa mal escolhida",
+  "items": [
+   "Suponha que você premie o robô aspirador com +1 por cada porção de sujeira coletada."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "bullets",
+  "title": "Os três componentes de um agente",
+  "items": [
+   "Um agente de AR pode ter até três \"ferramentas\" internas.",
+   "– Política (π, \"pi\"): a regra de decisão.",
+   "– Função valor (v): uma estimativa da recompensa total futura a partir de um estado (ou de um par estado-ação).",
+   "– Modelo: uma previsão de como o ambiente reage (\"se eu fizer isto aqui, o que acontece?\").",
+   "Métodos que não usam modelo são chamados livres de modelo (model-free); os que usam são baseados em modelo (model-based)."
+  ],
+  "notes": "Um agente de AR pode ter até três \"ferramentas\" internas. Métodos que não usam modelo são chamados livres de modelo (model-free); os que usam são baseados em modelo (model-based). O restante do livro percorre esses caminhos em ordem crescente de sofisticação.",
+  "num": "1.6"
+ },
+ {
+  "t": "fig",
+  "title": "Os três componentes de um agente",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f1_componentes.png",
+   "w": 1381,
+   "h": 524
+  },
+  "cap": "Política, função valor e modelo: o que fazer, quão bom é estar aqui e o que vai acontecer.",
+  "notes": "Figura 1.4 — Política, função valor e modelo: o que fazer, quão bom é estar aqui e o que vai acontecer."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Os três componentes no trânsito",
+  "items": [
+   "Política: \"se o semáforo está vermelho, pare\".",
+   "Valor: \"essa avenida costuma ser rápida às 7h, tem valor alto\".",
+   "Modelo: \"se eu entrar naquela rua, vou pegar o congestionamento do mercado\" (você imagina o futuro)."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "Os grandes desafios do AR",
+  "items": [
+   "Explorar ou aproveitar?: Você tem um restaurante favorito.",
+   "Atribuição de crédito: Numa partida de xadrez, a recompensa (vitória) só vem no fim.",
+   "Outros desafios: Eficiência de dados: aprender por tentativa exige muitas tentativas."
+  ],
+  "notes": "Você tem um restaurante favorito. Pode aproveitar (exploit): ir de novo ao favorito e garantir uma boa refeição. Ou pode explorar (explore): testar um restaurante novo, que talvez seja ainda melhor, mas talvez seja ruim. Se só aproveitar, você nunca descobre algo melhor. Se só explorar, nunca desfruta do que já sabe. Este é o dilema exploração-aproveitamento, tema do Capítulo 2. Numa partida de xadrez, a recompensa (vitória) só vem no fim. Qual das 80 jogadas foi decisiva? Esse é o problema da atribuição de crédito: descobrir quais ações passadas merecem os louros (ou a culpa) por um resultado tardio (SUTTON, 1984).",
+  "num": "1.7"
+ },
+ {
+  "t": "fig",
+  "title": "Os grandes desafios do AR",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f1_credito.png",
+   "w": 1381,
+   "h": 500
+  },
+  "cap": "Recompensa só no final: o agente precisa descobrir quais ações anteriores foram responsáveis.",
+  "notes": "Figura 1.5 — Recompensa só no final: o agente precisa descobrir quais ações anteriores foram responsáveis."
+ },
+ {
+  "t": "bullets",
+  "title": "Uma breve história",
+  "items": [
+   "A área nasceu da confluência de duas linhas de pesquisa (SUTTON; BARTO, 2018):",
+   "– Aprendizado por tentativa e erro, vindo da psicologia (Thorndike, 1911).",
+   "– Controle ótimo, vindo da matemática e da engenharia.",
+   "– 1959: Arthur Samuel criou um programa de damas que melhorava jogando contra si mesmo (SAMUEL, 1959)."
+  ],
+  "notes": "A área nasceu da confluência de duas linhas de pesquisa (SUTTON; BARTO, 2018): Alguns marcos:",
+  "num": "1.8"
+ },
+ {
+  "t": "bullets",
+  "title": "Uma breve história (cont.)",
+  "items": [
+   "– 1983: Barto, Sutton e Anderson usaram um par de redes para equilibrar um poste sobre um carrinho",
+   "– 1988: Sutton propôs o aprendizado por diferença temporal (SUTTON, 1988), tema do Capítulo 6.",
+   "– 1989 e 1992: Watkins propôs o Q-learning (WATKINS; DAYAN, 1992).",
+   "– 1995: o TD-Gammon, de Gerald Tesauro, aprendeu gamão em nível de campeões humanos (TESAURO, 1995)."
+  ],
+  "notes": "",
+  "num": "1.8"
+ },
+ {
+  "t": "bullets",
+  "title": "Uma breve história (cont.)",
+  "items": [
+   "– 2015: o DQN aprendeu a jogar dezenas de jogos de Atari a partir dos pixels da tela (MNIH et al., 2015).",
+   "– 2016: o AlphaGo venceu um campeão europeu de Go e depois um campeão mundial (SILVER et al., 2016).",
+   "– 2017: o algoritmo PPO tornou-se o \"cavalo de batalha\" do AR moderno (SCHULMAN et al., 2017).",
+   "– 2022: o AR a partir de feedback humano (RLHF) ajudou a treinar assistentes conversacionais (OUYANG et al., 2022)."
+  ],
+  "notes": "",
+  "num": "1.8"
+ },
+ {
+  "t": "fig",
+  "title": "Uma breve história",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f1_timeline.png",
+   "w": 1394,
+   "h": 553
+  },
+  "cap": "Marcos do aprendizado por reforço, da psicologia animal aos modelos de linguagem.",
+  "notes": "Figura 1.6 — Marcos do aprendizado por reforço, da psicologia animal aos modelos de linguagem."
+ },
+ {
+  "t": "bullets",
+  "title": "Onde o AR é usado",
+  "items": [
+   "– Jogos: do gamão ao Go e aos videogames (TESAURO, 1995; SILVER et al., 2016; MNIH et al., 2015).",
+   "– Robótica: ensinar robôs a andar, agarrar e manipular objetos (KOBER; BAGNELL; PETERS, 2013).",
+   "– Recomendação e publicidade online: decidir qual notícia ou anúncio mostrar a cada pessoa",
+   "– Linguagem: ajustar modelos de linguagem às preferências humanas (OUYANG et al., 2022).",
+   "– Controle e operações: gestão de energia, logística, preços."
+  ],
+  "notes": "",
+  "num": "1.9"
+ },
+ {
+  "t": "bullets",
+  "title": "As ferramentas deste livro",
+  "items": [
+   "Você não precisa saber programar para começar.",
+   "Os apêndices I e J trazem a matemática essencial e o roteiro para baixar as bases de dados (UCI e Kaggle) usadas nas práticas."
+  ],
+  "notes": "Você não precisa saber programar para começar. Os apêndices ensinam o necessário. Os apêndices I e J trazem a matemática essencial e o roteiro para baixar as bases de dados (UCI e Kaggle) usadas nas práticas.",
+  "num": "1.10"
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "Seu primeiro ambiente",
+   "Um agente aleatório",
+   "Aprendendo com o método da entropia cruzada",
+   "Avaliando com honestidade",
+   "Do classificador à decisão: o caso dos cogumelos"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f1_cartpole.png",
+   "w": 1714,
+   "h": 613
+  },
+  "cap": "Resultado típico do experimento: o retorno médio sobe e a distribuição dos retornos se desloca para a direita.",
+  "notes": "Figura 1.7 — Resultado típico do experimento: o retorno médio sobe e a distribuição dos retornos se desloca para a direita. Os valores exatos variam com a semente aleatória."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "ajustando o seu primeiro agente"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Objetivo: estudar como as escolhas do método da entropia cruzada afetam a aprendizagem no CartPole.",
+   "Entrega: um notebook com código, tabela, gráfico do retorno médio por iteração e o parágrafo de conclusão.",
+   "Reescreva o laço da Seção 1.11.3 como uma função treinar",
+   "Varie a profundidade da árvore (2, 4 e 8) e o percentil da elite (50, 70 e 90).",
+   "Monte uma tabela com a média e o intervalo de confiança (bootstrap) de cada combinação."
+  ],
+  "notes": "Objetivo: estudar como as escolhas do método da entropia cruzada afetam a aprendizagem no CartPole. Tarefas: Ponto de partida: Entrega: um notebook com código, tabela, gráfico do retorno médio por iteração e o parágrafo de conclusão."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "AR é aprender a decidir por tentativa e erro, maximizando a recompensa acumulada.",
+   "O ciclo é: estado → ação → recompensa + novo estado.",
+   "O retorno soma as recompensas futuras, com desconto γ: G = R₁ + γR₂ + γ²R₃ + …"
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Um agente pode ter política, função valor e modelo.",
+   "Desafios clássicos: exploração × aproveitamento, atribuição de crédito e recompensa mal especificada.",
+   "Prever não é decidir: o limiar de 0,5 de um classificador pode ser péssimo quando os erros têm custos diferentes."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "No ciclo do AR, depois que o agente executa uma ação, o ambiente devolve:",
+  "opts": [
+   "apenas o gabarito da ação.",
+   "uma nova política.",
+   "uma recompensa e um novo estado.",
+   "um conjunto de rótulos."
+  ],
+  "ans": "c",
+  "exp": "O ambiente responde com R_(t+1) e S_(t+1)."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "Um fator de desconto γ próximo de 0 produz um agente:",
+  "opts": [
+   "visionário, que valoriza muito o futuro distante.",
+   "míope, que valoriza sobretudo recompensas imediatas.",
+   "que nunca aprende.",
+   "que explora sempre."
+  ],
+  "ans": "b",
+  "exp": "γ pequeno reduz drasticamente o peso das recompensas distantes."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "O problema da atribuição de crédito consiste em:",
+  "opts": [
+   "calcular o fator de desconto.",
+   "descobrir quais ações passadas foram responsáveis por uma recompensa tardia.",
+   "dividir os dados em treino e teste.",
+   "escolher a quantidade de episódios."
+  ],
+  "ans": "b",
+  "exp": "Com recompensas atrasadas, é difícil saber qual ação merece o crédito."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "No método da entropia cruzada descrito no capítulo, a \"elite\" é:",
+  "opts": [
+   "o pior grupo de episódios.",
+   "os episódios de maior retorno, cujas ações serão imitadas.",
+   "o conjunto de ações proibidas.",
+   "o ambiente inicial."
+  ],
+  "ans": "b",
+  "exp": "Selecionam-se os melhores episódios e treina-se um classificador para imitá-los."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) c  —  O ambiente responde com Rₜ₊₁ e Sₜ₊₁.",
+   "2) b  —  γ pequeno reduz drasticamente o peso das recompensas distantes.",
+   "3) b  —  Com recompensas atrasadas, é difícil saber qual ação merece o crédito.",
+   "4) b  —  Selecionam-se os melhores episódios e treina-se um classificador para imitá-los."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Explique com suas palavras a diferença entre aprendizado supervisionado e aprendizado por reforço.",
+   "O que é atribuição de crédito?",
+   "Cite dois marcos históricos do AR e explique a importância de cada um."
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Introdução ao Aprendizado por Reforço"
+ }
+]

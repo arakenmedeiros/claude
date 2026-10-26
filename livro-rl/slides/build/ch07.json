@@ -1,0 +1,376 @@
+[
+ {
+  "t": "title",
+  "num": 7,
+  "title": "Aproximação de Funções",
+  "banner": "/home/user/claude/livro-rl/figs/banner7.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar por que tabelas não escalam e como a generalização resolve o problema.",
+   "Descrever a descida do gradiente e o semi-gradiente para estimar funções valor.",
+   "Construir características (agregação, polinômios, RBF, tile coding) para aproximadores lineares.",
+   "Implementar o SARSA semi-gradiente com tile coding no Mountain Car.",
+   "Explicar o triângulo mortal e reconhecer sinais de instabilidade.",
+   "Aplicar o Fitted Q-Iteration com regressores do scikit-learn."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Quando a tabela não cabe",
+   "A ideia: substituir a tabela por uma função",
+   "Descida do gradiente",
+   "Aproximação linear",
+   "Construindo características",
+   "Controle com aproximação",
+   "O triângulo mortal",
+   "Métodos em lote: Fitted Q-Iteration",
+   "Mão na massa",
+   "Projeto do capítulo: valor de clientes sem discretizar",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Quando a tabela não cabe",
+  "items": [
+   "Até aqui, guardamos o valor de cada estado numa tabela:",
+   "– Jogo de Go: cerca de 10¹⁷⁰ posições possíveis (SILVER et al., 2016).",
+   "– Atari: a tela tem 210 × 160 pixels coloridos.",
+   "– Robô com 7 articulações: cada ângulo é um número contínuo; há infinitos estados."
+  ],
+  "notes": "Até aqui, guardamos o valor de cada estado numa tabela. Isso funciona com 16 casas do FrozenLake ou 500 estados do Taxi. Mas pense nestes problemas: Duas dificuldades surgem juntas: A saída é generalizar: aprender sobre alguns estados e usar isso para estados parecidos que ele nunca viu.",
+  "num": "7.1"
+ },
+ {
+  "t": "bullets",
+  "title": "Quando a tabela não cabe (cont.)",
+  "items": [
+   "Duas dificuldades surgem juntas:",
+   "– Memória: a tabela não cabe.",
+   "– Tempo de aprendizado: mesmo se coubesse, o agente nunca visitaria todos os estados.",
+   "A saída é generalizar: aprender sobre alguns estados e usar isso para estados parecidos que ele nunca viu."
+  ],
+  "notes": "",
+  "num": "7.1"
+ },
+ {
+  "t": "cotidiano",
+  "title": "Generalizar é o que você faz",
+  "items": [
+   "Você aprendeu a dirigir em algumas ruas."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "A ideia: substituir a tabela por uma função",
+  "items": [
+   "Em vez de uma tabela V(s), usamos uma função parametrizada v̂(s, w), que recebe o estado e devolve uma estimativa de valor.",
+   "Note que estamos fazendo aprendizado supervisionado dentro do AR: os pares (estado, alvo) são os \"exemplos\"."
+  ],
+  "notes": "Em vez de uma tabela V(s), usamos uma função parametrizada v̂(s, w), que recebe o estado e devolve uma estimativa de valor. O vetor w reúne os parâmetros (pesos) ajustáveis. Há bem menos pesos do que estados, e mudar um peso altera o valor de muitos estados de uma vez: é isso que gera a generalização. Note que estamos fazendo aprendizado supervisionado dentro do AR: os pares (estado, alvo) são os \"exemplos\". A diferença é que os alvos mudam enquanto o agente aprende, e os dados dependem da política (Capítulo 1). Não é possível acertar todos os estados (são muitos para poucos parâmetros). Precisamos dizer quais estados importam mais. Usamos a distribuição μ(s): a fração do tempo em que o agente está no estado s. O erro a minimizar é o erro quadrático médio ponderado: Em palavras: \"erre menos nos estados que o agente visita mais\".",
+  "num": "7.2"
+ },
+ {
+  "t": "fig",
+  "title": "A ideia: substituir a tabela por uma função",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f7_generalizacao.png",
+   "w": 1694,
+   "h": 492
+  },
+  "cap": "Quatro aproximadores ajustados a 40 pontos ruidosos de uma função valor.",
+  "notes": "Figura 7.1 — Quatro aproximadores ajustados a 40 pontos ruidosos de uma função valor. A tabela com 6 faixas é \"grossa\"; a reta é simples demais; o polinômio e as funções RBF capturam a forma."
+ },
+ {
+  "t": "formula",
+  "title": "A ideia: substituir a tabela por uma função",
+  "formula": "VE(w) = Σₛ μ(s) [ vπ(s) − v̂(s, w) ]²",
+  "words": "Em palavras: \"erre menos nos estados que o agente visita mais\"."
+ },
+ {
+  "t": "bullets",
+  "title": "Descida do gradiente",
+  "items": [
+   "Para ajustar w, usamos a descida do gradiente, o mesmo método que treina redes neurais.",
+   "Qual é o alvo U?: Monte Carlo: U = Gₜ (retorno real)."
+  ],
+  "notes": "Para ajustar w, usamos a descida do gradiente, o mesmo método que treina redes neurais. Imagine-se numa montanha com neblina, querendo chegar ao vale. Você sente a inclinação do chão sob os pés e dá um passo morro abaixo. Repete. O gradiente é o vetor que aponta para a subida mais íngreme; andamos no sentido contrário. Com um exemplo (estado Sₜ, alvo Uₜ), um passo é: Em palavras: \"mude os pesos na direção que aproxima v̂ do alvo U, na proporção do erro (U − v̂) e do passo α\". O símbolo ∇v̂ (gradiente) indica quanto cada peso influencia o valor previsto.",
+  "num": "7.3"
+ },
+ {
+  "t": "fig",
+  "title": "Descida do gradiente",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f7_gradiente.png",
+   "w": 1109,
+   "h": 813
+  },
+  "cap": "Descida do gradiente num problema com dois pesos.",
+  "notes": "Figura 7.2 — Descida do gradiente num problema com dois pesos. As curvas de nível mostram o erro; cada ponto é um passo, no sentido oposto ao gradiente."
+ },
+ {
+  "t": "formula",
+  "title": "Descida do gradiente",
+  "formula": "w ← w + α [ Uₜ − v̂(Sₜ, w) ] ∇ v̂(Sₜ, w)",
+  "words": "Em palavras: \"mude os pesos na direção que aproxima v̂ do alvo U, na proporção do erro (U − v̂) e do passo α\". O símbolo ∇v̂ (gradiente) indica quanto cada peso influencia o valor previsto."
+ },
+ {
+  "t": "bullets",
+  "title": "Aproximação linear",
+  "items": [
+   "O TD linear converge para um ponto perto do melhor possível (TSITSIKLIS; VAN ROY, 1997), quando os dados vêm da própria política que se avalia."
+  ],
+  "notes": "O caso mais simples e mais bem compreendido é o linear: o valor é uma combinação ponderada de características (features) do estado: Aqui o gradiente é simplesmente o vetor de características x(s). A atualização semi-gradiente TD(0) vira: O TD linear converge para um ponto perto do melhor possível (TSITSIKLIS; VAN ROY, 1997), quando os dados vêm da própria política que se avalia. Todo o poder está em escolher boas características.",
+  "num": "7.4"
+ },
+ {
+  "t": "bullets",
+  "title": "Construindo características",
+  "items": [
+   "Dependendo da escolha de x(s), o mesmo modelo linear representa funções muito diferentes.",
+   "Tile coding: No tile coding (ALBUS, 1971), o espaço de estados é coberto por várias grades (tilings) deslocadas."
+  ],
+  "notes": "Dependendo da escolha de x(s), o mesmo modelo linear representa funções muito diferentes. No tile coding (ALBUS, 1971), o espaço de estados é coberto por várias grades (tilings) deslocadas. Para cada grade, exatamente um quadrado (tile) \"acende\" para o estado atual. O vetor de características é binário e esparso: contém 1 nos quadrados acesos e 0 no resto. O valor é a soma dos pesos dos quadrados acesos. A atualização é muito eficiente: só se mudam os pesos dos poucos quadrados acesos.",
+  "num": "7.5"
+ },
+ {
+  "t": "fig",
+  "title": "Construindo características",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f7_tiles.png",
+   "w": 1042,
+   "h": 831
+  },
+  "cap": "Três grades deslocadas.",
+  "notes": "Figura 7.3 — Três grades deslocadas. Cada uma acende um quadrado para o estado atual (marcado com X). Estados próximos compartilham quadrados, o que gera generalização local; as grades deslocadas dão resolução fina."
+ },
+ {
+  "t": "bullets",
+  "title": "Controle com aproximação",
+  "items": [
+   "O Mountain Car: No Mountain Car, um carro fraco está num vale e precisa subir a encosta à direita."
+  ],
+  "notes": "Para controlar, aproximamos q̂(s, a, w). O SARSA semi-gradiente atualiza: No Mountain Car, um carro fraco está num vale e precisa subir a encosta à direita. O motor não tem força para subir direto: o carro precisa balançar para trás e ganhar embalo. O estado é (posição, velocidade), a ação é empurrar para esquerda, direita ou nada, e a recompensa é −1 por passo até chegar ao topo (posição ≥ 0,5; limite de 200 passos). É um problema simples, mas enganoso: para ir para a direita, o agente precisa primeiro ir para a esquerda. Com uma tabela cheia de zeros e recompensas negativas, os valores iniciais funcionam como otimismo (Capítulo 2), e o agente explora sem precisar de ε.",
+  "num": "7.6"
+ },
+ {
+  "t": "fig",
+  "title": "Controle com aproximação",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f7_mountaincar.png",
+   "w": 1703,
+   "h": 663
+  },
+  "cap": "Esquerda: passos até a meta ao longo do aprendizado (média de 3 sementes, escala logarítmica).",
+  "notes": "Figura 7.4 — Esquerda: passos até a meta ao longo do aprendizado (média de 3 sementes, escala logarítmica). Direita: estimativa do \"custo até a meta\" aprendida: a espiral de balanço aparece no mapa."
+ },
+ {
+  "t": "bullets",
+  "title": "O triângulo mortal",
+  "items": [
+   "Sutton e Barto (2018) chamam de triângulo mortal (deadly triad) a combinação de três ingredientes que, juntos:",
+   "– Aproximação de funções: para generalizar.",
+   "– Bootstrapping: alvos que dependem das próprias estimativas (TD)."
+  ],
+  "notes": "Sutton e Barto (2018) chamam de triângulo mortal (deadly triad) a combinação de três ingredientes que, juntos, pode causar instabilidade e divergência: Com dois dos três, o aprendizado costuma ser estável. Abandonar qualquer um tem custo: sem aproximação, não escalamos; sem bootstrapping, perdemos eficiência e usamos MC; sem off-policy, não reaproveitamos dados antigos. O contraexemplo de Baird (1995) é um MDP de 7 estados, com recompensa zero em todo lugar (portanto v = 0), em que o semi-gradiente off-policy faz os pesos crescerem sem limite. Isso não significa que todo método falhe: significa que não há garantia. Algoritmos modernos como o DQN (Capítulo 8) adicionam truques (redes-alvo, repetição de experiência) para manter o aprendizado estável na prática (VAN HASSELT et al., 2018).",
+  "num": "7.7"
+ },
+ {
+  "t": "bullets",
+  "title": "O triângulo mortal (cont.)",
+  "items": [
+   "– Aprendizado off-policy: aprender sobre uma política com dados de outra.",
+   "Com dois dos três, o aprendizado costuma ser estável.",
+   "O contraexemplo de Baird: O contraexemplo de Baird (1995) é um MDP de 7 estados, com recompensa zero em todo lugar (portanto v = 0)"
+  ],
+  "notes": "",
+  "num": "7.7"
+ },
+ {
+  "t": "fig",
+  "title": "O triângulo mortal",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f7_triangulo.png",
+   "w": 1288,
+   "h": 756
+  },
+  "cap": "Cada ingrediente é útil sozinho.",
+  "notes": "Figura 7.5 — Cada ingrediente é útil sozinho. O problema aparece quando os três atuam juntos."
+ },
+ {
+  "t": "fig",
+  "title": "O triângulo mortal",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f7_baird.png",
+   "w": 1711,
+   "h": 645
+  },
+  "cap": "O contraexemplo de Baird.",
+  "notes": "Figura 7.6 — O contraexemplo de Baird. À direita, os pesos aprendidos divergem, embora o valor verdadeiro seja zero."
+ },
+ {
+  "t": "bullets",
+  "title": "Métodos em lote: Fitted Q-Iteration",
+  "items": [
+   "Uma alternativa estável é aprender em lotes:",
+   "– Calcule os alvos y = r + γ maxₐ′ q̂_k(s′, a′) para todas as transições.",
+   "– Ajuste um regressor supervisionado que prevê y a partir de (s, a): obtém q̂_(k+1).",
+   "Isso é o Fitted Q-Iteration (FQI) (ERNST; GEURTS; WEHENKEL, 2005), uma versão \"em lote\" do Q-learning."
+  ],
+  "notes": "Uma alternativa estável é aprender em lotes. Reunimos um conjunto fixo de transições (s, a, r, s′) e repetimos: Isso é o Fitted Q-Iteration (FQI) (ERNST; GEURTS; WEHENKEL, 2005), uma versão \"em lote\" do Q-learning. Variantes com redes neurais foram propostas por Riedmiller (2005). A beleza do FQI é que qualquer regressor serve: árvores, florestas, regressão linear, redes. E o scikit-learn é uma fábrica deles.",
+  "num": "7.8"
+ },
+ {
+  "t": "fig",
+  "title": "Métodos em lote: Fitted Q-Iteration",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f7_fqi.png",
+   "w": 1314,
+   "h": 706
+  },
+  "cap": "FQI no CartPole com 20.000 transições aleatórias.",
+  "notes": "Figura 7.7 — FQI no CartPole com 20.000 transições aleatórias. As árvores (ExtraTrees) chegam a retornos altos, mas oscilam entre iterações; o modelo com RBF e Ridge é mais estável, porém menos expressivo."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Instabilidade também existe aqui",
+  "items": [
+   "Repare na oscilação das árvores: com dados fixos e bootstrapping, o desempenho pode melhorar e piorar entre iterações."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "A divergência de Baird",
+   "Tile coding e SARSA semi-gradiente no Mountain Car",
+   "Quatro aproximadores para uma mesma função",
+   "Q-learning online com RBF: quando a aproximação falha",
+   "Fitted Q-Iteration com regressores do scikit-learn"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "valor de clientes sem discretizar"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Método (Fitted Value Iteration para um MRP): com os dados do painel (cliente-mês), repita",
+   "Atenção: o código acima treina com todos os dados e avalia em um subconjunto, só para ilustrar a mecânica.",
+   "alvo: y = gasto do mês seguinte + γ · Vₖ(características do mês seguinte);",
+   "ajuste um regressor Vₖ₊₁ que prevê y a partir das características atuais."
+  ],
+  "notes": "Contexto. No Capítulo 3, transformamos os clientes da base Online Retail em 5 estados com K-Means. Isso joga fora informação. Agora vamos estimar o valor de vida diretamente das características contínuas (recência, frequência e gasto), com aproximação de funções. Método (Fitted Value Iteration para um MRP): com os dados do painel (cliente-mês), repita: Tarefas: Ponto de partida: Atenção: o código acima treina com todos os dados e avalia em um subconjunto, só para ilustrar a mecânica. Na sua entrega, treine apenas em treino para uma avaliação honesta. Entrega: notebook com as curvas de escala, a comparação de regressores, a validação por grupos e a conclusão."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Tabelas não escalam; generalizar com funções v̂(s, w) é a solução.",
+   "A descida do gradiente ajusta os pesos; o semi-gradiente TD usa o alvo R + γv̂(S′, w) como se fosse constante.",
+   "Em modelos lineares, v̂ = w·x(s); a qualidade depende das características (agregação, polinômios, Fourier, RBF, tile coding)."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "SARSA semi-gradiente resolve o Mountain Car.",
+   "Triângulo mortal: aproximação + bootstrapping + off-policy pode divergir (contraexemplo de Baird).",
+   "Fitted Q-Iteration aprende em lote com qualquer regressor do scikit-learn, mas também pode oscilar."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "Uma consequência de ter menos pesos do que estados é que:",
+  "opts": [
+   "cada estado tem seu próprio peso exclusivo.",
+   "mudar um peso pode alterar o valor de muitos estados.",
+   "o aprendizado fica impossível.",
+   "o desconto deixa de existir."
+  ],
+  "ans": "b",
+  "exp": "Isso gera generalização, mas também interferência entre estados."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "Em um aproximador linear, a qualidade depende sobretudo de:",
+  "opts": [
+   "escolher boas características do estado.",
+   "usar γ = 1.",
+   "nunca usar bootstrapping.",
+   "ter poucos estados."
+  ],
+  "ans": "a",
+  "exp": "O modelo é limitado ao que as características conseguem representar."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "No Mountain Car, a dificuldade é que:",
+  "opts": [
+   "a recompensa é sempre positiva.",
+   "o carro precisa se afastar da meta para ganhar embalo.",
+   "o ambiente é discreto.",
+   "não há ações."
+  ],
+  "ans": "b",
+  "exp": "O motor é fraco; é preciso balançar para subir."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "O Fitted Q-Iteration (FQI) é:",
+  "opts": [
+   "um método em lote que repete regressões supervisionadas sobre alvos r + γ max q.",
+   "um método on-policy de Monte Carlo.",
+   "uma técnica de agrupamento.",
+   "um método sem aproximação."
+  ],
+  "ans": "a",
+  "exp": "Alterna cálculo de alvos e ajuste de um regressor."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) b  —  Isso gera generalização, mas também interferência entre estados.",
+   "2) a  —  O modelo é limitado ao que as características conseguem representar.",
+   "3) b  —  O motor é fraco; é preciso balançar para subir.",
+   "4) a  —  Alterna cálculo de alvos e ajuste de um regressor."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Explique por que tabelas não funcionam em problemas como Go ou Atari e como a generalização ajuda.",
+   "Por que valores iniciais zero funcionam como otimismo no Mountain Car?",
+   "Discuta o dilema entre aproximadores simples (retas) e flexíveis (polinômios de alto grau, árvores profundas)."
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Aproximação de Funções"
+ }
+]

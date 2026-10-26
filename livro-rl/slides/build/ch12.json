@@ -1,0 +1,347 @@
+[
+ {
+  "t": "title",
+  "num": 12,
+  "title": "Aprendizado Offline, por Imitação e Avaliação de Políticas",
+  "banner": "/home/user/claude/livro-rl/figs/banner12.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar por que e quando aprender sem interagir com o ambiente.",
+   "Implementar a clonagem de comportamento e explicar o acúmulo de erros e o DAgger.",
+   "Descrever, em linhas gerais, o aprendizado por reforço inverso e a imitação adversarial.",
+   "Explicar o problema do deslocamento de distribuição e as ideias de BCQ, CQL e IQL.",
+   "Estimar o valor de uma política a partir de dados registrados (IPS, SNIPS, método direto e duplamente robusto).",
+   "Diferenciar associação e causalidade em dados observacionais."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Aprender sem interagir",
+   "Aprendizado por imitação",
+   "Aprendizado por reforço inverso",
+   "Aprendizado por reforço offline",
+   "Avaliação de políticas a partir de dados registrados",
+   "Associação e causalidade",
+   "Mão na massa",
+   "Projeto do capítulo: auditando a escolha do canal de contato",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Aprender sem interagir",
+  "items": [
+   "Até aqui, o agente aprendia interagindo: agia, observava, ajustava:",
+   "– Saúde: não podemos testar tratamentos aleatórios em pacientes.",
+   "– Direção autônoma: não podemos \"explorar\" batendo carros.",
+   "– Recomendação e publicidade: já existem anos de logs de decisões passadas.",
+   "– Indústria: parar uma fábrica para experimentar custa muito."
+  ],
+  "notes": "Até aqui, o agente aprendia interagindo: agia, observava, ajustava. Mas há muitos problemas em que isso é impossível, perigoso ou caro: Nessas situações, temos um conjunto fixo de dados D = {(s, a, r, s′)}, gerado por alguma política de comportamento (humanos, sistemas antigos), e queremos:",
+  "num": "12.1"
+ },
+ {
+  "t": "bullets",
+  "title": "Aprender sem interagir (cont.)",
+  "items": [
+   "Nessas situações, temos um conjunto fixo de dados D = {(s, a, r, s′)}:",
+   "– Imitar o comportamento (aprendizado por imitação);",
+   "– Aprender uma política melhor que a dos dados (aprendizado por reforço offline);",
+   "– Avaliar uma política nova antes de colocá-la em produção (avaliação off-policy)."
+  ],
+  "notes": "",
+  "num": "12.1"
+ },
+ {
+  "t": "cotidiano",
+  "title": "Aprender a cozinhar",
+  "items": [
+   "Você pode aprender assistindo a um chef (imitação), lendo as avaliações de pratos servidos e descobrindo quais combinações funcionam (offline) e"
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "Aprendizado por imitação",
+  "items": [
+   "Clonagem de comportamento: A forma mais simples é a clonagem de comportamento (behavioral cloning, BC): transformar o problema em aprendizado supervisionado.",
+   "O acúmulo de erros: Durante o treino, o aprendiz só vê estados visitados pelo especialista.",
+   "DAgger: O DAgger (Dataset Aggregation) resolve esse problema pedindo ao especialista que rotule os estados"
+  ],
+  "notes": "A forma mais simples é a clonagem de comportamento (behavioral cloning, BC): transformar o problema em aprendizado supervisionado. Dados pares (estado, ação do especialista), treina-se um classificador (ou regressor) que prevê a ação do especialista a partir do estado. O sistema ALVINN, de Pomerleau (1991), aprendeu a dirigir um veículo assim, observando um motorista humano. A BC é simples e estável, mas tem um problema clássico. Durante o treino, o aprendiz só vê estados visitados pelo especialista. Ao executar a política aprendida, ele comete pequenos erros e chega a estados que o especialista nunca visitou, onde o classificador não foi treinado e erra mais. Os erros se acumulam com o tempo: um erro por passo vira, em T passos, um erro da ordem de T² (ROSS; GORDON; BAGNELL, 2011). O DAgger (Dataset Aggregation) resolve esse problema pedindo ao especialista que rotule os estados visitados pelo aprendiz (ROSS; GORDON; BAGNELL, 2011): O custo é precisar do especialista disponível durante o treino (para rotular).",
+  "num": "12.2"
+ },
+ {
+  "t": "bullets",
+  "title": "Aprendizado por imitação (cont.)",
+  "items": [
+   "– Treine o aprendiz com os dados atuais.",
+   "– Execute o aprendiz e registre os estados que ele visita.",
+   "– Peça ao especialista a ação correta para esses estados."
+  ],
+  "notes": "",
+  "num": "12.2"
+ },
+ {
+  "t": "fig",
+  "title": "Aprendizado por imitação",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f12_acumulo.png",
+   "w": 1411,
+   "h": 721
+  },
+  "cap": "Acúmulo de erros na clonagem de comportamento: o aprendiz sai da trajetória do especialista e entra em estados que nunca viu.",
+  "notes": "Figura 12.1 — Acúmulo de erros na clonagem de comportamento: o aprendiz sai da trajetória do especialista e entra em estados que nunca viu."
+ },
+ {
+  "t": "bullets",
+  "title": "Aprendizado por reforço inverso",
+  "items": [
+   "Em vez de imitar as ações, podemos inferir qual recompensa o especialista parece estar maximizando e depois otimizar essa recompensa.",
+   "– Aprendizado por aprendiz (apprenticeship learning): encontra uma política cujas estatísticas",
+   "– Entropia máxima (ZIEBART et al., 2008): entre as recompensas compatíveis com o especialista",
+   "– GAIL (generative adversarial imitation learning): treina um discriminador que tenta distinguir trajetórias do",
+   "A vantagem do IRL é que a recompensa inferida generaliza melhor que as ações copiadas e ajuda a entender o que o especialista valoriza."
+  ],
+  "notes": "Em vez de imitar as ações, podemos inferir qual recompensa o especialista parece estar maximizando e depois otimizar essa recompensa. Isso é o aprendizado por reforço inverso (IRL) (NG; RUSSELL, 2000). A vantagem do IRL é que a recompensa inferida generaliza melhor que as ações copiadas e ajuda a entender o que o especialista valoriza.",
+  "num": "12.3"
+ },
+ {
+  "t": "bullets",
+  "title": "Aprendizado por reforço offline",
+  "items": [
+   "No AR offline (também chamado de batch RL), queremos uma política melhor que a dos dados, aprendendo apenas do conjunto fixo (LEVINE et al., 2020).",
+   "O problema do deslocamento de distribuição: Ao calcular o alvo y = r + γ maxₐ′ Q(s′, a′), o Q-learning avalia ações a′ que nunca aparecem nos dados.",
+   "A ideia comum: confiar apenas no que os dados mostram: Restringir a política a ações próximas das dos dados: BCQ (FUJIMOTO; MEGER; PRECUP, 2019)."
+  ],
+  "notes": "No AR offline (também chamado de batch RL), queremos uma política melhor que a dos dados, aprendendo apenas do conjunto fixo (LEVINE et al., 2020). Algoritmos off-policy como o Q-learning parecem resolver, mas há uma armadilha. Ao calcular o alvo y = r + γ maxₐ′ Q(s′, a′), o Q-learning avalia ações a′ que nunca aparecem nos dados. A rede, sem exemplos, superestima o valor dessas ações (extrapolação). A política passa a preferir ações nunca testadas, e, sem poder interagir, ninguém corrige o erro. Resultado: colapso do desempenho. Há benchmarks como o D4RL para comparar algoritmos offline (FU et al., 2020).",
+  "num": "12.4"
+ },
+ {
+  "t": "fig",
+  "title": "Aprendizado por reforço offline",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f12_deslocamento.png",
+   "w": 1290,
+   "h": 721
+  },
+  "cap": "O AR offline \"enxerga\" só uma parte do espaço de ações.",
+  "notes": "Figura 12.2 — O AR offline \"enxerga\" só uma parte do espaço de ações. O valor das ações fora dos dados é extrapolado e costuma ser superestimado."
+ },
+ {
+  "t": "bullets",
+  "title": "Avaliação de políticas a partir de dados registrados",
+  "items": [
+   "Antes de colocar uma política nova em produção, queremos estimar seu valor com os dados antigos.",
+   "O desafio: só conhecemos a recompensa da ação que de fato foi tomada.",
+   "Os estimadores: Seja e(x) = P(a | x) a propensão: a probabilidade de a política de registro ter escolhido a ação a no contexto x.",
+   "Condições necessárias: Sobreposição (positividade): se a política-alvo escolhe uma ação em algum contexto"
+  ],
+  "notes": "Antes de colocar uma política nova em produção, queremos estimar seu valor com os dados antigos. Esse é o problema da avaliação off-policy (off-policy evaluation, OPE). Considere o caso mais simples, um bandit com dados registrados: para cada exemplo temos o contexto x, a ação a tomada pela política de registro (ou de comportamento, π₀) e a recompensa y. Queremos estimar o valor de uma política-alvo π: O desafio: só conhecemos a recompensa da ação que de fato foi tomada. O que teria acontecido com a outra ação é desconhecido. Isso se chama dado contrafactual faltante. Seja e(x) = P(a | x) a propensão: a probabilidade de a política de registro ter escolhido a ação a no contexto x. Seja μ̂(x, a) um modelo do resultado esperado (treinado com os dados). Em palavras: \"comece pela previsão do modelo e corrija o erro dela, nos casos em que a ação coincide, com o peso de importância\". É consistente se o modelo OU a propensão estiver correto (DUDÍK; LANGFORD; LI, 2011). Para decisões de alto risco, existem métodos que dão limites de confiança conservadores para o valor de uma política (THOMAS; THEOCHAROUS; GHAVAMZADEH, 2015), e métodos para avaliação em sequências (THOMAS; BRUNSKILL, 2016).",
+  "num": "12.5"
+ },
+ {
+  "t": "formula",
+  "title": "Avaliação de políticas a partir de dados registrados",
+  "formula": "V̂_DR = média[ μ̂(x, π(x)) + 1[a = π(x)] / e(x, a) × ( y − μ̂(x, a) ) ]",
+  "words": "Em palavras: \"comece pela previsão do modelo e corrija o erro dela, nos casos em que a ação coincide, com o peso de importância\". É consistente se o modelo OU a propensão estiver correto (DUDÍK; LANGFORD; LI, 2011)."
+ },
+ {
+  "t": "table",
+  "title": "Avaliação de políticas a partir de dados registrados",
+  "rows": [
+   [
+    "Estimador",
+    "Viés",
+    "Variância",
+    "Precisa de"
+   ],
+   [
+    "DM",
+    "Se o modelo é ruim",
+    "Baixa",
+    "Modelo do resultado"
+   ],
+   [
+    "IPS",
+    "Nenhum (propensão correta)",
+    "Alta",
+    "Propensões"
+   ],
+   [
+    "SNIPS",
+    "Pequeno",
+    "Média",
+    "Propensões"
+   ],
+   [
+    "DR",
+    "Pequeno",
+    "Média/baixa",
+    "Ambos (basta um correto)"
+   ]
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Associação e causalidade",
+  "items": [
+   "Em marketing, o equivalente é: \"o banco liga por celular para clientes que já parecem mais receptivos\"."
+  ],
+  "notes": "Todos esses métodos tentam responder a uma pergunta causal: \"o que teria acontecido se tivéssemos feito outra coisa?\". Dados observacionais podem enganar: Em marketing, o equivalente é: \"o banco liga por celular para clientes que já parecem mais receptivos\". A taxa de sucesso do celular parece maior, mas parte é efeito de quem foi escolhido. Ajustar pelas propensões ajuda somente se as variáveis relevantes forem observadas.",
+  "num": "12.6"
+ },
+ {
+  "t": "cotidiano",
+  "title": "Um exemplo clássico",
+  "items": [
+   "Hospitais enviam os pacientes mais graves para a UTI."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "Um especialista para o CartPole",
+   "Clonagem de comportamento e acúmulo de erros",
+   "DAgger",
+   "AR offline com o Fitted Q-Iteration",
+   "Avaliação off-policy com dados do Bank Marketing",
+   "Qual estimador é melhor? Um experimento controlado"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f12_estimadores.png",
+   "w": 1399,
+   "h": 716
+  },
+  "cap": "Comparação dos estimadores de avaliação off-policy num experimento simulado",
+  "notes": "Figura 12.3 — Comparação dos estimadores de avaliação off-policy num experimento simulado (dados sintéticos, 200 repetições): o método direto (DM) é enviesado (seu modelo é mal especificado) e pouco disperso; o IPS é praticamente sem viés, mas o mais disperso; o SNIPS e o duplamente robusto (DR) mantêm o viés baixo com dispersão um pouco menor. A linha tracejada é o valor verdadeiro."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "auditando a escolha do canal de contato"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Entrega: notebook com as estimativas, os intervalos, o diagnóstico de sobreposição, a análise de sensibilidade e a conclusão crítica.",
+   "Reproduza a Seção 12.7.5 e calcule DM, IPS, SNIPS e DR para \"sempre celular\" e \"sempre telefone fixo\".",
+   "Calcule intervalos de confiança de 95% para o DR por bootstrap (sklearn.utils.resample), reamostrando os exemplos.",
+   "Verifique a sobreposição: faça um histograma da propensão e(x)."
+  ],
+  "notes": "Contexto. O banco do Bank Marketing quer saber se sempre contatar por celular aumentaria as contratações. Você fará uma avaliação off-policy com intervalos de confiança e uma análise crítica de suas hipóteses. Tarefas: Ponto de partida (bootstrap do DR): Entrega: notebook com as estimativas, os intervalos, o diagnóstico de sobreposição, a análise de sensibilidade e a conclusão crítica."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Offline: aprender de dados fixos quando interagir é caro ou perigoso.",
+   "Imitação: BC é aprendizado supervisionado de ações do especialista, mas erros se acumulam fora da distribuição; o DAgger rotula os estados visitados pelo aprendiz.",
+   "IRL/GAIL: inferem a recompensa (ou a distribuição) do especialista."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "AR offline: o deslocamento de distribuição faz o Q-learning superestimar ações fora dos dados; BCQ, CQL e IQL restringem ou penalizam essas ações.",
+   "OPE: DM (modelo), IPS/SNIPS (pesos) e DR (os dois) estimam o valor de uma política com dados registrados; exigem sobreposição e propensões corretas.",
+   "Associação ≠ causalidade: variáveis ocultas podem invalidar as conclusões."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "A clonagem de comportamento (BC) trata o problema como:",
+  "opts": [
+   "aprendizado supervisionado de ações do especialista a partir de estados.",
+   "aprendizado por reforço com recompensas.",
+   "agrupamento.",
+   "planejamento."
+  ],
+  "ans": "a",
+  "exp": "Prevê a ação do especialista dado o estado."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "O GAIL (imitação adversarial generativa) usa:",
+  "opts": [
+   "um discriminador que distingue trajetórias do especialista e do aprendiz.",
+   "apenas regras escritas.",
+   "uma árvore de decisão.",
+   "o Q-learning tabular."
+  ],
+  "ans": "a",
+  "exp": "O discriminador fornece a recompensa para o aprendiz."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "O IQL aprende valores:",
+  "opts": [
+   "sem avaliar ações fora do conjunto de dados.",
+   "apenas com ações aleatórias.",
+   "com um modelo do ambiente.",
+   "com Monte Carlo."
+  ],
+  "ans": "a",
+  "exp": "Usa regressão por expectis sobre ações dos dados."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "O método direto (DM) estima o valor da política:",
+  "opts": [
+   "usando um modelo do resultado esperado, com baixa variância mas possível viés.",
+   "usando apenas pesos de importância.",
+   "por simulação do ambiente real.",
+   "sem dados."
+  ],
+  "ans": "a",
+  "exp": "O viés vem de erros de especificação do modelo."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) a  —  Prevê a ação do especialista dado o estado.",
+   "2) a  —  O discriminador fornece a recompensa para o aprendiz.",
+   "3) a  —  Usa regressão por expectis sobre ações dos dados.",
+   "4) a  —  O viés vem de erros de especificação do modelo."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Dê três situações reais em que o AR offline é preferível ao online e explique por quê.",
+   "Defina avaliação off-policy e explique por que ela é importante antes de implantar uma política.",
+   "Descreva o experimento semissintético da Seção 12.7.6 e por que ele é útil."
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Aprendizado Offline, por Imitação e Avaliação de Políticas"
+ }
+]

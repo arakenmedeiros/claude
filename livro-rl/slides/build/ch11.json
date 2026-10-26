@@ -1,0 +1,432 @@
+[
+ {
+  "t": "title",
+  "num": 11,
+  "title": "Aprendizado Baseado em Modelo e Planejamento",
+  "banner": "/home/user/claude/livro-rl/figs/banner11.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Distinguir métodos livres de modelo e baseados em modelo, com vantagens e riscos.",
+   "Descrever a arquitetura Dyna e implementar o Dyna-Q.",
+   "Aprender um modelo de dinâmica com scikit-learn e usá-lo em controle preditivo (MPC).",
+   "Explicar o acúmulo de erros do modelo e como mitigá-lo.",
+   "Implementar a busca em árvore de Monte Carlo (MCTS) e explicar o AlphaZero e o MuZero.",
+   "Construir e validar um simulador de clientes a partir de dados reais."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Pensar antes de agir",
+   "O que é um modelo?",
+   "Dyna: aprender, planejar e agir juntos",
+   "Planejamento em tempo de decisão",
+   "Busca em árvore de Monte Carlo (MCTS)",
+   "De AlphaGo a MuZero",
+   "Modelos de mundo profundos",
+   "Quando usar métodos baseados em modelo?",
+   "Mão na massa",
+   "Projeto do capítulo: um \"mundo imaginado\" de clientes",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Pensar antes de agir",
+  "items": [
+   "Um enxadrista experiente não testa jogadas no tabuleiro real.",
+   "Até aqui, quase todos os métodos eram livres de modelo: aprendiam valores ou políticas direto da experiência:",
+   "– Aprender um modelo do ambiente (prever o próximo estado e a recompensa).",
+   "– Planejar com o modelo, ou seja, usá-lo para simular experiências e melhorar a política ou o valor."
+  ],
+  "notes": "Um enxadrista experiente não testa jogadas no tabuleiro real. Ele imagina: \"se eu mover o bispo, ele responde com a torre, então eu...\". Ele tem um modelo da dinâmica do jogo na cabeça e planeja com ele. Até aqui, quase todos os métodos eram livres de modelo: aprendiam valores ou políticas direto da experiência. O aprendizado baseado em modelo (model-based) acrescenta uma etapa:",
+  "num": "11.1"
+ },
+ {
+  "t": "table",
+  "title": "Pensar antes de agir",
+  "rows": [
+   [
+    "",
+    "Livre de modelo",
+    "Baseado em modelo"
+   ],
+   [
+    "Aprende",
+    "Valores ou política",
+    "Modelo + valores/política"
+   ],
+   [
+    "Eficiência de dados",
+    "Baixa",
+    "Alta"
+   ],
+   [
+    "Custo computacional",
+    "Baixo por passo",
+    "Alto (planeja)"
+   ],
+   [
+    "Risco principal",
+    "Instabilidade",
+    "Erros do modelo"
+   ],
+   [
+    "Exemplo",
+    "DQN, PPO",
+    "Dyna, MPC, AlphaZero, MuZero"
+   ]
+  ]
+ },
+ {
+  "t": "cotidiano",
+  "title": "Treino mental",
+  "items": [
+   "Atletas usam visualização: ensaiam mentalmente uma jogada antes de executá-la."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "O que é um modelo?",
+  "items": [
+   "Um modelo é qualquer coisa que o agente use para prever como o ambiente reage:",
+   "– Modelo de distribuição: dá todas as probabilidades de resultado, p(s′, r | s, a).",
+   "– Modelo de amostras: dado (s, a), sorteia um resultado (s′, r).",
+   "O modelo pode ser dado (as regras do xadrez, um simulador físico) ou aprendido dos dados, por aprendizado supervisionado: a entrada é (s, a)",
+   "O perigo: erros que se acumulam: Um modelo aprendido nunca é perfeito."
+  ],
+  "notes": "Um modelo é qualquer coisa que o agente use para prever como o ambiente reage. Há dois tipos principais: O modelo pode ser dado (as regras do xadrez, um simulador físico) ou aprendido dos dados, por aprendizado supervisionado: a entrada é (s, a), e a saída é o próximo estado e a recompensa. Aqui o scikit-learn brilha: qualquer regressor serve. Um modelo aprendido nunca é perfeito. Ao encadear previsões (prever o passo 2 a partir da previsão do passo 1, e assim por diante), os erros se acumulam, e o futuro distante fica irreal. Daí a regra prática: planeje com horizontes curtos e replaneje com frequência.",
+  "num": "11.2"
+ },
+ {
+  "t": "fig",
+  "title": "O que é um modelo?",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f11_horizonte.png",
+   "w": 1338,
+   "h": 721
+  },
+  "cap": "Erro de previsão de um modelo de CartPole aprendido com 8.000 transições: o erro cresce a cada passo previsto à frente.",
+  "notes": "Figura 11.1 — Erro de previsão de um modelo de CartPole aprendido com 8.000 transições: o erro cresce a cada passo previsto à frente."
+ },
+ {
+  "t": "bullets",
+  "title": "Dyna: aprender, planejar e agir juntos",
+  "items": [
+   "O Dyna (SUTTON, 1991) é uma arquitetura simples e elegante que mistura aprendizado e planejamento:",
+   "– Aprende direto: atualiza Q com a experiência real (como no Q-learning).",
+   "– Aprende o modelo: guarda o que aconteceu (s, a → r, s′).",
+   "– Planeja: executa n atualizações simuladas, escolhendo pares (s, a) já vistos e usando o modelo para gerar r e s′.",
+   "O Dyna-Q é o Dyna com o Q-learning tabular."
+  ],
+  "notes": "O Dyna (SUTTON, 1991) é uma arquitetura simples e elegante que mistura aprendizado e planejamento. A cada passo real, o agente faz três coisas: O Dyna-Q é o Dyna com o Q-learning tabular. Com n = 0 é o Q-learning puro. Com n grande, cada passo real equivale a dezenas de passos de aprendizado. No labirinto abaixo, isso reduz o aprendizado de centenas de passos para dezenas.",
+  "num": "11.3"
+ },
+ {
+  "t": "fig",
+  "title": "Dyna: aprender, planejar e agir juntos",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f11_ciclo.png",
+   "w": 1381,
+   "h": 640
+  },
+  "cap": "A arquitetura Dyna: cada passo real alimenta o modelo, que gera muitos passos imaginados para atualizar a política.",
+  "notes": "Figura 11.2 — A arquitetura Dyna: cada passo real alimenta o modelo, que gera muitos passos imaginados para atualizar a política."
+ },
+ {
+  "t": "fig",
+  "title": "Dyna: aprender, planejar e agir juntos",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f11_dyna.png",
+   "w": 1714,
+   "h": 639
+  },
+  "cap": "O labirinto do Dyna e a curva de aprendizado com diferentes números de passos de planejamento (média de 10 sementes).",
+  "notes": "Figura 11.3 — O labirinto do Dyna e a curva de aprendizado com diferentes números de passos de planejamento (média de 10 sementes)."
+ },
+ {
+  "t": "bullets",
+  "title": "Planejamento em tempo de decisão",
+  "items": [
+   "O Dyna planeja em segundo plano para melhorar a política.",
+   "Controle preditivo por modelo (MPC): O MPC (model predictive control) é muito usado em engenharia",
+   "– Sorteie muitas sequências de ações de horizonte H (por exemplo, 15 passos).",
+   "– Simule cada sequência no modelo e some as recompensas previstas.",
+   "– Execute só a primeira ação da melhor sequência."
+  ],
+  "notes": "O Dyna planeja em segundo plano para melhorar a política. A alternativa é planejar na hora de decidir: dado o estado atual, usar o modelo para escolher a melhor ação agora, sem necessidade de política global. O MPC (model predictive control) é muito usado em engenharia. A cada passo: Replanejar corrige os erros do modelo. Quando as sequências são sorteadas ao acaso, o método se chama random shooting. Versões mais refinadas otimizam as sequências (por exemplo, o método da entropia cruzada do Capítulo 1).",
+  "num": "11.4"
+ },
+ {
+  "t": "fig",
+  "title": "Planejamento em tempo de decisão",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f11_mpc.png",
+   "w": 1381,
+   "h": 524
+  },
+  "cap": "MPC com amostragem aleatória: sorteia sequências, simula no modelo, executa a primeira ação da melhor e replaneja.",
+  "notes": "Figura 11.4 — MPC com amostragem aleatória: sorteia sequências, simula no modelo, executa a primeira ação da melhor e replaneja."
+ },
+ {
+  "t": "bullets",
+  "title": "Busca em árvore de Monte Carlo (MCTS)",
+  "items": [
+   "Em jogos e problemas de decisão discretos, a busca em árvore de Monte Carlo:",
+   "– Seleção: desce a árvore a partir do estado atual escolhendo filhos pela regra UCT",
+   "onde w/n é a taxa de vitórias do filho (exploração do que já se sabe), n o número de visitas ao filho, N o do pai e c uma constante (cerca de 1,4).",
+   "– Expansão: acrescenta um novo nó (uma jogada ainda não tentada)."
+  ],
+  "notes": "Em jogos e problemas de decisão discretos, a busca em árvore de Monte Carlo (Monte Carlo Tree Search, MCTS) planeja construindo, aos poucos, uma árvore de jogadas futuras, concentrando o esforço nos ramos mais promissores (COULOM, 2006; KOCSIS; SZEPESVÁRI, 2006; BROWNE et al., 2012). Cada iteração tem quatro fases: onde w/n é a taxa de vitórias do filho (exploração do que já se sabe), n o número de visitas ao filho, N o do pai e c uma constante (cerca de 1,4). Depois de milhares de iterações, escolhe-se a jogada mais visitada da raiz. A MCTS tem duas qualidades notáveis: não precisa de uma função de avaliação feita à mão (usa simulações) e é anytime (quanto mais tempo, melhor a decisão).",
+  "num": "11.5"
+ },
+ {
+  "t": "bullets",
+  "title": "Busca em árvore de Monte Carlo (MCTS) (cont.)",
+  "items": [
+   "– Simulação (rollout): joga a partida aleatoriamente até o fim, a partir do novo nó.",
+   "– Retropropagação: atualiza vitórias e visitas em todos os nós do caminho de volta.",
+   "Depois de milhares de iterações, escolhe-se a jogada mais visitada da raiz.",
+   "A MCTS tem duas qualidades notáveis: não precisa de uma função de avaliação feita à mão (usa simulações) e é anytime"
+  ],
+  "notes": "",
+  "num": "11.5"
+ },
+ {
+  "t": "fig",
+  "title": "Busca em árvore de Monte Carlo (MCTS)",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f11_mcts_fases.png",
+   "w": 1712,
+   "h": 528
+  },
+  "cap": "As quatro fases do MCTS.",
+  "notes": "Figura 11.5 — As quatro fases do MCTS."
+ },
+ {
+  "t": "bullets",
+  "title": "De AlphaGo a MuZero",
+  "items": [
+   "Avaliar posições do Go com simulações aleatórias não bastava.",
+   "O AlphaZero simplificou e generalizou: sem nenhum dado humano, partindo só das regras, aprendeu Go:",
+   "– Autojogo: a MCTS, guiada pela rede, escolhe as jogadas das partidas.",
+   "– Dados: para cada posição, guardam-se as probabilidades de visita da MCTS (um \"professor\" melhor que a rede) e o"
+  ],
+  "notes": "Avaliar posições do Go com simulações aleatórias não bastava. O AlphaGo combinou a MCTS com redes neurais profundas: uma rede de política (para sugerir jogadas promissoras) e uma rede de valor (para avaliar posições), treinadas com partidas de humanos e, depois, com autojogo e AR (SILVER et al., 2016). O AlphaZero simplificou e generalizou: sem nenhum dado humano, partindo só das regras, aprendeu Go, xadrez e shogi apenas jogando contra si mesmo (SILVER et al., 2017; 2018). O ciclo é: O MuZero foi além: nem as regras são dadas. Ele aprende um modelo (em um espaço latente, \"abstrato\") apenas daquilo que importa para o planejamento: a recompensa, a política e o valor, e ainda assim planeja com MCTS. Igualou o AlphaZero em Go, xadrez e shogi e superou métodos anteriores em Atari (SCHRITTWIESER et al., 2020).",
+  "num": "11.6"
+ },
+ {
+  "t": "bullets",
+  "title": "De AlphaGo a MuZero (cont.)",
+  "items": [
+   "– Treino: a rede aprende a prever as jogadas da MCTS e o resultado.",
+   "– A rede melhorada guia a MCTS seguinte.",
+   "O MuZero foi além: nem as regras são dadas."
+  ],
+  "notes": "",
+  "num": "11.6"
+ },
+ {
+  "t": "fig",
+  "title": "De AlphaGo a MuZero",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f11_alphazero.png",
+   "w": 1423,
+   "h": 564
+  },
+  "cap": "O ciclo do AlphaZero: a MCTS melhora a rede, e a rede melhora a MCTS.",
+  "notes": "Figura 11.6 — O ciclo do AlphaZero: a MCTS melhora a rede, e a rede melhora a MCTS."
+ },
+ {
+  "t": "bullets",
+  "title": "Modelos de mundo profundos",
+  "items": [
+   "Em problemas com imagens e dinâmicas complexas, o modelo é uma rede neural:",
+   "– World Models (HA; SCHMIDHUBER, 2018): aprendem uma representação comprimida do mundo e uma rede recorrente que prevê o",
+   "– Dreamer (HAFNER et al., 2020): aprende um modelo latente e treina o agente apenas com trajetórias imaginadas.",
+   "– PILCO (DEISENROTH; RASMUSSEN, 2011): usa processos gaussianos que modelam a incerteza e é muito eficiente em dados em",
+   "– MBPO (JANNER et al., 2019): usa o modelo para gerar rollouts curtos, a partir de estados reais"
+  ],
+  "notes": "Em problemas com imagens e dinâmicas complexas, o modelo é uma rede neural: O agente tende a explorar as falhas do modelo: procura regiões em que o modelo erra a favor dele. Mitigações:",
+  "num": "11.7"
+ },
+ {
+  "t": "bullets",
+  "title": "Modelos de mundo profundos (cont.)",
+  "items": [
+   "– Conjuntos de modelos (CHUA et al., 2018): vários modelos treinados com dados reamostrados",
+   "Incerteza e exploração do modelo: O agente tende a explorar as falhas do modelo: procura regiões em que o modelo erra a favor dele",
+   "– Horizontes curtos e replanejamento.",
+   "– Conjuntos de modelos e penalidade pela incerteza (desconfiar onde os modelos discordam).",
+   "– Misturar dados reais e simulados."
+  ],
+  "notes": "",
+  "num": "11.7"
+ },
+ {
+  "t": "bullets",
+  "title": "Quando usar métodos baseados em modelo?",
+  "items": [
+   "– Dados reais são caros (robôs, saúde, processos industriais): o modelo economiza interações.",
+   "– As regras são conhecidas (jogos de tabuleiro): o modelo é perfeito e a busca é poderosa.",
+   "– Há segurança em jogo: planejar antes de agir evita erros caros.",
+   "Evite quando o ambiente é muito complexo para modelar com os dados disponíveis ou quando o erro do modelo é mais prejudicial que a ineficiência de"
+  ],
+  "notes": "Evite quando o ambiente é muito complexo para modelar com os dados disponíveis ou quando o erro do modelo é mais prejudicial que a ineficiência de dados.",
+  "num": "11.8"
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "Dyna-Q no labirinto",
+   "Aprendendo o modelo do CartPole e medindo o acúmulo de erros",
+   "MPC com o modelo aprendido",
+   "MCTS na velha"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f11_amostras.png",
+   "w": 1299,
+   "h": 707
+  },
+  "cap": "Retorno do MPC conforme a quantidade de transições aleatórias usadas para aprender o modelo (3 episódios por barra; as barras de erro mostram o desvio-padrão).",
+  "notes": "Figura 11.7 — Retorno do MPC conforme a quantidade de transições aleatórias usadas para aprender o modelo (3 episódios por barra; as barras de erro mostram o desvio-padrão). Mesmo com 500 transições, o planejamento supera muito o agente aleatório (≈ 22). As diferenças entre as barras são pequenas diante da variação entre episódios, então não se deve concluir que mais dados piorem o resultado: faltam episódios para distinguir."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f11_mcts_res.png",
+   "w": 1329,
+   "h": 839
+  },
+  "cap": "Resultado do MCTS contra um jogador aleatório, em função do número de simulações por jogada.",
+  "notes": "Figura 11.8 — Resultado do MCTS contra um jogador aleatório, em função do número de simulações por jogada."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "um \"mundo imaginado\" de clientes"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Entrega: notebook com a avaliação por horizonte, a medida de incerteza com o conjunto",
+   "Carregue painel_clientes.csv e monte (estado atual) → (próximo estado, gasto).",
+   "Divida os clientes em treino e teste (GroupKFold).",
+   "Meça o erro de 1 passo no teste."
+  ],
+  "notes": "Contexto. No Capítulo 7, vimos o painel mensal de clientes (recência, frequência, gasto) da base Online Retail (UCI). Agora construímos um modelo de mundo do cliente: dado o estado atual, prevê o estado e o gasto do mês seguinte. Com ele, podemos simular o futuro de cada cliente, e avaliar o quão confiável é essa simulação. Tarefas: Ponto de partida: Entrega: notebook com a avaliação por horizonte, a medida de incerteza com o conjunto, a comparação dos três valores de vida e a conclusão sobre os usos adequados do simulador."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Baseado em modelo: aprender um modelo (s, a → s′, r) e planejar com ele; muito mais eficiente em dados, porém sujeito a erros do modelo.",
+   "Os erros do modelo se acumulam com o horizonte: planeje curto e replaneje.",
+   "Dyna: aprende direto, aprende o modelo e planeja com passos imaginados; o Dyna-Q acelera muito o aprendizado."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "MPC: simula sequências de ações no modelo e executa a primeira da melhor, replanejando sempre.",
+   "MCTS: seleção (UCT), expansão, simulação e retropropagação; AlphaZero e MuZero a combinam com redes neurais e autojogo.",
+   "Incerteza (conjuntos de modelos) e validação no ambiente real protegem contra a exploração das falhas do modelo."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "O principal risco do aprendizado baseado em modelo é:",
+  "opts": [
+   "erros do modelo, que o agente pode explorar.",
+   "falta de recompensas.",
+   "excesso de dados.",
+   "impossibilidade de usar redes neurais."
+  ],
+  "ans": "a",
+  "exp": "Um modelo imperfeito leva a decisões ruins no mundo real."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "O Dyna-Q com n = 0 passos de planejamento equivale a:",
+  "opts": [
+   "Q-learning puro.",
+   "Monte Carlo.",
+   "programação dinâmica.",
+   "SARSA(λ)."
+  ],
+  "ans": "a",
+  "exp": "Sem planejamento, só há aprendizado direto."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "As quatro fases da MCTS são:",
+  "opts": [
+   "seleção, expansão, simulação e retropropagação.",
+   "coleta, treino, avaliação e teste.",
+   "amostragem, normalização, predição e perda.",
+   "exploração, aproveitamento, desconto e recompensa."
+  ],
+  "ans": "a",
+  "exp": "São repetidas a cada iteração."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "No AlphaZero, a rede é treinada para prever:",
+  "opts": [
+   "as probabilidades de visita da MCTS e o resultado da partida.",
+   "apenas o resultado.",
+   "apenas a jogada humana.",
+   "o próximo quadro da imagem."
+  ],
+  "ans": "a",
+  "exp": "A MCTS serve como professor mais forte que a rede."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) a  —  Um modelo imperfeito leva a decisões ruins no mundo real.",
+   "2) a  —  Sem planejamento, só há aprendizado direto.",
+   "3) a  —  São repetidas a cada iteração.",
+   "4) a  —  A MCTS serve como professor mais forte que a rede."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Compare aprendizado livre de modelo e baseado em modelo quanto a eficiência de dados, custo computacional e riscos.",
+   "Calcule o valor UCT, com c = 1,4, de um filho com w = 6 vitórias, n = 10 visitas e pai com N = 50 visitas.",
+   "Explique por que o modelo de dinâmica do CartPole prevê a variação do estado (Δs) em vez do próximo estado."
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Aprendizado Baseado em Modelo e Planejamento"
+ }
+]

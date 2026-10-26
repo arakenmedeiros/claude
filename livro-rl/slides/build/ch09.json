@@ -1,0 +1,411 @@
+[
+ {
+  "t": "title",
+  "num": 9,
+  "title": "Gradientes de Política e Atores-Críticos",
+  "banner": "/home/user/claude/livro-rl/figs/banner9.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar por que aprender a política diretamente pode ser melhor que aprender valores.",
+   "Descrever políticas parametrizadas (softmax e gaussiana).",
+   "Enunciar a ideia do teorema do gradiente de política e implementar o REINFORCE.",
+   "Explicar a linha de base e demonstrar a redução de variância.",
+   "Implementar um ator-crítico e descrever A2C, A3C e a vantagem generalizada (GAE).",
+   "Explicar a motivação de TRPO e PPO (passos de confiança).",
+   "Aplicar um gradiente de política a um problema de decisão com dados reais."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Aprender a política diretamente",
+   "Políticas parametrizadas",
+   "O objetivo e a ascensão do gradiente",
+   "O teorema do gradiente de política",
+   "REINFORCE",
+   "A linha de base (baseline)",
+   "Atores-críticos",
+   "Entropia: incentivando a exploração",
+   "Passos de confiança: política natural e TRPO",
+   "Valor × política × ator-crítico",
+   "Mão na massa",
+   "Projeto do capítulo: quem vale a pena ligar?"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Aprender a política diretamente",
+  "items": [
+   "Até aqui, aprendemos valores (v e q) e deduzimos a política (escolher a ação de maior valor):",
+   "– Ações contínuas: como escolher \"o máximo de Q\" quando a ação é um número real (torque de um motor)?",
+   "– Políticas estocásticas: em jogos com informação oculta (pôquer, pedra-papel-tesoura), a política ótima é aleatória.",
+   "– Mudanças bruscas: uma pequena mudança em Q pode alterar completamente a ação escolhida (a ação \"pula\")",
+   "A alternativa é aprender a política π(a | s; θ) diretamente, como uma função suave de parâmetros θ, e ajustar θ para aumentar o retorno esperado."
+  ],
+  "notes": "Até aqui, aprendemos valores (v e q) e deduzimos a política (escolher a ação de maior valor). Esse caminho tem limitações: A alternativa é aprender a política π(a | s; θ) diretamente, como uma função suave de parâmetros θ, e ajustar θ para aumentar o retorno esperado. Esses são os métodos de gradiente de política (policy gradient).",
+  "num": "9.1"
+ },
+ {
+  "t": "cotidiano",
+  "title": "Treinador × analista",
+  "items": [
+   "Um analista (método de valor) calcula uma nota para cada jogada possível e escolhe a de maior nota."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "Políticas parametrizadas",
+  "items": [
+   "– Ações discretas: softmax.",
+   "– Ações contínuas: gaussiana.",
+   "Uma vantagem é que a exploração é embutida: a política já sorteia ações, sem precisar de ε-gulosa."
+  ],
+  "notes": "Uma vantagem é que a exploração é embutida: a política já sorteia ações, sem precisar de ε-gulosa. E, ao final do treino, o desvio tende a diminuir sozinho.",
+  "num": "9.2"
+ },
+ {
+  "t": "fig",
+  "title": "Políticas parametrizadas",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f9_politicas.png",
+   "w": 1714,
+   "h": 621
+  },
+  "cap": "À esquerda, uma política softmax para três ações.",
+  "notes": "Figura 9.1 — À esquerda, uma política softmax para três ações. À direita, duas políticas gaussianas com a mesma média e desvios diferentes."
+ },
+ {
+  "t": "bullets",
+  "title": "O objetivo e a ascensão do gradiente",
+  "items": [
+   "Medimos a qualidade de θ pelo retorno esperado J(θ) (por exemplo, o valor do estado inicial sob π).",
+   "O problema é: como calcular ∇J(θ) se J depende do ambiente, que desconhecemos?"
+  ],
+  "notes": "Medimos a qualidade de θ pelo retorno esperado J(θ) (por exemplo, o valor do estado inicial sob π). Queremos subir J. Usamos a ascensão do gradiente: o oposto da descida. O problema é: como calcular ∇J(θ) se J depende do ambiente, que desconhecemos? A resposta é o resultado mais importante deste capítulo.",
+  "num": "9.3"
+ },
+ {
+  "t": "bullets",
+  "title": "O teorema do gradiente de política",
+  "items": [
+   "O termo ∇ ln π(Aₜ | Sₜ) indica como mudar θ para tornar a ação Aₜ mais provável."
+  ],
+  "notes": "O teorema do gradiente de política (SUTTON et al., 2000) mostra que o gradiente do desempenho pode ser estimado apenas com amostras de episódios, sem derivar o ambiente: Em palavras: a direção de melhora é a média, sobre o que o agente viveu, de (retorno) × (direção que aumenta a probabilidade da ação tomada). O termo ∇ ln π(Aₜ | Sₜ) indica como mudar θ para tornar a ação Aₜ mais provável. O retorno Gₜ atua como nota: se foi alto, aumentamos a probabilidade da ação; se foi baixo, diminuímos.",
+  "num": "9.4"
+ },
+ {
+  "t": "formula",
+  "title": "O teorema do gradiente de política",
+  "formula": "∇J(θ) = Eπ [ Gₜ ∇ ln π(Aₜ | Sₜ; θ) ]",
+  "words": "Em palavras: a direção de melhora é a média, sobre o que o agente viveu, de (retorno) × (direção que aumenta a probabilidade da ação tomada)."
+ },
+ {
+  "t": "fig",
+  "title": "O teorema do gradiente de política",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f9_ideia.png",
+   "w": 1713,
+   "h": 593
+  },
+  "cap": "A ideia do gradiente de política: o retorno é a \"nota\" que reforça ou enfraquece as ações que o agente escolheu.",
+  "notes": "Figura 9.2 — A ideia do gradiente de política: o retorno é a \"nota\" que reforça ou enfraquece as ações que o agente escolheu."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Um passo numérico",
+  "items": [
+   "Uma política tem 3 ações com probabilidades (0,3; 0,4; 0,3).",
+   "Para uma política softmax com preferências h, o gradiente de ln π(a) em relação a h(a′) vale 1[a′ = a] − π(a′)."
+  ],
+  "head": "Exemplo"
+ },
+ {
+  "t": "bullets",
+  "title": "REINFORCE",
+  "items": [
+   "O REINFORCE (WILLIAMS, 1992) é o algoritmo mais direto:",
+   "– Jogue um episódio com a política atual, registrando estados, ações e recompensas.",
+   "– Para cada passo t, calcule o retorno Gₜ.",
+   "– Atualize: θ ← θ + α Gₜ ∇ ln π(Aₜ | Sₜ; θ).",
+   "É um método de Monte Carlo (Capítulo 5) para políticas."
+  ],
+  "notes": "O REINFORCE (WILLIAMS, 1992) é o algoritmo mais direto: É um método de Monte Carlo (Capítulo 5) para políticas. Herda as qualidades (sem viés, sem modelo) e os defeitos: variância alta, aprendizado lento e necessidade de episódios completos.",
+  "num": "9.5"
+ },
+ {
+  "t": "bullets",
+  "title": "A linha de base (baseline)",
+  "items": [
+   "Suponha que todos os retornos sejam positivos (por exemplo, no CartPole, cada episódio rende +1 por passo).",
+   "Como b(s) não depende da ação, a média do gradiente não muda (não introduz viés), mas a variância cai muito."
+  ],
+  "notes": "Suponha que todos os retornos sejam positivos (por exemplo, no CartPole, cada episódio rende +1 por passo). Então toda ação tomada é \"reforçada\", mesmo as ruins: só muda o quanto. Isso gera muito ruído. A solução é subtrair uma linha de base b(s) do retorno: Como b(s) não depende da ação, a média do gradiente não muda (não introduz viés), mas a variância cai muito. A melhor escolha prática é b(s) ≈ v̂(s), o valor do estado. A diferença Gₜ − v̂(Sₜ) mede o quanto a ação foi melhor que o esperado: é a vantagem.",
+  "num": "9.6"
+ },
+ {
+  "t": "fig",
+  "title": "A linha de base (baseline)",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f9_baseline.png",
+   "w": 1737,
+   "h": 673
+  },
+  "cap": "Estimativas do gradiente numa política com três ações e retornos próximos de 10.",
+  "notes": "Figura 9.3 — Estimativas do gradiente numa política com três ações e retornos próximos de 10. À esquerda, sem linha de base: a variância é enorme. À direita, com linha de base: a média é a mesma, mas as estimativas ficam bem mais concentradas."
+ },
+ {
+  "t": "bullets",
+  "title": "Atores-críticos",
+  "items": [
+   "O erro TD é uma estimativa da vantagem (quanto a ação superou o esperado):",
+   "– o ator (π, parâmetros θ): decide as ações;",
+   "– o crítico (v̂, parâmetros w): avalia os estados e fornece δ."
+  ],
+  "notes": "O REINFORCE espera o fim do episódio. E se usássemos bootstrapping (Capítulo 6)? Em vez do retorno Gₜ, usamos o erro TD: O erro TD é uma estimativa da vantagem (quanto a ação superou o esperado). O sistema tem dois componentes: As atualizações, a cada passo, são: Essa arquitetura vem de Barto, Sutton e Anderson (1983), que a aplicaram ao problema do poste no carrinho (o CartPole!), e foi formalizada por Konda e Tsitsiklis (2000). Em comparação com o REINFORCE, o ator-crítico aprende a cada passo, com menos variância, mas com algum viés (o crítico é aproximado). O A2C (advantage actor-critic) usa lotes de passos de vários ambientes em paralelo. O A3C é a versão assíncrona: vários \"trabalhadores\" jogam em paralelo, cada um com sua cópia, e enviam gradientes a uma rede central (MNIH et al., 2016). Isso substitui a memória de experiências do DQN por diversidade de experiências em paralelo. O erro TD de 1 passo tem pouca variância, mas tem viés (depende de um crítico imperfeito). O retorno completo não tem viés, mas tem variância alta. A estimativa de vantagem generalizada (GAE) mistura as duas ideias com um parâmetro λ entre 0 e 1 (SCHULMAN et al., 2016): Com λ = 0 é o erro TD; com λ = 1 é Gₜ − v̂(Sₜ). Valores como λ = 0,95 funcionam bem. É um TD(λ) para vantagens e é usado no PPO (Capítulo 10).",
+  "num": "9.7"
+ },
+ {
+  "t": "bullets",
+  "title": "Atores-críticos (cont.)",
+  "items": [
+   "Essa arquitetura vem de Barto, Sutton e Anderson (1983), que a aplicaram ao problema do poste no carrinho (o CartPole!)",
+   "A2C e A3C: O A2C (advantage actor-critic) usa lotes de passos de vários ambientes em paralelo.",
+   "Vantagem generalizada (GAE): Com λ = 0 é o erro TD; com λ = 1 é Gₜ − v̂(Sₜ)."
+  ],
+  "notes": "",
+  "num": "9.7"
+ },
+ {
+  "t": "fig",
+  "title": "Atores-críticos",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f9_ator_critico.png",
+   "w": 1381,
+   "h": 561
+  },
+  "cap": "O ator-crítico: o crítico calcula o erro TD, que serve para corrigir a si mesmo e para reforçar ou enfraquecer a ação do ator.",
+  "notes": "Figura 9.4 — O ator-crítico: o crítico calcula o erro TD, que serve para corrigir a si mesmo e para reforçar ou enfraquecer a ação do ator."
+ },
+ {
+  "t": "bullets",
+  "title": "Entropia: incentivando a exploração",
+  "items": [
+   "Para evitar que a política se torne determinística cedo demais, acrescenta-se à função objetivo um bônus de entropia (WILLIAMS; PENG, 1991)."
+  ],
+  "notes": "Para evitar que a política se torne determinística cedo demais, acrescenta-se à função objetivo um bônus de entropia (WILLIAMS; PENG, 1991). A entropia mede a incerteza da política (Apêndice I): é máxima quando todas as ações são igualmente prováveis. Um pequeno coeficiente (por exemplo, 0,01) mantém algum nível de exploração.",
+  "num": "9.8"
+ },
+ {
+  "t": "bullets",
+  "title": "Passos de confiança: política natural e TRPO",
+  "items": [
+   "Há um perigo: uma atualização grande demais pode piorar muito a política:",
+   "– Gradiente natural (KAKADE, 2002): mede \"distância\" entre políticas pela divergência KL (Apêndice I)",
+   "– TRPO (Trust Region Policy Optimization): maximiza a melhoria sob a restrição de que a KL entre a política nova e a"
+  ],
+  "notes": "Há um perigo: uma atualização grande demais pode piorar muito a política, e como os dados vêm da própria política, o agente pode nunca se recuperar (ele passa a coletar dados ruins). Duas ideias ajudam:",
+  "num": "9.9"
+ },
+ {
+  "t": "fig",
+  "title": "Passos de confiança: política natural e TRPO",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f9_regiao.png",
+   "w": 1156,
+   "h": 814
+  },
+  "cap": "Região de confiança: a política só dá passos dentro de uma região em que confiamos nas estimativas.",
+  "notes": "Figura 9.5 — Região de confiança: a política só dá passos dentro de uma região em que confiamos nas estimativas. O PPO (Capítulo 10) obtém o mesmo efeito com um truque mais simples."
+ },
+ {
+  "t": "table",
+  "title": "Valor × política × ator-crítico",
+  "rows": [
+   [
+    "Aspecto",
+    "Métodos de valor (DQN)",
+    "Gradiente de política (REINFORCE)",
+    "Ator-crítico (A2C, PPO, SAC)"
+   ],
+   [
+    "O que aprendem",
+    "q(s, a)",
+    "π(a \\| s)",
+    "π e v juntos"
+   ],
+   [
+    "Ações contínuas",
+    "Difícil",
+    "Natural",
+    "Natural"
+   ],
+   [
+    "Política estocástica",
+    "Não (precisa de ε)",
+    "Sim",
+    "Sim"
+   ],
+   [
+    "Variância",
+    "Baixa",
+    "Alta",
+    "Média"
+   ],
+   [
+    "Eficiência de dados",
+    "Alta (off-policy)",
+    "Baixa (on-policy)",
+    "Média"
+   ],
+   [
+    "Estabilidade",
+    "Frágil",
+    "Boa (passos pequenos)",
+    "Boa"
+   ]
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "O efeito da linha de base na variância",
+   "REINFORCE e ator-crítico em PyTorch",
+   "Avaliando a política com intervalo de confiança"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f9_curvas.png",
+   "w": 1485,
+   "h": 753
+  },
+  "cap": "Curvas de aprendizado no CartPole (média de 3 sementes, média móvel).",
+  "notes": "Figura 9.6 — Curvas de aprendizado no CartPole (média de 3 sementes, média móvel). O REINFORCE puro fica bem abaixo; com linha de base e com ator-crítico, os agentes chegam ao máximo (500), mas o desempenho oscila e pode cair depois. As faixas mostram o mínimo e o máximo entre as sementes."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "quem vale a pena ligar?"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Definimos: ligar custa 8 e uma contratação rende 100.",
+   "Entrega: notebook com o pré-processamento, a tabela de comparação, a curva de aprendizado da política e a discussão sobre feedback completo × parcial.",
+   "Prepare os dados: remova duration, trate valores ausentes, transforme categorias (OneHotEncoder) e padronize os números (StandardScaler)",
+   "Calcule as recompensas de referência no teste: ligar para todos, não ligar"
+  ],
+  "notes": "Contexto. No banco de dados Bank Marketing (UCI), cada linha é um cliente contatado por telefone, e sabemos se ele contratou o depósito (MORO; CORTEZ; RITA, 2014). Cada ligação custa (tempo da equipe) e uma contratação rende um valor. A decisão é: ligar ou não para cada cliente? Definimos: ligar custa 8 e uma contratação rende 100. Então a recompensa de ligar é 100·y − 8 (y = 1 se contratou) e a de não ligar é 0. Tarefas: Ponto de partida: Entrega: notebook com o pré-processamento, a tabela de comparação, a curva de aprendizado da política e a discussão sobre feedback completo × parcial."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Gradiente de política: aprender π(a | s; θ) diretamente, subindo o gradiente do retorno esperado.",
+   "Teorema: ∇J = E[Gₜ ∇ln π(Aₜ | Sₜ)]; reforça ações que deram bons retornos.",
+   "REINFORCE é Monte Carlo para políticas: sem viés, mas com variância alta.",
+   "A linha de base (por exemplo, v̂(s)) reduz a variância sem introduzir viés."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Atores-críticos: o crítico calcula o erro TD, que serve de vantagem para o ator.",
+   "A entropia mantém a exploração; TRPO e PPO limitam o tamanho do passo.",
+   "Com feedback completo, o aprendizado supervisionado costuma bastar."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "Para ações discretas, uma política parametrizada típica usa:",
+  "opts": [
+   "a função softmax sobre preferências h(s, a).",
+   "a função ReLU como saída.",
+   "uma distribuição gaussiana.",
+   "uma tabela fixa."
+  ],
+  "ans": "a",
+  "exp": "A softmax transforma preferências em probabilidades."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "Para uma política softmax, a derivada de ln π(a) em relação à preferência h(a′) é:",
+  "opts": [
+   "1[a′ = a] − π(a′).",
+   "π(a′).",
+   "1 − G.",
+   "0."
+  ],
+  "ans": "a",
+  "exp": "O gradiente da log-softmax tem essa forma simples."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "O ator, num ator-crítico:",
+  "opts": [
+   "é a política, que decide as ações.",
+   "é o modelo do ambiente.",
+   "calcula a função valor.",
+   "calcula o desconto."
+  ],
+  "ans": "a",
+  "exp": "Seus parâmetros são ajustados pela vantagem fornecida pelo crítico."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "O bônus de entropia na função objetivo serve para:",
+  "opts": [
+   "manter a política com algum nível de aleatoriedade e incentivar a exploração.",
+   "eliminar a exploração.",
+   "aumentar o desconto.",
+   "reduzir a memória."
+  ],
+  "ans": "a",
+  "exp": "Evita que a política se torne determinística cedo demais."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) a  —  A softmax transforma preferências em probabilidades.",
+   "2) a  —  O gradiente da log-softmax tem essa forma simples.",
+   "3) a  —  Seus parâmetros são ajustados pela vantagem fornecida pelo crítico.",
+   "4) a  —  Evita que a política se torne determinística cedo demais."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Dê três motivos para aprender a política diretamente em vez de derivá-la de valores Q.",
+   "Compare REINFORCE e ator-crítico quanto a viés, variância e momento da atualização.",
+   "No experimento de variância, por que as médias dos gradientes com e sem linha de base são iguais, mas os desvios-padrão diferem?"
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Gradientes de Política e Atores-Críticos"
+ }
+]

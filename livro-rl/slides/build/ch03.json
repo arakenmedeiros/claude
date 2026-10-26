@@ -1,0 +1,513 @@
+[
+ {
+  "t": "title",
+  "num": 3,
+  "title": "Processos de Decisão de Markov",
+  "banner": "/home/user/claude/livro-rl/figs/banner3.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar a propriedade de Markov e por que ela simplifica o problema de decisão.",
+   "Descrever um problema como um MDP: estados, ações, transições, recompensas e desconto.",
+   "Distinguir política determinística e estocástica.",
+   "Definir funções valor v e q e calcular um valor pela equação de Bellman.",
+   "Resolver pequenos MDPs por álgebra linear e por enumeração de políticas.",
+   "Estimar uma cadeia de Markov a partir de dados reais com scikit-learn."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Das máquinas ao mundo que muda",
+   "A propriedade de Markov: o presente basta",
+   "Cadeias de Markov e processos de recompensa",
+   "O MDP: a definição formal",
+   "Um exemplo completo: o robô de entrega",
+   "Políticas",
+   "Funções valor: quão bom é estar aqui?",
+   "A equação de Bellman",
+   "Otimalidade",
+   "Quando as equações não bastam",
+   "Projetando estados e recompensas",
+   "Mão na massa"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Das máquinas ao mundo que muda",
+  "items": [
+   "No capítulo anterior, a escolha de uma máquina não alterava o cassino.",
+   "Quando a ação de agora altera o estado futuro e, portanto, as recompensas futuras, entramos no coração do AR."
+  ],
+  "notes": "No capítulo anterior, a escolha de uma máquina não alterava o cassino. Na vida real, as ações mudam a situação. Se você sai de casa às 6h, encontra uma cidade diferente da de quem sai às 9h. Se um robô gasta bateria, ele passa a estar numa situação pior. Se você move uma peça no xadrez, o tabuleiro muda. Quando a ação de agora altera o estado futuro e, portanto, as recompensas futuras, entramos no coração do AR. A linguagem matemática para isso é o Processo de Decisão de Markov (MDP, do inglês Markov Decision Process) (BELLMAN, 1957; PUTERMAN, 1994).",
+  "num": "3.1"
+ },
+ {
+  "t": "quote",
+  "text": "Um MDP é um modelo matemático de decisões em sequência, em que cada ação gera uma recompensa e leva a um novo estado.",
+  "title": "Em uma frase"
+ },
+ {
+  "t": "bullets",
+  "title": "A propriedade de Markov: o presente basta",
+  "items": [
+   "Pense num jogo de damas.",
+   "A isso chamamos propriedade de Markov: o futuro depende do passado apenas através do estado presente."
+  ],
+  "notes": "Pense num jogo de damas. Para escolher a melhor jogada, você precisa saber a posição atual das peças. Não precisa saber em que ordem elas chegaram até ali. O presente resume o que importa do passado. A isso chamamos propriedade de Markov: o futuro depende do passado apenas através do estado presente.",
+  "num": "3.2"
+ },
+ {
+  "t": "fig",
+  "title": "A propriedade de Markov: o presente basta",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f3_markov.png",
+   "w": 1662,
+   "h": 445
+  },
+  "cap": "Propriedade de Markov: o estado presente contém toda a informação relevante para prever o que vem a seguir.",
+  "notes": "Figura 3.1 — Propriedade de Markov: o estado presente contém toda a informação relevante para prever o que vem a seguir."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Um contraexemplo",
+  "items": [
+   "Se você vê apenas uma foto de um carro, não sabe se ele está acelerando ou freando."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "cotidiano",
+  "title": "A responsabilidade é do projetista",
+  "items": [
+   "A propriedade de Markov é uma característica da forma como definimos o estado."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "bullets",
+  "title": "Cadeias de Markov e processos de recompensa",
+  "items": [
+   "Antes das ações, vejamos o caso mais simples: um sistema que evolui sozinho.",
+   "Considere os clientes de uma loja, classificados em cinco segmentos: novo, regular, fiel, em risco e inativo.",
+   "Podemos reunir as probabilidades numa matriz de transição P: a linha i e a coluna j guardam a probabilidade de ir de i para j."
+  ],
+  "notes": "Antes das ações, vejamos o caso mais simples: um sistema que evolui sozinho. Uma cadeia de Markov tem estados e probabilidades de transição: dado que estou no estado s, qual a chance de ir ao estado s′ no próximo passo? Considere os clientes de uma loja, classificados em cinco segmentos: novo, regular, fiel, em risco e inativo. A cada mês, um cliente pode mudar de segmento. Podemos reunir as probabilidades numa matriz de transição P: a linha i e a coluna j guardam a probabilidade de ir de i para j. Cada linha soma 1. Se, além disso, cada estado paga uma recompensa média (por exemplo, o gasto esperado do cliente no mês), temos um processo de recompensa de Markov (MRP). O valor de um estado passa a ser o retorno esperado a partir dele. Em marketing, isso é o conhecido valor de vida do cliente (customer lifetime value).",
+  "num": "3.3"
+ },
+ {
+  "t": "fig",
+  "title": "Cadeias de Markov e processos de recompensa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f3_clientes.png",
+   "w": 1381,
+   "h": 640
+  },
+  "cap": "Cadeia de Markov de clientes.",
+  "notes": "Figura 3.2 — Cadeia de Markov de clientes. As probabilidades são ilustrativas; na prática (Seção 3.9.3) vamos estimá-las a partir de dados."
+ },
+ {
+  "t": "bullets",
+  "title": "O MDP: a definição formal",
+  "items": [
+   "A partir dela calculamos a recompensa esperada de um par estado-ação, r(s, a), e as probabilidades de transição p(s′ | s, a).",
+   "Quando o MDP é \"conhecido\" ou \"desconhecido\": No MDP conhecido, temos a tabela p completa."
+  ],
+  "notes": "Um MDP reúne cinco ingredientes: A dinâmica é a parte essencial: Em palavras: \"se estou em s e faço a, qual a chance de acabar em s′ ganhando r?\". A partir dela calculamos a recompensa esperada de um par estado-ação, r(s, a), e as probabilidades de transição p(s′ | s, a). A maior parte do AR trata o segundo caso.",
+  "num": "3.4"
+ },
+ {
+  "t": "table",
+  "title": "O MDP: a definição formal",
+  "rows": [
+   [
+    "Símbolo",
+    "Nome",
+    "Significado"
+   ],
+   [
+    "S",
+    "Estados",
+    "Todas as situações possíveis"
+   ],
+   [
+    "A",
+    "Ações",
+    "O que o agente pode fazer"
+   ],
+   [
+    "p",
+    "Dinâmica (transições)",
+    "Probabilidade de ir a s′ e receber r, dado s e a"
+   ],
+   [
+    "R",
+    "Recompensas",
+    "Número recebido após a ação"
+   ],
+   [
+    "γ",
+    "Desconto",
+    "Peso do futuro (0 ≤ γ ≤ 1)"
+   ]
+  ]
+ },
+ {
+  "t": "formula",
+  "title": "O MDP: a definição formal",
+  "formula": "p(s′, r | s, a) = Probabilidade[ Sₜ₊₁ = s′, Rₜ₊₁ = r | Sₜ = s, Aₜ = a ]",
+  "words": "Em palavras: \"se estou em s e faço a, qual a chance de acabar em s′ ganhando r?\"."
+ },
+ {
+  "t": "bullets",
+  "title": "Um exemplo completo: o robô de entrega",
+  "items": [
+   "Um robô de entrega pode estar com bateria alta ou baixa.",
+   "Há um dilema claro: buscar com bateria baixa rende bem, mas arrisca ficar parado e ter de ser resgatado."
+  ],
+  "notes": "Um robô de entrega pode estar com bateria alta ou baixa. A cada passo, escolhe entre buscar pedidos (rende mais, gasta bateria), esperar (rende pouco, não gasta) ou recarregar. Este exemplo é inspirado no \"robô de reciclagem\" de Sutton e Barto (2018), com valores próprios. Há um dilema claro: buscar com bateria baixa rende bem, mas arrisca ficar parado e ter de ser resgatado. Recarregar custa um passo sem ganho, mas prepara ganhos maiores. Planejar o longo prazo é a essência de um MDP.",
+  "num": "3.5"
+ },
+ {
+  "t": "fig",
+  "title": "Um exemplo completo: o robô de entrega",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f3_robo.png",
+   "w": 1381,
+   "h": 741
+  },
+  "cap": "O MDP do robô de entrega.",
+  "notes": "Figura 3.3 — O MDP do robô de entrega. Os círculos pretos são as ações; as setas coloridas mostram o resultado, com probabilidade e recompensa. A ação \"recarregar\" com bateria alta (que nada muda) foi omitida do desenho."
+ },
+ {
+  "t": "table",
+  "title": "Um exemplo completo: o robô de entrega",
+  "rows": [
+   [
+    "Estado",
+    "Ação",
+    "Resultado (probabilidade)",
+    "Recompensa"
+   ],
+   [
+    "Alta",
+    "buscar",
+    "Alta (0,7); Baixa (0,3)",
+    "+4"
+   ],
+   [
+    "Alta",
+    "esperar",
+    "Alta (1,0)",
+    "+1"
+   ],
+   [
+    "Baixa",
+    "buscar",
+    "Baixa (0,6)",
+    "+4"
+   ],
+   [
+    "Baixa",
+    "buscar",
+    "Alta (0,4), após ser resgatado",
+    "−3"
+   ],
+   [
+    "Baixa",
+    "esperar",
+    "Baixa (1,0)",
+    "+1"
+   ],
+   [
+    "Baixa",
+    "recarregar",
+    "Alta (1,0)",
+    "0"
+   ]
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Políticas",
+  "items": [
+   "A política é a regra de decisão do agente:",
+   "– Determinística: a cada estado corresponde uma ação.",
+   "– Estocástica: a cada estado corresponde uma distribuição sobre ações.",
+   "Num MDP finito existe sempre uma política determinística ótima (PUTERMAN, 1994)."
+  ],
+  "notes": "A política é a regra de decisão do agente. Há dois tipos: Num MDP finito existe sempre uma política determinística ótima (PUTERMAN, 1994). Políticas estocásticas, porém, são úteis para explorar e, em ambientes com informação oculta ou adversários, para não se tornar previsível.",
+  "num": "3.6"
+ },
+ {
+  "t": "bullets",
+  "title": "Funções valor: quão bom é estar aqui?",
+  "items": [
+   "Fixada uma política π, definimos duas medidas centrais.",
+   "– Valor do estado, vπ(s): o retorno esperado ao começar em s e seguir π depois.",
+   "– Valor da ação, qπ(s, a): o retorno esperado ao começar em s, fazer a e depois seguir π."
+  ],
+  "notes": "Fixada uma política π, definimos duas medidas centrais. Em palavras: v responde \"quão boa é esta situação, se eu jogar do meu jeito?\"; q responde \"quão boa é esta jogada nesta situação, se depois eu jogar do meu jeito?\". A relação entre as duas é simples: o valor do estado é a média dos valores das ações, ponderada pela política:",
+  "num": "3.7"
+ },
+ {
+  "t": "formula",
+  "title": "Funções valor: quão bom é estar aqui?",
+  "formula": "vπ(s) = Eπ[ Gₜ | Sₜ = s ]        qπ(s, a) = Eπ[ Gₜ | Sₜ = s, Aₜ = a ]",
+  "words": "Em palavras: v responde \"quão boa é esta situação, se eu jogar do meu jeito?\"; q responde \"quão boa é esta jogada nesta situação, se depois eu jogar do meu jeito?\"."
+ },
+ {
+  "t": "cotidiano",
+  "title": "v e q no GPS",
+  "items": [
+   "O valor do estado é o tempo esperado de chegada, estando onde você está agora e seguindo sua rotina."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "bullets",
+  "title": "A equação de Bellman",
+  "items": [
+   "A equação relaciona o valor de um estado ao valor de seus vizinhos.",
+   "A forma matricial: Dá para resolver diretamente com np.linalg.solve."
+  ],
+  "notes": "Aqui está a ideia mais importante do livro. O retorno de agora tem uma estrutura recursiva: Em palavras: \"o que vou ganhar a partir de agora é a recompensa imediata mais o que vou ganhar a partir do próximo passo, com desconto\". Tomando a esperança, chegamos à equação de Bellman para vπ: Em palavras: o valor de um estado é a média, sobre as ações possíveis e seus resultados possíveis, de (recompensa imediata + γ × valor do estado seguinte). A equação relaciona o valor de um estado ao valor de seus vizinhos. Isso permite calcular valores sem simular infinitos passos, e inspira os algoritmos dos próximos capítulos. Num MDP pequeno, a equação de Bellman é um sistema de equações lineares. Com Pπ (a matriz de transição sob a política) e rπ (o vetor de recompensas esperadas): Dá para resolver diretamente com np.linalg.solve. O custo cresce com o cubo do número de estados, por isso só serve para problemas pequenos.",
+  "num": "3.8"
+ },
+ {
+  "t": "formula",
+  "title": "A equação de Bellman",
+  "formula": "Gₜ = Rₜ₊₁ + γ Gₜ₊₁",
+  "words": "Em palavras: \"o que vou ganhar a partir de agora é a recompensa imediata mais o que vou ganhar a partir do próximo passo, com desconto\". Tomando a esperança, chegamos à equação de Bellman para vπ:"
+ },
+ {
+  "t": "formula",
+  "title": "A equação de Bellman",
+  "formula": "vπ(s) = Σₐ π(a | s) Σ(s′, r) p(s′, r | s, a) [ r + γ vπ(s′) ]",
+  "words": "Em palavras: o valor de um estado é a média, sobre as ações possíveis e seus resultados possíveis, de (recompensa imediata + γ × valor do estado seguinte)."
+ },
+ {
+  "t": "fig",
+  "title": "A equação de Bellman",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f3_backup.png",
+   "w": 1659,
+   "h": 720
+  },
+  "cap": "Diagramas de retroação (backup): o valor de um estado (esquerda) é calculado a partir dos valores dos estados seguintes, ponderando ações e transições.",
+  "notes": "Figura 3.4 — Diagramas de retroação (backup): o valor de um estado (esquerda) é calculado a partir dos valores dos estados seguintes, ponderando ações e transições."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Verificando a equação no robô de entrega",
+  "items": [
+   "Política: alta → buscar; baixa → recarregar, com γ = 0,9.",
+   "Baixa: recarregar dá recompensa 0 e leva à alta.",
+   "Alta: buscar dá +4 e leva à alta (0,7) ou à baixa (0,3)."
+  ],
+  "head": "Exemplo"
+ },
+ {
+  "t": "bullets",
+  "title": "Otimalidade",
+  "items": [
+   "Queremos a melhor política.",
+   "É por isso que boa parte do AR se resume a estimar bem a função q."
+  ],
+  "notes": "Queremos a melhor política. Dizemos que π é melhor ou igual a π′ se vπ(s) ≥ vπ′(s) para todo estado s. Existe sempre ao menos uma política ótima, π*, com valores v* e q*. A equação de otimalidade de Bellman troca a média sobre ações por um máximo: Em palavras: o valor ótimo de um estado é o do melhor movimento disponível, supondo que eu jogue otimamente depois. Conhecendo q*, a política ótima é trivial: escolha, em cada estado, a ação de maior q*: É por isso que boa parte do AR se resume a estimar bem a função q. Isso vale para o Q-learning (Capítulo 6) e para o DQN (Capítulo 8).",
+  "num": "3.9"
+ },
+ {
+  "t": "formula",
+  "title": "Otimalidade",
+  "formula": "q*(s, a) = Σ(s′, r) p(s′, r | s, a) [ r + γ max(a′) q*(s′, a′) ]",
+  "words": "Em palavras: o valor ótimo de um estado é o do melhor movimento disponível, supondo que eu jogue otimamente depois."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Um aviso sobre as equações de otimalidade",
+  "items": [
+   "Elas são não lineares (por causa do máximo) e não têm solução em forma fechada."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "bullets",
+  "title": "Quando as equações não bastam",
+  "items": [
+   "Resolver o sistema exato é raramente possível:",
+   "– Não conhecemos p (MDP desconhecido).",
+   "– Há estados demais: o Go tem mais configurações do que átomos no universo observável."
+  ],
+  "notes": "Resolver o sistema exato é raramente possível: Os próximos capítulos atacam, um a um, esses obstáculos. Quando o agente não observa o estado completo, temos um MDP parcialmente observável (POMDP). O agente recebe apenas uma observação, que traz pistas sobre o estado real (KAELBLING; LITTMAN; CASSANDRA, 1998). No pôquer, você não vê as cartas do adversário. A solução geral mantém uma crença (distribuição de probabilidade sobre os estados possíveis) ou memória do passado.",
+  "num": "3.10"
+ },
+ {
+  "t": "bullets",
+  "title": "Quando as equações não bastam (cont.)",
+  "items": [
+   "– O agente não vê tudo.",
+   "Os próximos capítulos atacam, um a um, esses obstáculos.",
+   "Observação parcial: Quando o agente não observa o estado completo, temos um MDP parcialmente observável (POMDP)."
+  ],
+  "notes": "",
+  "num": "3.10"
+ },
+ {
+  "t": "bullets",
+  "title": "Projetando estados e recompensas",
+  "items": [
+   "Dois cuidados práticos, que valem para todo o livro:",
+   "– Estado: inclua o que é necessário para decidir (propriedade de Markov)",
+   "– Recompensa: deve refletir o objetivo final, não passos intermediários que você acha que levam a ele."
+  ],
+  "notes": "Dois cuidados práticos, que valem para todo o livro: Em palavras: você pode premiar o agente por \"chegar mais perto\" (Φ maior), desde que desconte o mesmo potencial na saída. Assim, ele não aprende atalhos que enganam o objetivo.",
+  "num": "3.11"
+ },
+ {
+  "t": "formula",
+  "title": "Projetando estados e recompensas",
+  "formula": "R′(s, a, s′) = R(s, a, s′) + γ Φ(s′) − Φ(s)",
+  "words": "Em palavras: você pode premiar o agente por \"chegar mais perto\" (Φ maior), desde que desconte o mesmo potencial na saída. Assim, ele não aprende atalhos que enganam o objetivo."
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "O robô de entrega em NumPy",
+   "Um MDP do Gymnasium: o lago congelado",
+   "Estimando uma cadeia de Markov com dados reais"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f3_frozenlake.png",
+   "w": 1714,
+   "h": 776
+  },
+  "cap": "O FrozenLake e o valor de cada casa sob a política aleatória: as casas perto da meta valem mais.",
+  "notes": "Figura 3.5 — O FrozenLake e o valor de cada casa sob a política aleatória: as casas perto da meta valem mais."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "o valor de um cliente"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Objetivo: estudar como as escolhas de modelagem (número de estados, desconto) mudam o valor estimado dos clientes.",
+   "Entrega: notebook com código, tabela de resultados por k e γ e a conclusão.",
+   "Repita a Seção 3.12.3 variando o número de estados k de 3 a 8.",
+   "Para o k escolhido, calcule o valor de vida com γ = 0,8; 0,9 e 0,95.",
+   "Verifique, numericamente, que cada linha de P soma 1 e que a equação de Bellman é satisfeita: v - (r + γ P v) deve ser ~0."
+  ],
+  "notes": "Objetivo: estudar como as escolhas de modelagem (número de estados, desconto) mudam o valor estimado dos clientes. Tarefas: Ponto de partida: Entrega: notebook com código, tabela de resultados por k e γ e a conclusão."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "MDP = (S, A, p, R, γ): estados, ações, dinâmica, recompensas e desconto.",
+   "Propriedade de Markov: o estado atual resume o passado relevante.",
+   "Política π: regra de decisão; vπ(s) e qπ(s, a) medem o retorno esperado."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Equação de Bellman: valor = recompensa imediata + γ × valor do próximo estado (em média).",
+   "Otimalidade: v* e q* usam o máximo; π* escolhe a ação de maior q*.",
+   "Resolver o MDP exatamente exige conhecer p e poucos estados."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "Se o estado não contém uma informação importante do passado, o problema:",
+  "opts": [
+   "continua sendo Markov.",
+   "deixa de ser Markov e o estado deve ser enriquecido.",
+   "fica sem recompensa.",
+   "vira um bandit."
+  ],
+  "ans": "b",
+  "exp": "A propriedade depende de como definimos o estado."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "Uma política determinística:",
+  "opts": [
+   "associa a cada estado uma distribuição de ações.",
+   "associa a cada estado uma única ação.",
+   "escolhe sempre ao acaso.",
+   "não depende do estado."
+  ],
+  "ans": "b",
+  "exp": "π(s) devolve uma ação para cada estado."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "No robô de entrega, com v(alta) = 31,5 e γ = 0,9, o valor de \"baixa\" sob a política \"baixa → recarregar\" é:",
+  "opts": [
+   "28,35.",
+   "31,5.",
+   "0.",
+   "35."
+  ],
+  "ans": "a",
+  "exp": "Recarregar dá recompensa 0 e leva à alta: 0,9 × 31,5 = 28,35."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "Em um MDP finito, sempre existe uma política ótima:",
+  "opts": [
+   "estocástica e nunca determinística.",
+   "determinística.",
+   "que depende do tempo.",
+   "com valor negativo."
+  ],
+  "ans": "b",
+  "exp": "Existe ao menos uma política determinística ótima (Puterman, 1994)."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) b  —  A propriedade depende de como definimos o estado.",
+   "2) b  —  π(s) devolve uma ação para cada estado.",
+   "3) a  —  Recarregar dá recompensa 0 e leva à alta: 0,9 × 31,5 = 28,35.",
+   "4) b  —  Existe ao menos uma política determinística ótima (Puterman, 1994)."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Explique, com um exemplo do cotidiano, a propriedade de Markov.",
+   "Calcule v para um MRP de dois estados: do estado A vai-se sempre para B com recompensa 1; de B volta-se sempre para A com recompensa 0; γ = 0,5.",
+   "Explique por que dar uma recompensa extra por \"chegar mais perto da meta\" pode atrapalhar, e como a recompensa potencial evita isso."
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Processos de Decisão de Markov"
+ }
+]

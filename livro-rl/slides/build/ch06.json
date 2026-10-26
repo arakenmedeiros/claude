@@ -1,0 +1,423 @@
+[
+ {
+  "t": "title",
+  "num": 6,
+  "title": "Diferença Temporal: SARSA e Q-learning",
+  "banner": "/home/user/claude/livro-rl/figs/banner6.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Explicar a ideia do aprendizado por diferença temporal e do erro TD.",
+   "Comparar TD, Monte Carlo e programação dinâmica.",
+   "Implementar TD(0), SARSA, Q-learning e Expected SARSA.",
+   "Diferenciar métodos on-policy e off-policy pelo exemplo do penhasco.",
+   "Explicar o viés de maximização e o Double Q-learning.",
+   "Descrever n-step TD e o papel dos traços de elegibilidade.",
+   "Resolver Taxi e CartPole com Q-learning tabular e hiperparâmetros testados."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "Aprender a cada passo",
+   "A predição TD(0)",
+   "SARSA: controle TD on-policy",
+   "Q-learning: controle TD off-policy",
+   "O caminho do penhasco",
+   "O viés de maximização e o Double Q-learning",
+   "Entre TD e Monte Carlo: n-step e traços de elegibilidade",
+   "Explorando: ε e passos",
+   "Mão na massa",
+   "Projeto do capítulo: preços dinâmicos de uma loja",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "Aprender a cada passo",
+  "items": [
+   "Você está voltando para casa e prevê: \"levo 30 minutos\".",
+   "Essa é a essência da aprendizagem por diferença temporal (temporal-difference learning, TD).",
+   "– de Monte Carlo, a capacidade de aprender da experiência, sem modelo;",
+   "– da programação dinâmica, o bootstrapping: atualizar uma estimativa usando outra estimativa"
+  ],
+  "notes": "Você está voltando para casa e prevê: \"levo 30 minutos\". Ao pegar a avenida, você vê o trânsito parado e corrige: \"agora serão 40\". Você não esperou chegar em casa para ajustar a previsão. Cada novo fato melhorou a estimativa anterior. Essa é a essência da aprendizagem por diferença temporal (temporal-difference learning, TD). Segundo Sutton e Barto (2018), ela é a ideia mais original e central do AR: combina",
+  "num": "6.1"
+ },
+ {
+  "t": "fig",
+  "title": "Aprender a cada passo",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_dirigindo.png",
+   "w": 1468,
+   "h": 722
+  },
+  "cap": "Num trajeto de volta para casa, o TD corrige a previsão a cada trecho, enquanto o MC só aprende na chegada.",
+  "notes": "Figura 6.1 — Num trajeto de volta para casa, o TD corrige a previsão a cada trecho, enquanto o MC só aprende na chegada."
+ },
+ {
+  "t": "bullets",
+  "title": "A predição TD(0)",
+  "items": [
+   "O erro TD é a \"surpresa\": se a previsão foi mais otimista ou pessimista do que o que ocorreu no passo seguinte.",
+   "Interpretação neurocientífica: O erro TD tem um paralelo famoso: neurônios dopaminérgicos do cérebro de macacos disparam de modo parecido com o δ",
+   "TD, MC e DP lado a lado: Na prática, o TD costuma aprender mais rápido que o MC, especialmente em ambientes estocásticos."
+  ],
+  "notes": "Queremos estimar vπ. No MC, o alvo da atualização era o retorno completo Gₜ. No TD, o alvo é a recompensa imediata mais a estimativa do próximo estado: Em palavras: \"nova estimativa = velha + passo × (alvo − velha)\", em que o alvo é R + γV(S′). A diferença entre alvo e estimativa velha é o erro TD, representado por δ (delta): O erro TD é a \"surpresa\": se a previsão foi mais otimista ou pessimista do que o que ocorreu no passo seguinte. O erro TD tem um paralelo famoso: neurônios dopaminérgicos do cérebro de macacos disparam de modo parecido com o δ, sinalizando \"melhor ou pior que o esperado\" (SCHULTZ; DAYAN; MONTAGUE, 1997). Isso reforça a ideia de que a TD captura um princípio geral de aprendizagem. Na prática, o TD costuma aprender mais rápido que o MC, especialmente em ambientes estocásticos. Veja o exemplo do passeio aleatório.",
+  "num": "6.2"
+ },
+ {
+  "t": "formula",
+  "title": "A predição TD(0)",
+  "formula": "V(Sₜ) ← V(Sₜ) + α [ Rₜ₊₁ + γ V(Sₜ₊₁) − V(Sₜ) ]",
+  "words": "Em palavras: \"nova estimativa = velha + passo × (alvo − velha)\", em que o alvo é R + γV(S′). A diferença entre alvo e estimativa velha é o erro TD, representado por δ (delta):"
+ },
+ {
+  "t": "fig",
+  "title": "A predição TD(0)",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_td_erro.png",
+   "w": 1381,
+   "h": 498
+  },
+  "cap": "A atualização TD: o alvo mistura uma recompensa real com uma estimativa do próximo estado; o erro corrige a estimativa atual.",
+  "notes": "Figura 6.2 — A atualização TD: o alvo mistura uma recompensa real com uma estimativa do próximo estado; o erro corrige a estimativa atual."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Um passo de TD",
+  "items": [
+   "Estados A e B, γ = 1, α = 0,5.",
+   "Alvo: R + γ V(B) = 1 + 6 = 7.",
+   "Erro TD: δ = 7 − V(A) = 7 − 2 = 5.",
+   "Nova estimativa: V(A) = 2 + 0,5 × 5 = 4,5.",
+   "A estimativa de A subiu porque B é um bom estado e a transição deu recompensa."
+  ],
+  "head": "Exemplo"
+ },
+ {
+  "t": "table",
+  "title": "A predição TD(0)",
+  "rows": [
+   [
+    "Aspecto",
+    "PD",
+    "MC",
+    "TD"
+   ],
+   [
+    "Usa o modelo?",
+    "Sim",
+    "Não",
+    "Não"
+   ],
+   [
+    "Bootstrapping?",
+    "Sim",
+    "Não",
+    "Sim"
+   ],
+   [
+    "Espera o fim do episódio?",
+    "Não",
+    "Sim",
+    "Não"
+   ],
+   [
+    "Variância",
+    "Nenhuma (calcula)",
+    "Alta",
+    "Menor"
+   ],
+   [
+    "Viés",
+    "Nenhum",
+    "Nenhum",
+    "Existe, mas diminui"
+   ]
+  ]
+ },
+ {
+  "t": "fig",
+  "title": "A predição TD(0)",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_td_vs_mc.png",
+   "w": 1712,
+   "h": 645
+  },
+  "cap": "Passeio aleatório de 5 estados: o erro do TD(0) cai bem mais rápido que o do MC com passos comparáveis.",
+  "notes": "Figura 6.3 — Passeio aleatório de 5 estados: o erro do TD(0) cai bem mais rápido que o do MC com passos comparáveis."
+ },
+ {
+  "t": "bullets",
+  "title": "SARSA: controle TD on-policy",
+  "items": [
+   "O nome SARSA vem da sequência de cinco elementos usados: S, A, R, S′, A′ (RUMMERY; NIRANJAN, 1994).",
+   "SARSA converge para a política ótima se todos os pares forem visitados indefinidamente e a política tender à gulosa (SINGH et al., 2000)."
+  ],
+  "notes": "Para controlar, usamos q(s, a). A regra é a mesma, com pares estado-ação: O nome SARSA vem da sequência de cinco elementos usados: S, A, R, S′, A′ (RUMMERY; NIRANJAN, 1994). Note que A′ é a ação que o agente de fato vai escolher no próximo estado (por exemplo, por ε-gulosa). Por isso o SARSA é on-policy: aprende o valor da política que está seguindo, incluindo sua exploração. SARSA converge para a política ótima se todos os pares forem visitados indefinidamente e a política tender à gulosa (SINGH et al., 2000).",
+  "num": "6.3"
+ },
+ {
+  "t": "bullets",
+  "title": "Q-learning: controle TD off-policy",
+  "items": [
+   "O alvo supõe que, no próximo estado, o agente fará a melhor ação, mesmo que ele não a escolha (por exploração).",
+   "Expected SARSA: Elimina a variância causada pela escolha aleatória de A′ e costuma ter desempenho melhor que o SARSA com o mesmo custo."
+  ],
+  "notes": "O Q-learning troca A′ pelo máximo: O alvo supõe que, no próximo estado, o agente fará a melhor ação, mesmo que ele não a escolha (por exploração). Por isso o Q-learning é off-policy: a política que gera os dados (ε-gulosa) difere da política que está sendo aprendida (a gulosa). Ele foi proposto por Watkins (1989) e analisado por Watkins e Dayan (1992), com provas de convergência por Jaakkola, Jordan e Singh (1994) e Tsitsiklis (1994). O Expected SARSA usa a média sobre as ações do próximo estado, ponderada pela política, no lugar de A′ ou do máximo (VAN SEIJEN et al., 2009): Elimina a variância causada pela escolha aleatória de A′ e costuma ter desempenho melhor que o SARSA com o mesmo custo. Se π for gulosa, vira o Q-learning.",
+  "num": "6.4"
+ },
+ {
+  "t": "fig",
+  "title": "Q-learning: controle TD off-policy",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_backups.png",
+   "w": 1714,
+   "h": 578
+  },
+  "cap": "Três atualizações: SARSA usa a ação escolhida A′; Q-learning usa o máximo; Expected SARSA usa a média ponderada pela política.",
+  "notes": "Figura 6.4 — Três atualizações: SARSA usa a ação escolhida A′; Q-learning usa o máximo; Expected SARSA usa a média ponderada pela política."
+ },
+ {
+  "t": "bullets",
+  "title": "O caminho do penhasco",
+  "items": [
+   "O exemplo clássico que mostra a diferença é o CliffWalking (SUTTON; BARTO, 2018).",
+   "– O caminho ótimo é rente ao penhasco: o mais curto.",
+   "– Mas, com ε-gulosa, uma escorregada aleatória custa −100.",
+   "O resultado ilustra a diferença: o Q-learning encontra a política ótima, mas durante o treino cai no penhasco com frequência."
+  ],
+  "notes": "O exemplo clássico que mostra a diferença é o CliffWalking (SUTTON; BARTO, 2018). Numa grade 4×12, o agente vai do início (canto inferior esquerdo) à meta (canto inferior direito). A fileira inferior entre eles é um penhasco: cair dá −100 e volta ao início. Cada passo normal dá −1. O resultado ilustra a diferença: o Q-learning encontra a política ótima, mas durante o treino cai no penhasco com frequência. O SARSA aprende a política ótima para uma agente que explora, mais segura. Se ε → 0, ambos chegam ao mesmo caminho.",
+  "num": "6.5"
+ },
+ {
+  "t": "fig",
+  "title": "O caminho do penhasco",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_cliff.png",
+   "w": 1933,
+   "h": 766
+  },
+  "cap": "O Q-learning aprende o caminho rente ao penhasco (ótimo, mas arriscado durante o treino); o SARSA, que \"sabe\" que explora",
+  "notes": "Figura 6.5 — O Q-learning aprende o caminho rente ao penhasco (ótimo, mas arriscado durante o treino); o SARSA, que \"sabe\" que explora, aprende o caminho seguro e obtém melhor retorno durante o treino."
+ },
+ {
+  "t": "bullets",
+  "title": "O viés de maximização e o Double Q-learning",
+  "items": [
+   "O Q-learning usa o máximo das estimativas.",
+   "A cada passo, sorteia-se qual tabela atualizar."
+  ],
+  "notes": "O Q-learning usa o máximo das estimativas. Mas estimativas são ruidosas: o máximo de números ruidosos tende a ser otimista demais. Exemplo: se todos os 8 dados de uma sala têm média 3,5, o máximo de um lançamento de cada um é, em geral, bem maior que 3,5. Esse é o viés de maximização. O Double Q-learning (VAN HASSELT, 2010) usa duas tabelas, QA e QB. Uma escolhe a melhor ação; a outra avalia o valor dessa ação: A cada passo, sorteia-se qual tabela atualizar. A separação entre \"escolher\" e \"avaliar\" remove o viés. Esta ideia reaparecerá no Double DQN (Capítulo 8).",
+  "num": "6.6"
+ },
+ {
+  "t": "fig",
+  "title": "O viés de maximização e o Double Q-learning",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_vies.png",
+   "w": 1706,
+   "h": 645
+  },
+  "cap": "Um MDP de teste: ir à esquerda é ruim em média, mas o Q-learning, enganado por máximos otimistas, escolhe \"esquerda\" muito mais vezes no início que o Double Q-learning.",
+  "notes": "Figura 6.6 — Um MDP de teste: ir à esquerda é ruim em média, mas o Q-learning, enganado por máximos otimistas, escolhe \"esquerda\" muito mais vezes no início que o Double Q-learning."
+ },
+ {
+  "t": "bullets",
+  "title": "Entre TD e Monte Carlo: n-step e traços de elegibilidade",
+  "items": [
+   "TD(0) olha 1 passo à frente; MC olha até o fim:",
+   "– TD de n passos: o alvo usa n recompensas reais e depois a estimativa: G(t:t+n) = Rₜ₊₁ + γRₜ₊₂ + … + γ^(n−1) Rₜ₊ₙ + γ^n",
+   "– TD(λ): média ponderada de todos os n, com peso decaindo por λ (entre 0 e 1).",
+   "A forma eficiente de implementar TD(λ) usa traços de elegibilidade: cada estado visitado guarda um \"traço\" que decai com o tempo"
+  ],
+  "notes": "TD(0) olha 1 passo à frente; MC olha até o fim. Entre eles há um espectro: A forma eficiente de implementar TD(λ) usa traços de elegibilidade: cada estado visitado guarda um \"traço\" que decai com o tempo; quando ocorre um erro TD, todos os estados com traço positivo são atualizados, proporcionalmente ao traço. É como \"distribuir o crédito\" entre os passos recentes, atacando o problema da atribuição de crédito (SUTTON, 1988; SINGH; SUTTON, 1996). Valores intermediários de λ costumam ser melhores que os extremos.",
+  "num": "6.7"
+ },
+ {
+  "t": "fig",
+  "title": "Entre TD e Monte Carlo: n-step e traços de elegibilidade",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_nstep.png",
+   "w": 1381,
+   "h": 512
+  },
+  "cap": "O espectro entre TD(0) e Monte Carlo.",
+  "notes": "Figura 6.7 — O espectro entre TD(0) e Monte Carlo. Mais passos reais reduzem o viés, mas aumentam a variância."
+ },
+ {
+  "t": "bullets",
+  "title": "Explorando: ε e passos",
+  "items": [
+   "Dois ajustes práticos:",
+   "– ε decrescente: começar explorando bastante (ε alto) e reduzir.",
+   "– Passo α: valores entre 0,05 e 0,5 são comuns em problemas tabulares; α decrescente garante convergência teórica.",
+   "A escolha dos hiperparâmetros (α, ε, γ) afeta muito o resultado."
+  ],
+  "notes": "Dois ajustes práticos: A escolha dos hiperparâmetros (α, ε, γ) afeta muito o resultado. Por isso vamos testar combinações de modo sistemático, com ParameterGrid do scikit-learn, e repetir cada configuração com várias sementes.",
+  "num": "6.8"
+ },
+ {
+  "t": "cotidiano",
+  "title": "Boa prática",
+  "items": [
+   "Reporte médias e variações sobre várias sementes (HENDERSON et al., 2018)."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "TD(0) × MC no passeio aleatório",
+   "SARSA, Q-learning e Expected SARSA no penhasco",
+   "Viés de maximização e Double Q-learning",
+   "Taxi: Q-learning com busca de hiperparâmetros",
+   "CartPole tabular com faixas aprendidas pelo scikit-learn"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_taxi.png",
+   "w": 1413,
+   "h": 707
+  },
+  "cap": "Q-learning no Taxi, com 5 sementes: o retorno sobe de cerca de −700 para perto de +8.",
+  "notes": "Figura 6.8 — Q-learning no Taxi, com 5 sementes: o retorno sobe de cerca de −700 para perto de +8."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f6_cartpole.png",
+   "w": 1396,
+   "h": 690
+  },
+  "cap": "Q-learning tabular no CartPole, com 3 sementes.",
+  "notes": "Figura 6.9 — Q-learning tabular no CartPole, com 3 sementes. O desempenho oscila entre execuções: um lembrete de repetir os experimentos."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "preços dinâmicos de uma loja"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Para tornar o problema realista, vamos estimar a sensibilidade da demanda ao preço com a base Online Retail (UCI), para o produto mais vendido",
+   "Entrega: notebook com a estimativa da elasticidade (e sua crítica), a comparação de receitas, o mapa da política e a análise de sensibilidade.",
+   "Estime a elasticidade e discuta se é confiável.",
+   "Construa o ambiente"
+  ],
+  "notes": "Contexto. Uma loja vende um produto perecível: o estoque da semana (20 unidades, já pagas) é reposto toda segunda e o que sobrar no domingo é descartado. O preço pode ser escolhido a cada dia entre 5 níveis, e a recompensa é a receita do dia. Queremos que o agente aprenda quando baixar ou aumentar o preço, conforme o estoque que resta e o dia da semana. Para tornar o problema realista, vamos estimar a sensibilidade da demanda ao preço com a base Online Retail (UCI), para o produto mais vendido, usando uma regressão de Poisson do scikit-learn. Tarefas: Ponto de partida: Entrega: notebook com a estimativa da elasticidade (e sua crítica), a comparação de receitas, o mapa da política e a análise de sensibilidade."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "TD aprende a cada passo, sem modelo e com bootstrapping: V(S) ← V(S) + α[R + γV(S′) − V(S)].",
+   "Erro TD: δ = R + γV(S′) − V(S); é a \"surpresa\".",
+   "SARSA (on-policy) usa a ação escolhida A′; Q-learning (off-policy) usa o máximo; Expected SARSA usa a média ponderada.",
+   "No penhasco, o Q-learning aprende o caminho ótimo e arriscado; o SARSA, o seguro."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Viés de maximização: máximos de estimativas ruidosas são otimistas; o Double Q-learning separa escolha e avaliação.",
+   "n-step e TD(λ) interpolam entre TD(0) e MC; os traços de elegibilidade distribuem o crédito.",
+   "Teste vários hiperparâmetros e várias sementes."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "O alvo do TD(0) para V(S_t) é:",
+  "opts": [
+   "G_t.",
+   "R_(t+1) + γ V(S_(t+1)).",
+   "max_a Q(S, a).",
+   "apenas R_(t+1)."
+  ],
+  "ans": "b",
+  "exp": "Recompensa imediata mais estimativa descontada do próximo estado."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "O nome SARSA vem de:",
+  "opts": [
+   "uma doença.",
+   "a sequência S, A, R, S′, A′.",
+   "um autor.",
+   "uma biblioteca."
+  ],
+  "ans": "b",
+  "exp": "São os cinco elementos usados em cada atualização."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "No penhasco, a recompensa por cair é:",
+  "opts": [
+   "−1.",
+   "−100.",
+   "0.",
+   "+100."
+  ],
+  "ans": "b",
+  "exp": "Cair custa −100 e o agente volta ao início."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "Uma boa prática ao reportar resultados de AR é:",
+  "opts": [
+   "mostrar só a melhor execução.",
+   "mostrar média e variação sobre várias sementes.",
+   "usar sempre a mesma semente.",
+   "não reportar variação."
+  ],
+  "ans": "b",
+  "exp": "A variabilidade entre execuções é grande (Henderson et al., 2018)."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) b  —  Recompensa imediata mais estimativa descontada do próximo estado.",
+   "2) b  —  São os cinco elementos usados em cada atualização.",
+   "3) b  —  Cair custa −100 e o agente volta ao início.",
+   "4) b  —  A variabilidade entre execuções é grande (Henderson et al., 2018)."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Explique o TD(0) com uma analogia do cotidiano e destaque a diferença para o Monte Carlo.",
+   "Explique o Expected SARSA e por que ele pode ter melhor desempenho que o SARSA.",
+   "Descreva como o Q-learning resolve o Taxi e por que a tabela Q é viável nesse ambiente."
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Diferença Temporal: SARSA e Q-learning"
+ }
+]

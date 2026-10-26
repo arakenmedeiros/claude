@@ -1,0 +1,440 @@
+[
+ {
+  "t": "title",
+  "num": 2,
+  "title": "Bandits Multi-Armados: Explorar ou Aproveitar?",
+  "banner": "/home/user/claude/livro-rl/figs/banner2.png"
+ },
+ {
+  "t": "obj",
+  "items": [
+   "Formular o problema dos bandits multi-armados e explicar o dilema exploração × aproveitamento.",
+   "Estimar o valor de uma ação com a média amostral e com a regra de atualização incremental.",
+   "Implementar e comparar as estratégias gulosa, ε-gulosa, UCB e Thompson Sampling.",
+   "Medir o desempenho com recompensa média, frequência da ação ótima e arrependimento acumulado.",
+   "Adaptar as estimativas a ambientes que mudam com o tempo.",
+   "Explicar o que é um bandit contextual e aplicá-lo com scikit-learn."
+  ]
+ },
+ {
+  "t": "roteiro",
+  "items": [
+   "O cassino com muitos braços",
+   "Formulação",
+   "Estimando valores: a média e sua versão incremental",
+   "Estratégias de decisão",
+   "Como medir o sucesso",
+   "Bandits contextuais",
+   "Bandits na prática: testes A/B × bandits",
+   "Resumo teórico",
+   "Mão na massa",
+   "Projeto do capítulo: qual mês é melhor para a campanha?",
+   "Resumo do capítulo"
+  ]
+ },
+ {
+  "t": "bullets",
+  "title": "O cassino com muitos braços",
+  "items": [
+   "Imagine um cassino com várias máquinas caça-níqueis.",
+   "Se jogar todas numa máquina só, pode ter escolhido a pior.",
+   "Esse é o problema dos bandits multi-armados (multi-armed bandit).",
+   "Por que começar por aqui?: O bandit é a versão mais simples do AR: há uma única situação (sempre o mesmo \"cassino\") e as ações não mudam o estado do mundo."
+  ],
+  "notes": "Imagine um cassino com várias máquinas caça-níqueis. Cada uma paga, em média, um prêmio diferente, mas você não sabe qual paga mais. Você tem 1.000 fichas. Como jogá-las para ganhar o máximo? Se jogar todas numa máquina só, pode ter escolhido a pior. Se testar todas igualmente, desperdiça fichas nas ruins. O ideal é descobrir quais são boas e, aos poucos, concentrar as fichas nelas. Esse é o problema dos bandits multi-armados (multi-armed bandit). O nome vem da gíria \"bandido de um braço só\" para caça-níqueis. O problema foi estudado desde o início da estatística moderna (THOMPSON, 1933; ROBBINS, 1952). O bandit é a versão mais simples do AR: há uma única situação (sempre o mesmo \"cassino\") e as ações não mudam o estado do mundo. Isso nos permite estudar, de forma limpa, o dilema que atravessa todo o livro: explorar ou aproveitar.",
+  "num": "2.1"
+ },
+ {
+  "t": "fig",
+  "title": "O cassino com muitos braços",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f2_cassino.png",
+   "w": 1381,
+   "h": 569
+  },
+  "cap": "O problema dos bandits: várias \"máquinas\" (braços) com prêmios médios desconhecidos.",
+  "notes": "Figura 2.1 — O problema dos bandits: várias \"máquinas\" (braços) com prêmios médios desconhecidos."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Bandits estão por toda parte",
+  "items": [
+   "Restaurantes: ir ao favorito ou testar um novo?",
+   "Anúncios online: qual banner mostrar a cada visitante?",
+   "Remédios em testes clínicos: como dar mais pacientes ao tratamento que parece melhor sem abandonar a investigação dos outros?",
+   "Notícias: qual manchete atrai mais cliques?"
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "formula",
+  "title": "Formulação",
+  "formula": "q*(a) = E[ Rₜ | Aₜ = a ]",
+  "words": "Em palavras: \"o prêmio médio que a máquina a pagaria se eu pudesse jogá-la infinitas vezes\". Se soubéssemos q*, bastaria sempre escolher o maior. Como não sabemos, precisamos estimar (usamos Qₜ(a) para a estimativa no passo t)."
+ },
+ {
+  "t": "fig",
+  "title": "Formulação",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f2_distribuicoes.png",
+   "w": 1488,
+   "h": 722
+  },
+  "cap": "Banco de testes de 10 braços: cada braço tem uma média diferente e paga com ruído.",
+  "notes": "Figura 2.2 — Banco de testes de 10 braços: cada braço tem uma média diferente e paga com ruído. O melhor braço (em laranja) é desconhecido do agente."
+ },
+ {
+  "t": "quote",
+  "text": "Em um bandit, o agente tenta descobrir qual ação tem a maior recompensa média enquanto joga, e cada jogada tem custo.",
+  "title": "Em uma frase"
+ },
+ {
+  "t": "bullets",
+  "title": "Estimando valores: a média e sua versão incremental",
+  "items": [
+   "A estimativa mais natural é a média amostral: some as recompensas obtidas ao escolher a e divida pelo número de vezes N(a) em que a foi escolhida.",
+   "Guardar todas as recompensas seria um desperdício de memória.",
+   "Esta regra, com a forma \"estimativa nova = velha + passo × erro\", reaparecerá em quase todos os algoritmos do livro, incluindo o Q-learning.",
+   "Ambientes que mudam: passo constante: Agora as recompensas recentes pesam mais que as antigas, e a estimativa \"esquece\" o passado gradualmente."
+  ],
+  "notes": "A estimativa mais natural é a média amostral: some as recompensas obtidas ao escolher a e divida pelo número de vezes N(a) em que a foi escolhida. Guardar todas as recompensas seria um desperdício de memória. Há um truque elegante: calcular a nova média a partir da antiga. Em palavras: novo = velho + passo × (alvo − velho). O termo (R − Q) é o erro: o quanto a recompensa surpreendeu em relação ao que eu esperava. Esta regra, com a forma \"estimativa nova = velha + passo × erro\", reaparecerá em quase todos os algoritmos do livro, incluindo o Q-learning. Se o mundo muda (a máquina \"esquenta\" ou \"esfria\"), recompensas antigas deixam de ser confiáveis. Trocamos o passo 1/n por um passo constante α (por exemplo, 0,1): Agora as recompensas recentes pesam mais que as antigas, e a estimativa \"esquece\" o passado gradualmente. Com 1/n, todas pesam igual; com α constante, o peso cai exponencialmente com a idade da recompensa.",
+  "num": "2.3"
+ },
+ {
+  "t": "formula",
+  "title": "Estimando valores: a média e sua versão incremental",
+  "formula": "Qₙ₊₁ = Qₙ + (1/n) × ( Rₙ − Qₙ )",
+  "words": "Em palavras: novo = velho + passo × (alvo − velho). O termo (R − Q) é o erro: o quanto a recompensa surpreendeu em relação ao que eu esperava."
+ },
+ {
+  "t": "cotidiano",
+  "title": "Conferindo com números",
+  "items": [
+   "Recompensas 4, 6 e 5 chegam uma a uma.",
+   "Após a 1ª: Q = 4.",
+   "Após a 2ª: Q = 4 + (1/2)(6 − 4) = 5.",
+   "Após a 3ª: Q = 5 + (1/3)(5 − 5) = 5."
+  ],
+  "head": "Exemplo"
+ },
+ {
+  "t": "fig",
+  "title": "Estimando valores: a média e sua versão incremental",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f2_incremental.png",
+   "w": 1381,
+   "h": 452
+  },
+  "cap": "A atualização incremental: a estimativa dá um passo em direção ao alvo.",
+  "notes": "Figura 2.3 — A atualização incremental: a estimativa dá um passo em direção ao alvo."
+ },
+ {
+  "t": "bullets",
+  "title": "Estratégias de decisão",
+  "items": [
+   "Gulosa: só aproveitar: A estratégia gulosa (greedy) escolhe sempre a ação de maior Q.",
+   "ε-gulosa: aproveitar quase sempre, explorar às vezes: A estratégia ε-gulosa (ε-greedy) faz o seguinte",
+   "– Com probabilidade 1 − ε, escolhe a ação de maior Q (aproveita).",
+   "– Com probabilidade ε, escolhe uma ação ao acaso (explora)."
+  ],
+  "notes": "A estratégia gulosa (greedy) escolhe sempre a ação de maior Q. É simples, mas arriscada: se as primeiras tentativas enganarem, o agente fica preso a uma ação medíocre e nunca descobre a melhor. A estratégia ε-gulosa (ε-greedy) faz o seguinte: Valores típicos são ε = 0,1 ou 0,01. É a estratégia mais usada em AR por sua simplicidade. Se você começa com Q muito alto (por exemplo, 5, quando as recompensas reais são ~1), toda ação \"decepciona\" ao ser testada e o agente tenta todas até as estimativas descerem. É uma forma barata de forçar exploração no início. A estratégia UCB (Upper Confidence Bound, limite superior de confiança) explora de modo mais inteligente: prefere as ações incertas com bom potencial. Ela escolhe a ação que maximiza: O primeiro termo é o que já sei (estimativa). O segundo é um bônus de incerteza: ele é grande para ações pouco testadas (N pequeno) e diminui conforme as testamos. O parâmetro c controla o quanto exploramos. Auer, Cesa-Bianchi e Fischer (2002) provaram que essa estratégia garante um crescimento muito lento do arrependimento. Outra ideia, muito eficaz, é do início do século XX (THOMPSON, 1933). Para recompensas do tipo sucesso/fracasso (clique ou não, compra ou não), mantemos para cada ação uma crença sobre sua taxa de sucesso, descrita por uma distribuição Beta. Em cada passo: Na prática, o sorteio é rng.beta(S + 1, F + 1). A distribuição Beta(1, ",
+  "num": "2.4"
+ },
+ {
+  "t": "bullets",
+  "title": "Estratégias de decisão (cont.)",
+  "items": [
+   "– Valores típicos são ε = 0,1 ou 0,01.",
+   "Valores iniciais otimistas: Se você começa com Q muito alto (por exemplo, 5, quando as recompensas reais são ~1)",
+   "UCB: otimismo diante da incerteza: O primeiro termo é o que já sei (estimativa).",
+   "Thompson Sampling: sorteie uma crença e aja nela: Outra ideia, muito eficaz, é do início do século XX (THOMPSON, 1933)"
+  ],
+  "notes": "",
+  "num": "2.4"
+ },
+ {
+  "t": "bullets",
+  "title": "Estratégias de decisão (cont.)",
+  "items": [
+   "– Sorteie uma taxa plausível de cada ação, a partir da sua crença.",
+   "– Escolha a ação com o maior sorteio.",
+   "– Observe o resultado e atualize a crença daquela ação (sucesso soma 1 em S, fracasso soma 1 em F).",
+   "Gradiente de preferências (opcional): Em vez de estimar valores, podemos aprender preferências H(a) e transformá-las em probabilidades pela função softmax"
+  ],
+  "notes": "",
+  "num": "2.4"
+ },
+ {
+  "t": "cotidiano",
+  "title": "ε-gulosa no jantar",
+  "items": [
+   "Com ε = 0,1, em 9 de cada 10 noites você vai ao restaurante favorito; na décima, sorteia um lugar novo."
+  ],
+  "head": "No dia a dia"
+ },
+ {
+  "t": "fig",
+  "title": "Estratégias de decisão",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f2_ucb.png",
+   "w": 1399,
+   "h": 669
+  },
+  "cap": "UCB soma à estimativa um bônus de incerteza.",
+  "notes": "Figura 2.4 — UCB soma à estimativa um bônus de incerteza. O braço 3 foi pouco testado (n = 5), então ganha um grande bônus e é escolhido."
+ },
+ {
+  "t": "fig",
+  "title": "Estratégias de decisão",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f2_thompson.png",
+   "w": 1703,
+   "h": 501
+  },
+  "cap": "Crenças de Thompson Sampling para três braços, no início, após 30 jogadas e após 300.",
+  "notes": "Figura 2.5 — Crenças de Thompson Sampling para três braços, no início, após 30 jogadas e após 300. As curvas se estreitam e o melhor braço (verde) se destaca."
+ },
+ {
+  "t": "bullets",
+  "title": "Como medir o sucesso",
+  "items": [
+   "Três medidas são usadas:",
+   "– Recompensa média por passo: quanto, em média, o agente ganha.",
+   "– % da ação ótima: com que frequência escolhe o melhor braço.",
+   "– Arrependimento acumulado (regret): quanto o agente perdeu, no total, por não ter jogado sempre o melhor braço.",
+   "Uma boa estratégia tem arrependimento que cresce devagar (idealmente de forma logarítmica)."
+  ],
+  "notes": "Três medidas são usadas: Uma boa estratégia tem arrependimento que cresce devagar (idealmente de forma logarítmica). O resultado clássico é que nenhuma estratégia pode ter arrependimento que cresça mais devagar que um certo limite logarítmico (LAI; ROBBINS, 1985). Um agente guloso que travou no braço errado tem arrependimento linear: perde a mesma quantidade a cada passo, para sempre.",
+  "num": "2.5"
+ },
+ {
+  "t": "bullets",
+  "title": "Bandits contextuais",
+  "items": [
+   "No bandit simples, o melhor braço é sempre o mesmo.",
+   "Uma abordagem comum aprende, com aprendizado supervisionado, um modelo que prevê a recompensa de cada ação dado o contexto"
+  ],
+  "notes": "No bandit simples, o melhor braço é sempre o mesmo. Na vida real, depende de quem chega. Para um jovem, o melhor anúncio pode ser um; para um idoso, outro. No bandit contextual, antes de cada decisão o agente observa um contexto (idade, local, histórico) e escolhe a ação com base nele. Uma abordagem comum aprende, com aprendizado supervisionado, um modelo que prevê a recompensa de cada ação dado o contexto, e combina isso com exploração. O algoritmo LinUCB faz isso com modelos lineares e um bônus de incerteza (LI et al., 2010) e foi usado para recomendar notícias. Na prática desta aula usaremos o scikit-learn para prever a recompensa, em lotes.",
+  "num": "2.6"
+ },
+ {
+  "t": "fig",
+  "title": "Bandits contextuais",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f2_contextual.png",
+   "w": 1381,
+   "h": 498
+  },
+  "cap": "Bandit contextual: o agente observa o contexto, decide, recebe uma recompensa e aprende.",
+  "notes": "Figura 2.6 — Bandit contextual: o agente observa o contexto, decide, recebe uma recompensa e aprende. O ciclo é o do AR, mas sem estados que evoluem."
+ },
+ {
+  "t": "cotidiano",
+  "title": "O que um bandit não faz",
+  "items": [
+   "Um bandit contextual não planeja o futuro: a ação de agora não muda o contexto futuro."
+  ],
+  "head": "Atenção"
+ },
+ {
+  "t": "bullets",
+  "title": "Bandits na prática: testes A/B × bandits",
+  "items": [
+   "Num teste A/B tradicional, divide-se o tráfego igualmente entre as opções por um período e só depois se escolhe a melhor."
+  ],
+  "notes": "Num teste A/B tradicional, divide-se o tráfego igualmente entre as opções por um período e só depois se escolhe a melhor. Com um bandit, o tráfego migra durante o experimento para as opções que vão bem, reduzindo o \"custo\" de testar. A contrapartida é que a análise estatística fica mais delicada: como a alocação muda ao longo do tempo, os dados não são mais uma amostra balanceada.",
+  "num": "2.7"
+ },
+ {
+  "t": "table",
+  "title": "Resumo teórico",
+  "rows": [
+   [
+    "Estratégia",
+    "Ideia",
+    "Vantagem",
+    "Cuidado"
+   ],
+   [
+    "Gulosa",
+    "Sempre o melhor Q",
+    "Simples",
+    "Pode travar numa ação ruim"
+   ],
+   [
+    "ε-gulosa",
+    "Sorteia ação com prob. ε",
+    "Simples e robusta",
+    "Explora \"às cegas\", mesmo depois de saber"
+   ],
+   [
+    "Otimista",
+    "Q inicial alto",
+    "Barata",
+    "Só ajuda no início"
+   ],
+   [
+    "UCB",
+    "Estimativa + bônus de incerteza",
+    "Explora com critério",
+    "Ajustar c"
+   ],
+   [
+    "Thompson",
+    "Sorteia da crença",
+    "Excelente na prática",
+    "Precisa de um modelo de crença"
+   ]
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Mão na massa",
+  "sub": "Hora de programar com Python"
+ },
+ {
+  "t": "cards",
+  "title": "O que vamos programar",
+  "items": [
+   "O banco de testes de 10 braços",
+   "Arrependimento com recompensas de sucesso/fracasso",
+   "Bandit contextual com scikit-learn: o caso dos cogumelos"
+  ],
+  "notes": "Execute os códigos do capítulo ao vivo ou peça que os alunos rodem em duplas."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f2_estrategias.png",
+   "w": 1709,
+   "h": 630
+  },
+  "cap": "Resultado típico no banco de testes.",
+  "notes": "Figura 2.7 — Resultado típico no banco de testes. A gulosa estagna; ε = 0,1 aprende rápido; ε = 0,01 aprende devagar, mas chega longe; UCB costuma ser o melhor aqui."
+ },
+ {
+  "t": "fig",
+  "title": "Mão na massa",
+  "fig": {
+   "path": "/home/user/claude/livro-rl/figs/f2_arrependimento.png",
+   "w": 1391,
+   "h": 737
+  },
+  "cap": "Arrependimento acumulado.",
+  "notes": "Figura 2.8 — Arrependimento acumulado. A gulosa pura (vermelho) cresce em linha reta; as demais crescem cada vez mais devagar."
+ },
+ {
+  "t": "section",
+  "title": "Projeto do capítulo",
+  "sub": "qual mês é melhor para a campanha?"
+ },
+ {
+  "t": "bullets",
+  "title": "O desafio",
+  "items": [
+   "Contexto.",
+   "Entrega: notebook com a tabela de taxas, as curvas de arrependimento, a análise das ressalvas e a extensão contextual.",
+   "Carregue a base e calcule a taxa de contratação por mês (groupby).",
+   "Use essas taxas como as probabilidades verdadeiras p de um bandit de 12 braços.",
+   "Compare ε-gulosa (ε = 0,01; 0,1), UCB1 e Thompson Sampling em 5.000 passos e 200 execuções, medindo o arrependimento acumulado."
+  ],
+  "notes": "Contexto. O banco de dados Bank Marketing (UCI) registra campanhas de telemarketing de um banco português e se o cliente contratou um depósito a prazo (MORO; CORTEZ; RITA, 2014). Vamos tratar cada mês como um \"braço\" e perguntar: se pudéssemos decidir em qual mês ligar, como aprenderíamos o melhor mês jogando o menos possível nos ruins? Tarefas: Ponto de partida: Entrega: notebook com a tabela de taxas, as curvas de arrependimento, a análise das ressalvas e a extensão contextual."
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "Bandits são o AR com uma única situação: o desafio é descobrir a melhor ação enquanto se joga.",
+   "A estimativa de valor se atualiza por novo = velho + passo × (alvo − velho).",
+   "Gulosa pode travar; ε-gulosa explora ao acaso; UCB explora por incerteza; Thompson sorteia da crença."
+  ]
+ },
+ {
+  "t": "resumo",
+  "title": "Resumo do capítulo",
+  "items": [
+   "O arrependimento mede a perda por não saber o melhor braço; bons métodos o fazem crescer devagar.",
+   "Passo constante α permite acompanhar ambientes que mudam.",
+   "Bandit contextual: a melhor ação depende do contexto; usamos modelos supervisionados do scikit-learn, com exploração."
+  ]
+ },
+ {
+  "t": "section",
+  "title": "Quiz relâmpago",
+  "sub": "Teste o que você aprendeu"
+ },
+ {
+  "t": "quiz",
+  "n": 1,
+  "q": "A atualização incremental da média é:",
+  "opts": [
+   "Q ← Q + passo × (alvo − Q).",
+   "Q ← alvo.",
+   "Q ← Q × alvo.",
+   "Q ← Q − alvo."
+  ],
+  "ans": "a",
+  "exp": "Novo = velho + passo × (alvo − velho)."
+ },
+ {
+  "t": "quiz",
+  "n": 2,
+  "q": "No UCB, o termo de bônus de incerteza é:",
+  "opts": [
+   "maior para ações pouco testadas.",
+   "maior para ações muito testadas.",
+   "sempre zero.",
+   "igual para todas as ações."
+  ],
+  "ans": "a",
+  "exp": "O bônus cresce quando N(a) é pequeno, estimulando testar o desconhecido."
+ },
+ {
+  "t": "quiz",
+  "n": 3,
+  "q": "Entre os braços com taxas 0,45, 0,55 e 0,60, jogar sempre o pior por 2.000 passos produz arrependimento de:",
+  "opts": [
+   "100.",
+   "200.",
+   "300.",
+   "600."
+  ],
+  "ans": "c",
+  "exp": "A perda por passo é 0,60 − 0,45 = 0,15; 0,15 × 2000 = 300."
+ },
+ {
+  "t": "quiz",
+  "n": 4,
+  "q": "No banco de testes de 10 braços, a estratégia gulosa tende a:",
+  "opts": [
+   "obter a maior recompensa média.",
+   "estagnar com recompensa média menor que as demais.",
+   "escolher sempre o melhor braço.",
+   "ter arrependimento zero."
+  ],
+  "ans": "b",
+  "exp": "Sem exploração, ela frequentemente trava num braço subótimo."
+ },
+ {
+  "t": "gabarito",
+  "items": [
+   "1) a  —  Novo = velho + passo × (alvo − velho).",
+   "2) a  —  O bônus cresce quando N(a) é pequeno, estimulando testar o desconhecido.",
+   "3) c  —  A perda por passo é 0,60 − 0,45 = 0,15; 0,15 × 2000 = 300.",
+   "4) b  —  Sem exploração, ela frequentemente trava num braço subótimo."
+  ]
+ },
+ {
+  "t": "discuss",
+  "items": [
+   "Descreva o dilema exploração × aproveitamento usando um exemplo próprio e explique por que não existe estratégia livre de custo.",
+   "Por que a distribuição Beta se estreita com o tempo e qual é a consequência para o Thompson Sampling?",
+   "Mostre que, com recompensas +5 (comestível) e −35 (venenoso), comer só vale a pena se p < 1/8."
+  ]
+ },
+ {
+  "t": "fim",
+  "title": "Bandits Multi-Armados: Explorar ou Aproveitar?"
+ }
+]
