@@ -1,0 +1,295 @@
+{
+"n": 19,
+"titulo": "Leitura, escrita, revisão, línguas, artes e humanidades",
+"parte": "Parte IV — Aplicações práticas no trabalho docente",
+"fecho": "O processo é o que se aprende.",
+"slides": [
+{
+"t": "objetivos",
+"notas": "Apresente os objetivos. Avise que o fio condutor é um só: deslocar o foco do produto para o processo. Peça que a turma pense em um texto 'impecável demais' que já recebeu. Tempo: 2 minutos.",
+"itens": [
+"Distinguir usos que apoiam e usos que esvaziam o processo",
+"Planejar a escrita com momentos com e sem IA",
+"Dar retorno em três camadas, mantendo a leitura do professor",
+"Ver limites da IA em línguas, artes e humanidades",
+"Propor atividades de baixo custo e sem IA"
+]
+},
+{
+"t": "pergunta",
+"notas": "Conte a cena de Rafael, Camila e Jonas: redação fluente demais, frases históricas inexistentes e imagens geradas como trabalho de criação. Pergunte: o que há de comum nas três cenas? Resposta esperada: o produto chegou sem o percurso.",
+"rotulo": "O TEXTO IMPECÁVEL DEMAIS",
+"texto": "A redação é ótima, mas a estudante não sabe explicar o que escreveu.",
+"apoio": "Cena fictícia: três professores, três áreas, o mesmo dilema."
+},
+{
+"t": "conceito",
+"notas": "Nas linguagens e humanidades, o processo é muitas vezes o próprio objeto de aprendizagem. Escrever organiza o pensamento, ler constrói sentido, criar é escolher. Peça exemplos da disciplina de cada participante.",
+"titulo": "O processo é o que se aprende",
+"definicao": "Escrever organiza o pensamento, ler constrói sentido, criar é escolher e assumir. Sem o percurso, o produto vale pouco.",
+"analogia": "ganhar a foto do topo da montanha sem subir: a imagem existe, mas o treino e a vista não.",
+"destaque": "Foque no processo, não só no produto."
+},
+{
+"t": "figura",
+"notas": "A linha vai da autoria do estudante à autoria do sistema. Não marca certo e errado: ajuda a conversar com a turma sobre onde cada tarefa deve ficar. Uma redação diagnóstica fica perto da autoria do estudante; comparar duas versões de parágrafo pode usar trechos gerados.",
+"titulo": "Onde cada tarefa deve estar?",
+"fig": "f19_espectro",
+"legenda": "Figura 19.2 — Do trabalho do estudante ao trabalho do sistema."
+},
+{
+"t": "cartoes",
+"notas": "Quatro momentos para a leitura. Regra de sala: primeiro o estudante tenta, depois compara. Problemático: trocar o texto por resumo ou aceitar interpretações do sistema como se fossem a leitura do texto.",
+"titulo": "Leitura: a IA como andaime",
+"cartoes": [
+{
+"cab": "Antes de ler",
+"txt": "Conhecimentos prévios, vocabulário-chave e perguntas-guia que o professor revisa."
+},
+{
+"cab": "Durante a leitura",
+"txt": "Versão com glossário ou frases curtas, sempre com acesso ao texto original."
+},
+{
+"cab": "Depois de ler",
+"txt": "O estudante escreve a síntese e só então compara com outras versões."
+},
+{
+"cab": "Leitura crítica",
+"txt": "Dois pontos de vista sobre a questão: o que cada um deixa de fora?"
+}
+]
+},
+{
+"t": "conceito",
+"notas": "Analogia do GPS. O GPS é ótimo em trajeto desconhecido, mas não ensina quem precisa conhecer o bairro. A meta de aprender a ler precisa continuar valendo. Pergunte: o que você perde quando só lê o resumo?",
+"titulo": "Resumo não substitui a leitura",
+"definicao": "Pedir resumo de um texto que o estudante não leu é o jeito mais direto de contornar a leitura.",
+"analogia": "usar o GPS todo dia e nunca aprender o caminho do próprio bairro.",
+"destaque": "Primeiro o estudante tenta. Depois compara."
+},
+{
+"t": "figura",
+"notas": "O processo de escrita em cinco etapas e o lugar possível da IA. Planejar e rascunhar têm restrições: o rascunho próprio é a evidência de autoria. Os modelos clássicos descrevem a escrita como processos que se alternam, e não como linha reta.",
+"titulo": "Escrita como processo: onde a IA entra",
+"fig": "f19_processo",
+"legenda": "Figura 19.3 — O processo de escrita e o lugar possível da IA."
+},
+{
+"t": "comparar",
+"notas": "Resuma a tabela por etapa. Rascunho: nenhum apoio, ou só ao final para comparar. Edição da forma: a IA indica trechos e o estudante corrige. Dois recursos fortalecem a autoria: portfólio de versões e escrita em sala. As práticas eficazes de ensino de escrita vêm de pesquisa anterior à IA generativa e não foram testadas com ela.",
+"titulo": "Escrita: o que fica com quem?",
+"esq": {
+"cab": "Fica com o estudante",
+"itens": [
+"Escolher tema, tese e repertório",
+"Produzir o primeiro rascunho",
+"Decidir o que manter, cortar e reorganizar",
+"Registrar o que mudou e por quê"
+]
+},
+"dir": {
+"cab": "Apoio possível da IA",
+"itens": [
+"Perguntas, depois das ideias do estudante",
+"Nenhum no rascunho; só ao final, para comparar",
+"'O que um leitor não entenderia?'",
+"Indicar trechos de forma, com a regra"
+]
+}
+},
+{
+"t": "frase",
+"notas": "Frase de impacto. Leia devagar e pergunte quem já viu uma correção automática total ensinar algo. Não ensina: o estudante precisa aprender a identificar o erro.",
+"texto": "O rascunho próprio é a evidência de autoria.",
+"apoio": "Portfólio de versões e escrita em sala protegem o processo."
+},
+{
+"t": "cartoes",
+"notas": "Retorno em três camadas. Forma: a IA pode indicar ocorrências. Organização: perguntas de apoio. Sentido e autoria: professor e colegas. Peça indicações e perguntas, não reescritas. Um estudo mostrou desempenho misto do retorno de IA em comparação ao humano; não permite concluir substituição.",
+"titulo": "Retorno em três camadas",
+"cartoes": [
+{
+"cab": "Forma",
+"txt": "Ortografia, pontuação, coesão. A IA indica; o estudante corrige e explica a regra."
+},
+{
+"cab": "Organização",
+"txt": "Estrutura e progressão. Perguntas como 'onde está a tese?'; discussão com colegas."
+},
+{
+"cab": "Sentido e autoria",
+"txt": "Ideias, posicionamento e voz. Cabe ao professor e aos colegas, por leitura atenta."
+}
+]
+},
+{
+"t": "cuidado",
+"notas": "Quando dispensar a IA em linguagens. Detectores de texto gerado por IA erram e têm viés contra quem escreve em língua não nativa. Nunca devem ser prova isolada. Textos íntimos não devem ir a sistemas externos.",
+"titulo": "Quando dispensar a IA na escrita",
+"itens": [
+"Para avaliar autoria e voz de um texto",
+"Em diários, cartas e relatos íntimos de estudantes",
+"Como única fonte de nota em trabalhos escritos",
+"Detectores: pouco confiáveis; podem punir quem escreve em outra língua"
+]
+},
+{
+"t": "cartoes",
+"notas": "Línguas: português, estrangeiras e Libras. Atenção à variação linguística: sistemas tendem a favorecer a norma-padrão e podem tratar falas regionais como erro. Em Libras, não substitua intérpretes, professores surdos e a comunidade surda. A evidência sobre ganhos de proficiência a longo prazo é escassa.",
+"titulo": "Línguas: possibilidades e limites",
+"cartoes": [
+{
+"cab": "Língua portuguesa",
+"txt": "Comparar gêneros e registros. Cuidado: variedades podem ser tratadas como 'erro'."
+},
+{
+"cab": "Língua estrangeira",
+"txt": "Conversação simulada, reformulação e comparação de traduções, com revisão."
+},
+{
+"cab": "Pronúncia e cultura",
+"txt": "Frases naturais podem estar incorretas. Ouça falantes reais."
+},
+{
+"cab": "Libras e outras línguas",
+"txt": "Não substitua intérpretes, professores surdos e comunidades."
+}
+]
+},
+{
+"t": "comparar",
+"notas": "Artes: o que se aprende está no fazer, no fruir e no contextualizar. Defina com a turma o que é criação própria. Não peça imitação do estilo de artistas vivos para exibir como própria. Dança, teatro e música dependem de presença.",
+"titulo": "Artes: apoiar o fazer, não substituí-lo",
+"esq": {
+"cab": "Possibilidades",
+"itens": [
+"Análise crítica de imagens geradas",
+"Ideias de composição para depois criar à mão",
+"Discussão sobre autoria e direitos",
+"Registro do processo em caderno de bordo"
+]
+},
+"dir": {
+"cab": "Cuidados",
+"itens": [
+"Imagem gerada entregue como criação própria",
+"Estereótipos e apropriação cultural",
+"Uso de obras de terceiros e licenças",
+"Corpo, voz e presença não se substituem"
+]
+}
+},
+{
+"t": "passos",
+"notas": "Humanidades: três hábitos ao lado de uma boa pergunta. Citações e frases famosas devem ser localizadas em obra ou documento verificável: se não for localizada, não entra. Leitura lateral: abrir outras fontes para checar quem produziu a informação.",
+"titulo": "Humanidades: três hábitos de checagem",
+"passos": [
+"Pedir a fonte e ir até ela",
+"Fazer leitura lateral em outras fontes",
+"Perguntar: quem falta nesta resposta?"
+],
+"rodape": "Frase plausível não é frase documentada."
+},
+{
+"t": "figura",
+"notas": "Mostre o mapa do capítulo como retomada. Peça que a turma localize o ramo do qual a sua disciplina mais depende.",
+"titulo": "Mapa do capítulo",
+"fig": "f19_mapa",
+"legenda": "Figura 19.1 — Mapa dos conceitos principais do capítulo."
+},
+{
+"t": "atividade",
+"notas": "Atividade 1. Aula 1: planejamento e rascunho em sala, sem IA. Depois a camada do sentido com colegas, a organização e, por fim, a forma, com IA opcional pedindo indicações sem reescrita. A nota de processo registra a autoria. Menores só sob mediação do professor, em dispositivo da escola.",
+"titulo": "Atividade 1: da escrita própria ao retorno em 3 camadas",
+"tempo": "3 aulas de 50 minutos",
+"passos": [
+"Planejar e rascunhar em sala, sem IA",
+"Colegas respondem: ideia principal e o que faltou",
+"Reorganizar o texto com base nas perguntas",
+"Forma: IA só indica trechos e regra, sem reescrever",
+"Comparar versões e escrever nota de processo de 5 linhas"
+],
+"produto": "Rascunho, versão final, registro do retorno e nota de processo",
+"poucos": "Tudo em papel: gramática, dicionário e lista de revisão da turma."
+},
+{
+"t": "atividade",
+"notas": "Atividade 2: auditoria de um texto em humanidades. O professor traz texto de cerca de 200 palavras com problemas propositais: frase sem fonte, anacronismo, vozes ausentes. Os estudantes não precisam usar IA. Cuide de temas sensíveis com contexto e acolhimento.",
+"titulo": "Atividade 2: fontes e vozes, auditoria de um texto",
+"tempo": "2 aulas de 50 minutos",
+"passos": [
+"Receber texto de ~200 palavras com problemas propositais",
+"Sublinhar afirmações verificáveis",
+"Buscar duas fontes independentes e classificar cada afirmação",
+"Perguntar: quem falta? Que perspectiva se assume como única?",
+"Reescrever só com o confirmado, com fontes e vozes ausentes"
+],
+"produto": "Ficha de auditoria com fontes e texto revisado",
+"poucos": "Texto impresso; fontes do livro didático, biblioteca e entrevistas na comunidade."
+},
+{
+"t": "comparar",
+"notas": "Alternativas sem IA: nada do capítulo exige tecnologia. Portfólios em caderno, escrita em sala, revisão por pares, círculos de leitura e saraus. Em artes e humanidades, o acervo local e a entrevista com pessoas mais velhas trazem vozes que nenhum sistema substitui.",
+"titulo": "Sem IA também se aprende muito",
+"esq": {
+"cab": "Leitura e escrita",
+"itens": [
+"Portfólios de versões em caderno",
+"Escrita em sala",
+"Revisão por pares com lista",
+"Círculos de leitura e saraus"
+]
+},
+"dir": {
+"cab": "Línguas, artes e humanidades",
+"itens": [
+"Conversação entre colegas com roteiros",
+"Escuta de falantes da comunidade",
+"Acervo local e visita a espaços culturais",
+"Entrevista com pessoas mais velhas"
+]
+}
+},
+{
+"t": "cuidado",
+"notas": "Pare e verifique antes de aceitar texto, tradução ou imagem. Percorra as perguntas lentamente e peça um exemplo para cada. Lembre da pesquisa: textos mais rápidos de adultos em tarefas curtas não demonstram aprendizagem de escrita em estudantes.",
+"titulo": "Pare e verifique",
+"itens": [
+"A fonte de cada citação foi localizada?",
+"O texto respeita o contexto histórico, cultural e linguístico?",
+"O estudante explica oralmente o que escreveu?",
+"Os direitos de uso de obras e imagens estão claros?"
+]
+},
+{
+"t": "figura",
+"notas": "Síntese: o processo do estudante no centro, com três apoios (retorno, glossário, comparação) e três cuidados (autoria, fontes, dados).",
+"titulo": "Síntese: o processo é o centro",
+"fig": "f19_sintese",
+"legenda": "Figura 19.4 — Ler, escrever, criar e interpretar."
+},
+{
+"t": "lembrar",
+"notas": "Releia os pontos e peça que cada pessoa escolha uma regra de sala para propor à turma, por exemplo a tabela de usos: o que pode, o que pode com declaração e o que não pode.",
+"itens": [
+"O processo é o objeto de aprendizagem: peça versões e justificativas",
+"Primeiro o estudante tenta; depois compara",
+"Retorno em três camadas: forma, organização, sentido e autoria",
+"Peça indicações e perguntas, não reescritas",
+"Em línguas, artes e humanidades: pessoas, fazer e fontes",
+"Detectores não devem ser prova isolada"
+]
+},
+{
+"t": "reflexao",
+"notas": "Dê 5 minutos de escrita. Convide a turma a compartilhar a regra de uso que construiria. Regras construídas coletivamente são mais compreendidas e mais respeitadas.",
+"perguntas": [
+"Em que tarefa da sua disciplina o processo vale mais que o produto?",
+"Que evidências de autoria você já recolhe? Que outras poderia recolher?",
+"Como explicar a diferença entre usar a IA para aprender e para entregar?",
+"Que vozes costumam faltar nos textos e imagens que seus estudantes consultam?"
+]
+}
+]
+}

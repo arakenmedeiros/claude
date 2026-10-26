@@ -1,0 +1,251 @@
+{
+"n": 5,
+"titulo": "Letramento em IA e o papel insubstituível do professor",
+"parte": "Parte I — Fundamentos para compreender e decidir",
+"fecho": "A IA pode apoiar tarefas. O vínculo continua sendo seu.",
+"slides": [
+{
+"t": "objetivos",
+"notas": "Apresente os objetivos. Este capítulo fecha a Parte I e responde à angústia de substituição. Avise que o direito de não usar IA faz parte do conteúdo. Tempo: 2 minutos.",
+"itens": [
+"Definir letramento em IA e seus quatro movimentos",
+"Distinguir o letramento de professores e de estudantes",
+"Separar o que a IA pode apoiar do que fica com o professor",
+"Reconhecer vínculo, julgamento e autonomia docente",
+"Autoavaliar-se e planejar um primeiro passo de aprendizagem"
+]
+},
+{
+"t": "pergunta",
+"rotulo": "NA SALA DOS PROFESSORES",
+"notas": "Conte a cena fictícia: Jonas viu a IA explicar equação do segundo grau melhor do que ele. Alice responde: ela sabe quem é o Pedro, que desistiu? Sabe que a Camila tem vergonha de perguntar? Pergunte à turma de que lado se sente. Tempo: 3 minutos.",
+"texto": "Se a IA explica tão bem, o que continua sendo insubstituível no seu trabalho?",
+"apoio": "Cena fictícia: o que a IA sabe sobre Pedro, que desistiu da matéria, e Camila, que tem vergonha de perguntar?"
+},
+{
+"t": "figura",
+"notas": "Use o mapa como roteiro: o que é letramento em IA, quatro movimentos, letramento docente, de estudantes, o que a IA apoia e o que permanece humano. Tempo: 2 minutos.",
+"titulo": "Mapa do capítulo",
+"fig": "f05_mapa",
+"legenda": "Figura 5.1 — Mapa dos conceitos principais do capítulo."
+},
+{
+"t": "conceito",
+"notas": "Letramento é compreender e usar um sistema simbólico ou cultural de modo crítico e autônomo. Aprendemos a ler para participar da vida social, não só para decodificar letras. Letramento em IA segue a mesma ideia. Peça que a turma pense em quem é letrado em outra tecnologia. Tempo: 3 minutos.",
+"titulo": "O que é letramento em IA",
+"definicao": "Conhecimentos, habilidades e atitudes para compreender, avaliar e usar IA de modo crítico, e participar das decisões sobre seus usos.",
+"analogia": "aprender a ler: não é só decodificar letras, é poder participar da vida social.",
+"destaque": "Saber usar não é o mesmo que ser letrado."
+},
+{
+"t": "figura",
+"notas": "Quatro verbos: compreender, utilizar, avaliar e participar criticamente. É uma formulação do livro, inspirada na literatura. Mostre que eles funcionam como roteiro de perguntas diante de qualquer ferramenta nova. Tempo: 3 minutos.",
+"titulo": "Os quatro movimentos do letramento em IA",
+"fig": "f05_verbos",
+"legenda": "Formulação do livro, inspirada em Long e Magerko (2020) e Ng et al. (2021)."
+},
+{
+"t": "cartoes",
+"notas": "Os quatro verbos viram perguntas práticas. Faça um exercício rápido: escolha uma ferramenta que a turma conhece e responda às quatro perguntas em voz alta. Tempo: 4 minutos.",
+"titulo": "Quatro perguntas para qualquer ferramenta",
+"cartoes": [
+{
+"cab": "Compreender",
+"txt": "O que isso faz e quais são os seus limites?"
+},
+{
+"cab": "Utilizar",
+"txt": "Para quê, como e com que cuidados?"
+},
+{
+"cab": "Avaliar",
+"txt": "Está certo, é justo, é adequado?"
+},
+{
+"cab": "Participar",
+"txt": "Quem decidiu isso e eu posso opinar?"
+}
+]
+},
+{
+"t": "cartoes",
+"notas": "Revisões sugerem que o conteúdo do letramento varia por etapa: básica com conhecimentos básicos, uso e ética; superior com dados, algoritmos e resolução de problemas. Muitos estudos focam o operacional e dão pouca atenção a consequências indesejadas. Ressalve: definições ainda em disputa e faltam estudos de longo prazo. Tempo: 3 minutos.",
+"titulo": "O que a pesquisa permite afirmar",
+"cartoes": [
+{
+"cab": "Muitas definições",
+"txt": "Frameworks ainda em disputa e pouca avaliação de resultados."
+},
+{
+"cab": "Convergência",
+"txt": "Vai além do uso técnico: compreensão, crítica, ética, participação."
+},
+{
+"cab": "Foco operacional",
+"txt": "Pouca atenção a dimensões socioculturais e críticas."
+},
+{
+"cab": "Ainda não se afirma",
+"txt": "Que um currículo dê resultados duradouros e transferíveis."
+}
+]
+},
+{
+"t": "conceito",
+"notas": "Para o professor, letramento não é só dominar ferramenta: é integrar a IA, ou decidir não integrar, ao conhecimento profissional que já tem. O TPACK soma tecnologia ao conhecimento de conteúdo e de pedagogia. A UNESCO publicou um quadro de competências em 2024: é recomendação, não obrigação legal. Tempo: 4 minutos.",
+"titulo": "Letramento docente: integrar ao que já se sabe",
+"definicao": "Ligar a IA, ou decidir não ligar, ao conhecimento de conteúdo, pedagogia e tecnologia que o professor já tem (ideia do TPACK).",
+"analogia": "um tempero novo na cozinha: você decide se combina com o prato.",
+"destaque": "Não é saber usar a ferramenta: é saber quando e por quê."
+},
+{
+"t": "figura",
+"notas": "A escada é uma proposta do autor, não validada nem norma. Cinco degraus: consciente, compreende, experimenta com segurança, planeja e avalia, lidera e forma. A nota lembra que escolher não usar IA pode ocorrer em qualquer degrau. Peça que cada um se localize. Tempo: 4 minutos.",
+"titulo": "Escada de desenvolvimento do letramento docente",
+"fig": "f05_escada",
+"legenda": "Proposta do autor, não validada empiricamente. Não usar IA é opção em qualquer degrau."
+},
+{
+"t": "figura",
+"notas": "À esquerda, o que pode receber apoio com verificação: rascunhos, exemplos, variações de exercícios. À direita, o que permanece com o professor: conhecer os estudantes, vínculo, decisões pedagógicas e éticas, avaliar com justiça. Separe tarefas de funções profissionais. Tempo: 4 minutos.",
+"titulo": "O que a IA apoia e o que fica com o professor",
+"fig": "f05_papeis",
+"legenda": "Tarefas podem receber apoio; funções envolvem julgamento, relação e responsabilidade."
+},
+{
+"t": "conceito",
+"notas": "Uma meta-análise associou relações afetivas professor-estudante a engajamento e desempenho. Isso não prova que só humanos ensinam, mas mostra que o vínculo é dimensão central. Freire: ensinar não é transferir conhecimento. Peça um exemplo de vínculo que mudou a aprendizagem de alguém. Tempo: 3 minutos.",
+"titulo": "Ensinar não é só transmitir informação",
+"definicao": "Pesquisas associam o vínculo professor-estudante a engajamento e desempenho. Para Freire, ensinar é criar possibilidades de construir o conhecimento.",
+"analogia": "jardinar: não se puxa a planta para crescer, cria-se o ambiente em que ela cresce.",
+"destaque": "Aprender também é relação."
+},
+{
+"t": "comparar",
+"notas": "Autonomia: a capacidade de decidir com responsabilidade sobre o próprio trabalho. A IA pode ampliá-la, se você decide como e quando usar, ou reduzi-la, se a tecnologia dita ritmos, conteúdos e avaliações. Pergunte à turma que sinais mostram qual dos dois lados está acontecendo na escola. Tempo: 3 minutos.",
+"titulo": "IA e autonomia docente",
+"esq": {
+"cab": "Pode ampliar quando...",
+"itens": [
+"O professor decide como e quando usar",
+"Há tempo e formação adequados",
+"Os professores participam das regras"
+]
+},
+"dir": {
+"cab": "Pode reduzir quando...",
+"itens": [
+"A tecnologia dita ritmos e conteúdos",
+"Ela dita também a avaliação",
+"O professor vira operador de ferramenta"
+]
+}
+},
+{
+"t": "frase",
+"notas": "Pausa para a frase de impacto. Duas afirmações a olhar com cuidado: a IA vai acabar com a docência e a IA não vai mudar nada. Nenhuma tem base empírica sólida. Peça que a turma reflita sobre uma terceira posição. Tempo: 2 minutos.",
+"texto": "Nem fim da docência, nem nada muda: participe da decisão.",
+"apoio": "Nenhuma das duas previsões extremas tem base empírica sólida."
+},
+{
+"t": "cartoes",
+"notas": "Letramento não é adesão obrigatória. Todas essas opções são legítimas quando fundamentadas. O que se deve evitar é decidir por desconhecimento, pressão, medo ou moda. Pergunte qual opção cabe hoje na realidade da turma. Tempo: 3 minutos.",
+"titulo": "O direito de não usar: quatro caminhos",
+"cartoes": [
+{
+"cab": "Não usar em certas tarefas",
+"txt": "Por exemplo, na avaliação dos estudantes."
+},
+{
+"cab": "Só na preparação",
+"txt": "Uso do professor, sem os estudantes."
+},
+{
+"cab": "Com estudantes, com limites",
+"txt": "Com alternativas sem IA."
+},
+{
+"cab": "Projeto-piloto",
+"txt": "Participar da experiência da escola."
+}
+]
+},
+{
+"t": "atividade",
+"notas": "Autoavaliação individual ou em grupo de estudo. Nesta atividade o próprio professor é aprendiz. As notas precisam de evidências. Incentive o plano de três ações realistas e uma frase sobre o que você não fará agora. Combine o acompanhamento em 30 dias. De 45 a 90 minutos.",
+"titulo": "Atividade: meu ponto de partida e meu plano",
+"tempo": "45 min (individual) a 90 min (grupo)",
+"passos": [
+"Dê nota de 1 a 5 a cada um dos quatro movimentos",
+"Escreva uma evidência para cada nota",
+"Identifique o movimento mais baixo e o mais alto",
+"Defina três ações de aprendizagem para 30 dias",
+"Escreva o que não pretende fazer agora, e por quê",
+"Combine com um colega um encontro de acompanhamento"
+],
+"produto": "Quadro de autoavaliação e plano com três ações, prazos e acompanhamento.",
+"poucos": "Folha de papel dividida em quatro colunas; acompanhamento no intervalo ou por mensagem."
+},
+{
+"t": "cuidado",
+"notas": "Riscos do letramento: reduzi-lo a saber usar, transformar quadros de competência em lista burocrática, desigualdade de oportunidades de formação, culpabilizar o professor por falta de política e infraestrutura. Use quadros como orientação, não como controle. Tempo: 3 minutos.",
+"titulo": "Pare e verifique",
+"itens": [
+"Letramento restrito a saber usar reforça a falta de crítica",
+"Quadros de competência não devem virar controle burocrático",
+"Nem todos têm tempo, apoio e acesso a cursos",
+"Não culpe o professor pela falta de política, formação e infraestrutura"
+]
+},
+{
+"t": "comparar",
+"notas": "Para desenvolver o hábito de pensar sem apoio imediato, organize a atividade sem IA e discuta depois o papel dela. Letramento em IA não exige computador: atividades desplugadas e conversas guiadas com casos funcionam. Peça um caso que a turma levaria para a sala. Tempo: 2 minutos.",
+"titulo": "Quando dispensar e como fazer com poucos recursos",
+"esq": {
+"cab": "Dispense a IA para...",
+"itens": [
+"Formular perguntas próprias",
+"Debater e resolver problemas desafiadores",
+"Depois, discutir o papel da IA nessa tarefa"
+]
+},
+"dir": {
+"cab": "Letramento sem computador",
+"itens": [
+"Atividades desplugadas dos capítulos 2 e 3",
+"Conversas guiadas a partir de casos",
+"Notícias, dilemas e cenas hipotéticas"
+]
+}
+},
+{
+"t": "figura",
+"notas": "Síntese: letramento em IA, juízo profissional e vínculo humano sustentam a decisão pedagógica fundamentada. Peça que cada pessoa diga qual coluna está mais forte em sua prática. Tempo: 3 minutos.",
+"titulo": "Síntese: três colunas sustentam a decisão",
+"fig": "f05_sintese",
+"legenda": "Letramento, juízo profissional e vínculo humano."
+},
+{
+"t": "lembrar",
+"notas": "Releia os itens e peça que a turma diga qual pretende contar a um colega. Volte a Jonas e Alice: o que a turma diria a cada um?",
+"itens": [
+"Letramento: compreender, utilizar, avaliar e participar criticamente",
+"Definições diversas e poucas avaliações de resultados na pesquisa",
+"O professor integra a IA ao conhecimento que tem, ou decide não integrar",
+"Tarefas recebem apoio; vínculo, decisão e justiça permanecem humanos",
+"A autonomia docente pode ser ampliada ou reduzida pela tecnologia",
+"Escolher não usar, com fundamentação, faz parte do letramento"
+]
+},
+{
+"t": "reflexao",
+"notas": "Duas perguntas para duplas, 5 minutos. A última costuma gerar boas respostas sobre sobrecarga: anote as condições mencionadas.",
+"perguntas": [
+"Em qual dos quatro movimentos você precisa de mais apoio?",
+"O que, no seu trabalho, você considera insubstituível, e por quê?",
+"Como sua escola envolve os professores nas decisões sobre IA?",
+"Que condições você precisaria para aprender sem sobrecarga?"
+]
+}
+]
+}

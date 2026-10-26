@@ -1,0 +1,282 @@
+{
+"n": 1,
+"titulo": "Educação, tecnologias e mudanças sociais: de onde viemos",
+"parte": "Parte I — Fundamentos para compreender e decidir",
+"fecho": "Decidir com calma vale mais que reagir com pressa.",
+"slides": [
+{
+"t": "objetivos",
+"notas": "Leia os objetivos em voz alta e peça que a turma marque mentalmente qual deles mais lhe interessa. Diga que este capítulo não ensina nenhuma ferramenta: ele dá chão firme para decidir. Tempo: 2 minutos.",
+"itens": [
+"Ver a tecnologia na escola como processo social e pedagógico",
+"Reconhecer o que a história ensina sobre a chegada da IA",
+"Relacionar mudanças sociais à formação de professores",
+"Distinguir três posturas diante da IA",
+"Registrar seu primeiro posicionamento sobre usar ou não usar"
+]
+},
+{
+"t": "pergunta",
+"rotulo": "A REUNIÃO DE SEGUNDA-FEIRA",
+"notas": "Conte a cena fictícia de Marina: professora há quinze anos, a coordenadora pede uma posição da escola até o fim do mês, um colega quer aproveitar tudo e outra quer proibir. Pergunte quem já viveu algo parecido. Deixe 2 minutos de conversa em duplas.",
+"texto": "Como decidir sem pressa nem pânico qual lugar a IA deve ocupar na sua aula?",
+"apoio": "Cena hipotética: Marina ouve o entusiasmo e o medo, mas quer algo mais sólido para decidir."
+},
+{
+"t": "conceito",
+"notas": "Quebre a ideia de que tecnologia é sinônimo de tela. Pergunte: o que na sua sala é tecnologia e ninguém chama assim? Quadro, caderno e livro entram na lista. Tempo: 3 minutos.",
+"titulo": "O que é tecnologia, afinal?",
+"definicao": "Qualquer criação humana que amplia o que conseguimos fazer. O quadro de giz, o caderno e o livro impresso também são tecnologia.",
+"analogia": "uma ponte: não é a ponte que importa, e sim aonde ela deixa você chegar.",
+"destaque": "Tecnologia na escola é muito mais antiga que a tela."
+},
+{
+"t": "figura",
+"notas": "Percorra a linha do tempo da escrita até a IA generativa, em um marco por vez. Pergunte qual marco mudou mais a forma de ensinar. A figura é conceitual, sem escala precisa de datas. Tempo: 3 minutos.",
+"titulo": "Uma história longa de tecnologias na escola",
+"fig": "f01_linha",
+"legenda": "Linha do tempo conceitual, sem escala temporal precisa."
+},
+{
+"t": "cartoes",
+"notas": "Toda tecnologia nova chegou com as três reações ao mesmo tempo. Cuban estudou décadas de computadores em escolas e falou em supervendidos e subutilizados. Isso não significa que a tecnologia seja inútil: a mudança depende de formação, tempo e projeto. Peça um exemplo da escola da turma.",
+"titulo": "Toda tecnologia chega com três reações",
+"cartoes": [
+{
+"cab": "Esperança",
+"txt": "A crença de que ela vai resolver problemas antigos da educação."
+},
+{
+"cab": "Desconfiança",
+"txt": "O receio de que ela prejudique algo valioso na aprendizagem."
+},
+{
+"cab": "Desencontro",
+"txt": "A distância entre o prometido e o que acontece na sala de aula."
+}
+]
+},
+{
+"t": "conceito",
+"notas": "Cuban observou que as máquinas chegavam às escolas, mas as práticas mudavam pouco. A lição: equipamento sozinho não muda o ensino. Pergunte à turma o que faltou nas tecnologias que não pegaram na sua escola.",
+"titulo": "Supervendidos e subutilizados",
+"definicao": "Máquinas chegavam às escolas, mas as práticas de ensino mudavam pouco: faltavam formação, tempo, projeto pedagógico e cultura escolar.",
+"analogia": "comprar uma bicicleta e deixá-la na garagem: ter o objeto não é pedalar.",
+"destaque": "Equipamento não é o mesmo que mudança."
+},
+{
+"t": "comparar",
+"notas": "A IA generativa é as duas coisas. Mesmo quem decide não usar em aula precisa saber o que ela é, porque os estudantes a encontram fora da escola. Peça um exemplo de cada lado. Tempo: 3 minutos.",
+"titulo": "Tecnologia como ferramenta e como ambiente",
+"esq": {
+"cab": "Ferramenta",
+"itens": [
+"Usamos algo para fazer uma tarefa",
+"Exemplo: projetor, planilha de notas",
+"Eu decido quando usar"
+]
+},
+"dir": {
+"cab": "Ambiente",
+"itens": [
+"Muda o contexto de ensinar e aprender",
+"Exemplo: redes sociais, internet, celular",
+"Está presente mesmo sem convite"
+]
+}
+},
+{
+"t": "conceito",
+"notas": "Pergunta de Papert: em vez de o que o computador faz pelo aluno, o que o aluno faz com o computador. A IA pode fazer o pensamento por nós ou servir de material para pensarmos melhor. Esse fio volta várias vezes no livro. Peça que a turma classifique um uso que conhece.",
+"titulo": "A lição de Papert: quem controla quem?",
+"definicao": "Perguntar o que o aluno pode fazer com a tecnologia (criar, investigar), e não só o que a tecnologia faz por ele.",
+"analogia": "a diferença entre assistir a uma receita e cozinhar com ela.",
+"destaque": "Quem recebe, copia. Quem produz, pensa."
+},
+{
+"t": "cartoes",
+"notas": "Três mudanças sociais que pressionam a escola. Previsões exatas sobre empregos são incertas, então desconfie de quem as faz com muita segurança. Pergunte à turma qual dessas três ela vê mais nos seus estudantes.",
+"titulo": "Três mudanças que pressionam a escola",
+"cartoes": [
+{
+"cab": "Informação em abundância",
+"txt": "O desafio deixou de ser achar e passou a ser selecionar o que é confiável."
+},
+{
+"cab": "Trabalho em transformação",
+"txt": "As tarefas mudam. Previsões exatas sobre empregos são incertas."
+},
+{
+"cab": "Plataformas e dados",
+"txt": "Algoritmos decidem o que mostrar. Entender isso é formação cidadã."
+}
+]
+},
+{
+"t": "passos",
+"notas": "Fim de 2022: sistemas que conversam e geram texto fluente ficaram acessíveis ao grande público. A reação foi diversa pelo mundo: restrição, orientação, diretrizes. A UNESCO publicou orientações com abordagem centrada no ser humano, proteção de dados e regulação. Lembre de conferir sempre a versão atual.",
+"titulo": "A IA generativa chega ao grande público",
+"passos": [
+"Fim de 2022: IA que conversa fica acessível",
+"Estudantes, professores e famílias discutem",
+"Redes de ensino restringem ou orientam",
+"Escolas e universidades criam diretrizes",
+"UNESCO orienta: foco humano, dados e regulação"
+],
+"rodape": "Normas mudam rápido: confira sempre a versão atual."
+},
+{
+"t": "cartoes",
+"notas": "Mostre onde a tecnologia já é competência nos documentos brasileiros. Chame atenção para os quatro adjetivos da BNCC: crítica, significativa, reflexiva e ética. Não basta saber usar. Lembre que quem digita dados de estudantes em um sistema trata dados pessoais.",
+"titulo": "Tecnologia como competência nos documentos",
+"cartoes": [
+{
+"cab": "BNCC",
+"txt": "Cultura digital: compreender, usar e criar com crítica, reflexão e ética."
+},
+{
+"cab": "Computação na Educação Básica",
+"txt": "Três eixos: pensamento computacional, mundo digital e cultura digital."
+},
+{
+"cab": "LGPD",
+"txt": "Protege dados pessoais, inclusive de crianças e adolescentes."
+},
+{
+"cab": "UNESCO",
+"txt": "Orientações sobre IA na educação, em 2021 e 2023."
+}
+]
+},
+{
+"t": "figura",
+"notas": "Use o mapa para retomar o caminho percorrido até aqui e antecipar o que vem. Peça que a turma localize em qual ramo está sua maior dúvida. Tempo: 2 minutos.",
+"titulo": "Mapa do capítulo",
+"fig": "f01_mapa",
+"legenda": "Figura 1.1 — Mapa dos conceitos principais do capítulo."
+},
+{
+"t": "figura",
+"notas": "Apresente as três posturas lado a lado. A terceira é destacada porque é a adotada pelo livro. Pergunte em qual postura a turma se reconhece hoje, sem julgamento. Tempo: 3 minutos.",
+"titulo": "Três posturas diante da IA",
+"fig": "f01_lentes",
+"legenda": "Figura 1.3 — Entusiasmo acrítico, rejeição automática e deliberação fundamentada."
+},
+{
+"t": "conceito",
+"notas": "Defina a deliberação fundamentada pelas quatro perguntas: objetivo, ajuda, riscos, alternativa. A conclusão pode ser usar, adaptar ou não usar. Peça que a turma aplique as perguntas ao caso de Marina. Tempo: 4 minutos.",
+"titulo": "Deliberação fundamentada",
+"definicao": "Perguntar, a cada situação: qual o objetivo de aprendizagem? A tecnologia ajuda? Que riscos traz? Existe alternativa mais simples?",
+"analogia": "um GPS: antes de ligar, você precisa saber para onde quer ir.",
+"destaque": "Primeiro o objetivo, depois a ferramenta."
+},
+{
+"t": "cartoes",
+"notas": "A pesquisa não permite dizer que a IA melhora ou piora a aprendizagem por si só. Revisões mostram muita produção, qualidade desigual e poucos estudos na educação básica. Kestin e Bastani mostram resultados opostos em contextos diferentes, que não se generalizam. Peça cautela com manchetes.",
+"titulo": "O que a pesquisa permite afirmar",
+"cartoes": [
+{
+"cab": "Muita produção",
+"txt": "Crescimento rápido desde 2022, mas com qualidade desigual."
+},
+{
+"cab": "Lacunas",
+"txt": "Poucos estudos na educação básica e poucos experimentais."
+},
+{
+"cab": "Resultados opostos",
+"txt": "Ganho com tutor bem desenhado; prejuízo sem salvaguardas."
+},
+{
+"cab": "Conclusão",
+"txt": "Desenho da atividade e mediação docente fazem a diferença."
+}
+]
+},
+{
+"t": "frase",
+"notas": "Pausa para a frase de impacto. Satisfação e economia de tempo são informações úteis, mas não provam aprendizagem. Pergunte: que indicador de aprendizagem você olharia? Tempo: 2 minutos.",
+"texto": "Gostar e ganhar tempo não é o mesmo que aprender.",
+"apoio": "Peça indicadores de aprendizagem e qualidade, não só de satisfação."
+},
+{
+"t": "atividade",
+"notas": "Atividade individual ou em reunião pedagógica, sem uso de IA. Não há resposta certa: o texto é provisório e será relido no último capítulo. Circule pela sala e incentive exemplos concretos da própria prática. Aproximadamente 45 a 60 minutos.",
+"titulo": "Atividade: meu mapa de tecnologias",
+"tempo": "45 a 60 minutos",
+"passos": [
+"Liste as tecnologias que você usa para ensinar",
+"Anote para que servem, o que facilitam e dificultam",
+"Desenhe a linha do tempo da sua escola: o que pegou e o que não",
+"Responda: o que me anima? O que me preocupa?",
+"Escreva: \"Hoje, eu penso que a IA na minha prática...\"",
+"Guarde o texto: você o relerá no último capítulo"
+],
+"produto": "Mapa de tecnologias, linha do tempo e parágrafo de posicionamento provisório.",
+"poucos": "Tudo em papel e caneta. Em grupos grandes, cartões coloridos e painel na parede."
+},
+{
+"t": "cuidado",
+"notas": "Dois alertas do capítulo: perguntas para avaliar qualquer notícia de que a IA transforma a educação, e os riscos centrais que o livro aprofunda. Cheque também se há acesso desigual na sua escola. Tempo: 3 minutos.",
+"titulo": "Pare e verifique",
+"itens": [
+"Quem produziu o estudo? Com quantos estudantes e em que nível?",
+"Mediu satisfação, tempo ou aprendizagem? Houve grupo de comparação?",
+"Sem essas respostas, trate a afirmação como hipótese",
+"Riscos: erros, vieses, privacidade, dependência, autoria e desigualdade"
+]
+},
+{
+"t": "comparar",
+"notas": "Dispensar a IA pode ser a melhor decisão pedagógica e é tão legítimo quanto usar. Peça um objetivo de aprendizagem da turma que se ganha sem IA. Mencione a alternativa para escolas sem internet: preparar material em casa, imprimir e revisar. Tempo: 3 minutos.",
+"titulo": "Quando dispensar a IA",
+"esq": {
+"cab": "Considere dispensar se...",
+"itens": [
+"O estudante precisa fazer o esforço sozinho",
+"Você teria de inserir dados pessoais sensíveis",
+"Não há tempo para revisar o que ela produzir",
+"Há alternativa mais simples e eficaz"
+]
+},
+"dir": {
+"cab": "Poucos recursos?",
+"itens": [
+"Prepare o material em casa e imprima",
+"Revise tudo antes de levar para a sala",
+"Em aula: papel, lousa e conversa",
+"Os estudantes nem precisam ver a IA"
+]
+}
+},
+{
+"t": "figura",
+"notas": "Feche com a síntese: a decisão pedagógica vem antes da tecnologia, e o professor está no centro do ciclo. Percorra as quatro etapas com um exemplo da turma. Tempo: 2 minutos.",
+"titulo": "Síntese: a decisão pedagógica vem primeiro",
+"fig": "f01_sintese",
+"legenda": "Objetivo, contexto, decisão (usar, adaptar ou dispensar) e avaliação."
+},
+{
+"t": "lembrar",
+"notas": "Releia cada item e peça que a turma escolha o que levaria para a próxima reunião pedagógica. Reforce que usar, adaptar ou não usar são decisões profissionais legítimas.",
+"itens": [
+"A relação entre educação e tecnologia é antiga; a IA é nova etapa",
+"Cada tecnologia trouxe esperança, desconfiança e desencontro",
+"A BNCC trata a cultura digital como competência crítica e ética",
+"Três posturas: entusiasmo, rejeição ou deliberação fundamentada",
+"Satisfação e economia de tempo não comprovam aprendizagem",
+"Usar, adaptar ou não usar: a decisão pedagógica vem antes"
+]
+},
+{
+"t": "reflexao",
+"notas": "Escolha uma ou duas perguntas para discussão em duplas, 5 minutos, e depois socialize. Use a última para voltar à Marina: que informação ela precisaria antes de se posicionar?",
+"perguntas": [
+"Que tecnologia mudou mais a sua forma de ensinar, e por quê?",
+"Quem decide sobre tecnologia na sua escola? Professores são ouvidos?",
+"O que dificultaria ou favoreceria a IA no seu contexto?",
+"Em que situações dispensar a IA seria a melhor escolha?"
+]
+}
+]
+}

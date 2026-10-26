@@ -1,0 +1,262 @@
+{
+"n": 7,
+"titulo": "Como se aprende: conhecimentos prévios, esforço e aprendizagem ativa",
+"parte": "Parte II — Fundamentos pedagógicos e planejamento",
+"fecho": "Quem faz o esforço de pensar é quem aprende.",
+"slides": [
+{
+"t": "objetivos",
+"notas": "Apresente os objetivos. O capítulo traz a ciência da aprendizagem para qualquer decisão sobre IA. Avise que haverá uma atividade de prever, investigar e explicar. Tempo: 2 minutos.",
+"itens": [
+"Explicar por que os conhecimentos prévios importam",
+"Relacionar mediação e andaimes ao uso de IA",
+"Distinguir esforço produtivo de improdutivo",
+"Descrever a aprendizagem ativa com orientação",
+"Planejar uma atividade de ideias prévias e investigação"
+]
+},
+{
+"t": "pergunta",
+"rotulo": "DUAS ESTUDANTES, O MESMO ASSISTENTE",
+"notas": "Conte a cena: Beatriz já domina velocidade e avança; Camila tem a ideia de que se há movimento, há força na mesma direção, recebe a explicação correta, concorda, copia e segue. Na prova, Beatriz vai bem e Camila repete o erro. Cena fictícia. Pergunte à turma o que faltou a Camila. Tempo: 3 minutos.",
+"texto": "Por que o mesmo recurso funciona para uma estudante e não para outra?",
+"apoio": "Cena fictícia: depende do que o estudante já sabe e de como interage com a ferramenta."
+},
+{
+"t": "figura",
+"notas": "Mapa como roteiro: conhecimentos prévios, desenvolvimento e mediação, carga cognitiva, esforço produtivo, aprendizagem ativa e diferenças individuais. Tempo: 2 minutos.",
+"titulo": "Mapa do capítulo",
+"fig": "f07_mapa",
+"legenda": "Figura 7.1 — Mapa dos conceitos principais do capítulo."
+},
+{
+"t": "conceito",
+"notas": "Ausubel: o fator isolado mais importante é o que o aprendiz já sabe. Sem âncora, decora-se sem compreender. Concepções alternativas são resistentes: ouvir a explicação correta não basta, é preciso perceber o conflito. Use o exemplo do verão: ficar mais perto do Sol. Peça outra concepção comum na disciplina da turma. Tempo: 4 minutos.",
+"titulo": "Conhecimentos prévios: o ponto de partida",
+"definicao": "Aprender é conectar o novo ao que já se sabe. Ideias prévias erradas resistem: só mudam quando o estudante percebe o conflito.",
+"analogia": "pregar um quadro na parede: sem um ponto de apoio, ele cai.",
+"destaque": "Ouvir a explicação certa não apaga a ideia errada."
+},
+{
+"t": "passos",
+"notas": "O que isso significa para a IA: uma explicação correta e clara não garante mudança conceitual. Atividades em que o estudante expõe suas ideias antes e depois confronta com evidências tendem a ser mais promissoras. Mostre a sequência, que será usada na atividade. Tempo: 3 minutos.",
+"titulo": "Para mudar uma ideia prévia",
+"passos": [
+"Expor: prever, explicar ou desenhar",
+"Compartilhar e discutir divergências",
+"Investigar com evidências",
+"Reescrever a explicação",
+"Comparar antes e depois"
+],
+"rodape": "Só ler e concordar deixa as ideias antigas intactas."
+},
+{
+"t": "cartoes",
+"notas": "Piaget foi questionado e refinado, e hoje serve como lente, não como regra rígida. Crianças pequenas aprendem com objetos concretos, brincadeira e interação. Por isso não generalize resultados de um nível de ensino para outro sem justificativa e evidência. Algo que funciona com universitários pode ser inadequado a crianças. Tempo: 3 minutos.",
+"titulo": "Desenvolvimento e idade: lentes, não regras",
+"cartoes": [
+{
+"cab": "Crianças pequenas",
+"txt": "Objetos concretos, movimento, brincadeira e interação."
+},
+{
+"cab": "Pré-adolescentes e jovens",
+"txt": "Lidam melhor com abstrações, mas ainda precisam de exemplos."
+},
+{
+"cab": "Cuidado",
+"txt": "Não generalize resultados de um nível para outro sem evidência."
+}
+]
+},
+{
+"t": "figura",
+"notas": "Vygotsky: a ZDP é a distância entre o que a pessoa faz sozinha e o que faz com ajuda de alguém mais experiente. A ajuda adequada se ajusta ao estudante e se retira aos poucos. Peça um exemplo de mediação em aula. Tempo: 3 minutos.",
+"titulo": "Zona de Desenvolvimento Proximal",
+"fig": "f07_zdp",
+"legenda": "A ajuda adequada se ajusta ao estudante e é retirada gradualmente."
+},
+{
+"t": "conceito",
+"notas": "Andaime: apoio temporário que permite realizar uma tarefa além do que se faria sozinho, e que é retirado. Um assistente pode ser andaime, com dicas graduais, ou muleta, com resposta pronta. Peça à turma que dê exemplo de cada um. Tempo: 3 minutos.",
+"titulo": "Andaime ou muleta?",
+"definicao": "Andaime é um apoio temporário que orienta sem fazer pelo aprendiz e é retirado aos poucos. Muleta é a resposta pronta.",
+"analogia": "rodinhas de bicicleta: ajudam a aprender e saem quando não são mais necessárias.",
+"destaque": "Um bom apoio orienta sem fazer pelo aluno."
+},
+{
+"t": "cartoes",
+"notas": "Dois estudos, lidos com cuidado. No experimento com cerca de mil estudantes de ensino médio em Matemática, houve melhora enquanto o acesso existia, e piora sem salvaguardas depois que foi retirado; com dicas em vez de respostas, o efeito negativo foi atenuado. No ensaio com universitários, um tutor desenhado com princípios pedagógicos ensinou mais em menos tempo, em um conteúdo específico e com teste logo após. Não se contradizem: o desenho do apoio é decisivo. Tempo: 4 minutos.",
+"titulo": "Dois estudos, uma lição: o desenho do apoio",
+"cartoes": [
+{
+"cab": "Ensino médio, Matemática",
+"txt": "Com resposta pronta, piora quando o acesso é retirado."
+},
+{
+"cab": "Com dicas pedagógicas",
+"txt": "O efeito negativo ficou bastante atenuado."
+},
+{
+"cab": "Tutor desenhado",
+"txt": "Mais aprendizagem em menos tempo, num conteúdo e teste imediato."
+},
+{
+"cab": "Limites",
+"txt": "Populações, conteúdos e prazos diferentes: não generalize."
+}
+]
+},
+{
+"t": "conceito",
+"notas": "Memória de trabalho é limitada. Há carga intrínseca (do conteúdo), extrínseca (do mau desenho) e relevante (do esforço de construir). A IA pode reduzir a extrínseca, o que é benefício, mas corre o risco de eliminar também a relevante, quando faz a organização, a síntese e a resolução. Peça um exemplo de cada carga. Tempo: 4 minutos.",
+"titulo": "Carga cognitiva: reduzir o ruído, manter o esforço",
+"definicao": "A memória de trabalho é limitada. A IA pode tirar a carga desnecessária, mas não deve tirar o esforço de construir o conhecimento.",
+"analogia": "arrumar a mesa para estudar: tirar a bagunça ajuda, mas fazer a lição por você não.",
+"destaque": "Tire o ruído, preserve o esforço."
+},
+{
+"t": "conceito",
+"notas": "Dificuldades desejáveis: espaçar o estudo, intercalar problemas, tentar lembrar antes de consultar e explicar com as próprias palavras prejudicam o desempenho imediato, mas melhoram a retenção a longo prazo. O efeito do teste: recuperar da memória fortalece mais que reler. Peça que a turma escolha uma estratégia para propor aos estudantes. Tempo: 3 minutos.",
+"titulo": "Dificuldades desejáveis",
+"definicao": "Espaçar, intercalar, tentar lembrar antes de consultar: parecem mais difíceis agora, mas melhoram a retenção a longo prazo.",
+"analogia": "a academia: o peso pesado cansa na hora e fortalece o músculo depois.",
+"destaque": "Recuperar da memória ensina mais do que reler."
+},
+{
+"t": "figura",
+"notas": "Escala: tarefa fácil demais ou resolvida por outro, pouco esforço; esforço produtivo no meio, desafio possível com apoio; tarefa impossível ou confusa, esforço improdutivo. A IA pode deslocar o estudante para qualquer ponto. Pergunte onde a turma quer que os estudantes estejam. Tempo: 3 minutos.",
+"titulo": "Esforço produtivo e improdutivo",
+"fig": "f07_esforco",
+"legenda": "A IA pode deslocar o estudante para qualquer ponto da escala."
+},
+{
+"t": "frase",
+"notas": "Pausa para a frase de impacto. Um experimento de laboratório com 117 estudantes sugeriu possível preguiça metacognitiva: o texto melhorou, mas sem ganhos significativos de conhecimento e transferência. A palavra possível importa. Pergunte à turma: quem está pensando na tarefa? Tempo: 2 minutos.",
+"texto": "Quem está fazendo o esforço de pensar: o estudante ou a ferramenta?",
+"apoio": "Se for a ferramenta, o estudante provavelmente não está aprendendo."
+},
+{
+"t": "cartoes",
+"notas": "Aprendizagem ativa se associa a melhor desempenho e menor reprovação em meta-análise de 225 estudos no ensino superior de STEM. Mas instrução com pouca orientação tende a ser menos eficaz para iniciantes. Ativo não significa sem orientação. Um ensaio isolado de Macroeconomia sugere combinar IA e trabalho em grupo. Tempo: 4 minutos.",
+"titulo": "Aprendizagem ativa, mas com orientação",
+"cartoes": [
+{
+"cab": "O que é",
+"txt": "Os estudantes fazem mais do que ouvir: resolvem, discutem, explicam, investigam."
+},
+{
+"cab": "Evidência",
+"txt": "Meta-análise de 225 estudos no ensino superior: mais desempenho e menos reprovação."
+},
+{
+"cab": "Ressalva",
+"txt": "Pouca orientação sobrecarrega iniciantes. Ativo não é sem orientação."
+},
+{
+"cab": "Social",
+"txt": "Um estudo isolado sugere combinar IA com trabalho em grupo."
+}
+]
+},
+{
+"t": "comparar",
+"notas": "Estilos de aprendizagem: uma revisão rigorosa concluiu que faltam evidências para ajustar o ensino a eles. Isso não torna inútil variar a forma de apresentação, que ajuda a todos. O que não tem sustentação é rotular estudantes. Rótulos podem virar profecias autorrealizáveis, e sistemas de IA que perfilam estudantes podem agravar isso. Tempo: 3 minutos.",
+"titulo": "Diferenças individuais sem rótulos",
+"esq": {
+"cab": "Vale a pena",
+"itens": [
+"Reconhecer conhecimentos prévios e interesses",
+"Variar as formas de apresentar",
+"Ajustar apoios às necessidades"
+]
+},
+"dir": {
+"cab": "Evite",
+"itens": [
+"Rotular por estilo visual, auditivo ou cinestésico",
+"Perfis opacos ou enviesados",
+"Expectativas moldadas pelo rótulo"
+]
+}
+},
+{
+"t": "atividade",
+"notas": "Prever, investigar, explicar e comparar. A IA é interlocutor opcional e deve pedir perguntas em vez de dar a resposta. Para menores de 13 anos, a etapa com IA só como demonstração do professor. A sequência importa mais que a ferramenta. Duas aulas de 50 minutos.",
+"titulo": "Atividade: preveja, investigue e explique",
+"tempo": "2 aulas de 50 minutos",
+"passos": [
+"Prever: cada um escreve o que acontece ao soltar dois objetos",
+"Compartilhar em pares e anotar as ideias prévias",
+"Investigar com variações e registrar observações",
+"Reescrever a explicação, indicando o que mudou",
+"Opcional: tutor de IA que só faz perguntas",
+"Fechar: \"Antes eu achava... Agora eu penso... porque...\""
+],
+"produto": "Folha com previsão, observações, explicação reescrita e frase antes e depois.",
+"poucos": "Sem tecnologia: o interlocutor é um colega ou roteiro impresso de cinco perguntas."
+},
+{
+"t": "cuidado",
+"notas": "Riscos do capítulo. A ilusão de compreensão: texto bem explicado dá a sensação de entender. Resultados de universitários não valem automaticamente para crianças. Explicações incorretas do sistema podem reforçar concepções alternativas. Pergunte à turma qual desses riscos mais a preocupa. Tempo: 3 minutos.",
+"titulo": "Pare e verifique",
+"itens": [
+"O estudante termina a tarefa, mas a ferramenta fez o esforço",
+"Texto bem explicado dá ilusão de compreensão",
+"Estudos com universitários não valem automaticamente para crianças",
+"Explicações incorretas podem reforçar concepções alternativas"
+]
+},
+{
+"t": "comparar",
+"notas": "Quando o objetivo é construir a explicação, o raciocínio ou a memória por conta própria, dispense a IA: primeira tentativa, ideias prévias, recuperação da memória, avaliação individual. Use-a depois, para revisão e comparação. Mostre o contraste com o que tende a ajudar. Tempo: 3 minutos.",
+"titulo": "Quando a IA tende a ajudar ou a atrapalhar",
+"esq": {
+"cab": "Tende a ajudar",
+"itens": [
+"Dicas graduais e perguntas",
+"Exemplos extras e reformulação",
+"Feedback depois da tentativa do estudante"
+]
+},
+"dir": {
+"cab": "Tende a atrapalhar",
+"itens": [
+"Resposta pronta antes da tentativa",
+"Substituir o raciocínio",
+"Explicações não verificadas",
+"Rótulos sobre estudantes"
+]
+}
+},
+{
+"t": "figura",
+"notas": "Síntese do capítulo em dois painéis. A figura é ilustração conceitual com base nos princípios, não em dados. Peça que a turma proponha uma tarefa sua e a localize no painel. Tempo: 3 minutos.",
+"titulo": "Síntese: ajudar ou atrapalhar a aprendizagem",
+"fig": "f07_sintese",
+"legenda": "Ilustração conceitual com base nos princípios do capítulo, não em dados."
+},
+{
+"t": "lembrar",
+"notas": "Releia os itens e peça que a turma escolha o que mudaria em uma atividade já planejada. Volte a Camila: que andaime teria ajudado?",
+"itens": [
+"Conhecimentos prévios e concepções alternativas são o ponto de partida",
+"Mediação e andaimes são retirados aos poucos: IA é andaime ou muleta",
+"Esforço produtivo é necessário; facilitar tudo pode eliminá-lo",
+"Resultados com IA dependem do desenho do apoio e da população",
+"Aprendizagem ativa funciona melhor com orientação",
+"Estilos de aprendizagem não sustentam ajuste do ensino"
+]
+},
+{
+"t": "reflexao",
+"notas": "Duas perguntas para duplas, 5 minutos. A previsão antes da explicação é um hábito simples para levar já à próxima aula.",
+"perguntas": [
+"Que concepções alternativas você encontra? Como as faz aparecer?",
+"Quando um estudante parecia entender, mas não soube aplicar?",
+"Que andaimes você oferece e quando os retira?",
+"Em que tarefas o esforço de pensar é insubstituível?"
+]
+}
+]
+}

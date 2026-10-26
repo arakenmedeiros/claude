@@ -1,0 +1,297 @@
+{
+"n": 18,
+"titulo": "Planejar aulas e criar materiais com apoio de IA",
+"parte": "Parte IV — Aplicações práticas no trabalho docente",
+"fecho": "Planeje primeiro. A IA entra depois.",
+"slides": [
+{
+"t": "objetivos",
+"notas": "Apresente os objetivos e avise que o capítulo é muito prático: vamos sair com um roteiro de revisão de planos. Peça que cada pessoa pense em uma aula que precisa planejar na próxima semana. Tempo: 2 minutos.",
+"itens": [
+"Partir de objetivos e evidências antes de recorrer à IA",
+"Separar o que delegar, o que fazer em parceria e o que reservar",
+"Pedir com contexto, objetivo, restrições e formato",
+"Criar e adaptar materiais com acessibilidade e cuidado com dados",
+"Verificar exatidão antes de levar à sala e montar um banco próprio"
+]
+},
+{
+"t": "pergunta",
+"notas": "Conte a cena da professora Lúcia no domingo à noite. Pergunte: o que vocês fariam com esse plano? Aproveitar, descartar ou usar de outro jeito? Deixe 2 minutos de conversa em duplas.",
+"rotulo": "DOMINGO À NOITE",
+"texto": "O plano de IA veio bonito, mas com uma conta errada. O que fazer?",
+"apoio": "Cena fictícia: objetivos genéricos, material que a escola não tem e um exercício incorreto."
+},
+{
+"t": "conceito",
+"notas": "Explique o planejamento para trás: primeiro resultados desejados, depois evidências, só então atividades. Mencione o alinhamento construtivo. Pergunte: quantos já começam o plano pela atividade?",
+"titulo": "Planejar para trás",
+"definicao": "Primeiro, o que os estudantes devem aprender. Depois, como saberemos que aprenderam. Só então, as atividades.",
+"analogia": "traçar o destino no mapa antes de ligar o GPS: sem destino, qualquer rota parece boa.",
+"destaque": "Objetivo, atividade e avaliação apontam para o mesmo lado."
+},
+{
+"t": "conceito",
+"notas": "A IA devolve o plano mais provável, não o plano da sua turma. Ela não sabe o que a turma já sabe, o tempo real nem as dificuldades da semana passada. Peça exemplos de algo que só quem está na sala sabe.",
+"titulo": "A IA devolve o plano mais provável",
+"definicao": "Ela combina padrões frequentes sobre aulas. Não conhece sua turma, seu tempo, sua sala nem a dificuldade da semana passada.",
+"analogia": "uma receita de caderno antigo: serve de ponto de partida, mas quem prova o sal é o cozinheiro.",
+"destaque": "Rascunho de partida, não plano pronto."
+},
+{
+"t": "figura",
+"notas": "Mostre o fluxo em cinco etapas. As etapas 1 e 2 (objetivos e evidências) ficam com o docente. A IA pode apoiar nas etapas 3 e 4. Peça que a turma diga onde costuma gastar mais tempo.",
+"titulo": "Do objetivo à aula: onde a IA pode apoiar",
+"fig": "f18_fluxo",
+"legenda": "Figura 18.2 — Do objetivo à aula: o caminho do planejamento."
+},
+{
+"t": "figura",
+"notas": "O semáforo organiza as decisões. Verde: delegar com revisão rápida. Amarelo: parceria com revisão atenta. Vermelho: decisão do professor. Pergunte em qual cor cada participante colocaria elaborar uma prova.",
+"titulo": "Semáforo do planejamento",
+"fig": "f18_semaforo",
+"legenda": "Figura 18.3 — Três categorias de decisão no planejamento."
+},
+{
+"t": "cartoes",
+"notas": "Dê exemplos de cada categoria. Delegar: reformatar um texto seu. Parceria: sequência a partir dos seus objetivos, exercícios com conferência total. Reservar: objetivos, adaptações individuais, replanejar. Fecho: quanto mais a decisão depende de conhecer seus estudantes, menos se delega.",
+"titulo": "O que delegar, dividir e reservar",
+"cartoes": [
+{
+"cab": "Delegar com revisão",
+"txt": "Reformatar texto seu em tópicos; sugerir títulos e variações de exemplo."
+},
+{
+"cab": "Fazer em parceria",
+"txt": "Levantar equívocos comuns; propor sequência; criar exercícios, resolvendo todos."
+},
+{
+"cab": "Reservar ao professor",
+"txt": "Objetivos, critérios, adaptações para estudantes e replanejamento."
+}
+]
+},
+{
+"t": "passos",
+"notas": "Mostre o exercício de três linhas no papel antes de abrir o assistente. Esses três itens viram o início do pedido e protegem de aceitar um plano bonito que não leva aonde se queria. Faça junto com a turma por 2 minutos.",
+"titulo": "Antes de abrir o assistente: três linhas",
+"passos": [
+"O que devem ser capazes de fazer ao final?",
+"O que aceito como evidência disso?",
+"O que eles já sabem?"
+],
+"rodape": "Esses três itens viram o começo do seu pedido."
+},
+{
+"t": "cartoes",
+"notas": "Os elementos de um bom pedido. Se o resultado vier distante, a causa mais comum é um pedido que omitiu algo importante. Peça que a turma reescreva mentalmente o pedido da Lúcia com esses elementos.",
+"titulo": "Como pedir: o que o sistema não sabe",
+"cartoes": [
+{
+"cab": "Contexto",
+"txt": "Etapa, turma, tempo, espaço e recursos reais, inclusive 'só quadro e caderno'."
+},
+{
+"cab": "Objetivo e evidência",
+"txt": "O que fazer ao final, com o código da habilidade, se houver."
+},
+{
+"cab": "Restrições",
+"txt": "O que você não quer: sem tela, sem competição entre estudantes."
+},
+{
+"cab": "Formato e transparência",
+"txt": "Tabela por tempo. E: 'indique o que é suposição'."
+}
+]
+},
+{
+"t": "passos",
+"notas": "Seis perguntas para revisar o plano recebido, aqui resumidas em cinco passos. Vale para planos de colegas e de livros também. Diferença da IA: o texto parece sempre seguro e fluente, e isso não indica correção.",
+"titulo": "Revisar o plano recebido",
+"passos": [
+"Os objetivos são meus?",
+"A evidência combina com o objetivo?",
+"Cabe no tempo, no espaço e nos recursos?",
+"Há erro, referência inventada ou exemplo inadequado?",
+"Todos participam, inclusive quem precisa de adaptação?"
+],
+"rodape": "Fluência não é correção."
+},
+{
+"t": "figura",
+"notas": "O ciclo planejar, aplicar, observar e ajustar. A sequência só fica boa depois de testada com a turma. Incentive o registro ao final de cada aula: o que funcionou, o que não e o que mudaria.",
+"titulo": "Planejar, aplicar, observar, ajustar",
+"fig": "f18_ciclo",
+"legenda": "Figura 18.4 — Ciclo de planejamento e ajuste, com a decisão docente no centro."
+},
+{
+"t": "conceito",
+"notas": "Use o exemplo do molho pronto. Peça que a turma pense em outro exemplo da vida em que algo pronto precisa ser provado antes de servido.",
+"titulo": "Plano de IA é molho pronto",
+"definicao": "Planos e materiais gerados economizam tempo, mas só servem àquela turma depois que alguém prova e corrige.",
+"analogia": "molho pronto: ajuda, mas se ninguém provar o sal antes de servir, o jantar pode estragar.",
+"destaque": "Prove antes de servir."
+},
+{
+"t": "cartoes",
+"notas": "Materiais mais frequentes e cuidado principal de cada um. Exercícios: resolva cada item como se fosse o estudante. Adaptação de leitura: confira se o sentido foi preservado. Rubricas: ajuste e discuta com a turma.",
+"titulo": "Criar e adaptar materiais: cuidado principal",
+"cartoes": [
+{
+"cab": "Adaptar a leitura",
+"txt": "Frases mais curtas. Confira se o sentido e a precisão foram preservados."
+},
+{
+"cab": "Exercícios e gabaritos",
+"txt": "Resolva todos os itens antes de entregar, como se fosse o estudante."
+},
+{
+"cab": "Exemplos e analogias",
+"txt": "Verifique exatidão e adequação cultural."
+},
+{
+"cab": "Rubricas",
+"txt": "Rascunhe e ajuste à sua tarefa; discuta com a turma."
+}
+]
+},
+{
+"t": "cartoes",
+"notas": "Desenho universal para a aprendizagem: múltiplas formas de engajamento, representação e ação e expressão. A IA pode gerar versões alternativas, desde que você revise e que as adaptações respondam a necessidades reais, não a rótulos. Veja o capítulo 9.",
+"titulo": "Acessibilidade: desenho universal",
+"cartoes": [
+{
+"cab": "Engajamento",
+"txt": "Várias formas de despertar o interesse e manter o esforço."
+},
+{
+"cab": "Representação",
+"txt": "Texto, roteiro em tópicos, imagem com descrição."
+},
+{
+"cab": "Ação e expressão",
+"txt": "Mais de um modo de mostrar o que aprendeu."
+},
+{
+"cab": "Verifique",
+"txt": "Títulos claros, contraste, instruções curtas e alternativa em papel."
+}
+]
+},
+{
+"t": "cartoes",
+"notas": "O que a pesquisa permite afirmar. Um estudo de caso nos Estados Unidos chegou a um plano em cerca de 30 minutos, mas com componentes questionáveis, lacunas e um recurso inexistente. É um caso, não uma média. Evidências robustas sobre melhora de aprendizagem ainda são poucas.",
+"titulo": "O que a pesquisa permite afirmar",
+"cartoes": [
+{
+"cab": "Ponto de partida útil",
+"txt": "Em um estudo de caso, o plano saiu em cerca de 30 minutos, mas com falhas."
+},
+{
+"cab": "Potencial e riscos",
+"txt": "Revisões apontam apoio a materiais e preocupação com precisão e vieses."
+},
+{
+"cab": "Ainda não sabemos",
+"txt": "Faltam evidências robustas de melhora na aprendizagem e efeito de longo prazo."
+}
+]
+},
+{
+"t": "atividade",
+"notas": "Atividade 1: do rascunho gerado ao plano do professor. Em duplas, auditam um rascunho com as seis perguntas, reescrevem e trocam. Sem acesso à IA, o formador traz um rascunho com erros propositais. No fim, a turma lista cinco critérios de revisão.",
+"titulo": "Atividade 1: do rascunho ao plano do professor",
+"tempo": "2 horas, em um ou dois encontros",
+"passos": [
+"Escrever objetivo, evidência e conhecimentos prévios",
+"Obter um rascunho de plano sobre o tema",
+"Auditar com as seis perguntas e marcar o duvidoso",
+"Conferir cada dúvida em material confiável",
+"Reescrever com objetivos próprios e duas adaptações",
+"Trocar versões e listar cinco critérios de revisão"
+],
+"produto": "Rascunho anotado, plano reescrito e cinco critérios de revisão",
+"poucos": "Rascunho impresso com erros propositais; tudo em papel."
+},
+{
+"t": "atividade",
+"notas": "Atividade 2: banco de materiais adaptados. Cada pessoa adapta um material seu, sempre partindo do original, compara linha a linha, resolve exercícios em duplas e organiza o banco com nome padronizado, o que mudou e como foi conferido.",
+"titulo": "Atividade 2: banco de materiais adaptados",
+"tempo": "2 sessões de 90 minutos",
+"passos": [
+"Escolher um material seu e definir objetivo e público",
+"Definir duas adaptações",
+"Produzir as versões a partir do texto original",
+"Comparar linha a linha e resolver os exercícios em duplas",
+"Aplicar a lista de acessibilidade",
+"Organizar o banco com nome, versão e 'o que mudou'"
+],
+"produto": "Original, duas versões adaptadas, registro das verificações e ficha do banco",
+"poucos": "Adaptação à mão; banco em fichário. A revisão por pares é o recurso mais valioso."
+},
+{
+"t": "cuidado",
+"notas": "Pare e verifique antes de levar qualquer plano ou material à sala. Resolva exercícios, confira fatos, confirme recursos, retire dados pessoais e tenha alternativa sem tecnologia. Cuidado também com imagens que repetem estereótipos e com obras protegidas.",
+"titulo": "Pare e verifique antes de usar",
+"itens": [
+"Resolva todos os exercícios e confira fatos, datas e fórmulas",
+"Confirme que os recursos citados existem e estão ao seu alcance",
+"Retire dados pessoais; não envie obras protegidas a sistemas externos",
+"Tenha uma alternativa sem tecnologia e atenção a estereótipos"
+]
+},
+{
+"t": "cartoes",
+"notas": "Quando dispensar a IA. Se planejar com colegas for mais rápido e mais proveitoso do que revisar um texto gerado, dispense. A reunião pedagógica é um recurso de alto valor. Um caderno de planos e a troca de materiais cumprem a mesma função de um banco digital.",
+"titulo": "Quando dispensar a IA no planejamento",
+"cartoes": [
+{
+"cab": "Sem objetivo claro",
+"txt": "Se você ainda não sabe o que quer ensinar, comece pelos objetivos."
+},
+{
+"cab": "Conteúdo que não confere",
+"txt": "Conteúdo especializado que você não terá como conferir."
+},
+{
+"cab": "Estudante específico",
+"txt": "Adaptações individuais, relatórios, dados pessoais e obras protegidas."
+},
+{
+"cab": "Colegas resolvem melhor",
+"txt": "Planejar em duplas ou trios costuma ser mais rápido e proveitoso."
+}
+]
+},
+{
+"t": "figura",
+"notas": "Síntese visual: quatro elos. Decisão docente, rascunho de IA, verificação e adaptação docentes, uso em aula e ajuste. Peça que a turma narre o caminho com suas palavras.",
+"titulo": "Síntese: o professor no centro",
+"fig": "f18_sintese",
+"legenda": "Figura 18.5 — O professor no centro do planejamento apoiado por IA."
+},
+{
+"t": "lembrar",
+"notas": "Releia os pontos e peça que cada um escolha um para praticar na próxima aula. Sugira o experimento: planejar uma aula sozinho em dez minutos e depois comparar com um rascunho.",
+"itens": [
+"Planeje primeiro: objetivos e evidências são seus",
+"Quanto mais depender de conhecer a turma, menos se delega",
+"Pedidos com contexto e restrições ajudam, mas não garantem correção",
+"Resolva, confira e teste tempo e recursos antes de usar",
+"Parta de textos que você domina e peça adaptações",
+"Registre o que funcionou e monte seu banco próprio"
+]
+},
+{
+"t": "reflexao",
+"notas": "Dê 5 minutos de escrita e depois conversa em duplas. Convide cada dupla a compartilhar uma decisão que considera inegociavelmente sua.",
+"perguntas": [
+"Em que parte do planejamento você sente mais pressão de tempo?",
+"Que decisões de planejamento são inegociavelmente suas? Por quê?",
+"Como você confere hoje materiais que não foram produzidos por você?",
+"Como você organizaria um banco de materiais com colegas?"
+]
+}
+]
+}
