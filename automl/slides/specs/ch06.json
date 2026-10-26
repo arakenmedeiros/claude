@@ -1,0 +1,259 @@
+{
+ "num": 6,
+ "titulo": "Multifidelidade: Halving, Hyperband e BOHB",
+ "curto": "Multifidelidade",
+ "parte": "Parte II — Otimização de Hiperparâmetros",
+ "subtitulo": "Desistir cedo dos candidatos fracos para investir nos fortes",
+ "slides": [
+  {
+   "tipo": "capa",
+   "notas": "Ideia central: gastar pouco com todos e muito só com os promissores."
+  },
+  {
+   "tipo": "objetivos",
+   "itens": [
+    "Explicar fidelidade e avaliação barata",
+    "Aplicar o Successive Halving e contar o custo",
+    "Saber quando o corte precoce funciona e quando falha",
+    "Entender o Hyperband e o BOHB",
+    "Usar halving no scikit-learn e podadores no Optuna",
+    "Reconhecer as armadilhas da multifidelidade"
+   ],
+   "notas": "Seis objetivos."
+  },
+  {
+   "tipo": "roteiro",
+   "itens": [
+    [
+     "6.1–6.2",
+     "Peneira de talentos e fidelidade"
+    ],
+    [
+     "6.3–6.4",
+     "Successive Halving e limites do corte"
+    ],
+    [
+     "6.5",
+     "Halving no scikit-learn"
+    ],
+    [
+     "6.6–6.7",
+     "Hyperband e BOHB"
+    ],
+    [
+     "6.8–6.9",
+     "Podas no Optuna e armadilhas"
+    ]
+   ],
+   "notas": "Mapa."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "A peneira de talentos",
+   "fig": "f6_peneira",
+   "frase": "Candidatos fracos saem cedo e gastam pouco",
+   "notas": "Como um clube que testa muitos jovens por pouco tempo e só treina a fundo os melhores."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "O que é fidelidade?",
+   "fig": "f6_fidelidade",
+   "frase": "Versões baratas de uma avaliação cara",
+   "notas": "Menos épocas, menos dados, menos atributos, imagens menores, menos partes da validação."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Provar com a ponta da colher",
+   "icone": "FaSpoon",
+   "texto": "Para saber se um molho está bom você não come o prato todo. Uma colherada dá uma ideia razoável do final.",
+   "tecnico": "Aposta central: o ranking em baixa fidelidade se parece com o ranking em alta fidelidade.",
+   "notas": "Quando a aposta falha, o método falha também (próximos slides)."
+  },
+  {
+   "tipo": "saida",
+   "titulo": "Successive Halving com 81 candidatos (η = 3)",
+   "saida": "81 candidatos com  1 épocas | melhor acurácia = 0.948\n27 candidatos com  3 épocas | melhor acurácia = 0.961\n 9 candidatos com  9 épocas | melhor acurácia = 0.969\n 3 candidatos com 27 épocas | melhor acurácia = 0.969\n 1 candidatos com 81 épocas | melhor acurácia = 0.956",
+   "fonte": 13,
+   "frase": "297 épocas gastas, contra 6.561 para treinar todos até o fim",
+   "notas": "A cada rodada mantém 1/3 dos candidatos e triplica o orçamento. Economia de 95% do custo, com um bom vencedor."
+  },
+  {
+   "tipo": "numeros",
+   "titulo": "A economia do halving",
+   "itens": [
+    {
+     "n": "297",
+     "r": "épocas gastas pelo halving"
+    },
+    {
+     "n": "6.561",
+     "r": "épocas se treinássemos todos até o fim"
+    },
+    {
+     "n": "95%",
+     "r": "de economia"
+    }
+   ],
+   "frase": "O ganho é de ordem de grandeza, não de detalhe",
+   "notas": "297 épocas contra 6.561 se todos fossem treinados por 81 épocas: cerca de 95% de economia. (81×81 = 6.561; o halving gasta 297 porque cada rodada reaproveita o treino anterior.)"
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Quando o corte precoce funciona (e quando não)",
+   "fig": "f6_curvas",
+   "frase": "Curvas que se cruzam eliminam campeãs lentas",
+   "notas": "Se as curvas não se cruzam, o ranking inicial vale. Se se cruzam, o corte injusto elimina quem só brilha no fim."
+  },
+  {
+   "tipo": "saida",
+   "titulo": "Quem sobreviveria ao corte?",
+   "saida": "configuração 30: posto final = 1 | posto após 3 épocas =  5 de 40\nconfiguração 14: posto final = 2 | posto após 3 épocas = 10 de 40\nconfiguração 35: posto final = 3 | posto após 3 épocas = 20 de 40\nCortando para as 13 melhores após 3 épocas: 2 das 3 campeãs sobrevivem",
+   "fonte": 12,
+   "frase": "Uma das três melhores seria eliminada por azar do corte",
+   "notas": "Resultado real: a terceira campeã estava em 20º lugar após 3 épocas."
+  },
+  {
+   "tipo": "saida",
+   "titulo": "Halving no scikit-learn: SVM no Digits",
+   "saida": "Grade completa : 180 treinos | melhor acurácia = 0.989\nHalving        : candidatos por rodada [36, 12, 4] | exemplos por rodada [100, 300, 900]\n                 melhor acurácia (na última rodada) = 0.987\nCusto aproximado (exemplos processados): grade = 258,660 | halving = 43,200\nEconomia: 83%",
+   "fonte": 12,
+   "frase": "83% mais barato, 0,2 ponto a menos",
+   "notas": "Fidelidade = número de exemplos de treino. A diferença de acurácia é irrelevante diante da economia."
+  },
+  {
+   "tipo": "analogia",
+   "titulo": "Vários torneios, várias apostas",
+   "icone": "FaTrophy",
+   "texto": "Um técnico pode apostar em testar muitos jogadores por pouco tempo, ou poucos por muito tempo. Hyperband faz as duas apostas, em torneios diferentes.",
+   "tecnico": "Hyperband executa vários Successive Halving com compromissos diferentes entre número de candidatos e orçamento por candidato.",
+   "notas": "Evita escolher o corte 'certo' (Li et al., 2018)."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Os torneios (brackets) do Hyperband",
+   "fig": "f6_brackets",
+   "frase": "Do mais agressivo ao mais conservador",
+   "notas": "R=81, η=3. O primeiro bracket testa 81 candidatos com 1 época; o último, 5 com 81."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "Hyperband × aleatória (12 sementes)",
+   "fig": "f6_comparacao",
+   "frase": "A vantagem existe, mas é modesta",
+   "notas": "Resultados reais; vantagem pequena mas consistente."
+  },
+  {
+   "tipo": "saida",
+   "titulo": "Mesmo orçamento, mais candidatos",
+   "saida": "Orçamento de 297 épocas:\n  Successive Halving (81 configurações): 0.963 (±0.005)\n  Aleatória (só 3 configurações)         : 0.955 (±0.012)\nOrçamento de 1581 épocas:\n  Hyperband (143 configurações)      : 0.969 (±0.002)\n  Aleatória (só 19 configurações)      : 0.965 (±0.007)",
+   "fonte": 12,
+   "frase": "Mais candidatos exploram melhor; o desvio também cai",
+   "notas": "Resultados reais; as vantagens são pequenas (0,4 a 0,8 ponto), mas o desvio menor é relevante."
+  },
+  {
+   "tipo": "figura",
+   "titulo": "BOHB: Hyperband + inteligência",
+   "fig": "f6_bohb",
+   "frase": "Torneios do Hyperband com candidatos sugeridos por um modelo TPE",
+   "notas": "Falkner et al., 2018: combina robustez do Hyperband e eficiência da busca bayesiana."
+  },
+  {
+   "tipo": "saida",
+   "titulo": "Poda no Optuna: MedianPruner",
+   "saida": "sem poda     : tentativas podadas =  0/40 | épocas treinadas = 2400 | melhor acurácia = 0.972\nMedianPruner : tentativas podadas = 20/40 | épocas treinadas = 1297 | melhor acurácia = 0.969",
+   "fonte": 12,
+   "frase": "46% menos treino, 0,3 ponto a menos",
+   "notas": "report() informa o progresso e should_prune() interrompe as tentativas piores que a mediana."
+  },
+  {
+   "tipo": "conceito",
+   "titulo": "Armadilhas e boas práticas",
+   "itens": [
+    "Curvas que se cruzam enganam o corte",
+    "Fidelidade muito baixa gera ranking ruidoso",
+    "Meça a correlação entre fidelidades",
+    "Reserve um mínimo de orçamento por candidato",
+    "Compare com busca aleatória de mesmo custo"
+   ],
+   "icone": "FaExclamationCircle",
+   "cor": "accent4",
+   "frase": "Desistir cedo é bom, mas só com evidência",
+   "notas": "Resumo."
+  },
+  {
+   "tipo": "quiz",
+   "q": "No Successive Halving com η = 3, o que acontece a cada rodada?",
+   "op": [
+    "Mantém 1/3 dos candidatos e triplica o orçamento",
+    "Dobra os candidatos",
+    "Reinicia a busca",
+    "Mantém todos"
+   ],
+   "certa": 0,
+   "expl": "Corta para 1/η e multiplica o orçamento por η.",
+   "notas": ""
+  },
+  {
+   "tipo": "quiz",
+   "q": "Qual é o risco central do corte precoce?",
+   "op": [
+    "Gastar demais",
+    "Eliminar candidatas que só brilham no fim do treino",
+    "Perder o conjunto de teste",
+    "Usar poucos dados"
+   ],
+   "certa": 1,
+   "expl": "Curvas de aprendizado que se cruzam.",
+   "notas": ""
+  },
+  {
+   "tipo": "memorize",
+   "itens": [
+    "Multifidelidade: muitos candidatos baratos, poucos caros",
+    "Fidelidade: épocas, dados, atributos, resolução",
+    "Halving: mantém 1/η e multiplica o orçamento por η",
+    "Hyperband: vários torneios, sem escolher o corte",
+    "BOHB = Hyperband + TPE",
+    "Risco: curvas que se cruzam"
+   ],
+   "notas": "Repasse."
+  },
+  {
+   "tipo": "pratica",
+   "itens": [
+    {
+     "tag": "EX 1",
+     "h": "Custo do halving",
+     "d": "Conte as épocas gastas"
+    },
+    {
+     "tag": "EX 2",
+     "h": "Fator η",
+     "d": "Efeito de η = 2, 3 e 4"
+    },
+    {
+     "tag": "EX 3",
+     "h": "Hyperband à mão",
+     "d": "Implemente os brackets"
+    },
+    {
+     "tag": "EX 4",
+     "h": "Podadores do Optuna",
+     "d": "Compare Median e Hyperband"
+    },
+    {
+     "tag": "PROJETO",
+     "h": "Busca econômica",
+     "d": "Compare custo e acurácia"
+    }
+   ],
+   "notas": "Soluções nos Apêndices D e E."
+  },
+  {
+   "tipo": "fim",
+   "frase": "Gaste pouco com todos; invista em quem merece",
+   "proximo": "Capítulo 7: métodos evolutivos e TPOT",
+   "notas": "Ponte: e se a busca evoluísse como os seres vivos?"
+  }
+ ]
+}
