@@ -1,0 +1,22 @@
+module.exports = {
+  arquivo: "Projeto_Integrador_Final",
+  gancho: "Juntar tudo: qualidade, segurança, custo e privacidade.",
+  roteiro: ["O desafio", "As nove etapas", "Resultados de referência", "O relatório"],
+  slides: [
+    { k: "impacto", frase: "Projeto real é uma sequência de compromissos.", sub: "Qualidade × custo × privacidade × robustez.", n: "Abertura." },
+    { k: "c", t: "Federa Saúde: o cenário", b: ["20 clínicas, dados que não saem delas", "Rótulos muito heterogêneos (Dirichlet α = 0,3)", "Rede lenta entre as clínicas", "Comitê de ética quer saber o preço da privacidade"], a: "uma orquestra em que cada músico toca em outra cidade.", n: "Dígitos manuscritos como substituto de dados clínicos." },
+    { k: "c", t: "Cinco preocupações da diretoria", b: ["Qualidade em cada clínica", "Dados diferentes (não-IID)", "2 clínicas podem estar comprometidas (backdoor)", "Custo de comunicação", "Privacidade dos pacientes"], a: "uma obra com cinco fiscais ao mesmo tempo.", n: "Cada uma vira uma etapa." },
+    { k: "f", t: "As nove etapas", f: "f12_etapas", leg: "Do diagnóstico dos dados ao relatório.", n: "Visão geral do projeto." },
+    { k: "t", t: "Etapas 1 a 4", h: ["Etapa", "Pergunta"], r: [["1. Diagnóstico", "Quão heterogêneos são os clientes?"], ["2. Linha de base", "Como se sai o FedAvg?"], ["3. Ameaça", "O backdoor funciona?"], ["4. Robustez", "Qual agregador resolve?"]], cw: [3, 6], n: "Registrar ASR e acurácia por cliente." },
+    { k: "t", t: "Etapas 5 a 9", h: ["Etapa", "Pergunta"], r: [["5. Comunicação", "Quantos bytes economizar?"], ["6. Privacidade", "Qual o preço da DP?"], ["7. Personalização", "O ajuste fino ajuda?"], ["8. Síntese", "Qual configuração recomendar?"], ["9. Relatório", "Como explicar a decisão?"]], cw: [3, 6], n: "Registrar 8 e 4 bits, ε, percentil 10." },
+    { k: "c", t: "Meça o que importa", b: ["Por cliente, e não só na média", "Sob ataque, e não só limpo", "Por byte, e não só por rodada", "Com várias sementes"], a: "um boletim com todas as matérias, e não só a média geral.", n: "Percentil 10 mostra quem fica para trás." },
+    { k: "f", t: "Resultado de referência", f: "f12_resultados", leg: "ASR do backdoor, tráfego de subida e acurácia média por cliente, para seis configurações.", n: "Média de 3 sementes." },
+    { k: "c", t: "O que o resultado ensina", b: ["A média fica vulnerável ao backdoor", "A mediana barra o ataque", "Quantizar economiza bytes com perda pequena", "A DP exige muitos clientes para ser útil"], a: "cada ferramenta tem preço e benefício.", n: "Todo método tem um preço." },
+    { k: "c", t: "O relatório de uma página", b: ["Resumo executivo (3 linhas)", "Cenário e método", "Resultados em tabela", "Riscos e limitações", "Recomendação e próximos passos"], a: "o resumo do jogo para quem não viu a partida.", n: "Escreva para quem não é técnico." },
+    { k: "cmp", t: "Como escrever para quem decide", esq: ["Evite", ["ASR caiu para 0,00", "ε = 14"]], dir: ["Prefira", ["Com a mediana, o ataque deixou de funcionar", "A proteção formal é fraca com poucos clientes"]], a: "traduza o placar em resultado do jogo.", n: "Comunicação (15% da nota)." },
+    { k: "t", t: "Critérios de avaliação", h: ["Critério", "Peso"], r: [["Correção técnica", "30%"], ["Cobertura das nove etapas", "20%"], ["Análise dos compromissos", "25%"], ["Comunicação", "15%"], ["Rigor e ética", "10%"]], cw: [6, 3], n: "Limitações reconhecidas valem pontos." },
+    { k: "impacto", frase: "Um resultado honesto vale mais que um resultado bonito.", sub: "Documente as limitações.", n: "Fixação." },
+  ],
+  fechamento: "Parabéns: você percorreu o livro inteiro.",
+  proximo: "Fim da jornada. Continue com os problemas em aberto de Kairouz et al. (2021).",
+};

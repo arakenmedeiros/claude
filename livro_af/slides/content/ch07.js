@@ -1,0 +1,22 @@
+module.exports = {
+  arquivo: "Ameacas_a_Privacidade",
+  gancho: "Os ajustes não são os dados, mas carregam pistas.",
+  roteiro: ["Quem ataca e o que enxerga", "Inversão de gradientes", "Inferência de pertencimento", "Mitigar não é garantir"],
+  slides: [
+    { k: "impacto", frase: "Atualizações não são os dados. Mas carregam pistas sobre eles.", sub: "Quem recebe 'tirar toda a pimenta' deduz que a receita tinha muita pimenta.", n: "Abertura: o ajuste 'tirar toda a pimenta' revela algo da receita." },
+    { k: "c", t: "A lista de compras do mercado", b: ["Leite sem lactose, fraldas e ração", "Dá para adivinhar muito sobre a casa", "Sem nunca ter entrado nela", "Atualizações são a lista de compras dos dados"], a: "ver só o carrinho já conta muito sobre quem compra.", n: "Aviso ético: ataques só em dados públicos, em laboratório." },
+    { k: "f", t: "Quem ataca e o que vê", f: "f7_ameacas", leg: "O servidor honesto-mas-curioso vê cada atualização individual.", n: "Adversários: servidor curioso ou malicioso, cliente malicioso, observador de rede, usuário do modelo." },
+    { k: "t", t: "Cinco famílias de ataque", h: ["Ataque", "Pergunta do adversário"], r: [["Reconstrução", "Quais eram os dados?"], ["Pertencimento", "Este exemplo estava no treino?"], ["Propriedades", "O conjunto tem esta característica?"], ["Memorização", "Que trechos o modelo decorou?"], ["Ativos", "Posso manipular o modelo para vazar mais?"]], cw: [2.6, 6.4], n: "Mapa do capítulo." },
+    { k: "c", t: "O gradiente entrega a entrada", b: ["Para um exemplo: ∇W = x ⊗ (p − y)", "Gradiente do viés: (p − y)", "Divida uma coluna pelo viés correspondente", "Resultado: x recuperado exatamente"], a: "a impressão digital do dado está no ajuste.", n: "Zhu et al. (2019) fizeram em redes profundas; na softmax a conta é exata." },
+    { k: "f", t: "Reconstruindo dígitos pelo gradiente", f: "f7_inversao", leg: "Lote 1: perfeito. Lotes maiores: mistura parecida com algum exemplo.", n: "Correlação: 1,00; 0,97; 0,85; 0,82 conforme o lote cresce de 1 a 32." },
+    { k: "num", t: "Melhor caso para o atacante", itens: [["1,00", "correlação com lote de 1 exemplo"], ["0,82", "ainda com lote de 32 exemplos"], ["≈ 1e-16", "erro máximo da reconstrução exata"]], a: "mesmo uma salada de fotos deixa pistas de cada foto.", n: "Modelo linear, um passo, gradiente puro. Em redes profundas é mais difícil, mas não impossível." },
+    { k: "c", t: "Inferência de pertencimento", b: ["Pergunta: este exemplo foi usado no treino?", "Saber isso pode revelar que alguém é paciente", "Ataque simples: perda baixa ⇒ 'membro'", "Mede-se pela AUC: 0,5 é chute, 1,0 é perfeito"], a: "quem decorou a prova de treino responde rápido às perguntas do treino.", n: "Referências: Yeom et al. (2018), Shokri et al. (2017)." },
+    { k: "f", t: "Poucos dados, mais vazamento", f: "f7_membership", leg: "AUC cai de 0,64 para 0,53 quando há mais dados de treino.", n: "Sobreajuste e privacidade andam juntos." },
+    { k: "t", t: "Quando o risco de pertencimento sobe", h: ["Aumenta", "Diminui"], r: [["Poucos dados", "Mais dados"], ["Muitas épocas", "Parada antecipada"], ["Modelo grande", "Regularização"], ["Sobreajuste forte", "Modelo mais simples"]], cw: [4.5, 4.5], a: "decorar demais é entregar a resposta.", n: "Exercício 3: mais rodadas elevam a AUC e a acurácia de teste estaciona." },
+    { k: "c", t: "Outros riscos", b: ["Propriedades: inferir o que não tem relação com a tarefa", "Memorização: modelos de linguagem repetem trechos do treino", "Ataques ativos: servidor manda modelo-armadilha", "Servidor malicioso: 'não basta confiar'"], n: "Referências: Melis et al. (2019), Carlini et al. (2021), Fowl et al. (2022)." },
+    { k: "t", t: "O que ajuda e o que garante", h: ["Prática", "Efeito"], r: [["Lotes maiores, mais passos locais", "Dificultam a reconstrução"], ["Regularização, parada antecipada", "Menos memorização"], ["Compressão", "Menos informação enviada"], ["Agregação segura, DP, homomórfica", "Defesas do Capítulo 8"]], cw: [4.2, 4.8], a: "mitigar é trancar a porta; garantir é provar que a chave não existe.", n: "Mitigações reduzem risco sem prova formal." },
+    { k: "impacto", frase: "Mitigar reduz o risco. Garantir exige privacidade diferencial.", sub: "Defesas se combinam.", n: "Frase de fixação." },
+  ],
+  fechamento: "Só quem conhece o ataque consegue se proteger dele.",
+  proximo: "Próximo capítulo: privacidade diferencial, agregação segura e criptografia.",
+};

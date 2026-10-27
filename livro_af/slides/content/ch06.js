@@ -1,0 +1,23 @@
+module.exports = {
+  arquivo: "Personalizacao",
+  gancho: "Camisa de prateleira ou sob medida?",
+  roteiro: ["Quando o global não serve", "Famílias de personalização", "Ditto e ajuste fino", "Agrupamento: IFCA"],
+  slides: [
+    { k: "impacto", frase: "O modelo global é a camisa de prateleira. A personalização é o alfaiate.", sub: "Bom na média, mas pode vestir mal alguns clientes.", n: "Abertura com a analogia da camisa." },
+    { k: "c", t: "Seu teclado e o teclado de todos", b: ["Aprende com milhões de pessoas", "Mas você usa gírias e nomes que ninguém mais usa", "Bom teclado: combina o coletivo com o seu jeito", "É a personalização em ação"], a: "um garçom que conhece o cardápio da casa e o seu pedido de sempre.", n: "Exemplo cotidiano antes da técnica." },
+    { k: "c", t: "Meça por cliente, não só na média", b: ["Média entre clientes", "Pior cliente: o menos bem servido", "Percentil 10: 90% dos clientes ficam ao menos nisso", "Teste local: com dados do próprio cliente"], a: "a média da turma esconde o aluno que está sendo deixado para trás.", n: "Aviso: o teste local deve vir dos dados daquele cliente." },
+    { k: "f", t: "Mudança de conceito: nenhum modelo único serve", f: "f6_conceito_ideia", leg: "Mesmos pontos, rótulos opostos em dois grupos.", n: "Se P(y | x) muda entre grupos, o modelo global não pode acertar para todos." },
+    { k: "f", t: "Mapa das estratégias", f: "f6_taxonomia", leg: "Ajuste fino, regularização, partição, agrupamento, multitarefa, meta.", n: "Tan et al. (2022) organizam a literatura em duas grandes linhas." },
+    { k: "c", t: "Ajuste fino local", b: ["Receba o global e treine mais um pouco com seus dados", "Sem custo extra de comunicação", "Poucos passos: ajusta pouco", "Passos demais: esquece o global e sobreajusta"], a: "pegar a camisa pronta e pedir a barra no alfaiate.", n: "Exercício 2 explora o número de épocas." },
+    { k: "c", t: "Ditto: modelo pessoal com coleira", b: ["Cada cliente tem o global e um modelo pessoal v_k", "Minimiza F_k(v_k) + (λ/2) ‖v_k − w‖²", "λ = 0: só o erro local (≈ ajuste fino)", "λ muito grande: igual ao global"], a: "λ é o quanto você confia no coletivo.", n: "Semelhante ao FedProx, mas aqui a coleira define o modelo pessoal." },
+    { k: "f", t: "Corpo compartilhado, cabeça pessoal", f: "f6_partilha", leg: "Conhecimento geral é de todos; a decisão final é de cada um.", n: "FedRep (Collins et al., 2021). A cabeça não é enviada, o que também economiza comunicação." },
+    { k: "f", t: "Experimento A: poucos rótulos por cliente", f: "f6_rotulos", leg: "Ajuste fino e Ditto elevam média e percentil 10; só local falha no cliente pobre.", n: "Média: global 0,95; ajuste fino 0,97. Pior cliente do só local: 0,17." },
+    { k: "num", t: "O que o experimento A mostrou", itens: [["0,95 → 0,97", "média por cliente com ajuste fino ou Ditto"], ["0,88 → 0,93", "percentil 10"], ["0,17", "pior cliente do modelo só local"]], a: "sozinho vai bem quem tem muitos dados; colaborar protege quem tem poucos.", n: "10 clientes, Dirichlet α = 0,1, 5 sementes." },
+    { k: "f", t: "IFCA: agrupar sem saber os grupos", f: "f6_ifca", leg: "Cada cliente escolhe o modelo de menor perda; o servidor faz a média por grupo.", n: "Ghosh et al. (2020). K é um hiperparâmetro." },
+    { k: "f", t: "Mudança de conceito: o IFCA brilha", f: "f6_conceito", leg: "Global 0,38; só local 0,87; ajuste fino 0,79; IFCA 0,93.", n: "Ajuste fino com 5 épocas não desfaz o que o global aprendeu. IFCA recuperou os três grupos nas três sementes." },
+    { k: "cmp", t: "Cliente novo: o que fazer?", esq: ["Com poucos dados (cold start)", ["Global falha em mudança de conceito", "Só local precisa de muitos exemplos", "Ajuste fino melhora devagar", "Modelo do grupo (IFCA): ≈ 0,93 com 5 exemplos"]], dir: ["Cuidados", ["Memória extra para modelos pessoais", "Modelos pessoais memorizam mais", "IFCA envia K modelos", "Errar K para menos é pior que para mais"]], a: "para escolher entre K camisas bastam poucas medidas.", n: "Projeto do capítulo: unidades novas com 5, 20 ou 50 exemplos." },
+    { k: "impacto", frase: "Personalizar não é só ajustar no final.", sub: "Com conceitos diferentes, agrupe primeiro e treine dentro do grupo.", n: "Frase de fixação." },
+  ],
+  fechamento: "Cada cliente merece um modelo à sua medida.",
+  proximo: "Próximo capítulo: o que pode vazar — ameaças à privacidade.",
+};
