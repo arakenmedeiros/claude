@@ -189,6 +189,8 @@ function calloutParas(body) {
     const ln = body[i];
     if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
     if (/^\d+\. /.test(ln)) { flush(); while (i < body.length && /^\d+\. /.test(body[i])) { out.push(new Paragraph({ spacing: { after: 60, line: 276 }, indent: { left: 420, hanging: 320 }, children: [new TextRun({ text: body[i].match(/^\d+\./)[0] + " ", bold: true, color: C.ind, size: 20 }), ...runs(body[i].replace(/^\d+\.\s+/, ""), { size: 20 })] })); i++; } continue; }
+    const dm = ln.match(/^\$\$\s*(.+?)\s*\$\$\s*$/);
+    if (dm) { flush(); out.push(formulaImg({ text: dm[1] })); i++; continue; }
     if (ln.trim() === "") { flush(); i++; continue; }
     para.push(ln.trim()); i++;
   }
@@ -206,7 +208,7 @@ function callout(b) {
   const s = CALL[b.kind] || CALL.dica;
   const norm = (t) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   const dup = !b.title || norm(b.title).startsWith(norm(s.label.split(" ")[0]));
-  const kids = [new Paragraph({ spacing: { after: 80 }, keepNext: true, children: [...(dup && !b.title ? [new TextRun({ text: s.label, bold: true, size: 20, color: s.c, characterSpacing: 10 })] : [new TextRun({ text: s.label + (b.title ? "  " : ""), bold: true, size: 16, color: s.c, characterSpacing: 20 }), new TextRun({ text: b.title || "", bold: true, size: 22, color: s.c })])] }), ...calloutParas(b.body)];
+  const kids = [new Paragraph({ spacing: { after: 80 }, keepNext: true, children: [...(dup && !b.title ? [new TextRun({ text: s.label, bold: true, size: 20, color: s.c, characterSpacing: 10 })] : [new TextRun({ text: s.label + (b.title ? "  " : ""), bold: true, size: 16, color: s.c, characterSpacing: 20 }), ...runs(b.title || "", { bold: true, size: 22, color: s.c })])] }), ...calloutParas(b.body)];
   const nb = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
   return new Table({ width: { size: CW, type: WidthType.DXA }, columnWidths: [CW], rows: [new TableRow({ cantSplit: b.body.length < 14, children: [new TableCell({ width: { size: CW, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, fill: s.f, color: "auto" }, margins: { top: 100, bottom: 60, left: 200, right: 160 }, borders: { top: nb, bottom: nb, right: nb, left: { style: BorderStyle.SINGLE, size: 36, color: s.c } }, children: kids })] })] });
 }
