@@ -77,7 +77,8 @@ def taxas(y, p, g):
 print(f"{'viés da nota':>12} {'taxa-base A':>12} {'taxa-base B':>12} {'ΔDP':>7} {'ΔIO':>7} {'acerto':>7}")
 for v in (0.0, 0.3, 0.6):
     X, y, g = gerar(v)
-    Xtr, Xte, ytr, yte, gtr, gte = train_test_split(X, y, g, test_size=0.5, random_state=0, stratify=y * 2 + g)
+    Xtr, Xrest, ytr, yrest, gtr, grest = train_test_split(X, y, g, test_size=0.5, random_state=0, stratify=y * 2 + g)
+    _, Xte, _, yte, _, gte = train_test_split(Xrest, yrest, grest, test_size=0.5, random_state=1, stratify=yrest * 2 + grest)  # mesmo teste do capítulo
     p = (LogisticRegression().fit(Xtr, ytr).predict_proba(Xte)[:, 1] >= 0.5).astype(int)
     sel, tpr = taxas(yte, p, gte)
     print(f"{v:>12.1f} {yte[gte == 0].mean():>12.2f} {yte[gte == 1].mean():>12.2f} {sel[0] - sel[1]:>+7.2f} {tpr[0] - tpr[1]:>+7.2f} {(p == yte).mean():>7.3f}")

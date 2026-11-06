@@ -8,7 +8,7 @@
    "itens": [
     "Explicar o que é uma modalidade e como imagem, som e documento viram números",
     "Dividir uma imagem em patches e somar posição, como no ViT",
-    "Calcular a perda contrastiva (a ideia do CLIP) e medir recall@k",
+    "Calcular a perda contrastiva (a ideia do CLIP) e medir Hit@k",
     "Entender o projetor que liga a visão a um LLM, e o espectrograma do áudio",
     "Explicar a difusão: pôr e tirar ruído aos poucos",
     "Avaliar com atenção a vieses, alucinação visual, custo, privacidade e acessibilidade"
@@ -132,12 +132,12 @@
   },
   {
    "tipo": "tabela",
-   "titulo": "Recall@k: o número depende do critério",
+   "titulo": "Hit@k: o número depende do critério",
    "cabecalho": [
     "Critério de \"correto\"",
     "Direção",
-    "R@1",
-    "R@5"
+    "Hit@1",
+    "Hit@5"
    ],
    "linhas": [
     [
@@ -165,7 +165,7 @@
      "1,000"
     ]
    ],
-   "notas": "Recall@k é a fração de consultas em que algum item correto aparece entre os k primeiros. Na imagem para texto, ordenamos as 497 descrições do teste para cada imagem; na texto para imagem, o contrário. Com 10 dígitos equiprováveis o acaso daria recall@1 perto de 0,10 no critério do dígito. A tabela mostra os números reais: quase perfeito no critério fácil, e 0,823 no critério estrito que exige acertar também o traço e o lado. As duas direções diferem; o capítulo oferece uma explicação plausível, mas não testada: as palavras do modelo de frase variam entre as candidatas e funcionam como distratores. Pergunta: por que reportar recall sem dizer o critério e o tamanho da galeria engana? Armadilha: comparar sistemas que usam critérios diferentes."
+   "notas": "Hit@k é a fração de consultas em que algum item correto aparece entre os k primeiros. Na imagem para texto, ordenamos as 497 descrições do teste para cada imagem; na texto para imagem, o contrário. Com 10 dígitos equiprováveis o acaso daria Hit@1 perto de 0,10 no critério do dígito. A tabela mostra os números reais: quase perfeito no critério fácil, e 0,823 no critério estrito que exige acertar também o traço e o lado. As duas direções diferem; o capítulo oferece uma explicação plausível, mas não testada: as palavras do modelo de frase variam entre as candidatas e funcionam como distratores. Pergunta: por que reportar recall sem dizer o critério e o tamanho da galeria engana? Armadilha: comparar sistemas que usam critérios diferentes."
   },
   {
    "tipo": "figura",
@@ -175,10 +175,10 @@
    "itens": [
     "Perda final: 1,057 com τ = 0,01 e 3,369 com τ = 1,0",
     "Perdas de τ diferentes não são comparáveis",
-    "R@1 quase não muda de 0,01 a 0,5",
+    "Hit@1 quase não muda de 0,01 a 0,5",
     "Com τ = 0,01, o cosseno dos pares errados é 0,745: tudo amontoado"
    ],
-   "notas": "Repetimos o treino com cinco temperaturas e mantivemos todo o resto. Primeira leitura: a perda não é comparável entre temperaturas, porque é uma entropia cruzada sobre pontuações divididas por tau; com tau 0,01 a perda final é 1,057 e com tau 1,0 é 3,369, embora ambas tenham alinhado os pares. Segunda: o recall@1 imagem para texto varia pouco entre 0,968 e 0,976 de tau 0,01 a 0,5, dentro do ruído com 497 itens de teste, e cai a 0,946 com tau 1,0. Terceira: a geometria muda; com tau 0,01 o cosseno médio dos pares errados é 0,745, os embeddings ficam amontoados. Pergunta: o que isso diz sobre olhar só o ranqueamento? Armadilha: concluir que a temperatura não importa em modelos reais; aqui o problema é pequeno e fácil."
+   "notas": "Repetimos o treino com cinco temperaturas e mantivemos todo o resto. Primeira leitura: a perda não é comparável entre temperaturas, porque é uma entropia cruzada sobre pontuações divididas por tau; com tau 0,01 a perda final é 1,057 e com tau 1,0 é 3,369, embora ambas tenham alinhado os pares. Segunda: o Hit@1 imagem para texto varia pouco entre 0,968 e 0,976 de tau 0,01 a 0,5, dentro do ruído com 497 itens de teste, e cai a 0,946 com tau 1,0. Terceira: a geometria muda; com tau 0,01 o cosseno médio dos pares errados é 0,745, os embeddings ficam amontoados. Pergunta: o que isso diz sobre olhar só o ranqueamento? Armadilha: concluir que a temperatura não importa em modelos reais; aqui o problema é pequeno e fácil."
   },
   {
    "tipo": "codigo",
@@ -271,7 +271,7 @@
    "itens": [
     "Achar que o LLM \"vê\": ele recebe vetores, não pixels",
     "Ignorar a posição dos patches",
-    "Reportar recall@k sem dizer o critério e o tamanho da galeria",
+    "Reportar Hit@k sem dizer o critério e o tamanho da galeria",
     "Acreditar na leitura de documentos por ser fluente: o erro de OCR é silencioso",
     "Aqui: dígitos 8×8, codificadores lineares, legendas sintéticas; não preveem modelos reais"
    ],
@@ -306,8 +306,8 @@
   },
   {
    "tipo": "quiz",
-   "titulo": "o que mede o recall@5",
-   "pergunta": "O que mede o recall@5 na recuperação imagem→texto?",
+   "titulo": "o que mede o Hit@5",
+   "pergunta": "O que mede o Hit@5 na recuperação imagem→texto?",
    "opcoes": [
     "A fração de textos com mais de 5 palavras",
     "O número de imagens com 5 canais",
@@ -316,7 +316,7 @@
    ],
    "resposta": "C",
    "explicacao": "É a proporção de consultas com algum item correto no top 5.",
-   "notas": "Peça que a turma explique com as próprias palavras antes de revelar. Reforce que o recall depende do que se chama de correto e do tamanho da galeria. Retome a tabela do capítulo, em que o recall@1 imagem para texto passou de 0,976 no critério do dígito para 0,823 no critério estrito. Pergunte quando um recall@5 de 1,000 é suspeito."
+   "notas": "Peça que a turma explique com as próprias palavras antes de revelar. Reforce que o Hit@k depende do que se chama de correto e do tamanho da galeria. Retome a tabela do capítulo, em que o Hit@1 imagem para texto passou de 0,976 no critério do dígito para 0,823 no critério estrito. Pergunte quando um Hit@5 de 1,000 é suspeito."
   },
   {
    "tipo": "quiz",

@@ -90,12 +90,13 @@ def taxas(y, p, g):
 print(f"{'viés da nota':>12} {'taxa-base A':>12} {'taxa-base B':>12} {'ΔDP':>7} {'ΔIO':>7} {'acerto':>7}")
 for v in (0.0, 0.3, 0.6):
     X, y, g = gerar(v)
-    Xtr, Xte, ytr, yte, gtr, gte = train_test_split(X, y, g, test_size=0.5, random_state=0, stratify=y * 2 + g)
+    Xtr, Xrest, ytr, yrest, gtr, grest = train_test_split(X, y, g, test_size=0.5, random_state=0, stratify=y * 2 + g)
+    _, Xte, _, yte, _, gte = train_test_split(Xrest, yrest, grest, test_size=0.5, random_state=1, stratify=yrest * 2 + grest)  # mesmo teste do capítulo
     p = (LogisticRegression().fit(Xtr, ytr).predict_proba(Xte)[:, 1] >= 0.5).astype(int)
     sel, tpr = taxas(yte, p, gte)
     print(f"{v:>12.1f} {yte[gte == 0].mean():>12.2f} {yte[gte == 1].mean():>12.2f} {sel[0] - sel[1]:>+7.2f} {tpr[0] - tpr[1]:>+7.2f} {(p == yte).mean():>7.3f}")
 ```
-@@NOTE Com viés de 0,0, a diferença de oportunidades é pequena (+0,03), mas a de paridade demográfica continua em +0,10, porque as taxas-base diferem (0,44 contra 0,29): mesmo um modelo sem viés de medida seleciona proporções diferentes quando há diferenças reais nas taxas de qualificação (nos dados sintéticos). Com viés de 0,3 as diferenças sobem para +0,19 (DP) e +0,17 (IO); com 0,6, para +0,27 e +0,31. A acurácia quase não muda (0,781; 0,790; 0,784), então a acurácia global **não revela** o problema. A fonte do viés está na medida, e não no modelo: corrigir a medida reduz a diferença de oportunidade mais do que ajustar o limiar. Tudo isso vale para dados sintéticos com premissas explícitas.
+@@NOTE Com viés de 0,0, a diferença de oportunidades é praticamente nula (+0,01), mas a de paridade demográfica continua em +0,11, porque as taxas-base diferem (0,44 contra 0,29): mesmo um modelo sem viés de medida seleciona proporções diferentes quando há diferenças reais nas taxas de qualificação (nos dados sintéticos). Com viés de 0,3 as diferenças sobem para +0,20 (DP) e +0,17 (IO); com 0,6, para +0,28 e +0,31. A acurácia quase não muda (0,787; 0,793; 0,786), então a acurácia global **não revela** o problema. A fonte do viés está na medida, e não no modelo: corrigir a medida reduz a diferença de oportunidade mais do que ajustar o limiar. Tudo isso vale para dados sintéticos com premissas explícitas e para o conjunto de teste de 1 500 casos (sem ajuste de nenhum parâmetro nele).
 @@ALEM
 - **NIST AI RMF 1.0** (NIST AI 100-1): as quatro funções (Govern, Map, Measure, Manage) como roteiro de um programa de gestão de riscos.
 - **OWASP, lista de riscos para aplicações com LLMs:** vocabulário comum de ameaças; confira a versão vigente.

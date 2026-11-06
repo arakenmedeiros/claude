@@ -79,14 +79,17 @@ def treinar_contrastivo(Xi, Xt, d=16, tau=0.1, epocas=150, lote=64, lr=0.05, see
         hist.append(tot / nb)
     return Wi, Wt, hist
 
-def recall_em_k(S, rotulos_linha, rotulos_coluna, ks=(1, 5)):
-    """S (n_consultas, n_candidatos). Acerto se algum dos k melhores candidatos tem o mesmo rótulo da consulta."""
+def hit_em_k(S, rotulos_linha, rotulos_coluna, ks=(1, 5)):
+    """Hit@k. S (n_consultas, n_candidatos). Vale 1 por consulta se ALGUM dos k melhores candidatos tem o mesmo rótulo da consulta
+    (não é o recall@k do Cap. 10, que divide pelo número de itens relevantes). Devolve a média sobre as consultas."""
     ordem = np.argsort(-S, axis=1)
     out = {}
     for k in ks:
         top = rotulos_coluna[ordem[:, :k]]
         out[k] = float((top == rotulos_linha[:, None]).any(1).mean())
     return out
+
+recall_em_k = hit_em_k  # nome antigo (mantido por compatibilidade; a métrica é Hit@k)
 
 # ---------- áudio ----------
 def stft(x, n_fft=256, salto=64):

@@ -6,13 +6,13 @@ Este apêndice descreve **como o livro foi produzido**, o que foi **verificado**
 
 A revisão bibliográfica e a verificação de informações voláteis foram feitas **até 18 de outubro de 2026**. Fatos posteriores a essa data não foram incorporados. O livro evita depender de modelos, preços e interfaces específicos; quando os cita, manda **conferir a documentação oficial**. As contagens deste apêndice referem-se aos **capítulos 1 a 18** na data do corte; o Capítulo 18 (projetos integradores) segue as mesmas regras e está incluído nelas.
 
-## L.2 O que foi consultado de Ozdemir (2024; 2025)
+## L.2 O que foi consultado de Ozdemir (2024)
 
 O livro de Ozdemir é a **referência orientadora de escopo**: serviu para decidir quais grandes temas um livro didático introdutório sobre LLMs deveria cobrir (fundamentos, embeddings, prompts, ajuste fino, multimodalidade). Declaramos com clareza:
 
 - **O conteúdo do livro de Ozdemir NÃO foi lido na íntegra.** Não tivemos acesso ao texto completo. Usamos apenas a **descrição editorial pública** (título, subtítulo e escopo declarado) como guia.
 - **Nenhuma afirmação técnica deste livro é atribuída a Ozdemir.** A seleção de marcos, as explicações, os exemplos, o código e os exercícios são **nossos**; as afirmações técnicas vêm dos artigos e das documentações citados, que o leitor pode consultar.
-- O status das duas entradas na lista de referências reflete isso: a edição em inglês (2024) consta como **V**, porque a existência e os dados bibliográficos foram conferidos online; a edição em português (2025) consta como **P**, ou seja, dado fornecido pelo solicitante e **não localizado** na verificação. O status **V** atesta a conferência dos **dados bibliográficos**, e não a leitura da obra.
+- A lista de referências cita **apenas a edição em inglês** (2. ed., 2024; ISBN 978-0-13-534651-8 no catálogo da editora), que consta como **V**: o status atesta a conferência dos **dados bibliográficos**, e não a leitura da obra. Uma edição brasileira ("São Paulo: Pearson, 2025") foi mencionada no pedido original, mas **não foi localizada em registro editorial ou ISBN** na verificação; por isso, foi retirada da bibliografia até que a tradução seja documentada.
 - Os capítulos não reproduzem nem parafraseiam capítulos dessa obra. Se houver semelhança de temas, ela decorre do escopo comum do assunto.
 
 ## L.3 Status de verificação das referências
@@ -23,7 +23,7 @@ Cada referência tem um status no arquivo `cap/referencias.txt`:
 - **C**: **conferida pela memória** do autor e ainda **a verificar na fonte**.
 - **P**: dado fornecido pelo solicitante, **não localizado** na verificação.
 
-Na data do corte, a lista continha **151 entradas**: **149 V, 1 C e 1 P** (C: McCloskey; Cohen, 1989, sobre interferência catastrófica; P: a edição brasileira de Ozdemir, 2025). Das entradas efetivamente citadas nos capítulos 1 a 18 (147; o Capítulo 18 só reutiliza referências já citadas), 145 são V, 1 é C e 1 é P. No livro impresso, as entradas que não são V trazem o sinal †, que significa: **confira na fonte original antes de depender do dado**. Para recontar:
+Na data do corte, a lista continha **151 entradas**: **150 V e 1 C** (C: Benjamini; Yekutieli, 2001, sobre o controle da taxa de falsas descobertas sob dependência, com dados conferidos pela memória). Das entradas efetivamente citadas nos capítulos 1 a 18 (147; o Capítulo 18 só reutiliza referências já citadas), 146 são V e 1 é C. No livro impresso, as entradas que não são V trazem o sinal †, que significa: **confira na fonte original antes de depender do dado**. Para recontar:
 
 ```bash
 cut -d'|' -f2 cap/referencias.txt | tr -d ' ' | sort | uniq -c
@@ -113,7 +113,7 @@ O que **muda rápido** e deve ser conferido na fonte oficial antes de qualquer d
 | Regulação (LGPD, regras do uso de IA, normas setoriais) | consultar o texto legal vigente e profissionais habilitados |
 | Benchmarks e rankings | tratar como triagem; conferir contaminação e adequação à sua tarefa |
 
-Em cada edição: (1) reexecutar os códigos e comparar as saídas; (2) reconferir as referências **C** e **P** e as marcadas com †; (3) revisar as passagens sobre conteúdo volátil; (4) registrar a nova data de corte neste apêndice.
+Em cada edição: (1) reexecutar os códigos e comparar as saídas; (2) reconferir as referências **C** e as marcadas com †; (3) revisar as passagens sobre conteúdo volátil; (4) registrar a nova data de corte neste apêndice.
 
 ## L.9 Como relatar erros
 

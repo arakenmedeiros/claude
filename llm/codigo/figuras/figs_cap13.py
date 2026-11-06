@@ -80,11 +80,11 @@ def temp():
     yt = rotulos[te]
     for tau in taus:
         Wi, Wt, h = treinar(tau); S = emb(Xi[te], Wi) @ emb(T[te], Wt).T
-        L.append(h[-1]); R.append(recall_em_k(S, yt, yt, (1,))[1])
+        L.append(h[-1]); R.append(hit_em_k(S, yt, yt, (1,))[1])
     fig, axs = plt.subplots(1, 2, figsize=(8.4, 3.2))
     axs[0].plot(range(5), L, "o-", c=IND); axs[0].axhline(np.log(64), c=GRY, ls="--"); axs[0].text(0.05, np.log(64) + 0.08, "ln 64 (acaso)", color=GRY, fontsize=8)
     axs[1].plot(range(5), R, "o-", c=GRN); axs[1].set_ylim(0.9, 1.0)
-    for ax, yl, tt in zip(axs, ["perda final", "recall@1 imagem→texto"], ["perda (não comparável entre τ)", "recuperação"]):
+    for ax, yl, tt in zip(axs, ["perda final", "Hit@1 imagem→texto"], ["perda (não comparável entre τ)", "recuperação"]):
         ax.set_xticks(range(5)); ax.set_xticklabels([str(t) for t in taus]); ax.set_xlabel("temperatura τ"); ax.set_ylabel(yl); ax.set_title(tt, fontsize=9)
     save(fig, "f13_temp")
 

@@ -94,7 +94,7 @@ MC: Por que não se deve comparar perdas contrastivas obtidas com temperaturas d
 - Porque a temperatura é fixada pelo sistema operacional.
 J: Para τ grande o softmax fica achatado e a perda alta mesmo com bom alinhamento.
 
-MC: O que mede o recall@5 na recuperação imagem→texto?
+MC: O que mede o Hit@5 na recuperação imagem→texto?
 = A fração de imagens cujo texto correto aparece entre os 5 mais similares.
 - A fração de textos com mais de 5 palavras.
 - O número de imagens com 5 canais.
@@ -102,11 +102,11 @@ MC: O que mede o recall@5 na recuperação imagem→texto?
 - A perda após 5 épocas.
 J: É a proporção de consultas com algum item correto no top 5.
 
-MC: Por que um recall@k precisa vir acompanhado do critério de "correto" e do tamanho da galeria?
+MC: Por que um Hit@k precisa vir acompanhado do critério de "correto" e do tamanho da galeria?
 = Porque o valor muda muito conforme o critério de acerto e o número de candidatos.
-- Porque o recall é sempre igual a 1 em galerias pequenas, o que torna o número inútil para comparação.
+- Porque o Hit@k é sempre igual a 1 em galerias pequenas, o que torna o número inútil para comparação.
 - Porque o critério de acerto é definido pelo tamanho da imagem em pixels e pelo número de canais.
-- Porque o recall não depende dos dados.
+- Porque o Hit@k não depende dos dados.
 - Porque a galeria é sempre o conjunto de treino.
 J: Critério estrito e galerias grandes tornam o problema mais difícil e mudam o valor.
 
@@ -364,8 +364,8 @@ CRIT: Compara média e variância com os valores teóricos.
 DISC[A]: Uma equipe pretende usar um modelo multimodal para ler faturas e lançar os totais automaticamente. Analise os riscos e proponha um desenho com validações e revisão humana.
 R: Riscos: erros silenciosos de OCR (0/O, vírgula/ponto), perda de estrutura de tabelas, alucinação de valores ilegíveis, dados pessoais em faturas. Desenho: extrair em campos estruturados com validação de esquema; validar somas (itens contra total) e formatos; exigir abstenção quando ilegível; revisar por amostragem e sempre os casos que falham nas validações; medir erro por campo em conjunto anotado; registrar versões; avaliar privacidade e contratos antes de usar serviço externo.
 
-DISC[A]: Um CLIP-like obteve recall@1 de 0,95 em um conjunto de teste e a equipe concluiu que "o modelo entende as imagens". Analise a conclusão.
-R: O recall depende do critério de "correto", do tamanho da galeria e da dificuldade do conjunto; um conjunto fácil ou com vazamento superestima. Alinhamento por similaridade não equivale a compreensão; é preciso medir por fatia, com critérios estritos, galerias maiores, dados fora do domínio e intervalos de confiança, e verificar abstenção diante de entradas ilegíveis.
+DISC[A]: Um CLIP-like obteve Hit@1 de 0,95 em um conjunto de teste e a equipe concluiu que "o modelo entende as imagens". Analise a conclusão.
+R: O Hit@k depende do critério de "correto", do tamanho da galeria e da dificuldade do conjunto; um conjunto fácil ou com vazamento superestima. Alinhamento por similaridade não equivale a compreensão; é preciso medir por fatia, com critérios estritos, galerias maiores, dados fora do domínio e intervalos de confiança, e verificar abstenção diante de entradas ilegíveis.
 
 DISC[A]: Analise se é adequado usar descrições automáticas de imagem como texto alternativo em um curso, e que processo de qualidade você adotaria.
 R: O texto alternativo é essencial à acessibilidade, mas descrições automáticas erram detalhes relevantes (números, setas). Processo: rascunho automático, revisão pelo professor, tabela de dados para gráficos, amostragem e teste com estudantes que usam tecnologias assistivas, registro de erros frequentes e proibição de enviar imagens de estudantes. Meça fatos obrigatórios corretos por figura, com intervalo de confiança.

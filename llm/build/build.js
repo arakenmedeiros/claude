@@ -4,10 +4,22 @@ const path = require("path");
 const crypto = require("crypto");
 const D = require("docx");
 const {
-  Document, Packer, Paragraph, TextRun, ImageRun, Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
+  Document, Packer, Paragraph: ParagraphBase, TextRun, ImageRun, Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
   AlignmentType, HeadingLevel, LevelFormat, TabStopType, LeaderType, Header, Footer, PageNumber, SectionType,
   VerticalAlign, HorizontalPositionRelativeFrom, VerticalPositionRelativeFrom, TextWrappingType,
 } = D;
+
+// Texto corrido justificado: parágrafos sem alinhamento explícito, sem título, borda, tabulação, imagem nem espaçamento zero
+// (código e células de tabela têm espaçamento zero) passam a JUSTIFIED. Listas de referências usam LEFT (ABNT).
+class Paragraph extends ParagraphBase {
+  constructor(o) {
+    if (o && !o.alignment && !o.heading && !o.tabStops && !o.border && !(o.spacing && o.spacing.after === 0)
+        && Array.isArray(o.children) && o.children.length && !o.children.some((c) => c instanceof D.ImageRun)) {
+      o = { ...o, alignment: AlignmentType.JUSTIFIED };
+    }
+    super(o);
+  }
+}
 
 const ROOT = path.join(__dirname, "..");
 const CAP = path.join(ROOT, "cap");
@@ -39,12 +51,42 @@ const sha = (t) => crypto.createHash("sha1").update(t).digest("hex").slice(0, 12
 
 // TeX-lite -> unicode para matemática em linha
 const GREEK = { alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", varepsilon: "ε", theta: "θ", lambda: "λ", mu: "μ", pi: "π", rho: "ρ", sigma: "σ", tau: "τ", phi: "φ", psi: "ψ", omega: "ω", eta: "η", kappa: "κ", nu: "ν", xi: "ξ", zeta: "ζ", chi: "χ", Delta: "Δ", Sigma: "Σ", Theta: "Θ", Omega: "Ω", Lambda: "Λ", Pi: "Π", Phi: "Φ", Psi: "Ψ", Gamma: "Γ" };
-const SYM = { cdot: "·", times: "×", sum: "∑", prod: "∏", sqrt: "√", top: "ᵀ", in: "∈", le: "≤", leq: "≤", ge: "≥", geq: "≥", approx: "≈", to: "→", rightarrow: "→", infty: "∞", nabla: "∇", partial: "∂", neq: "≠", ne: "≠", log: "log", ln: "ln", exp: "exp", max: "max", min: "min", argmax: "argmax", argmin: "argmin", pm: "±", ldots: "…", dots: "…", propto: "∝", mid: "|", cup: "∪", cap: "∩", forall: "∀", exists: "∃", sim: "∼", odot: "⊙", ell: "ℓ", mathcal: "", mathbf: "", mathrm: "", text: "", hat: "^", bar: "‾", quad: "  ", ",": " ", ";": " ", " ": " ", "{": "{", "}": "}", "|": "‖", lVert: "‖", rVert: "‖", langle: "⟨", rangle: "⟩", lfloor: "⌊", rfloor: "⌋", Rightarrow: "⇒", leftarrow: "←", mathbb: "" };
+const SYM = { cdot: "·", times: "×", sum: "∑", prod: "∏", sqrt: "√", top: "ᵀ", in: "∈", le: "≤", leq: "≤", ge: "≥", geq: "≥", approx: "≈", to: "→", rightarrow: "→", infty: "∞", nabla: "∇", partial: "∂", neq: "≠", ne: "≠", log: "log", ln: "ln", exp: "exp", max: "max", min: "min", argmax: "argmax", argmin: "argmin", pm: "±", ldots: "…", dots: "…", propto: "∝", mid: "|", cup: "∪", cap: "∩", forall: "∀", exists: "∃", sim: "∼", odot: "⊙", ell: "ℓ", mathcal: "", mathbf: "", mathrm: "", text: "", hat: "^", bar: "‾", quad: "  ", ",": " ", ";": " ", " ": " ", "{": "{", "}": "}", "|": "‖", lVert: "‖", rVert: "‖", langle: "⟨", rangle: "⟩", lfloor: "⌊", rfloor: "⌋", Rightarrow: "⇒", leftarrow: "←", mathbb: "", lceil: "⌈", rceil: "⌉", succ: "≻", prec: "≺", Vert: "‖", lvert: "|", rvert: "|", big: "", Big: "", bigg: "", Bigg: "", boldsymbol: "", tilde: "~", vec: "→", cos: "cos", sin: "sin", arg: "arg" };
 function texToUni(s) {
   s = s.replace(/\\([A-Za-z]+|[,; {}|])/g, (m, n) => (n in GREEK ? GREEK[n] : n in SYM ? SYM[n] : n));
   return s;
 }
+
+// Conversor TeX -> texto linear (fração a/b, raiz, acentos combinados, matrizes em linha). Antes de texToUni.
+function _grp(s, i) {
+  while (s[i] === " ") i++;
+  if (s[i] === "{") { let d = 0, j = i; for (; j < s.length; j++) { if (s[j] === "{") d++; else if (s[j] === "}") { d--; if (d === 0) break; } } return [s.slice(i + 1, j), j + 1]; }
+  if (s[i] === "\\") { const m = s.slice(i).match(/^\\([A-Za-z]+|.)/); return [m[0], i + m[0].length]; }
+  return [s[i] ?? "", i + 1];
+}
+function _wrap(x) { const t = x.replace(/\{[^}]*\}/g, "").replace(/\\[A-Za-z]+\s*/g, "X"); return /^[\p{L}\d.]+$/u.test(t) ? x : "(" + x + ")"; }
+const _ACC = { hat: "\u0302", widehat: "\u0302", bar: "\u0304", overline: "\u0305", tilde: "~", widetilde: "~", vec: "\u20D7" };
+function linTex(s) {
+  let out = "", i = 0;
+  while (i < s.length) {
+    if (s[i] !== "\\") { out += s[i++]; continue; }
+    const m = s.slice(i).match(/^\\([A-Za-z]+|.)/); const cmd = m[1]; i += m[0].length;
+    if (cmd === "frac" || cmd === "dfrac" || cmd === "tfrac") { let a, b; [a, i] = _grp(s, i); [b, i] = _grp(s, i); out += _wrap(linTex(a)) + "/" + _wrap(linTex(b)); }
+    else if (cmd === "binom") { let a, b; [a, i] = _grp(s, i); [b, i] = _grp(s, i); out += "C(" + linTex(a) + ", " + linTex(b) + ")"; }
+    else if (cmd === "sqrt") { let a; [a, i] = _grp(s, i); const x = linTex(a); out += "√" + (/^[\p{L}\d]+(_\{[^}]*\}|_\S)?$/u.test(x) ? x : "(" + x + ")"); }
+    else if (["boldsymbol", "mathbf", "mathrm", "mathcal", "mathbb", "mathit", "mathsf", "textbf", "text", "operatorname"].includes(cmd)) { let a; [a, i] = _grp(s, i); out += linTex(a); }
+    else if (cmd in _ACC) { let a; [a, i] = _grp(s, i); const x = linTex(a); out += cmd === "overline" ? [...x].map((c) => c + _ACC[cmd]).join("") : (_ACC[cmd] === "~" ? "~" + x : x + _ACC[cmd]); }
+    else if (cmd === "begin") {
+      let env; [env, i] = _grp(s, i); const end = s.indexOf("\\end{" + env + "}", i); const body = s.slice(i, end < 0 ? s.length : end); i = end < 0 ? s.length : end + env.length + 6;
+      out += "[" + body.split("\\\\").map((r) => r.split("&").map((c) => linTex(c.trim())).join(" ")).join("; ") + "]";
+    }
+    else if (cmd === "left" || cmd === "right") { if (s[i] === ".") i++; }
+    else out += cmd in GREEK ? GREEK[cmd] : cmd in SYM ? SYM[cmd] : "\\" + cmd;
+  }
+  return out;
+}
 function mathRuns(tex, base = {}) {
+  tex = linTex(tex);
   tex = tex.replace(/\{,\}/g, ",").replace(/\\(?:text|mathrm|mathbf|mathcal|mathbb|operatorname)\{([^}]*)\}/g, "$1").replace(/\\(?:left|right)/g, "").replace(/\\mid/g, "|");
   const s = texToUni(tex); const out = []; const b = { font: "Cambria Math", ...base };
   const clean = (x) => x.replace(/[{}]/g, "");
@@ -412,7 +454,7 @@ for (const ln of readTxt("referencias.txt").split("\n")) {
 }
 const refSortKey = (t) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 function refPara(r) {
-  return new Paragraph({ keepLines: true, spacing: { after: 80, line: 264 }, indent: { left: 420, hanging: 420 }, children: runs(r.text + (r.st === "V" ? "" : " †"), { size: 19 }) });
+  return new Paragraph({ alignment: AlignmentType.LEFT, keepLines: true, spacing: { after: 80, line: 264 }, indent: { left: 420, hanging: 420 }, children: runs(r.text + (r.st === "V" ? "" : " †"), { size: 19 }) });
 }
 function chapterRefs(c) {
   const out = [heading(3, "Referências do capítulo")];

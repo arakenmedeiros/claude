@@ -204,7 +204,7 @@ MC: Ao comparar 100 variantes equivalentes a 5% de nível, sem correção, esper
 - 50 falsos positivos, pois metade das comparações tende a dar diferença.
 - 95 falsos positivos, pois o nível de 5% vale para cada acerto individual.
 - 100 falsos positivos, pois todas as comparações ultrapassam o nível fixado.
-J: Cada comparação tem 5% de chance de falso positivo; Holm ou Benjamini-Hochberg corrigem isso.
+J: Cada comparação tem 5% de chance de falso positivo. Holm controla a probabilidade de ao menos um falso positivo na família; Benjamini-Hochberg controla a proporção esperada de falsos positivos entre as descobertas (sob suas condições de dependência).
 
 MC: Por que reportar a temperatura e a semente em uma avaliação?
 = Sem elas, o resultado de um sistema com amostragem não pode ser reproduzido nem comparado.

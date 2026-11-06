@@ -327,17 +327,26 @@ def limiar_para(score, y, g, alvo, k, tipo):
     return min(cands, key=lambda t: abs(f(t) - alvo))
 
 X, y, g = gerar_candidatos()
-Xtr, Xte, ytr, yte, gtr, gte = train_test_split(X, y, g, test_size=0.5, random_state=0, stratify=y * 2 + g)
-s = LogisticRegression().fit(Xtr, ytr).predict_proba(Xte)[:, 1]            # modelo SEM o atributo protegido
-p0 = (s >= 0.5).astype(int)
+# três conjuntos disjuntos: treino (50%) ajusta o modelo, validação (25%) escolhe os limiares, teste (25%) só mede
+Xtr, Xrest, ytr, yrest, gtr, grest = train_test_split(X, y, g, test_size=0.5, random_state=0, stratify=y * 2 + g)
+Xva, Xte, yva, yte, gva, gte = train_test_split(Xrest, yrest, grest, test_size=0.5, random_state=1, stratify=yrest * 2 + grest)
+modelo = LogisticRegression().fit(Xtr, ytr)                                # modelo SEM o atributo protegido
+sva, s = modelo.predict_proba(Xva)[:, 1], modelo.predict_proba(Xte)[:, 1]
+p0va, p0 = (sva >= 0.5).astype(int), (s >= 0.5).astype(int)                # limiar único fixo em 0,5 (nada é ajustado)
+m0va = por_grupo(yva, p0va, gva)
+alvo_sel = p0va.mean()                                                     # alvos definidos na VALIDAÇÃO: seleção global do limiar único
+alvo_tpr = m0va["A"]["tpr"]                                                # e a taxa de verdadeiros positivos do grupo A
+lim_dp = {k: limiar_para(sva, yva, gva, alvo_sel, k, "sel") for k in (0, 1)}   # limiares escolhidos só com a validação
+lim_io = {k: limiar_para(sva, yva, gva, alvo_tpr, k, "tpr") for k in (0, 1)}
+aplicar = lambda lim: np.where(gte == 1, s >= lim[1], s >= lim[0]).astype(int) # aplicação ao TESTE, sem reajuste
+p_dp, p_io = aplicar(lim_dp), aplicar(lim_io)
 m0 = por_grupo(yte, p0, gte)
-alvo_sel = p0.mean()                                                       # mesma taxa de seleção global do limiar único
-p_dp = np.where(gte == 1, s >= limiar_para(s, yte, gte, alvo_sel, 1, "sel"), s >= limiar_para(s, yte, gte, alvo_sel, 0, "sel")).astype(int)
-alvo_tpr = m0["A"]["tpr"]
-p_io = np.where(gte == 1, s >= limiar_para(s, yte, gte, alvo_tpr, 1, "tpr"), s >= limiar_para(s, yte, gte, alvo_tpr, 0, "tpr")).astype(int)
 
 tab_eq = {}
-print(f"taxa-base de qualificados: A={m0['A']['base']:.2f}, B={m0['B']['base']:.2f}")
+print(f"tamanhos: treino={len(ytr)}, validação={len(yva)}, teste={len(yte)}")
+print(f"alvos escolhidos na validação: seleção global={alvo_sel:.3f}, TPR do grupo A={alvo_tpr:.3f}")
+print(f"limiares por grupo (A, B): paridade demográfica=({lim_dp[0]:.3f}; {lim_dp[1]:.3f}), igual oportunidade=({lim_io[0]:.3f}; {lim_io[1]:.3f})")
+print(f"\nresultados no TESTE. taxa-base de qualificados: A={m0['A']['base']:.2f}, B={m0['B']['base']:.2f}")
 print(f"{'estratégia':<22} {'sel A':>6} {'sel B':>6} {'ΔDP':>6} {'TPR A':>6} {'TPR B':>6} {'ΔIO':>6} {'FPR A':>6} {'FPR B':>6} {'PPV A':>6} {'PPV B':>6} {'acerto':>7}")
 for nome, p in [("limiar único", p0), ("paridade demográfica", p_dp), ("igual oportunidade", p_io)]:
     m = por_grupo(yte, p, gte); acc = float((p == yte).mean()); tab_eq[nome] = (m, acc)

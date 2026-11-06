@@ -56,7 +56,7 @@ print("com posição, diferença após embaralhar:", np.abs(atencao_media(E + po
 
 # %% [bloco 4]
 from llmdidatico.multimodal import (descricao, vocabulario, bow, infonce_simetrica,
-                                    treinar_contrastivo, recall_em_k, PALAVRAS)
+                                    treinar_contrastivo, hit_em_k, PALAVRAS)
 
 X = imagens.reshape(len(imagens), -1) / 16                     # 64 pixels por imagem, em [0, 1]
 med = np.median(X.sum(1))
@@ -98,20 +98,20 @@ for i in sel:
 def avaliar(Wi_, Wt_, ks=(1, 5)):
     Ui_, Ut_ = embutir(Xi[te], Wi_), embutir(T[te], Wt_)
     S_ = Ui_ @ Ut_.T
-    a_i2t, a_t2i = recall_em_k(S_, yt, yt, ks), recall_em_k(S_.T, yt, yt, ks)
+    a_i2t, a_t2i = hit_em_k(S_, yt, yt, ks), hit_em_k(S_.T, yt, yt, ks)
     ch = chaves[te]
-    b_i2t, b_t2i = recall_em_k(S_, ch, ch, ks), recall_em_k(S_.T, ch, ch, ks)
+    b_i2t, b_t2i = hit_em_k(S_, ch, ch, ks), hit_em_k(S_.T, ch, ch, ks)
     return a_i2t, a_t2i, b_i2t, b_t2i, S_
 
 a_i2t, a_t2i, b_i2t, b_t2i, _ = avaliar(Wi, Wt)
-print(f"{'critério':<22} {'direção':<14} {'R@1':>6} {'R@5':>6}")
+print(f"{'critério':<22} {'direção':<14} {'Hit@1':>6} {'Hit@5':>6}")
 for nome, i2t, t2i in (("mesmo dígito", a_i2t, a_t2i), ("dígito + atributos", b_i2t, b_t2i)):
     print(f"{nome:<22} {'imagem->texto':<14} {i2t[1]:>6.3f} {i2t[5]:>6.3f}")
     print(f"{nome:<22} {'texto->imagem':<14} {t2i[1]:>6.3f} {t2i[5]:>6.3f}")
 
 
 # %% [bloco 7]
-print(f"{'tau':>5} {'perda final':>12} {'cos par certo':>14} {'cos par errado':>15} {'R@1 i->t':>9} {'R@1 t->i':>9}")
+print(f"{'tau':>5} {'perda final':>12} {'cos par certo':>14} {'cos par errado':>15} {'Hit@1 i->t':>9} {'Hit@1 t->i':>9}")
 res_tau = {}
 for tau in (0.01, 0.05, 0.1, 0.5, 1.0):
     Wi_, Wt_, h = treinar_contrastivo(Xi[tr], T[tr], d=16, tau=tau, epocas=60, lote=64, lr=0.05, seed=0)

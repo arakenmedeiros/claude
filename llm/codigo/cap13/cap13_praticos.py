@@ -28,7 +28,7 @@ for p in (4, 2):
 # %% [Exercício 13.2: Temperatura e dimensão do embedding]
 import numpy as np
 from sklearn.datasets import load_digits
-from llmdidatico.multimodal import descricao, vocabulario, bow, treinar_contrastivo, recall_em_k
+from llmdidatico.multimodal import descricao, vocabulario, bow, treinar_contrastivo, hit_em_k
 
 dg = load_digits(); imagens, y = dg.images, dg.target
 X = imagens.reshape(len(imagens), -1) / 16
@@ -40,14 +40,14 @@ T = bow(leg, vocabulario(leg)); Xi = X - 0.5
 def emb(A, W):
     Z = A @ W; return Z / np.linalg.norm(Z, axis=1, keepdims=True)
 
-print(f"{'tau':>5} {'d':>3} {'R@1 i->t (média ± dp, 3 sementes)':>36}")
+print(f"{'tau':>5} {'d':>3} {'Hit@1 i->t (média ± dp, 3 sementes)':>36}")
 for tau in (0.05, 0.5):
     for d in (2, 4, 8, 16):
         r = []
         for sem in range(3):
             Wi, Wt, _ = treinar_contrastivo(Xi[tr], T[tr], d=d, tau=tau, epocas=40, lote=64, lr=0.05, seed=sem)
             S = emb(Xi[te], Wi) @ emb(T[te], Wt).T
-            r.append(recall_em_k(S, y[te], y[te], (1,))[1])
+            r.append(hit_em_k(S, y[te], y[te], (1,))[1])
         print(f"{tau:>5} {d:>3} {np.mean(r):>25.3f} ± {np.std(r):.3f}")
 
 
@@ -74,7 +74,7 @@ for n_fft in (64, 128, 256, 512, 1024):
 # %% [Projeto: Busca imagem–texto com abstenção e avaliação por fatia]
 import numpy as np
 from sklearn.datasets import load_digits
-from llmdidatico.multimodal import descricao, vocabulario, bow, treinar_contrastivo, recall_em_k, PALAVRAS
+from llmdidatico.multimodal import descricao, vocabulario, bow, treinar_contrastivo, hit_em_k, PALAVRAS
 from llmdidatico import avaliacao as av
 
 dg = load_digits(); imagens, y = dg.images, dg.target
@@ -92,8 +92,8 @@ Up = emb(bow([f"dígito {w}" for w in PALAVRAS], voc), Wt)
 
 # 2. recuperação e classificação
 S = emb(Xi[te], Wi) @ emb(T[te], Wt).T
-r_i2t, r_t2i = recall_em_k(S, y[te], y[te], (1, 5)), recall_em_k(S.T, y[te], y[te], (1, 5))
-print("recall@1/@5 imagem->texto:", round(r_i2t[1], 3), round(r_i2t[5], 3), "| texto->imagem:", round(r_t2i[1], 3), round(r_t2i[5], 3))
+r_i2t, r_t2i = hit_em_k(S, y[te], y[te], (1, 5)), hit_em_k(S.T, y[te], y[te], (1, 5))
+print("Hit@1/@5 imagem->texto:", round(r_i2t[1], 3), round(r_i2t[5], 3), "| texto->imagem:", round(r_t2i[1], 3), round(r_t2i[5], 3))
 acertos = ((emb(Xi[te], Wi) @ Up.T).argmax(1) == y[te]).astype(float)
 m, lo, hi = av.bootstrap_ic(acertos, n=1000, seed=0)
 print(f"acurácia por descrições de classe: {m:.3f}  IC95% [{lo:.3f}; {hi:.3f}]")

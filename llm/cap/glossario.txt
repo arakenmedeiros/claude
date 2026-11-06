@@ -124,7 +124,7 @@ Gradiente (gradient): vetor das derivadas parciais da perda em relação aos par
 Hash: resumo de tamanho fixo de um conteúdo, usado para versionar prompts e verificar integridade. Caps. 8, 14, 17.
 Hiperparâmetro (hyperparameter): configuração escolhida antes do treinamento, como taxa de aprendizado ou posto do LoRA. Caps. 5, 12.
 Hipótese distribucional (distributional hypothesis): ideia de que palavras em contextos parecidos têm significados parecidos. Cap. 3.
-Hit@k: fração de consultas com algum documento relevante entre os k primeiros. Cap. 10.
+Hit@k: fração de consultas com pelo menos um item relevante entre os k primeiros; vale 1 ou 0 por consulta. Em trabalhos multimodais costuma ser chamado de recall@k. Caps. 10, 13.
 Idempotência (idempotency): propriedade de uma operação que, repetida, produz o mesmo efeito que uma única execução. Cap. 14.
 IDF (inverse document frequency): medida de raridade de um termo na coleção. Caps. 3, 10.
 Índice vetorial (vector index): estrutura que armazena embeddings para busca por similaridade. Cap. 10.
@@ -231,7 +231,7 @@ Quantização (quantization): representar pesos com menos bits; reduz memória, 
 QLoRA: LoRA aplicado sobre um modelo-base quantizado. Cap. 12.
 Rastro (trace): registro encadeado das etapas de uma requisição, usado em observabilidade. Caps. 9, 15.
 RAG avançado: variações como reescrita de consulta, multiconsulta e reranqueamento, que precisam ser medidas. Cap. 11.
-Recall@k (revocação em k): fração dos documentos relevantes encontrados entre os k primeiros. Caps. 10, 13.
+Recall@k (revocação em k): fração dos documentos relevantes encontrados entre os k primeiros (divide pelo número de relevantes; difere do Hit@k). Cap. 10.
 Recuo exponencial com jitter (exponential backoff with jitter): esperas crescentes e aleatorizadas entre tentativas. Cap. 9.
 Recompensa (reward): nota numérica atribuída a uma resposta pelo modelo de recompensa. Cap. 7.
 Red teaming: teste planejado do sistema como um adversário faria, para encontrar falhas antes dos atacantes. Cap. 17.
@@ -328,7 +328,7 @@ Observabilidade (observability): capacidade de entender o comportamento de um si
 Teste de carga (load test): teste com volume de requisições crescente para medir limites. Cap. 15.
 Energia por requisição: estimativa da energia gasta, potência vezes tempo, para raciocinar sobre sustentabilidade. Cap. 15.
 Dimensionamento de amostra (sample size): cálculo do número de casos necessário para uma precisão ou poder desejados. Cap. 16.
-Múltiplas comparações (multiple comparisons): risco de falsos positivos ao fazer muitos testes; corrigido por Holm ou Benjamini-Hochberg. Cap. 16.
+Múltiplas comparações (multiple comparisons): risco de falsos positivos ao fazer muitos testes; Holm controla a probabilidade de ao menos um falso positivo na família (FWER); Benjamini-Hochberg controla a proporção esperada de falsos positivos entre as descobertas (FDR), sob independência ou dependência positiva. Cap. 16.
 Margem de relevância (equivalence margin): diferença mínima que importa na prática. Cap. 16.
 Calibração (calibration): ajuste da correspondência entre confiança declarada e acerto observado, ou do juiz contra humanos. Cap. 16.
 Deduplicação (deduplication): remoção de documentos idênticos ou quase idênticos do conjunto de treino. Cap. 5.
