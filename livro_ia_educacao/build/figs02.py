@@ -16,18 +16,21 @@ def f02_espectro():
         w=8.6, h=3.6, cor_esq=TEAL, cor_dir=PLUM)
 
 def f02_conjuntos():
-    fig, ax = canvas(8.2, 4.8, (0, 100), (-2, 56))
-    cx, cy = 34, 29
-    cores = [MID, "#F8D9B8", "#F2A93B", TERRA]
-    rs = [27, 21, 14.5, 8]
-    nomes = ["Inteligência artificial", "Aprendizado de máquina", "Aprendizado profundo", "IA generativa\ne LLMs"]
-    for r, c, n, i in zip(rs, cores, nomes, range(4)):
-        ax.add_patch(Circle((cx, cy - (27 - r)), r, fc=c, ec="white", lw=2, zorder=2 + i))
-        ax.text(cx, cy - (27 - r) + r - 3.6 if i < 3 else cy - (27 - r), n, ha="center", va="center", fontsize=8.2 if i < 3 else 7.6, fontweight="bold", color=INK if i < 3 else "white", zorder=8, linespacing=1.05)
-    rbox(ax, 66, 34, 32, 18, "", fc=SAND, ec=GOLD, lw=1.6, r=2, z=2)
-    ax.text(82, 43, wrap("Há IA sem aprendizado de máquina: os sistemas especialistas baseados em regras.", 30), ha="center", va="center", fontsize=7.6, zorder=5, linespacing=1.2)
-    rbox(ax, 66, 8, 32, 18, "", fc="#EAF6F4", ec=TEAL, lw=1.6, r=2, z=2)
-    ax.text(82, 17, wrap("Imagine bonecas russas: cada conceito está dentro do anterior.", 30), ha="center", va="center", fontsize=7.6, zorder=5, linespacing=1.2)
+    fig, ax = canvas(8.4, 5.0, (0, 100), (0, 58))
+    rbox(ax, 2, 16, 96, 40, "", fc=MID, ec=GRY, lw=1.4, r=2.5, z=1)
+    ax.text(4.5, 53, "Inteligência artificial (campo amplo)", ha="left", va="center", fontsize=9.2, fontweight="bold", color=INK, zorder=6)
+    rbox(ax, 5, 19, 25, 29, "", fc=SAND, ec=GOLD, lw=1.4, r=2, z=2)
+    ax.text(17.5, 36, wrap("Sistemas baseados em regras", 18), ha="center", va="center", fontsize=8.4, fontweight="bold", zorder=6, linespacing=1.1)
+    ax.text(17.5, 26, wrap("ex.: sistemas especialistas", 18), ha="center", va="center", fontsize=7.6, zorder=6, color=GRY)
+    rbox(ax, 33, 19, 63, 29, "", fc="#F8D9B8", ec=TERRA, lw=1.4, r=2, z=2)
+    ax.text(64.5, 44.5, "Aprendizado de máquina (família de métodos)", ha="center", va="center", fontsize=8.4, fontweight="bold", zorder=6)
+    rbox(ax, 36, 22, 22, 18, "", fc="#FBE9D3", ec=TERRA, lw=1.0, r=1.5, z=3)
+    ax.text(47, 31, wrap("Outros métodos de aprendizado", 17), ha="center", va="center", fontsize=7.8, zorder=6, linespacing=1.1)
+    rbox(ax, 61, 22, 32, 18, "", fc=AMBER, ec=GOLD, lw=1.2, r=1.5, z=3)
+    ax.text(77, 31, wrap("Aprendizado profundo (redes neurais)", 24), ha="center", va="center", fontsize=8.2, fontweight="bold", zorder=6, linespacing=1.1)
+    rbox(ax, 2, 1, 96, 11, "", fc="#F3E8F4", ec=PLUM, lw=1.5, r=2.5, z=1)
+    ax.text(50, 6.5, wrap("Capacidade de gerar conteúdo (texto, imagem, áudio, código): pode ser implementada por métodos diferentes. Os assistentes generativos atuais, como os modelos de linguagem de grande porte, usam em geral aprendizado profundo.", 92), ha="center", va="center", fontsize=7.8, zorder=6, linespacing=1.2)
+    arrow(ax, (77, 12.4), (77, 21.6), c=PLUM, lw=1.8, z=9)
     save(fig, "f02_conjuntos")
 
 def f02_usos():

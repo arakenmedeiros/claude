@@ -25,3 +25,11 @@ Nenhuma referência foi incluída sem existência confirmada. Quando uma afirma�
 ## Como atualizar
 
 Ao usar este livro em cursos e documentos institucionais: consulte a fonte primária de cada afirmação importante, registre a data de acesso, e verifique se há nova versão ou retratação. O Capítulo 26 descreve um procedimento simples de verificação e registro que pode ser aplicado a qualquer fonte.
+
+## Revisão editorial de 6 de novembro de 2026
+
+Esta versão incorporou as correções de um parecer técnico-editorial. Os principais ajustes foram: a substituição do Decreto nº 7.611/2011, revogado, pelo Decreto nº 12.686/2025 (com o Decreto nº 12.773/2025 e a Portaria MEC nº 421/2026); a distinção entre bases legais e consentimento no tratamento de dados de crianças (art. 14 da LGPD e Enunciado CD/ANPD nº 1/2023); a inclusão da Lei nº 14.874/2024 e do Decreto nº 12.651/2025 no marco de ética em pesquisa; a distinção entre a citação (art. 46, III) e as demais hipóteses do art. 46 da Lei nº 9.610/1998; a atualização sobre o ECA Digital (art. 41-A e Decreto nº 12.880/2026); a inclusão da Lei nº 15.100/2025 e da Resolução CNE/CEB nº 2/2025 sobre aparelhos na escola; a citação direta da Portaria CNPq nº 2.664/2026; e a correção da Figura 2.3 e de resumos de estudos (Lee et al., Xu et al., Cabezas-Clavijo e Sidorenko-Bautista, Walters e Wilder).
+
+Os dispositivos legais citados nessa revisão foram conferidos por busca em páginas oficiais e secundárias em 6 de novembro de 2026; o texto integral de cada norma deve ser consultado nos canais oficiais antes de uso institucional. Alguns atos, como o Decreto nº 12.686/2025, o Decreto nº 12.651/2025 e a Lei nº 14.874/2024, são objeto de questionamentos no Congresso ou no Supremo Tribunal Federal, e sua situação deve ser conferida.
+
+Nas referências com versão preliminar e versão final (por exemplo, Cabezas-Clavijo e Sidorenko-Bautista; Baillifard et al.; Pallant et al.), adotou-se o ano da versão indicada na referência, com a observação correspondente.

@@ -76,7 +76,7 @@ MC: Qual relação entre os conjuntos descreve corretamente a "família" da IA?
 - IA generativa contém toda a IA. || É um subconjunto.
 - Os quatro conceitos são sinônimos perfeitos. || São diferentes, ainda que relacionados.
 - Aprendizado de máquina contém IA. || Inverte a relação.
-R: A imagem das bonecas russas ajuda: cada conceito está dentro do outro.
+R: Aprendizado de máquina e aprendizado profundo são famílias de métodos (uma dentro da outra); a geração de conteúdo é uma capacidade, implementada hoje em geral por aprendizado profundo.
 
 MC: Sobre as redes neurais do aprendizado profundo, o capítulo afirma que:
 + São modelos matemáticos inspirados de forma muito livre em neurônios conectados, mas não são réplicas do cérebro.
@@ -250,7 +250,7 @@ DISC: Descreva o "efeito ELIZA" e explique por que ele é importante para profes
 R: É a tendência de atribuir compreensão e empatia a sistemas que apenas imitam a forma de uma conversa. Importa porque estudantes e professores podem confiar demais em respostas fluentes e tratar o sistema como interlocutor com entendimento.
 C: Descreve o fenômeno; relaciona a fluência com confiança indevida.
 
-DISC: Com o desenho de bonecas russas, explique a relação entre IA, aprendizado de máquina, aprendizado profundo e IA generativa. Dê um exemplo de sistema em cada nível.
+DISC: Com a figura do capítulo, explique a relação entre IA, aprendizado de máquina, aprendizado profundo e IA generativa, distinguindo famílias de métodos de capacidades. Dê um exemplo de sistema em cada caso.
 R: IA é o conjunto mais amplo; aprendizado de máquina é um subconjunto; aprendizado profundo, subconjunto deste; IA generativa, em boa parte, usa aprendizado profundo. Exemplos: sistema especialista de regras (IA), filtro de spam (AM), reconhecimento de voz (AP), assistente que escreve textos (IA generativa).
 C: Relações de inclusão corretas; exemplos coerentes.
 
@@ -307,7 +307,7 @@ R: Porque gostar ou usar com facilidade não mostra que o sistema é adequado, c
 C: Distingue satisfação de qualidade; articula a pergunta com análise.
 
 DISC: Planeje uma breve conversa de dez minutos para apresentar a seus colegas a diferença entre "IA", "aprendizado de máquina" e "IA generativa" sem usar jargões. Descreva a analogia e o exemplo que usaria.
-R: Analogia das bonecas russas; exemplos: sistema de regras, filtro de spam e assistente que escreve textos. Fechar com pergunta para o grupo.
+R: Campo, famílias de métodos e capacidade; exemplos: sistema de regras, filtro de spam e assistente que escreve textos. Fechar com pergunta para o grupo.
 C: Analogia adequada; linguagem simples; exemplos corretos.
 
 DISC: Escreva três perguntas que um estudante curioso poderia fazer sobre IA e que você, como professor, gostaria de investigar com ele. Explique como transformaria uma delas em atividade de pesquisa.

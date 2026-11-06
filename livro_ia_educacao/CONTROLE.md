@@ -35,3 +35,6 @@ Notas: Consensus esgotado (2 buscas até 01/11); usar WebSearch para verificar. 
 - Itens a conferir antes de publicação: textos oficiais de ECA Digital, Lei 9.610, LDB (arts. 14 e 24), CNPq 2026; resumos de Bastani/Kestin/Fan/Lee (descritos qualitativamente); referencial UNESCO 2024; volume/páginas de Noy & Zhang 2023; referências M (clássicos) não reverificadas; ref. MAYER 2009, MOLLICK 2023 e algumas M sem citação nos capítulos (não aparecem na lista consolidada).
 - Capítulos 18–32 excedem a meta de extensão (~4.000–4.900 palavras).
 - Próximo passo (aguarda autorização do autor): PPTX por capítulo.
+
+## Revisão 01.2 (6/11/2026)
+Aplicado o parecer técnico-editorial (decreto de educação inclusiva, LGPD/consentimento, Lee et al., Figura 2.3, ética em pesquisa, Lei 9.610 art. 46, ECA Digital, Lei 15.100/CNE, CNPq, fontes científicas) e texto justificado (referências mantidas alinhadas à esquerda). Itens não verificados de forma independente: correção editorial do PNAS (Bastani et al.), versão JDIS 2026/DOI de Cabezas-Clavijo e Sidorenko-Bautista (informados pelo parecer).
