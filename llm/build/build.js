@@ -104,7 +104,7 @@ function mathRuns(tex, base = {}) {
 // inline: **negrito**, *itálico*, `código`, $matemática$
 function runs(text, base = {}) {
   const out = [];
-  const re = /(\$[^$\n]+\$|\*\*(?:[^*]|\*(?!\*)[^*]+\*)+\*\*|\*[^*\s][^*]*\*|`[^`]+`)/g;
+  const re = /((?<![A-Za-z])\$(?!\s)[^$\n]*?(?<!\s)\$|\*\*(?:[^*]|\*(?!\*)[^*]+\*)+\*\*|\*[^*\s][^*]*\*|`[^`]+`)/g;
   let last = 0, m;
   while ((m = re.exec(text)) !== null) {
     if (m.index > last) out.push(new TextRun({ text: text.slice(last, m.index), ...base }));
@@ -167,14 +167,14 @@ function parseMd(text) {
 const headings = [];
 let hid = 0;
 function heading(level, text, opts = {}) {
-  text = text.replace(/\*+/g, "").replace(/`/g, "").replace(/\$/g, "");
+  text = text.replace(/\$([^$\n]+)\$/g, (m, t) => texToUni(linTex(t)).replace(/[{}]/g, "")).replace(/\*+/g, "").replace(/`/g, "").replace(/\$/g, "");
   const id = "h" + (++hid);
   headings.push({ level, text, id });
   const lv = { 1: HeadingLevel.HEADING_1, 2: HeadingLevel.HEADING_2, 3: HeadingLevel.HEADING_3, 4: HeadingLevel.HEADING_4 }[level];
   return new Paragraph({ heading: lv, pageBreakBefore: !!opts.pageBreak, keepNext: true, children: [new TextRun({ text })] });
 }
 function subtitleLike(text) { // título sem entrar no sumário (itens de exercício)
-  return new Paragraph({ keepNext: true, spacing: { before: 240, after: 100 }, children: [new TextRun({ text, bold: true, size: 25, color: "4338CA" })] });
+  return new Paragraph({ keepNext: true, spacing: { before: 240, after: 100 }, children: runs(text, { bold: true, size: 25, color: "4338CA" }) });
 }
 function P(text, o = {}) {
   return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.LEFT, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
