@@ -177,7 +177,7 @@ function subtitleLike(text) { // título sem entrar no sumário (itens de exerc�
   return new Paragraph({ keepNext: true, spacing: { before: 240, after: 100 }, children: runs(text, { bold: true, size: 25, color: "4338CA" }) });
 }
 function P(text, o = {}) {
-  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.LEFT, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
+  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.JUSTIFIED, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
 }
 function spacer(after = 120) { return new Paragraph({ spacing: { after, line: 120 }, children: [] }); }
 
@@ -391,7 +391,7 @@ function exercises(ex) {
   });
   out.push(heading(3, "Exercícios discursivos", { pageBreak: true }));
   out.push(P("Responda por escrito. Cada questão indica o tipo entre colchetes: [Compreensão], [Matemática], [Análise], [Programação] ou [Decisão]. As soluções das questões matemáticas estão no Apêndice B; as respostas orientadoras e os critérios, no Apêndice C.", { run: { color: C.gry } }));
-  ex.dc.forEach((q, i) => out.push(new Paragraph({ keepLines: true, spacing: { before: 120, after: 80, line: 288 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 21 }), new TextRun({ text: `[${TYPE_NAME[q.type]}] `, bold: true, size: 17, color: C.gry }), ...runs(q.stem, { size: 21 })] })));
+  ex.dc.forEach((q, i) => out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, keepLines: true, spacing: { before: 120, after: 80, line: 288 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 21 }), new TextRun({ text: `[${TYPE_NAME[q.type]}] `, bold: true, size: 17, color: C.gry }), ...runs(q.stem, { size: 21 })] })));
   return out;
 }
 
@@ -547,7 +547,7 @@ const chShort = (c) => `Capítulo ${c.n} — ${c.meta.title.split(":")[0]}`;
 }
 // Apêndice B — matemática; C — orientadoras
 function answerPara(q, i, c) {
-  const ps = [new Paragraph({ keepLines: true, spacing: { before: 100, after: 60, line: 270 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 20 }), new TextRun({ text: `[${TYPE_NAME[q.type]}] `, bold: true, size: 16, color: C.gry }), ...runs(q.stem, { size: 19, bold: true })] })];
+  const ps = [new Paragraph({ alignment: AlignmentType.JUSTIFIED, keepLines: true, spacing: { before: 100, after: 60, line: 270 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 20 }), new TextRun({ text: `[${TYPE_NAME[q.type]}] `, bold: true, size: 16, color: C.gry }), ...runs(q.stem, { size: 19, bold: true })] })];
   for (const a of q.ans) ps.push(new Paragraph({ keepLines: true, spacing: { after: 60, line: 270 }, indent: { left: 500 }, children: runs(a, { size: 19 }) }));
   if (q.code.length) ps.push(...codeBlock({ lang: EX_OK[`${c.n}-${i + 1}`] ? "python" : "python-ni", code: q.code }).slice(0, 1));
   if (q.crit.length) { ps.push(new Paragraph({ spacing: { after: 40 }, indent: { left: 500 }, children: [new TextRun({ text: "Critérios de avaliação", bold: true, size: 17, color: C.indD })] })); q.crit.forEach((k) => ps.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 30, line: 260 }, children: runs(k, { size: 18 }) }))); }
