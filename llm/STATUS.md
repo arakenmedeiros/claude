@@ -31,3 +31,4 @@ Blocos de código dos capítulos, códigos de referência das questões e soluç
 - **Referências:** McCloskey; Cohen (1989) com DOI e sem †; MCP (Anthropic, 25/11/2024) sem a ressalva; Ji et al. (ACM Computing Surveys, 2023) e Su et al. (Neurocomputing, 2024) completos; Ozdemir só na edição inglesa (ISBN 978-0-13-534651-8).
 - **Formatação:** texto corrido justificado (referências, código e tabelas continuam à esquerda); sumário com páginas verificadas em duas passagens.
 - A verificação das referências do parecer **não foi refeita online nesta sessão** (sem acesso à rede externa): os dados (DOIs, volumes, artigos) vêm do parecer.
+- **EPUB:** `Grandes_Modelos_de_Linguagem.epub` gerado do DOCX final com pandoc (`build/epub/mkepub.sh`). Texto reflowable, sumário navegável (912 títulos), figuras e equações como imagens, código com indentação. Não testado em leitores físicos; revisar em Calibre/Apple Books/Kindle (conversão).
