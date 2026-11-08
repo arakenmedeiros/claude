@@ -468,12 +468,12 @@ const doc = new Document({
     ],
   },
   numbering: { config: numberingConfigs },
-  sections: [sections[0], sections[1], tocSection, ...contentSections],
+  sections: process.env.EPUB ? [sections[1], ...contentSections] : [sections[0], sections[1], tocSection, ...contentSections],
 });
 
 Packer.toBuffer(doc).then((buf) => {
   fs.writeFileSync(OUT, buf);
-  fs.writeFileSync(path.join(__dirname, "headings.json"), JSON.stringify(headings, null, 1));
+  if (!process.env.EPUB) fs.writeFileSync(path.join(__dirname, "headings.json"), JSON.stringify(headings, null, 1));
   console.log("ok", OUT, headings.length, "títulos,", numCounter, "listas;", chapters.length, "capítulos");
   if (missingKeys.size) console.log("CHAVES DE REFERÊNCIA AUSENTES NO BANCO:", [...missingKeys]);
   if (warnings.length) console.log("AVISOS:\n" + warnings.join("\n"));

@@ -38,3 +38,6 @@ Notas: Consensus esgotado (2 buscas até 01/11); usar WebSearch para verificar. 
 
 ## Revisão 01.2 (6/11/2026)
 Aplicado o parecer técnico-editorial (decreto de educação inclusiva, LGPD/consentimento, Lee et al., Figura 2.3, ética em pesquisa, Lei 9.610 art. 46, ECA Digital, Lei 15.100/CNE, CNPq, fontes científicas) e texto justificado (referências mantidas alinhadas à esquerda). Itens não verificados de forma independente: correção editorial do PNAS (Bastani et al.), versão JDIS 2026/DOI de Cabezas-Clavijo e Sidorenko-Bautista (informados pelo parecer).
+
+## EPUB
+`bash build/make_epub.sh` gera `saida/livro.epub` (EPUB 3 reflowable; capa, folha de rosto, sumário navegável com partes/capítulos/seções, texto alternativo e descrição acessível das figuras, metadados de acessibilidade; validado com epubcheck sem mensagens). Sem numeração de páginas (formato reflowable).
