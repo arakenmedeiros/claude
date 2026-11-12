@@ -3,7 +3,7 @@ from fe import *
 def f13_mapa():
     mapa_conceitos("f13_mapa", "IA nos anos\nfinais", [
         ("Estudantes", ["autonomia e identidade", "vida digital"]),
-        ("Condições de uso", ["idade e normas", "mediação e registro"]),
+        ("Condições de uso", ["só uso mediado", "idade e normas"]),
         ("Apoios ao professor", ["sequências e exemplos", "rubricas e feedback"]),
         ("Atividades", ["auditoria de respostas", "dica ou resposta?"]),
         ("Avaliação e autoria", ["processo e conversa", "sem detectores"]),

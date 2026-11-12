@@ -136,24 +136,24 @@
 },
 {
 "t": "comparar",
-"notas": "A IA e as rubricas. Pode rascunhar critérios e descritores, ou versões em linguagem simples. Mas rubricas geradas costumam ser genéricas, com descritores quase intercambiáveis. Teste em dois ou três trabalhos reais. Evite pedir que a IA aplique a rubrica e atribua notas: nota é decisão profissional.",
+"notas": "A IA e as rubricas. Pode rascunhar critérios e descritores, ou versões em linguagem simples; é apoio à elaboração de material, que deve ser informado com clareza. Rubricas geradas costumam ser genéricas. Teste em dois ou três trabalhos reais. Não peça que a IA aplique a rubrica e atribua nota às produções: nota, conceito e mérito são exclusivos do professor, e o Parecer CNE/CP 15/2026 veda nota a produção autoral exclusivamente por IA.",
 "titulo": "IA e rubricas: o que pode e o que não",
 "esq": {
 "cab": "Pode rascunhar",
 "itens": [
 "Critérios e descritores a partir dos seus objetivos",
 "Versão em linguagem simples para os mais novos",
-"Ponto de partida para testar em trabalhos reais",
-"Você ajusta e valida"
+"Ponto de partida, informado como apoio de IA",
+"Você testa, ajusta e valida"
 ]
 },
 "dir": {
 "cab": "Não delegue",
 "itens": [
-"Aplicar a rubrica e dar nota",
+"Aplicar a rubrica e dar nota a produções autorais",
 "Notas inconsistentes entre execuções",
 "Vieses de estilo, língua e dialeto",
-"Responsabilidade pela decisão"
+"Nota e devolutiva: decisão do professor"
 ]
 }
 },
@@ -182,11 +182,11 @@
 },
 {
 "t": "passos",
-"notas": "Arranjo prudente: a IA rascunha a partir de critérios seus e de texto sem identificação; o professor lê, decide e assina; o estudante age. Sem ação, não há ciclo. Os resultados de feedback por IA são promissores, mas contextuais, recentes e mistos.",
+"notas": "Arranjo prudente: a IA rascunha a partir de critérios seus e de texto sem identificação; o professor lê o trabalho inteiro, edita e assina; o estudante age. Nenhum comentário sai da IA direto para o estudante. Feedback formativo sem efeito na nota é risco moderado no Parecer: comunicação, registro, revisão humana, contestação. Se influenciar nota, passa a alto risco. Os resultados de feedback por IA são promissores, mas contextuais, recentes e mistos.",
 "titulo": "Arranjo prudente para o feedback",
 "passos": [
 "A IA rascunha, com texto sem identificação",
-"O professor lê, decide e assina",
+"O professor lê por inteiro, edita e assina",
 "O estudante age: revisa, responde, refaz"
 ],
 "rodape": "Sem ação do estudante, não há ciclo formativo."
@@ -254,13 +254,36 @@
 },
 {
 "t": "cuidado",
-"notas": "Notas automáticas, detectores e decisões consequentes exigem supervisão humana e devido processo. Não delegue a nota. Não use detectores como prova isolada: em caso de suspeita, converse, peça explicação oral e compare com produções em sala. Explique as regras antes de cada tarefa e proteja os dados.",
-"titulo": "Notas automáticas e detectores",
+"notas": "Notas automáticas, pré-correção e detectores exigem supervisão humana e devido processo. Não delegue nota nem devolutiva. Pré-correção é só instrumento preparatório e exige leitura integral. Detectores só como elemento auxiliar. Em caso de suspeita, converse, peça explicação oral e compare com produções em sala. Explique as regras antes de cada tarefa e proteja os dados.",
+"titulo": "Notas, pré-correção e detectores",
 "itens": [
-"Não delegue a nota: a responsabilidade é do professor",
-"Detectores não são prova isolada; há viés contra não nativos",
-"Em caso de suspeita: converse e peça explicação oral",
-"Trabalhos e notas são dados pessoais: proteja-os"
+"Nota e devolutiva são do professor, com leitura integral",
+"Pré-correção: sem validação em bloco nem mera ratificação",
+"Detector não é prova isolada; viés contra não nativos",
+"Suspeita: converse, peça explicação oral e proteja os dados"
+]
+},
+{
+"t": "cartoes",
+"notas": "Apresente o que o Parecer CNE/CP 15/2026 (homologado em 11/11/2026) diz sobre avaliação. A classificação é por finalidade concreta. Feedback formativo sem efeito na nota: risco moderado. Alto risco: correção automatizada com repercussão, feedback que influencie nota, proctoring, detectores e pré-correção. Pelo projeto de resolução anexo, art. 40, par. 4: nota, conceito, mérito e devolutiva são exclusivos do professor, sem homologação tácita, validação em bloco ou mera ratificação. Art. 41: vedada nota a produção autoral só por IA e sanção só por detector. Lembre que é projeto anexo ao Parecer: conferir a publicação da Resolução e o prazo de adequação. O Princípio XII valoriza processos, portfólios e apresentações.",
+"titulo": "O que diz o Parecer CNE/CP 15/2026",
+"cartoes": [
+{
+"cab": "Risco moderado",
+"txt": "Feedback formativo sem efeito na nota: revisão humana, registro e canal de contestação."
+},
+{
+"cab": "Alto risco",
+"txt": "Correção automatizada, proctoring, detectores, pré-correção e feedback que influencie nota."
+},
+{
+"cab": "Indelegável",
+"txt": "Nota, conceito, mérito e devolutiva são do professor, com leitura integral (projeto, art. 40, § 4º)."
+},
+{
+"cab": "Vedado (projeto, art. 41)",
+"txt": "Nota a produção autoral só por IA; sanção fundada só em detector."
+}
 ]
 },
 {
@@ -269,8 +292,8 @@
 "titulo": "Quando dispensar a IA na avaliação",
 "cartoes": [
 {
-"cab": "Notas e decisões",
-"txt": "Atribuir nota, aprovar ou reprovar."
+"cab": "Notas e devolutivas",
+"txt": "Atribuir nota, aprovar ou reprovar, enviar devolutiva sem ler e assinar."
 },
 {
 "cab": "Situações sensíveis",
@@ -301,7 +324,7 @@
 "Diagnóstico bom: curto, específico, leva a uma decisão",
 "Rubricas valem antes e durante a tarefa, com critérios observáveis",
 "Feedback indica o próximo passo; a IA rascunha, você assina",
-"Não delegue notas; detectores não são prova isolada",
+"Nota e devolutiva são do professor; detector não é prova isolada",
 "Proteja dados: anonimize e siga a LGPD e a escola"
 ]
 },

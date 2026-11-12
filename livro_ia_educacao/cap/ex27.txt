@@ -53,13 +53,13 @@ MC: Qual é a melhor forma de verificar se um estudante aprendeu um conteúdo co
 R: Aprendizagem é inferida de tarefa nova, feita sem apoio, com critérios previamente definidos.
 
 #7
-MC: Qual é o papel de uma revisão sistemática na construção de evidências?
-+ Reunir e avaliar criticamente estudos sobre uma mesma questão, mas ela depende da qualidade dos estudos que reúne.
-- Substituir qualquer experimento, pois reúne todas as opiniões. || Revisões não produzem dados novos de intervenção e dependem de experimentos; opiniões não equivalem a resultados.
-- Garantir que a conclusão vale para todas as escolas. || A generalização depende de contextos dos estudos incluídos, que podem ser limitados.
-- Confirmar automaticamente qualquer resultado favorável à tecnologia. || Revisões podem mostrar também resultados nulos ou prejudiciais; não confirmam por padrão.
-- Escolher apenas estudos que concordam entre si. || Excluir estudos divergentes seria viés de seleção, o oposto do rigor esperado.
-R: Revisões ajudam a ver o conjunto, mas não corrigem a fragilidade dos estudos de base.
+MC: Segundo o art. 6º do projeto de resolução anexo ao Parecer CNE/CP nº 15/2026, o que se prevê quando a evidência prévia de eficácia de uma aplicação de IA é insuficiente?
++ A adoção será acompanhada de avaliação institucional posterior, cujos achados subsidiam manter, revisar ou interromper o uso.
+- A adoção é automaticamente proibida. || O texto não proíbe a adoção por esse motivo; exige avaliação posterior dos resultados.
+- A adoção é liberada sem acompanhamento, por ser inovadora. || A evidência insuficiente exige justamente acompanhamento.
+- A decisão cabe apenas ao professor, sem participação da comunidade. || O art. 6º pede decisão técnica, pedagógica e institucional fundamentada, com participação da comunidade educacional.
+- A evidência passa a ser dispensável se o fornecedor garantir bons resultados. || Garantia do fornecedor não substitui evidência nem avaliação institucional.
+R: Evidência insuficiente leva à avaliação posterior, e a decisão é institucional e participativa (art. 6º, parágrafo único).
 
 #8
 MC: O que a retratação de uma meta-análise amplamente citada ensina aos leitores?
@@ -89,13 +89,13 @@ MC: Qual é a vantagem de um experimento com sorteio dos participantes entre as 
 R: O sorteio reduz diferenças prévias entre grupos; ainda assim, o resultado vale para o contexto estudado.
 
 #11
-MC: Um estudo foi feito com estudantes de física no ensino superior. Uma rede de ensino fundamental quer adotar a prática com base nele. Qual é a avaliação mais cuidadosa?
-+ O resultado é indício, não garantia; seria preciso avaliar a diferença de idade e de conteúdo e testar localmente.
-- Se funcionou na universidade, funcionará no fundamental. || A transferência entre níveis exige justificativa; crianças diferem em desenvolvimento, autonomia e necessidades.
-- O estudo é inútil por ter sido feito em outro nível. || Ele pode inspirar hipóteses e desenhos de piloto; descartá-lo por completo é exagero.
-- Basta traduzir o material para o português. || A língua é um detalhe; as diferenças pedagógicas e de público é que importam.
-- Depende apenas do preço da licença. || O custo é relevante, mas não responde à questão da validade do resultado.
-R: A generalização entre níveis e contextos precisa de justificativa e de teste local.
+MC: Um estudo foi feito com estudantes de física no ensino superior. Uma rede quer adotar a prática com estudantes dos anos iniciais do ensino fundamental com base nele. Qual é a avaliação mais cuidadosa?
++ O resultado é só indício; a diferença de idade e de conteúdo pesa, e o Parecer CNE/CP nº 15/2026 não recomenda IA generativa para esses estudantes.
+- Se funcionou na universidade, funcionará nos anos iniciais. || A transferência entre níveis exige justificativa, e o Parecer restringe a IA generativa nessa etapa.
+- O estudo é inútil por ter sido feito em outro nível. || Ele pode inspirar hipóteses; descartá-lo por completo é exagero.
+- Basta traduzir o material para o português. || A língua é um detalhe; as diferenças pedagógicas, de público e as normas da etapa é que importam.
+- Depende apenas do preço da licença. || O custo é relevante, mas não responde à questão da validade nem da adequação etária.
+R: A generalização entre níveis exige justificativa e teste, e a adequação etária segundo o Parecer vem antes da adoção.
 
 #12
 MC: O que significa "efeito de novidade" na avaliação de uma tecnologia?
@@ -242,13 +242,13 @@ MC: Como reescrever com cautela a afirmação "a tutoria com IA melhora a aprend
 R: Uma afirmação cautelosa indica contexto, desenho e limites do que foi mostrado.
 
 #28
-MC: Qual é a relação entre tamanho de efeito e relevância prática?
-+ Não há régua universal; é preciso considerar consistência entre estudos, tipo de medida, custo e escala.
-- Todo efeito acima de zero é relevante para a prática. || Efeitos muito pequenos podem não compensar o custo ou a mudança de rotina.
-- Todo efeito estatisticamente significativo é relevante na prática. || Significância estatística e relevância prática são conceitos diferentes; um efeito pode ser detectável e pequeno demais para compensar o custo.
-- A relevância depende apenas do nome do periódico. || O prestígio do periódico não define a relevância prática.
-- O tamanho do efeito deve ser calculado apenas pela empresa. || A análise independente é preferível e o cálculo deve ser auditável.
-R: A interpretação do efeito exige contexto e custo, e não faixas rígidas.
+MC: Uma escola quer fazer um mini-piloto em que estudantes da educação infantil conversem com um assistente de IA para testar um benefício. Qual é a resposta mais coerente com o Parecer CNE/CP nº 15/2026?
++ Não realizar o piloto desse modo, pois o Parecer recomenda restrição total do uso de IA pelos estudantes na educação infantil; o piloto pode testar usos do professor.
+- Realizar, desde que as famílias assinem autorização. || O Parecer recomenda restrição total, e o projeto veda o uso pelos estudantes, direto ou mediado (art. 21).
+- Realizar, pois piloto é pesquisa e não precisa seguir normas. || Pesquisa com estudantes segue proteção integral e comitê de ética, sem afastar as vedações da etapa.
+- Realizar por duas semanas, pois é um prazo curto. || A duração não altera a restrição.
+- Realizar, mas só com a IA ligada ao professor assistindo. || O projeto veda também o uso mediado pelos estudantes nessa etapa.
+R: Na educação infantil, pilotos só podem testar usos do professor, como planejamento e acessibilidade.
 
 #29
 MC: O que significa dizer que o estudo foi feito "com medida alinhada à ferramenta"?
@@ -296,9 +296,9 @@ DISC: Elabore uma pergunta de avaliação para um mini-piloto na sua turma, defi
 R: Pergunta específica; condição A com IA; condição B alternativa de custo semelhante; indicador sem IA com rubrica prévia.
 C: Pergunta viável; comparação adequada; indicador válido.
 
-DISC: Discuta por que a transferência de resultados de estudos universitários para a educação infantil ou fundamental exige cautela.
-R: Diferenças de desenvolvimento, autonomia, leitura, necessidade de mediação, direitos e proteção; estudos concentrados no ensino superior; necessidade de teste local.
-C: Argumentos de desenvolvimento; reconhecimento da lacuna; proposta de teste.
+DISC: Discuta por que a transferência de resultados de estudos universitários para a educação infantil ou fundamental exige cautela, incluindo o que o Parecer CNE/CP nº 15/2026 diz sobre essas etapas.
+R: Diferenças de desenvolvimento, autonomia, leitura, necessidade de mediação, direitos e proteção; estudos concentrados no ensino superior; necessidade de teste local. O Parecer recomenda restrição total do uso de IA pelos estudantes na educação infantil, não recomenda IA generativa nos anos iniciais, mesmo mediada, e admite nos anos finais apenas uso mediado.
+C: Argumentos de desenvolvimento; reconhecimento da lacuna; cita as restrições por etapa; proposta de teste.
 
 DISC: Explique o que significa "fronteira irregular" e como isso afeta a decisão de usar IA em diferentes tarefas docentes.
 R: Capacidade desigual entre tarefas; o mesmo sistema pode acertar uma e errar outra parecida; exige teste por tarefa e verificação.
@@ -336,9 +336,9 @@ DISC: Proponha um procedimento de três passos para verificar, antes de uma reun
 R: Localizar o estudo original; verificar publicação e retratação; ler limitações e contexto; registrar data e fonte; apresentar como relatado quando não verificado.
 C: Procedimento exequível; inclui verificação de retratação.
 
-DISC: Defina "evidência" como gradação de confiança e dê um exemplo em que a mesma tecnologia tenha evidência forte para um uso e fraca para outro.
-R: Evidência é conjunto de indícios de qualidade variável; exemplo: tutoria estruturada em ensino superior (indícios) versus uso por crianças pequenas (lacuna).
-C: Definição adequada; exemplo coerente.
+DISC: Explique como os critérios de adoção do art. 6º do projeto de resolução anexo ao Parecer CNE/CP nº 15/2026 se relacionam com a leitura crítica de evidências e com o piloto local.
+R: O art. 6º pede decisão fundamentada, com participação da comunidade, considerando evidências de eficácia, bem-estar, autonomia docente, dados, capacidade institucional, infraestrutura e inclusão; se a evidência é insuficiente, a adoção é acompanhada de avaliação posterior. O piloto local e a medida sem IA são formas de avaliação posterior; a leitura crítica evita aceitar propaganda como evidência.
+C: Cita critérios do art. 6º e o parágrafo único; liga ao piloto; distingue Parecer e projeto; mantém cautela.
 
 DISC: Planeje uma tarefa de transferência sem IA para verificar a aprendizagem após uma sequência didática em que se usou um assistente de IA.
 R: Tarefa nova e parecida; sem apoio; critérios prévios; aplicada após intervalo; comparação com desempenho assistido; devolutiva.

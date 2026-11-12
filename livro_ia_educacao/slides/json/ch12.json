@@ -10,7 +10,7 @@
    "itens": [
     "Relacionar o desenvolvimento dos anos iniciais a decisões sobre IA",
     "Planejar apoios de IA ao professor, com verificação",
-    "Definir condições e limites para a participação dos estudantes",
+    "Reconhecer o que o Parecer 15/2026 diz sobre os estudantes",
     "Planejar atividades desplugadas sobre máquinas e informação",
     "Avaliar sem usar IA para classificar crianças"
    ]
@@ -61,16 +61,16 @@
   },
   {
    "t": "cartoes",
-   "notas": "Proposta do autor, em quatro pontos. A UNESCO sugere idade mínima (13 anos como referência) e muitos termos de serviço restringem menores, mas isso é diferente da autorização para usar o aparelho na escola: a Lei 15.100/2025 e a Resolução CNE/CEB 2/2025 restringem o uso de aparelhos pessoais, com exceção para finalidade pedagógica orientada. Confira o regimento da escola.",
-   "titulo": "Condições e limites: proposta do autor",
+   "notas": "Orientação do capítulo, em quatro pontos, coerente com o Parecer CNE/CP 15/2026: sem interação dos estudantes com IA generativa, nem em 'demonstração coletiva' com assistente. A UNESCO cita 13 anos como referência e termos de serviço restringem menores, mas isso é diferente da autorização para usar o aparelho na escola: a Lei 15.100/2025 e a Resolução CNE/CEB 2/2025 restringem aparelhos pessoais, com exceção para finalidade pedagógica orientada. Confira o regimento da escola.",
+   "titulo": "Condições e limites nos anos iniciais",
    "cartoes": [
     {
-     "cab": "Sem assistentes diretos",
-     "txt": "Salvo demonstração coletiva do professor: breve, sem dados pessoais, com objetivo claro."
+     "cab": "Estudantes sem IA generativa",
+     "txt": "Nem autônomos nem sob supervisão: sem demonstração com assistente de conversa."
     },
     {
      "cab": "IA na preparação",
-     "txt": "Se o professor quiser, para materiais e propostas."
+     "txt": "Se o professor quiser, com revisão e informando o uso."
     },
     {
      "cab": "Letramento desplugado",
@@ -79,6 +79,29 @@
     {
      "cab": "Diálogo com as famílias",
      "txt": "A produção da criança importa; apoio demais pode prejudicar."
+    }
+   ]
+  },
+  {
+   "t": "cartoes",
+   "notas": "Parecer CNE/CP nº 15/2026, homologado em 11/11/2026 (Seção 5): IA generativa e conversacional não é recomendada nos anos iniciais, nem com uso mediado pelo professor. O projeto de resolução anexo (art. 22) veda o acesso direto, autônomo, individual ou não supervisionado e veda a interação dos estudantes com IA generativa ou conversacional, ainda que sob supervisão; exige transparência às famílias e proteção de dados; não alcança tecnologias assistivas e acessibilidade. É um projeto: confira a publicação da Resolução e o prazo de 12 meses. Ensinar sobre IA por atividades desplugadas continua adequado.",
+   "titulo": "O que diz o Parecer CNE/CP 15/2026",
+   "cartoes": [
+    {
+     "cab": "Parecer",
+     "txt": "IA generativa e conversacional não é recomendada, nem mediada pelo professor."
+    },
+    {
+     "cab": "Projeto: vedações",
+     "txt": "Sem acesso autônomo e sem interação com IA generativa, mesmo sob supervisão."
+    },
+    {
+     "cab": "Famílias e dados",
+     "txt": "Transparência sobre finalidades, comunicação clara e proteção de dados."
+    },
+    {
+     "cab": "O que segue possível",
+     "txt": "IA do professor na preparação, acessibilidade e atividades desplugadas."
     }
    ]
   },
@@ -236,7 +259,7 @@
   },
   {
    "t": "cuidado",
-   "notas": "Dois alertas fortes: nada de IA para notas ou para prever 'problemas'; nada de detectores de texto gerado por IA com crianças, pois são imprecisos e podem produzir injustiças. Prefira produção em sala e conversa sobre o processo, sem culpar famílias.",
+   "notas": "Dois alertas fortes: nada de IA para notas ou para prever 'problemas'; nada de detectores de texto gerado por IA com crianças, pois são imprecisos e podem produzir injustiças. Prefira produção em sala e conversa sobre o processo, sem culpar famílias. O projeto de resolução anexo ao Parecer classifica detectores como de alto risco e veda sanção fundada só neles.",
    "titulo": "Pare e verifique: o que não fazer",
    "itens": [
     "Não use IA para dar notas, classificar crianças ou prever problemas",
@@ -292,7 +315,7 @@
    "notas": "Rodada rápida. Retome a professora Rita: o que ela poderia dizer às famílias? Peça que cada pessoa escolha uma ideia para levar.",
    "itens": [
     "Produção própria é parte do aprendizado",
-    "Sem evidência sólida para uso rotineiro direto por crianças",
+    "Parecer 15/2026: sem IA generativa para estudantes, nem mediada",
     "A IA apoia o professor, com revisão",
     "Atividades desplugadas: adivinhar não é saber",
     "Avalie por observação, portfólio, rubricas e feedback descritivo",

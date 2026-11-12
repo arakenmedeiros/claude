@@ -4,7 +4,7 @@ def f12_mapa():
     mapa_conceitos("f12_mapa", "IA nos anos\niniciais", [
         ("Desenvolvimento", ["alfabetização", "mediação do adulto"]),
         ("Apoios ao professor", ["textos em níveis", "problemas e roteiros"]),
-        ("Participação das crianças", ["sem assistentes", "demonstrações mediadas"]),
+        ("Participação das crianças", ["sem IA generativa", "atividades desplugadas"]),
         ("Atividades", ["próxima palavra", "detetive de fontes"]),
         ("Avaliação", ["observação, portfólio", "feedback descritivo"]),
         ("Riscos", ["cópia e dependência", "privacidade"]),

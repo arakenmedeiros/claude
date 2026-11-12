@@ -16,6 +16,14 @@ def f32_criterios():
         ("a", "Adotar com condições", "Piloto, limites de uso, contrato revisto, formação e revisão em data marcada."),
         ("r", "Não adotar", "Exige dados sem base legal, impede a saída ou substitui o julgamento do professor.")], w=8.6, wrap_at=95)
 
+def f32_risco():
+    comparar_cartoes("f32_risco", [
+        ("Baixo", ["Apoio instrumental ao docente: adaptar, organizar, revisar texto", "Acessibilidade simples (legenda, leitura de tela)", "Registro simplificado da finalidade"], GREEN),
+        ("Moderado", ["Interação contínua com estudantes, tutoria, recomendação", "Registro das aplicações, revisão humana, canal de contestação", "Monitoramento de erros e vieses; reavaliação"], GOLD),
+        ("Alto", ["Efeito sobre avaliação, nota, certificação, permanência", "Pré-correção, detectores, predição de evasão", "Avaliação de impacto, validação humana, auditoria"], TERRA),
+        ("Excessivo (vedado)", ["Pontuação social, reconhecimento de emoções", "Nota só por IA; sanção só por detector", "Dados de crianças para treinar modelos de terceiros"], ROSE),
+    ], w=8.6, h=6.6, wrap_at=40, colunas=2)
+
 def f32_ciclo():
     ciclo("f32_ciclo", [("Planejar", "uma mudança pequena"), ("Executar", "com registro"),
           ("Estudar", "indicadores e relatos"), ("Ajustar", "e decidir")], centro="A cada\nbimestre", w=7.4, h=5.4, cor=TEAL)
@@ -57,4 +65,4 @@ def f32_livro():
     save(fig, "f32_livro")
 
 if __name__ == "__main__":
-    f32_mapa(); f32_criterios(); f32_ciclo(); f32_comunidade(); f32_sintese(); f32_livro()
+    f32_mapa(); f32_criterios(); f32_risco(); f32_ciclo(); f32_comunidade(); f32_sintese(); f32_livro()

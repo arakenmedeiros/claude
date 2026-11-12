@@ -6,11 +6,11 @@
  "slides": [
   {
    "t": "objetivos",
-   "notas": "Leia os objetivos. Avise que este capítulo é mais cauteloso que os outros: a regra geral proposta é dispensar a IA no contato direto com crianças pequenas. Tempo: 2 minutos.",
+   "notas": "Leia os objetivos. Avise que este capítulo é o mais restritivo: o Parecer CNE/CP nº 15/2026 recomenda a restrição total do uso de IA pelos estudantes na educação infantil, e a IA fica para o profissional (preparação e acessibilidade). Tempo: 2 minutos.",
    "itens": [
     "Reconhecer direitos e necessidades das crianças pequenas",
-    "Diferenciar uso pelo professor e uso direto pelas crianças",
-    "Conhecer condições e limites para a participação das crianças",
+    "Diferenciar uso pelo profissional e uso pelas crianças",
+    "Conhecer os limites e as condições para o uso docente",
     "Planejar atividades desplugadas sobre máquinas e instruções",
     "Avaliar por observação, registro e documentação, protegendo dados"
    ]
@@ -65,10 +65,33 @@
   },
   {
    "t": "figura",
-   "notas": "Dois lugares da IA: nos bastidores, com o professor, e na brincadeira, com as crianças. Para crianças pequenas, não há evidências nem justificativa pedagógica sólida para uso direto de assistentes generativos. A UNESCO sugere idade mínima e cita 13 anos como referência.",
-   "titulo": "Quem usa a IA: professor ou crianças?",
+   "notas": "Dois lugares da IA: nos bastidores, com o profissional, e na brincadeira, com as crianças. Para as crianças, o Parecer CNE/CP 15/2026 recomenda restrição total, e o projeto de resolução anexo veda o uso direto e o mediado. Não há base de evidências nem justificativa pedagógica. A UNESCO cita 13 anos como referência de idade mínima.",
+   "titulo": "Quem usa a IA: profissional ou crianças?",
    "fig": "f11_usos",
-   "legenda": "Figura 11.2 — Uso pelo professor na preparação e uso direto pelas crianças."
+   "legenda": "Figura 11.2 — Uso pelo professor na preparação e uso pelas crianças."
+  },
+  {
+   "t": "cartoes",
+   "notas": "Parecer CNE/CP nº 15/2026, homologado em 11/11/2026 (Seção 5): recomenda a restrição total do uso de IA pelos estudantes na educação infantil, com base em evidências sobre telas nos primeiros anos e na recomendação da SBP. O projeto de resolução anexo (art. 21) permite a IA para profissionais, em planejamento e gestão pedagógica e como acessibilidade, e veda o uso pelas crianças, direto ou mediado. É um projeto: confira a publicação da Resolução e o prazo de 12 meses para adequação. Peça à turma exemplos do que cabe nos bastidores.",
+   "titulo": "O que diz o Parecer CNE/CP 15/2026",
+   "cartoes": [
+    {
+     "cab": "Parecer: restrição total",
+     "txt": "Recomenda restringir totalmente o uso de IA pelos estudantes na educação infantil."
+    },
+    {
+     "cab": "Projeto: só profissionais",
+     "txt": "IA no planejamento, na gestão pedagógica e na acessibilidade (art. 21)."
+    },
+    {
+     "cab": "Projeto: crianças, não",
+     "txt": "Veda o uso pelas crianças, direto ou mediado pelo professor."
+    },
+    {
+     "cab": "Acessibilidade",
+     "txt": "Só para eliminar barreiras, sem inferências sensíveis nem perfilização."
+    }
+   ]
   },
   {
    "t": "cartoes",
@@ -191,16 +214,16 @@
   },
   {
    "t": "cartoes",
-   "notas": "Seis condições propostas pelo autor. Selecione quatro para destacar. Insista em linguagem: 'o computador mostrou', não 'ela quer ajudar você'. Envolva as famílias: explique o que se faz e por quê.",
-   "titulo": "Condições para qualquer participação das crianças",
+   "notas": "Condições para esta etapa: os dois primeiros itens vêm do Parecer e do projeto de resolução anexo; os demais são proposta do autor. Insista em linguagem: 'o computador mostrou', não 'ela quer ajudar você'. Envolva as famílias: explique o que se faz e por quê.",
+   "titulo": "Limites e condições na educação infantil",
    "cartoes": [
     {
-     "cab": "Sem assistentes diretos",
-     "txt": "Não usar assistentes generativos com crianças pequenas; prioridade à experiência concreta."
+     "cab": "Sem IA para as crianças",
+     "txt": "Nem direta nem mediada: sem assistentes, caixas de som conversacionais ou demonstrações."
     },
     {
-     "cab": "Demonstração breve",
-     "txt": "Mediada, sem dados pessoais, para discutir o que a máquina faz e não faz."
+     "cab": "IA só para o profissional",
+     "txt": "Preparação e acessibilidade, sem dados pessoais e com revisão."
     },
     {
      "cab": "Linguagem cuidadosa",
@@ -255,12 +278,12 @@
   },
   {
    "t": "comparar",
-   "notas": "Dispensar é a regra geral proposta neste livro para o contato direto com crianças. Dispense também na documentação com imagens, vozes ou relatos identificáveis, e para dados de saúde ou comportamento. O foco é o brincar, o corpo e a convivência.",
+   "notas": "Dispensar a IA no contato com as crianças é a regra: o Parecer recomenda restrição total e o projeto anexo veda o uso direto ou mediado. Dispense também na documentação com imagens, vozes ou relatos identificáveis, e para dados de saúde ou comportamento.",
    "titulo": "Quando dispensar a IA",
    "esq": {
     "cab": "Dispense a IA",
     "itens": [
-     "No contato direto com as crianças",
+     "No contato com as crianças, direto ou mediado",
      "Com imagens, vozes ou relatos identificáveis",
      "Com dados de saúde ou comportamento",
      "Para avaliar ou classificar crianças"
@@ -282,10 +305,10 @@
    "itens": [
     "Interações e brincadeira são o eixo do currículo",
     "Avaliar é observar, registrar e documentar; sem nota",
-    "Uso pelo professor na preparação; uso direto não recomendado",
-    "Sem base de evidências para uso direto por crianças pequenas",
+    "Parecer: restrição total do uso de IA pelas crianças",
+    "Professor: preparação e acessibilidade, com revisão",
     "Imagens, vozes e relatos de crianças não entram na IA",
-    "Dispensar a IA com as crianças é a regra geral proposta"
+    "Atividades desplugadas ensinam sobre máquinas sem IA"
    ]
   },
   {
