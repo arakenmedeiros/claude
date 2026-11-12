@@ -185,7 +185,7 @@ MC: Qual é a limitação central dos detectores de texto gerado por IA, segundo
 - Só funcionam com textos curtos. || Não é essa a limitação documentada.
 - São proibidos pela legislação de dados. || A restrição de uso se baseia em confiabilidade, e não em proibição legal geral.
 - Funcionam apenas para estudantes do ensino superior. || Não há essa restrição documentada.
-R: Acusações não devem se basear exclusivamente em detectores.
+R: Acusações não devem se basear exclusivamente em detectores; o projeto anexo ao Parecer CNE/CP nº 15/2026 veda sanção fundada só neles (art. 41, X).
 
 #22
 MC: Um professor suspeita que um trabalho foi feito por IA. Qual é o primeiro passo mais adequado?
@@ -224,22 +224,22 @@ MC: Qual é a atitude adequada ao professor sobre criar imagem ou voz sintética
 R: Prefira personagens fictícios ou imagens de licença aberta.
 
 #26
-MC: Qual é o papel do encarregado de dados (ou da assessoria jurídica) em uma instituição?
-+ Orientar sobre o tratamento de dados e a conformidade com a legislação, e ser canal de comunicação com titulares e autoridade.
-- Escolher as notas dos estudantes. || Não é função desse papel.
-- Substituir a decisão pedagógica dos professores. || Orienta sobre proteção de dados, sem substituir a autonomia pedagógica.
-- Cobrar mensalidades. || É função administrativa distinta.
-- Treinar os modelos de IA. || Não é função do encarregado.
-R: Consultar esse profissional ajuda a tomar decisões seguras e informadas.
+MC: Uma empresa oferece uma plataforma gratuita para a escola, mas os termos permitem usar as produções dos estudantes para treinar modelos e exibir publicidade direcionada. O que diz o projeto de resolução anexo ao Parecer CNE/CP nº 15/2026?
++ Veda usar conteúdos de crianças e adolescentes para treinar modelos de terceiros e veda publicidade direcionada e exploração comercial de dados educacionais.
+- Permite, se os responsáveis consentirem no cadastro. || O art. 15, parágrafo único, afasta a ressalva de autorização para crianças e adolescentes.
+- Permite, desde que o professor use a plataforma só em sala. || O local de uso não altera a vedação.
+- Permite o treino, mas não a publicidade. || Ambos são vedados para crianças e adolescentes (arts. 15, 16 e 41).
+- Não se aplica, pois a plataforma é gratuita. || A gratuidade não afasta as vedações.
+R: Treino com conteúdos de crianças e adolescentes e publicidade direcionada são vedados (arts. 15, 16 e 41, VII e XI).
 
 #27
-MC: O que este capítulo recomenda sobre as normas relativas a IA, dados e direitos autorais?
-+ Que sejam conferidas em fontes oficiais, pois mudam e podem variar entre instituições e países.
-- Que sejam tratadas como definitivas e imutáveis. || Contraria a evolução rápida do tema.
-- Que sejam ignoradas até haver multa. || A diligência prévia é parte do dever de cuidado.
-- Que sejam aplicadas apenas por empresas. || Escolas, redes e pessoas também estão sujeitas a elas.
-- Que sejam substituídas por regras pessoais de cada professor. || Decisões individuais não substituem as normas.
-R: A atualização e a consulta a fontes oficiais fazem parte da conduta responsável.
+MC: Segundo o projeto de resolução anexo ao Parecer CNE/CP nº 15/2026, o que ocorre com a sanção acadêmica ou disciplinar baseada em detector de IA?
++ É vedada quando fundada exclusivamente no resultado do detector, que só pode ser elemento auxiliar de análise.
+- É permitida sempre que o detector indicar alta probabilidade de uso de IA. || O art. 41, X, veda a sanção fundada exclusivamente em detector.
+- É permitida se a coordenação assinar a decisão. || A assinatura não supre a ausência de outras evidências; o detector é só elemento auxiliar.
+- É exigida em todos os casos de suspeita. || Nada no texto exige sanção automática; a política deve ser formativa e justa.
+- Não é tratada no texto, que se limita ao ensino superior. || O art. 41, X, vale para os sistemas de ensino e instituições em geral.
+R: Detectores são de alto risco e só auxiliam; sanção só com base neles é vedada (arts. 40, IX, e 41, X).
 
 #28
 MC: Quais usos de IA costumam ser mais seguros do ponto de vista da privacidade em uma escola?
@@ -320,9 +320,9 @@ DISC: Explique o papel das licenças abertas e do domínio público para profess
 R: Ampliam o uso legal; verificar tipo de licença, condições (atribuição, adaptação, uso comercial), fonte oficial do material.
 C: Conceitos corretos; verificação.
 
-DISC: Avalie o dilema de um professor que deseja usar a IA para devolver comentários a todos os estudantes e proponha uma solução que proteja a privacidade.
-R: Evitar colar textos identificáveis; usar rubricas e bancos de comentários genéricos; comentários finais individualizados pelo professor; ferramenta institucional com garantias.
-C: Equilíbrio entre eficiência e proteção; solução viável.
+DISC: Avalie o dilema de um professor que deseja usar a IA para devolver comentários a todos os estudantes e proponha uma solução que proteja a privacidade, considerando o que o Parecer CNE/CP nº 15/2026 diz sobre pré-correção e dados.
+R: Evitar colar textos identificáveis; usar rubricas e bancos de comentários genéricos; comentários finais individualizados pelo professor; ferramenta institucional com garantias. O projeto de resolução classifica a pré-correção de produções autorais como alto risco, só como etapa preparatória, com leitura integral e devolutiva do professor (art. 40, X e § 4º), e veda usar conteúdos de crianças e adolescentes para treinar modelos de terceiros (art. 41, XI).
+C: Equilíbrio entre eficiência e proteção; cita a pré-correção e a vedação de treino; solução viável; distingue Parecer e projeto.
 
 DISC: Por que a declaração de uso deve ser tratada como prática de aprendizagem e não de punição? Como a escola pode comunicar isso?
 R: Transparência permite ensinar; punir desestimula honestidade; comunicar regras, aceitar declarações honestas, usar para feedback.
@@ -336,9 +336,9 @@ DISC: Planeje a comunicação com as famílias sobre o uso de dados e de IA em u
 R: Linguagem simples; finalidade; dados tratados; alternativa sem IA; contato; formatos acessíveis e outras línguas quando necessário.
 C: Transparência; acessibilidade.
 
-DISC: Analise por que as normas sobre IA, dados e direitos autorais precisam ser conferidas periodicamente e como organizar essa revisão na escola.
-R: Normas mudam; conferir fontes oficiais; responsável pela revisão; calendário semestral; registro das versões consultadas.
-C: Justificativa; organização exequível.
+DISC: Analise por que as normas sobre IA, dados e direitos autorais precisam ser conferidas periodicamente e explique, com base no Parecer CNE/CP nº 15/2026, por que a política de integridade e de dados é responsabilidade institucional e não só do professor.
+R: Normas mudam (o projeto de resolução anexo ao Parecer ainda depende de publicação da Resolução e de prazo de adequação, art. 46); organizar revisão periódica e responsável. O Parecer prevê governança institucional documentada, participação docente, contratos com fornecedores com auditoria e responsabilização (arts. 5º, 12), condições para o docente (formação, tempo, apoio) e, no ensino superior, políticas institucionais de autoria e integridade (art. 27).
+C: Reconhece a mudança normativa; liga a revisão a responsáveis; cita governança institucional; distingue Parecer e projeto.
 
 DISC: Redija um parágrafo reflexivo sobre o que mudará na sua forma de tratar dados e autoria nos seus trabalhos após estudar este capítulo.
 R: Resposta pessoal: práticas atuais; riscos identificados; mudanças concretas; compromissos.

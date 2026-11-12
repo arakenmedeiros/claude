@@ -182,7 +182,7 @@
 },
 {
 "t": "atividade",
-"notas": "Prever, investigar, explicar e comparar. A IA é interlocutor opcional e deve pedir perguntas em vez de dar a resposta. Para menores de 13 anos, a etapa com IA só como demonstração do professor. A sequência importa mais que a ferramenta. Duas aulas de 50 minutos.",
+"notas": "Prever, investigar, explicar e comparar. A IA é interlocutor opcional e deve pedir perguntas em vez de dar a resposta. Pelo Parecer CNE/CP 15/2026, nos anos finais a etapa com IA é só mediada pelo professor (tela única, sem uso individual) e, na educação infantil e nos anos iniciais, não é feita com as crianças. A sequência importa mais que a ferramenta. Duas aulas de 50 minutos.",
 "titulo": "Atividade: preveja, investigue e explique",
 "tempo": "2 aulas de 50 minutos",
 "passos": [
@@ -190,7 +190,7 @@
 "Compartilhar em pares e anotar as ideias prévias",
 "Investigar com variações e registrar observações",
 "Reescrever a explicação, indicando o que mudou",
-"Opcional: tutor de IA que só faz perguntas",
+"Opcional: o professor usa um tutor de IA que só faz perguntas",
 "Fechar: \"Antes eu achava... Agora eu penso... porque...\""
 ],
 "produto": "Folha com previsão, observações, explicação reescrita e frase antes e depois.",
@@ -235,6 +235,29 @@
 "titulo": "Síntese: ajudar ou atrapalhar a aprendizagem",
 "fig": "f07_sintese",
 "legenda": "Ilustração conceitual com base nos princípios do capítulo, não em dados."
+},
+{
+"t": "comparar",
+"notas": "Apresente as regras do Parecer CNE/CP 15/2026 sobre o uso de IA pelos estudantes por etapa. Informe que as restrições dos anos iniciais vêm do Parecer e do projeto de resolução anexo, ainda a ser confirmado como Resolução. Reforce: ensinar sobre IA com atividades desplugadas continua adequado em todas as etapas. Ensino médio: sem regra específica; valem as regras gerais. Tempo: 4 minutos.",
+"titulo": "O que diz o Parecer CNE/CP 15/2026",
+"esq": {
+"cab": "Etapas iniciais",
+"itens": [
+"Infantil: restrição total do uso pelas crianças",
+"Anos iniciais: sem IA generativa, nem mediada",
+"Anos finais: só mediada pelo professor",
+"Atividades desplugadas seguem adequadas"
+]
+},
+"dir": {
+"cab": "Ensino médio e além",
+"itens": [
+"Sem regra específica para o ensino médio",
+"Valem as regras gerais: dados, risco, supervisão",
+"Interação contínua é risco moderado",
+"Valorize esforço, autonomia e metacognição"
+]
+}
 },
 {
 "t": "lembrar",

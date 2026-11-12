@@ -121,18 +121,18 @@
 },
 {
 "t": "cuidado",
-"notas": "Dados sensíveis. Informações sobre saúde e deficiência têm proteção reforçada pela LGPD. Para pedir ajuda à IA não é preciso informar nome, laudo ou história. Melhor ainda: não inclua nada sobre a pessoa e peça só uma versão acessível do material. O plano individual é feito com a família e o atendimento especializado, fora dos sistemas de IA.",
+"notas": "Dados sensíveis. Informações sobre saúde e deficiência têm proteção reforçada pela LGPD. Para pedir ajuda à IA não é preciso informar nome, laudo ou história. Melhor ainda: não inclua nada sobre a pessoa e peça só uma versão acessível do material. O plano individual é feito com a família e o atendimento especializado, fora dos sistemas de IA. O Parecer CNE/CP 15/2026 trata dados de deficiência e saúde como sensíveis e afasta inferências e perfilização.",
 "titulo": "Dados sensíveis: laudos ficam de fora",
 "itens": [
 "Saúde e deficiência são dados pessoais sensíveis",
 "Não informe nome, laudo ou história do estudante",
-"Descreva a necessidade em termos gerais, ou nada",
+"Termos gerais, ou nada; sem inferir perfil ou emoção",
 "Plano individual: com família e atendimento, fora da IA"
 ]
 },
 {
 "t": "cartoes",
-"notas": "Tempo de geração não é tempo de trabalho. Um experimento de campo com consultores mostra ganho dentro da fronteira de capacidade da IA e piora fora dela, sem que as pessoas notem. Não foi com professores, mas é um lembrete. Práticas: triagem em três colunas, banco pessoal, diário de prompts, limites de tempo.",
+"notas": "Tempo de geração não é tempo de trabalho. Um experimento de campo com consultores mostra ganho dentro da fronteira de capacidade da IA e piora fora dela, sem que as pessoas notem. Não foi com professores, mas é um lembrete. Práticas: triagem em três colunas, banco pessoal, diário de prompts, limites de tempo. Escolha de plataforma, contrato e avaliação de risco cabem à instituição, não ao professor isolado.",
 "titulo": "Rotina sustentável com IA",
 "cartoes": [
 {
@@ -271,6 +271,29 @@
 "titulo": "Síntese: apoio entre estudantes, professores e colegas",
 "fig": "f23_sintese",
 "legenda": "Figura 23.4 — Acessibilidade, trabalho e formação, com a IA como ferramenta."
+},
+{
+"t": "cartoes",
+"titulo": "O que diz o Parecer CNE/CP 15/2026",
+"notas": "Parecer homologado em 11/11/2026. Princípio IV: inclusão, equidade e acessibilidade. Transcrição, legendagem e leitura de tela, sem perfilização, são baixo risco; o projeto de resolução anexo admite a IA como recurso de acessibilidade na educação infantil, sem inferências sensíveis (art. 21), e não alcança tecnologias assistivas nos anos iniciais (art. 22). Dados de deficiência e saúde são sensíveis; reconhecimento de emoções é vedado, salvo tecnologia assistiva exclusiva de acessibilidade com consentimento (art. 41). Princípio I: responsabilidades técnicas, jurídicas e contratuais não se transferem ao professor; formação permanente (art. 11). Conferir a Resolução e o prazo de adequação.",
+"cartoes": [
+{
+"cab": "Baixo risco",
+"txt": "Transcrição, legendagem e leitura de tela, sem perfilização nem dados sensíveis."
+},
+{
+"cab": "Sem inferências",
+"txt": "Dados de deficiência e saúde são sensíveis; sem perfilização nem leitura de emoções."
+},
+{
+"cab": "Responsabilidade partilhada",
+"txt": "Contratos, segurança e riscos cabem à rede e ao fornecedor, não só ao professor."
+},
+{
+"cab": "Formação permanente",
+"txt": "Projeto, art. 11: algoritmos, comandos, curadoria, dados, vieses; com tempo e suporte."
+}
+]
 },
 {
 "t": "lembrar",

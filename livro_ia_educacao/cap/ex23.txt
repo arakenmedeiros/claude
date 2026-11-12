@@ -80,13 +80,13 @@ MC: As tecnologias assistivas e a IA se relacionam de qual forma, segundo o cap�
 R: O estudante e os profissionais de apoio decidem quais recursos funcionam.
 
 #10
-MC: Por que informações sobre a deficiência ou o laudo de um estudante exigem cuidado ao pedir ajuda a uma ferramenta de IA?
-+ São dados pessoais sensíveis, protegidos de modo reforçado pela LGPD, e não são necessários para obter uma versão acessível do material.
+MC: Por que informações sobre a deficiência ou o laudo de um estudante exigem cuidado ao pedir ajuda a uma ferramenta de IA, à luz da LGPD e do Parecer CNE/CP nº 15/2026?
++ São dados pessoais sensíveis, de proteção reforçada, não são necessários para obter uma versão acessível do material, e o Parecer afasta inferências sensíveis e perfilização.
 - Porque a IA recusa qualquer menção a deficiência. || A restrição é de proteção de dados e não de recusa pela ferramenta.
 - Porque o laudo melhora automaticamente o resultado. || Não há garantia disso e a informação não é necessária.
 - Porque a escola nunca pode ter laudos. || A escola pode tratá-los conforme as regras; o ponto é não inseri-los em sistemas externos sem base.
-- Porque só médicos podem ler laudos. || Profissionais da educação envolvidos no atendimento acessam as informações necessárias, observadas as regras.
-R: Dados sensíveis exigem minimização e proteção.
+- Porque o Parecer exige que a IA classifique o perfil de aprendizagem do estudante. || Ao contrário, perfilização e inferências sensíveis elevam o risco ou são vedadas.
+R: Dados sensíveis exigem minimização e proteção; sem inferências nem perfilização.
 
 #11
 MC: Como descrever uma necessidade de acesso a uma ferramenta de IA sem expor o estudante?
@@ -98,13 +98,13 @@ MC: Como descrever uma necessidade de acesso a uma ferramenta de IA sem expor o 
 R: A minimização de dados protege o estudante e basta para o objetivo.
 
 #12
-MC: Qual é uma limitação do argumento de que a IA "economiza tempo" no planejamento?
-+ O tempo de geração é curto, mas o de revisão, adaptação e verificação pode ser longo e deve entrar na conta.
-- A IA sempre demora mais que o planejamento manual. || Nem sempre; o ganho depende da tarefa e da revisão.
-- O tempo de revisão não existe quando o texto é fluente. || Textos fluentes podem conter erros, que exigem verificação.
-- O tempo só importa para quem trabalha em uma escola. || O tempo de trabalho importa em qualquer contexto.
-- A economia de tempo é proibida pela legislação. || Não há essa proibição, e o argumento é de contabilidade do esforço.
-R: O saldo de tempo inclui a verificação do que foi gerado.
+MC: Em qual situação é mais recomendável dispensar a IA?
++ Quando a ferramenta pretende inferir deficiência, emoção ou perfil de aprendizagem de um estudante, ou quando o material envolve segurança ou saúde e não pode ser verificado.
+- Quando se quer um rascunho de ideias de formatos alternativos para uma ficha de leitura. || É um uso de baixo risco com verificação.
+- Quando se precisa de uma lista de títulos e subtítulos sugeridos para um texto. || A estrutura pode ser conferida facilmente.
+- Quando se pede uma transcrição inicial que será revisada. || Transcrição e legendagem são acessibilidade simples, de baixo risco, com revisão.
+- Quando se deseja organizar etapas de uma tarefa em uma lista. || É uso de baixo risco e fácil de revisar.
+R: Inferências sensíveis e perfilização não cabem; onde um erro pode causar dano, a verificação deve ser rigorosa ou a IA, dispensada.
 
 #13
 MC: O que o experimento de campo de Dell'Acqua e colaboradores (2023) sugere sobre IA e desempenho?
@@ -242,22 +242,22 @@ MC: Qual das ações a seguir contribui para a sustentabilidade do trabalho doce
 R: O trabalho compartilhado reduz carga e melhora a revisão.
 
 #28
-MC: Qual é o objetivo de medir, durante um mês, o tempo total e a confiança em uma tarefa feita com e sem IA?
-+ Obter dados próprios para decidir quando a IA realmente compensa, incluindo o tempo de revisão.
-- Provar que a IA é sempre melhor. || O objetivo é decidir com dados, e não provar um resultado.
-- Provar que a IA é sempre pior. || Também não é o objetivo.
-- Avaliar o desempenho dos estudantes. || Mede o trabalho do próprio professor.
-- Atender a uma exigência legal de produtividade. || Não há tal exigência no capítulo.
-R: Evidência local orienta a decisão e vale mais que propaganda.
+MC: Como o Parecer CNE/CP nº 15/2026 enquadra recursos simples de acessibilidade, como transcrição, legendagem e leitura de tela?
++ Como baixo risco, quando sem perfilização, dados sensíveis, monitoramento contínuo ou decisão automatizada, com salvaguardas como transparência, proteção de dados e registro simplificado.
+- Como alto risco, por envolverem estudantes com deficiência. || O uso de recursos de acessibilidade simples não é, por si, alto risco; o que eleva o risco são perfilização, dados sensíveis e inferências.
+- Como proibidos nos anos iniciais. || O projeto de resolução não alcança tecnologias assistivas e recursos de acessibilidade nessa restrição.
+- Como atividades que dispensam proteção de dados. || Dados de deficiência e saúde são sensíveis e exigem proteção.
+- Como matéria fora do Parecer. || O Parecer e o Anexo II citam a acessibilidade como exemplo de aplicação de baixo risco.
+R: Acessibilidade simples é baixo risco, sem perfilização nem inferências sensíveis.
 
 #29
-MC: Por que a formação centrada apenas em ferramentas tende a ser insuficiente?
-+ Porque as ferramentas mudam rapidamente, e os critérios de decisão, a verificação e o conhecimento pedagógico são mais duráveis.
-- Porque ferramentas nunca mudam. || As ferramentas mudam com frequência.
-- Porque professores não precisam saber usar ferramentas. || Saber usá-las pode ser útil, mas não suficiente.
-- Porque a formação deve ser exclusivamente teórica. || Aprendizagem ativa e prática são valorizadas.
-- Porque a IA não faz parte do trabalho docente. || O capítulo reconhece que parte do trabalho pode envolver IA, com critério.
-R: Critérios e hábitos de verificação permanecem úteis quando as ferramentas mudam.
+MC: Segundo o Parecer CNE/CP nº 15/2026, quem responde pelas responsabilidades técnicas, jurídicas, contratuais e de segurança das ferramentas de IA usadas na escola?
++ Sistemas de ensino, instituições, mantenedoras, gestores, equipes técnicas e fornecedores; o professor tem a mediação pedagógica, com formação, suporte, tempo e orientações.
+- Exclusivamente o professor que decidiu usar a ferramenta. || O Parecer afirma que tais responsabilidades não se transferem aos docentes.
+- Apenas as famílias dos estudantes. || Não há essa atribuição no Parecer.
+- Ninguém, pois o uso é livre. || Há deveres de governança, contratos e salvaguardas por nível de risco.
+- Somente o fornecedor, sem qualquer dever da escola. || A governança é compartilhada, incluindo redes e instituições.
+R: A governança é compartilhada; o professor não deve carregar sozinho essas responsabilidades.
 
 #30
 MC: O que um professor deve registrar no banco compartilhado de um grupo de estudo?
@@ -292,9 +292,9 @@ DISC: Discuta os limites da IA em relação a Libras, leitura de tela e comunica
 R: Libras é língua própria; tradução automática limitada; tecnologias assistivas de uso pessoal; intérpretes e comunidade surda; ouvir estudantes.
 C: Reconhece limites; respeita a comunidade; propõe parcerias.
 
-DISC: Que cuidados com dados sensíveis você adotaria ao planejar adaptações para estudantes com deficiência? Cite pelo menos três.
-R: Não inserir laudos ou nomes; descrever necessidades em termos gerais; planejamento individual fora da IA; registros nos meios da escola; LGPD.
-C: Cuidados pertinentes; referência à LGPD; viabilidade.
+DISC: Que cuidados com dados sensíveis você adotaria ao planejar adaptações para estudantes com deficiência? Inclua o que o Parecer CNE/CP nº 15/2026 diz sobre inferências e perfilização.
+R: Minimização; descrever a necessidade em termos gerais; não inserir laudos; plano individual fora da IA; o Parecer trata dados de deficiência e saúde como sensíveis e afasta inferências sensíveis e perfilização; acessibilidade simples é baixo risco.
+C: Minimização; referência à LGPD e ao Parecer; viabilidade.
 
 DISC: Elabore uma triagem de tarefas (usar, adaptar, dispensar) com três exemplos em cada coluna para o seu trabalho.
 R: Usar: lista de perguntas; adaptar: material existente; dispensar: nota, feedback sensível, laudos.
@@ -320,9 +320,9 @@ DISC: Argumente sobre como conciliar autonomia docente e a pressão para adotar 
 R: Reconhecer recusa fundamentada; informar; tentativas pequenas; registrar resultados; decisões coletivas; sem imposição.
 C: Equilíbrio; respeito à autonomia; propostas.
 
-DISC: Quais riscos de intensificação do trabalho a IA pode trazer e que medidas institucionais e pessoais poderiam preveni-los?
-R: Mais materiais e cobranças; medidas: limites de jornada, triagem, banco, revisão em pares, acordos com a gestão.
-C: Riscos; medidas pessoais e institucionais; realismo.
+DISC: Quais riscos de intensificação do trabalho a IA pode trazer e que medidas institucionais ajudariam? Relacione com o que o Parecer CNE/CP nº 15/2026 diz sobre responsabilidade docente e institucional e sobre formação permanente (art. 11 do projeto de resolução anexo).
+R: Mais materiais e cobranças sem tempo de revisão; medidas: tempo de trabalho, orientações claras, suporte técnico, formação permanente (alfabetização algorítmica, comandos, curadoria, proteção de dados, vieses), contratos e avaliação de risco pela instituição; Princípio I.
+C: Riscos concretos; medidas institucionais; distinção Parecer/projeto.
 
 DISC: Como você ouviria um estudante sobre o formato de material que mais o ajuda, sem expô-lo diante da turma?
 R: Bilhete anônimo, conversa individual, apoio do profissional; oferecer opções a todos; respeitar escolhas.

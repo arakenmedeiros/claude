@@ -6,7 +6,7 @@ def f10_mapa():
         ("Quando agrega valor", ["acesso e andaimes", "tempo do professor"]),
         ("Quando prejudica", ["elimina o esforço", "expõe dados"]),
         ("Fluxograma", ["cinco perguntas", "usar, adaptar, dispensar"]),
-        ("Perfis de risco", ["menor, moderado", "alto"]),
+        ("Classificação de risco", ["baixo, moderado, alto", "e excessivo (vedado)"]),
         ("Plano A, B e C", ["com IA, poucos recursos", "sem IA"]),
     ], w=8.6, h=6.0, cor=BLUE)
 
@@ -32,11 +32,28 @@ def f10_decisao():
            ("q5", "r", "f1", "l", "Sim", 0), ("q5", "b", "f2", "t", "Não", 0)]
     decisao("f10_decisao", nos, lig, w=7.0, h=6.2, fs=8.4)
 
+def semaforo4(name, linhas, w=8.6, fs=8.2, wrap_at=95):
+    """Quatro níveis: v (baixo), a (moderado), r (alto), x (excessivo/vedado)."""
+    h = 1.6 + 1.0 * len(linhas) * 1.05
+    fig, ax = canvas(w, h, (0, 100), (0, 100 * h / w))
+    H = 100 * h / w
+    cmap = {"v": (GREEN, "#EAF3E3"), "a": (AMBER, "#FDF1D8"), "r": (ROSE, "#FADDE5"), "x": (PLUM, "#EBE0EE")}
+    lh = (H - 3) / len(linhas)
+    for i, (k, t, d) in enumerate(linhas):
+        c, f = cmap[k]
+        y = H - 1.5 - (i + 1) * lh
+        rbox(ax, 2, y + 0.6, 96, lh - 1.2, "", fc=f, ec=c, lw=1.5, r=2, z=2)
+        ax.add_patch(Circle((8, y + lh / 2), min(3.6, lh * 0.32), fc=c, ec="none", zorder=4))
+        ax.text(14, y + lh / 2 + (1.1 if d else 0), t, ha="left", va="center", fontsize=fs + 0.3, fontweight="bold", color=INK, zorder=5)
+        if d: ax.text(14, y + lh / 2 - 2.0, wrap(d, wrap_at), ha="left", va="center", fontsize=fs - 1.4, zorder=5, linespacing=1.1)
+    save(fig, name)
+
 def f10_risco():
-    semaforo("f10_risco", [
-        ("v", "Risco menor", "Professor prepara rascunhos de exemplos, sem dados pessoais, e revisa tudo."),
-        ("a", "Risco moderado", "Estudantes (na idade adequada) usam IA em atividades mediadas, com registro e alternativa sem IA."),
-        ("r", "Risco alto", "Notas por IA, perfis de estudantes, dados sensíveis, vigilância ou detecção de fraude como prova.")], w=8.6, wrap_at=95)
+    semaforo4("f10_risco", [
+        ("v", "Baixo risco", "Apoio instrumental ao professor (organizar e adaptar materiais, revisão textual) e acessibilidade simples, sem perfilização."),
+        ("a", "Risco moderado", "Interação contínua com estudantes, tutoria, personalização de percursos e feedback formativo sem efeito na nota."),
+        ("r", "Alto risco", "Efeitos sobre avaliação, certificação ou direitos: proctoring, predição de evasão, detectores de IA, pré-correção."),
+        ("x", "Excessivo (vedado)", "Pontuação social, reconhecimento de emoções, perfilização, decisão só automatizada, nota só por IA.")], w=8.6, wrap_at=95)
 
 def f10_plano():
     comparar_cartoes("f10_plano", [
