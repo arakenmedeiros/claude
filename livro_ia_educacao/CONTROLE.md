@@ -41,3 +41,6 @@ Aplicado o parecer técnico-editorial (decreto de educação inclusiva, LGPD/con
 
 ## EPUB
 `bash build/make_epub.sh` gera `saida/livro.epub` (EPUB 3 reflowable; capa, folha de rosto, sumário navegável com partes/capítulos/seções, texto alternativo e descrição acessível das figuras, metadados de acessibilidade; validado com epubcheck sem mensagens). Sem numeração de páginas (formato reflowable).
+
+## Revisão 01.3 (12/11/2026): Parecer CNE/CP nº 15/2026
+Livro, apêndices (novo Apêndice N, glossário, F, G, H, J, K, L, M, nota de fontes), exercícios e os 32 decks atualizados; novo quadro `:::norma` ("Norma e orientação oficial"); chave de citação `CNE, 2026`. O Parecer foi lido na íntegra (PDF fornecido pelo autor). O texto distingue Parecer x projeto de resolução anexo; a Resolução decorrente e o prazo de adequação (12 meses no projeto) devem ser conferidos. Interpretações a validar: ensino médio (sem regra específica, aplicam-se as regras gerais da Educação Básica) e o sentido de "mediação" nos anos finais (adotado: uso conduzido pelo professor, sem acesso individual dos estudantes).
