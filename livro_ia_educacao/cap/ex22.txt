@@ -80,13 +80,13 @@ MC: Qual das ações a seguir fecha o ciclo da avaliação formativa?
 R: O ciclo exige uma ação depois da evidência.
 
 #10
-MC: Qual é uma vantagem do bilhete de saída?
-+ Fornece, em poucos minutos, uma evidência do raciocínio da turma que permite começar a aula seguinte pelos padrões encontrados.
-- Garante que todos os estudantes aprenderam o conteúdo. || Uma pergunta curta indica padrões, mas não garante aprendizagem.
-- Substitui toda a avaliação somativa. || Tem função formativa e não certifica o aprendizado do período.
-- Exige uma ferramenta de IA para ser lido. || Pode ser lido e agrupado manualmente em pilhas.
-- Serve para punir estudantes que erram. || Seu objetivo é ajustar o ensino, e não punir.
-R: É um instrumento simples e frequente de coleta de evidência.
+MC: Segundo o Parecer CNE/CP nº 15/2026, como se enquadra o feedback formativo gerado por IA que não tem repercussão acadêmica direta (não altera nota nem progressão)?
++ Risco moderado: exige comunicação clara, registro institucional, revisão humana e canal de contestação.
+- Risco baixo, equivalente à formatação de um texto, sem salvaguardas específicas. || O Parecer trata o apoio pedagógico automatizado e o feedback formativo como risco moderado, com salvaguardas próprias; o risco baixo se aplica a apoios organizacionais sem interação com estudantes.
+- Alto risco, com avaliação prévia de impacto algorítmico em todos os casos. || O alto risco se aplica quando o feedback passa a influenciar nota, progressão ou decisão relevante, o que não é o caso descrito.
+- Uso vedado em qualquer circunstância, em todas as etapas. || O Parecer não veda o feedback formativo como categoria; veda, entre outras coisas, atribuir nota exclusivamente por IA a produções autorais.
+- Não é objeto de classificação, por ser decisão exclusiva da escola. || O Parecer e seu Anexo II classificam cada aplicação por finalidade, e a ausência de classificação documentada não autoriza o uso como se fosse de baixo risco.
+R: Feedback formativo sem efeito acadêmico direto é risco moderado; se passar a influenciar nota, sobe para alto risco.
 
 #11
 MC: O que é uma rubrica?
@@ -116,13 +116,13 @@ MC: Qual é uma boa prática ao construir uma rubrica?
 R: Poucos critérios, descritores observáveis e teste com trabalhos reais aumentam a utilidade.
 
 #14
-MC: Por que calibrar uma rubrica com colegas é útil?
-+ Porque avaliar os mesmos trabalhos e comparar julgamentos revela descritores ambíguos e aumenta a consistência.
-- Porque garante que todos os professores darão exatamente a mesma nota. || Reduz divergências, mas não as elimina.
-- Porque dispensa a leitura dos trabalhos pelos professores. || A calibração exige leitura cuidadosa dos trabalhos.
-- Porque permite à IA decidir qual avaliador está certo. || A decisão sobre os descritores é da equipe docente.
-- Porque substitui o feedback aos estudantes. || Calibrar melhora a rubrica, mas não substitui o feedback.
-R: A calibração revela ambiguidades e melhora a justiça do julgamento.
+MC: Segundo o projeto de resolução anexo ao Parecer CNE/CP nº 15/2026, qual condição se aplica à pré-correção de redações por um sistema de IA?
++ Ela é só um instrumento preparatório: o professor lê integralmente o trabalho e é o único a atribuir nota, conceito ou mérito, sem mera ratificação do resultado sugerido.
+- O professor pode aprovar em bloco as notas sugeridas quando a ferramenta for confiável. || O projeto veda a homologação tácita, a validação em bloco e a mera ratificação do resultado sugerido.
+- A nota sugerida pelo sistema vale automaticamente se o estudante não contestar. || A pontuação gerada pelo sistema não pode produzir efeito acadêmico sem correção humana.
+- A pré-correção é livre, por ser de baixo risco. || O Parecer a classifica como alto risco, com salvaguardas reforçadas.
+- A devolutiva formativa pode ser delegada ao sistema, desde que o professor a receba por e-mail. || Nota, conceito, mérito e devolutiva formativa são exclusivos e indelegáveis do professor.
+R: Pré-correção auxilia, mas não decide: leitura integral e decisão do professor são indispensáveis.
 
 #15
 MC: Segundo a revisão de Panadero e Jonsson (2013), em que situação as rubricas mais se associam a ganhos de aprendizagem?
@@ -143,13 +143,13 @@ MC: Qual é o principal limite de rubricas geradas por IA sem revisão?
 R: O rascunho de IA é ponto de partida a ser adaptado e testado.
 
 #17
-MC: Por que não é recomendável pedir à IA que aplique uma rubrica e atribua nota?
-+ Porque a nota é decisão profissional, e o sistema pode errar, ser inconsistente de uma execução a outra e favorecer certos estilos de texto.
-- Porque notas não podem existir em nenhum caso. || Notas são parte da avaliação somativa; a questão é quem as atribui.
+MC: Por que não se deve pedir à IA que aplique uma rubrica e atribua nota às produções dos estudantes?
++ Porque a nota é decisão exclusiva e indelegável do professor, o sistema pode ser inconsistente e enviesado, e o Parecer CNE/CP nº 15/2026 veda atribuir nota a produções autorais exclusivamente por IA.
+- Porque notas não podem existir em nenhum caso. || Notas fazem parte da avaliação somativa; a questão é quem as atribui e com que leitura.
 - Porque a IA nunca consegue ler textos em português. || Consegue lê-los, mas isso não garante um julgamento consistente e justo.
-- Porque a lei proíbe qualquer uso de IA na escola. || O argumento é pedagógico e de responsabilidade, e não de proibição geral.
+- Porque o Parecer proíbe qualquer uso de IA na escola. || O Parecer admite usos de apoio, com classificação de risco e salvaguardas; a vedação é específica para a atribuição de nota por IA.
 - Porque as rubricas ficam mais curtas. || O tamanho da rubrica não tem relação com a razão apresentada.
-R: A responsabilidade e a consistência do julgamento exigem leitura e decisão do professor.
+R: A responsabilidade pela nota é do professor, que lê integralmente o trabalho; delegar à IA é vedado para produções autorais.
 
 #18
 MC: Segundo Hattie e Timperley (2007), qual é um nível de feedback que tende a ajudar pouco?
@@ -189,12 +189,12 @@ R: O feedback não é uniformemente eficaz: a qualidade da informação importa.
 
 #22
 MC: Qual arranjo de trabalho com feedback rascunhado por IA é mais prudente?
-+ A IA rascunha comentários sobre critérios fornecidos; o professor lê o trabalho, decide e assina; o estudante age sobre o feedback.
-- A IA decide a nota e envia o comentário diretamente ao estudante. || Retira do professor a decisão e a revisão.
-- O professor devolve o rascunho da IA sem ler, para ganhar tempo. || Pode propagar erros e comentários inadequados.
++ A IA rascunha comentários a partir de critérios fornecidos; o professor lê o trabalho inteiro, edita e assina; o estudante age sobre o feedback, com a IA fora do contato direto com ele.
+- A IA decide a nota e envia o comentário diretamente ao estudante. || Retira do professor a decisão e a devolutiva, que são indelegáveis segundo o Parecer.
+- O professor devolve o rascunho da IA sem ler, para ganhar tempo. || Pode propagar erros e comentários inadequados e equivale a ratificação sem leitura.
 - O estudante cola seu trabalho com nome e turma em qualquer ferramenta. || Expõe dados pessoais e não é orientado pela escola.
 - O professor descarta qualquer apoio, mesmo quando houver tempo. || Descartar não é exigido; o ponto é revisar e decidir.
-R: Feedback é uma interação pedagógica: a IA pode ajudar a redigir, mas o professor decide.
+R: Feedback é uma interação pedagógica: a IA pode ajudar a redigir, mas o professor lê, edita e assina.
 
 #23
 MC: Por que é útil pedir à IA perguntas e dicas graduais, e não reescritas completas do trabalho?
@@ -216,17 +216,17 @@ R: As evidências são iniciais e contextuais, e pedem testes locais.
 
 #25
 MC: Por que detectores de IA não devem ser usados como prova isolada de má conduta?
-+ Porque têm limitações documentadas e podem apresentar viés contra quem escreve em língua que não é a sua primeira.
++ Porque têm limitações e viés documentados, e o projeto de resolução anexo ao Parecer CNE/CP nº 15/2026 os admite apenas como elemento auxiliar, vedando sanção fundada só em seu resultado.
 - Porque nunca detectam nenhum texto gerado por IA. || A questão é a não confiabilidade como prova, e não uma incapacidade total.
 - Porque só funcionam para textos em inglês. || Não é a razão apresentada; a limitação é de precisão e de viés.
-- Porque a LDB proíbe qualquer detector. || O argumento é de confiabilidade e devido processo, e não de proibição legal.
+- Porque a LDB proíbe qualquer detector. || O argumento é de confiabilidade e devido processo, e não de proibição legal geral.
 - Porque são gratuitos. || O custo não altera a validade como evidência.
-R: A prova de má conduta exige evidências complementares e escuta do estudante.
+R: A decisão exige evidências complementares e escuta do estudante.
 
 #26
 MC: Qual é uma ação adequada diante da suspeita de que um estudante usou IA sem autorização em uma tarefa?
-+ Conversar com o estudante, pedir explicação oral e comparar com produções anteriores, antes de qualquer decisão.
-- Atribuir nota zero com base apenas no resultado de um detector. || Decisão sem devido processo, baseada em ferramenta com limitações.
++ Conversar com o estudante, pedir explicação oral e comparar com produções anteriores, usando o detector, se houver, apenas como elemento auxiliar, antes de qualquer decisão.
+- Atribuir nota zero com base apenas no resultado de um detector. || Sanção fundada exclusivamente em detector é vedada pelo projeto de resolução anexo ao Parecer.
 - Divulgar o nome do estudante à turma. || Expõe o estudante e viola princípios de respeito e privacidade.
 - Ignorar o caso, sem registrar nem conversar. || A omissão não esclarece nem orienta o estudante.
 - Pedir ao próprio estudante que confirme a acusação a um sistema automático. || Transfere a decisão a uma ferramenta, sem escuta humana.
@@ -242,31 +242,31 @@ MC: Qual regra ajuda a evitar conflitos sobre o uso de IA em tarefas avaliativas
 R: Regras claras e antecipadas favorecem a integridade e a confiança.
 
 #28
-MC: Em qual das situações é mais recomendável dispensar a IA?
-+ Ao atribuir notas ou decidir sobre aprovação e reprovação de estudantes.
-- Ao rascunhar itens de um diagnóstico que o professor resolverá e revisará. || É um uso de apoio com revisão e sem dados pessoais.
-- Ao propor versões em linguagem simples de uma rubrica, que o professor revisará. || É um apoio à acessibilidade com revisão docente.
+MC: Em qual das situações é mais recomendável dispensar a IA, conforme o capítulo?
++ Ao atribuir notas ou ao enviar devolutivas finais aos estudantes sem que o professor as tenha lido e assinado.
+- Ao rascunhar itens de um diagnóstico que o professor resolverá e revisará. || É um uso de apoio à elaboração de materiais, de baixo risco, com revisão e sem dados pessoais.
+- Ao propor versões em linguagem simples de uma rubrica, que o professor revisará e informará. || É apoio à acessibilidade e à adaptação de materiais, com revisão docente.
 - Ao agrupar contagens agregadas de respostas anonimizadas. || Risco reduzido de exposição, sob supervisão.
 - Ao sugerir perguntas de discussão a partir de equívocos listados pelo professor. || É um uso de rascunho que o professor avalia.
-R: Decisões consequentes sobre estudantes pedem responsabilidade e julgamento humanos.
+R: Notas e devolutivas são responsabilidade indelegável do professor.
 
 #29
-MC: Qual medida ajuda um professor com muitas redações a manter feedback de qualidade sem sobrecarga?
-+ Priorizar uma ou duas orientações por texto e revisar amostras diferentes a cada tarefa, com critérios compartilhados.
+MC: Qual medida ajuda um professor com muitas redações a manter feedback de qualidade sem sobrecarga e sem delegar o juízo à IA?
++ Priorizar uma ou duas orientações por texto, usar feedback de pares com critérios compartilhados e dar feedback individual a grupos diferentes a cada tarefa, lendo integralmente o que comentar ou notar.
 - Escrever quinze apontamentos em cada texto. || Excesso de apontamentos paralisa o estudante.
 - Dar a mesma nota a todos, sem ler. || Não há avaliação nem feedback sem leitura.
-- Terceirizar totalmente o feedback a um sistema automático. || Perde-se o controle do que os estudantes recebem.
+- Usar um sistema que atribua as notas e apenas ratificar o resultado. || A mera ratificação e a validação em bloco são vedadas; a nota exige leitura integral e decisão do professor.
 - Evitar qualquer tarefa escrita no ano letivo. || A solução elimina a prática de escrita e a oportunidade de feedback.
-R: Menos comentários, mais focados, e amostragem planejada tornam o trabalho viável.
+R: Menos comentários, mais focados, e planejamento de quem recebe feedback do professor tornam o trabalho viável.
 
 #30
-MC: Qual produto resulta da Atividade 1 do capítulo?
-+ Diagnóstico de quatro a seis itens, folha de tabulação e plano de ação para a aula seguinte.
-- Uma lista de notas finais de cada estudante. || O diagnóstico não é uma avaliação somativa; o foco é o planejamento.
-- Um relatório automático produzido pela IA sobre cada estudante. || A atividade pede análise do professor sobre dados agregados.
-- Um ranking das turmas da escola. || Não é objetivo da atividade comparar turmas.
-- Uma rubrica geral para todo o ano. || A rubrica é o produto da outra atividade.
-R: O produto liga o diagnóstico à decisão de ensino.
+MC: Qual das situações a seguir está VEDADA pelo projeto de resolução anexo ao Parecer CNE/CP nº 15/2026?
++ Aplicar sanção disciplinar a um estudante com base exclusivamente no resultado de um detector de IA.
+- Usar um detector de IA como elemento auxiliar em uma apuração, junto de conversa e outras evidências. || O projeto admite o detector apenas como elemento auxiliar de análise, em apurações com repercussão acadêmica ou disciplinar, em alto risco.
+- Usar IA para rascunhar uma rubrica que o professor revisará e informará aos estudantes. || É apoio à elaboração de materiais, de baixo risco, desde que informado com clareza.
+- Pedir a um colega que leia as mesmas redações e compare julgamentos. || É prática de calibração humana, sem relação com vedações.
+- Usar uma ferramenta que apenas leia em voz alta um enunciado para um estudante com deficiência visual. || Recursos de acessibilidade desse tipo são de baixo risco, sem perfilização.
+R: Sanção fundada só em detector é incompatível com as finalidades educacionais, segundo o art. 41 do projeto.
 
 DISC: Diferencie avaliação diagnóstica, formativa e somativa e dê um exemplo de cada em uma mesma unidade de ensino.
 R: Diagnóstica: antes, ideias prévias (perguntas de entrada); formativa: durante, bilhetes de saída com ajuste; somativa: ao final, prova ou produto. Funções distintas, usos das evidências.
@@ -292,9 +292,9 @@ DISC: Por que rubricas entregues só no momento da nota têm pouco efeito format
 R: Estudantes não podem orientar o trabalho; usar na construção com a turma, em exemplos, autoavaliação, feedback de pares e revisão.
 C: Relação com a pesquisa; propostas de uso formativo.
 
-DISC: Descreva um procedimento de calibração de uma rubrica entre dois professores e o que fazer com as divergências.
-R: Avaliar os mesmos trabalhos anônimos; comparar; discutir descritores ambíguos; reescrever; testar novamente.
-C: Procedimento claro; tratamento de divergências; melhoria da rubrica.
+DISC: Explique como o Parecer CNE/CP nº 15/2026 classifica aplicações de IA na avaliação (feedback formativo, pré-correção, detectores, correção automatizada) e que salvaguardas decorrem de cada nível. Distinga o que está no Parecer do que está no projeto de resolução anexo.
+R: Feedback formativo sem repercussão acadêmica: risco moderado (comunicação, registro, revisão humana, contestação). Alto risco: correção automatizada com repercussão, feedback que influencie nota, proctoring, detectores, pré-correção (instrumento preparatório; nota, conceito, mérito e devolutiva exclusivos do professor, com leitura integral). Projeto de resolução: art. 40, § 4º (sem homologação tácita, validação em bloco ou mera ratificação) e art. 41 (vedada nota exclusivamente por IA em produções autorais e sanção só por detector). Registrar que se trata de projeto anexo e conferir a Resolução.
+C: Classificação correta; salvaguardas; distinção Parecer/projeto; cautela quanto ao status.
 
 DISC: Reescreva três comentários vagos ("Melhore a argumentação", "Bom trabalho", "Atenção ao raciocínio") como feedback acionável.
 R: Indicar trecho, problema e próximo passo; exemplo: tese só no último parágrafo, reescreva o primeiro; dado usado e explicação faltante.
@@ -304,9 +304,9 @@ DISC: Explique os níveis de feedback (tarefa, processo, autorregulação, pesso
 R: Tarefa: certo/errado; processo: estratégia; autorregulação: monitoramento e controle; pessoa: elogio genérico.
 C: Definição correta; exemplos adequados; avaliação da utilidade de cada nível.
 
-DISC: Proponha um fluxo de trabalho em que a IA rascunha feedback e o professor revisa, indicando verificações e proteção de dados.
-R: Anonimizar; fornecer critérios; solicitar perguntas e dicas; ler o trabalho; editar; assinar; estudante age; registrar.
-C: Papéis definidos; verificação; privacidade.
+DISC: Proponha um fluxo de trabalho em que a IA rascunha comentários e o professor os revisa, indicando verificações, proteção de dados, registro e informação aos estudantes, e explique por que nenhuma nota ou devolutiva deve sair da IA sem a apreciação do professor.
+R: Anonimizar; fornecer critérios; pedir perguntas e dicas; ler o trabalho inteiro; editar e assinar; informar que houve apoio de IA; registrar a aplicação; estudante age e pode contestar. Nota e devolutiva são exclusivas do professor (art. 40, § 4º do projeto) e feedback que influencie nota é alto risco.
+C: Papéis definidos; leitura integral; privacidade; transparência; justificativa normativa.
 
 DISC: Discuta os riscos de feedback automático para a autonomia do estudante e para o vínculo com o professor.
 R: Dependência, perda de autoavaliação, comentários impessoais; mitigação: respostas ao feedback, autoavaliação, conversa.
@@ -320,13 +320,13 @@ DISC: Argumente por que detectores de IA não devem ser prova isolada e proponha
 R: Falsos positivos e negativos, viés contra não nativos; procedimento: conversa, explicação oral, comparação de produções, registro, devido processo.
 C: Argumentação baseada em evidências; procedimento justo.
 
-DISC: Planeje uma tarefa avaliativa em que o uso de IA seja permitido de forma regulada, com registro e critérios claros.
-R: Definir objetivo; permitir usos específicos; exigir registro; critérios de processo e produto; momento presencial de explicação.
-C: Regras claras; alinhamento com objetivos; critérios.
+DISC: Argumente por que detectores de IA não devem ser prova isolada e proponha um procedimento justo diante de suspeita, considerando o que o projeto de resolução anexo ao Parecer CNE/CP nº 15/2026 prevê.
+R: Falsos positivos e negativos, viés contra não nativos; o projeto admite o detector só como elemento auxiliar e veda sanção fundada exclusivamente nele; procedimento: conversa, explicação oral, comparação de produções, registro, contestação e revisão humana.
+C: Argumentação baseada em evidências e na norma; procedimento justo.
 
-DISC: Como você adaptaria a avaliação de uma tarefa escrita para um estudante com barreiras de escrita, mantendo a validade do que se avalia?
-R: Identificar o objetivo; oferecer resposta oral, gravada, mapa ou apoio permitido; manter critérios; evitar baixar exigências conceituais.
-C: Distingue objetivo e meio; justiça; viabilidade.
+DISC: Planeje uma tarefa avaliativa em que o uso de IA pelo professor ou pelo estudante (na etapa em que for permitido, com mediação) seja regulado, com registro e critérios claros, privilegiando processo, portfólio ou apresentação (Princípio XII).
+R: Definir objetivo; indicar a etapa e se há interação de estudantes com IA (não na educação infantil e anos iniciais; nos anos finais só com mediação); exigir registro; critérios de processo e produto; momento presencial de explicação; nota atribuída pelo professor após leitura integral.
+C: Regras claras; respeito às restrições por etapa; alinhamento com objetivos; critérios.
 
 DISC: Descreva três estratégias de avaliação formativa de baixo custo e explique como cada uma gera ação do professor.
 R: Bilhete de saída; cartões de resposta; revisão em pares; leitura, agrupamento e replanejamento.
