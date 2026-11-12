@@ -125,18 +125,18 @@
 },
 {
 "t": "cuidado",
-"notas": "Quando dispensar a IA em linguagens. Detectores de texto gerado por IA erram e têm viés contra quem escreve em língua não nativa. Nunca devem ser prova isolada. Textos íntimos não devem ir a sistemas externos.",
+"notas": "Quando dispensar a IA em linguagens. Detectores de texto gerado por IA erram e têm viés contra quem escreve em língua não nativa. Nunca devem ser prova isolada. Textos íntimos não devem ir a sistemas externos. O projeto de resolução anexo ao Parecer CNE/CP 15/2026 veda sanção fundada só em detector e nota por IA a produção autoral.",
 "titulo": "Quando dispensar a IA na escrita",
 "itens": [
 "Para avaliar autoria e voz de um texto",
 "Em diários, cartas e relatos íntimos de estudantes",
 "Como única fonte de nota em trabalhos escritos",
-"Detectores: pouco confiáveis; podem punir quem escreve em outra língua"
+"Detector: só auxiliar; sanção só por ele é vedada (projeto)"
 ]
 },
 {
 "t": "cartoes",
-"notas": "Línguas: português, estrangeiras e Libras. Atenção à variação linguística: sistemas tendem a favorecer a norma-padrão e podem tratar falas regionais como erro. Em Libras, não substitua intérpretes, professores surdos e a comunidade surda. A evidência sobre ganhos de proficiência a longo prazo é escassa.",
+"notas": "Línguas: português, estrangeiras e Libras. Atenção à variação linguística: sistemas tendem a favorecer a norma-padrão e podem tratar falas regionais como erro. Em Libras, não substitua intérpretes, professores surdos e a comunidade surda. A evidência sobre ganhos de proficiência a longo prazo é escassa. Interação direta de estudantes com IA: ensino médio e superior conforme regras; anos finais só com mediação; anos iniciais e educação infantil, não.",
 "titulo": "Línguas: possibilidades e limites",
 "cartoes": [
 {
@@ -145,7 +145,7 @@
 },
 {
 "cab": "Língua estrangeira",
-"txt": "Conversação simulada, reformulação e comparação de traduções, com revisão."
+"txt": "Conversação, reformulação e traduções: só onde a etapa permite IA, com revisão."
 },
 {
 "cab": "Pronúncia e cultura",
@@ -165,7 +165,7 @@
 "cab": "Possibilidades",
 "itens": [
 "Análise crítica de imagens geradas",
-"Ideias de composição para depois criar à mão",
+"Ideias de composição (professor ou etapa permitida), depois criar à mão",
 "Discussão sobre autoria e direitos",
 "Registro do processo em caderno de bordo"
 ]
@@ -200,14 +200,14 @@
 },
 {
 "t": "atividade",
-"notas": "Atividade 1. Aula 1: planejamento e rascunho em sala, sem IA. Depois a camada do sentido com colegas, a organização e, por fim, a forma, com IA opcional pedindo indicações sem reescrita. A nota de processo registra a autoria. Menores só sob mediação do professor, em dispositivo da escola.",
+"notas": "Atividade 1. Aula 1: planejamento e rascunho em sala, sem IA. Depois a camada do sentido com colegas, a organização e, por fim, a forma. No ensino médio e superior, IA opcional pedindo indicações sem reescrita; nos anos finais, só demonstração do professor com texto anônimo; nos anos iniciais, sem IA. A nota de processo registra a autoria.",
 "titulo": "Atividade 1: da escrita própria ao retorno em 3 camadas",
 "tempo": "3 aulas de 50 minutos",
 "passos": [
 "Planejar e rascunhar em sala, sem IA",
 "Colegas respondem: ideia principal e o que faltou",
 "Reorganizar o texto com base nas perguntas",
-"Forma: IA só indica trechos e regra, sem reescrever",
+"Forma: IA só indica trechos (EM e superior); anos finais, demonstração do professor",
 "Comparar versões e escrever nota de processo de 5 linhas"
 ],
 "produto": "Rascunho, versão final, registro do retorno e nota de processo",
@@ -268,6 +268,29 @@
 "titulo": "Síntese: o processo é o centro",
 "fig": "f19_sintese",
 "legenda": "Figura 19.4 — Ler, escrever, criar e interpretar."
+},
+{
+"t": "cartoes",
+"titulo": "O que diz o Parecer CNE/CP 15/2026",
+"notas": "Parecer homologado em 11/11/2026. Educação infantil: recomenda restrição total do uso pelos estudantes; o projeto de resolução anexo veda qualquer uso por eles (art. 21). Anos iniciais: IA generativa e conversacional não recomendada, nem mediada; projeto veda a interação mesmo sob supervisão (art. 22). Anos finais: sem acesso direto, autônomo, individual ou não supervisionado; só mediação (art. 23). Ensino médio: sem regra específica, valem as gerais. Superior: políticas próprias e declaração de uso. Ensinar sobre IA com atividades desplugadas segue adequado. Conferir a publicação da Resolução e o prazo.",
+"cartoes": [
+{
+"cab": "Educação infantil",
+"txt": "Restrição total recomendada; o projeto veda qualquer uso pelos estudantes (art. 21)."
+},
+{
+"cab": "Anos iniciais",
+"txt": "IA generativa não recomendada, nem mediada; projeto veda a interação (art. 22)."
+},
+{
+"cab": "Anos finais",
+"txt": "Sem uso direto, autônomo ou individual; só com mediação do professor (art. 23)."
+},
+{
+"cab": "Médio e superior",
+"txt": "Regras gerais; no superior, políticas próprias e declaração de uso."
+}
+]
 },
 {
 "t": "lembrar",

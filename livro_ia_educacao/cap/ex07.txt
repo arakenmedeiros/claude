@@ -251,13 +251,13 @@ MC: No prompt do exercício, por que o assistente é instruído a não dar a res
 R: O objetivo é preservar o esforço produtivo, com verificação posterior no livro didático.
 
 #29
-MC: Qual cuidado de adequação etária é recomendado para a etapa com IA da atividade?
-+ Para menores de 13 anos, conduzir a etapa apenas pelo professor, como demonstração, sem contas pessoais.
-- Permitir que todos criem contas pessoais. || Não é recomendado.
-- Exigir que digitem dados pessoais para personalizar. || Não é recomendado.
-- Substituir a observação por respostas de IA. || Não é recomendado.
-- Retirar o professor da atividade. || O professor medeia.
-R: A idade de 13 anos é referência mencionada pela UNESCO (2023); consulte as normas atuais e da escola.
+MC: Qual cuidado de adequação etária é recomendado para a etapa com IA da atividade, à luz do Parecer CNE/CP nº 15/2026?
++ Nos anos finais, conduzir a etapa apenas pelo professor, de forma mediada e sem contas pessoais; nos anos iniciais e na educação infantil, não realizar a etapa com as crianças.
+- Permitir que estudantes dos anos finais usem o assistente individualmente, desde que tenham 13 anos ou mais. || O Parecer não admite, nos anos finais, o acesso direto, autônomo, individual ou não supervisionado; a idade de 13 anos é apenas uma referência da UNESCO.
+- Exigir que digitem dados pessoais para personalizar. || Não é recomendado; contraria a proteção de dados.
+- Permitir que crianças dos anos iniciais conversem com o assistente sob supervisão do professor. || O Parecer não recomenda IA generativa conversacional nos anos iniciais, nem mediada.
+- Retirar o professor da atividade. || A regência humana e a mediação pedagógica são centrais.
+R: O Parecer restringe o uso por estudantes conforme a etapa. A referência de 13 anos citada pela UNESCO (2023) não substitui as regras brasileiras; consulte as normas atuais e as da sua rede.
 
 #30
 MC: Quando o capítulo recomenda dispensar a IA?
@@ -313,7 +313,7 @@ R: Rótulos orientam expectativas e oportunidades; sistemas opacos ou enviesados
 C: Explica o mecanismo; relaciona com IA e propõe cuidados.
 
 DISC: Planeje uma versão da atividade "Preveja, investigue e explique" para o seu nível e disciplina, com uma etapa opcional de IA e uma alternativa sem IA.
-R: Resposta pessoal. Deve incluir previsão, investigação, explicação, comparação, etapa opcional e alternativa.
+R: Resposta pessoal. Deve incluir previsão, investigação, explicação, comparação, etapa opcional e alternativa. A etapa com IA deve respeitar a etapa de ensino: mediada pelo professor nos anos finais e ausente com as crianças da educação infantil e dos anos iniciais.
 C: Estrutura; adequação etária; cuidados com dados.
 
 DISC: Redija um prompt para que um assistente atue como tutor de perguntas guiadas em um conteúdo da sua disciplina, sem dar a resposta final. Explique como você verificaria a qualidade das respostas do assistente.
@@ -321,7 +321,7 @@ R: Resposta pessoal. Prompt com papel, nível, restrição de não dar resposta 
 C: Prompt claro; plano de verificação.
 
 DISC: Quais cuidados de privacidade e de adequação etária você adotaria ao usar IA como interlocutor em sala de aula?
-R: Sem contas pessoais; sem dados pessoais; mediação do professor; demonstração coletiva para menores de 13 anos; consulta às normas e a pais; alternativas sem IA.
+R: Sem contas pessoais; sem dados pessoais; mediação do professor; nos anos finais, demonstração coletiva ou uso apenas mediado, nunca individual ou autônomo (Parecer CNE/CP nº 15/2026); nas etapas iniciais, sem uso pelas crianças; comunicação às famílias; alternativas sem IA.
 C: Cuidados coerentes e específicos.
 
 DISC: Por que resultados de estudos com universitários não podem ser aplicados automaticamente à educação infantil ou aos anos iniciais? Dê dois argumentos.
