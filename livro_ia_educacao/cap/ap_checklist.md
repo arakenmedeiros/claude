@@ -38,7 +38,17 @@ Use esta lista antes de levar à sala de aula qualquer texto, exercício, imagem
 | Imagens, textos e músicas usados respeitam direitos autorais e licenças? | ☐ | ☐ |
 | O uso de IA está declarado quando for necessário? | ☐ | ☐ |
 
-## 5. Decisão final
+## 5. Conformidade com o Parecer CNE/CP nº 15/2026
+
+| Pergunta | Sim | Não |
+|---|---|---|
+| O uso previsto respeita a regra da etapa (educação infantil, anos iniciais e anos finais) {{CNE, 2026}}? | ☐ | ☐ |
+| A aplicação foi classificada por nível de risco (baixo, moderado, alto) e a classificação está registrada? | ☐ | ☐ |
+| Nenhuma nota, conceito ou devolutiva foi atribuída por IA sem leitura e decisão do professor? | ☐ | ☐ |
+| O uso de IA na elaboração do material foi informado de forma clara? | ☐ | ☐ |
+| Nenhum conteúdo identificável de estudantes será usado para treinar modelos de terceiros? | ☐ | ☐ |
+
+## 6. Decisão final
 
 ☐ Usar sem alterações   ☐ Usar após ajustes   ☐ Reescrever   ☐ Descartar
 

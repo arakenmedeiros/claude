@@ -142,6 +142,7 @@ const CALL = {
   prompt: { c: C.blue, f: "EBF3F9", label: "MODELO DE PROMPT" },
   modelo: { c: C.gry, f: "F4F1EE", label: "MODELO ADAPTÁVEL" },
   cotidiano: { c: C.amb, f: "FEF4E0", label: "NO SEU DIA A DIA" },
+  norma: { c: C.blue, f: "EAF1F7", label: "NORMA E ORIENTAÇÃO OFICIAL" },
 };
 function bodyParas(body, size = 20) {
   const out = []; let para = []; let i = 0;

@@ -11,6 +11,7 @@
 | Critérios de avaliação do produto | |
 | Recursos e acessibilidade | |
 | Política de uso de IA na sequência (permitido, restrito, não permitido, como declarar) | |
+| Regra da etapa de ensino e nível de risco das aplicações previstas (Parecer CNE/CP nº 15/2026) | |
 
 ## Percurso
 

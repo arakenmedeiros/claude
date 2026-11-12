@@ -10,6 +10,8 @@ Modelo para organizar seu próprio caminho de aprendizagem sobre IA ao longo de 
 | Sei formular pedidos claros e verificar respostas | | |
 | Integro a IA ao planejamento de forma intencional | | |
 | Protejo dados e cuido da ética e da integridade | | |
+| Conheço o Parecer CNE/CP nº 15/2026 e as regras da minha etapa {{CNE, 2026}} | | |
+| Sei classificar o risco de uma aplicação e registrar o uso | | |
 | Sei avaliar o impacto na aprendizagem | | |
 | Compartilho experiências com colegas | | |
 
@@ -25,19 +27,23 @@ Modelo para organizar seu próprio caminho de aprendizagem sobre IA ao longo de 
 
 | Período | Ações | Produto | Parceria |
 |---|---|---|---|
-| 1º trimestre: compreender | Estudar os capítulos da Parte I e II; testar usos de baixo risco | Registro de aprendizagens | Colega de confiança |
+| 1º trimestre: compreender | Estudar os capítulos da Parte I e II e o Apêndice N; testar usos de baixo risco | Registro de aprendizagens | Colega de confiança |
 | 2º trimestre: experimentar | Aplicar uma atividade piloto e coletar evidências | Relato e materiais | Grupo de estudo |
 | 3º trimestre: avaliar | Analisar resultados e riscos; ajustar | Relatório curto | Coordenação |
 | 4º trimestre: compartilhar | Apresentar à comunidade escolar | Oficina ou guia | Comunidade de prática |
 
-## 4. Registro reflexivo mensal
+## 4. Temas de formação permanente
+
+O Parecer CNE/CP nº 15/2026 indica que a formação dos profissionais da educação para o uso pedagógico da IA pode contemplar: alfabetização algorítmica; elaboração de comandos; curadoria crítica de conteúdos gerados; avaliação mediada por tecnologias digitais; proteção de dados pessoais; integridade acadêmica; e identificação e mitigação de vieses. Use esta lista para escolher metas. A instituição deve oferecer tempo, suporte técnico e orientações claras para essa formação.
+
+## 5. Registro reflexivo mensal
 
 - O que tentei? O que aprendi?
 - Que evidências tenho sobre efeitos nos estudantes?
 - Que riscos observei? O que mudaria?
 - Do que preciso para o próximo mês?
 
-## 5. Revisão final
+## 6. Revisão final
 
 | Pergunta | Resposta |
 |---|---|

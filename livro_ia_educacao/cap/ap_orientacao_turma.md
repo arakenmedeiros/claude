@@ -1,6 +1,6 @@
 # Apêndice K — Modelo de orientação de uso de IA para a turma
 
-Adapte este texto à idade dos estudantes e às regras da sua escola. Para crianças pequenas, use apenas as ideias principais, com linguagem e exemplos próprios da faixa etária, e envolva as famílias.
+Adapte este texto à idade dos estudantes e às regras da sua escola. **Este modelo não se aplica ao uso de IA por estudantes da educação infantil nem dos anos iniciais do ensino fundamental:** o Parecer CNE/CP nº 15/2026 {{CNE, 2026}} recomenda a restrição total na educação infantil e não recomenda IA generativa e conversacional nos anos iniciais, nem com uso mediado pelo professor. Nessas etapas, use apenas a conversa sobre tecnologia em atividades desplugadas e envolva as famílias. Nos **anos finais do ensino fundamental**, o uso de IA generativa só é admitido com mediação de profissionais da educação, e não de forma direta, autônoma, individual ou não supervisionada. Este modelo se destina, portanto, sobretudo ao ensino médio, à educação profissional e à educação superior, e a atividades mediadas nos anos finais.
 
 ## Orientação de uso de IA na disciplina de [nome]
 
@@ -23,8 +23,8 @@ Adapte este texto à idade dos estudantes e às regras da sua escola. Para crian
 5. Se tiver dúvida, pergunte antes de usar.
 6. Se não puder ou não quiser usar IA, terá uma alternativa sem prejuízo.
 
-**Como avaliaremos.** Valorizamos o processo (rascunhos, perguntas, revisões) e o seu domínio do conteúdo, que poderá ser verificado em conversas, atividades em sala e produções acompanhadas.
+**Como avaliaremos.** Valorizamos o processo (rascunhos, perguntas, revisões) e o seu domínio do conteúdo, que poderá ser verificado em conversas, atividades em sala e produções acompanhadas. **Nenhuma nota ou devolutiva será atribuída por um sistema de IA:** a leitura e a decisão são da professora ou do professor.
 
-**Se houver suspeita de uso indevido.** Primeiro conversaremos sobre o seu processo de trabalho. Nenhuma decisão será tomada com base apenas em programas de detecção.
+**Se houver suspeita de uso indevido.** Primeiro conversaremos sobre o seu processo de trabalho. Nenhuma decisão ou sanção será tomada com base apenas em programas de detecção, que são apenas um elemento auxiliar.
 
 **Modelo de declaração de uso.** "Usei [ferramenta] em [data] para [finalidade]. Aceitei [o quê], alterei [o quê] e rejeitei [o quê]. Conferi as informações em [fontes]."

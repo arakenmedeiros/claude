@@ -4,7 +4,7 @@ def f11_mapa():
     mapa_conceitos("f11_mapa", "IA e educação\ninfantil", [
         ("Direitos e campos", ["conviver, brincar", "explorar, expressar"]),
         ("Uso docente", ["ideias e rascunhos", "revisão, sem dados"]),
-        ("Participação das crianças", ["sem assistentes", "demonstração mediada"]),
+        ("Participação das crianças", ["sem uso de IA pelas crianças", "famílias informadas"]),
         ("Atividades desplugadas", ["robô de comando", "pessoas e máquinas"]),
         ("Avaliação", ["observação e registro", "documentação"]),
         ("Riscos e proteção", ["privacidade", "antropomorfismo"]),
@@ -13,7 +13,7 @@ def f11_mapa():
 def f11_usos():
     comparar_cartoes("f11_usos", [
         ("Uso pelo professor (preparação)", ["Ideias de histórias, brincadeiras e músicas", "Rascunhos de comunicados", "Organização de notas sem dados identificáveis", "Sempre com revisão"], TEAL),
-        ("Uso direto pelas crianças", ["Em geral, não recomendado com assistentes generativos", "Prioridade: experiência concreta e brincadeira", "Conversar sobre máquinas com atividades desplugadas"], ROSE)],
+        ("Uso direto pelas crianças", ["Parecer 15/2026: restrição total do uso de IA pelas crianças", "Prioridade: experiência concreta e brincadeira", "Conversar sobre máquinas com atividades desplugadas"], ROSE)],
         w=8.6, h=3.4, wrap_at=40)
 
 def f11_desplugado():

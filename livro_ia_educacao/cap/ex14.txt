@@ -8,13 +8,13 @@ MC: Qual é uma das finalidades do ensino médio mencionadas no capítulo?
 R: A BNCC trata de pensamento crítico, argumentação, cultura digital e projeto de vida.
 
 #2
-MC: Por que o capítulo recomenda consultar a versão atualizada das normas do ensino médio?
-+ Porque as normas foram alteradas recentemente e mudam com regulamentações.
-- Porque nunca mudam. || Mudam.
-- Porque só professores de tecnologia precisam delas. || Não é verdade.
-- Porque a BNCC foi revogada. || Não é a afirmação.
-- Porque o ensino médio é opcional. || Não é a afirmação.
-R: A verificação de fontes oficiais é essencial.
+MC: O que o Parecer CNE/CP nº 15/2026 estabelece especificamente para o ensino médio?
++ Não traz regra específica para a etapa; aplicam-se as regras gerais da Educação Básica (proteção integral, adequação etária, mediação, ensino sobre IA, vedação de monitoramento invasivo) e de governança e risco.
+- Proíbe qualquer uso de IA pelos estudantes do ensino médio. || As vedações de uso direto recaem sobre a Educação Infantil e o Ensino Fundamental, não sobre o ensino médio.
+- Libera o uso sem mediação, pois os estudantes são quase adultos. || Valem a mediação, a supervisão e a proteção de dados exigidas na Educação Básica.
+- Substitui a BNCC e a LDB para a etapa. || O Parecer não substitui a BNCC nem a LDB.
+- Já está em vigor como resolução, com regras detalhadas por série. || Foi homologado como Parecer; o projeto de resolução anexo ainda depende de publicação.
+R: O Parecer homologado em 11/11/2026 trata a Educação Básica em conjunto; convém conferir a publicação da Resolução e o prazo de adequação, e as normas locais.
 
 #3
 MC: Qual das oportunidades é característica do ensino médio?
@@ -62,13 +62,13 @@ MC: O que a revisão de Pérez-Montesdeoca et al. (2026) conclui sobre IA genera
 R: A revisão pede estudos longitudinais e fundamentação teórica.
 
 #8
-MC: Qual é a ressalva sobre detectores de IA?
-+ Podem classificar erroneamente textos de falantes não nativos de inglês, não devendo ser prova isolada.
-- São sempre confiáveis. || Não são.
-- Só funcionam em Matemática. || Não é a afirmação.
-- São obrigatórios. || Não são.
-- Só são usados no ensino superior. || Não é a afirmação.
-R: Evidências de processo e conversa são mais adequadas.
+MC: Qual é a posição do Parecer CNE/CP nº 15/2026 (projeto de resolução anexo) sobre detectores de IA em apurações escolares?
++ São de alto risco, admitidos só como elemento auxiliar, e é vedada sanção acadêmica ou disciplinar fundada exclusivamente em seu resultado.
+- São a prova suficiente para sancionar o estudante. || O projeto veda sanção fundada exclusivamente no detector.
+- São obrigatórios em todas as avaliações. || Não são obrigatórios.
+- São classificados como baixo risco por serem apenas tecnológicos. || Têm repercussão acadêmica e disciplinar potencial; são de alto risco.
+- Só se aplicam ao ensino superior. || Valem para qualquer apuração com repercussão acadêmica ou disciplinar.
+R: Os detectores podem errar, inclusive com falantes não nativos de inglês {{LIANG et al., 2023}}; evidências de processo e conversa são mais adequadas.
 
 #9
 MC: Qual cuidado é essencial ao usar IA para preparar bancos de questões?
@@ -230,7 +230,7 @@ MC: Qual cuidado de dados vale para atividades com adolescentes?
 - Usar contas pessoais sem orientação. || Contraria.
 - Compartilhar senhas. || Contraria.
 - Ignorar termos de uso. || Contraria.
-R: Contas institucionais são preferíveis, quando existirem.
+R: Contas institucionais são preferíveis, quando existirem; o Parecer também veda usar conteúdos de adolescentes para treinar modelos de terceiros.
 
 #27
 MC: Qual é um risco ligado à desinformação e polarização?
@@ -242,13 +242,13 @@ MC: Qual é um risco ligado à desinformação e polarização?
 R: O letramento em informação é essencial.
 
 #28
-MC: Qual é uma tarefa do professor em projetos de pesquisa?
-+ Orientar a pergunta, a matriz e as fontes, acompanhar e avaliar processo e produto.
-- Pedir à IA que oriente sozinha. || Contraria.
-- Dispensar o acompanhamento. || Contraria.
-- Avaliar apenas o produto. || Contraria.
-- Esconder critérios. || Contraria.
-R: O acompanhamento valoriza o processo.
+MC: Uma professora usa IA para gerar um primeiro feedback sobre redações, que depois lê integralmente. Quem atribui a nota, segundo o Parecer (projeto de resolução anexo)?
++ O professor, de modo exclusivo, com leitura integral da produção e direito de revisão por avaliador humano.
+- A IA, se o resultado parecer coerente. || Atribuir nota a redações exclusivamente por IA é vedado.
+- A IA, com homologação em bloco pelo professor. || Validação em bloco e mera ratificação são vedadas.
+- O estudante, a partir da sugestão da IA. || A atribuição cabe ao professor.
+- A escola, automaticamente, ao adotar o sistema. || Não pode haver decisão exclusivamente automatizada.
+R: A pré-correção é apoio preparatório e de alto risco; nota, conceito e mérito permanecem com o professor.
 
 #29
 MC: Em qual situação o capítulo recomenda atenção ao acesso desigual?
@@ -301,7 +301,7 @@ R: Resposta pessoal. Por exemplo: texto inicial em sala; versão final em casa c
 C: Combinação coerente.
 
 DISC: Aponte duas razões para evitar detectores de IA como prova de fraude e descreva um encaminhamento mais justo.
-R: Imprecisão e vieses; direito de defesa. Encaminhamento: reunir evidências de processo, conversar, dar oportunidade.
+R: Imprecisão e vieses; direito de defesa; o projeto de resolução anexo ao Parecer veda sanção fundada exclusivamente em detector. Encaminhamento: reunir evidências de processo, conversar, dar oportunidade e garantir revisão humana.
 C: Razões; encaminhamento.
 
 DISC: Como você apoiaria estudantes ansiosos com avaliações sem recorrer apenas a soluções automáticas?
@@ -325,7 +325,7 @@ R: Resposta pessoal. Critérios: pergunta; fontes; síntese; declaração e auto
 C: Critérios claros.
 
 DISC: Descreva como você usaria a comparação de correções (professor, rubrica e IA) em sala e que aprendizagens esperaria.
-R: Avaliar redação com rubrica; comparar com feedback de IA; discutir diferenças; aprender critérios e limites.
+R: Avaliar redação anônima com rubrica; o professor apresenta o feedback de IA em demonstração; discutir diferenças; aprender critérios e limites; a nota permanece com o professor.
 C: Descrição; aprendizagens.
 
 DISC: Relacione o projeto de vida a práticas de IA com verificação de dados e cuidado com previsões.
@@ -340,13 +340,9 @@ DISC: Retome a situação de Júlia. Escreva um feedback do professor Marcelo pa
 R: Resposta pessoal. Reconhecer esforço; explicar que a nota de IA não é confiável; apontar competências a melhorar; propor plano.
 C: Acolhimento; orientação.
 
-DISC: Em que situações você dispensaria a IA no ensino médio? Justifique.
-R: Avaliações individuais; treino de raciocínio; dados pessoais; regras de exames; ansiedade.
-C: Situações; justificativas.
-
-DISC: Como o princípio de valorização da docência se manifesta nas decisões sobre IA no ensino médio?
-R: O professor decide regras, avalia processo, medeia, dialoga com estudantes e decide não usar.
-C: Relação coerente.
+DISC: Segundo o Parecer CNE/CP nº 15/2026, a responsabilidade pelo uso de IA na escola recai apenas sobre o professor? Relacione com decisões do ensino médio.
+R: Não. A responsabilidade é compartilhada: sistemas de ensino, escolas, gestores, equipes técnicas e fornecedores respondem por governança, contratos, segurança e dados; ao docente cabem a mediação pedagógica e a supervisão, com formação, suporte e tempo. No ensino médio, o professor define regras e avalia o processo, mas a escola deve oferecer contas institucionais, formação e alternativas.
+C: Responsabilidade compartilhada; exemplo no ensino médio.
 
 DISC: Escreva uma orientação de cinco linhas aos estudantes sobre o uso de IA em trabalhos da sua disciplina.
 R: Resposta pessoal. Linguagem clara; o que pode; o que não pode; declaração; verificação.

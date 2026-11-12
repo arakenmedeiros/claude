@@ -64,3 +64,6 @@ Gere uma explicação sobre [tema] contendo dois erros sutis, sem indicar quais.
 - Guarde as versões que funcionam bem para você; registre data e ferramenta.
 - Compare respostas de pedidos ligeiramente diferentes; refine em etapas.
 - Nunca inclua nomes, imagens, laudos ou informações de saúde de estudantes.
+- **Não use IA para atribuir nota, conceito ou mérito** a produções dos estudantes. Os prompts de rubrica e de devolutiva produzem rascunhos que você lê, edita e assina; a decisão e a devolutiva formativa são suas, conforme o Parecer CNE/CP nº 15/2026 {{CNE, 2026}}.
+- **Informe o uso**: quando compartilhar com estudantes ou colegas um material elaborado, adaptado ou revisado com apoio de IA, diga isso de forma clara e responsabilize-se pela verificação.
+- Estes prompts são destinados ao **uso docente**. Na educação infantil e nos anos iniciais, o Parecer não admite o uso de IA generativa ou conversacional pelos estudantes; nos anos finais, apenas com mediação.

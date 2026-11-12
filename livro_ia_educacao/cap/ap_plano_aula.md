@@ -14,6 +14,8 @@ Modelo adaptável. Os campos podem ser reduzidos ou ampliados conforme o seu con
 | Recursos e materiais (incluir alternativas sem tecnologia) | |
 | Estratégias de acessibilidade e inclusão | |
 | Uso de IA previsto (se houver): finalidade, quem usa, que dados, como será verificado | |
+| Nível de risco da aplicação (baixo, moderado, alto) e conformidade com a regra da etapa, conforme o Parecer CNE/CP nº 15/2026 | |
+| Informação aos estudantes e às famílias sobre o uso de IA, quando couber | |
 | Alternativa sem IA | |
 
 ## Desenvolvimento

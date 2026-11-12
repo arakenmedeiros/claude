@@ -33,3 +33,8 @@ Esta versão incorporou as correções de um parecer técnico-editorial. Os prin
 Os dispositivos legais citados nessa revisão foram conferidos por busca em páginas oficiais e secundárias em 6 de novembro de 2026; o texto integral de cada norma deve ser consultado nos canais oficiais antes de uso institucional. Alguns atos, como o Decreto nº 12.686/2025, o Decreto nº 12.651/2025 e a Lei nº 14.874/2024, são objeto de questionamentos no Congresso ou no Supremo Tribunal Federal, e sua situação deve ser conferida.
 
 Nas referências com versão preliminar e versão final (por exemplo, Cabezas-Clavijo e Sidorenko-Bautista; Baillifard et al.; Pallant et al.), adotou-se o ano da versão indicada na referência, com a observação correspondente.
+
+## Atualização de 12 de novembro de 2026: Parecer CNE/CP nº 15/2026
+
+Após a homologação do Parecer CNE/CP nº 15/2026 {{CNE, 2026}} (despacho publicado no Diário Oficial da União de 11 de novembro de 2026, Seção 1, p. 141), o livro e os slides foram revistos à luz do texto integral do Parecer, com seu projeto de resolução, glossário e guia de classificação de risco anexos. A síntese está no Apêndice N, e cada capítulo afetado traz um quadro de norma oficial. O texto distingue o que consta do **Parecer** do que consta do **projeto de resolução anexo**. A Resolução decorrente e seu prazo de adequação devem ser conferidos nos canais oficiais antes de qualquer decisão institucional.
+
