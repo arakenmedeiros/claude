@@ -20,11 +20,11 @@ d) do hardware.
 R: a | A relação entre perfil e resposta pode continuar a mesma.
 
 MC: A mudança de rótulos (label shift) é uma mudança:
-a) na proporção das classes, P(y).
-b) na distribuição de X apenas.
+a) na proporção das classes, P(y), com P(X | y) estável.
+b) na distribuição de X apenas, com P(y | X) fixo.
 c) no modelo de regressão apenas.
 d) no tamanho do arquivo.
-R: a | Exemplo: em crise, aumenta a fração de inadimplentes.
+R: a | Só P(y) muda; dentro de cada classe, os atributos se distribuem como antes. Mudar a frequência dos positivos por mudar P(y | X) é outro fenômeno.
 
 MC: Uma mudança que vem e volta periodicamente, como a sazonalidade de Natal, é chamada de:
 a) recorrente.
@@ -87,7 +87,7 @@ a) tenta distinguir dados de referência dos atuais; se consegue, as distribuiç
 b) prevê o alvo original.
 c) compara os arquivos byte a byte.
 d) mede a latência.
-R: a | AUC próxima de 0,5 indica distribuições parecidas.
+R: a | AUC próxima de 0,5 indica ausência de diferença detectável por esse classificador e amostra; não prova igualdade das distribuições.
 
 MC: Em qual situação o classificador de domínio é mais útil que testes por atributo?
 a) Quando a relação entre atributos mudou e cada marginal parece normal.
@@ -157,7 +157,7 @@ a) o modelo novo faz previsões que não são usadas, para comparação.
 b) o modelo novo responde a todos.
 c) o modelo antigo é desligado.
 d) só 50% dos clientes veem o novo.
-R: a | Risco nulo para o usuário.
+R: a | Reduz o risco de decisões baseadas no candidato, mas ainda consome recursos e pode ter efeitos operacionais.
 
 MC: No teste A/B, o tráfego é dividido:
 a) aleatoriamente entre modelo atual e modelo novo.
@@ -174,7 +174,7 @@ d) Para aumentar o p-valor.
 R: a | Olhar o resultado toda hora e parar cedo distorce a estatística.
 
 MC: Um p-valor pequeno em um teste A/B indica que:
-a) a diferença provavelmente não é acaso, mas não diz que é grande ou importante.
+a) os dados são pouco compatíveis com a hipótese de ausência de diferença, sob as condições do teste, mas isso não diz que a diferença é grande ou importante.
 b) a diferença é enorme.
 c) o modelo é perfeito.
 d) o teste foi inválido.
@@ -212,7 +212,7 @@ DISC: Explique por que a falha silenciosa torna o monitoramento indispensável e
 R: Porque o modelo continua respondendo mesmo piorando. Monitoram-se: serviço (latência, erros), dados de entrada (ausentes, distribuição), previsões (distribuição das saídas), desempenho (com rótulos, muitas vezes atrasados) e negócio.
 
 DISC: Diferencie mudança de covariáveis, mudança de rótulos e deriva de conceito, com um exemplo de cada.
-R: Covariáveis: muda P(X), p. ex., campanha atrai público mais jovem. Rótulos: muda P(y), p. ex., mais inadimplentes em crise. Conceito: muda a relação X→y, p. ex., o mesmo perfil passa a se comportar de modo diferente.
+R: Covariáveis: muda P(X), p. ex., campanha atrai público mais jovem. Rótulos: muda P(y) com P(X | y) estável, p. ex., uma doença fica mais frequente mas os sintomas de quem a tem não mudam. Conceito: muda a relação X→y, p. ex., o mesmo perfil passa a se comportar de modo diferente.
 
 DISC: Descreva três formas de mudança temporal (abrupta, gradual, incremental, recorrente) com exemplos.
 R: Abrupta: uma lei nova de um dia para outro. Gradual: o conceito antigo e o novo convivem por um tempo. Incremental: deslizamento lento e contínuo. Recorrente: volta periodicamente, como a sazonalidade de fim de ano.
@@ -224,7 +224,7 @@ DISC: Por que um teste estatístico com p-valor pequeno pode não indicar mudan�
 R: Com muitos dados, qualquer diferença minúscula fica "significativa". É preciso avaliar o tamanho da diferença (KS, PSI) e o impacto no desempenho, definindo limiares de relevância.
 
 DISC: Como o classificador de domínio funciona e o que se pode aprender de suas importâncias?
-R: Treina-se um modelo para distinguir dados de referência de dados atuais; AUC próxima de 0,5 indica semelhança e AUC alta indica diferença. As importâncias dos atributos apontam quais contribuem mais para a distinção, ajudando a investigar a causa.
+R: Treina-se um modelo para distinguir dados de referência de dados atuais; AUC próxima de 0,5 indica ausência de diferença detectável pelo classificador e pela amostra usados, e AUC alta indica diferença. As importâncias dos atributos apontam quais contribuem mais para a distinção, ajudando a investigar a causa.
 
 DISC: Como monitorar o desempenho de um modelo quando os rótulos demoram a chegar?
 R: Esperar os rótulos e calcular com atraso; amostrar casos para rotulagem rápida; usar indicadores adiantados (cliques, devoluções); acompanhar sinais sem rótulo (dados e previsões); e usar detectores sobre o fluxo de erros quando os rótulos chegam.

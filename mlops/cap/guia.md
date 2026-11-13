@@ -9,8 +9,8 @@
 | Identificar a versão dos dados | Hash SHA-256, manifesto, DVC | 3 |
 | Evitar vazamento no pré-processamento | `Pipeline`, `ColumnTransformer`, `fit` só no treino | 4 |
 | Registrar experimentos | MLflow Tracking | 5 |
-| Trocar ou reverter o modelo sem mexer no código | Registro de modelos com apelido `champion` | 5 |
-| Avaliar com classes raras | Precisão, revocação, F1, AUC-PR | 6 |
+| Trocar ou reverter o modelo sem editar o código | Registro de modelos com apelido `champion` + recarga do serviço | 5, 7 |
+| Avaliar com classes raras | Precisão, revocação, F1, AP | 6 |
 | Escolher o limiar de decisão | Custo dos erros, escolha na validação | 6 |
 | Comparar modelos com rigor | Validação cruzada repetida, bootstrap, validação aninhada | 6 |
 | Ajustar hiperparâmetros | Busca aleatória, Optuna, Hyperband | 6 |

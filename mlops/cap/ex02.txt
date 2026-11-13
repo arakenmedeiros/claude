@@ -37,7 +37,7 @@ MC: Em um problema com 2% de positivos, um modelo que sempre responde "negativo"
 a) acurácia de cerca de 98%, mas é inútil.
 b) acurácia de 2%.
 c) revocação de 100%.
-d) AUC-PR de 100%.
+d) AP de 100%.
 R: a | Alta acurácia pode ocultar um modelo que não encontra nenhum caso positivo.
 
 MC: A principal função de uma linha de base (baseline) é:
@@ -205,7 +205,7 @@ DISC: Descreva as nove etapas do fluxo de trabalho de ML segundo Amershi et al. 
 R: Requisitos, coleta, limpeza, rotulagem, engenharia de atributos, treino, avaliação, implantação e monitoramento. É um laço porque o que se observa no monitoramento (queda de qualidade, novos casos) gera novos requisitos, novos dados e novos treinos.
 
 DISC: Por que se deve construir uma linha de base antes de um modelo complexo? Dê um exemplo.
-R: Para saber se o modelo agrega valor e evitar complexidade desnecessária. Exemplo: em um problema com 3% de positivos, "sempre negativo" tem 97% de acurácia; o modelo só vale se superar essa referência em métricas adequadas, como revocação e AUC-PR.
+R: Para saber se o modelo agrega valor e evitar complexidade desnecessária. Exemplo: em um problema com 3% de positivos, "sempre negativo" tem 97% de acurácia; o modelo só vale se superar essa referência em métricas adequadas, como revocação e AP.
 
 DISC: Explique a dívida técnica em ML e dê três exemplos de tipos de dívida.
 R: É o custo futuro de atalhos tomados hoje. Exemplos: emaranhamento (CACE), dependências de dados instáveis, ciclos de realimentação escondidos, consumidores não declarados, código de cola, dívida de configuração e mudanças no mundo externo.

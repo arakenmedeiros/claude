@@ -71,7 +71,7 @@ print(f"Menor perda: {perdas.min():.4f} com {int(perdas.argmin()) + 1} árvores 
 ```
 @@NOTE Registrar métricas por passo permite ver o ponto em que o modelo começa a piorar na validação (superajuste) e escolher o número de árvores. É a base das curvas que as interfaces de rastreamento desenham.
 @@EX 3 | Versões, apelidos e reversão | intermediário
-Registre duas versões de um modelo no registro do MLflow (v1: regressão logística com `C=0.001`; v2: com `C=10`) no conjunto *Breast Cancer* (UCI). Dê à v2 o apelido `champion`. Carregue o modelo pelo apelido e meça a acurácia no teste. Em seguida, **reverta** movendo o apelido para a v1 e meça novamente, **sem alterar o código de carga**.
+Registre duas versões de um modelo no registro do MLflow (v1: regressão logística com `C=0.001`; v2: com `C=10`) no conjunto *Breast Cancer* (UCI). Dê à v2 o apelido `champion`. Carregue o modelo pelo apelido e meça a acurácia no teste. Em seguida, **reverta** movendo o apelido para a v1 e meça novamente, **sem editar o código de carga**. Mostre também que o objeto carregado **antes** da reversão continua sendo a versão antiga, até que o modelo seja recarregado pelo apelido.
 @@SOL
 ```python
 import os
@@ -110,11 +110,14 @@ def acuracia_do_champion():
     modelo = mlflow.sklearn.load_model(f"models:/{NOME}@champion")            # o código de carga nunca muda
     return cliente.get_model_version_by_alias(NOME, "champion").version, modelo.score(Xte, yte)
 
+em_memoria = mlflow.sklearn.load_model(f"models:/{NOME}@champion")            # carregado quando o champion era a v2
 print("Antes:  versão", *[f"{v} | acurácia = {a:.4f}" for v, a in [acuracia_do_champion()]])
 cliente.set_registered_model_alias(NOME, "champion", v1)                          # reversão
 print("Depois: versão", *[f"{v} | acurácia = {a:.4f}" for v, a in [acuracia_do_champion()]])
+print(f"Objeto carregado antes da reversão ainda tem acurácia {em_memoria.score(Xte, yte):.4f} (é a v2); "
+      "só um novo load_model pelo apelido traz a v1.")
 ```
-@@NOTE O código de produção carrega sempre `models:/diagnostico@champion`. Promover ou reverter é só mover o apelido: nenhuma implantação de código é necessária, e a troca é imediata e auditável.
+@@NOTE O código de produção carrega sempre `models:/diagnostico@champion`. Promover ou reverter é mover o apelido: nenhuma edição de código é necessária e a troca é auditável. Mas o objeto já carregado em memória continua sendo a versão antiga até que o serviço recarregue o modelo, como mostra o `load_model` repetido no exercício.
 @@EX 4 | Promoção só com evidência estatística | avançado
 No conjunto *Digits* (UCI), compare um campeão (regressão logística com `C=1`) e um candidato (SVC com `C=10`) no mesmo conjunto de teste. Calcule, por *bootstrap* com 2.000 reamostragens, o intervalo de confiança de 95% da diferença de acurácia (candidato − campeão). Escreva a regra: promover apenas se o limite inferior do intervalo for maior que zero. Teste a regra também com um candidato quase idêntico ao campeão (regressão logística com `C=0.7`).
 @@SOL

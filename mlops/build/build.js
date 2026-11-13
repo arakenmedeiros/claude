@@ -102,17 +102,17 @@ function heading(level, text, opts = {}) {
   return new Paragraph({ heading: lv, pageBreakBefore: !!opts.pageBreak, keepNext: true, children: [new TextRun({ text })] });
 }
 function P(text, o = {}) {
-  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.LEFT, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
+  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.JUSTIFIED, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
 }
 function noBorder() { const n = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }; return { top: n, bottom: n, left: n, right: n }; }
 
 function calloutParas(body, color) {
   const out = []; let para = [];
-  const flush = () => { if (para.length) { out.push(new Paragraph({ spacing: { after: 80, line: 280 }, children: runs(para.join(" "), { size: 20 }) })); para = []; } };
+  const flush = () => { if (para.length) { out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, spacing: { after: 80, line: 280 }, children: runs(para.join(" "), { size: 20 }) })); para = []; } };
   let i = 0;
   while (i < body.length) {
     const ln = body[i];
-    if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
+    if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, alignment: AlignmentType.JUSTIFIED, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
     if (ln.trim() === "") { flush(); i++; continue; }
     para.push(ln.trim()); i++;
   }
@@ -205,8 +205,8 @@ function renderBlocks(blocks) {
       case "h4": out.push(heading(4, b.text)); break;
       case "p": out.push(P(b.text)); break;
       case "quote": out.push(new Paragraph({ spacing: { after: 120 }, indent: { left: 400 }, border: { left: { style: BorderStyle.SINGLE, size: 18, color: C.cya, space: 8 } }, children: runs(b.text, { size: 21, italics: true }) })); break;
-      case "ul": b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break;
-      case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: ref, level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
+      case "ul": b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, alignment: AlignmentType.JUSTIFIED, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break;
+      case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: ref, level: 0 }, alignment: AlignmentType.JUSTIFIED, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
       case "callout": out.push(callout(b)); out.push(spacer(140)); break;
       case "code": out.push(...codeBlock(b)); break;
       case "formula": out.push(formula(b)); break;
@@ -246,7 +246,7 @@ function exercises(ex) {
   });
   out.push(heading(3, "Exercícios discursivos", { pageBreak: true }));
   out.push(P("Responda com suas palavras, em poucas linhas. Compare depois com a resposta-modelo do Apêndice A.", { run: { color: C.gry } }));
-  ex.dc.forEach((q, i) => out.push(new Paragraph({ keepLines: true, spacing: { before: 120, after: 80, line: 288 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 21 }), ...runs(q.stem, { size: 21 })] })));
+  ex.dc.forEach((q, i) => out.push(new Paragraph({ keepLines: true, alignment: AlignmentType.JUSTIFIED, spacing: { before: 120, after: 80, line: 288 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 21 }), ...runs(q.stem, { size: 21 })] })));
   return out;
 }
 
@@ -403,7 +403,7 @@ for (const c of chapters) {
     kids.push(new Table({ width: { size: CW, type: WidthType.DXA }, columnWidths: widths, rows: [mk(["Questão", "Resposta", "Justificativa"], true), ...c.ex.mc.map((q, i) => mk([String(i + 1), q.ans + ")", q.why], false))] }));
     kids.push(spacer(160));
     kids.push(heading(3, "Discursivas (respostas-modelo)"));
-    c.ex.dc.forEach((q, i) => kids.push(new Paragraph({ keepLines: true, spacing: { after: 90, line: 270 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 20 }), ...runs(q.ans, { size: 20 })] })));
+    c.ex.dc.forEach((q, i) => kids.push(new Paragraph({ keepLines: true, alignment: AlignmentType.JUSTIFIED, spacing: { after: 90, line: 270 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 20 }), ...runs(q.ans, { size: 20 })] })));
   }
   contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Apêndice A — Gabarito") }, footers: { default: mkFooter() }, children: kids });
 }

@@ -87,8 +87,8 @@ open("test_modelo.py", "w").write(textwrap.dedent('''
 print("Código de saída do pytest:", int(pytest.main(["test_modelo.py", "-q", "-p", "no:cacheprovider"])))
 ```
 @@NOTE Os três testes passam. Os limites (0,60; 0,03; 95%) são decisões do projeto: apertados demais, os testes falham à toa; frouxos demais, não protegem nada.
-@@EX 3 | Portão de qualidade com código de saída | intermediário
-Escreva um script `gate.py` que leia `metricas.json` e `limites.json`, reprove (código de saída 1) se qualquer métrica estiver abaixo do limite e imprima os motivos. Execute-o com `subprocess` em três cenários: aprovado, reprovado por uma métrica e reprovado por duas.
+@@EX 3 | Portão de qualidade que valida as métricas | intermediário
+Escreva um script `gate.py` que leia `metricas.json` e `limites.json` e, **antes** de comparar com os pisos, valide as métricas: presença, tipo numérico, ausência de `NaN` e infinitos, intervalo [0, 1] e número mínimo de exemplos avaliados (`n_avaliados` ≥ 100). Use o código de saída 1 para reprovação por qualidade e 2 para métricas inválidas. Execute-o com `subprocess` em cinco cenários: aprovado, reprovado por uma métrica, reprovado por duas, com `NaN` e com métrica ausente. Mostre que, sem a validação, o caso do `NaN` seria aprovado.
 @@SOL
 ```python
 import json
@@ -100,24 +100,39 @@ import textwrap
 
 os.chdir(tempfile.mkdtemp())
 open("gate.py", "w").write(textwrap.dedent('''
-    import json, sys
+    import json, math, sys
     m, lim = json.load(open("metricas.json")), json.load(open("limites.json"))
-    falhas = [f"{k}: {m.get(k, float('nan')):.3f} < {v}" for k, v in lim.items() if not m.get(k, 0) >= v]
+    erros = [f"ausente: {k}" for k in list(lim) + ["n_avaliados"] if k not in m]
+    erros += [f"{k}: não finito ou não numérico ({v!r})" for k, v in m.items()
+              if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v)]
+    erros += [f"{k}: fora de [0, 1] ({m[k]})" for k in lim if isinstance(m.get(k), (int, float)) and math.isfinite(m[k]) and not 0 <= m[k] <= 1]
+    if isinstance(m.get("n_avaliados"), (int, float)) and m["n_avaliados"] < 100:
+        erros.append(f"n_avaliados = {m['n_avaliados']} < 100")
+    if erros:
+        print("REPROVADO (métricas inválidas) ->", "; ".join(erros)); sys.exit(2)
+    falhas = [f"{k}: {m[k]:.3f} < {v}" for k, v in lim.items() if m[k] < v]
     if falhas:
         print("REPROVADO ->", "; ".join(falhas)); sys.exit(1)
     print("APROVADO")
 '''))
 json.dump({"f1": 0.90, "revocacao": 0.85, "auc_pr": 0.80}, open("limites.json", "w"))
 
-cenarios = {"aprovado": {"f1": 0.93, "revocacao": 0.90, "auc_pr": 0.85},
-            "reprovado por uma": {"f1": 0.93, "revocacao": 0.80, "auc_pr": 0.85},
-            "reprovado por duas": {"f1": 0.85, "revocacao": 0.80, "auc_pr": 0.85}}
+nan = float("nan")
+cenarios = {"aprovado": {"f1": 0.93, "revocacao": 0.90, "auc_pr": 0.85, "n_avaliados": 300},
+            "reprovado por uma": {"f1": 0.93, "revocacao": 0.80, "auc_pr": 0.85, "n_avaliados": 300},
+            "reprovado por duas": {"f1": 0.85, "revocacao": 0.80, "auc_pr": 0.85, "n_avaliados": 300},
+            "F1 = NaN": {"f1": nan, "revocacao": 0.90, "auc_pr": 0.85, "n_avaliados": 300},
+            "métrica ausente": {"f1": 0.93, "auc_pr": 0.85, "n_avaliados": 300}}
 for nome, met in cenarios.items():
     json.dump(met, open("metricas.json", "w"))
     r = subprocess.run([sys.executable, "gate.py"], capture_output=True, text=True)
     print(f"{nome:20s} -> código {r.returncode} | {r.stdout.strip()}")
+
+# o portão ingênuo, sem validação, aprovaria o NaN:
+m, lim = cenarios["F1 = NaN"], {"f1": 0.90, "revocacao": 0.85, "auc_pr": 0.80}
+print("Portão ingênuo aprova o caso do NaN?", not [k for k, v in lim.items() if m[k] < v])
 ```
-@@NOTE Em CI, o código de saída diferente de zero interrompe o fluxo automaticamente. O portão deve mostrar **todos** os motivos de uma vez, para poupar tempo de quem corrige.
+@@NOTE Em CI, o código de saída diferente de zero interrompe o fluxo automaticamente. O portão deve mostrar **todos** os motivos de uma vez e distinguir "modelo ruim" (1) de "avaliação inválida" (2). O portão ingênuo aprova o `NaN`, porque qualquer comparação com `NaN` é falsa: por isso, valide antes de comparar.
 @@EX 4 | Os testes realmente protegem? Quebrando o modelo de propósito | avançado
 Treine um modelo no conjunto *Breast Cancer* (UCI) e crie uma bateria de testes (F1 mínimo, revocação mínima da classe maligna e consistência de previsões). Depois, "quebre" o modelo de três maneiras: (a) treine com rótulos embaralhados, (b) esqueça de padronizar a entrada em produção (use o modelo sem o `StandardScaler`) e (c) treine com apenas 10 exemplos. Mostre quais testes detectam cada falha.
 @@SOL

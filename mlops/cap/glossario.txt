@@ -7,7 +7,7 @@ Apelido (alias): nome móvel que aponta para uma versão de modelo no registro, 
 Armazém de atributos (feature store): sistema que guarda atributos calculados uma só vez e reutilizados no treino e no serviço.
 Artefato: arquivo produzido por uma execução, como um modelo, um gráfico ou um relatório.
 Atributo (feature): característica usada como entrada de um modelo.
-AUC-PR: área sob a curva de precisão-revocação; seu piso é a fração de positivos.
+AP (precisão média): resumo da curva de precisão-revocação por soma ponderada das precisões; não é necessariamente igual à área trapezoidal. Para um classificador aleatório, é próxima da fração de positivos.
 AUC-ROC: área sob a curva ROC; mede a capacidade de ordenar positivos acima de negativos.
 Azul-verde (implantação): dois ambientes idênticos; o tráfego passa de um para o outro, com reversão rápida.
 Baseline (linha de base): solução simples contra a qual o modelo precisa ganhar.
@@ -54,7 +54,7 @@ Invariância (teste de): verifica que uma mudança irrelevante altera pouco a pr
 Jensen-Shannon (distância): medida simétrica e limitada de diferença entre distribuições.
 JSON: formato de texto estruturado em chaves e valores.
 KS (teste de Kolmogorov-Smirnov): compara as distribuições acumuladas de duas amostras.
-Label shift (mudança de rótulos): mudança na proporção das classes.
+Label shift (mudança de rótulos): mudança na proporção das classes, P(y), com P(X | y) estável.
 Latência: tempo entre o pedido e a resposta.
 Linhagem (lineage): caminho completo de um dado ou modelo, da origem ao destino.
 LGPD: Lei Geral de Proteção de Dados Pessoais (Lei n.º 13.709/2018).

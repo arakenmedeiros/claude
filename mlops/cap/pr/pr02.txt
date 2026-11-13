@@ -1,5 +1,5 @@
 @@EX 1 | Sempre comece pela linha de base | básico
-Gere um problema de cancelamento com 3% de positivos (`make_classification`, 8.000 exemplos, `weights=[0.97]`, `class_sep=1.0`, `random_state=0`). Compare: (a) `DummyClassifier(strategy="most_frequent")`, (b) `DummyClassifier(strategy="stratified")` e (c) uma regressão logística. Mostre acurácia, revocação e AUC-PR no teste.
+Gere um problema de cancelamento com 3% de positivos (`make_classification`, 8.000 exemplos, `weights=[0.97]`, `class_sep=1.0`, `random_state=0`). Compare: (a) `DummyClassifier(strategy="most_frequent")`, (b) `DummyClassifier(strategy="stratified")` e (c) uma regressão logística. Mostre acurácia, revocação e AP no teste.
 @@SOL
 ```python
 from sklearn.datasets import make_classification
@@ -18,9 +18,9 @@ print(f"Positivos no teste: {yte.mean():.1%}")
 for nome, m in modelos.items():
     m.fit(Xtr, ytr)
     prev, p = m.predict(Xte), m.predict_proba(Xte)[:, 1]
-    print(f"{nome:22s} acurácia = {accuracy_score(yte, prev):.3f} | revocação = {recall_score(yte, prev):.3f} | AUC-PR = {average_precision_score(yte, p):.3f}")
+    print(f"{nome:22s} acurácia = {accuracy_score(yte, prev):.3f} | revocação = {recall_score(yte, prev):.3f} | AP = {average_precision_score(yte, p):.3f}")
 ```
-@@NOTE A linha de base "sempre a maioria" tem acurácia de cerca de 97% e revocação zero. Por isso, a acurácia sozinha não serve aqui. A AUC-PR da linha de base é igual à fração de positivos (cerca de 0,03); a da regressão logística é muito maior, o que mostra que ela ordena bem os clientes, embora, com o limiar padrão de 0,5, encontre poucos positivos (veja o ajuste de limiar no Capítulo 6).
+@@NOTE A linha de base "sempre a maioria" tem acurácia de cerca de 97% e revocação zero. Por isso, a acurácia sozinha não serve aqui. A AP da linha de base é igual à fração de positivos (cerca de 0,03); a da regressão logística é muito maior, o que mostra que ela ordena bem os clientes, embora, com o limiar padrão de 0,5, encontre poucos positivos (veja o ajuste de limiar no Capítulo 6).
 @@EX 2 | Calculadora de ML Test Score | básico
 Implemente uma função que receba, para cada um dos quatro grupos (dados, modelo, infraestrutura, monitoramento), a lista de pontos (0, 0,5 ou 1) e devolva a nota final (o mínimo dos grupos) e o grupo mais fraco. Aplique a dois projetos fictícios: um "notebook solto" e um "pipeline automatizado", e compare.
 @@SOL

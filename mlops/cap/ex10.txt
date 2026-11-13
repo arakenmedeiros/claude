@@ -80,7 +80,7 @@ a) revocação (TPR) semelhante entre os grupos.
 b) taxa de seleção idêntica.
 c) precisão idêntica.
 d) mesmo número de exemplos por grupo.
-R: a | Entre os que "merecem", a fração aprovada é parecida.
+R: a | Entre os casos positivos segundo o critério definido, a fração aprovada é parecida.
 
 MC: Retirar o atributo sensível (grupo) do modelo:
 a) não garante justiça, pois proxies podem carregar o viés.
@@ -111,7 +111,7 @@ d) pelo preço do software.
 R: a | Regulamento (UE) 2024/1689.
 
 MC: A privacidade diferencial garante que:
-a) o resultado da análise seja quase o mesmo, tenha ou não uma pessoa específica nos dados.
+a) as probabilidades dos resultados da análise mudem pouco, de forma limitada por ε, entre bases vizinhas (com e sem uma pessoa).
 b) todos os dados sejam apagados.
 c) o modelo seja perfeito.
 d) o servidor nunca falhe.
@@ -224,13 +224,13 @@ DISC: Explique por que remover o atributo sensível não garante justiça e o qu
 R: Outros atributos podem carregar a informação (proxies) ou ser medidos com viés diferente entre grupos. Deve-se medir desempenho e seleção por grupo, investigar a origem do viés e aplicar remédios em dados, treino ou saída.
 
 DISC: Compare paridade demográfica, igualdade de oportunidade e paridade de precisão.
-R: Paridade demográfica: mesma taxa de seleção. Igualdade de oportunidade: mesma revocação entre os que merecem. Paridade de precisão: mesma precisão quando aprova. Em geral não se satisfazem todas ao mesmo tempo.
+R: Paridade demográfica: mesma taxa de seleção. Igualdade de oportunidade: mesma revocação entre os casos positivos segundo o critério definido. Paridade de precisão: mesma precisão quando aprova. Em geral não se satisfazem todas ao mesmo tempo.
 
 DISC: Descreva o ajuste de limiares por grupo para igualar a revocação e discuta suas consequências.
 R: Escolhe-se, para cada grupo, o limiar que captura a mesma fração de positivos reais. Isso melhora a igualdade de oportunidade, mas altera taxas de seleção e precisão, podendo gerar dilemas éticos e legais; a decisão é social, não só técnica.
 
 DISC: Explique o que é privacidade diferencial e o papel de ε.
-R: Garantia matemática de que o resultado de uma análise muda pouco com a presença de uma pessoa. Obtém-se com ruído. ε controla o equilíbrio: menor ε, mais privacidade e mais ruído; maior ε, menos privacidade e mais precisão.
+R: Garantia matemática de que as probabilidades dos resultados de uma análise mudam pouco, de forma limitada por ε, entre bases vizinhas (com e sem uma pessoa). Obtém-se com ruído. ε controla o equilíbrio: menor ε, mais privacidade e mais ruído; maior ε, menos privacidade e mais precisão.
 
 DISC: O que é um ataque de inferência de associação e como mitigá-lo?
 R: O atacante tenta descobrir se um registro estava no treino a partir das saídas do modelo. Mitiga-se limitando detalhes das saídas, regularizando, limitando consultas e usando privacidade diferencial.

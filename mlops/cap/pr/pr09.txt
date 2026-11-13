@@ -17,7 +17,7 @@ def nivel(v):
 rng = np.random.default_rng(0)
 ref = rng.normal(0, 1, 5000)
 for nome, atual in {"sem mudança": rng.normal(0, 1, 2000), "média +0,3": rng.normal(0.3, 1, 2000),
-                    "média +1": rng.normal(1, 1, 2000), "desvio ×2": rng.normal(0, 2, 2000)}.items():
+                    "média +1": rng.normal(1, 1, 2000), "desvio padrão ×2": rng.normal(0, 2, 2000)}.items():
     v = psi(ref, atual)
     print(f"{nome:12s} PSI = {v:.3f} -> {nivel(v)}")
 ```
@@ -104,7 +104,7 @@ for depois in [0.10, 0.15, 0.20, 0.30]:
 ```
 @@NOTE Quanto maior a piora, mais sementes detectam e menor o atraso. Sem mudança real (0,10), não deve haver detecção depois de 3.000, mas pode haver falsos alarmes: nenhum detector é perfeito. Mudanças pequenas demoram ou nem são percebidas: por isso o monitoramento combina vários sinais.
 @@PROJ Painel de monitoramento de 12 semanas com três tipos de deriva | Cap09
-**Contexto.** Um modelo de classificação foi treinado na semana 0. Nas 12 semanas seguintes, o mundo muda de três maneiras: a partir da semana 3, mudança de covariáveis (o atributo 0 se desloca); a partir da semana 6, mudança de rótulos (a proporção de positivos sobe); e a partir da semana 8, deriva de conceito (a fronteira de decisão gira).
+**Contexto.** Um modelo de classificação foi treinado na semana 0. Nas 12 semanas seguintes, o mundo muda de três maneiras: a partir da semana 3, mudança de covariáveis (o atributo 0 se desloca); a partir da semana 6, mudança de rótulos (*label shift*: a proporção de positivos sobe para 35%, mas **P(X | y) permanece igual**, obtida por reamostragem estratificada das classes); e a partir da semana 8, deriva de conceito (a fronteira de decisão gira).
 
 **Dados simulados.** Gere 12 lotes semanais de 1.200 exemplos, com 4 atributos normais e rótulo gerado por uma função logística da combinação linear dos atributos mais um intercepto que controla a proporção de positivos. Documente suas escolhas.
 
@@ -113,7 +113,7 @@ for depois in [0.10, 0.15, 0.20, 0.30]:
 2. Para cada semana, calcule: PSI do atributo 0, AUC do classificador de domínio, probabilidade média prevista, fração real de positivos e a AUC-ROC do modelo (supondo que o rótulo chegue sem atraso, só para fins de análise).
 3. Defina uma regra de alerta sem rótulos (PSI e AUC de domínio) e informe a semana do primeiro alerta e a semana em que a AUC do modelo estático cai mais de 0,10 em relação à da semana 1. O alerta enxerga todas as mudanças?
 4. Compare três estratégias: (a) estático; (b) retreino periódico, a cada 3 semanas, com as 3 últimas semanas rotuladas; (c) retreino por gatilho (quando a regra de alerta dispara, espera 2 semanas para que cheguem rótulos do regime novo, retreina com as 3 últimas semanas rotuladas e atualiza a referência do monitoramento).
-5. Compare as estratégias pela AUC média e pelo erro médio entre a probabilidade média prevista e a fração real de positivos (calibração global) nas semanas 4 a 12.
+5. Compare as estratégias pela AUC média e pelo erro médio entre a probabilidade média prevista e a fração real de positivos (calibração global) nas semanas 4 a 12, sem concluir demais de um único indicador.
 6. Escreva uma recomendação sobre monitoramento e retreinamento, explicando que tipo de mudança prejudica cada métrica.
 
 **Entregáveis.** Tabela semanal, semanas dos alertas, comparação das estratégias e recomendação.
@@ -130,16 +130,20 @@ from sklearn.preprocessing import StandardScaler
 
 def semana(s, n=1200):
     r = np.random.default_rng(500 + s)
-    X = r.normal(size=(n, 4))
+    N = 6 * n                                                        # reserva grande, para reamostrar por classe
+    X = r.normal(size=(N, 4))
     if s >= 3:
-        X[:, 0] += 0.8                                               # mudança de covariáveis
+        X[:, 0] += 0.8                                               # mudança de covariáveis (P(y | X) fixo)
     w = np.array([2.0, 1.6, -1.2, 0.0])
     if s >= 8:
         ang = np.deg2rad(80)                                         # deriva de conceito: a fronteira gira
         w = np.array([2.0 * np.cos(ang), 1.6, -1.2, 2.0 * np.sin(ang)])
-    intercepto = -3.4 if s < 6 else -2.6                             # mudança de rótulos
-    y = (r.random(n) < 1 / (1 + np.exp(-(X @ w + intercepto)))).astype(int)
-    return X, y
+    y = (r.random(N) < 1 / (1 + np.exp(-(X @ w - 3.4)))).astype(int)
+    # mudança de rótulos (label shift): muda P(y) e preserva P(X | y), sorteando cada classe separadamente
+    alvo = 0.15 if s < 6 else 0.35
+    n1 = int(round(alvo * n)); i1 = r.choice(np.flatnonzero(y == 1), n1, replace=False); i0 = r.choice(np.flatnonzero(y == 0), n - n1, replace=False)
+    idx = r.permutation(np.r_[i1, i0])
+    return X[idx], y[idx]
 
 def psi(ref, atual, faixas=10):
     cortes = np.quantile(ref, np.linspace(0, 1, faixas + 1)); cortes[0], cortes[-1] = -np.inf, np.inf
@@ -199,7 +203,7 @@ print("Erro médio de proporção (semanas 4-12):", {k: round(float(r[f"dif_prob
 - Comparação das três estratégias com as mesmas métricas e as mesmas semanas.
 - Atualização da referência após o retreino por gatilho.
 - Recomendação que explica que a mudança de covariáveis e a de rótulos nem sempre derrubam a AUC, mas a deriva de conceito sim.
-@@NOTE O resultado exato depende do computador e das versões. Nesta execução: (i) o alerta sem rótulos dispara na semana 3, junto com a mudança de covariáveis, mas a AUC do modelo quase não muda nessa fase (nem toda deriva prejudica o desempenho); (ii) na semana 6 a proporção real de positivos sobe e a probabilidade média prevista passa a diferir da realidade (descalibração), embora a AUC se mantenha; (iii) o alerta sem rótulos não enxerga a deriva de conceito da semana 8, porque a distribuição dos atributos não muda: só o desempenho com rótulos mostra a queda da AUC do modelo estático (de cerca de 0,92 para cerca de 0,75); (iv) por isso, o retreino periódico recupera a AUC (cerca de 0,89 nas semanas 10 a 12), enquanto o retreino por gatilho baseado apenas em sinais sem rótulos não reage. A lição é combinar monitoramento sem rótulos (rápido) com monitoramento de desempenho com rótulos (mais lento, mas decisivo), além de retreinos periódicos de segurança.
+@@NOTE O resultado exato depende do computador e das versões. Nesta execução: (i) o alerta sem rótulos dispara na semana 3, junto com a mudança de covariáveis, mas a AUC do modelo quase não muda nessa fase (nem toda deriva prejudica o desempenho); (ii) na semana 6, o *label shift* (a fração de positivos sobe de 15% para 35%, com P(X | y) preservado) não derruba a AUC, pois o ordenamento dos casos continua bom; o efeito aparece sobretudo nas probabilidades e no limiar de decisão, e a diferença entre a probabilidade média prevista e a fração real oscila de forma irregular entre as estratégias, de modo que não se deve tirar uma conclusão forte só desse indicador; (iii) o alerta sem rótulos não enxerga a deriva de conceito da semana 8, porque a distribuição dos atributos não muda: só o desempenho com rótulos mostra a queda da AUC do modelo estático (de cerca de 0,92 para cerca de 0,72); (iv) por isso, o retreino periódico recupera a AUC (cerca de 0,89 nas semanas 10 a 12), enquanto o retreino por gatilho baseado apenas em sinais sem rótulos recupera pouco. A lição é combinar monitoramento sem rótulos (rápido) com monitoramento de desempenho com rótulos (mais lento, mas decisivo), além de retreinos periódicos de segurança.
 @@ALEM
 - **UCI:** *Bike Sharing Dataset*, *Online Retail* e *Electricity (NSW)*, séries com padrões temporais e mudanças ao longo do tempo.
 - **Kaggle:** *Store Sales (Time Series Forecasting)* e *Rossmann Store Sales* para observar sazonalidade e eventos. Meça a deriva entre períodos.

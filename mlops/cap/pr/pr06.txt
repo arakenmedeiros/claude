@@ -1,5 +1,5 @@
 @@EX 1 | Métricas para classes raras | básico
-Gere um problema com 4% de positivos (`make_classification`, 10.000 exemplos, `weights=[0.96]`, `class_sep=0.9`, `random_state=1`). Treine uma floresta aleatória e calcule, no teste: acurácia, precisão, revocação, F1, AUC-ROC e AUC-PR. Compare com o modelo "sempre negativo". Explique por que a AUC-PR é mais informativa que a AUC-ROC neste caso.
+Gere um problema com 4% de positivos (`make_classification`, 10.000 exemplos, `weights=[0.96]`, `class_sep=0.9`, `random_state=1`). Treine uma floresta aleatória e calcule, no teste: acurácia, precisão, revocação, F1, AUC-ROC e AP. Compare com o modelo "sempre negativo". Explique por que a AP é mais informativa que a AUC-ROC neste caso.
 @@SOL
 ```python
 from sklearn.datasets import make_classification
@@ -17,10 +17,10 @@ for nome, m in [("sempre negativo", DummyClassifier(strategy="most_frequent")),
     prev, p = m.predict(Xte), m.predict_proba(Xte)[:, 1]
     print(f"{nome:16s} acc={accuracy_score(yte, prev):.3f} prec={precision_score(yte, prev, zero_division=0):.3f} "
           f"rev={recall_score(yte, prev):.3f} F1={f1_score(yte, prev):.3f} "
-          f"AUC-ROC={roc_auc_score(yte, p):.3f} AUC-PR={average_precision_score(yte, p):.3f}")
-print(f"Fração de positivos no teste (piso da AUC-PR): {yte.mean():.3f}")
+          f"AUC-ROC={roc_auc_score(yte, p):.3f} AP={average_precision_score(yte, p):.3f}")
+print(f"Fração de positivos no teste (piso da AP): {yte.mean():.3f}")
 ```
-@@NOTE A AUC-ROC da floresta parece alta (acima de 0,8), mas a AUC-PR é bem menor, porque, com poucos positivos, muitos falsos positivos pouco alteram a taxa de falsos positivos (que usa um denominador enorme). A curva PR expõe essa dificuldade.
+@@NOTE A AUC-ROC da floresta parece alta (acima de 0,8), mas a AP é bem menor, porque, com poucos positivos, muitos falsos positivos pouco alteram a taxa de falsos positivos (que usa um denominador enorme). A curva PR expõe essa dificuldade.
 @@EX 2 | Escolhendo o limiar pelo custo | intermediário
 No problema do exercício anterior, suponha que um falso negativo custe R$ 400 e um falso positivo custe R$ 8. Divida os dados em treino, validação e teste (50/25/25). Escolha o limiar que minimiza o custo na **validação** e aplique-o no **teste**. Compare o custo do teste com o limiar 0,5 e com o limiar escolhido.
 @@SOL
@@ -97,10 +97,10 @@ print(f"Viés médio de otimismo: {np.mean(dif):+.3f}")
 
 **Tarefas.**
 1. Divida em treino, validação e teste (60/20/20), estratificando por alvo.
-2. Compare regressão logística (com padronização) e floresta aleatória por validação cruzada repetida (5 dobras × 3 repetições) em AUC-PR. Reporte média e desvio.
+2. Compare regressão logística (com padronização) e floresta aleatória por validação cruzada repetida (5 dobras × 3 repetições) em AP. Reporte média e desvio.
 3. Escolha o melhor, calibre-o (isotônica) e reporte o Brier antes e depois, na validação.
 4. Escolha o limiar na validação com custos: falso negativo R$ 1.000 e falso positivo R$ 30.
-5. No teste, reporte AUC-PR, revocação, precisão e custo total, com intervalo de confiança de 95% (*bootstrap*) para a AUC-PR.
+5. No teste, reporte AP, revocação, precisão e custo total, com intervalo de confiança de 95% (*bootstrap*) para a AP.
 6. Reporte as mesmas métricas por região. Há desigualdade?
 7. Escreva uma recomendação de 4 linhas.
 
@@ -135,7 +135,7 @@ medias = {}
 for nome, m in candidatos.items():
     s = cross_val_score(m, Xtr, ytr, cv=cv, scoring="average_precision")
     medias[nome] = s.mean()
-    print(f"{nome:9s} AUC-PR (CV) = {s.mean():.3f} ± {s.std():.3f}")
+    print(f"{nome:9s} AP (CV) = {s.mean():.3f} ± {s.std():.3f}")
 melhor = max(medias, key=medias.get)
 
 bruto = candidatos[melhor].fit(Xtr, ytr)
@@ -154,7 +154,7 @@ rng = np.random.default_rng(0)
 boot = [average_precision_score(yte[i], pte[i]) for i in (rng.integers(0, len(yte), len(yte)) for _ in range(500))]
 lo, hi = np.percentile(boot, [2.5, 97.5])
 prev = pte >= t
-print(f"Teste: AUC-PR = {average_precision_score(yte, pte):.3f} (IC95% {lo:.3f}-{hi:.3f}) | revocação = {recall_score(yte, prev):.3f} | "
+print(f"Teste: AP = {average_precision_score(yte, pte):.3f} (IC95% {lo:.3f}-{hi:.3f}) | revocação = {recall_score(yte, prev):.3f} | "
       f"precisão = {precision_score(yte, prev):.3f} | custo = R$ {custo(pte, yte, t):,.0f}")
 
 reg_te = regiao[ite]
@@ -162,7 +162,7 @@ linhas = []
 for r in ["A", "B"]:
     m_ = reg_te == r
     linhas.append({"região": r, "n": int(m_.sum()), "positivos (%)": round(yte[m_].mean() * 100, 1),
-                   "AUC-PR": round(average_precision_score(yte[m_], pte[m_]), 3),
+                   "AP": round(average_precision_score(yte[m_], pte[m_]), 3),
                    "revocação": round(recall_score(yte[m_], prev[m_]), 3),
                    "precisão": round(precision_score(yte[m_], prev[m_], zero_division=0), 3)})
 print(pd.DataFrame(linhas).to_string(index=False))
@@ -174,7 +174,7 @@ print(pd.DataFrame(linhas).to_string(index=False))
 - Intervalo de confiança por bootstrap para a métrica final.
 - Análise por região com discussão de desigualdade e limites (amostras pequenas na fatia).
 - Recomendação objetiva, com ressalvas sobre incerteza, custo e monitoramento.
-@@NOTE O resultado exato depende do computador e das versões das bibliotecas. O padrão esperado: a floresta supera a regressão logística em AUC-PR; a calibração reduz o Brier; o limiar escolhido é muito menor que 0,5 por causa do custo do falso negativo; o intervalo de confiança da AUC-PR é razoavelmente largo, pois há poucos positivos; e as métricas diferem entre as regiões, apontando que a fatia B merece atenção e monitoramento próprio.
+@@NOTE O resultado exato depende do computador e das versões das bibliotecas. O padrão esperado: a floresta supera a regressão logística em AP; a calibração reduz o Brier; o limiar escolhido é muito menor que 0,5 por causa do custo do falso negativo; o intervalo de confiança da AP é razoavelmente largo, pois há poucos positivos; e as métricas diferem entre as regiões, apontando que a fatia B merece atenção e monitoramento próprio.
 @@ALEM
 - **UCI:** *Default of Credit Card Clients*, *Statlog (German Credit Data)* e *Bank Marketing* para repetir o relatório com dados reais de risco e marketing.
-- **Kaggle:** *Give Me Some Credit* e *Credit Card Fraud Detection* (muito desbalanceado) para praticar AUC-PR, limiares e calibração.
+- **Kaggle:** *Give Me Some Credit* e *Credit Card Fraud Detection* (muito desbalanceado) para praticar AP, limiares e calibração.

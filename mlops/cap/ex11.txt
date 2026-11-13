@@ -62,11 +62,11 @@ d) aprovação sem critérios.
 R: a | Aprovado, o modelo é registrado como champion.
 
 MC: O apelido champion é usado pela API para:
-a) carregar o modelo vigente sem mudar o código quando a versão muda.
+a) carregar o modelo vigente pelo apelido, sem editar o código, e recarregar quando a versão muda.
 b) guardar a senha.
 c) desligar o servidor.
 d) escolher a cor dos gráficos.
-R: a | Promover é mover o apelido.
+R: a | Promover é mover o apelido; o serviço precisa recarregar o modelo.
 
 MC: O contrato da API do projeto rejeita:
 a) tamanho diferente de 64 pixels e valores fora de 0 a 16.
@@ -251,7 +251,7 @@ DISC: Qual a diferença entre uma simulação como a do projeto e a produção r
 R: Na simulação, a deriva é controlada e conhecida, os rótulos têm atraso fixo e o ambiente é simples. Na realidade, as causas são variadas e desconhecidas, os rótulos são ruidosos e incompletos, e há restrições de custo, equipe e conformidade.
 
 DISC: Como o projeto aplica o princípio de reversão rápida usando o registro de modelos?
-R: O código carrega o modelo pelo apelido champion; para reverter, move-se o apelido para uma versão anterior validada, sem alterar o código nem reimplantar a API.
+R: O código carrega o modelo pelo apelido champion; para reverter, move-se o apelido para uma versão anterior validada e recarrega-se o serviço, sem editar o código; confere-se a versão servida.
 
 DISC: Que mudanças você faria para adaptar o projeto a um problema de dados tabulares, como churn de clientes?
 R: Trocar o conjunto de dados; usar ColumnTransformer com imputação e codificação; escolher métricas de negócio e limiar por custo; criar atributos temporais; definir o tipo de deriva esperado (covariáveis e rótulos); adaptar os testes e as fatias (regiões, planos).

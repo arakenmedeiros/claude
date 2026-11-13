@@ -95,7 +95,7 @@ def f9_tipos():
 
 def f9_psi():
     rng=np.random.default_rng(0); ref=rng.normal(50,10,5000)
-    cen=[("sem mudança",rng.normal(50,10,2000),GRN),("média +3",rng.normal(53,10,2000),AMB),("média +10",rng.normal(60,10,2000),RED),("variância ×2",rng.normal(50,20,2000),VIO)]
+    cen=[("sem mudança",rng.normal(50,10,2000),GRN),("média +3",rng.normal(53,10,2000),AMB),("média +10",rng.normal(60,10,2000),RED),("desvio padrão ×2",rng.normal(50,20,2000),VIO)]
     def psi(r,a,b=10):
         c=np.quantile(r,np.linspace(0,1,b+1)); c[0],c[-1]=-np.inf,np.inf
         p=np.clip(np.histogram(r,c)[0]/len(r),1e-6,None); q=np.clip(np.histogram(a,c)[0]/len(a),1e-6,None); return float(np.sum((q-p)*np.log(q/p)))

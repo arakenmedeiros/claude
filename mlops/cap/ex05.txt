@@ -15,7 +15,7 @@ R: a | Um experimento agrupa várias execuções.
 MC: Qual destes é um parâmetro, e não uma métrica?
 a) n_estimators = 200.
 b) F1 = 0,96.
-c) AUC-PR = 0,78.
+c) AP = 0,78.
 d) Perda = 0,12.
 R: a | Parâmetros são entradas fixas durante a execução; métricas medem o resultado.
 
@@ -104,7 +104,7 @@ d) a versão apagada.
 R: a | O challenger é a candidata.
 
 MC: Qual a vantagem de carregar o modelo por models:/nome@champion?
-a) Trocar ou reverter o modelo exige apenas mover o apelido, sem mudar o código.
+a) Trocar ou reverter exige mover o apelido e recarregar o serviço, sem editar o código.
 b) O modelo fica mais rápido.
 c) O modelo nunca erra.
 d) Elimina a necessidade de registro.
@@ -224,7 +224,7 @@ DISC: Por que uma diferença pequena de F1 entre modelos pode não significar na
 R: Porque, com poucos exemplos de teste, a métrica tem incerteza; diferenças pequenas podem ser ruído. É preciso usar validação cruzada, intervalos de confiança e testes estatísticos para decidir.
 
 DISC: Explique o papel dos apelidos no registro de modelos e por que facilitam a reversão.
-R: Apelidos são nomes móveis que apontam para versões, como champion e challenger. O código de produção carrega sempre o apelido; para trocar ou reverter, basta mover o apelido, sem alterar código ou reimplantar.
+R: Apelidos são nomes móveis que apontam para versões, como champion e challenger. O código de produção carrega sempre o apelido; para trocar ou reverter, move-se o apelido e recarrega-se o serviço, sem editar o código. Mover o apelido só muda a referência no registro; o objeto já carregado continua sendo a versão antiga até a recarga.
 
 DISC: Descreva um portão de promoção automática de modelos e três critérios que ele deve ter.
 R: Função executada ao final do treino que decide se o candidato vira champion. Critérios: piso absoluto de qualidade, ganho mínimo sobre o campeão (margem) e registro da decisão com data, motivo e responsável. Opcionalmente, intervalo de confiança e testes em fatias.
@@ -251,7 +251,7 @@ DISC: Como você garantiria uma comparação justa entre o campeão e o candidat
 R: Usando o mesmo conjunto de avaliação fixo e versionado, não usado no treino de nenhum dos dois, com as mesmas métricas, e comparando com intervalos de confiança e margem mínima.
 
 DISC: Por que o código de produção não deve depender do número da versão do modelo, mas sim do apelido?
-R: Porque trocar a versão exigiria alterar e reimplantar o código. Com o apelido, a mudança de modelo é uma operação de registro, auditável e reversível em segundos.
+R: Porque trocar a versão exigiria alterar e reimplantar o código. Com o apelido, a mudança de modelo é uma operação de registro, auditável e reversível, seguida da recarga do serviço.
 
 DISC: Cite quatro componentes principais do MLflow e a função de cada um.
 R: Tracking (registra e consulta execuções), Models (formato padrão de empacotamento), Model Registry (catálogo com versões e apelidos) e Projects (empacotamento de código reprodutível).

@@ -40,12 +40,12 @@ c) nenhuma curva pode ser usada.
 d) ambas são idênticas.
 R: a | A ROC pode parecer ótima mesmo com muitos falsos alarmes.
 
-MC: Qual é a AUC-PR de um classificador aleatório em um conjunto com 5% de positivos?
+MC: Qual é a AP de um classificador aleatório em um conjunto com 5% de positivos?
 a) Aproximadamente 0,05.
 b) Aproximadamente 0,50.
 c) Aproximadamente 0,95.
 d) Exatamente 1,00.
-R: a | O piso da AUC-PR é a fração de positivos.
+R: a | O piso da AP é a fração de positivos.
 
 MC: O limiar de decisão padrão de 0,5:
 a) raramente é o ótimo quando os custos dos erros são diferentes.
@@ -97,7 +97,7 @@ d) usada apenas como validação final.
 R: a | Resume-se por média e desvio dos k resultados.
 
 MC: Por que reportar o desvio padrão da validação cruzada?
-a) Para mostrar a incerteza; diferenças menores que a dispersão podem ser ruído.
+a) Para mostrar a incerteza; diferenças pequenas diante da dispersão merecem desconfiança e uma comparação pareada.
 b) Para aumentar a média.
 c) Para reduzir o número de dobras.
 d) Porque é obrigatório por lei.
@@ -209,7 +209,7 @@ d) remove atributos redundantes.
 R: a | Costuma reduzir o erro de calibração.
 
 DISC: Explique, com um exemplo, por que a acurácia pode enganar em problemas de classes raras e quais métricas usar em seu lugar.
-R: Com 5% de fraudes, prever sempre "não fraude" dá 95% de acurácia sem encontrar nenhuma fraude. Usam-se precisão, revocação, F1 e AUC-PR, que olham a classe rara, e se escolhem de acordo com o custo dos erros.
+R: Com 5% de fraudes, prever sempre "não fraude" dá 95% de acurácia sem encontrar nenhuma fraude. Usam-se precisão, revocação, F1 e AP, que olham a classe rara, e se escolhem de acordo com o custo dos erros.
 
 DISC: Diferencie precisão e revocação com um exemplo do cotidiano.
 R: Detector de fumaça sensível: apita com torrada queimada (baixa precisão, alta revocação). Detector frouxo: nunca falha em alarme falso, mas pode deixar passar um incêndio (alta precisão, baixa revocação). A escolha depende do custo de cada erro.
@@ -224,7 +224,7 @@ DISC: O que é calibração e por que ela importa quando a probabilidade entra n
 R: Um modelo é calibrado se as probabilidades correspondem às frequências reais. Importa para preço de seguro, risco de crédito e priorização, em que o valor numérico da probabilidade (e não só o ranking) é usado.
 
 DISC: Explique a validação cruzada de k dobras e as razões para reportar média e dispersão.
-R: Divide-se o conjunto em k partes; cada uma serve de teste uma vez, treinando nas outras. Resumem-se os k resultados pela média e pelo desvio. A dispersão mostra a incerteza; diferenças menores que ela podem ser ruído.
+R: Divide-se o conjunto em k partes; cada uma serve de teste uma vez, treinando nas outras. Resumem-se os k resultados pela média e pelo desvio. A dispersão mostra a variabilidade; diferenças pequenas diante dela merecem desconfiança e devem ser confirmadas por uma comparação pareada (por dobra ou por bootstrap).
 
 DISC: Por que embaralhar os dados é incorreto na validação de séries temporais?
 R: Porque o modelo veria o futuro durante o treino, o que é impossível em produção e infla o desempenho. Deve-se treinar no passado e testar no futuro, com divisões que respeitem a ordem.
@@ -260,7 +260,7 @@ DISC: Por que o desvio treino–teste em desempenho pode indicar sobreajuste? Co
 R: Se o desempenho no treino é muito maior que na validação, o modelo memorizou o treino. Investiga-se com curvas de aprendizado, regularização, validação cruzada, mais dados e simplificação do modelo.
 
 DISC: O que são classes desbalanceadas e quais técnicas ajudam a lidar com elas?
-R: Quando uma classe é muito mais rara que outra. Ajudam métricas adequadas (AUC-PR, F1), pesos de classe, reamostragem, ajuste do limiar por custo e validação estratificada.
+R: Quando uma classe é muito mais rara que outra. Ajudam métricas adequadas (AP, F1), pesos de classe, reamostragem, ajuste do limiar por custo e validação estratificada.
 
 DISC: Explique por que as probabilidades de uma floresta aleatória costumam precisar de calibração.
 R: A média dos votos das árvores tende a evitar valores extremos, deixando as probabilidades "espremidas" para o meio. Métodos como a regressão isotônica ou de Platt corrigem isso.

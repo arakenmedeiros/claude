@@ -153,7 +153,7 @@ def f6_curvas():
     fig,ax=plt.subplots(1,2,figsize=(8.4,3.6))
     ax[0].plot(fpr,tpr,c=IND,lw=2.5); ax[0].plot([0,1],[0,1],"--",c=GRY); ax[0].fill_between(fpr,tpr,alpha=0.12,color=IND); ax[0].set_title(f"ROC (AUC = {roc_auc_score(yte,p):.2f})"); ax[0].set_xlabel("taxa de falsos positivos"); ax[0].set_ylabel("taxa de verdadeiros positivos")
     ax[1].plot(rc,pr,c=RED,lw=2.5); ax[1].axhline(yte.mean(),ls="--",c=GRY); ax[1].text(0.5,yte.mean()+0.03,f"acaso = {yte.mean():.2f}",fontsize=8,color=GRY); ax[1].fill_between(rc,pr,alpha=0.12,color=RED)
-    ax[1].set_title(f"Precisão-revocação (AUC-PR = {average_precision_score(yte,p):.2f})"); ax[1].set_xlabel("revocação"); ax[1].set_ylabel("precisão"); ax[1].set_ylim(0,1.02)
+    ax[1].set_title(f"Precisão-revocação (AP = {average_precision_score(yte,p):.2f})"); ax[1].set_xlabel("revocação"); ax[1].set_ylabel("precisão"); ax[1].set_ylim(0,1.02)
     fig.tight_layout(); save(fig,"f6_curvas")
 
 def f6_calibracao():

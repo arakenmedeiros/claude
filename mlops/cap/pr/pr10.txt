@@ -70,7 +70,7 @@ print("\nCom uma cópia quase idêntica:\n", com_copia.round(4).to_string())
 ```
 @@NOTE Com atributos quase duplicados, a importância se divide entre eles, e cada um pode parecer menos relevante do que realmente é. Por isso, explicações devem ser lidas com cuidado e acompanhadas da análise de correlação entre atributos.
 @@EX 3 | Auditoria de justiça e ajuste de limiares | intermediário
-Simule 20.000 candidatos a crédito de dois grupos (A, 70%; B, 30%) com o mesmo mérito real, mas com um atributo medido com viés no grupo B. Treine uma regressão logística **sem** o grupo como entrada e calcule, por grupo, taxa de seleção, revocação (TPR) e precisão. Reporte a razão de impacto. Depois, escolha limiares por grupo que igualem a revocação em 80% e recalcule.
+Simule 20.000 candidatos a crédito de dois grupos (A, 70%; B, 30%) com a mesma habilidade real, mas com um atributo medido com viés no grupo B. Divida em treino, validação e teste (50/25/25). Treine uma regressão logística **sem** o grupo como entrada e calcule, no **teste**, por grupo, taxa de seleção, revocação (TPR) e precisão. Reporte a razão de impacto. Depois, escolha limiares por grupo que levem a revocação a 80% **na validação**, aplique-os no teste e recalcule.
 @@SOL
 ```python
 import numpy as np
@@ -82,12 +82,14 @@ rng = np.random.default_rng(0)
 n = 20000
 grupo = rng.choice(["A", "B"], n, p=[0.7, 0.3])
 merito = rng.normal(size=n)
-y = (merito + rng.normal(0, 0.8, n) > 0).astype(int)
+y = (merito + rng.normal(0, 0.8, n) > 0).astype(int)                 # resultado positivo segundo o critério definido
 x1 = merito + np.where(grupo == "B", -0.6, 0.0) + rng.normal(0, 0.5, n)       # medido com viés no grupo B
 x2 = merito + rng.normal(0, 0.9, n)
 d = pd.DataFrame({"x1": x1, "x2": x2, "grupo": grupo, "y": y})
-tr, te = train_test_split(d, test_size=0.4, random_state=0, stratify=d["grupo"])
+tr, resto = train_test_split(d, test_size=0.5, random_state=0, stratify=d["grupo"])
+va, te = train_test_split(resto, test_size=0.5, random_state=0, stratify=resto["grupo"])
 m = LogisticRegression().fit(tr[["x1", "x2"]], tr["y"])
+va = va.assign(p=m.predict_proba(va[["x1", "x2"]])[:, 1])
 te = te.assign(p=m.predict_proba(te[["x1", "x2"]])[:, 1])
 
 def relatorio(te, sel):
@@ -98,16 +100,16 @@ def relatorio(te, sel):
     return pd.DataFrame(linhas).T.round(3)
 
 t1 = relatorio(te, te["p"] >= 0.5)
-print("Limiar único 0,5:\n", t1)
+print("Limiar único 0,5 (teste):\n", t1)
 print("Razão de impacto B/A:", round(t1.loc["B", "taxa_selecao"] / t1.loc["A", "taxa_selecao"], 3))
 
-limiares = {g: float(np.quantile(dg.loc[dg["y"] == 1, "p"], 1 - 0.80)) for g, dg in te.groupby("grupo")}
+limiares = {g: float(np.quantile(dg.loc[dg["y"] == 1, "p"], 1 - 0.80)) for g, dg in va.groupby("grupo")}   # ajuste na validação
 sel2 = np.array([p >= limiares[g] for p, g in zip(te["p"], te["grupo"])])
 t2 = relatorio(te, sel2)
-print("\nLimiares por grupo", {g: round(v, 3) for g, v in limiares.items()}, ":\n", t2)
+print("\nLimiares por grupo (da validação)", {g: round(v, 3) for g, v in limiares.items()}, ":\n", t2)
 print("Razão de impacto B/A:", round(t2.loc["B", "taxa_selecao"] / t2.loc["A", "taxa_selecao"], 3))
 ```
-@@NOTE Sem usar o grupo, o modelo ainda seleciona menos pessoas do grupo B e encontra menos dos que merecem: o viés entrou pelo atributo medido com erro. Com limiares por grupo, a revocação fica igual (80%), mas a precisão e a taxa de seleção mudam. Escolher o critério de justiça é uma decisão social e jurídica, e não apenas técnica.
+@@NOTE Sem usar o grupo, o modelo ainda seleciona menos pessoas do grupo B e encontra menos dos casos positivos desse grupo: o viés entrou pelo atributo medido com erro. Com limiares ajustados na validação, as revocações no teste ficam próximas (não exatamente iguais, pois os limiares foram escolhidos em outra amostra), e a precisão e a taxa de seleção também mudam. Escolher o critério de justiça é uma decisão social e jurídica, e não apenas técnica.
 @@EX 4 | Privacidade diferencial: o custo do ruído | avançado
 Considere 1.000 pessoas com a característica de interesse em 300 delas. Divulgue a contagem com o mecanismo de Laplace (sensibilidade 1) para ε = 0,05; 0,5 e 5. Para cada ε, repita 2.000 vezes e informe o erro absoluto médio. Depois, mostre o efeito de repetir a mesma consulta 100 vezes e fazer a média dos resultados (o que acontece com a privacidade?).
 @@SOL
