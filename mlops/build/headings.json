@@ -600,828 +600,828 @@
   "id": "h120"
  },
  {
-  "level": 3,
-  "text": "5.6 Promoção automática com portão de qualidade",
+  "level": 4,
+  "text": "5.5.1 Mover o apelido não atualiza o modelo já carregado",
   "id": "h121"
  },
  {
   "level": 3,
-  "text": "5.7 Metadados de modelo: o que um \"cartão de identidade\" deve conter",
+  "text": "5.6 Promoção automática com portão de qualidade",
   "id": "h122"
  },
  {
   "level": 3,
-  "text": "5.8 Além do MLflow",
+  "text": "5.7 Metadados de modelo: o que um \"cartão de identidade\" deve conter",
   "id": "h123"
  },
  {
   "level": 3,
-  "text": "5.9 Resumo do capítulo",
+  "text": "5.8 Além do MLflow",
   "id": "h124"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "5.9 Resumo do capítulo",
   "id": "h125"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "Exercícios de múltipla escolha",
   "id": "h126"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "Exercícios discursivos",
   "id": "h127"
  },
  {
-  "level": 4,
-  "text": "Exercício 1 — Três modelos, três execuções, uma consulta",
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h128"
  },
  {
   "level": 4,
-  "text": "Exercício 2 — Curva de aprendizado como métrica por passo",
+  "text": "Exercício 1 — Três modelos, três execuções, uma consulta",
   "id": "h129"
  },
  {
   "level": 4,
-  "text": "Exercício 3 — Versões, apelidos e reversão",
+  "text": "Exercício 2 — Curva de aprendizado como métrica por passo",
   "id": "h130"
  },
  {
   "level": 4,
-  "text": "Exercício 4 — Promoção só com evidência estatística",
+  "text": "Exercício 3 — Versões, apelidos e reversão",
   "id": "h131"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Promoção só com evidência estatística",
+  "id": "h132"
  },
  {
   "level": 3,
   "text": "Projeto integrador do capítulo",
-  "id": "h132"
+  "id": "h133"
  },
  {
   "level": 4,
   "text": "Central de experimentos com portão e registro",
-  "id": "h133"
+  "id": "h134"
  },
  {
   "level": 2,
   "text": "Capítulo 6 — Avaliação Rigorosa e Otimização de Hiperparâmetros",
-  "id": "h134"
- },
- {
-  "level": 3,
-  "text": "6.1 Avaliar é mais difícil do que parece",
   "id": "h135"
  },
  {
   "level": 3,
-  "text": "6.2 Métricas de classificação",
+  "text": "6.1 Avaliar é mais difícil do que parece",
   "id": "h136"
  },
  {
-  "level": 4,
-  "text": "6.2.1 O engano da acurácia",
+  "level": 3,
+  "text": "6.2 Métricas de classificação",
   "id": "h137"
  },
  {
   "level": 4,
-  "text": "6.2.2 Curva ROC e curva de precisão-revocação",
+  "text": "6.2.1 O engano da acurácia",
   "id": "h138"
  },
  {
-  "level": 3,
-  "text": "6.3 Escolhendo o limiar pelo custo",
+  "level": 4,
+  "text": "6.2.2 Curva ROC e curva de precisão-revocação",
   "id": "h139"
  },
  {
-  "level": 3,
-  "text": "6.4 Calibração: as probabilidades dizem a verdade?",
+  "level": 4,
+  "text": "6.2.3 AP não é \"a\" área sob a curva PR",
   "id": "h140"
  },
  {
   "level": 3,
-  "text": "6.5 Validação cruzada",
+  "text": "6.3 Escolhendo o limiar pelo custo",
   "id": "h141"
  },
  {
-  "level": 4,
-  "text": "6.5.1 Quando os dados têm tempo: não embaralhe!",
+  "level": 3,
+  "text": "6.4 Calibração: as probabilidades dizem a verdade?",
   "id": "h142"
  },
  {
   "level": 3,
-  "text": "6.6 Comparando modelos com honestidade",
+  "text": "6.5 Validação cruzada",
   "id": "h143"
  },
  {
-  "level": 3,
-  "text": "6.7 O viés de seleção e a validação aninhada",
+  "level": 4,
+  "text": "6.5.1 Quando os dados têm tempo: não embaralhe!",
   "id": "h144"
  },
  {
   "level": 3,
-  "text": "6.8 Otimização de hiperparâmetros",
+  "text": "6.6 Comparando modelos com honestidade",
   "id": "h145"
  },
  {
   "level": 3,
-  "text": "6.9 Avaliando por fatias",
+  "text": "6.7 O viés de seleção e a validação aninhada",
   "id": "h146"
  },
  {
   "level": 3,
-  "text": "6.10 Métricas de regressão",
+  "text": "6.8 Otimização de hiperparâmetros",
   "id": "h147"
  },
  {
   "level": 3,
-  "text": "6.11 Offline versus online",
+  "text": "6.9 Avaliando por fatias",
   "id": "h148"
  },
  {
   "level": 3,
-  "text": "6.12 Resumo do capítulo",
+  "text": "6.10 Métricas de regressão",
   "id": "h149"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "6.11 Offline versus online",
   "id": "h150"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "6.12 Resumo do capítulo",
   "id": "h151"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "Exercícios de múltipla escolha",
   "id": "h152"
  },
  {
-  "level": 4,
-  "text": "Exercício 1 — Métricas para classes raras",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h153"
  },
  {
-  "level": 4,
-  "text": "Exercício 2 — Escolhendo o limiar pelo custo",
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h154"
  },
  {
   "level": 4,
-  "text": "Exercício 3 — Calibração antes e depois",
+  "text": "Exercício 1 — Métricas para classes raras",
   "id": "h155"
  },
  {
   "level": 4,
-  "text": "Exercício 4 — O viés da busca de hiperparâmetros",
+  "text": "Exercício 2 — Escolhendo o limiar pelo custo",
   "id": "h156"
  },
  {
-  "level": 3,
-  "text": "Projeto integrador do capítulo",
+  "level": 4,
+  "text": "Exercício 3 — Calibração antes e depois",
   "id": "h157"
  },
  {
   "level": 4,
-  "text": "Relatório de avaliação rigorosa de um modelo de risco",
+  "text": "Exercício 4 — O viés da busca de hiperparâmetros",
   "id": "h158"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h159"
+ },
+ {
+  "level": 4,
+  "text": "Relatório de avaliação rigorosa de um modelo de risco",
+  "id": "h160"
  },
  {
   "level": 1,
   "text": "Parte III — Entrega e Operação",
-  "id": "h159"
+  "id": "h161"
  },
  {
   "level": 2,
   "text": "Capítulo 7 — Empacotamento e Serviço de Modelos",
-  "id": "h160"
- },
- {
-  "level": 3,
-  "text": "7.1 O modelo precisa sair do laboratório",
-  "id": "h161"
- },
- {
-  "level": 3,
-  "text": "7.2 Quatro formas de entregar previsões",
   "id": "h162"
  },
  {
   "level": 3,
-  "text": "7.3 O contrato de entrada e saída",
+  "text": "7.1 O modelo precisa sair do laboratório",
   "id": "h163"
  },
  {
   "level": 3,
-  "text": "7.4 Uma API de previsão com FastAPI",
+  "text": "7.2 Quatro formas de entregar previsões",
   "id": "h164"
  },
  {
   "level": 3,
-  "text": "7.5 Testando a API sem subir servidor",
+  "text": "7.3 O contrato de entrada e saída",
   "id": "h165"
  },
  {
   "level": 3,
-  "text": "7.6 Latência: não olhe só a média",
+  "text": "7.4 Uma API de previsão com FastAPI",
   "id": "h166"
  },
  {
   "level": 3,
-  "text": "7.7 Contêineres: levando o ambiente junto",
+  "text": "7.5 Testando a API sem subir servidor",
   "id": "h167"
  },
  {
   "level": 4,
-  "text": "7.7.1 Boas práticas com imagens",
+  "text": "7.5.1 Atualizando o modelo de um serviço em execução",
   "id": "h168"
  },
  {
   "level": 3,
-  "text": "7.8 Previsão em lote",
+  "text": "7.6 Latência: não olhe só a média",
   "id": "h169"
  },
  {
   "level": 3,
-  "text": "7.9 Estratégias de entrega: um panorama",
+  "text": "7.7 Contêineres: levando o ambiente junto",
   "id": "h170"
  },
  {
-  "level": 3,
-  "text": "7.10 Segurança no serviço de modelos",
+  "level": 4,
+  "text": "7.7.1 Boas práticas com imagens",
   "id": "h171"
  },
  {
   "level": 3,
-  "text": "7.11 Resumo do capítulo",
+  "text": "7.8 Previsão em lote",
   "id": "h172"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "7.9 Estratégias de entrega: um panorama",
   "id": "h173"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "7.10 Segurança no serviço de modelos",
   "id": "h174"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "7.11 Resumo do capítulo",
   "id": "h175"
  },
  {
-  "level": 4,
-  "text": "Exercício 1 — Um contrato gerado a partir dos dados de treino",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h176"
  },
  {
-  "level": 4,
-  "text": "Exercício 2 — Uma API mínima com saúde e previsão",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h177"
  },
  {
-  "level": 4,
-  "text": "Exercício 3 — Percentis de latência e o ganho do lote",
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h178"
  },
  {
   "level": 4,
-  "text": "Exercício 4 — Previsão em lote idempotente com manifesto",
+  "text": "Exercício 1 — Um contrato gerado a partir dos dados de treino",
   "id": "h179"
  },
  {
-  "level": 3,
-  "text": "Projeto integrador do capítulo",
+  "level": 4,
+  "text": "Exercício 2 — Uma API mínima com saúde e previsão",
   "id": "h180"
  },
  {
   "level": 4,
-  "text": "API completa com tempo real, lote, limites e testes",
+  "text": "Exercício 3 — Percentis de latência e o ganho do lote",
   "id": "h181"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — Testes e CI/CD para Machine Learning",
+  "level": 4,
+  "text": "Exercício 4 — Previsão em lote idempotente com manifesto",
   "id": "h182"
  },
  {
   "level": 3,
-  "text": "8.1 Testar para dormir tranquilo",
+  "text": "Projeto integrador do capítulo",
   "id": "h183"
  },
  {
-  "level": 3,
-  "text": "8.2 Testes unitários com pytest",
+  "level": 4,
+  "text": "API completa com tempo real, lote, limites e testes",
   "id": "h184"
  },
  {
-  "level": 3,
-  "text": "8.3 Testes de dados",
+  "level": 2,
+  "text": "Capítulo 8 — Testes e CI/CD para Machine Learning",
   "id": "h185"
  },
  {
   "level": 3,
-  "text": "8.4 Testes de modelo",
+  "text": "8.1 Testar para dormir tranquilo",
   "id": "h186"
  },
  {
   "level": 3,
-  "text": "8.5 O portão de qualidade",
+  "text": "8.2 Testes unitários com pytest",
   "id": "h187"
  },
  {
   "level": 3,
-  "text": "8.6 Integração contínua (CI)",
+  "text": "8.3 Testes de dados",
   "id": "h188"
  },
  {
-  "level": 4,
-  "text": "8.6.1 Um exemplo de fluxo de CI",
+  "level": 3,
+  "text": "8.4 Testes de modelo",
   "id": "h189"
  },
  {
-  "level": 4,
-  "text": "8.6.2 Boas práticas de CI",
+  "level": 3,
+  "text": "8.5 O portão de qualidade",
   "id": "h190"
  },
  {
   "level": 3,
-  "text": "8.7 Entrega e implantação contínuas (CD)",
+  "text": "8.6 Integração contínua (CI)",
   "id": "h191"
  },
  {
-  "level": 3,
-  "text": "8.8 Treinamento contínuo (CT)",
+  "level": 4,
+  "text": "8.6.1 Um exemplo de fluxo de CI",
   "id": "h192"
  },
  {
-  "level": 3,
-  "text": "8.9 Revisão de código e de modelos",
+  "level": 4,
+  "text": "8.6.2 Boas práticas de CI",
   "id": "h193"
  },
  {
   "level": 3,
-  "text": "8.10 Resumo do capítulo",
+  "text": "8.7 Entrega e implantação contínuas (CD)",
   "id": "h194"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "8.8 Treinamento contínuo (CT)",
   "id": "h195"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "8.9 Revisão de código e de modelos",
   "id": "h196"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "8.10 Resumo do capítulo",
   "id": "h197"
  },
  {
-  "level": 4,
-  "text": "Exercício 1 — Testes unitários para uma função de limpeza",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h198"
  },
  {
-  "level": 4,
-  "text": "Exercício 2 — Testes de comportamento do modelo",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h199"
  },
  {
-  "level": 4,
-  "text": "Exercício 3 — Portão de qualidade com código de saída",
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h200"
  },
  {
   "level": 4,
-  "text": "Exercício 4 — Os testes realmente protegem? Quebrando o modelo de propósito",
+  "text": "Exercício 1 — Testes unitários para uma função de limpeza",
   "id": "h201"
  },
  {
-  "level": 3,
-  "text": "Projeto integrador do capítulo",
+  "level": 4,
+  "text": "Exercício 2 — Testes de comportamento do modelo",
   "id": "h202"
  },
  {
   "level": 4,
-  "text": "Suíte de testes e CI local de ponta a ponta",
+  "text": "Exercício 3 — Portão de qualidade que valida as métricas",
   "id": "h203"
  },
  {
-  "level": 2,
-  "text": "Capítulo 9 — Monitoramento, Deriva de Dados e Retreinamento",
+  "level": 4,
+  "text": "Exercício 4 — Os testes realmente protegem? Quebrando o modelo de propósito",
   "id": "h204"
  },
  {
   "level": 3,
-  "text": "9.1 O modelo envelhece sozinho",
+  "text": "Projeto integrador do capítulo",
   "id": "h205"
  },
  {
-  "level": 3,
-  "text": "9.2 O que monitorar",
+  "level": 4,
+  "text": "Suíte de testes e CI local de ponta a ponta",
   "id": "h206"
  },
  {
-  "level": 3,
-  "text": "9.3 Os tipos de mudança",
+  "level": 2,
+  "text": "Capítulo 9 — Monitoramento, Deriva de Dados e Retreinamento",
   "id": "h207"
  },
  {
   "level": 3,
-  "text": "9.4 Detectando mudanças em um atributo",
+  "text": "9.1 O modelo envelhece sozinho",
   "id": "h208"
  },
  {
   "level": 3,
-  "text": "9.5 Mudanças que só aparecem no conjunto",
+  "text": "9.2 O que monitorar",
   "id": "h209"
  },
  {
   "level": 3,
-  "text": "9.6 Monitorando as previsões",
+  "text": "9.3 Os tipos de mudança",
   "id": "h210"
  },
  {
   "level": 3,
-  "text": "9.7 Desempenho com rótulos atrasados",
+  "text": "9.4 Detectando mudanças em um atributo",
   "id": "h211"
  },
  {
-  "level": 4,
-  "text": "9.7.1 Um detector de deriva em fluxo de erros",
+  "level": 3,
+  "text": "9.5 Mudanças que só aparecem no conjunto",
   "id": "h212"
  },
  {
   "level": 3,
-  "text": "9.8 Simulação de um modelo que envelhece",
+  "text": "9.6 Monitorando as previsões",
   "id": "h213"
  },
  {
-  "level": 4,
-  "text": "9.8.1 O DDM em ação",
+  "level": 3,
+  "text": "9.7 Desempenho com rótulos atrasados",
   "id": "h214"
  },
  {
-  "level": 3,
-  "text": "9.9 Retreinamento: como e quando",
+  "level": 4,
+  "text": "9.7.1 Um detector de deriva em fluxo de erros",
   "id": "h215"
  },
  {
   "level": 3,
-  "text": "9.10 Implantando mudanças com segurança",
+  "text": "9.8 Simulação de um modelo que envelhece",
   "id": "h216"
  },
  {
   "level": 4,
-  "text": "9.10.1 Teste A/B: quanta gente é preciso?",
+  "text": "9.8.1 O DDM em ação",
   "id": "h217"
  },
  {
   "level": 3,
-  "text": "9.11 Registrando o que o modelo faz",
+  "text": "9.9 Retreinamento: como e quando",
   "id": "h218"
  },
  {
   "level": 3,
-  "text": "9.12 Alertas, painéis e planos de resposta",
+  "text": "9.10 Implantando mudanças com segurança",
   "id": "h219"
  },
  {
-  "level": 3,
-  "text": "9.13 Resumo do capítulo",
+  "level": 4,
+  "text": "9.10.1 Teste A/B: quanta gente é preciso?",
   "id": "h220"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "9.11 Registrando o que o modelo faz",
   "id": "h221"
  },
  {
   "level": 3,
-  "text": "Exercícios discursivos",
+  "text": "9.12 Alertas, painéis e planos de resposta",
   "id": "h222"
  },
  {
   "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
+  "text": "9.13 Resumo do capítulo",
   "id": "h223"
  },
  {
-  "level": 4,
-  "text": "Exercício 1 — Calculando o PSI à mão",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h224"
  },
  {
-  "level": 4,
-  "text": "Exercício 2 — Deriva em atributo categórico",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h225"
  },
  {
-  "level": 4,
-  "text": "Exercício 3 — O classificador de domínio acha o que os testes simples perdem",
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h226"
  },
  {
   "level": 4,
-  "text": "Exercício 4 — Quanto o DDM demora a perceber?",
+  "text": "Exercício 1 — Calculando o PSI à mão",
   "id": "h227"
  },
  {
-  "level": 3,
-  "text": "Projeto integrador do capítulo",
+  "level": 4,
+  "text": "Exercício 2 — Deriva em atributo categórico",
   "id": "h228"
  },
  {
   "level": 4,
-  "text": "Painel de monitoramento de 12 semanas com três tipos de deriva",
+  "text": "Exercício 3 — O classificador de domínio acha o que os testes simples perdem",
   "id": "h229"
  },
  {
-  "level": 1,
-  "text": "Parte IV — Confiança e Escala",
+  "level": 4,
+  "text": "Exercício 4 — Quanto o DDM demora a perceber?",
   "id": "h230"
- },
- {
-  "level": 2,
-  "text": "Capítulo 10 — Governança, Explicabilidade, Ética e Arquiteturas Avançadas",
-  "id": "h231"
- },
- {
-  "level": 3,
-  "text": "10.1 Do \"funciona\" ao \"merece confiança\"",
-  "id": "h232"
- },
- {
-  "level": 3,
-  "text": "10.2 Documentando modelos: o cartão do modelo",
-  "id": "h233"
- },
- {
-  "level": 3,
-  "text": "10.3 Explicabilidade: por que o modelo decidiu isso?",
-  "id": "h234"
- },
- {
-  "level": 3,
-  "text": "10.4 Justiça: o modelo trata os grupos de forma equilibrada?",
-  "id": "h235"
- },
- {
-  "level": 3,
-  "text": "10.5 Privacidade",
-  "id": "h236"
- },
- {
-  "level": 4,
-  "text": "10.5.1 Privacidade diferencial",
-  "id": "h237"
- },
- {
-  "level": 4,
-  "text": "10.5.2 Aprendizado federado",
-  "id": "h238"
- },
- {
-  "level": 3,
-  "text": "10.6 Segurança do ML",
-  "id": "h239"
- },
- {
-  "level": 3,
-  "text": "10.7 Rastreabilidade e auditoria",
-  "id": "h240"
- },
- {
-  "level": 3,
-  "text": "10.8 Armazém de atributos (feature store)",
-  "id": "h241"
- },
- {
-  "level": 4,
-  "text": "10.8.1 A armadilha temporal",
-  "id": "h242"
- },
- {
-  "level": 3,
-  "text": "10.9 Orquestração de fluxos de trabalho",
-  "id": "h243"
- },
- {
-  "level": 3,
-  "text": "10.10 Plataforma, custos e a decisão \"construir ou comprar\"",
-  "id": "h244"
- },
- {
-  "level": 3,
-  "text": "10.11 LLMOps: operando modelos de linguagem",
-  "id": "h245"
- },
- {
-  "level": 3,
-  "text": "10.12 Olhando adiante",
-  "id": "h246"
- },
- {
-  "level": 3,
-  "text": "10.13 Resumo do capítulo",
-  "id": "h247"
- },
- {
-  "level": 3,
-  "text": "Exercícios de múltipla escolha",
-  "id": "h248"
- },
- {
-  "level": 3,
-  "text": "Exercícios discursivos",
-  "id": "h249"
- },
- {
-  "level": 3,
-  "text": "Exercícios práticos em Python (scikit-learn)",
-  "id": "h250"
- },
- {
-  "level": 4,
-  "text": "Exercício 1 — Cartão do modelo gerado automaticamente",
-  "id": "h251"
- },
- {
-  "level": 4,
-  "text": "Exercício 2 — Explicando o modelo: permutação, PDP e a armadilha da correlação",
-  "id": "h252"
- },
- {
-  "level": 4,
-  "text": "Exercício 3 — Auditoria de justiça e ajuste de limiares",
-  "id": "h253"
- },
- {
-  "level": 4,
-  "text": "Exercício 4 — Privacidade diferencial: o custo do ruído",
-  "id": "h254"
  },
  {
   "level": 3,
   "text": "Projeto integrador do capítulo",
-  "id": "h255"
+  "id": "h231"
  },
  {
   "level": 4,
-  "text": "Auditoria de um modelo de crédito: documentação, explicação, justiça e privacidade",
-  "id": "h256"
+  "text": "Painel de monitoramento de 12 semanas com três tipos de deriva",
+  "id": "h232"
  },
  {
   "level": 1,
-  "text": "Parte V — Projeto Final",
-  "id": "h257"
+  "text": "Parte IV — Confiança e Escala",
+  "id": "h233"
  },
  {
   "level": 2,
-  "text": "Capítulo 11 — Projeto Final: do Dado à Produção",
-  "id": "h258"
+  "text": "Capítulo 10 — Governança, Explicabilidade, Ética e Arquiteturas Avançadas",
+  "id": "h234"
  },
  {
   "level": 3,
-  "text": "11.1 Chegou a hora de montar a fábrica inteira",
-  "id": "h259"
+  "text": "10.1 Do \"funciona\" ao \"merece confiança\"",
+  "id": "h235"
  },
  {
   "level": 3,
-  "text": "11.2 O cenário",
-  "id": "h260"
+  "text": "10.2 Documentando modelos: o cartão do modelo",
+  "id": "h236"
  },
  {
   "level": 3,
-  "text": "11.3 Visão geral das nove etapas",
-  "id": "h261"
+  "text": "10.3 Explicabilidade: por que o modelo decidiu isso?",
+  "id": "h237"
  },
  {
   "level": 3,
-  "text": "11.4 A arquitetura do projeto",
-  "id": "h262"
+  "text": "10.4 Justiça: o modelo trata os grupos de forma equilibrada?",
+  "id": "h238"
  },
  {
   "level": 3,
-  "text": "11.5 Etapa por etapa",
-  "id": "h263"
+  "text": "10.5 Privacidade",
+  "id": "h239"
  },
  {
   "level": 4,
-  "text": "11.5.1 Dados e validação",
-  "id": "h264"
+  "text": "10.5.1 Privacidade diferencial",
+  "id": "h240"
  },
  {
   "level": 4,
-  "text": "11.5.2 Candidatos",
-  "id": "h265"
- },
- {
-  "level": 4,
-  "text": "11.5.3 Rastreamento, registro e portão de qualidade",
-  "id": "h266"
- },
- {
-  "level": 4,
-  "text": "11.5.4 Serviço",
-  "id": "h267"
- },
- {
-  "level": 4,
-  "text": "11.5.5 Testes",
-  "id": "h268"
- },
- {
-  "level": 4,
-  "text": "11.5.6 Produção simulada",
-  "id": "h269"
- },
- {
-  "level": 4,
-  "text": "11.5.7 Monitoramento",
-  "id": "h270"
- },
- {
-  "level": 4,
-  "text": "11.5.8 Treinamento contínuo",
-  "id": "h271"
- },
- {
-  "level": 4,
-  "text": "11.5.9 Governança e relatório",
-  "id": "h272"
+  "text": "10.5.2 Aprendizado federado",
+  "id": "h241"
  },
  {
   "level": 3,
-  "text": "11.6 O que esperar dos resultados",
-  "id": "h273"
+  "text": "10.6 Segurança do ML",
+  "id": "h242"
  },
  {
   "level": 3,
-  "text": "11.7 O relatório final",
-  "id": "h274"
+  "text": "10.7 Rastreabilidade e auditoria",
+  "id": "h243"
  },
  {
   "level": 3,
-  "text": "11.8 Fechamento",
-  "id": "h275"
+  "text": "10.8 Armazém de atributos (feature store)",
+  "id": "h244"
+ },
+ {
+  "level": 4,
+  "text": "10.8.1 A armadilha temporal",
+  "id": "h245"
  },
  {
   "level": 3,
-  "text": "11.9 Resumo do capítulo",
-  "id": "h276"
+  "text": "10.9 Orquestração de fluxos de trabalho",
+  "id": "h246"
+ },
+ {
+  "level": 3,
+  "text": "10.10 Plataforma, custos e a decisão \"construir ou comprar\"",
+  "id": "h247"
+ },
+ {
+  "level": 3,
+  "text": "10.11 LLMOps: operando modelos de linguagem",
+  "id": "h248"
+ },
+ {
+  "level": 3,
+  "text": "10.12 Olhando adiante",
+  "id": "h249"
+ },
+ {
+  "level": 3,
+  "text": "10.13 Resumo do capítulo",
+  "id": "h250"
  },
  {
   "level": 3,
   "text": "Exercícios de múltipla escolha",
-  "id": "h277"
+  "id": "h251"
  },
  {
   "level": 3,
   "text": "Exercícios discursivos",
+  "id": "h252"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h253"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 1 — Cartão do modelo gerado automaticamente",
+  "id": "h254"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 2 — Explicando o modelo: permutação, PDP e a armadilha da correlação",
+  "id": "h255"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 3 — Auditoria de justiça e ajuste de limiares",
+  "id": "h256"
+ },
+ {
+  "level": 4,
+  "text": "Exercício 4 — Privacidade diferencial: o custo do ruído",
+  "id": "h257"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador do capítulo",
+  "id": "h258"
+ },
+ {
+  "level": 4,
+  "text": "Auditoria de um modelo de crédito: documentação, explicação, justiça e privacidade",
+  "id": "h259"
+ },
+ {
+  "level": 1,
+  "text": "Parte V — Projeto Final",
+  "id": "h260"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Projeto Final: do Dado à Produção",
+  "id": "h261"
+ },
+ {
+  "level": 3,
+  "text": "11.1 Chegou a hora de montar a fábrica inteira",
+  "id": "h262"
+ },
+ {
+  "level": 3,
+  "text": "11.2 O cenário",
+  "id": "h263"
+ },
+ {
+  "level": 3,
+  "text": "11.3 Visão geral das nove etapas",
+  "id": "h264"
+ },
+ {
+  "level": 3,
+  "text": "11.4 A arquitetura do projeto",
+  "id": "h265"
+ },
+ {
+  "level": 3,
+  "text": "11.5 Etapa por etapa",
+  "id": "h266"
+ },
+ {
+  "level": 4,
+  "text": "11.5.1 Dados e validação",
+  "id": "h267"
+ },
+ {
+  "level": 4,
+  "text": "11.5.2 Candidatos",
+  "id": "h268"
+ },
+ {
+  "level": 4,
+  "text": "11.5.3 Rastreamento, registro e portão de qualidade",
+  "id": "h269"
+ },
+ {
+  "level": 4,
+  "text": "11.5.4 Serviço",
+  "id": "h270"
+ },
+ {
+  "level": 4,
+  "text": "11.5.5 Testes",
+  "id": "h271"
+ },
+ {
+  "level": 4,
+  "text": "11.5.6 Produção simulada",
+  "id": "h272"
+ },
+ {
+  "level": 4,
+  "text": "11.5.7 Monitoramento",
+  "id": "h273"
+ },
+ {
+  "level": 4,
+  "text": "11.5.8 Treinamento contínuo",
+  "id": "h274"
+ },
+ {
+  "level": 4,
+  "text": "11.5.9 Governança e relatório",
+  "id": "h275"
+ },
+ {
+  "level": 3,
+  "text": "11.6 O que esperar dos resultados",
+  "id": "h276"
+ },
+ {
+  "level": 3,
+  "text": "11.7 O relatório final",
+  "id": "h277"
+ },
+ {
+  "level": 3,
+  "text": "11.8 Fechamento",
   "id": "h278"
  },
  {
   "level": 3,
-  "text": "Projeto integrador final",
+  "text": "11.9 Resumo do capítulo",
   "id": "h279"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h280"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h281"
+ },
+ {
+  "level": 3,
+  "text": "Projeto integrador final",
+  "id": "h282"
  },
  {
   "level": 4,
   "text": "Do dado à produção: um sistema de reconhecimento de dígitos com monitoramento e retreino",
-  "id": "h280"
+  "id": "h283"
  },
  {
   "level": 1,
   "text": "Apêndice A — Gabarito dos exercícios",
-  "id": "h281"
- },
- {
-  "level": 2,
-  "text": "Capítulo 1 — Introdução ao MLOps",
-  "id": "h282"
- },
- {
-  "level": 3,
-  "text": "Múltipla escolha",
-  "id": "h283"
- },
- {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
   "id": "h284"
  },
  {
   "level": 2,
-  "text": "Capítulo 2 — O Ciclo de Vida do ML, a Dívida Técnica e a Maturidade",
+  "text": "Capítulo 1 — Introdução ao MLOps",
   "id": "h285"
  },
  {
@@ -1436,7 +1436,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 3 — Dados",
+  "text": "Capítulo 2 — O Ciclo de Vida do ML, a Dívida Técnica e a Maturidade",
   "id": "h288"
  },
  {
@@ -1451,7 +1451,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 4 — Pipelines Reprodutíveis com scikit-learn",
+  "text": "Capítulo 3 — Dados",
   "id": "h291"
  },
  {
@@ -1466,7 +1466,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 5 — Rastreamento de Experimentos e Registro de Modelos",
+  "text": "Capítulo 4 — Pipelines Reprodutíveis com scikit-learn",
   "id": "h294"
  },
  {
@@ -1481,7 +1481,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 6 — Avaliação Rigorosa e Otimização de Hiperparâmetros",
+  "text": "Capítulo 5 — Rastreamento de Experimentos e Registro de Modelos",
   "id": "h297"
  },
  {
@@ -1496,7 +1496,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 7 — Empacotamento e Serviço de Modelos",
+  "text": "Capítulo 6 — Avaliação Rigorosa e Otimização de Hiperparâmetros",
   "id": "h300"
  },
  {
@@ -1511,7 +1511,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 8 — Testes e CI/CD para Machine Learning",
+  "text": "Capítulo 7 — Empacotamento e Serviço de Modelos",
   "id": "h303"
  },
  {
@@ -1526,7 +1526,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 9 — Monitoramento, Deriva de Dados e Retreinamento",
+  "text": "Capítulo 8 — Testes e CI/CD para Machine Learning",
   "id": "h306"
  },
  {
@@ -1541,7 +1541,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 10 — Governança, Explicabilidade, Ética e Arquiteturas Avançadas",
+  "text": "Capítulo 9 — Monitoramento, Deriva de Dados e Retreinamento",
   "id": "h309"
  },
  {
@@ -1556,7 +1556,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 11 — Projeto Final",
+  "text": "Capítulo 10 — Governança, Explicabilidade, Ética e Arquiteturas Avançadas",
   "id": "h312"
  },
  {
@@ -1570,408 +1570,423 @@
   "id": "h314"
  },
  {
-  "level": 1,
-  "text": "Apêndice B — Glossário",
+  "level": 2,
+  "text": "Capítulo 11 — Projeto Final",
   "id": "h315"
  },
  {
-  "level": 1,
-  "text": "Apêndice C — Guia rápido de decisões, ferramentas e códigos",
+  "level": 3,
+  "text": "Múltipla escolha",
   "id": "h316"
  },
  {
   "level": 3,
-  "text": "C.1 Mapa de decisão",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h317"
  },
  {
-  "level": 3,
-  "text": "C.2 Classes, funções e comandos principais",
+  "level": 1,
+  "text": "Apêndice B — Glossário",
   "id": "h318"
  },
  {
-  "level": 3,
-  "text": "C.3 Lista de verificação de prontidão para produção",
+  "level": 1,
+  "text": "Apêndice C — Guia rápido de decisões, ferramentas e códigos",
   "id": "h319"
  },
  {
   "level": 3,
-  "text": "C.4 Valores de referência usados no livro",
+  "text": "C.1 Mapa de decisão",
   "id": "h320"
  },
  {
-  "level": 1,
-  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "level": 3,
+  "text": "C.2 Classes, funções e comandos principais",
   "id": "h321"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Introdução ao MLOps",
+  "level": 3,
+  "text": "C.3 Lista de verificação de prontidão para produção",
   "id": "h322"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — O custo de não fixar a semente",
+  "text": "C.4 Valores de referência usados no livro",
   "id": "h323"
  },
  {
-  "level": 3,
-  "text": "Exercício 2 — Salvando o modelo com seus metadados",
-  "id": "h324"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — A ordem dos dados também importa",
-  "id": "h325"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — As quatro medidas do DevOps aplicadas a um modelo",
-  "id": "h326"
- },
- {
-  "level": 2,
-  "text": "Capítulo 2 — O Ciclo de Vida do ML, a Dívida Técnica e a Maturidade",
-  "id": "h327"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Sempre comece pela linha de base",
-  "id": "h328"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Calculadora de ML Test Score",
-  "id": "h329"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Quebrando o ciclo de realimentação",
-  "id": "h330"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — \"Mudar qualquer coisa muda tudo\" (CACE)",
-  "id": "h331"
- },
- {
-  "level": 2,
-  "text": "Capítulo 3 — Dados",
-  "id": "h332"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Relatório de qualidade de dados",
-  "id": "h333"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Um validador de esquema que para o pipeline",
-  "id": "h334"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Caçando um atributo vazado",
-  "id": "h335"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Divisão aleatória versus divisão por grupo",
-  "id": "h336"
- },
- {
-  "level": 2,
-  "text": "Capítulo 4 — Pipelines Reprodutíveis com scikit-learn",
-  "id": "h337"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Padronizar importa para uns, não para outros",
-  "id": "h338"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Dados mistos com ColumnTransformer",
-  "id": "h339"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Um transformador que aprende limites",
-  "id": "h340"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — O vazamento da seleção de atributos, em muitas sementes",
-  "id": "h341"
- },
- {
-  "level": 2,
-  "text": "Capítulo 5 — Rastreamento de Experimentos e Registro de Modelos",
-  "id": "h342"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Três modelos, três execuções, uma consulta",
-  "id": "h343"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Curva de aprendizado como métrica por passo",
-  "id": "h344"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Versões, apelidos e reversão",
-  "id": "h345"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Promoção só com evidência estatística",
-  "id": "h346"
- },
- {
-  "level": 2,
-  "text": "Capítulo 6 — Avaliação Rigorosa e Otimização de Hiperparâmetros",
-  "id": "h347"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Métricas para classes raras",
-  "id": "h348"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Escolhendo o limiar pelo custo",
-  "id": "h349"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Calibração antes e depois",
-  "id": "h350"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — O viés da busca de hiperparâmetros",
-  "id": "h351"
- },
- {
-  "level": 2,
-  "text": "Capítulo 7 — Empacotamento e Serviço de Modelos",
-  "id": "h352"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Um contrato gerado a partir dos dados de treino",
-  "id": "h353"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Uma API mínima com saúde e previsão",
-  "id": "h354"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Percentis de latência e o ganho do lote",
-  "id": "h355"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Previsão em lote idempotente com manifesto",
-  "id": "h356"
- },
- {
-  "level": 2,
-  "text": "Capítulo 8 — Testes e CI/CD para Machine Learning",
-  "id": "h357"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Testes unitários para uma função de limpeza",
-  "id": "h358"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Testes de comportamento do modelo",
-  "id": "h359"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Portão de qualidade com código de saída",
-  "id": "h360"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Os testes realmente protegem? Quebrando o modelo de propósito",
-  "id": "h361"
- },
- {
-  "level": 2,
-  "text": "Capítulo 9 — Monitoramento, Deriva de Dados e Retreinamento",
-  "id": "h362"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Calculando o PSI à mão",
-  "id": "h363"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Deriva em atributo categórico",
-  "id": "h364"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — O classificador de domínio acha o que os testes simples perdem",
-  "id": "h365"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Quanto o DDM demora a perceber?",
-  "id": "h366"
- },
- {
-  "level": 2,
-  "text": "Capítulo 10 — Governança, Explicabilidade, Ética e Arquiteturas Avançadas",
-  "id": "h367"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Cartão do modelo gerado automaticamente",
-  "id": "h368"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Explicando o modelo: permutação, PDP e a armadilha da correlação",
-  "id": "h369"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Auditoria de justiça e ajuste de limiares",
-  "id": "h370"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Privacidade diferencial: o custo do ruído",
-  "id": "h371"
- },
- {
   "level": 1,
-  "text": "Apêndice E — Soluções de referência dos projetos integradores",
-  "id": "h372"
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h324"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Introdução ao MLOps",
-  "id": "h373"
+  "id": "h325"
  },
  {
   "level": 3,
-  "text": "Esqueleto de um projeto reprodutível",
-  "id": "h374"
+  "text": "Exercício 1 — O custo de não fixar a semente",
+  "id": "h326"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Salvando o modelo com seus metadados",
+  "id": "h327"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — A ordem dos dados também importa",
+  "id": "h328"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — As quatro medidas do DevOps aplicadas a um modelo",
+  "id": "h329"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — O Ciclo de Vida do ML, a Dívida Técnica e a Maturidade",
-  "id": "h375"
+  "id": "h330"
  },
  {
   "level": 3,
-  "text": "Planejando um projeto de retenção de clientes",
-  "id": "h376"
+  "text": "Exercício 1 — Sempre comece pela linha de base",
+  "id": "h331"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Calculadora de ML Test Score",
+  "id": "h332"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Quebrando o ciclo de realimentação",
+  "id": "h333"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — \"Mudar qualquer coisa muda tudo\" (CACE)",
+  "id": "h334"
  },
  {
   "level": 2,
   "text": "Capítulo 3 — Dados",
-  "id": "h377"
+  "id": "h335"
  },
  {
   "level": 3,
-  "text": "Portão de dados com quarentena e versionamento",
-  "id": "h378"
+  "text": "Exercício 1 — Relatório de qualidade de dados",
+  "id": "h336"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Um validador de esquema que para o pipeline",
+  "id": "h337"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Caçando um atributo vazado",
+  "id": "h338"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Divisão aleatória versus divisão por grupo",
+  "id": "h339"
  },
  {
   "level": 2,
   "text": "Capítulo 4 — Pipelines Reprodutíveis com scikit-learn",
-  "id": "h379"
+  "id": "h340"
  },
  {
   "level": 3,
-  "text": "Treino como script parametrizado e reprodutível",
-  "id": "h380"
+  "text": "Exercício 1 — Padronizar importa para uns, não para outros",
+  "id": "h341"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Dados mistos com ColumnTransformer",
+  "id": "h342"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Um transformador que aprende limites",
+  "id": "h343"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — O vazamento da seleção de atributos, em muitas sementes",
+  "id": "h344"
  },
  {
   "level": 2,
   "text": "Capítulo 5 — Rastreamento de Experimentos e Registro de Modelos",
-  "id": "h381"
+  "id": "h345"
  },
  {
   "level": 3,
-  "text": "Central de experimentos com portão e registro",
-  "id": "h382"
+  "text": "Exercício 1 — Três modelos, três execuções, uma consulta",
+  "id": "h346"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Curva de aprendizado como métrica por passo",
+  "id": "h347"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Versões, apelidos e reversão",
+  "id": "h348"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Promoção só com evidência estatística",
+  "id": "h349"
  },
  {
   "level": 2,
   "text": "Capítulo 6 — Avaliação Rigorosa e Otimização de Hiperparâmetros",
-  "id": "h383"
+  "id": "h350"
  },
  {
   "level": 3,
-  "text": "Relatório de avaliação rigorosa de um modelo de risco",
-  "id": "h384"
+  "text": "Exercício 1 — Métricas para classes raras",
+  "id": "h351"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Escolhendo o limiar pelo custo",
+  "id": "h352"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Calibração antes e depois",
+  "id": "h353"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — O viés da busca de hiperparâmetros",
+  "id": "h354"
  },
  {
   "level": 2,
   "text": "Capítulo 7 — Empacotamento e Serviço de Modelos",
-  "id": "h385"
+  "id": "h355"
  },
  {
   "level": 3,
-  "text": "API completa com tempo real, lote, limites e testes",
-  "id": "h386"
+  "text": "Exercício 1 — Um contrato gerado a partir dos dados de treino",
+  "id": "h356"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Uma API mínima com saúde e previsão",
+  "id": "h357"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Percentis de latência e o ganho do lote",
+  "id": "h358"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Previsão em lote idempotente com manifesto",
+  "id": "h359"
  },
  {
   "level": 2,
   "text": "Capítulo 8 — Testes e CI/CD para Machine Learning",
-  "id": "h387"
+  "id": "h360"
  },
  {
   "level": 3,
-  "text": "Suíte de testes e CI local de ponta a ponta",
-  "id": "h388"
+  "text": "Exercício 1 — Testes unitários para uma função de limpeza",
+  "id": "h361"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Testes de comportamento do modelo",
+  "id": "h362"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Portão de qualidade que valida as métricas",
+  "id": "h363"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Os testes realmente protegem? Quebrando o modelo de propósito",
+  "id": "h364"
  },
  {
   "level": 2,
   "text": "Capítulo 9 — Monitoramento, Deriva de Dados e Retreinamento",
-  "id": "h389"
+  "id": "h365"
  },
  {
   "level": 3,
-  "text": "Painel de monitoramento de 12 semanas com três tipos de deriva",
-  "id": "h390"
+  "text": "Exercício 1 — Calculando o PSI à mão",
+  "id": "h366"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Deriva em atributo categórico",
+  "id": "h367"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — O classificador de domínio acha o que os testes simples perdem",
+  "id": "h368"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quanto o DDM demora a perceber?",
+  "id": "h369"
  },
  {
   "level": 2,
   "text": "Capítulo 10 — Governança, Explicabilidade, Ética e Arquiteturas Avançadas",
+  "id": "h370"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Cartão do modelo gerado automaticamente",
+  "id": "h371"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Explicando o modelo: permutação, PDP e a armadilha da correlação",
+  "id": "h372"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Auditoria de justiça e ajuste de limiares",
+  "id": "h373"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Privacidade diferencial: o custo do ruído",
+  "id": "h374"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "id": "h375"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução ao MLOps",
+  "id": "h376"
+ },
+ {
+  "level": 3,
+  "text": "Esqueleto de um projeto reprodutível",
+  "id": "h377"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — O Ciclo de Vida do ML, a Dívida Técnica e a Maturidade",
+  "id": "h378"
+ },
+ {
+  "level": 3,
+  "text": "Planejando um projeto de retenção de clientes",
+  "id": "h379"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Dados",
+  "id": "h380"
+ },
+ {
+  "level": 3,
+  "text": "Portão de dados com quarentena e versionamento",
+  "id": "h381"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Pipelines Reprodutíveis com scikit-learn",
+  "id": "h382"
+ },
+ {
+  "level": 3,
+  "text": "Treino como script parametrizado e reprodutível",
+  "id": "h383"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Rastreamento de Experimentos e Registro de Modelos",
+  "id": "h384"
+ },
+ {
+  "level": 3,
+  "text": "Central de experimentos com portão e registro",
+  "id": "h385"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Avaliação Rigorosa e Otimização de Hiperparâmetros",
+  "id": "h386"
+ },
+ {
+  "level": 3,
+  "text": "Relatório de avaliação rigorosa de um modelo de risco",
+  "id": "h387"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Empacotamento e Serviço de Modelos",
+  "id": "h388"
+ },
+ {
+  "level": 3,
+  "text": "API completa com tempo real, lote, limites e testes",
+  "id": "h389"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Testes e CI/CD para Machine Learning",
+  "id": "h390"
+ },
+ {
+  "level": 3,
+  "text": "Suíte de testes e CI local de ponta a ponta",
   "id": "h391"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Monitoramento, Deriva de Dados e Retreinamento",
+  "id": "h392"
+ },
+ {
+  "level": 3,
+  "text": "Painel de monitoramento de 12 semanas com três tipos de deriva",
+  "id": "h393"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Governança, Explicabilidade, Ética e Arquiteturas Avançadas",
+  "id": "h394"
  },
  {
   "level": 3,
   "text": "Auditoria de um modelo de crédito: documentação, explicação, justiça e privacidade",
-  "id": "h392"
+  "id": "h395"
  },
  {
   "level": 2,
   "text": "Capítulo 11 — Projeto Final",
-  "id": "h393"
+  "id": "h396"
  },
  {
   "level": 3,
   "text": "Do dado à produção: um sistema de reconhecimento de dígitos com monitoramento e retreino",
-  "id": "h394"
+  "id": "h397"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h395"
+  "id": "h398"
  }
 ]
