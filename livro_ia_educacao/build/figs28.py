@@ -22,10 +22,10 @@ def f28_vieses():
 
 def f28_faixas():
     semaforo("f28_faixas", [
-        ("r", "Educação infantil", "Parecer: restrição total do uso por estudantes; IA só com profissionais (planejamento, acessibilidade)."),
-        ("r", "Anos iniciais", "IA generativa e conversacional não recomendada, nem mediada; sem acesso autônomo; só atividades planejadas."),
-        ("a", "Anos finais", "IA generativa só com mediação do professor; sem acesso direto, autônomo ou individual."),
-        ("a", "Ensino médio e superior", "Sem regra específica no Parecer (ensino médio): valem as regras gerais; superior: política e declaração."),
+        ("r", "Educação infantil", "Resolução (art. 21): uso vedado às crianças, direto ou mediado; IA só com profissionais (planejamento, acessibilidade)."),
+        ("r", "Anos iniciais", "Resolução (art. 22): sem interação com IA generativa ou conversacional, nem supervisionada; só atividades planejadas."),
+        ("a", "Anos finais", "Resolução (art. 23): IA generativa só com mediação de profissionais; sem acesso direto, autônomo ou individual."),
+        ("a", "Ensino médio e superior", "Médio: regras gerais da Educação Básica (art. 18); superior: política institucional e declaração de uso."),
     ], w=8.6, wrap_at=88)
 
 def f28_sintese():
