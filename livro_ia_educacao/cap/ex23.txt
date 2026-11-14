@@ -80,12 +80,12 @@ MC: As tecnologias assistivas e a IA se relacionam de qual forma, segundo o cap�
 R: O estudante e os profissionais de apoio decidem quais recursos funcionam.
 
 #10
-MC: Por que informações sobre a deficiência ou o laudo de um estudante exigem cuidado ao pedir ajuda a uma ferramenta de IA, à luz da LGPD e do Parecer CNE/CP nº 15/2026?
-+ São dados pessoais sensíveis, de proteção reforçada, não são necessários para obter uma versão acessível do material, e o Parecer afasta inferências sensíveis e perfilização.
+MC: Por que informações sobre a deficiência ou o laudo de um estudante exigem cuidado ao pedir ajuda a uma ferramenta de IA, à luz da LGPD e da Resolução CNE/CP nº 1/2026?
++ São dados pessoais sensíveis, de proteção reforçada, não são necessários para obter uma versão acessível do material, e a Resolução afasta inferências sensíveis e perfilização (arts. 21, § 2º, e 41, IV).
 - Porque a IA recusa qualquer menção a deficiência. || A restrição é de proteção de dados e não de recusa pela ferramenta.
 - Porque o laudo melhora automaticamente o resultado. || Não há garantia disso e a informação não é necessária.
 - Porque a escola nunca pode ter laudos. || A escola pode tratá-los conforme as regras; o ponto é não inseri-los em sistemas externos sem base.
-- Porque o Parecer exige que a IA classifique o perfil de aprendizagem do estudante. || Ao contrário, perfilização e inferências sensíveis elevam o risco ou são vedadas.
+- Porque a Resolução exige que a IA classifique o perfil de aprendizagem do estudante. || Ao contrário, perfilização e inferências sensíveis elevam o risco ou são vedadas.
 R: Dados sensíveis exigem minimização e proteção; sem inferências nem perfilização.
 
 #11
@@ -242,16 +242,16 @@ MC: Qual das ações a seguir contribui para a sustentabilidade do trabalho doce
 R: O trabalho compartilhado reduz carga e melhora a revisão.
 
 #28
-MC: Como o Parecer CNE/CP nº 15/2026 enquadra recursos simples de acessibilidade, como transcrição, legendagem e leitura de tela?
+MC: Como a Resolução CNE/CP nº 1/2026, com o Parecer que a fundamenta, enquadra recursos simples de acessibilidade, como transcrição, legendagem e leitura de tela?
 + Como baixo risco, quando sem perfilização, dados sensíveis, monitoramento contínuo ou decisão automatizada, com salvaguardas como transparência, proteção de dados e registro simplificado.
 - Como alto risco, por envolverem estudantes com deficiência. || O uso de recursos de acessibilidade simples não é, por si, alto risco; o que eleva o risco são perfilização, dados sensíveis e inferências.
-- Como proibidos nos anos iniciais. || O projeto de resolução não alcança tecnologias assistivas e recursos de acessibilidade nessa restrição.
+- Como proibidos nos anos iniciais. || A Resolução não alcança tecnologias assistivas (art. 22, § 5º) e recursos de acessibilidade nessa restrição.
 - Como atividades que dispensam proteção de dados. || Dados de deficiência e saúde são sensíveis e exigem proteção.
 - Como matéria fora do Parecer. || O Parecer e o Anexo II citam a acessibilidade como exemplo de aplicação de baixo risco.
 R: Acessibilidade simples é baixo risco, sem perfilização nem inferências sensíveis.
 
 #29
-MC: Segundo o Parecer CNE/CP nº 15/2026, quem responde pelas responsabilidades técnicas, jurídicas, contratuais e de segurança das ferramentas de IA usadas na escola?
+MC: Segundo o Parecer CNE/CP nº 15/2026, que fundamenta a Resolução CNE/CP nº 1/2026, quem responde pelas responsabilidades técnicas, jurídicas, contratuais e de segurança das ferramentas de IA usadas na escola?
 + Sistemas de ensino, instituições, mantenedoras, gestores, equipes técnicas e fornecedores; o professor tem a mediação pedagógica, com formação, suporte, tempo e orientações.
 - Exclusivamente o professor que decidiu usar a ferramenta. || O Parecer afirma que tais responsabilidades não se transferem aos docentes.
 - Apenas as famílias dos estudantes. || Não há essa atribuição no Parecer.
@@ -292,9 +292,9 @@ DISC: Discuta os limites da IA em relação a Libras, leitura de tela e comunica
 R: Libras é língua própria; tradução automática limitada; tecnologias assistivas de uso pessoal; intérpretes e comunidade surda; ouvir estudantes.
 C: Reconhece limites; respeita a comunidade; propõe parcerias.
 
-DISC: Que cuidados com dados sensíveis você adotaria ao planejar adaptações para estudantes com deficiência? Inclua o que o Parecer CNE/CP nº 15/2026 diz sobre inferências e perfilização.
-R: Minimização; descrever a necessidade em termos gerais; não inserir laudos; plano individual fora da IA; o Parecer trata dados de deficiência e saúde como sensíveis e afasta inferências sensíveis e perfilização; acessibilidade simples é baixo risco.
-C: Minimização; referência à LGPD e ao Parecer; viabilidade.
+DISC: Que cuidados com dados sensíveis você adotaria ao planejar adaptações para estudantes com deficiência? Inclua o que a Resolução CNE/CP nº 1/2026 determina sobre inferências e perfilização.
+R: Minimização; descrever a necessidade em termos gerais; não inserir laudos; plano individual fora da IA; a Resolução (arts. 21, § 2º, 40, § 1º, V, e 41, IV) trata dados de deficiência e saúde como sensíveis e afasta inferências sensíveis e perfilização; acessibilidade simples é baixo risco.
+C: Minimização; referência à LGPD e à Resolução; viabilidade.
 
 DISC: Elabore uma triagem de tarefas (usar, adaptar, dispensar) com três exemplos em cada coluna para o seu trabalho.
 R: Usar: lista de perguntas; adaptar: material existente; dispensar: nota, feedback sensível, laudos.
@@ -320,9 +320,9 @@ DISC: Argumente sobre como conciliar autonomia docente e a pressão para adotar 
 R: Reconhecer recusa fundamentada; informar; tentativas pequenas; registrar resultados; decisões coletivas; sem imposição.
 C: Equilíbrio; respeito à autonomia; propostas.
 
-DISC: Quais riscos de intensificação do trabalho a IA pode trazer e que medidas institucionais ajudariam? Relacione com o que o Parecer CNE/CP nº 15/2026 diz sobre responsabilidade docente e institucional e sobre formação permanente (art. 11 do projeto de resolução anexo).
+DISC: Quais riscos de intensificação do trabalho a IA pode trazer e que medidas institucionais ajudariam? Relacione com o que o Parecer CNE/CP nº 15/2026 diz sobre responsabilidade docente e institucional e sobre formação permanente (art. 11 da Resolução).
 R: Mais materiais e cobranças sem tempo de revisão; medidas: tempo de trabalho, orientações claras, suporte técnico, formação permanente (alfabetização algorítmica, comandos, curadoria, proteção de dados, vieses), contratos e avaliação de risco pela instituição; Princípio I.
-C: Riscos concretos; medidas institucionais; distinção Parecer/projeto.
+C: Riscos concretos; medidas institucionais; distinção Parecer (fundamentação) e Resolução (norma).
 
 DISC: Como você ouviria um estudante sobre o formato de material que mais o ajuda, sem expô-lo diante da turma?
 R: Bilhete anônimo, conversa individual, apoio do profissional; oferecer opções a todos; respeitar escolhas.

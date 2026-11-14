@@ -3,14 +3,14 @@
 Este apêndice resume as **Diretrizes para a Utilização da Inteligência Artificial na Educação Brasileira**, instituídas pela Resolução CNE/CP nº 1, de 11 de novembro de 2026 {{CNE, 2026b}}, com fundamento no Parecer CNE/CP nº 15/2026 {{CNE, 2026a}}, aprovado em 1º de setembro de 2026 e homologado por despacho do Ministro da Educação publicado no Diário Oficial da União de 11 de novembro de 2026 (Seção 1, p. 141). É uma síntese de estudo, elaborada a partir da leitura do texto integral dos dois documentos, em 12 e 13 de novembro de 2026. **Não substitui o texto oficial** nem a orientação jurídica da sua rede ou instituição.
 
 :::norma Resolução, Parecer e prazos: o que é cada coisa
-A **Resolução** institui as Diretrizes, que devem ser observadas pelos sistemas de ensino e pelas instituições educacionais, **públicas e privadas, em todos os níveis, etapas e modalidades** (art. 1º). Entra em vigor **na data de sua publicação** (art. 47). Redes e instituições têm **doze meses, contados da publicação**, para adequar políticas, práticas, instrumentos de governança e contratos vigentes (art. 46), **sem prejuízo da aplicação imediata das vedações do art. 41**. O **Parecer** é a fundamentação da Resolução: traz as recomendações e os treze princípios da Seção 3, além do glossário e do guia de classificação de risco, que a Resolução incorpora como anexos. A cópia consultada não informa a data de publicação no Diário Oficial; **confira essa data**, porque dela depende a contagem do prazo.
+A **Resolução** institui as Diretrizes, que devem ser observadas pelos sistemas de ensino e pelas instituições educacionais, **públicas e privadas, em todos os níveis, etapas e modalidades** (art. 1º). Entra em vigor **na data de sua publicação** (art. 47). Redes e instituições têm **doze meses, contados da publicação**, para adequar políticas, práticas, instrumentos de governança e contratos vigentes (art. 46), **sem prejuízo da aplicação imediata das vedações do art. 41**. O **Parecer** é a fundamentação da Resolução: traz as recomendações, a análise por etapa e os treze princípios da Seção 3 (os mesmos do art. 4º da Resolução). O glossário e o guia de classificação de risco acompanham os dois textos como anexos. A cópia consultada não informa a data de publicação no Diário Oficial; **confira essa data**, porque dela depende a contagem do prazo.
 :::
 
 ## N.1 O espírito do documento
 
 O Parecer parte de uma ideia que atravessa este livro: a IA não é um fim em si mesma, não traz benefícios automáticos e deve estar a serviço da aprendizagem e dos direitos dos estudantes. Cada aplicação precisa de **finalidade educacional legítima, necessidade, proporcionalidade, supervisão humana e proteção de direitos**, preservada a centralidade da mediação pedagógica. Ele também reconhece desigualdades de acesso e de formação e afirma que a responsabilidade pela governança é **compartilhada** entre instituição, sistema de ensino, mantenedora, gestores e fornecedores, e **não se confunde com a responsabilidade pedagógica ordinária do professor**.
 
-## N.2 Os treze princípios (Seção 3 do Parecer)
+## N.2 Os treze princípios (art. 4º da Resolução e Seção 3 do Parecer)
 
 | Princípio | Em uma frase |
 |---|---|
