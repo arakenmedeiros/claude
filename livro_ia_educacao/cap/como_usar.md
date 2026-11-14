@@ -43,7 +43,7 @@ Alguns quadros aparecem em vários capítulos, sempre com a mesma função:
 - **O que a pesquisa permite afirmar**: o que os estudos sustentam e quais são seus limites.
 - **Quando dispensar a IA**: situações em que outra abordagem é melhor.
 - **Uma alternativa com poucos recursos**: caminhos para quem não tem conexão, dispositivos ou tempo.
-- **Norma e orientação oficial**: o que o Parecer CNE/CP nº 15/2026 e outras normas dizem sobre o tema, com a distinção entre o texto do Parecer e o projeto de resolução anexo.
+- **Norma e orientação oficial**: o que a Resolução CNE/CP nº 1/2026, o Parecer CNE/CP nº 15/2026 e outras normas dizem sobre o tema.
 - **Para ir além**: aprofundamentos conceituais opcionais.
 
 ## Sobre os prompts e as ferramentas

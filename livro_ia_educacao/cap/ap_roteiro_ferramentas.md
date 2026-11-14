@@ -1,6 +1,6 @@
 # Apêndice L — Roteiro para avaliar ferramentas de IA
 
-Use este roteiro antes de recomendar ou adotar uma ferramenta em sala de aula ou na instituição. Nenhuma ferramenta é recomendada neste livro. As dimensões iniciais seguem a lógica de classificação de risco do Parecer CNE/CP nº 15/2026 {{CNE, 2026}}. A decisão é sempre local e deve envolver a gestão, a equipe de tecnologia e, quando necessário, o encarregado de proteção de dados.
+Use este roteiro antes de recomendar ou adotar uma ferramenta em sala de aula ou na instituição. Nenhuma ferramenta é recomendada neste livro. As dimensões iniciais seguem a lógica de classificação de risco da Resolução CNE/CP nº 1/2026 {{CNE, 2026b}}. A decisão é sempre local e deve envolver a gestão, a equipe de tecnologia e, quando necessário, o encarregado de proteção de dados.
 
 | Dimensão | Perguntas | Resposta | Alerta? |
 |---|---|---|---|

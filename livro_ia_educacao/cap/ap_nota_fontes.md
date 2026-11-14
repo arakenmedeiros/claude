@@ -34,7 +34,6 @@ Os dispositivos legais citados nessa revisão foram conferidos por busca em pág
 
 Nas referências com versão preliminar e versão final (por exemplo, Cabezas-Clavijo e Sidorenko-Bautista; Baillifard et al.; Pallant et al.), adotou-se o ano da versão indicada na referência, com a observação correspondente.
 
-## Atualização de 12 de novembro de 2026: Parecer CNE/CP nº 15/2026
+## Atualização de 13 de novembro de 2026: Resolução CNE/CP nº 1/2026 e Parecer CNE/CP nº 15/2026
 
-Após a homologação do Parecer CNE/CP nº 15/2026 {{CNE, 2026}} (despacho publicado no Diário Oficial da União de 11 de novembro de 2026, Seção 1, p. 141), o livro e os slides foram revistos à luz do texto integral do Parecer, com seu projeto de resolução, glossário e guia de classificação de risco anexos. A síntese está no Apêndice N, e cada capítulo afetado traz um quadro de norma oficial. O texto distingue o que consta do **Parecer** do que consta do **projeto de resolução anexo**. A Resolução decorrente e seu prazo de adequação devem ser conferidos nos canais oficiais antes de qualquer decisão institucional.
-
+O livro e os slides foram revistos à luz do texto integral da Resolução CNE/CP nº 1, de 11 de novembro de 2026 {{CNE, 2026b}}, que institui as Diretrizes para a Utilização da Inteligência Artificial na Educação Brasileira, e do Parecer CNE/CP nº 15/2026 {{CNE, 2026a}}, que a fundamenta (homologado por despacho publicado no Diário Oficial da União de 11 de novembro de 2026, Seção 1, p. 141). Os textos foram lidos a partir de cópias fornecidas pelo autor; não foi possível confirmar a data de publicação da Resolução no Diário Oficial, da qual depende a contagem do prazo de doze meses para adequação (art. 46), razão pela qual o livro orienta a conferi-la. A síntese está no Apêndice N, e os capítulos afetados trazem um quadro de norma e orientação oficial. Normas mudam: confirme sempre o texto vigente e as orientações do seu sistema de ensino.
