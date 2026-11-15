@@ -44,7 +44,7 @@ MC: Ao decidir sobre uma ferramenta, o que significa 'adotar com condições'?
 R: A decisão intermediária reconhece benefícios possíveis e riscos que exigem salvaguardas.
 
 #6
-MC: Uma escola quer contratar uma plataforma de IA, mas o fornecedor se recusa a informar que dados trata, para que finalidades e com que funcionalidades. Segundo o Guia de classificação de risco anexo ao Parecer CNE/CP nº 15/2026, qual é a consequência?
+MC: Uma escola quer contratar uma plataforma de IA, mas o fornecedor se recusa a informar que dados trata, para que finalidades e com que funcionalidades. Segundo o Guia de classificação de risco (Anexo II da Resolução CNE/CP nº 1/2026), qual é a consequência?
 + A impossibilidade de classificar a aplicação por falta de informação do fornecedor obsta a contratação e o uso.
 - A escola pode contratar presumindo baixo risco, já que nada indica o contrário. || O Guia diz que a ausência de classificação documentada não autoriza o uso sob presunção de baixo risco.
 - A escola pode contratar e deixar a classificação para o professor fazer depois. || A classificação é institucional e prévia; o docente não assume sozinho esse encargo.
@@ -135,12 +135,12 @@ MC: Quais perguntas orientam uma reunião de balanço ao final de um ciclo?
 R: As perguntas de balanço transformam registros em aprendizagem coletiva e em decisão.
 
 #16
-MC: Uma ferramenta tem duas funcionalidades: revisar textos de materiais didáticos (baixo risco) e sugerir pré-correção de redações dos estudantes (alto risco). Segundo o Anexo II do Parecer, como a aplicação deve ser tratada em termos de salvaguardas?
+MC: Uma ferramenta tem duas funcionalidades: revisar textos de materiais didáticos (baixo risco) e sugerir pré-correção de redações dos estudantes (alto risco). Segundo o Anexo II da Resolução, como a aplicação deve ser tratada em termos de salvaguardas?
 + Prevalece o nível mais alto: as salvaguardas de alto risco valem para a aplicação, e a pré-correção só pode servir de apoio à correção do professor, a quem cabe a nota.
 - Vale o nível baixo, por ser a funcionalidade mais usada. || Havendo mais de uma finalidade, prevalece o nível mais alto.
 - Vale a média dos níveis, o que resulta em risco moderado. || Não há média: prevalece o nível mais alto.
 - Basta classificar a empresa, e não cada funcionalidade. || Classificam-se aplicação, funcionalidade e finalidade concretas.
-- A pré-correção pode atribuir a nota final se o professor concordar em bloco. || O projeto veda validação em bloco e mera ratificação; a nota é atribuição exclusiva e indelegável do professor.
+- A pré-correção pode atribuir a nota final se o professor concordar em bloco. || A Resolução veda validação em bloco e mera ratificação; a nota é atribuição exclusiva e indelegável do professor.
 R: Prevalece o nível mais alto, e a pré-correção é só instrumento preparatório do professor.
 
 
@@ -217,13 +217,13 @@ MC: Como uma comunidade de prática com poucos recursos pode começar?
 R: O essencial é a regularidade, o propósito e o repertório, que podem ser mantidos com papel e encontros curtos.
 
 #25
-MC: Qual das alternativas sobre os contratos com fornecedores de IA está de acordo com o projeto de resolução anexo ao Parecer CNE/CP nº 15/2026?
+MC: Qual das alternativas sobre os contratos com fornecedores de IA está de acordo com a Resolução CNE/CP nº 1/2026?
 + Os instrumentos de contratação devem assegurar governança, auditoria, monitoramento e responsabilização dos fornecedores (art. 5º).
-- Os contratos devem transferir ao professor a responsabilidade técnica e jurídica pelo uso. || O Parecer afirma que essas responsabilidades cabem às instituições, gestores, equipes técnicas e fornecedores.
+- Os contratos devem transferir ao professor a responsabilidade técnica e jurídica pelo uso. || A Resolução (art. 4º, § 2º) afirma que essas responsabilidades cabem às instituições, gestores, equipes técnicas e fornecedores.
 - Os contratos podem permitir o treinamento de modelos de terceiros com conteúdos de estudantes menores de idade. || É vedado usar conteúdos de crianças e adolescentes para treinar modelos de terceiros.
 - Os contratos dispensam registro institucional da aplicação. || O registro institucional é salvaguarda do nível moderado e a documentação é exigida pela governança.
 - Os contratos só precisam de revisão se o fornecedor mudar de nome. || Ampliar funcionalidades ou mudar finalidade já exige reavaliação.
-R: O art. 5º prevê governança, auditoria, monitoramento e responsabilização do fornecedor.
+R: O art. 5º da Resolução determina governança, auditoria, monitoramento e responsabilização do fornecedor.
 
 
 #26
@@ -275,8 +275,8 @@ DISC: Descreva cinco dos dez critérios para a escolha de uma ferramenta de IA e
 R: Exemplos: finalidade pedagógica (evita adoção sem necessidade); dados e privacidade (proteção de direitos); transparência; equidade e acessibilidade; saída e interoperabilidade (evita dependência); custo total; controle docente; qualidade e verificação.
 C: Critérios corretos; justificativa de importância; coerência com o livro.
 
-DISC: O que são critérios eliminatórios e que exemplos você definiria para sua escola, à luz do Parecer CNE/CP nº 15/2026?
-R: São condições que, se não atendidas, eliminam a ferramenta, independentemente das notas. Exemplos: dados pessoais de crianças sem base legal; impossibilidade de exportar materiais; substituição de decisões avaliativas sem revisão; risco excessivo; falta de informação para classificar o risco; exigência de uso por estudantes em etapa em que o Parecer o restringe.
+DISC: O que são critérios eliminatórios e que exemplos você definiria para sua escola, à luz da Resolução CNE/CP nº 1/2026?
+R: São condições que, se não atendidas, eliminam a ferramenta, independentemente das notas. Exemplos: dados pessoais de crianças sem base legal; impossibilidade de exportar materiais; substituição de decisões avaliativas sem revisão; risco excessivo; falta de informação para classificar o risco; exigência de uso por estudantes em etapa em que a Resolução o veda ou restringe.
 C: Definição correta; exemplos coerentes com dados, saída, autonomia e classificação de risco.
 
 DISC: Elabore cinco casos de teste (sem dados pessoais) para avaliar uma ferramenta de IA em uma escola e explique o que cada um verifica.
@@ -291,9 +291,9 @@ DISC: Diferencie as decisões 'adotar', 'adotar com condições' e 'não adotar'
 R: Adotar: atende aos critérios e foi testada; condições: piloto, limites de uso, contrato revisto; não adotar: exige dados sem base legal ou não permite saída.
 C: Distinção clara; exemplos pertinentes.
 
-DISC: Explique as quatro categorias de risco do Parecer CNE/CP nº 15/2026 e as regras do Guia (Anexo II) para classificar uma aplicação. Dê um exemplo de cada nível.
+DISC: Explique as quatro categorias de risco da Resolução CNE/CP nº 1/2026 (arts. 36 a 42) e as regras do Guia (Anexo II) para classificar uma aplicação. Dê um exemplo de cada nível.
 R: Baixo (apoio instrumental, como adaptar materiais); moderado (interação contínua, tutoria, recomendação); alto (efeito sobre avaliação, certificação, permanência; pré-correção, detectores); excessivo, vedado (pontuação social, reconhecimento de emoções, nota só por IA). Regras: classificar cada aplicação, funcionalidade e finalidade; prevalece o nível mais alto; na dúvida, o mais gravoso; ampliar funcionalidades exige reavaliação; falta de informação do fornecedor obsta a contratação.
-C: Quatro níveis com exemplos; cinco regras do Guia; distingue Parecer e projeto de resolução.
+C: Quatro níveis com exemplos; cinco regras do Guia; distingue a norma (Resolução) da fundamentação (Parecer).
 
 DISC: Apresente as seis famílias de indicadores e dê um exemplo e um cuidado para cada uma.
 R: Processo, aprendizagem, equidade, risco e segurança, trabalho e bem-estar docente, custos; exemplos e cuidados coerentes com o quadro do capítulo.
@@ -316,7 +316,7 @@ R: Planejar uma mudança pequena (rotina de verificação); executar em uma ativ
 C: Etapas corretas e exemplificadas.
 
 DISC: Elabore um plano de ação de 90 dias com três objetivos para uma escola de sua realidade, incluindo governança das aplicações de IA.
-R: Objetivos observáveis, ações com responsáveis e prazos, indicadores variados, riscos e salvaguardas, formação, revisão em 45 e 90 dias e seção de governança: inventário e classificação de risco, registro institucional, contratos, canal de contestação, reavaliação periódica e marco de adequação (doze meses previstos no projeto de resolução, a confirmar após a publicação).
+R: Objetivos observáveis, ações com responsáveis e prazos, indicadores variados, riscos e salvaguardas, formação, revisão em 45 e 90 dias e seção de governança: inventário e classificação de risco, registro institucional, contratos, canal de contestação, reavaliação periódica e marco de adequação (doze meses contados da publicação da Resolução, art. 46; as vedações do art. 41 são imediatas).
 C: Plano concreto; objetivos observáveis; governança e salvaguardas incluídas.
 
 DISC: Quais riscos um plano de ação pode trazer para a carga de trabalho docente e como preveni-los?
@@ -335,8 +335,8 @@ DISC: Por que a segurança psicológica é essencial e como promovê-la em uma c
 R: Permite dizer 'não sei' e 'errei'; promovê-la com combinados de confidencialidade, ausência de ranking, facilitação rotativa e respeito ao direito de não usar.
 C: Relaciona segurança com aprendizagem; propõe ações.
 
-DISC: Quem responde pelas responsabilidades técnicas, jurídicas e contratuais do uso de IA na escola, segundo o Parecer CNE/CP nº 15/2026? Que consequências isso traz para o plano de ação e para a comunidade de prática?
-R: Sistemas de ensino, instituições, mantenedoras, gestores, equipes técnicas e fornecedores, e não cada professor (Princípio I). O plano deve prever formação, tempo, suporte, contratos e registro institucional; a comunidade de prática apoia o aprendizado, sem assumir responsabilidade jurídica; a participação docente no acompanhamento deve ter respaldo.
+DISC: Quem responde pelas responsabilidades técnicas, jurídicas e contratuais do uso de IA na escola, segundo a Resolução CNE/CP nº 1/2026? Que consequências isso traz para o plano de ação e para a comunidade de prática?
+R: Sistemas de ensino, instituições, mantenedoras, gestores, equipes técnicas e fornecedores, e não cada professor (art. 4º, § 2º). O plano deve prever formação, tempo, suporte, contratos e registro institucional; a comunidade de prática apoia o aprendizado, sem assumir responsabilidade jurídica; a participação docente no acompanhamento deve ter respaldo.
 C: Identifica corretamente os responsáveis; relaciona com condições de trabalho e governança.
 
 DISC: Explique como o diagnóstico, o piloto, a escolha de ferramentas, os indicadores e a comunidade de prática se encadeiam.
