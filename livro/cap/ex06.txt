@@ -68,12 +68,12 @@ c) oscila livremente.
 d) fica sempre igual.
 R: b | O EM aumenta ou mantém a verossimilhança, convergindo a um máximo local.
 
-MC: O K-means pode ser visto como um GMM:
-a) em que as gaussianas são esféricas, de mesma variância, com atribuição rígida.
+MC: O K-means pode ser visto como o caso-limite de um GMM:
+a) com gaussianas esféricas, de mesma variância e pesos iguais, quando a variância tende a zero (atribuição rígida).
 b) com dimensões ocultas.
 c) sem médias.
 d) com infinitos componentes.
-R: a | O GMM generaliza o K-means com covariâncias flexíveis e pertinências suaves.
+R: a | O GMM generaliza o K-means com covariâncias flexíveis e pertinências suaves; a equivalência vale apenas nesse limite.
 
 MC: No agrupamento suave, cada ponto:
 a) pertence a um único grupo.

@@ -16,7 +16,7 @@ Chebyshev (distância de): maior diferença absoluta entre os atributos de dois 
 Confiança: probabilidade de B aparecer dado que A apareceu; suporte(A ∪ B) / suporte(A).
 Convicção (conviction): medida que compara a frequência esperada de A sem B com a observada.
 Correlação cofenética: correlação entre as distâncias originais e as distâncias implícitas em um dendrograma.
-Cosseno (similaridade do): medida do ângulo entre dois vetores; ignora seu tamanho.
+Cosseno (similaridade do): medida do ângulo entre dois vetores; ignora seu tamanho. A "distância" 1 − cos não é uma métrica no sentido matemático.
 Covariância: medida de quanto dois atributos variam juntos.
 DBSCAN: algoritmo de agrupamento por densidade com os parâmetros eps e min_samples.
 Dendrograma: gráfico em árvore que registra as fusões do agrupamento hierárquico.
@@ -42,7 +42,7 @@ Itemset: conjunto de itens que ocorrem juntos.
 K-means: algoritmo que divide os dados em k grupos representados por suas médias.
 K-medoids: variante do K-means que usa um ponto real do conjunto como centro.
 Kernel: função que mede similaridade e permite trabalhar implicitamente em um espaço de maior dimensão.
-Laplaciana de um grafo: matriz L = D − W cujos autovetores revelam a estrutura de comunidades do grafo.
+Laplaciana de um grafo: matriz cujos autovetores revelam a estrutura de comunidades do grafo; a não normalizada é L = D − W, e há versões normalizadas (L_sym e L_rw).
 Lift: razão entre a confiança de uma regra e o suporte do consequente; acima de 1 indica associação positiva.
 LOF (Local Outlier Factor): escore de anomalia que compara a densidade local de um ponto com a de seus vizinhos.
 Maldição da dimensionalidade: conjunto de dificuldades que surgem quando há muitos atributos, como o espaço vazio e a concentração de distâncias.
@@ -66,3 +66,19 @@ UMAP: técnica de redução de dimensionalidade baseada em grafos difusos de viz
 VAE (autoencoder variacional): autoencoder probabilístico cujo espaço latente é regularizado para ser contínuo.
 Variância explicada: fração da variância total dos dados capturada por uma componente principal.
 Variedade (manifold): superfície que, localmente, parece plana, mesmo sendo curva em escala global.
+Agrupamento por consenso (cluster ensemble): combinação de muitas partições dos mesmos dados em uma única partição mais estável.
+Biclustering (co-clustering): agrupamento simultâneo de linhas e colunas de uma matriz, que encontra submatrizes coerentes.
+Cannot-link: restrição que exige que dois exemplos fiquem em grupos diferentes.
+COP-K-means: variante do K-means que respeita restrições must-link e cannot-link na atribuição.
+Coerência de tópicos: medida de quanto os termos principais de um tópico aparecem juntos nos documentos.
+Deriva de conceito (concept drift): mudança, ao longo do tempo, da estrutura dos dados que um modelo aprendeu.
+Evidence accumulation: método de consenso que usa a matriz de coassociação das partições e agrupa 1 − C.
+Força de predição: medida (Tibshirani; Walther, 2005) da reprodutibilidade de um agrupamento em dados de teste.
+K-prototypes: variante do K-means para dados mistos, com média nos atributos numéricos e moda nos categóricos.
+LDA (Latent Dirichlet Allocation): modelo probabilístico de tópicos em que cada documento mistura tópicos e cada tópico é uma distribuição sobre palavras.
+Leiden e Louvain: algoritmos de detecção de comunidades que otimizam a modularidade; o Leiden garante comunidades bem conectadas.
+Matriz de coassociação: matriz em que cada elemento é a fração das partições em que dois exemplos caíram no mesmo grupo.
+Modularidade: medida de quão mais densas são as conexões dentro das comunidades do que o esperado em uma rede aleatória com os mesmos graus.
+Must-link: restrição que exige que dois exemplos fiquem no mesmo grupo.
+Rejeição (de casos novos): decisão de não atribuir grupo a um caso muito distante de todos os grupos conhecidos.
+Transdutivo e indutivo (uso): transdutivo, agrupar um conjunto fixo para entendê-lo; indutivo, atribuir casos novos aos grupos descobertos.

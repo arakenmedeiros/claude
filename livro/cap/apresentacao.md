@@ -9,14 +9,15 @@ Ao mesmo tempo, o livro avança. Os capítulos começam no nível básico, passa
 
 ## Como o livro está organizado
 
-O livro tem **seis partes** e **treze capítulos**.
+O livro tem **sete partes** e **catorze capítulos**.
 
 - **Parte I — Fundamentos:** o que é aprendizado não supervisionado; dados, distâncias e pré-processamento.
 - **Parte II — Agrupamento:** K-means, hierárquico, densidade (DBSCAN, OPTICS, HDBSCAN), modelos de mistura, agrupamento espectral e avaliação.
 - **Parte III — Redução de dimensionalidade:** PCA, ICA, NMF, MDS, Isomap, t-SNE e UMAP.
 - **Parte IV — Padrões e anomalias:** regras de associação e detecção de anomalias.
-- **Parte V — Aprendizado profundo:** autoencoders, VAEs, GANs, difusão e aprendizado auto-supervisionado.
-- **Parte VI — Projeto final:** um estudo completo que integra todas as técnicas em um mesmo conjunto de dados.
+- **Parte V — Aprendizado profundo:** autoencoders, VAEs, GANs, difusão e aprendizado autossupervisionado.
+- **Parte VI — Tópicos avançados:** consenso entre agrupamentos, restrições, dados mistos, biclustering, comunidades em grafos, fluxos de dados, modelagem de tópicos e validação fora da amostra.
+- **Parte VII — Projeto final:** um estudo completo que integra todas as técnicas em um mesmo conjunto de dados.
 
 Cada capítulo segue o mesmo roteiro:
 
@@ -77,10 +78,11 @@ Todos os trechos de código em Python deste livro foram executados durante a ela
 | scikit-learn | 1.9 |
 | matplotlib | 3.11 |
 | mlxtend | 0.25 |
-| umap-learn | 0.5 |
-| PyTorch | 2.14 |
+| umap-learn | 0.6 |
+| PyTorch | 2.15 |
+| NetworkX (Capítulo 13) | 3.7 |
 
-Os exemplos e projetos usam **conjuntos de dados embutidos no scikit-learn** ou **dados simulados** gerados no próprio código, com sementes fixas. Assim, você não precisa baixar arquivos externos e consegue reproduzir os resultados.
+Os blocos de código de cada capítulo também estão reunidos em **cadernos Jupyter** (um por capítulo), acompanhados de um arquivo `requirements.txt` com as versões acima e de instruções de execução. Os exemplos e projetos usam **conjuntos de dados embutidos no scikit-learn** ou **dados simulados** gerados no próprio código, com sementes fixas. Assim, você não precisa baixar arquivos externos e consegue reproduzir os resultados.
 
 Os conjuntos embutidos vêm do repositório **UCI Machine Learning**: *Iris*, *Wine*, *Breast Cancer Wisconsin (Diagnostic)* e *Optical Recognition of Handwritten Digits* (a parte de teste, com 1.797 imagens). Os dados de clientes, de transações, de cestas de compras e de coordenadas geográficos usados em alguns projetos são **simulados** e servem apenas para fins didáticos; cada projeto informa a origem dos seus dados.
 

@@ -1,236 +1,290 @@
-@@PROJ Laboratório de Dígitos: do dado bruto à decisão | Cap13
-**Contexto.** Um banco (fictício) digitaliza cheques e formulários escritos à mão. Existem milhares de imagens de dígitos, mas **só alguém caro e lento pode rotulá-las**. A diretoria de dados pediu a você um **estudo completo** de aprendizado não supervisionado para responder, ao final, a pergunta: *"Podemos reduzir o custo de rotulagem e encontrar imagens problemáticas usando apenas as imagens?"*
+@@EX 1 | Consenso: qual ligação e quantas partições? | básico
+Em dois conjuntos não convexos (**luas** e **anéis**), gere ensembles de 5, 20 e 50 partições de K-means (com *k* entre 8 e 15, usando 80 % dos pontos), calcule a matriz de coassociação e extraia o consenso com as ligações **simples**, **média** e **completa**. Monte uma tabela de ARI e explique por que a ligação completa falha.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import make_moons, make_circles
+from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.metrics import adjusted_rand_score
 
-**Fonte dos dados.** *Optical Recognition of Handwritten Digits*, do repositório **UCI Machine Learning**, incluído no scikit-learn (`load_digits`): 1.797 imagens de 8×8 pixels, com valores de 0 a 16. Os rótulos (dígitos de 0 a 9) **só podem ser usados para avaliar** os resultados, exceto na Etapa 7, em que você simulará um orçamento pequeno de rotulagem.
+def consenso(X, n_particoes, ligacao, k_final=2, seed=0):
+    rng = np.random.default_rng(seed)
+    C = np.zeros((len(X), len(X)))
+    for _ in range(n_particoes):
+        k = int(rng.integers(8, 16))
+        idx = rng.choice(len(X), int(0.8 * len(X)), replace=False)
+        p = KMeans(k, n_init=1, random_state=int(rng.integers(10**6))).fit(X[idx]).predict(X)
+        C += p[:, None] == p[None, :]
+    C /= n_particoes
+    return AgglomerativeClustering(k_final, metric="precomputed", linkage=ligacao).fit_predict(1 - C)
 
-**Etapa 1 — Entender e preparar.** Escale os pixels para [0, 1]. Calcule a estatística de Hopkins e o número de componentes do PCA para reter 95% da variância. Reduza os dados a 30 componentes para as próximas etapas.
+conjuntos = {
+    "Luas":   make_moons(400, noise=0.08, random_state=0),
+    "Anéis":  make_circles(400, factor=0.4, noise=0.05, random_state=0),
+}
+print(f"{'Conjunto':8s} {'partições':>9s} {'simples':>8s} {'média':>8s} {'completa':>9s}")
+for nome, (X, y) in conjuntos.items():
+    for m in (5, 20, 50):
+        aris = [adjusted_rand_score(y, consenso(X, m, lig)) for lig in ("single", "average", "complete")]
+        print(f"{nome:8s} {m:9d} " + " ".join(f"{a:8.2f}" for a in aris))
+```
+@@NOTE A ligação média é a mais estável (ARI de 0,98 a 1,00 nas luas, mesmo com 5 partições) e a simples melhora com mais partições (0,70 com 5 e 1,00 com 20). A completa fracassa nas luas (ARI de 0,05): ela exige grupos compactos e, em formas alongadas, junta pedaços de luas diferentes. Nos anéis, as ligações simples e média acertam, e a completa também falha.
+@@EX 2 | Quantas restrições bastam? | intermediário
+Use o COP-K-means (Seção 13.3) em três blobs sobrepostos. Sorteie 0, 10, 30, 60 e 100 restrições (a partir dos rótulos verdadeiros, simulando um especialista), com 10 sorteios cada, e calcule o ARI médio, as violações médias e quantas execuções foram viáveis.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+from sklearn.metrics import adjusted_rand_score
 
-**Etapa 2 — Agrupar.** Agrupe com K-means, Ward, GMM (covariância `diag`), agrupamento espectral e HDBSCAN. Para os métodos com k fixo, use k = 10. Compare silhueta (interna), estabilidade (ARI entre reamostragens) e, **só no final**, ARI e NMI contra os dígitos reais.
+X, y = make_blobs(300, centers=3, cluster_std=2.4, random_state=3)
 
-**Etapa 3 — Visualizar.** Gere projeções 2D com PCA, Isomap e t-SNE e compare-as por confiança (`trustworthiness`). Desenhe o t-SNE colorido pelos grupos do melhor método.
+def sortear_restricoes(n_pares, seed):
+    rng = np.random.default_rng(seed)
+    ml, cl = [], []
+    while len(ml) + len(cl) < n_pares:
+        i, j = rng.choice(len(X), 2, replace=False)
+        (ml if y[i] == y[j] else cl).append((int(i), int(j)))
+    return ml, cl
 
-**Etapa 4 — Representações aprendidas.** Treine um autoencoder (`MLPRegressor`) com código de 16 dimensões e verifique se agrupar o código supera agrupar o PCA de 16 componentes.
+def cop_kmeans(X, k, ml, cl, n_iter=50, seed=0):
+    r = np.random.default_rng(seed)
+    pai = list(range(len(X)))
+    def raiz(a):
+        while pai[a] != a:
+            pai[a] = pai[pai[a]]; a = pai[a]
+        return a
+    for a, b in ml: pai[raiz(a)] = raiz(b)
+    comp = np.array([raiz(i) for i in range(len(X))])
+    proib = {}
+    for a, b in cl:
+        proib.setdefault(a, set()).add(b); proib.setdefault(b, set()).add(a)
+    centros = X[r.choice(len(X), k, replace=False)]
+    rot = -np.ones(len(X), int)
+    for _ in range(n_iter):
+        novo = -np.ones(len(X), int)
+        for i in r.permutation(len(X)):
+            if novo[i] >= 0: continue
+            membros = np.where(comp == comp[i])[0]
+            d = ((X[membros][:, None] - centros[None]) ** 2).sum(2).sum(0)
+            for c in np.argsort(d):
+                if not any(novo[v] == c for m in membros for v in proib.get(m, ())):
+                    novo[membros] = c; break
+            else:
+                return None
+        if (novo == rot).all(): break
+        rot = novo
+        centros = np.array([X[rot == c].mean(0) if (rot == c).any() else centros[c] for c in range(k)])
+    return rot
 
-**Etapa 5 — Anomalias.** Use um escore combinado (Isolation Forest e LOF, média dos postos) para encontrar as 12 imagens "mais estranhas". Desenhe-as e descreva, em uma frase cada, o que parece estranho. Quais dígitos dominam os 30 principais alertas?
+def viol(rot, ml, cl):
+    return sum(rot[a] != rot[b] for a, b in ml) + sum(rot[a] == rot[b] for a, b in cl)
 
-**Etapa 6 — Regras de traços.** Divida cada imagem em 16 blocos (grade 4×4 de blocos 2×2). Para cada bloco, crie dois itens: `ativo_rc` (média maior que 8, na escala de 0 a 16) e `vazio_rc` (caso contrário). Inclua também um item por dígito. Use `fpgrowth` (suporte mínimo de 0,03, no máximo 4 itens) para encontrar regras do tipo *blocos → dígito* com confiança de pelo menos 0,6 e lift de pelo menos 1,5. Liste a melhor regra de cada dígito para o qual existir alguma. Por que os blocos das bordas quase nunca aparecem nas regras?
-
-**Etapa 7 — Rotular com pouco orçamento.** Suponha que você só possa rotular **30 imagens**. Estratégia A: agrupe em 30 grupos (K-means), rotule a imagem mais próxima do centro de cada grupo e propague o rótulo ao grupo ("agrupar e rotular"). Estratégia B: sorteie 30 imagens, rotule-as e treine uma regressão logística. Compare a acurácia (contra os rótulos reais, em todas as imagens) das duas estratégias, repetindo o sorteio da estratégia B 20 vezes.
-
-**Etapa 8 — Relatório final.** Escreva um relatório de 1 a 2 páginas com: resumo executivo (3 linhas), método, principais resultados (tabela), limitações, riscos éticos (erros em cheques afetam pessoas; viés de escrita; privacidade) e recomendação ao banco.
-
-**Entregáveis.** Um script (ou notebook) organizado por etapas, os gráficos e o relatório final.
+print("n restrições | ARI médio | violações médias | execuções viáveis (de 10 sorteios)")
+for n in (0, 10, 30, 60, 100):
+    aris, vs = [], []
+    for s in range(10):
+        ml, cl = sortear_restricoes(n, seed=s)
+        melhor = None
+        for ini in range(5):
+            r = cop_kmeans(X, 3, ml, cl, seed=ini)
+            if r is not None:
+                sse = sum(((X[r == c] - X[r == c].mean(0)) ** 2).sum() for c in range(3))
+                if melhor is None or sse < melhor[0]: melhor = (sse, r)
+        if melhor is not None:
+            aris.append(adjusted_rand_score(y, melhor[1])); vs.append(viol(melhor[1], ml, cl))
+    print(f"{n:12d} | {np.mean(aris):9.2f} | {np.mean(vs):16.1f} | {len(aris):2d}")
+```
+@@NOTE As restrições garantem violações zero, mas o ganho em ARI é pequeno (de 0,71 para 0,76 com 100 restrições): os grupos se sobrepõem tanto que poucos pares ajudam. Com 100 restrições, uma das 10 execuções já fica inviável: o algoritmo guloso pode não achar solução. Restrições valem mais quando são **informativas** (pares na fronteira) do que quando são sorteadas ao acaso.
+@@EX 3 | Dados mistos: o peso das categorias na distância de Gower | intermediário
+Gere clientes com idade, renda, plano (ordinal) e canal (categórico). Implemente a distância de Gower com um peso `w_cat` para o atributo categórico, agrupe com ligação média e varie `w_cat` em 0; 0,5; 1; 2; 4 e 8. Calcule o ARI com os perfis ocultos e discuta.
 @@SOL
 ```python
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_digits
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import NearestNeighbors
-from sklearn.cluster import KMeans, AgglomerativeClustering, SpectralClustering, HDBSCAN
-from sklearn.mixture import GaussianMixture
-from sklearn.manifold import Isomap, TSNE, trustworthiness
-from sklearn.neural_network import MLPRegressor
-from sklearn.ensemble import IsolationForest
-from sklearn.neighbors import LocalOutlierFactor
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import silhouette_score, adjusted_rand_score, normalized_mutual_info_score
-from mlxtend.frequent_patterns import fpgrowth, association_rules
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import adjusted_rand_score
 
-# ---------------------------------------------------------------- Etapa 1
-dig = load_digits()
-X = dig.data / 16.0
-y = dig.target  # só para avaliar (e na Etapa 7, como "oráculo" de rotulagem)
+rng = np.random.default_rng(0)
+n = 450
+perfil = rng.integers(0, 3, n)
+canais = [["app", "whatsapp"], ["loja", "telefone"], ["site", "email"]]
+todos = ["app", "whatsapp", "loja", "telefone", "site", "email"]
+canal = [rng.choice(canais[p]) if rng.random() < 0.8 else rng.choice(todos) for p in perfil]
+pr = np.array([[0.6, 0.3, 0.1], [0.1, 0.3, 0.6], [0.2, 0.6, 0.2]])[perfil]
+plano = [rng.choice([0, 1, 2], p=p) for p in pr]
+df = pd.DataFrame({"idade": rng.normal(np.array([32, 42, 52])[perfil], 11),
+                   "renda": rng.normal(np.array([3.5, 5.0, 4.0])[perfil], 1.6),
+                   "plano": plano, "canal": canal})
 
+def gower(df, numericos, categoricos, w_cat=1.0):
+    D = np.zeros((len(df), len(df))); soma_pesos = 0.0
+    for c in numericos:
+        v = df[c].to_numpy(float); D += np.abs(v[:, None] - v[None, :]) / (v.max() - v.min()); soma_pesos += 1
+    for c in categoricos:
+        v = df[c].to_numpy(); D += w_cat * (v[:, None] != v[None, :]); soma_pesos += w_cat
+    return D / soma_pesos
 
-def hopkins(A, m=100, seed=42):
-    r = np.random.default_rng(seed)
-    n, d = A.shape
-    nn = NearestNeighbors(n_neighbors=2).fit(A)
-    idx = r.choice(n, m, replace=False)
-    w = nn.kneighbors(A[idx], 2)[0][:, 1]
-    U = r.uniform(A.min(0), A.max(0), (m, d))
-    u = nn.kneighbors(U, 1)[0][:, 0]
-    return u.sum() / (u.sum() + w.sum())
+print("peso da categoria 'canal' | ARI (Gower + ligação média)")
+for w in (0.0, 0.5, 1.0, 2.0, 4.0, 8.0):
+    G = gower(df, ["idade", "renda", "plano"], ["canal"], w_cat=w)
+    r = AgglomerativeClustering(3, metric="precomputed", linkage="average").fit_predict(G)
+    print(f"{w:25.1f} | {adjusted_rand_score(perfil, r):.2f}")
+```
+@@NOTE Ignorar o canal (peso 0) dá ARI de apenas 0,18, porque os atributos numéricos se sobrepõem muito. Com peso 0,5 o ARI sobe a 0,41 e, a partir de 1, estabiliza em 0,67. Em dados reais, o peso adequado depende do problema e deve ser validado (estabilidade, interpretação), não ajustado ao gabarito.
+@@EX 4 | Biclustering: até que ruído a estrutura em blocos sobrevive? | intermediário
+Com `make_biclusters` (300 × 300, 4 biclusters), embaralhe linhas e colunas, aplique `SpectralCoclustering` e calcule o `consensus_score` para níveis de ruído de 5, 50, 100, 150 e 250.
+@@SOL
+```python
+import numpy as np
+from sklearn.datasets import make_biclusters
+from sklearn.cluster import SpectralCoclustering
+from sklearn.metrics import consensus_score
 
+print("ruído | consensus_score")
+for ruido in (5, 50, 100, 150, 250):
+    dados, linhas, colunas = make_biclusters(shape=(300, 300), n_clusters=4, noise=ruido, shuffle=False, random_state=0)
+    rng = np.random.default_rng(0)
+    pl, pc = rng.permutation(300), rng.permutation(300)
+    emb = dados[pl][:, pc]
+    cc = SpectralCoclustering(n_clusters=4, random_state=0).fit(emb)
+    verdade = (linhas[:, pl], colunas[:, pc])
+    print(f"{ruido:5d} | {consensus_score(cc.biclusters_, verdade):.2f}")
+```
+@@NOTE O escore de consenso é 1,00 até o ruído 50, cai para 0,89 com ruído 100, 0,60 com 150 e 0,13 com 250: a partir de certo ponto, o ruído esconde os blocos. Em dados reais, o nível de ruído não é conhecido, e a validação deve combinar o escore interno, a estabilidade e a leitura de especialistas.
+@@EX 5 | Um alarme de deriva por taxa de rejeição | avançado
+Treine um K-means em um lote de referência. Defina o limite de rejeição como o percentil 99 das distâncias ao centro no treino. Simule 13 lotes, com os centros deslocados a partir do lote 8, e calcule em cada lote a taxa de rejeitados e a distância média ao centro. Dispare um alerta quando a taxa passar de 5 %.
+@@SOL
+```python
+import numpy as np
+from sklearn.cluster import KMeans
 
-pca_full = PCA().fit(X)
-n95 = int(np.argmax(pca_full.explained_variance_ratio_.cumsum() >= 0.95)) + 1
-Z = PCA(30, random_state=0).fit_transform(X)
-print(f"[1] Hopkins = {hopkins(X):.2f} | componentes para 95% da variância = {n95}")
+rng = np.random.default_rng(1)
+base = np.array([[0.0, 0.0], [6.0, 0.0], [3.0, 5.0]])
 
+def lote(t, n=300):
+    desloc = np.zeros_like(base)
+    if t >= 8:
+        desloc[:, 0] += 1.5 * (t - 7)                   # deriva abrupta e crescente a partir do lote 8
+    y = rng.integers(0, 3, n)
+    return (base + desloc)[y] + rng.normal(0, 0.8, (n, 2))
 
-# ---------------------------------------------------------------- Etapa 2
-def estabilidade(fab, A, pares=8, seed=0):
+ref = lote(0)
+modelo = KMeans(3, n_init=10, random_state=0).fit(ref)
+d_ref = modelo.transform(ref).min(1)
+limite = np.quantile(d_ref, 0.99)                       # limite de rejeição: percentil 99 do treino
+
+print(" t | % rejeitados | distância média ao centro | alerta (rejeição > 5 %)")
+for t in range(1, 14):
+    X = lote(t)
+    d = modelo.transform(X).min(1)
+    taxa = (d > limite).mean()
+    print(f"{t:2d} | {100 * taxa:12.1f} | {d.mean():25.2f} | {'ALERTA' if taxa > 0.05 else '-'}")
+```
+@@NOTE Nos lotes 1 a 7, a taxa de rejeição fica abaixo de 4 %, como esperado do percentil 99. No lote 8, em que a deriva começa, ela salta para cerca de 21 % e continua subindo, e a distância média ao centro dispara: o alerta funciona. Um limite de 5 % é uma escolha de negócio: reduza-o para detectar antes (com mais falsos alarmes) ou aumente-o para alarmar menos.
+@@PROJ Segmentação de clientes em produção: consenso, dados mistos e monitoramento | Cap13
+**Contexto.** Uma seguradora (fictícia) quer segmentar os clientes por atributos **mistos** (idade, renda, plano e canal de contratação) e **usar** a segmentação nos meses seguintes, sem reajustá-la a cada semana. A equipe precisa de um agrupamento **robusto**, de uma regra para **atribuir** clientes novos e de um **alarme** para quando surgir um perfil que o modelo não conhece.
+
+**Fonte dos dados.** Dados simulados (função `gerar` na solução), com três perfis no treino e um quarto perfil que surge dois meses depois.
+
+**Tarefas.**
+1. Gere 600 clientes de treino (3 perfis), 300 clientes do mês 1 (mesmos perfis) e 300 do mês 2 (com o perfil novo). **Ajuste todo o pré-processamento apenas no treino.**
+2. Construa um **ensemble de 30 partições** de K-means (*k* de 3 a 8) sobre os dados codificados (padronização + *one-hot*), calcule a coassociação e extraia o **consenso** com ligação média.
+3. Escolha *k* com a **força de predição** (divisão interna do treino) e justifique.
+4. Atribua os clientes novos com um classificador de *k* vizinhos treinado nos rótulos do consenso e **rejeite** os que estão longe demais (limite: percentil 99 das distâncias do treino).
+5. Calcule a taxa de rejeição nos meses 1 e 2 e discuta o alarme de deriva.
+6. Apenas no final, use os perfis ocultos para calcular o ARI do consenso e o dos casos aceitos.
+7. Escreva um parágrafo de recomendação: o que a equipe deve monitorar e quando reagrupar.
+
+**Entregáveis.** Script, tabela de resultados e parágrafo.
+@@SOL
+```python
+import numpy as np
+import pandas as pd
+from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.compose import ColumnTransformer
+from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.metrics import adjusted_rand_score
+
+# ---------- 1) Dados sintéticos: clientes com atributos mistos
+CANAIS = [["app", "whatsapp"], ["loja", "telefone"], ["site", "email"], ["parceiro", "evento"]]
+TODOS = sum(CANAIS, [])
+IDADE, RENDA = np.array([30, 42, 52, 36]), np.array([3.5, 5.0, 4.0, 7.0])
+PLANO = np.array([[0.6, 0.3, 0.1], [0.1, 0.3, 0.6], [0.2, 0.6, 0.2], [0.1, 0.2, 0.7]])
+
+def gerar(n, perfis, seed):
     rng = np.random.default_rng(seed)
-    n = len(A)
-    sc = []
-    for _ in range(pares):
-        i1 = rng.choice(n, int(0.7 * n), replace=False)
-        i2 = rng.choice(n, int(0.7 * n), replace=False)
-        v1 = (
-            NearestNeighbors(n_neighbors=1)
-            .fit(A[i1])
-            .kneighbors(A, return_distance=False)
-            .ravel()
-        )
-        v2 = (
-            NearestNeighbors(n_neighbors=1)
-            .fit(A[i2])
-            .kneighbors(A, return_distance=False)
-            .ravel()
-        )
-        r1 = fab().fit_predict(A[i1])
-        r2 = fab().fit_predict(A[i2])
-        sc.append(adjusted_rand_score(r1[v1], r2[v2]))
-    return float(np.mean(sc))
+    p = rng.choice(perfis, n)
+    canal = [rng.choice(CANAIS[k]) if rng.random() < 0.8 else rng.choice(TODOS) for k in p]
+    df = pd.DataFrame({"idade": rng.normal(IDADE[p], 8), "renda": rng.normal(RENDA[p], 1.2),
+                       "plano": [rng.choice(["basico", "padrao", "premium"], p=PLANO[k]) for k in p],
+                       "canal": canal})
+    return df, p
 
+treino, y_tr = gerar(600, [0, 1, 2], seed=0)
+mes1, y_m1 = gerar(300, [0, 1, 2], seed=1)           # mês seguinte: mesmos perfis
+mes2, y_m2 = gerar(300, [0, 1, 2, 3], seed=2)        # dois meses depois: surge o perfil 3
 
-metodos = {
-    "K-means": lambda: KMeans(10, n_init=10, random_state=0),
-    "Ward": lambda: AgglomerativeClustering(10, linkage="ward"),
-    "GMM (diag)": lambda: GaussianMixture(10, covariance_type="diag", n_init=3, random_state=0),
-    "Espectral": lambda: SpectralClustering(
-        10, affinity="nearest_neighbors", n_neighbors=15, random_state=0
-    ),
-    "HDBSCAN": lambda: HDBSCAN(min_cluster_size=20),
-}
-linhas = []
-rotulos = {}
-for nome, fab in metodos.items():
-    r = fab().fit_predict(Z)
-    rotulos[nome] = r
-    ok = r >= 0
-    sil = silhouette_score(Z[ok], r[ok]) if len(set(r[ok])) > 1 else np.nan
-    linhas.append(
-        {
-            "método": nome,
-            "grupos": len(set(r[ok])),
-            "ruído": int((~ok).sum()),
-            "silhueta": sil,
-            "estabilidade": estabilidade(fab, Z),
-            "ARI": adjusted_rand_score(y[ok], r[ok]),
-            "NMI": normalized_mutual_info_score(y[ok], r[ok]),
-        }
-    )
-tab = pd.DataFrame(linhas)
-print("[2] Comparação de agrupamentos (ARI e NMI só para conferência):")
-print(tab.round(3).to_string(index=False))
-dez = tab[tab.grupos == 10].copy()  # escolha SEM usar rótulos: silhueta + estabilidade
-dez["postos"] = dez.silhueta.rank(ascending=False) + dez.estabilidade.rank(ascending=False)
-melhor = dez.loc[dez.postos.idxmin(), "método"]
-print("    Escolhido por silhueta e estabilidade (sem rótulos):", melhor)
+# ---------- 2) Pré-processamento ajustado SÓ no treino
+prep = ColumnTransformer([("num", StandardScaler(), ["idade", "renda"]),
+                          ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), ["plano", "canal"])]).fit(treino)
+Z_tr, Z_m1, Z_m2 = prep.transform(treino), prep.transform(mes1), prep.transform(mes2)
 
-# ---------------------------------------------------------------- Etapa 3
-proj = {
-    "PCA": PCA(2).fit_transform(X),
-    "Isomap": Isomap(n_neighbors=10).fit_transform(X),
-    "t-SNE": TSNE(2, init="pca", random_state=0).fit_transform(X),
-}
-print(
-    "[3] Confiança (k=10):",
-    {k: round(float(trustworthiness(X, v, n_neighbors=10)), 3) for k, v in proj.items()},
-)
-plt.scatter(proj["t-SNE"][:, 0], proj["t-SNE"][:, 1], c=rotulos[melhor], cmap="tab10", s=6)
-plt.title(f"t-SNE colorido por {melhor}")
-plt.show()
+# ---------- 3) Consenso: 30 partições K-means (k de 3 a 8) -> coassociação -> hierárquico (média)
+rng = np.random.default_rng(0)
+C = np.zeros((len(Z_tr), len(Z_tr))); M = 30
+for _ in range(M):
+    k = int(rng.integers(3, 9)); idx = rng.choice(len(Z_tr), int(0.8 * len(Z_tr)), replace=False)
+    p = KMeans(k, n_init=1, random_state=int(rng.integers(10**6))).fit(Z_tr[idx]).predict(Z_tr)
+    C += p[:, None] == p[None, :]
+C /= M
 
-# ---------------------------------------------------------------- Etapa 4
-Xtr_ae = X
-ae = MLPRegressor(hidden_layer_sizes=(64, 16, 64), max_iter=1500, random_state=0).fit(X, X)
-relu = lambda a: np.maximum(a, 0)
-W, b = ae.coefs_, ae.intercepts_
-codigo = relu(relu(X @ W[0] + b[0]) @ W[1] + b[1])
-pca16 = PCA(16, random_state=0).fit_transform(X)
-for nome, R in [("PCA (16)", pca16), ("Autoencoder (16)", codigo)]:
-    r = KMeans(10, n_init=10, random_state=0).fit_predict(StandardScaler().fit_transform(R))
-    print(
-        f"[4] {nome:17s} K-means: ARI = {adjusted_rand_score(y, r):.3f}  NMI = {normalized_mutual_info_score(y, r):.3f}"
-    )
+# ---------- 4) Força de predição para escolher k (divisão treino/validação do próprio treino)
+def forca(k):
+    a, b = Z_tr[:300], Z_tr[300:]
+    ma, mb = KMeans(k, n_init=10, random_state=0).fit(a), KMeans(k, n_init=10, random_state=0).fit(b)
+    prev, ps = ma.predict(b), []
+    for j in range(k):
+        i = np.where(mb.labels_ == j)[0]
+        ps.append(((prev[i][:, None] == prev[i][None, :]).sum() - len(i)) / max(len(i) * (len(i) - 1), 1))
+    return min(ps)
+for k in range(2, 7):
+    print(f"Força de predição k = {k}: {forca(k):.2f}")
 
-# ---------------------------------------------------------------- Etapa 5
-Z20 = PCA(20, random_state=0).fit_transform(X)
-s_if = -IsolationForest(n_estimators=300, random_state=0).fit(Z20).score_samples(Z20)
-s_lof = -LocalOutlierFactor(n_neighbors=20).fit(Z20).negative_outlier_factor_
-comb = (pd.Series(s_if).rank() + pd.Series(s_lof).rank()).values / 2
-topo = np.argsort(-comb)
-print(
-    "[5] Dígitos entre os 30 maiores alertas:",
-    np.bincount(y[topo[:30]], minlength=10),
-    "| índices dos 12 primeiros:",
-    topo[:12].tolist(),
-)
-fig, ax = plt.subplots(2, 6, figsize=(9, 3.4))
-for a, i in zip(ax.ravel(), topo[:12]):
-    a.imshow(dig.images[i], cmap="gray_r")
-    a.set_title(f"#{i} (dígito {y[i]})", fontsize=8)
-    a.axis("off")
-plt.suptitle("As 12 imagens mais estranhas")
-plt.show()
+k_final = 3
+rotulos = AgglomerativeClustering(k_final, metric="precomputed", linkage="average").fit_predict(1 - C)
+print("Tamanho dos grupos do consenso:", np.bincount(rotulos))
 
-# ---------------------------------------------------------------- Etapa 6
-blocos = X.reshape(-1, 4, 2, 4, 2).mean(axis=(2, 4)).reshape(len(X), 16) > 0.5
-itens = {}
-for r in range(4):
-    for c in range(4):
-        itens[f"ativo_{r}{c}"] = blocos[:, 4 * r + c]
-        itens[f"vazio_{r}{c}"] = ~blocos[:, 4 * r + c]
-for d in range(10):
-    itens[f"digito_{d}"] = y == d
-df_i = pd.DataFrame(itens)
-freq = fpgrowth(df_i, min_support=0.03, use_colnames=True, max_len=4)
-regras = association_rules(freq, metric="lift", min_threshold=1.5)
-so_digito = regras.consequents.apply(
-    lambda s: len(s) == 1 and next(iter(s)).startswith("digito_")
-)
-so_blocos = regras.antecedents.apply(lambda s: all(not i.startswith("digito") for i in s))
-r2 = regras[so_digito & so_blocos & (regras.confidence >= 0.6)].sort_values(
-    ["lift", "confidence"], ascending=False
-)
-print(
-    f"[6] {len(r2)} regras blocos → dígito (confiança ≥ 0,6, lift ≥ 1,5). Melhor regra por dígito:"
-)
-for d in range(10):
-    sub = r2[r2.consequents.apply(lambda s: f"digito_{d}" in s)].head(1)
-    for _, r in sub.iterrows():
-        print(
-            f"    dígito {d}: {sorted(r.antecedents)}  conf = {r.confidence:.2f}  lift = {r.lift:.1f}"
-        )
-print(
-    "    Fração de imagens com bloco ativo nas colunas das bordas (0 e 3):",
-    round(float(blocos.reshape(-1, 4, 4)[:, :, [0, 3]].mean()), 3),
-)
+# ---------- 5) Atribuir casos novos (kNN) e rejeitar os distantes demais
+knn = KNeighborsClassifier(15).fit(Z_tr, rotulos)
+d5 = NearestNeighbors(n_neighbors=6).fit(Z_tr).kneighbors(Z_tr)[0][:, 1:].mean(1)   # distância média a 5 vizinhos (treino)
+limite = np.quantile(d5, 0.99)
 
-# ---------------------------------------------------------------- Etapa 7
-km30 = KMeans(30, n_init=10, random_state=0).fit(Z)
-d2c = np.linalg.norm(Z[:, None, :] - km30.cluster_centers_[None], axis=2)
-representantes = d2c.argmin(axis=0)  # imagem mais próxima de cada centro
-rot_grupo = {g: y[representantes[g]] for g in range(30)}  # "oráculo" rotula só 30 imagens
-pred_A = np.array([rot_grupo[g] for g in km30.labels_])
-acc_A = (pred_A == y).mean()
-accs_B = []
-for s in range(20):
-    rng = np.random.default_rng(s)
-    idx = rng.choice(len(X), 30, replace=False)
-    if len(set(y[idx])) < 2:
-        continue
-    accs_B.append(LogisticRegression(max_iter=2000).fit(X[idx], y[idx]).score(X, y))
-print(
-    f"[7] Acurácia com 30 rótulos: agrupar e rotular = {acc_A:.3f} | amostra aleatória + regressão logística = {np.mean(accs_B):.3f} ± {np.std(accs_B):.3f}"
-)
+def monitorar(nome, Z, y_real):
+    d = NearestNeighbors(n_neighbors=5).fit(Z_tr).kneighbors(Z)[0].mean(1)
+    rej = d > limite
+    atrib = knn.predict(Z)
+    ok = ~rej
+    print(f"{nome}: rejeitados = {100 * rej.mean():4.1f} % | ARI (aceitos, rótulos ocultos) = {adjusted_rand_score(y_real[ok], atrib[ok]):.2f}")
+    return rej
+
+print("ARI do consenso no treino (rótulos ocultos):", round(adjusted_rand_score(y_tr, rotulos), 2))
+r1 = monitorar("Mês 1 (sem mudança)  ", Z_m1, y_m1)
+r2 = monitorar("Mês 2 (perfil novo)  ", Z_m2, y_m2)
+print("Entre os clientes do perfil novo, rejeitados:", f"{100 * r2[y_m2 == 3].mean():.1f} %")
+print("Entre os clientes dos perfis antigos, rejeitados:", f"{100 * r2[y_m2 != 3].mean():.1f} %")
 ```
 @@RUBRICA
-- Preparação adequada e justificativa do número de componentes.
-- Cinco métodos de agrupamento comparados por critérios internos, estabilidade e (apenas no final) externos.
-- Projeções comparadas por confiança, com gráfico interpretado com cuidado.
-- Autoencoder comparado a uma linha de base (PCA) sem concluir que "profundo é melhor" sem evidência.
-- Imagens estranhas descritas e dígitos predominantes nos alertas identificados.
-- Regras de traços interpretadas como coocorrência, não causalidade.
-- Comparação justa entre rotular por grupos e rotular ao acaso, com repetições.
-- Relatório com resumo executivo, limitações, riscos éticos e recomendação clara.
-@@NOTE O resultado exato depende do computador e das versões das bibliotecas. Nesta execução: (i) a estatística de Hopkins é alta (cerca de 0,74) e são necessárias 29 componentes para reter 95% da variância; (ii) o agrupamento espectral é o mais estável (cerca de 0,89) e tem ARI de cerca de 0,76, seguido por Ward (ARI de cerca de 0,72); o GMM é o menos estável; o HDBSCAN encontra 7 grupos e marca 873 imagens como ruído, mas os grupos que forma são muito puros (ARI de cerca de 0,87 só nos pontos não ruidosos), o que mostra que ele troca cobertura por pureza; (iii) o t-SNE tem a maior confiança (cerca de 0,99, contra cerca de 0,83 do PCA e do Isomap); (iv) o autoencoder (ARI de cerca de 0,44) é pior que o PCA de 16 componentes (cerca de 0,69); (v) com apenas 30 rótulos, "agrupar e rotular" alcança acurácia de cerca de 0,93, contra cerca de 0,66 da amostra aleatória com regressão logística, porque cada rótulo é propagado a dezenas de imagens parecidas. (vi) com blocos de 2×2 pixels, só se encontram regras confiáveis para os dígitos 4, 5 e 7, e os blocos das colunas das bordas quase nunca ficam ativos (cerca de 0,6% das vezes), por isso quase não aparecem nas regras. Atenção: no passo (v), escolher a imagem mais próxima do centro para rotular depende de um "oráculo" humano; o resultado depende da qualidade dos grupos.
+- Pré-processamento ajustado só no treino, sem vazamento.
+- Consenso construído com partições diversas e extraído com ligação adequada.
+- Escolha de k justificada pela força de predição (e não só pelo gabarito).
+- Atribuição de casos novos com regra de rejeição explícita.
+- Taxa de rejeição comparada entre os meses e interpretada como sinal de deriva.
+- Rótulos ocultos usados apenas no final.
+- Recomendação clara, com limites e responsabilidades humanas.
+@@NOTE A força de predição é alta para k = 2 (0,89) e cai a 0,77 em k = 3; o consenso do treino tem ARI de cerca de 0,45 com os perfis ocultos, o que mostra como a sobreposição dificulta o problema. No mês 1, a taxa de rejeição fica em cerca de 2 %; no mês 2, sobe a cerca de 13 %, e entre os clientes do perfil novo, a 41 %, contra cerca de 3 % nos perfis antigos. O alarme de deriva funciona, mas o perfil novo só é plenamente identificável depois de reagrupar com dados atualizados.
 @@ALEM
-- **UCI:** Optical Recognition of Handwritten Digits (a versão completa tem 3.823 imagens de treino e 1.797 de teste), Pen-Based Recognition of Handwritten Digits, Dry Bean e Wine Quality.
-- **Kaggle:** Fashion-MNIST e MNIST (Digit Recognizer). Repita o projeto final em outro conjunto e compare as conclusões.
+- **UCI:** Bank Marketing, Adult (Census Income), Online Retail e German Credit são bases com atributos mistos que servem para repetir o projeto.
+- **Kaggle:** Customer Segmentation Classification e Mall Customers; Dataset de comunidades (redes de e-mails) e conjuntos de texto como 20 Newsgroups (disponível também em `sklearn.datasets`, com download).

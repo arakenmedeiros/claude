@@ -1,269 +1,269 @@
-MC: Em um projeto de dados bem conduzido, o primeiro passo é:
-a) definir a pergunta de negócio e a decisão que será apoiada.
-b) escolher o algoritmo mais sofisticado.
-c) treinar um autoencoder.
-d) calcular o ARI.
-R: a | Primeiro a decisão; depois as ferramentas.
+MC: Em um agrupamento por consenso (cluster ensemble), o primeiro passo é:
+a) gerar muitas partições diversas dos mesmos dados.
+b) escolher o algoritmo mais caro.
+c) apagar os outliers.
+d) rotular os dados manualmente.
+R: a | Depois, as partições são resumidas, por exemplo, na matriz de coassociação.
 
-MC: Qual destes NÃO é um ingrediente de uma boa pergunta de projeto?
-a) Quem decide.
-b) O que será decidido.
-c) O nome do algoritmo que será usado.
-d) Como saberemos que deu certo.
-R: c | O algoritmo é um meio, e não parte da pergunta.
+MC: Na matriz de coassociação C, o valor C[i, j] representa:
+a) a fração das partições em que i e j caíram no mesmo grupo.
+b) a distância Euclidiana entre i e j.
+c) o número de grupos da partição.
+d) o rótulo de i menos o de j.
+R: a | Valores perto de 1 indicam pares que quase sempre ficam juntos.
 
-MC: Por que os rótulos reais só devem ser usados no final de um estudo não supervisionado?
-a) Para evitar que a escolha do método seja influenciada por informação que não estaria disponível na prática.
-b) Porque rótulos sempre estão errados.
-c) Porque o scikit-learn proíbe.
-d) Porque tornam o algoritmo mais lento.
-R: a | Usar rótulos para escolher o método é uma forma de vazamento.
+MC: No esquema evidence accumulation, o consenso final costuma ser obtido:
+a) aplicando um agrupamento hierárquico a 1 − C.
+b) calculando a média dos rótulos.
+c) escolhendo a partição com maior inércia.
+d) ignorando as partições individuais.
+R: a | 1 − C é usada como matriz de distâncias (Fred; Jain, 2005).
 
-MC: Fixar random_state em tudo que é aleatório serve principalmente para:
-a) tornar os resultados reproduzíveis.
-b) melhorar a acurácia.
-c) acelerar o código.
-d) evitar o sobreajuste.
-R: a | Outras pessoas conseguem repetir seus números.
+MC: Para que um ensemble de partições ajude, as partições-base devem ser:
+a) diversas e razoáveis.
+b) todas idênticas.
+c) totalmente aleatórias.
+d) sempre com k = 2.
+R: a | Sem diversidade o consenso repete as partições; sem qualidade, soma ruído.
 
-MC: Ajustar o StandardScaler com todos os dados antes de dividir em treino e teste causa:
-a) vazamento de informação do teste para o treino.
-b) melhora legítima do desempenho.
-c) redução do tempo de execução.
-d) nenhum efeito possível.
-R: a | O escalonador deve ser ajustado só com o treino.
+MC: Uma restrição must-link entre os exemplos i e j significa que:
+a) i e j devem ficar no mesmo grupo.
+b) i e j devem ficar em grupos diferentes.
+c) i e j são outliers.
+d) i e j têm a mesma distância ao centroide.
+R: a | O cannot-link é a restrição oposta.
 
-MC: Entre as etapas do projeto, qual técnica serve para reduzir 64 pixels a poucas dimensões antes de agrupar?
-a) PCA.
-b) Apriori.
-c) One-Class SVM.
-d) Silhueta.
-R: a | O PCA resume os dados em poucas componentes.
+MC: O COP-K-means difere do K-means no passo de:
+a) atribuição: cada ponto vai ao centroide mais próximo que não viole restrições.
+b) atualização: usa a mediana.
+c) inicialização: usa o DBSCAN.
+d) avaliação: usa o ARI.
+R: a | Os blocos ligados por must-link se movem juntos (Wagstaff et al., 2001).
 
-MC: Na Etapa 2 do projeto, a escolha do melhor método de agrupamento foi feita com:
-a) silhueta e estabilidade, sem usar rótulos.
-b) o ARI contra os dígitos reais.
-c) sorteio.
-d) o tempo de execução apenas.
-R: a | Assim a escolha não depende de rótulos.
+MC: Um risco do COP-K-means com muitas restrições é:
+a) não existir nenhuma atribuição que satisfaça todas as restrições.
+b) o algoritmo ficar mais rápido.
+c) o número de grupos diminuir sempre.
+d) os centroides desaparecerem do espaço.
+R: a | Decidir a viabilidade pode ser difícil (Davidson; Ravi, 2007).
 
-MC: No estudo com os dígitos, o agrupamento espectral destacou-se por:
-a) maior estabilidade entre reamostragens.
-b) ser o mais rápido.
-c) não precisar de parâmetros.
-d) detectar ruído.
-R: a | Teve a estabilidade mais alta entre os métodos testados.
+MC: Usar poucos exemplos rotulados apenas para inicializar os centroides do K-means é conhecido como:
+a) seeding (sementes), uma forma de agrupamento semissupervisionado.
+b) bagging.
+c) boosting.
+d) validação cruzada.
+R: a | Basu, Banerjee e Mooney (2002).
 
-MC: O HDBSCAN, nos dígitos, marcou muitas imagens como ruído e formou grupos muito puros. Isso ilustra:
-a) uma troca entre cobertura e pureza.
-b) um erro do algoritmo.
-c) que ele não funciona em imagens.
-d) que eixos devem ser trocados.
-R: a | Ele deixa de agrupar pontos difíceis, mantendo grupos mais coesos.
+MC: Por que não é adequado codificar categorias sem ordem (app, loja, site) como 0, 1 e 2 e usá-las como números?
+a) Porque isso inventa uma ordem e distâncias que não existem.
+b) Porque o computador não aceita inteiros.
+c) Porque reduz a dimensão.
+d) Porque aumenta o número de grupos.
+R: a | O one-hot ou a distância de Gower evitam esse problema.
 
-MC: A estatística de Hopkins alta (por exemplo, 0,74) indica que os dados:
-a) têm tendência de agrupamento.
-b) são uniformes.
-c) não têm estrutura.
-d) são ruído.
-R: a | Valores próximos de 1 indicam estrutura agrupável.
+MC: Na distância de Gower, para atributos categóricos a diferença parcial entre dois exemplos vale:
+a) 0 se as categorias são iguais e 1 se são diferentes.
+b) a diferença entre os códigos.
+c) o quadrado da diferença.
+d) sempre 0,5.
+R: a | Para atributos numéricos, usa-se |diferença| dividida pela amplitude.
 
-MC: Na comparação de projeções 2D dos dígitos, a técnica de maior confiança (trustworthiness) foi:
-a) t-SNE.
-b) PCA.
-c) Isomap.
-d) MDS.
-R: a | Preservou melhor as vizinhanças locais.
+MC: No K-prototypes, o protótipo de um grupo é formado por:
+a) média nos atributos numéricos e moda nos categóricos.
+b) mediana em todos os atributos.
+c) apenas a moda.
+d) apenas a média.
+R: a | O parâmetro γ pondera o peso das categorias (Huang, 1998).
 
-MC: Por que não se deve interpretar a distância entre grupos distantes em um mapa t-SNE?
-a) Porque o t-SNE preserva vizinhanças locais, não distâncias globais.
-b) Porque o t-SNE não usa distâncias.
-c) Porque o t-SNE é determinístico.
-d) Porque o t-SNE exige rótulos.
-R: a | Só a vizinhança local é confiável.
+MC: O parâmetro γ do K-prototypes controla:
+a) o peso das discordâncias categóricas em relação à parte numérica.
+b) o número de grupos.
+c) o número de iterações.
+d) o formato dos gráficos.
+R: a | Valores grandes dão mais importância às categorias.
 
-MC: No projeto, o autoencoder com código de 16 dimensões, comparado ao PCA de 16 componentes, teve:
-a) desempenho de agrupamento pior.
-b) desempenho de agrupamento melhor.
-c) desempenho idêntico.
-d) erro de execução.
-R: a | O ARI do autoencoder foi menor que o do PCA nesta execução.
+MC: O biclustering procura:
+a) subconjuntos de linhas e colunas que formam submatrizes coerentes.
+b) apenas grupos de linhas.
+c) apenas grupos de colunas.
+d) somente valores ausentes.
+R: a | Agrupa linhas e colunas ao mesmo tempo.
 
-MC: A lição principal do resultado do autoencoder versus PCA é:
-a) comparar sempre com uma linha de base simples.
-b) nunca usar autoencoders.
-c) PCA é sempre melhor.
-d) autoencoders não funcionam em imagens.
-R: a | Métodos sofisticados nem sempre superam os simples.
+MC: Qual método do scikit-learn supõe uma estrutura em xadrez (cada grupo de linhas se relaciona com todos os grupos de colunas)?
+a) SpectralBiclustering.
+b) KMeans.
+c) DBSCAN.
+d) GaussianMixture.
+R: a | O SpectralCoclustering procura blocos "diagonais".
 
-MC: Para encontrar imagens "estranhas", o projeto combinou Isolation Forest e LOF por meio:
-a) da média dos postos (ranks) dos escores.
-b) do produto dos escores brutos.
-c) de uma votação de rótulos reais.
-d) da escolha do menor escore.
-R: a | Os postos tornam escores de escalas diferentes comparáveis.
+MC: O escore de consenso (consensus_score) do scikit-learn serve para:
+a) comparar biclusters encontrados com biclusters verdadeiros.
+b) escolher k no K-means.
+c) medir a inércia.
+d) calcular a perplexidade do t-SNE.
+R: a | Vale 1 quando os biclusters coincidem.
 
-MC: Por que combinar detectores por postos é preferível à média dos escores brutos?
-a) Os escores têm escalas diferentes.
-b) Postos são sempre mais precisos.
-c) Escores brutos não existem.
-d) Postos eliminam falsos positivos.
-R: a | Postos colocam todos na mesma escala.
+MC: Na detecção de comunidades, a modularidade Q mede:
+a) o quanto as arestas dentro das comunidades excedem o esperado numa rede aleatória com os mesmos graus.
+b) o número de nós.
+c) a distância Euclidiana média.
+d) o diâmetro da rede.
+R: a | Newman e Girvan (2004).
 
-MC: Em regras do tipo "blocos → dígito", a confiança de 0,84 e o lift de 8,4 indicam que:
-a) o padrão de blocos é muito mais frequente no dígito do que o esperado por acaso.
-b) o bloco causa o dígito.
-c) a regra é inválida.
-d) o dígito é raro.
-R: a | Lift acima de 1 indica associação positiva; não implica causalidade.
+MC: O algoritmo de Louvain:
+a) move nós entre comunidades para aumentar a modularidade e depois agrega as comunidades em super-nós.
+b) usa autovetores da matriz de covariância.
+c) exige o número de comunidades.
+d) funciona só com grafos direcionados.
+R: a | Blondel et al. (2008).
 
-MC: Os blocos das colunas das bordas quase não aparecem nas regras porque:
-a) quase nunca estão ativos nas imagens.
-b) são ruído.
-c) têm lift negativo.
-d) não existem.
-R: a | As bordas das imagens 8×8 são quase sempre vazias.
+MC: Em relação ao Louvain, o algoritmo de Leiden:
+a) garante comunidades bem conectadas internamente.
+b) é mais lento e menos preciso.
+c) dispensa o grafo.
+d) é um algoritmo supervisionado.
+R: a | Traag, Waltman e van Eck (2019).
 
-MC: Na estratégia "agrupar e rotular", cada rótulo humano é:
-a) propagado a todas as imagens do mesmo grupo.
-b) usado apenas para uma imagem.
-c) descartado depois.
-d) usado para treinar o autoencoder.
-R: a | Isso multiplica o efeito de cada rótulo.
+MC: O limite de resolução da modularidade é o fato de que:
+a) ela pode juntar comunidades pequenas, mas legítimas, em redes grandes.
+b) ela só funciona com 2 comunidades.
+c) ela é sempre igual a 1.
+d) ela depende dos rótulos.
+R: a | Fortunato e Barthélemy (2007).
 
-MC: Com 30 rótulos, "agrupar e rotular" teve acurácia de cerca de 0,93, contra cerca de 0,66 da amostra aleatória com regressão logística. Isso sugere que:
-a) a estrutura dos grupos aproveita melhor poucos rótulos.
-b) a regressão logística é um modelo ruim.
-c) o sorteio foi errado.
-d) não vale a pena rotular.
-R: a | Cada rótulo informa dezenas de imagens parecidas.
+MC: A deriva de conceito (concept drift) é:
+a) a mudança, ao longo do tempo, da estrutura dos dados que um modelo aprendeu.
+b) um tipo de distância.
+c) um erro de digitação nos dados.
+d) uma técnica de redução de dimensão.
+R: a | Gama et al. (2014).
 
-MC: Uma limitação do "agrupar e rotular" é que:
-a) depende da qualidade dos grupos.
-b) não permite rótulos.
-c) só funciona com 2 grupos.
-d) exige redes neurais.
-R: a | Se um grupo mistura dígitos, o rótulo propagado erra para parte deles.
+MC: Um modelo de agrupamento ajustado uma única vez e nunca atualizado, num fluxo com deriva:
+a) tende a perder qualidade com o tempo.
+b) melhora sempre.
+c) é imune à deriva.
+d) detecta novos grupos sozinho.
+R: a | É preciso acompanhar o fluxo.
 
-MC: Um relatório final deve começar com:
-a) um resumo executivo curto com pergunta, resultado e recomendação.
-b) o código completo.
-c) a lista de bibliotecas.
-d) a tabela de hiperparâmetros.
-R: a | Quem lê só o início já deve saber o que fazer.
+MC: No esquema prequential de avaliação em fluxos:
+a) primeiro prevê-se o novo lote, depois ele é usado para atualizar o modelo.
+b) embaralham-se todos os lotes antes do treino.
+c) usa-se só o primeiro lote.
+d) ignoram-se os lotes antigos e os novos.
+R: a | Isso respeita a ordem temporal e evidencia a deriva.
 
-MC: Qual alternativa descreve um risco ético no projeto dos dígitos?
-a) Um dígito errado em um cheque pode mover dinheiro para a conta errada.
-b) Dígitos não têm relação com pessoas.
-c) Imagens nunca contêm dados pessoais.
-d) Algoritmos não erram.
-R: a | Erros de leitura afetam pessoas.
+MC: Um sinal simples de deriva em um agrupamento por janela deslizante é:
+a) um salto no deslocamento dos centroides entre janelas consecutivas.
+b) a redução da memória do computador.
+c) a diminuição do número de atributos.
+d) o aumento do número de linhas do arquivo.
+R: a | Outros sinais: aumento da inércia e da taxa de rejeição.
 
-MC: Humano no circuito significa que:
-a) casos duvidosos são revisados por pessoas.
-b) pessoas treinam os algoritmos todos os dias.
-c) o sistema funciona sem supervisão.
-d) as pessoas escrevem o código.
-R: a | O detector de anomalias ajuda a encaminhar casos à revisão.
+MC: No LDA (Latent Dirichlet Allocation), cada documento é modelado como:
+a) uma mistura de tópicos, e cada tópico como uma distribuição sobre palavras.
+b) um único tópico fixo.
+c) um vetor de rótulos de classe.
+d) uma matriz de distâncias.
+R: a | Blei, Ng e Jordan (2003).
 
-MC: Escolher hiperparâmetros olhando o desempenho em rótulos e depois chamar o método de "não supervisionado" é:
-a) uma armadilha: se rótulos foram usados, isso deve ser declarado.
-b) uma boa prática.
-c) obrigatório.
-d) irrelevante.
-R: a | A transparência sobre o uso de rótulos é essencial.
+MC: Qual combinação descreve melhor o BERTopic?
+a) Embeddings, UMAP, HDBSCAN e palavras-chave dos grupos.
+b) Apriori e FP-Growth.
+c) PCA e regressão linear.
+d) K-modes e Gower.
+R: a | Une vários capítulos deste livro (Grootendorst, 2022).
 
-MC: Em uma rubrica de projeto, o peso para "Relatório e ética" foi de:
-a) 20%.
-b) 5%.
-c) 50%.
-d) 0%.
-R: a | É um dos critérios de maior peso.
+MC: A coerência de um tópico mede, de forma geral:
+a) se os termos principais do tópico tendem a aparecer juntos nos documentos.
+b) o tamanho do vocabulário.
+c) o número de documentos.
+d) o tempo de treino.
+R: a | Mimno et al. (2011); Röder et al. (2015). A interpretação humana continua decisiva.
 
-MC: O que é "deriva dos dados" (data drift)?
-a) A mudança, ao longo do tempo, da distribuição dos dados em produção.
-b) A perda de arquivos.
-c) O aumento da semente aleatória.
-d) A redução do número de atributos.
-R: a | Com o tempo, o "normal" muda e os modelos podem perder validade.
+MC: O uso transdutivo do agrupamento tem o objetivo de:
+a) entender um conjunto fixo de dados, sem necessariamente classificar casos futuros.
+b) classificar sempre casos novos.
+c) substituir o treino.
+d) calcular rótulos supervisionados.
+R: a | No uso indutivo, queremos atribuir casos novos.
 
-MC: Qual hábito de reprodutibilidade registra as versões das bibliotecas?
-a) Salvar um arquivo requirements.txt (por exemplo, com pip freeze).
-b) Fixar random_state.
-c) Usar notebooks.
-d) Rodar o código duas vezes.
-R: a | Versões diferentes podem gerar resultados diferentes.
+MC: Para atribuir casos novos quando o algoritmo (por exemplo, o DBSCAN) não tem predict, uma solução é:
+a) treinar um classificador sobre os rótulos do agrupamento (cluster-then-classify).
+b) descartar o algoritmo e os dados.
+c) usar o ARI nos casos novos sem rótulos.
+d) escalar os dados novamente com seus próprios parâmetros.
+R: a | Por exemplo, um classificador de k vizinhos.
 
-MC: Quando um resultado muda bastante com a semente aleatória, o correto é:
-a) repetir com várias sementes e reportar a variação.
-b) escolher a melhor semente e esconder as demais.
-c) ignorar o problema.
-d) trocar de computador.
-R: a | Reportar a variação é mais honesto.
+MC: Rejeitar um caso novo que está muito distante de todos os grupos conhecidos serve para:
+a) evitar rotulá-lo à força e sinalizar possíveis grupos desconhecidos ou deriva.
+b) aumentar a inércia.
+c) reduzir o número de atributos.
+d) acelerar o K-means.
+R: a | Um limite comum é um percentil alto das distâncias do treino.
 
-MC: Uma extensão sugerida para o projeto final é:
-a) repetir o estudo em outro conjunto, como Fashion-MNIST, e comparar as conclusões.
-b) apagar os resultados.
-c) trocar o idioma do relatório.
-d) usar apenas um método.
-R: a | Comparar conjuntos ajuda a avaliar a generalidade das conclusões.
+MC: A força de predição (Tibshirani; Walther, 2005) de um agrupamento é calculada como:
+a) o menor valor, entre os grupos, da fração de pares que o modelo de treino mantém juntos no teste.
+b) a média da silhueta.
+c) o valor de eps do DBSCAN.
+d) o número de autovalores nulos.
+R: a | Valores altos indicam um agrupamento que se reproduz em novos dados.
 
-DISC: Explique por que o projeto final começa pela pergunta de negócio e não pela escolha do algoritmo.
-R: A pergunta define a decisão a ser apoiada, os critérios de sucesso e os riscos. Algoritmos são meios; escolhê-los antes leva a respostas tecnicamente bonitas, mas inúteis para a decisão.
+DISC: O que é um cluster ensemble (agrupamento por consenso) e por que ele tende a ser mais robusto que uma única partição?
+R: Combina muitas partições diversas dos mesmos dados e extrai o que há de estável entre elas. Erros idiossincráticos de cada partição se cancelam, como numa floresta aleatória.
 
-DISC: Liste os quatro ingredientes de uma boa pergunta de projeto e dê um exemplo para um caso de sua escolha.
-R: Quem decide, o que será decidido, como saber que deu certo e quais os riscos de errar. Exemplo: gerente de loja (quem), reorganizar prateleiras (o quê), aumento das vendas conjuntas em teste A/B (critério), perda de vendas em itens deslocados (risco).
+DISC: Descreva os três passos do esquema evidence accumulation.
+R: (1) Gerar muitas partições diversas; (2) resumir em uma matriz de coassociação, com a fração de vezes em que cada par ficou junto; (3) aplicar um agrupamento (por exemplo, hierárquico) a 1 − C.
 
-DISC: Descreva cinco hábitos de reprodutibilidade e o problema que cada um evita.
-R: Fixar sementes (resultados não repetíveis); registrar versões (diferenças entre ambientes); separar etapas em funções (código confuso); ajustar transformações só no treino (vazamento); registrar decisões (escolhas sem justificativa).
+DISC: Por que partições-base com k maior que o verdadeiro podem ajudar a recuperar grupos de forma não esférica, como duas luas?
+R: Pequenos pedaços raramente misturam pontos de grupos verdadeiros diferentes. A coassociação une os pedaços vizinhos e o hierárquico os junta no formato verdadeiro.
 
-DISC: O que significa "comparar com justiça" métodos de agrupamento? Cite quatro cuidados.
-R: Mesmos dados e pré-processamento; critérios definidos antes; rótulos só no final; várias sementes ou reamostragens; linha de base simples.
+DISC: Explique a diferença entre restrições must-link e cannot-link e dê um exemplo de cada em um problema de negócio.
+R: Must-link exige que dois exemplos fiquem juntos (dois registros do mesmo CPF); cannot-link exige que fiquem separados (dois produtos que a regra de negócio proíbe misturar).
 
-DISC: Explique por que usar o ARI para escolher o método de agrupamento contradiz a ideia de um estudo não supervisionado.
-R: Na prática, os rótulos não existem; escolher o método olhando o ARI usa informação indisponível e superestima o desempenho. Deve-se escolher por critérios internos, estabilidade e interpretação, e conferir com rótulos no final.
+DISC: Por que o agrupamento com restrições é considerado semissupervisionado?
+R: Usa informação externa parcial (pares), não rótulos completos de classe, além dos dados não rotulados.
 
-DISC: Interprete a tabela de resultados do projeto: K-means (ARI 0,67), Ward (0,72), espectral (0,76) e HDBSCAN (0,87 com 873 ruídos de 1.797). O HDBSCAN é o melhor?
-R: Não necessariamente: seu ARI foi calculado só nos pontos não ruidosos (cerca de metade). Ele troca cobertura por pureza. Para decidir, é preciso considerar o custo de deixar quase metade das imagens sem grupo.
+DISC: Descreva como o COP-K-means usa as restrições e cite uma limitação.
+R: No passo de atribuição, cada ponto (ou bloco must-link) vai ao centroide mais próximo que não viole restrições. Limitação: com muitas restrições pode não haver solução viável, e a ordem de atribuição influencia o resultado.
 
-DISC: Explique por que o autoencoder não superou o PCA no projeto e o que isso ensina.
-R: Em imagens pequenas e simples, o PCA já captura bem a estrutura, e o autoencoder precisa de ajustes (arquitetura, treino). Ensina a comparar com linhas de base simples antes de adotar métodos complexos.
+DISC: Por que tratar categorias sem ordem como números inteiros prejudica o agrupamento? Cite duas alternativas.
+R: Cria uma ordem e distâncias artificiais (app estaria "mais perto" de loja do que de site). Alternativas: one-hot com padronização, distância de Gower, K-modes ou K-prototypes.
 
-DISC: Descreva como o escore combinado por postos foi construído na Etapa 5 e por que ele é útil.
-R: Calcula-se o escore de cada detector (Isolation Forest e LOF), converte-se cada um em postos e tira-se a média dos postos. Isso evita que escalas diferentes dominem e aproveita o acordo entre detectores.
+DISC: Explique a distância de Gower para dados mistos.
+R: Média das diferenças parciais por atributo: |diferença| dividida pela amplitude nos numéricos e ordinais; 0 ou 1 nos categóricos. O resultado está entre 0 e 1 e pode ter pesos por atributo.
 
-DISC: Interprete uma regra "ativo_21, vazio_11, vazio_32 → dígito 7" com confiança 0,84 e lift 8,4.
-R: Quando o bloco 21 está ativo e os blocos 11 e 32 estão vazios, em 84% dos casos o dígito é 7; isso é 8,4 vezes mais que o esperado ao acaso. É coocorrência de traços, não causa.
+DISC: Como funciona o K-prototypes e qual é o papel do parâmetro γ?
+R: Protótipos com média nos atributos numéricos e moda nos categóricos; a dissimilaridade soma a distância quadrática numérica e γ vezes o número de categorias diferentes. γ equilibra o peso dos dois tipos.
 
-DISC: Explique a estratégia "agrupar e rotular" e por que ela superou a amostra aleatória com 30 rótulos.
-R: Agrupa-se em 30 grupos, rotula-se o representante de cada grupo e propaga-se o rótulo aos membros. Como cada rótulo cobre dezenas de imagens parecidas, a acurácia é maior do que com 30 imagens sorteadas isoladamente.
+DISC: Qual é a diferença entre agrupar linhas e fazer biclustering? Dê um exemplo.
+R: Agrupar linhas forma grupos de exemplos usando todas as colunas. O biclustering encontra subconjuntos de linhas e de colunas coerentes entre si, como grupos de usuários que gostam de grupos de filmes.
 
-DISC: Quais são os riscos da estratégia "agrupar e rotular"?
-R: Grupos que misturam classes propagam rótulos errados; o representante pode ser atípico; erros se concentram em classes parecidas. É preciso revisar amostras e medir o erro por classe.
+DISC: Diferencie SpectralCoclustering e SpectralBiclustering.
+R: O coclustering busca blocos diagonais (cada grupo de linhas associado a um grupo de colunas); o biclustering em xadrez supõe que cada grupo de linhas se relaciona com todos os grupos de colunas, em intensidades diferentes.
 
-DISC: Descreva a estrutura sugerida para um relatório final de projeto de dados.
-R: Título e resumo executivo, dados, método, resultados, limitações, riscos éticos e operacionais, recomendação e apêndice técnico.
+DISC: O que é a modularidade e por que uma modularidade maior não garante uma divisão mais correta?
+R: Compara a fração de arestas dentro das comunidades com a esperada em uma rede aleatória com os mesmos graus. Mede a estrutura da rede, não a coincidência com um gabarito externo; há também o limite de resolução.
 
-DISC: Por que o resumo executivo deve ser escrito por último, mas colocado no início?
-R: Só no fim se sabe o resultado completo; mas leitores ocupados leem o início primeiro e precisam de pergunta, resultado e recomendação.
+DISC: Diferencie o agrupamento espectral do Capítulo 6 da detecção de comunidades em grafos.
+R: No espectral, o grafo é construído a partir de pontos em um espaço de atributos. Na detecção de comunidades, o grafo é o dado original, e se procura a estrutura da rede.
 
-DISC: Cite quatro riscos éticos do projeto dos dígitos e uma ação de mitigação para cada.
-R: Erro que move dinheiro (revisão humana); viés contra estilos de escrita (avaliar por subgrupos); privacidade (minimizar e proteger dados); falta de transparência (explicar e permitir contestação).
+DISC: Explique o papel do parâmetro de resolução no Louvain.
+R: Controla a escala das comunidades: valores baixos geram poucas comunidades grandes; valores altos, muitas pequenas. Permite explorar diferentes níveis de detalhe.
 
-DISC: O que é humano no circuito e como ele aparece neste projeto?
-R: Pessoas revisam casos duvidosos. No projeto, o detector de anomalias seleciona as imagens estranhas para revisão humana.
+DISC: Compare três estratégias para agrupar fluxos: modelo congelado, incremental e janela deslizante.
+R: Congelado: simples, mas envelhece. Incremental (partial_fit): memória constante, mas o passado pesa e a adaptação é lenta. Janela deslizante: acompanha mudanças, mas exige escolher o tamanho da janela e reajustar.
 
-DISC: Como você detectaria a deriva dos dados em um sistema de leitura de dígitos em produção?
-R: Monitorar a distribuição dos atributos e dos escores de anomalia ao longo do tempo, a taxa de alertas e o desempenho em uma pequena amostra rotulada periodicamente; disparar revisão quando houver mudança.
+DISC: Cite três sinais de que um agrupamento em produção sofre deriva.
+R: Deslocamento dos centroides, aumento da inércia ou das distâncias nos dados novos, aumento da taxa de rejeição, mudança no tamanho relativo dos grupos ou aparecimento de um grupo novo.
 
-DISC: Proponha uma extensão do projeto usando Fashion-MNIST ou outro conjunto público e diga quais conclusões você espera que mudem.
-R: Resposta pessoal coerente: por exemplo, em imagens de roupas as classes são mais variadas e o autoencoder ou o aprendizado contrastivo podem superar o PCA com mais dados; o t-SNE ainda deve separar bem os grupos; o número de regras de traços deve diminuir.
+DISC: Compare NMF, LDA e agrupamento de embeddings na modelagem de tópicos.
+R: NMF: decomposição aditiva (TF-IDF). LDA: modelo probabilístico em que cada documento mistura tópicos (contagens). Embeddings: vetores densos que capturam semântica, agrupados por K-means ou HDBSCAN. Todos exigem avaliação por coerência, estabilidade e interpretação.
 
-DISC: Discuta qual etapa do projeto você considera mais crítica para a qualidade da decisão final e justifique.
-R: Resposta pessoal fundamentada. Exemplos de respostas boas: a definição da pergunta e dos critérios (guia todo o resto), a avaliação sem vazamento de rótulos (evita conclusões otimistas) ou a revisão humana (reduz danos).
+DISC: Como avaliar a qualidade de tópicos sem um gabarito?
+R: Coerência dos termos principais, estabilidade entre sementes e amostras, e interpretabilidade por pessoas; mais comparação com uma linha de base.
 
-DISC: Compare os custos e benefícios de rotular imagens manualmente versus agrupar e rotular.
-R: A rotulagem manual completa é cara, mas dá o melhor gabarito; agrupar e rotular reduz muito o custo, mas depende da qualidade dos grupos e propaga erros. Uma estratégia mista, com revisão por amostragem, equilibra custo e qualidade.
+DISC: Distinga o uso transdutivo e o indutivo do agrupamento e explique por que a diferença importa para a validação.
+R: Transdutivo: entender um conjunto fixo. Indutivo: atribuir casos novos. No segundo, é preciso validar fora da amostra (atribuição, rejeição, força de predição), pois bons índices no conjunto de treino não garantem generalização.
 
-DISC: Resuma em um parágrafo as principais lições do livro para um colega que vai começar um projeto de aprendizado não supervisionado.
-R: Resposta pessoal coerente com: definir a pergunta primeiro; preparar bem os dados e escalar; escolher a distância certa; testar vários métodos; avaliar com critérios internos, estabilidade e interpretação; usar rótulos só no final; comparar com linhas de base; visualizar com cuidado; pensar nos riscos éticos; documentar tudo.
+DISC: Descreva a força de predição e como ela pode ajudar a escolher k.
+R: Divide-se em treino e teste, agrupa-se o treino e prevê-se o teste, agrupa-se o teste sozinho e calcula-se, em cada grupo do teste, a fração de pares mantidos juntos; usa-se o mínimo. Escolhe-se o maior k com valor ainda alto (por exemplo, acima de 0,8).

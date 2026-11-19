@@ -54,7 +54,7 @@ c) usar poucos dados rotulados e muitos não rotulados.
 d) usar só recompensas.
 R: c | Mistura uma pequena parte rotulada com uma grande parte sem rótulo.
 
-MC: No aprendizado auto-supervisionado, o rótulo:
+MC: No aprendizado autossupervisionado, o rótulo:
 a) é criado a partir dos próprios dados.
 b) é sempre fornecido por humanos.
 c) não existe nem é criado.
@@ -199,7 +199,7 @@ a) fundamentos.
 b) agrupamento.
 c) regras de associação.
 d) aprendizado profundo.
-R: d | A Parte V (Capítulo 12) cobre autoencoders, VAEs, GANs e auto-supervisão.
+R: d | A Parte V (Capítulo 12) cobre autoencoders, VAEs, GANs e autossupervisão.
 
 DISC: Explique, com suas palavras e usando uma analogia do cotidiano, o que é aprendizado não supervisionado.
 R: É aprender estrutura a partir de dados que só têm atributos (X), sem rótulos. Analogia: organizar uma biblioteca sem etiquetas, agrupando livros parecidos; ninguém dá a resposta, a organização é descoberta.
@@ -208,7 +208,7 @@ DISC: Diferencie aprendizado supervisionado de não supervisionado quanto aos da
 R: No supervisionado há X e y e o feedback é o gabarito, usado para medir o erro. No não supervisionado há só X e não há gabarito; o objetivo é descobrir grupos, padrões ou exceções.
 
 DISC: Descreva as cinco principais formas de aprendizado apresentadas no capítulo, com um exemplo de cada.
-R: Supervisionado (classificar e-mails em spam), não supervisionado (segmentar clientes), semissupervisionado (poucos rótulos e muitos dados sem rótulo), auto-supervisionado (prever palavra oculta) e por reforço (agente que aprende por recompensas, como em jogos).
+R: Supervisionado (classificar e-mails em spam), não supervisionado (segmentar clientes), semissupervisionado (poucos rótulos e muitos dados sem rótulo), autossupervisionado (prever palavra oculta) e por reforço (agente que aprende por recompensas, como em jogos).
 
 DISC: Cite cinco motivos para estudar aprendizado não supervisionado.
 R: Rótulos são caros; rótulos podem não existir; exploração dos dados; pré-processamento e representações melhores; detecção de eventos raros e mutáveis, como fraudes e falhas.
@@ -228,7 +228,7 @@ R: Entender o problema, coletar dados, explorar e limpar, preparar atributos, es
 DISC: Por que a etapa de interpretação e comunicação é especialmente importante em agrupamento?
 R: Porque, sem gabarito, o valor dos grupos depende de fazerem sentido para especialistas, de terem nomes e perfis claros e de apoiarem ações concretas.
 
-DISC: Explique por que o aprendizado auto-supervisionado é visto como uma ponte entre o supervisionado e o não supervisionado.
+DISC: Explique por que o aprendizado autossupervisionado é visto como uma ponte entre o supervisionado e o não supervisionado.
 R: Usa dados sem rótulos humanos (como o não supervisionado), mas treina com rótulos criados automaticamente a partir dos dados (como o supervisionado).
 
 DISC: No código do primeiro agrupamento, por que o vetor y foi usado só no final?

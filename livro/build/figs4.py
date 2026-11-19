@@ -186,7 +186,7 @@ def _net(ax,layers,x0,x1,col,ys=(8,92)):
 def f12_mapa():
     fig,ax=canvas(9,4.6,(0,100),(0,56))
     rbox(ax,32,46,36,8,"Aprendizado profundo\nnão supervisionado",fc=IND,tc="white",bold=True,fs=9.5,r=2.5)
-    groups=[("Autoencoders",GRN,4,["Subcompleto","Esparso","Denoising","Convolucional"]),("Modelos generativos",AMB,36,["VAE","GAN","Difusão"]),("Auto-supervisionado",RED,68,["Tarefas-pretexto","Contrastivo\n(SimCLR, MoCo)","Sem negativos\n(BYOL, DINO)"])]
+    groups=[("Autoencoders",GRN,4,["Subcompleto","Esparso","Denoising","Convolucional"]),("Modelos generativos",AMB,36,["VAE","GAN","Difusão"]),("Autossupervisionado",RED,68,["Tarefas-pretexto","Contrastivo\n(SimCLR, MoCo)","Sem negativos\n(BYOL, DINO)"])]
     for t,c,x,ch in groups:
         rbox(ax,x,30,28,8,t,fc=c,tc="white",bold=True,fs=9,r=2.5); arrow(ax,(50,46),(x+14,38.4),INK,lw=1.2)
         for i,s in enumerate(ch):

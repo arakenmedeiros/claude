@@ -16,6 +16,14 @@
 | Itens que ocorrem juntos | Apriori, FP-Growth | 10 |
 | Encontrar casos raros | Isolation Forest, LOF, One-Class SVM | 11 |
 | Aprender representações | Autoencoder, VAE, contrastivo | 12 |
+| Combinar vários agrupamentos | Consenso (coassociação + hierárquico) | 13 |
+| Usar conhecimento do especialista | COP-K-means (must-link, cannot-link) | 13 |
+| Agrupar dados mistos | Gower, K-prototypes, one-hot | 13 |
+| Agrupar linhas e colunas | SpectralCoclustering, SpectralBiclustering | 13 |
+| Achar comunidades em redes | Louvain, Leiden | 13 |
+| Acompanhar fluxos e deriva | MiniBatchKMeans, janela deslizante | 13 |
+| Descobrir tópicos em textos | NMF, LDA, embeddings + agrupamento | 13 |
+| Validar em casos novos | Atribuição, rejeição, força de predição | 13 |
 
 ## C.2 Classes do scikit-learn e parâmetros principais
 
@@ -44,6 +52,11 @@
 | One-Class SVM | sklearn.svm.OneClassSVM | kernel, gamma, nu |
 | Apriori e FP-Growth | mlxtend.frequent_patterns.apriori, fpgrowth | min_support |
 | Regras | mlxtend.frequent_patterns.association_rules | metric, min_threshold |
+| Biclustering | sklearn.cluster.SpectralCoclustering, SpectralBiclustering | n_clusters, method |
+| Consenso de biclusters | sklearn.metrics.consensus_score | biclusters encontrados e verdadeiros |
+| Agrupamento incremental | sklearn.cluster.MiniBatchKMeans, Birch (partial_fit) | n_clusters, batch_size |
+| LDA | sklearn.decomposition.LatentDirichletAllocation | n_components, learning_method |
+| Comunidades (Louvain) | networkx.algorithms.community.louvain_communities | resolution, seed |
 
 ## C.3 Modelo de código para um projeto completo
 

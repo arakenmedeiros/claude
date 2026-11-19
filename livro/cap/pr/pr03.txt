@@ -83,7 +83,7 @@ for nome, modelo in [
     dt = time.perf_counter() - t0
     print(f"{nome:16s} tempo = {dt:5.2f} s   inércia = {modelo.inertia_:,.0f}")
 ```
-@@NOTE O Mini-Batch costuma ser bem mais rápido e ter inércia apenas ligeiramente maior. Os tempos exatos dependem do seu computador.
+@@NOTE O Mini-Batch costuma ser mais rápido (a diferença cresce com o tamanho dos dados) e ter inércia apenas ligeiramente maior. Os tempos exatos dependem do seu computador.
 @@EX 5 | Quantização de cores de uma foto | avançado
 Carregue uma imagem de exemplo com `load_sample_images`. Transforme os pixels em pontos RGB e use K-means com 8, 16 e 32 cores (ajuste o modelo em uma **amostra de 10 mil pixels**, depois aplique a todos). Para cada k, calcule o erro quadrático médio da imagem reconstruída e a razão de compressão aproximada (24 bits por pixel antes; log2(k) bits por pixel depois, ignorando a paleta).
 @@SOL

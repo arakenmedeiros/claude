@@ -73,7 +73,7 @@ a) erro de reconstrução alto.
 b) erro de reconstrução zero.
 c) número de grupos.
 d) alta densidade.
-R: a | A rede só aprendeu a reconstruir o padrão normal.
+R: a | A rede aprendeu a reconstruir o padrão normal; espera-se erro alto nas anomalias, o que deve ser verificado, pois alguns exemplos anômalos podem ser bem reconstruídos.
 
 MC: Para imagens, os autoencoders costumam usar camadas:
 a) convolucionais.
@@ -138,7 +138,7 @@ c) agrupando pixels.
 d) comparando perplexidades.
 R: a | Ho, Jain e Abbeel (2020).
 
-MC: Aprendizado auto-supervisionado cria o rótulo:
+MC: Aprendizado autossupervisionado cria o rótulo:
 a) a partir dos próprios dados, por meio de uma tarefa-pretexto.
 b) com especialistas humanos.
 c) com recompensas.
@@ -214,7 +214,7 @@ DISC: Diferencie autoencoders subcompleto, esparso e de remoção de ruído.
 R: Subcompleto: código menor que a entrada. Esparso: código grande com poucas ativações. Denoising: entrada corrompida, alvo limpo, aprendendo estrutura robusta.
 
 DISC: Explique como usar um autoencoder para detectar anomalias.
-R: Treinar apenas com dados normais; calcular o erro de reconstrução; erros altos indicam anomalias; definir limiar adequado.
+R: Separar treino, validação e teste; ajustar o escalonador só no treino; treinar apenas com dados normais; calcular o erro de reconstrução; escolher o limiar na validação; avaliar normais inéditos e anomalias no teste. Erros altos sugerem anomalias, mas isso deve ser verificado.
 
 DISC: Descreva o VAE e a função de cada termo da perda.
 R: O codificador produz μ e σ; sorteia-se z; o decodificador reconstrói. O erro de reconstrução faz a saída parecer a entrada; a KL aproxima a distribuição latente de N(0,1), tornando o espaço contínuo.
@@ -231,16 +231,16 @@ R: Instabilidade, colapso de modos e avaliação difícil; soluções: DCGAN, Wa
 DISC: Explique em linhas gerais como funcionam os modelos de difusão.
 R: Processo direto adiciona ruído em muitos passos até restar ruído; uma rede aprende a remover um pouco de ruído por passo; para gerar, parte-se de ruído e aplica-se a rede repetidamente.
 
-DISC: Defina aprendizado auto-supervisionado e dê três exemplos de tarefas-pretexto.
+DISC: Defina aprendizado autossupervisionado e dê três exemplos de tarefas-pretexto.
 R: O rótulo é criado a partir dos dados. Exemplos: prever palavras ocultas, prever a rotação de uma imagem, reconstruir regiões mascaradas, resolver quebra-cabeças, colorir imagens.
 
 DISC: Descreva o aprendizado contrastivo e a perda NT-Xent.
-R: Duas visões da mesma imagem formam par positivo (aproximar) e imagens diferentes formam pares negativos (afastar). A perda usa similaridade do cosseno com temperatura e compara o positivo com todos os negativos do lote.
+R: Duas visões da mesma imagem formam par positivo (aproximar) e imagens diferentes formam pares negativos (afastar). A perda usa similaridade do cosseno com temperatura e compara o positivo com todas as outras representações do lote (o positivo e os negativos), excluindo apenas a própria âncora.
 
 DISC: Compare SimCLR, MoCo, CLIP e BYOL/DINO.
 R: SimCLR: negativos do lote. MoCo: fila de negativos. CLIP: alinha imagens e textos. BYOL/DINO: sem negativos explícitos, com rede aluna e professora.
 
-DISC: Explique como o aprendizado auto-supervisionado é aproveitado em tarefas com poucos rótulos.
+DISC: Explique como o aprendizado autossupervisionado é aproveitado em tarefas com poucos rótulos.
 R: Pré-treina-se em muitos dados sem rótulo; depois reaproveita-se a rede com ajuste fino ou avaliação linear usando poucos rótulos.
 
 DISC: Como as representações aprendidas podem ser usadas para agrupar, visualizar e buscar?
@@ -265,5 +265,5 @@ c) O número de camadas.
 d) A inércia dos grupos.
 R: a | perda = (1/n) · Σ ‖x − x̂‖².
 
-DISC: Explique por que, em um autoencoder, a entrada é também o alvo e em que sentido isso é auto-supervisão.
-R: Não há rótulos humanos: a própria entrada serve de resposta que a rede tenta reproduzir. O "rótulo" é criado automaticamente, característica da auto-supervisão no sentido mais simples.
+DISC: Explique por que, em um autoencoder, a entrada é também o alvo e em que sentido isso é autossupervisão.
+R: Não há rótulos humanos: a própria entrada serve de resposta que a rede tenta reproduzir. O "rótulo" é criado automaticamente, característica da autossupervisão no sentido mais simples.

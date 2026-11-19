@@ -1,0 +1,269 @@
+MC: Em um projeto de dados bem conduzido, o primeiro passo é:
+a) definir a pergunta de negócio e a decisão que será apoiada.
+b) escolher o algoritmo mais sofisticado.
+c) treinar um autoencoder.
+d) calcular o ARI.
+R: a | Primeiro a decisão; depois as ferramentas.
+
+MC: Qual destes NÃO é um ingrediente de uma boa pergunta de projeto?
+a) Quem decide.
+b) O que será decidido.
+c) O nome do algoritmo que será usado.
+d) Como saberemos que deu certo.
+R: c | O algoritmo é um meio, e não parte da pergunta.
+
+MC: Por que os rótulos reais só devem ser usados no final de um estudo não supervisionado?
+a) Para evitar que a escolha do método seja influenciada por informação que não estaria disponível na prática.
+b) Porque rótulos sempre estão errados.
+c) Porque o scikit-learn proíbe.
+d) Porque tornam o algoritmo mais lento.
+R: a | Usar rótulos para escolher o método é uma forma de vazamento.
+
+MC: Fixar random_state em tudo que é aleatório serve principalmente para:
+a) tornar os resultados reproduzíveis.
+b) melhorar a acurácia.
+c) acelerar o código.
+d) evitar o sobreajuste.
+R: a | Outras pessoas conseguem repetir seus números.
+
+MC: Ajustar o StandardScaler com todos os dados antes de dividir em treino e teste causa:
+a) vazamento de informação do teste para o treino.
+b) melhora legítima do desempenho.
+c) redução do tempo de execução.
+d) nenhum efeito possível.
+R: a | O escalonador deve ser ajustado só com o treino.
+
+MC: Entre as etapas do projeto, qual técnica serve para reduzir 64 pixels a poucas dimensões antes de agrupar?
+a) PCA.
+b) Apriori.
+c) One-Class SVM.
+d) Silhueta.
+R: a | O PCA resume os dados em poucas componentes.
+
+MC: Na Etapa 2 do projeto, a escolha do melhor método de agrupamento foi feita com:
+a) silhueta e estabilidade, sem usar rótulos.
+b) o ARI contra os dígitos reais.
+c) sorteio.
+d) o tempo de execução apenas.
+R: a | Assim a escolha não depende de rótulos.
+
+MC: No estudo com os dígitos, o agrupamento espectral destacou-se por:
+a) maior estabilidade entre reamostragens.
+b) ser o mais rápido.
+c) não precisar de parâmetros.
+d) detectar ruído.
+R: a | Teve a estabilidade mais alta entre os métodos testados.
+
+MC: O HDBSCAN, nos dígitos, marcou muitas imagens como ruído e formou grupos muito puros. Isso ilustra:
+a) uma troca entre cobertura e pureza.
+b) um erro do algoritmo.
+c) que ele não funciona em imagens.
+d) que eixos devem ser trocados.
+R: a | Ele deixa de agrupar pontos difíceis, mantendo grupos mais coesos.
+
+MC: A estatística de Hopkins alta (por exemplo, 0,74) indica que os dados:
+a) têm tendência de agrupamento.
+b) são uniformes.
+c) não têm estrutura.
+d) são ruído.
+R: a | Valores próximos de 1 indicam estrutura agrupável.
+
+MC: Na comparação de projeções 2D dos dígitos, a técnica de maior confiança (trustworthiness) foi:
+a) t-SNE.
+b) PCA.
+c) Isomap.
+d) MDS.
+R: a | Preservou melhor as vizinhanças locais.
+
+MC: Por que não se deve interpretar a distância entre grupos distantes em um mapa t-SNE?
+a) Porque o t-SNE preserva vizinhanças locais, não distâncias globais.
+b) Porque o t-SNE não usa distâncias.
+c) Porque o t-SNE é determinístico.
+d) Porque o t-SNE exige rótulos.
+R: a | Só a vizinhança local é confiável.
+
+MC: No projeto, o autoencoder com código de 16 dimensões, comparado ao PCA de 16 componentes, teve:
+a) desempenho de agrupamento pior.
+b) desempenho de agrupamento melhor.
+c) desempenho idêntico.
+d) erro de execução.
+R: a | O ARI do autoencoder foi menor que o do PCA nesta execução.
+
+MC: A lição principal do resultado do autoencoder versus PCA é:
+a) comparar sempre com uma linha de base simples.
+b) nunca usar autoencoders.
+c) PCA é sempre melhor.
+d) autoencoders não funcionam em imagens.
+R: a | Métodos sofisticados nem sempre superam os simples.
+
+MC: Para encontrar imagens "estranhas", o projeto combinou Isolation Forest e LOF por meio:
+a) da média dos postos (ranks) dos escores.
+b) do produto dos escores brutos.
+c) de uma votação de rótulos reais.
+d) da escolha do menor escore.
+R: a | Os postos tornam escores de escalas diferentes comparáveis.
+
+MC: Por que combinar detectores por postos é preferível à média dos escores brutos?
+a) Os escores têm escalas diferentes.
+b) Postos são sempre mais precisos.
+c) Escores brutos não existem.
+d) Postos eliminam falsos positivos.
+R: a | Postos colocam todos na mesma escala.
+
+MC: Em regras do tipo "blocos → dígito", a confiança de 0,84 e o lift de 8,4 indicam que:
+a) o padrão de blocos é muito mais frequente no dígito do que o esperado por acaso.
+b) o bloco causa o dígito.
+c) a regra é inválida.
+d) o dígito é raro.
+R: a | Lift acima de 1 indica associação positiva; não implica causalidade.
+
+MC: Os blocos das colunas das bordas quase não aparecem nas regras porque:
+a) quase nunca estão ativos nas imagens.
+b) são ruído.
+c) têm lift negativo.
+d) não existem.
+R: a | As bordas das imagens 8×8 são quase sempre vazias.
+
+MC: Na estratégia "agrupar e rotular", cada rótulo humano é:
+a) propagado a todas as imagens do mesmo grupo.
+b) usado apenas para uma imagem.
+c) descartado depois.
+d) usado para treinar o autoencoder.
+R: a | Isso multiplica o efeito de cada rótulo.
+
+MC: Com 30 rótulos, "agrupar e rotular" teve acurácia de cerca de 0,93, contra cerca de 0,66 da amostra aleatória com regressão logística. Isso sugere que:
+a) a estrutura dos grupos aproveita melhor poucos rótulos.
+b) a regressão logística é um modelo ruim.
+c) o sorteio foi errado.
+d) não vale a pena rotular.
+R: a | Cada rótulo informa dezenas de imagens parecidas.
+
+MC: Uma limitação do "agrupar e rotular" é que:
+a) depende da qualidade dos grupos.
+b) não permite rótulos.
+c) só funciona com 2 grupos.
+d) exige redes neurais.
+R: a | Se um grupo mistura dígitos, o rótulo propagado erra para parte deles.
+
+MC: Um relatório final deve começar com:
+a) um resumo executivo curto com pergunta, resultado e recomendação.
+b) o código completo.
+c) a lista de bibliotecas.
+d) a tabela de hiperparâmetros.
+R: a | Quem lê só o início já deve saber o que fazer.
+
+MC: Qual alternativa descreve um risco ético no projeto dos dígitos?
+a) Um dígito errado em um cheque pode mover dinheiro para a conta errada.
+b) Dígitos não têm relação com pessoas.
+c) Imagens nunca contêm dados pessoais.
+d) Algoritmos não erram.
+R: a | Erros de leitura afetam pessoas.
+
+MC: Humano no circuito significa que:
+a) casos duvidosos são revisados por pessoas.
+b) pessoas treinam os algoritmos todos os dias.
+c) o sistema funciona sem supervisão.
+d) as pessoas escrevem o código.
+R: a | O detector de anomalias ajuda a encaminhar casos à revisão.
+
+MC: Escolher hiperparâmetros olhando o desempenho em rótulos e depois chamar o método de "não supervisionado" é:
+a) uma armadilha: se rótulos foram usados, isso deve ser declarado.
+b) uma boa prática.
+c) obrigatório.
+d) irrelevante.
+R: a | A transparência sobre o uso de rótulos é essencial.
+
+MC: Em uma rubrica de projeto, o peso para "Relatório e ética" foi de:
+a) 20%.
+b) 5%.
+c) 50%.
+d) 0%.
+R: a | É um dos critérios de maior peso.
+
+MC: O que é "deriva dos dados" (data drift)?
+a) A mudança, ao longo do tempo, da distribuição dos dados em produção.
+b) A perda de arquivos.
+c) O aumento da semente aleatória.
+d) A redução do número de atributos.
+R: a | Com o tempo, o "normal" muda e os modelos podem perder validade.
+
+MC: Qual hábito de reprodutibilidade registra as versões das bibliotecas?
+a) Salvar um arquivo requirements.txt (por exemplo, com pip freeze).
+b) Fixar random_state.
+c) Usar notebooks.
+d) Rodar o código duas vezes.
+R: a | Versões diferentes podem gerar resultados diferentes.
+
+MC: Quando um resultado muda bastante com a semente aleatória, o correto é:
+a) repetir com várias sementes e reportar a variação.
+b) escolher a melhor semente e esconder as demais.
+c) ignorar o problema.
+d) trocar de computador.
+R: a | Reportar a variação é mais honesto.
+
+MC: Uma extensão sugerida para o projeto final é:
+a) repetir o estudo em outro conjunto, como Fashion-MNIST, e comparar as conclusões.
+b) apagar os resultados.
+c) trocar o idioma do relatório.
+d) usar apenas um método.
+R: a | Comparar conjuntos ajuda a avaliar a generalidade das conclusões.
+
+DISC: Explique por que o projeto final começa pela pergunta de negócio e não pela escolha do algoritmo.
+R: A pergunta define a decisão a ser apoiada, os critérios de sucesso e os riscos. Algoritmos são meios; escolhê-los antes leva a respostas tecnicamente bonitas, mas inúteis para a decisão.
+
+DISC: Liste os quatro ingredientes de uma boa pergunta de projeto e dê um exemplo para um caso de sua escolha.
+R: Quem decide, o que será decidido, como saber que deu certo e quais os riscos de errar. Exemplo: gerente de loja (quem), reorganizar prateleiras (o quê), aumento das vendas conjuntas em teste A/B (critério), perda de vendas em itens deslocados (risco).
+
+DISC: Descreva cinco hábitos de reprodutibilidade e o problema que cada um evita.
+R: Fixar sementes (resultados não repetíveis); registrar versões (diferenças entre ambientes); separar etapas em funções (código confuso); ajustar transformações só no treino (vazamento); registrar decisões (escolhas sem justificativa).
+
+DISC: O que significa "comparar com justiça" métodos de agrupamento? Cite quatro cuidados.
+R: Mesmos dados e pré-processamento; critérios definidos antes; rótulos só no final; várias sementes ou reamostragens; linha de base simples.
+
+DISC: Explique por que usar o ARI para escolher o método de agrupamento contradiz a ideia de um estudo não supervisionado.
+R: Na prática, os rótulos não existem; escolher o método olhando o ARI usa informação indisponível e superestima o desempenho. Deve-se escolher por critérios internos, estabilidade e interpretação, e conferir com rótulos no final.
+
+DISC: Interprete a tabela de resultados do projeto: K-means (ARI 0,67), Ward (0,72), espectral (0,76) e HDBSCAN (0,87 com 873 ruídos de 1.797). O HDBSCAN é o melhor?
+R: Não necessariamente: seu ARI foi calculado só nos pontos não ruidosos (cerca de metade). Ele troca cobertura por pureza. Para decidir, é preciso considerar o custo de deixar quase metade das imagens sem grupo.
+
+DISC: Explique por que o autoencoder não superou o PCA no projeto e o que isso ensina.
+R: Em imagens pequenas e simples, o PCA já captura bem a estrutura, e o autoencoder precisa de ajustes (arquitetura, treino). Ensina a comparar com linhas de base simples antes de adotar métodos complexos.
+
+DISC: Descreva como o escore combinado por postos foi construído na Etapa 5 e por que ele é útil.
+R: Calcula-se o escore de cada detector (Isolation Forest e LOF), converte-se cada um em postos e tira-se a média dos postos. Isso evita que escalas diferentes dominem e aproveita o acordo entre detectores.
+
+DISC: Interprete uma regra "ativo_21, vazio_11, vazio_32 → dígito 7" com confiança 0,84 e lift 8,4.
+R: Quando o bloco 21 está ativo e os blocos 11 e 32 estão vazios, em 84% dos casos o dígito é 7; isso é 8,4 vezes mais que o esperado ao acaso. É coocorrência de traços, não causa.
+
+DISC: Explique a estratégia "agrupar e rotular" e por que ela superou a amostra aleatória com 30 rótulos.
+R: Agrupa-se em 30 grupos, rotula-se o representante de cada grupo e propaga-se o rótulo aos membros. Como cada rótulo cobre dezenas de imagens parecidas, a acurácia é maior do que com 30 imagens sorteadas isoladamente.
+
+DISC: Quais são os riscos da estratégia "agrupar e rotular"?
+R: Grupos que misturam classes propagam rótulos errados; o representante pode ser atípico; erros se concentram em classes parecidas. É preciso revisar amostras e medir o erro por classe.
+
+DISC: Descreva a estrutura sugerida para um relatório final de projeto de dados.
+R: Título e resumo executivo, dados, método, resultados, limitações, riscos éticos e operacionais, recomendação e apêndice técnico.
+
+DISC: Por que o resumo executivo deve ser escrito por último, mas colocado no início?
+R: Só no fim se sabe o resultado completo; mas leitores ocupados leem o início primeiro e precisam de pergunta, resultado e recomendação.
+
+DISC: Cite quatro riscos éticos do projeto dos dígitos e uma ação de mitigação para cada.
+R: Erro que move dinheiro (revisão humana); viés contra estilos de escrita (avaliar por subgrupos); privacidade (minimizar e proteger dados); falta de transparência (explicar e permitir contestação).
+
+DISC: O que é humano no circuito e como ele aparece neste projeto?
+R: Pessoas revisam casos duvidosos. No projeto, o detector de anomalias seleciona as imagens estranhas para revisão humana.
+
+DISC: Como você detectaria a deriva dos dados em um sistema de leitura de dígitos em produção?
+R: Monitorar a distribuição dos atributos e dos escores de anomalia ao longo do tempo, a taxa de alertas e o desempenho em uma pequena amostra rotulada periodicamente; disparar revisão quando houver mudança.
+
+DISC: Proponha uma extensão do projeto usando Fashion-MNIST ou outro conjunto público e diga quais conclusões você espera que mudem.
+R: Resposta pessoal coerente: por exemplo, em imagens de roupas as classes são mais variadas e o autoencoder ou o aprendizado contrastivo podem superar o PCA com mais dados; o t-SNE ainda deve separar bem os grupos; o número de regras de traços deve diminuir.
+
+DISC: Discuta qual etapa do projeto você considera mais crítica para a qualidade da decisão final e justifique.
+R: Resposta pessoal fundamentada. Exemplos de respostas boas: a definição da pergunta e dos critérios (guia todo o resto), a avaliação sem vazamento de rótulos (evita conclusões otimistas) ou a revisão humana (reduz danos).
+
+DISC: Compare os custos e benefícios de rotular imagens manualmente versus agrupar e rotular.
+R: A rotulagem manual completa é cara, mas dá o melhor gabarito; agrupar e rotular reduz muito o custo, mas depende da qualidade dos grupos e propaga erros. Uma estratégia mista, com revisão por amostragem, equilibra custo e qualidade.
+
+DISC: Resuma em um parágrafo as principais lições do livro para um colega que vai começar um projeto de aprendizado não supervisionado.
+R: Resposta pessoal coerente com: definir a pergunta primeiro; preparar bem os dados e escalar; escolher a distância certa; testar vários métodos; avaliar com critérios internos, estabilidade e interpretação; usar rótulos só no final; comparar com linhas de base; visualizar com cuidado; pensar nos riscos éticos; documentar tudo.

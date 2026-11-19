@@ -18,7 +18,7 @@ def f1_tipos():
     fig,ax=canvas(8.4,5.2,(0,100),(0,64))
     cards=[("Supervisionado","dados + rótulos (X e y)","feedback: gabarito",IND,0,33),
            ("Não supervisionado","apenas dados (X)","feedback: nenhum — descobre estrutura",GRN,51,33),
-           ("Auto-supervisionado","dados; rótulo criado dos próprios dados","feedback: tarefa-pretexto",VIO,0,0),
+           ("Autossupervisionado","dados; rótulo criado dos próprios dados","feedback: tarefa-pretexto",VIO,0,0),
            ("Por reforço","agente age em um ambiente","feedback: recompensa / punição",AMB,51,0)]
     rng=np.random.default_rng(1)
     for i,(t,s1,s2,c,x0,y0) in enumerate(cards):
@@ -100,14 +100,15 @@ def f1_roteiro():
     fig,ax=canvas(10,4.6,(0,100),(0,58))
     parts=[("Parte I\nFundamentos","Cap. 1 e 2\nConceitos,\ndados e\ndistâncias",IND),("Parte II\nAgrupamento","Cap. 3 a 7\nK-means,\nhierárquico,\ndensidade, GMM,\nespectral,\navaliação",CYA),
            ("Parte III\nRedução de\ndimensões","Cap. 8 e 9\nPCA, ICA, NMF,\nIsomap, t-SNE,\nUMAP",GRN),("Parte IV\nPadrões e\nanomalias","Cap. 10 e 11\nRegras de\nassociação,\nIsolation Forest,\nLOF, SVM",AMB),
-           ("Parte V\nAprendizado\nprofundo","Cap. 12\nAutoencoders,\nVAEs, GANs,\ncontrastivo",RED),("Parte VI\nProjeto\nFinal","Cap. 13\nProjeto\nintegrador\ncom todas as\ntécnicas",VIO)]
+           ("Parte V\nAprendizado\nprofundo","Cap. 12\nAutoencoders,\nVAEs, GANs,\ncontrastivo",RED),("Parte VI\nTópicos\navançados","Cap. 13\nConsenso,\nrestrições,\ndados mistos,\ngrafos, fluxos",PNK),
+           ("Parte VII\nProjeto\nFinal","Cap. 14\nProjeto\nintegrador\ncom todas as\ntécnicas",VIO)]
     for i,(t,d,c) in enumerate(parts):
-        x=0.5+i*16.6; y=1+i*2.0
-        rbox(ax,x,y+27,15.4,13,t,fc=c,tc="white",bold=True,fs=7.4,r=3)
-        rbox(ax,x,y,15.4,26,d,fc="white",ec=c,lw=1.8,fs=7.2,r=3)
+        x=0.4+i*14.2; y=1+i*1.6
+        rbox(ax,x,y+27,13.2,13,t,fc=c,tc="white",bold=True,fs=6.6,r=3)
+        rbox(ax,x,y,13.2,26,d,fc="white",ec=c,lw=1.8,fs=6.4,r=3)
     save(fig,"f1_roteiro")
 
-def f13_etapas():
+def f14_etapas():
     fig,ax=canvas(9,4.8,(0,100),(0,56))
     et=[("1. Preparar","escalar, Hopkins,\nPCA","Cap. 2 e 8",IND),("2. Agrupar","5 métodos,\nestabilidade","Cap. 3 a 7",CYA),("3. Visualizar","PCA, Isomap,\nt-SNE","Cap. 9",GRN),("4. Representações","autoencoder\nversus PCA","Cap. 12",RED),
         ("5. Anomalias","Isolation Forest\n+ LOF","Cap. 11",AMB),("6. Regras","blocos de traços\n→ dígito","Cap. 10",PNK),("7. Poucos rótulos","agrupar e\nrotular","Cap. 3 e 7",VIO),("8. Relatório","decisão, riscos,\nlimites","Cap. 1 e 13",INK)]
@@ -117,7 +118,7 @@ def f13_etapas():
         ax.text(x+11,y+8.3,d,ha="center",va="center",fontsize=8.2); ax.text(x+11,y+2.2,c,ha="center",fontsize=7.4,color=col,fontweight="bold")
         if cx<3: arrow(ax,(x+22.2,y+11),(x+24.3,y+11),INK,ms=10)
     ax.text(50,55,"Mesmo conjunto de dados, da pergunta à decisão",ha="center",fontsize=10,fontweight="bold",color=IND)
-    save(fig,"f13_etapas")
+    save(fig,"f14_etapas")
 
 def f2_matriz():
     fig,ax=canvas(9,3.6,(0,100),(0,44))

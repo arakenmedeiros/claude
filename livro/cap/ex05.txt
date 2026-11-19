@@ -122,7 +122,7 @@ a) eps.
 b) min_cluster_size.
 c) k.
 d) perplexity.
-R: b | Intuitivo: o menor grupo que interessa.
+R: b | Intuitivo: o menor grupo que interessa. O min_samples, se omitido, assume o mesmo valor e controla o rigor com o ruído.
 
 MC: O HDBSCAN passou a integrar o scikit-learn a partir da versão:
 a) 0.9.
@@ -132,11 +132,11 @@ d) 2.5.
 R: c | Antes, era distribuído no pacote independente hdbscan.
 
 MC: O atributo probabilities_ do HDBSCAN informa:
-a) a probabilidade de pertinência de cada ponto ao seu grupo.
+a) a força de pertinência de cada ponto ao seu grupo, e não uma probabilidade posterior de classe.
 b) a inércia.
 c) o número de grupos.
 d) o valor de eps.
-R: a | Dá uma medida de quão bem cada ponto pertence ao grupo.
+R: a | Mede quão bem cada ponto pertence ao grupo (persistência); difere das responsabilidades de um GMM.
 
 MC: O Mean-shift (Comaniciu e Meer, 2002) baseia-se em:
 a) subir o "morro" da densidade estimada até um pico.
@@ -236,7 +236,7 @@ DISC: Descreva as principais etapas do HDBSCAN.
 R: Distância de alcançabilidade mútua; árvore geradora mínima e hierarquia; condensação da árvore descartando divisões minúsculas; seleção dos grupos mais estáveis.
 
 DISC: Compare DBSCAN, OPTICS e HDBSCAN quanto aos parâmetros e às densidades variáveis.
-R: DBSCAN: eps e min_samples; fraco com densidades variáveis. OPTICS: min_samples e xi; lida bem, com gráfico. HDBSCAN: min_cluster_size; muito bom com densidades variáveis, dá probabilidades.
+R: DBSCAN: eps e min_samples; fraco com densidades variáveis. OPTICS: min_samples e xi; lida bem, com gráfico. HDBSCAN: min_cluster_size (e min_samples); muito bom com densidades variáveis, dá uma força de pertinência por ponto.
 
 DISC: Por que o DBSCAN exige padronização dos atributos?
 R: Usa um raio único; atributos de maior escala dominariam a vizinhança, distorcendo os grupos.
@@ -260,7 +260,7 @@ DISC: Proponha um roteiro para aplicar DBSCAN a um conjunto de dados novo.
 R: Limpar e padronizar; escolher min_samples; plotar k-distâncias para eps; rodar; verificar ruído e grupos; comparar com HDBSCAN; interpretar.
 
 DISC: Quando preferir HDBSCAN a DBSCAN? Justifique com duas razões.
-R: Densidades variáveis e dificuldade de escolher eps; HDBSCAN só pede min_cluster_size e dá probabilidades de pertinência.
+R: Densidades variáveis e dificuldade de escolher eps; o HDBSCAN pede sobretudo min_cluster_size (além de min_samples, opcional) e dá uma força de pertinência por ponto.
 
 DISC: Explique por que o ruído é uma informação valiosa e não apenas um descarte.
 R: Pontos de ruído podem indicar anomalias, erros ou eventos raros; identificá-los evita forçá-los a grupos e pode orientar investigações.

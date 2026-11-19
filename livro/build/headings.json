@@ -81,7 +81,7 @@
  },
  {
   "level": 4,
-  "text": "1.3.4 Aprendizado auto-supervisionado",
+  "text": "1.3.4 Aprendizado autossupervisionado",
   "id": "h17"
  },
  {
@@ -946,7 +946,7 @@
  },
  {
   "level": 4,
-  "text": "6.10.5 O corte normalizado",
+  "text": "6.10.5 Três variantes e dois critérios de corte",
   "id": "h190"
  },
  {
@@ -1906,7 +1906,7 @@
  },
  {
   "level": 2,
-  "text": "Capítulo 12 — Aprendizado Profundo Não Supervisionado: Autoencoders, VAEs, GANs e Auto-supervisão",
+  "text": "Capítulo 12 — Aprendizado Profundo Não Supervisionado: Autoencoders, VAEs, GANs e Autossupervisão",
   "id": "h382"
  },
  {
@@ -2051,7 +2051,7 @@
  },
  {
   "level": 3,
-  "text": "12.8 Aprendizado auto-supervisionado",
+  "text": "12.8 Aprendizado autossupervisionado",
   "id": "h411"
  },
  {
@@ -2161,832 +2161,1107 @@
  },
  {
   "level": 1,
-  "text": "Parte VI — Projeto Final",
+  "text": "Parte VI — Tópicos Avançados",
   "id": "h433"
  },
  {
   "level": 2,
-  "text": "Capítulo 13 — Projeto Final: Integrando Tudo",
+  "text": "Capítulo 13 — Agrupamento no Mundo Real: Consenso, Restrições, Grafos e Fluxos",
   "id": "h434"
  },
  {
   "level": 3,
-  "text": "13.1 Chegou a hora de juntar as peças",
+  "text": "13.1 Quando o agrupamento \"de livro\" não basta",
   "id": "h435"
  },
  {
   "level": 3,
-  "text": "13.2 A pergunta vem primeiro",
+  "text": "13.2 Ensembles e consenso de agrupamentos",
   "id": "h436"
  },
  {
-  "level": 3,
-  "text": "13.3 Organizando o trabalho",
+  "level": 4,
+  "text": "13.2.1 A sabedoria da multidão",
   "id": "h437"
  },
  {
   "level": 4,
-  "text": "13.3.1 Estrutura sugerida",
+  "text": "13.2.2 Receita em três passos",
   "id": "h438"
  },
  {
   "level": 4,
-  "text": "13.3.2 Reprodutibilidade em cinco hábitos",
+  "text": "13.2.3 Diversidade e outras funções de consenso",
   "id": "h439"
  },
  {
-  "level": 4,
-  "text": "13.3.3 Notebook ou script?",
+  "level": 3,
+  "text": "13.3 Agrupamento com restrições",
   "id": "h440"
  },
  {
-  "level": 3,
-  "text": "13.4 Comparar com justiça",
+  "level": 4,
+  "text": "13.3.1 Quando o especialista sabe algo",
   "id": "h441"
  },
  {
-  "level": 3,
-  "text": "13.5 O relatório final",
+  "level": 4,
+  "text": "13.3.2 O COP-K-means",
   "id": "h442"
  },
  {
-  "level": 4,
-  "text": "13.5.1 Gráficos que comunicam",
+  "level": 3,
+  "text": "13.4 Agrupamento de dados mistos",
   "id": "h443"
  },
  {
-  "level": 3,
-  "text": "13.6 Ética e responsabilidade",
+  "level": 4,
+  "text": "13.4.1 O problema",
   "id": "h444"
  },
  {
-  "level": 3,
-  "text": "13.7 Como será avaliado o seu projeto",
+  "level": 4,
+  "text": "13.4.2 O K-prototypes",
   "id": "h445"
  },
  {
-  "level": 3,
-  "text": "13.8 Extensões para quem quer ir além",
+  "level": 4,
+  "text": "13.4.3 Um laboratório comparativo",
   "id": "h446"
  },
  {
   "level": 3,
-  "text": "Resumo do capítulo",
+  "text": "13.5 Biclustering e co-clustering",
   "id": "h447"
  },
  {
-  "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "level": 4,
+  "text": "13.5.1 Agrupar linhas e colunas ao mesmo tempo",
   "id": "h448"
  },
  {
-  "level": 3,
-  "text": "Exercícios discursivos",
+  "level": 4,
+  "text": "13.5.2 Os métodos do scikit-learn",
   "id": "h449"
  },
  {
   "level": 3,
-  "text": "Projeto integrador final",
+  "text": "13.6 Detecção de comunidades em grafos",
   "id": "h450"
  },
  {
   "level": 4,
-  "text": "Laboratório de Dígitos: do dado bruto à decisão",
+  "text": "13.6.1 Quando os dados são uma rede",
   "id": "h451"
  },
  {
-  "level": 1,
-  "text": "Apêndice A — Gabarito dos exercícios",
+  "level": 4,
+  "text": "13.6.2 Modularidade",
   "id": "h452"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao Aprendizado Não Supervisionado",
+  "level": 4,
+  "text": "13.6.3 Louvain e Leiden",
   "id": "h453"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "13.7 Agrupamento em fluxos de dados e deriva de conceito",
   "id": "h454"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "13.7.1 O mundo muda",
   "id": "h455"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Dados, Distâncias e Pré-processamento",
+  "level": 4,
+  "text": "13.7.2 Três estratégias",
   "id": "h456"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "13.7.3 Simulando a deriva",
   "id": "h457"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "13.8 Modelagem de tópicos",
   "id": "h458"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — K-means",
+  "level": 4,
+  "text": "13.8.1 Descobrir assuntos em milhares de textos",
   "id": "h459"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "13.8.2 Um laboratório com um corpus sintético",
   "id": "h460"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "13.8.3 Como avaliar tópicos",
   "id": "h461"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Agrupamento Hierárquico",
+  "level": 3,
+  "text": "13.9 Validação fora da amostra: o agrupamento funciona em casos novos?",
   "id": "h462"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "13.9.1 Dois usos do agrupamento",
   "id": "h463"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "13.9.2 Três ferramentas",
   "id": "h464"
  },
  {
-  "level": 2,
-  "text": "Capítulo 5 — Agrupamento por Densidade",
+  "level": 3,
+  "text": "13.10 Boas práticas deste capítulo",
   "id": "h465"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "Resumo do capítulo",
   "id": "h466"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "Exercícios de múltipla escolha",
   "id": "h467"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Modelos de Mistura Gaussiana e Agrupamento Espectral",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h468"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h469"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "Exercício 1 — Consenso: qual ligação e quantas partições?",
   "id": "h470"
  },
  {
-  "level": 2,
-  "text": "Capítulo 7 — Como Saber se os Grupos São Bons? Avaliação e Validação",
+  "level": 4,
+  "text": "Exercício 2 — Quantas restrições bastam?",
   "id": "h471"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "Exercício 3 — Dados mistos: o peso das categorias na distância de Gower",
   "id": "h472"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "Exercício 4 — Biclustering: até que ruído a estrutura em blocos sobrevive?",
   "id": "h473"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — PCA e Métodos Lineares",
+  "level": 4,
+  "text": "Exercício 5 — Um alarme de deriva por taxa de rejeição",
   "id": "h474"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "Projeto integrador do capítulo",
   "id": "h475"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "Segmentação de clientes em produção: consenso, dados mistos e monitoramento",
   "id": "h476"
  },
  {
-  "level": 2,
-  "text": "Capítulo 9 — Aprendizado de Variedades",
+  "level": 1,
+  "text": "Parte VII — Projeto Final",
   "id": "h477"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 2,
+  "text": "Capítulo 14 — Projeto Final: Integrando Tudo",
   "id": "h478"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "14.1 Chegou a hora de juntar as peças",
   "id": "h479"
  },
  {
-  "level": 2,
-  "text": "Capítulo 10 — Regras de Associação",
+  "level": 3,
+  "text": "14.2 A pergunta vem primeiro",
   "id": "h480"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "14.3 Organizando o trabalho",
   "id": "h481"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "14.3.1 Estrutura sugerida",
   "id": "h482"
  },
  {
-  "level": 2,
-  "text": "Capítulo 11 — Detecção de Anomalias",
+  "level": 4,
+  "text": "14.3.2 Reprodutibilidade em cinco hábitos",
   "id": "h483"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "14.3.3 Notebook ou script?",
   "id": "h484"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "14.4 Comparar com justiça",
   "id": "h485"
  },
  {
-  "level": 2,
-  "text": "Capítulo 12 — Aprendizado Profundo Não Supervisionado",
+  "level": 3,
+  "text": "14.5 O relatório final",
   "id": "h486"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "14.5.1 Gráficos que comunicam",
   "id": "h487"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "14.6 Ética e responsabilidade",
   "id": "h488"
  },
  {
-  "level": 2,
-  "text": "Capítulo 13 — Projeto Final",
+  "level": 3,
+  "text": "14.7 Como será avaliado o seu projeto",
   "id": "h489"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "14.8 Extensões para quem quer ir além",
   "id": "h490"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "Resumo do capítulo",
   "id": "h491"
  },
  {
-  "level": 1,
-  "text": "Apêndice B — Glossário",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h492"
  },
  {
-  "level": 1,
-  "text": "Apêndice C — Guia rápido de algoritmos e códigos",
+  "level": 3,
+  "text": "Exercícios discursivos",
   "id": "h493"
  },
  {
   "level": 3,
-  "text": "C.1 Mapa de decisão",
+  "text": "Projeto integrador final",
   "id": "h494"
  },
  {
-  "level": 3,
-  "text": "C.2 Classes do scikit-learn e parâmetros principais",
+  "level": 4,
+  "text": "Laboratório de Dígitos: do dado bruto à decisão",
   "id": "h495"
  },
  {
-  "level": 3,
-  "text": "C.3 Modelo de código para um projeto completo",
-  "id": "h496"
- },
- {
-  "level": 3,
-  "text": "C.4 Lista de verificação final",
-  "id": "h497"
- },
- {
   "level": 1,
-  "text": "Apêndice D — Soluções dos exercícios práticos",
-  "id": "h498"
+  "text": "Apêndice A — Gabarito dos exercícios",
+  "id": "h496"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Bem-vindo ao Aprendizado Não Supervisionado",
-  "id": "h499"
+  "id": "h497"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Primeiro contato com o conjunto Wine",
+  "text": "Múltipla escolha",
+  "id": "h498"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h499"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Dados, Distâncias e Pré-processamento",
   "id": "h500"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — O efeito da escala",
+  "text": "Múltipla escolha",
   "id": "h501"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Enxergando os grupos com PCA",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h502"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — A sorte da inicialização",
+  "level": 2,
+  "text": "Capítulo 3 — K-means",
   "id": "h503"
  },
  {
   "level": 3,
-  "text": "Exercício 5 — O algoritmo sempre responde",
+  "text": "Múltipla escolha",
   "id": "h504"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Dados, Distâncias e Pré-processamento",
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
   "id": "h505"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — Matriz de distâncias entre clientes",
+  "level": 2,
+  "text": "Capítulo 4 — Agrupamento Hierárquico",
   "id": "h506"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Três escalonadores diante de um outlier",
+  "text": "Múltipla escolha",
   "id": "h507"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Imputar: mediana ou vizinhos?",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h508"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Codificando variáveis categóricas",
+  "level": 2,
+  "text": "Capítulo 5 — Agrupamento por Densidade",
   "id": "h509"
  },
  {
   "level": 3,
-  "text": "Exercício 5 — A maldição da dimensionalidade em números",
+  "text": "Múltipla escolha",
   "id": "h510"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — K-means",
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
   "id": "h511"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — K-means \"do zero\" com NumPy",
+  "level": 2,
+  "text": "Capítulo 6 — Modelos de Mistura Gaussiana e Agrupamento Espectral",
   "id": "h512"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Escolhendo k com inércia e silhueta",
+  "text": "Múltipla escolha",
   "id": "h513"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Aleatória ou k-means++?",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h514"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Mini-Batch K-means em dados grandes",
+  "level": 2,
+  "text": "Capítulo 7 — Como Saber se os Grupos São Bons? Avaliação e Validação",
   "id": "h515"
  },
  {
   "level": 3,
-  "text": "Exercício 5 — Quantização de cores de uma foto",
+  "text": "Múltipla escolha",
   "id": "h516"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Agrupamento Hierárquico",
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
   "id": "h517"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — O dendrograma à mão, conferido pelo computador",
+  "level": 2,
+  "text": "Capítulo 8 — PCA e Métodos Lineares",
   "id": "h518"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Qual ligação reproduz melhor as classes?",
+  "text": "Múltipla escolha",
   "id": "h519"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Cortando a árvore por altura",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h520"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — O efeito corrente",
+  "level": 2,
+  "text": "Capítulo 9 — Aprendizado de Variedades",
   "id": "h521"
  },
  {
   "level": 3,
-  "text": "Exercício 5 — Agrupando exemplos e atributos ao mesmo tempo",
+  "text": "Múltipla escolha",
   "id": "h522"
  },
  {
-  "level": 2,
-  "text": "Capítulo 5 — Agrupamento por Densidade",
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
   "id": "h523"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — Varrendo o parâmetro eps",
+  "level": 2,
+  "text": "Capítulo 10 — Regras de Associação",
   "id": "h524"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Achando o joelho do gráfico de k-distâncias",
+  "text": "Múltipla escolha",
   "id": "h525"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — DBSCAN, K-means e espectral em anéis",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h526"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Densidades variáveis: OPTICS e HDBSCAN",
+  "level": 2,
+  "text": "Capítulo 11 — Detecção de Anomalias",
   "id": "h527"
  },
  {
   "level": 3,
-  "text": "Exercício 5 — Pontos quentes com a distância haversine",
+  "text": "Múltipla escolha",
   "id": "h528"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Modelos de Mistura Gaussiana e Agrupamento Espectral",
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
   "id": "h529"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — Tipos de covariância no Iris",
+  "level": 2,
+  "text": "Capítulo 12 — Aprendizado Profundo Não Supervisionado",
   "id": "h530"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Quantas gaussianas?",
+  "text": "Múltipla escolha",
   "id": "h531"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Pontos ambíguos e pertinência suave",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h532"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — GMM como detector de anomalias",
+  "level": 2,
+  "text": "Capítulo 13 — Agrupamento no Mundo Real",
   "id": "h533"
  },
  {
   "level": 3,
-  "text": "Exercício 5 — Espectral: o papel da afinidade",
+  "text": "Múltipla escolha",
   "id": "h534"
  },
  {
-  "level": 2,
-  "text": "Capítulo 7 — Como Saber se os Grupos São Bons? Avaliação e Validação",
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
   "id": "h535"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — Há grupos para encontrar? A estatística de Hopkins",
+  "level": 2,
+  "text": "Capítulo 14 — Projeto Final",
   "id": "h536"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Silhueta por grupo e por ponto",
+  "text": "Múltipla escolha",
   "id": "h537"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Um painel de índices internos",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h538"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Avaliação externa de três algoritmos",
+  "level": 1,
+  "text": "Apêndice B — Glossário",
   "id": "h539"
  },
  {
-  "level": 3,
-  "text": "Exercício 5 — Estabilidade para escolher k",
+  "level": 1,
+  "text": "Apêndice C — Guia rápido de algoritmos e códigos",
   "id": "h540"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — PCA e Métodos Lineares",
+  "level": 3,
+  "text": "C.1 Mapa de decisão",
   "id": "h541"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Quantas componentes para 90% da variância?",
+  "text": "C.2 Classes do scikit-learn e parâmetros principais",
   "id": "h542"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Reconstrução e compressão de dígitos",
+  "text": "C.3 Modelo de código para um projeto completo",
   "id": "h543"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — PCA \"na unha\" com autovetores",
+  "text": "C.4 Lista de verificação final",
   "id": "h544"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Kernel PCA em anéis",
-  "id": "h545"
- },
- {
-  "level": 3,
-  "text": "Exercício 5 — Separando fontes com ICA",
-  "id": "h546"
- },
- {
-  "level": 2,
-  "text": "Capítulo 9 — Aprendizado de Variedades",
-  "id": "h547"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — O mapa do Brasil a partir de distâncias",
-  "id": "h548"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Desenrolando o rocambole",
-  "id": "h549"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Perplexidade e qualidade do t-SNE",
-  "id": "h550"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — PCA antes do t-SNE: tempo e qualidade",
-  "id": "h551"
- },
- {
-  "level": 3,
-  "text": "Exercício 5 — Quem preserva melhor os vizinhos?",
-  "id": "h552"
- },
- {
-  "level": 2,
-  "text": "Capítulo 10 — Regras de Associação",
-  "id": "h553"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Suporte, confiança e lift \"na unha\"",
-  "id": "h554"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Apriori ou FP-Growth?",
-  "id": "h555"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Como o suporte mínimo controla a explosão de regras",
-  "id": "h556"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Regras em dados reais: o conjunto Wine",
-  "id": "h557"
- },
- {
-  "level": 3,
-  "text": "Exercício 5 — Filtrando regras e recomendando produtos",
-  "id": "h558"
- },
- {
-  "level": 2,
-  "text": "Capítulo 11 — Detecção de Anomalias",
-  "id": "h559"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Regras estatísticas simples em uma medida real",
-  "id": "h560"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Isolation Forest",
-  "id": "h561"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — LOF e a escolha de n_neighbors",
-  "id": "h562"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — One-Class SVM treinado só com o normal",
-  "id": "h563"
- },
- {
-  "level": 3,
-  "text": "Exercício 5 — Cinco detectores nos dígitos",
-  "id": "h564"
- },
- {
-  "level": 2,
-  "text": "Capítulo 12 — Aprendizado Profundo Não Supervisionado",
-  "id": "h565"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Um autoencoder com MLPRegressor",
-  "id": "h566"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Abrindo o autoencoder: extraindo o código",
-  "id": "h567"
- },
- {
-  "level": 3,
-  "text": "Exercício 3 — Autoencoder de remoção de ruído",
-  "id": "h568"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Usando a RBM como extratora de atributos",
-  "id": "h569"
- },
- {
-  "level": 3,
-  "text": "Exercício 5 — Anomalias pelo erro de reconstrução",
-  "id": "h570"
- },
- {
   "level": 1,
-  "text": "Apêndice E — Soluções de referência dos projetos integradores",
-  "id": "h571"
+  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "id": "h545"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Bem-vindo ao Aprendizado Não Supervisionado",
-  "id": "h572"
+  "id": "h546"
  },
  {
   "level": 3,
-  "text": "Primeiro diagnóstico de um conjunto de dados",
-  "id": "h573"
+  "text": "Exercício 1 — Primeiro contato com o conjunto Wine",
+  "id": "h547"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — O efeito da escala",
+  "id": "h548"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Enxergando os grupos com PCA",
+  "id": "h549"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — A sorte da inicialização",
+  "id": "h550"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — O algoritmo sempre responde",
+  "id": "h551"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — Dados, Distâncias e Pré-processamento",
-  "id": "h574"
+  "id": "h552"
  },
  {
   "level": 3,
-  "text": "Pipeline de preparação para uma carteira de clientes",
-  "id": "h575"
+  "text": "Exercício 1 — Matriz de distâncias entre clientes",
+  "id": "h553"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Três escalonadores diante de um outlier",
+  "id": "h554"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Imputar: mediana ou vizinhos?",
+  "id": "h555"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Codificando variáveis categóricas",
+  "id": "h556"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — A maldição da dimensionalidade em números",
+  "id": "h557"
  },
  {
   "level": 2,
   "text": "Capítulo 3 — K-means",
-  "id": "h576"
+  "id": "h558"
  },
  {
   "level": 3,
-  "text": "Segmentação RFM de uma loja",
-  "id": "h577"
+  "text": "Exercício 1 — K-means \"do zero\" com NumPy",
+  "id": "h559"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Escolhendo k com inércia e silhueta",
+  "id": "h560"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Aleatória ou k-means++?",
+  "id": "h561"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Mini-Batch K-means em dados grandes",
+  "id": "h562"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Quantização de cores de uma foto",
+  "id": "h563"
  },
  {
   "level": 2,
   "text": "Capítulo 4 — Agrupamento Hierárquico",
-  "id": "h578"
+  "id": "h564"
  },
  {
   "level": 3,
-  "text": "A árvore dos dígitos",
-  "id": "h579"
+  "text": "Exercício 1 — O dendrograma à mão, conferido pelo computador",
+  "id": "h565"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Qual ligação reproduz melhor as classes?",
+  "id": "h566"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Cortando a árvore por altura",
+  "id": "h567"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — O efeito corrente",
+  "id": "h568"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Agrupando exemplos e atributos ao mesmo tempo",
+  "id": "h569"
  },
  {
   "level": 2,
   "text": "Capítulo 5 — Agrupamento por Densidade",
-  "id": "h580"
+  "id": "h570"
  },
  {
   "level": 3,
-  "text": "Pontos quentes de ocorrências urbanas",
-  "id": "h581"
+  "text": "Exercício 1 — Varrendo o parâmetro eps",
+  "id": "h571"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Achando o joelho do gráfico de k-distâncias",
+  "id": "h572"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — DBSCAN, K-means e espectral em anéis",
+  "id": "h573"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Densidades variáveis: OPTICS e HDBSCAN",
+  "id": "h574"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Pontos quentes com a distância haversine",
+  "id": "h575"
  },
  {
   "level": 2,
   "text": "Capítulo 6 — Modelos de Mistura Gaussiana e Agrupamento Espectral",
-  "id": "h582"
+  "id": "h576"
  },
  {
   "level": 3,
-  "text": "Perfis com probabilidades: uma operadora de telecomunicações",
-  "id": "h583"
+  "text": "Exercício 1 — Tipos de covariância no Iris",
+  "id": "h577"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quantas gaussianas?",
+  "id": "h578"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Pontos ambíguos e pertinência suave",
+  "id": "h579"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — GMM como detector de anomalias",
+  "id": "h580"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Espectral: o papel da afinidade",
+  "id": "h581"
  },
  {
   "level": 2,
   "text": "Capítulo 7 — Como Saber se os Grupos São Bons? Avaliação e Validação",
+  "id": "h582"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Há grupos para encontrar? A estatística de Hopkins",
+  "id": "h583"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Silhueta por grupo e por ponto",
   "id": "h584"
  },
  {
   "level": 3,
-  "text": "Painel de avaliação de agrupamentos",
+  "text": "Exercício 3 — Um painel de índices internos",
   "id": "h585"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — PCA e Métodos Lineares",
+  "level": 3,
+  "text": "Exercício 4 — Avaliação externa de três algoritmos",
   "id": "h586"
  },
  {
   "level": 3,
-  "text": "Compressão, limpeza e partes de dígitos",
+  "text": "Exercício 5 — Estabilidade para escolher k",
   "id": "h587"
  },
  {
   "level": 2,
-  "text": "Capítulo 9 — Aprendizado de Variedades",
+  "text": "Capítulo 8 — PCA e Métodos Lineares",
   "id": "h588"
  },
  {
   "level": 3,
-  "text": "Comparando mapas dos dígitos e dos vinhos",
+  "text": "Exercício 1 — Quantas componentes para 90% da variância?",
   "id": "h589"
  },
  {
-  "level": 2,
-  "text": "Capítulo 10 — Regras de Associação",
+  "level": 3,
+  "text": "Exercício 2 — Reconstrução e compressão de dígitos",
   "id": "h590"
  },
  {
   "level": 3,
-  "text": "Cesta de supermercado: encontrando regras de verdade",
+  "text": "Exercício 3 — PCA \"na unha\" com autovetores",
   "id": "h591"
  },
  {
-  "level": 2,
-  "text": "Capítulo 11 — Detecção de Anomalias",
+  "level": 3,
+  "text": "Exercício 4 — Kernel PCA em anéis",
   "id": "h592"
  },
  {
   "level": 3,
-  "text": "Detecção de fraude em transações de cartão",
+  "text": "Exercício 5 — Separando fontes com ICA",
   "id": "h593"
  },
  {
   "level": 2,
-  "text": "Capítulo 12 — Aprendizado Profundo Não Supervisionado",
+  "text": "Capítulo 9 — Aprendizado de Variedades",
   "id": "h594"
  },
  {
   "level": 3,
-  "text": "Que representação ajuda mais a agrupar?",
+  "text": "Exercício 1 — O mapa do Brasil a partir de distâncias",
   "id": "h595"
  },
  {
-  "level": 2,
-  "text": "Capítulo 13 — Projeto Final",
+  "level": 3,
+  "text": "Exercício 2 — Desenrolando o rocambole",
   "id": "h596"
  },
  {
   "level": 3,
-  "text": "Laboratório de Dígitos: do dado bruto à decisão",
+  "text": "Exercício 3 — Perplexidade e qualidade do t-SNE",
   "id": "h597"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — PCA antes do t-SNE: tempo e qualidade",
+  "id": "h598"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Quem preserva melhor os vizinhos?",
+  "id": "h599"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Regras de Associação",
+  "id": "h600"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Suporte, confiança e lift \"na unha\"",
+  "id": "h601"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Apriori ou FP-Growth?",
+  "id": "h602"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Como o suporte mínimo controla a explosão de regras",
+  "id": "h603"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Regras em dados reais: o conjunto Wine",
+  "id": "h604"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Filtrando regras e recomendando produtos",
+  "id": "h605"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Detecção de Anomalias",
+  "id": "h606"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Regras estatísticas simples em uma medida real",
+  "id": "h607"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Isolation Forest",
+  "id": "h608"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — LOF e a escolha de n_neighbors",
+  "id": "h609"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — One-Class SVM treinado só com o normal",
+  "id": "h610"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Cinco detectores nos dígitos",
+  "id": "h611"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Aprendizado Profundo Não Supervisionado",
+  "id": "h612"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Um autoencoder com MLPRegressor",
+  "id": "h613"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Abrindo o autoencoder: extraindo o código",
+  "id": "h614"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Autoencoder de remoção de ruído",
+  "id": "h615"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Usando a RBM como extratora de atributos",
+  "id": "h616"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Anomalias pelo erro de reconstrução",
+  "id": "h617"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Agrupamento no Mundo Real",
+  "id": "h618"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Consenso: qual ligação e quantas partições?",
+  "id": "h619"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quantas restrições bastam?",
+  "id": "h620"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Dados mistos: o peso das categorias na distância de Gower",
+  "id": "h621"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Biclustering: até que ruído a estrutura em blocos sobrevive?",
+  "id": "h622"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 5 — Um alarme de deriva por taxa de rejeição",
+  "id": "h623"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "id": "h624"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao Aprendizado Não Supervisionado",
+  "id": "h625"
+ },
+ {
+  "level": 3,
+  "text": "Primeiro diagnóstico de um conjunto de dados",
+  "id": "h626"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Dados, Distâncias e Pré-processamento",
+  "id": "h627"
+ },
+ {
+  "level": 3,
+  "text": "Pipeline de preparação para uma carteira de clientes",
+  "id": "h628"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — K-means",
+  "id": "h629"
+ },
+ {
+  "level": 3,
+  "text": "Segmentação RFM de uma loja",
+  "id": "h630"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Agrupamento Hierárquico",
+  "id": "h631"
+ },
+ {
+  "level": 3,
+  "text": "A árvore dos dígitos",
+  "id": "h632"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Agrupamento por Densidade",
+  "id": "h633"
+ },
+ {
+  "level": 3,
+  "text": "Pontos quentes de ocorrências urbanas",
+  "id": "h634"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Modelos de Mistura Gaussiana e Agrupamento Espectral",
+  "id": "h635"
+ },
+ {
+  "level": 3,
+  "text": "Perfis com probabilidades: uma operadora de telecomunicações",
+  "id": "h636"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Como Saber se os Grupos São Bons? Avaliação e Validação",
+  "id": "h637"
+ },
+ {
+  "level": 3,
+  "text": "Painel de avaliação de agrupamentos",
+  "id": "h638"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — PCA e Métodos Lineares",
+  "id": "h639"
+ },
+ {
+  "level": 3,
+  "text": "Compressão, limpeza e partes de dígitos",
+  "id": "h640"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Aprendizado de Variedades",
+  "id": "h641"
+ },
+ {
+  "level": 3,
+  "text": "Comparando mapas dos dígitos e dos vinhos",
+  "id": "h642"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Regras de Associação",
+  "id": "h643"
+ },
+ {
+  "level": 3,
+  "text": "Cesta de supermercado: encontrando regras de verdade",
+  "id": "h644"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Detecção de Anomalias",
+  "id": "h645"
+ },
+ {
+  "level": 3,
+  "text": "Detecção de fraude em transações de cartão",
+  "id": "h646"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Aprendizado Profundo Não Supervisionado",
+  "id": "h647"
+ },
+ {
+  "level": 3,
+  "text": "Que representação ajuda mais a agrupar?",
+  "id": "h648"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Agrupamento no Mundo Real",
+  "id": "h649"
+ },
+ {
+  "level": 3,
+  "text": "Segmentação de clientes em produção: consenso, dados mistos e monitoramento",
+  "id": "h650"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 14 — Projeto Final",
+  "id": "h651"
+ },
+ {
+  "level": 3,
+  "text": "Laboratório de Dígitos: do dado bruto à decisão",
+  "id": "h652"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h598"
+  "id": "h653"
  }
 ]

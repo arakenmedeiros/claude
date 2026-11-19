@@ -1,5 +1,5 @@
 @@EX 1 | Há grupos para encontrar? A estatística de Hopkins | básico
-Implemente a estatística de Hopkins (use `NearestNeighbors`) e aplique-a a três conjuntos: dados uniformes (500 × 2), dados com 4 blobs e o Wine padronizado. Interprete os valores.
+Implemente a estatística de Hopkins (use `NearestNeighbors`) e aplique-a a quatro conjuntos: dados uniformes (500 × 2), dados com 4 blobs, **uma única nuvem gaussiana** e o Wine padronizado. Interprete os valores e explique por que a nuvem gaussiana, que não tem grupos, não fica perto de 0,5.
 @@SOL
 ```python
 import numpy as np
@@ -22,9 +22,10 @@ def hopkins(X, m=50, seed=42):
 rng = np.random.default_rng(0)
 print("Uniforme:", round(hopkins(rng.random((500, 2))), 2))
 print("4 blobs :", round(hopkins(make_blobs(500, centers=4, random_state=2)[0]), 2))
+print("1 nuvem :", round(hopkins(rng.normal(size=(500, 2))), 2))
 print("Wine    :", round(hopkins(StandardScaler().fit_transform(load_wine().data)), 2))
 ```
-@@NOTE Perto de 0,5 indica dados uniformes; valores perto de 1 indicam tendência de agrupamento. O Wine fica claramente acima de 0,5. Nesta versão, usamos a distância elevada à dimensão d, como na definição original.
+@@NOTE Perto de 0,5 indica dados parecidos com uma distribuição uniforme na caixa que os envolve; valores altos indicam dados **mais aglomerados que o modelo uniforme**, o que acontece tanto com vários grupos quanto com uma única nuvem concentrada. O Hopkins não diz quantos grupos existem. Nesta versão, usamos a distância elevada à dimensão d, como na definição original. No Wine (13 atributos), o valor chega a 1,00 porque a potência d = 13 exagera as diferenças de distância: em alta dimensão, o Hopkins precisa de cautela (Capítulo 2, maldição da dimensionalidade).
 @@EX 2 | Silhueta por grupo e por ponto | básico
 No Wine padronizado, agrupe com K-means (k = 3). Calcule a silhueta de cada ponto (`silhouette_samples`). Mostre a silhueta média por grupo e o número de pontos com silhueta negativa.
 @@SOL

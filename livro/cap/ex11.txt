@@ -132,11 +132,11 @@ d) a matriz de ligações.
 R: a | Schölkopf et al. (2001).
 
 MC: No One-Class SVM, o parâmetro nu é:
-a) um limite superior para a fração de anomalias.
+a) um limite superior para a fração de erros de treinamento (e inferior para a de vetores de suporte).
 b) o número de vizinhos.
 c) o raio.
 d) a profundidade.
-R: a | Fica entre 0 e 1.
+R: a | Fica entre 0 e 1; não limita a proporção de anomalias futuras.
 
 MC: O erro de reconstrução do PCA pode detectar anomalias porque:
 a) pontos que não seguem a estrutura principal são mal reconstruídos.

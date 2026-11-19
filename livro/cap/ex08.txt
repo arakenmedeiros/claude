@@ -220,7 +220,7 @@ DISC: Interprete: um PCA em dados padronizados retorna variâncias explicadas de
 R: Duas componentes somam 87%; três somam 95%. Para pelo menos 90%, mantêm-se três.
 
 DISC: Diferencie escores e cargas e explique como ler um biplot.
-R: Escores são as coordenadas dos exemplos; cargas são os pesos dos atributos em cada componente. No biplot, pontos são exemplos e setas são atributos; setas próximas indicam correlação, opostas anticorrelação, perpendiculares independência.
+R: Escores são as coordenadas dos exemplos; cargas são os pesos dos atributos em cada componente. No biplot, pontos são exemplos e setas são atributos; setas próximas sugerem correlação positiva, opostas, correlação negativa, e ângulos próximos de 90°, correlação linear próxima de zero, o que não prova independência estatística (a leitura depende da qualidade da projeção).
 
 DISC: Explique como o PCA pode ser usado para compressão e remoção de ruído.
 R: Mantêm-se poucas componentes e reconstrói-se com inverse_transform; o ruído, em direções de baixa variância, é descartado, enquanto o essencial é preservado.

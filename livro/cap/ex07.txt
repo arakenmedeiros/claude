@@ -35,17 +35,17 @@ R: a | Verifica se os dados têm estrutura agrupável ou são uniformes.
 
 MC: Uma estatística de Hopkins próxima de 0,5 sugere dados:
 a) fortemente agrupados.
-b) aproximadamente uniformes, sem grupos.
+b) com distribuição semelhante à uniforme na região considerada.
 c) muito regulares como uma grade.
 d) sem variação.
-R: b | Perto de 1 indica forte agrupamento; perto de 0, dados muito regulares.
+R: b | Perto de 1, dados mais aglomerados que o modelo uniforme; perto de 0, dados mais regulares que o acaso.
 
 MC: Um valor de Hopkins próximo de 1 indica:
 a) dados uniformes.
-b) forte tendência de agrupamento.
+b) dados mais aglomerados que o esperado sob uma distribuição uniforme, o que não prova a existência de vários grupos.
 c) dados constantes.
-d) ruído puro.
-R: b | Os pontos reais estão mais próximos entre si do que pontos aleatórios.
+d) exatamente quatro grupos.
+R: b | Uma única nuvem concentrada também pode gerar H alto; o Hopkins não informa o número de grupos.
 
 MC: Na silhueta de um ponto, a(i) representa:
 a) a distância média aos pontos do mesmo grupo (coesão).
@@ -215,7 +215,7 @@ DISC: Descreva as três famílias de validação (interna, externa e relativa) c
 R: Interna: silhueta (só dados e grupos). Externa: ARI ou NMI (compara com rótulos). Relativa: gap ou estabilidade (compara soluções para escolher k).
 
 DISC: Explique a estatística de Hopkins e como interpretá-la.
-R: Compara distâncias de pontos reais ao vizinho mais próximo com as de pontos aleatórios uniformes. H ≈ 0,5: sem grupos; H próximo de 1: forte tendência; H próximo de 0: dados regulares.
+R: Compara distâncias de pontos reais ao vizinho mais próximo com as de pontos aleatórios uniformes na região dos dados. H ≈ 0,5: semelhante ao modelo uniforme; H próximo de 1: mais aglomerado que o modelo uniforme (mas isso não prova vários grupos, pois uma única nuvem também dá H alto); H próximo de 0: dados regulares. Deve ser combinado com outras análises.
 
 DISC: Calcule a silhueta de um ponto com a = 2 e b = 6 e interprete.
 R: s = (6 − 2) / máx(2, 6) = 4/6 ≈ 0,67; o ponto está bem encaixado no seu grupo.
@@ -232,8 +232,8 @@ R: Pressupõem compacidade e convexidade; grupos alongados ou curvos têm baixa 
 DISC: Descreva a estatística gap e o critério para escolher k.
 R: Gap(k) = E[log W_k de referência] − log W_k observado; escolhe-se o menor k tal que Gap(k) ≥ Gap(k+1) − desvio padrão de Gap(k+1).
 
-DISC: Descreva um procedimento de avaliação de estabilidade com bootstrap e ARI.
-R: Sortear subamostras, agrupar cada uma, comparar pares de soluções (no conjunto inteiro) com ARI e tomar a média; alta concordância indica agrupamento estável.
+DISC: Descreva um procedimento de avaliação de estabilidade por reamostragem e ARI.
+R: Sortear subamostras (sem reposição, ou com reposição no bootstrap convencional), agrupar cada uma, comparar pares de soluções (no conjunto inteiro) com ARI e tomar a média; alta concordância indica agrupamento estável.
 
 DISC: Interprete a matriz de contingência [[48,2,0],[1,45,6],[1,3,44]]. O agrupamento reproduz bem as classes?
 R: A diagonal domina, com poucos erros: o grupo 0 corresponde à classe A, o 1 à B e o 2 à C. Reproduz bem as classes, com pequenas confusões entre B e C.

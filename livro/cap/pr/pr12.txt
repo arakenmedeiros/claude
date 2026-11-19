@@ -132,7 +132,7 @@ for nome, e in esc.items():
     )
 print("Linha de base AUPRC:", round(yte.mean(), 3))
 ```
-@@NOTE O 9 é uma anomalia difícil: se parece com 4, 7 e 8, que o autoencoder aprendeu a reconstruir. O desempenho é modesto para os dois métodos: o PCA (AUC-ROC de cerca de 0,85) ficou à frente do autoencoder (cerca de 0,79). Quanto mais "diferente" é a anomalia, mais fácil fica detectá-la pelo erro de reconstrução.
+@@NOTE O 9 é uma anomalia difícil: se parece com 4, 7 e 8, que o autoencoder aprendeu a reconstruir. O desempenho é modesto para os dois métodos: o PCA (AUC-ROC de cerca de 0,85) ficou à frente do autoencoder (cerca de 0,79). Quanto mais "diferente" é a anomalia, mais fácil fica detectá-la pelo erro de reconstrução. Num detector real, o limiar de alerta deve ser escolhido num conjunto de validação com exemplos normais, sem consultar o teste.
 @@PROJ Que representação ajuda mais a agrupar? | Cap12
 **Contexto.** Sua equipe quer saber se vale a pena trocar a representação dos dados (pixels) por uma representação aprendida antes de agrupar. Você comparará quatro representações dos dígitos manuscritos: **pixels**, **PCA**, **código de um autoencoder** e **atributos de uma RBM**.
 
@@ -207,7 +207,7 @@ print(pd.DataFrame(linhas).round(3).to_string(index=False))
 - Agrupamento e avaliação supervisionada comparados em uma tabela.
 - A discussão relaciona o resultado ao tamanho do problema e a alternativas (outras arquiteturas, mais dados, PyTorch).
 - A discussão evita concluir que "profundo é sempre melhor".
-@@NOTE Neste teste, o PCA com 16 componentes foi a melhor representação para agrupar (ARI de cerca de 0,64, contra 0,49 dos pixels, 0,53 do autoencoder e 0,57 da RBM). Para classificar com regressão logística, os próprios pixels foram os melhores (acurácia de cerca de 0,97). Ou seja: a representação aprendida não é automaticamente melhor. Cada uma tem custo de treino, hiperparâmetros e variabilidade entre sementes. A lição do capítulo se confirma: **compare sempre com uma linha de base simples**. Para imagens maiores e coloridas, redes convolucionais e o aprendizado auto-supervisionado costumam fazer grande diferença.
+@@NOTE Neste teste, o PCA com 16 componentes foi a melhor representação para agrupar (ARI de cerca de 0,64, contra 0,49 dos pixels, 0,53 do autoencoder e 0,57 da RBM). Para classificar com regressão logística, os próprios pixels foram os melhores (acurácia de cerca de 0,97). Ou seja: a representação aprendida não é automaticamente melhor. Cada uma tem custo de treino, hiperparâmetros e variabilidade entre sementes. A lição do capítulo se confirma: **compare sempre com uma linha de base simples**. Para imagens maiores e coloridas, redes convolucionais e o aprendizado autossupervisionado costumam fazer grande diferença.
 @@ALEM
 - **UCI:** Optical Recognition of Handwritten Digits (versão completa) e Pen-Based Recognition of Handwritten Digits.
 - **Kaggle:** Fashion-MNIST e MNIST (Digit Recognizer). Com imagens maiores, vale usar PyTorch ou TensorFlow.
