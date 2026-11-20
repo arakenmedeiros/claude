@@ -186,3 +186,15 @@ Randomização de domínio: variar aleatoriamente o simulador para tornar a pol�
 RLHF: aprendizado por reforço a partir de feedback humano.
 Sim-to-real: transferência de uma política aprendida em simulador para o mundo real.
 Sobre-otimização: otimizar demais um proxy imperfeito, piorando o objetivo real.
+Término: fim de um episódio porque o ambiente chegou a um estado final (meta, queda, fim de jogo); depois dele não há futuro, e o valor do estado final é zero.
+Truncamento: fim de um episódio por limite de tempo, embora o mundo continuasse; no alvo TD, o valor do próximo estado deve ser mantido (bootstrap).
+Recompensa média: critério para tarefas contínuas que mede o ganho médio por passo a longo prazo, sem desconto.
+Valor diferencial: quanto estar em um estado é melhor ou pior que a recompensa média; é definido a menos de uma constante.
+MDP com restrições (CMDP): MDP que, além da recompensa, tem um custo cujo valor esperado deve respeitar um limite.
+Multiplicador de Lagrange (λ): peso do custo no método lagrangiano; sobe quando o limite é violado e desce quando há folga.
+Opção: habilidade reutilizável, formada por um conjunto de iniciação, uma política interna e uma condição de término.
+Recompensa verificável: recompensa dada por um verificador automático (por exemplo, a conferência do resultado de um problema de matemática ou testes de um código).
+Observação: o que o agente percebe do mundo; pode ser menos que o estado completo (veja POMDP).
+Tamanho efetivo da amostra (ESS): medida de quantas trajetórias realmente contam em uma estimativa ponderada por importância; valores pequenos indicam instabilidade.
+Média interquartil (IQM): média calculada após descartar os 25% menores e os 25% maiores resultados; é mais robusta a valores extremos.
+Validação e teste: separação entre os dados (ou execuções) usados para escolher hiperparâmetros e os usados para medir o resultado final.

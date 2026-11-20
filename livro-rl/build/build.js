@@ -2,10 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const D = require("docx");
 const {
-  Document, Packer, Paragraph, TextRun, ImageRun, Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
+  Document, Packer, Paragraph, ImageRun, Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
   AlignmentType, HeadingLevel, LevelFormat, TabStopType, LeaderType, Header, Footer, PageNumber, SectionType,
   VerticalAlign, PageBreak, HorizontalPositionRelativeFrom, VerticalPositionRelativeFrom, TextWrappingType,
 } = D;
+// protege asteriscos de "q*", "v*", "π*" (valor ótimo) do analisador de itálico/negrito
+const TextRun = function (o) { if (o && typeof o.text === "string") o = { ...o, text: o.text.replace(/\uE000/g, "*") }; return new D.TextRun(o); };
+const protegeEstrela = (t) => t.replace(/\*\*([qvπ])\*\*\*(?!\*)/g, "**$1\uE000**").replace(/([qvπ])\*(?![*\w])/g, "$1\uE000");
 
 const ROOT = path.join(__dirname, "..");
 const CAP = path.join(ROOT, "cap");
@@ -24,7 +27,7 @@ const AUTHOR = "Araken de Medeiros Santos";
 const YEAR = "2026";
 
 // ---------------------------------------------------------------- helpers
-const readTxt = (f) => fs.readFileSync(path.join(CAP, f), "utf8").replace(/\r/g, "");
+const readTxt = (f) => { const t = fs.readFileSync(path.join(CAP, f), "utf8").replace(/\r/g, ""); return f.endsWith(".md") ? protegeEstrela(t) : t; };
 function pngSize(file) {
   const b = fs.readFileSync(file);
   return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
@@ -118,17 +121,19 @@ function heading(level, text, opts = {}) {
   return new Paragraph({ heading: lv, pageBreakBefore: !!opts.pageBreak, keepNext: true, children: [new TextRun({ text })] });
 }
 function P(text, o = {}) {
-  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.LEFT, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
+  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.JUSTIFIED, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
 }
 function noBorder() { const n = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }; return { top: n, bottom: n, left: n, right: n }; }
 
 function calloutParas(body, color) {
   const out = []; let para = [];
-  const flush = () => { if (para.length) { out.push(new Paragraph({ spacing: { after: 80, line: 280 }, children: runs(para.join(" "), { size: 20 }) })); para = []; } };
+  const flush = () => { if (para.length) { out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, spacing: { after: 80, line: 280 }, children: runs(para.join(" "), { size: 20 }) })); para = []; } };
   let i = 0;
   while (i < body.length) {
     const ln = body[i];
-    if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
+    if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, alignment: AlignmentType.JUSTIFIED, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
+    if (ln.startsWith("$$")) { flush(); out.push(formula({ text: ln.replace(/^\$\$\s*/, "").replace(/\s*\$\$$/, "") })); i++; continue; }
+    if (/^\d+\.\s/.test(ln)) { flush(); while (i < body.length && /^\d+\.\s/.test(body[i])) { out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, spacing: { after: 60, line: 276 }, indent: { left: 400, hanging: 300 }, children: runs(body[i], { size: 20 }) })); i++; } continue; }
     if (ln.trim() === "") { flush(); i++; continue; }
     para.push(ln.trim()); i++;
   }
@@ -167,7 +172,11 @@ function codeRuns(line) {
 }
 function codeBlock(b) {
   const nb = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
-  const kids = b.code.map((ln) => new Paragraph({ spacing: { after: 0, line: 240 }, children: b.lang === "bash" ? [new TextRun({ text: ln || " ", font: MONO, size: 16, color: C.ink })] : codeRuns(ln) }));
+  const kids = b.code.map((ln0) => {
+    // recuo pendente: as linhas quebradas continuam alinhadas ao recuo do código (mais 4 caracteres)
+    const lead = ln0.match(/^ */)[0].length, ln = ln0.slice(lead), cw = 96;
+    return new Paragraph({ spacing: { after: 0, line: 240 }, indent: { left: lead * cw + 4 * cw, hanging: 4 * cw }, children: b.lang === "bash" ? [new TextRun({ text: ln || " ", font: MONO, size: 16, color: C.ink })] : codeRuns(ln) });
+  });
   const label = b.lang ? b.lang.replace("-nr", "").toUpperCase() : "CÓDIGO";
   return [new Table({ width: { size: CW, type: WidthType.DXA }, columnWidths: [CW], rows: [new TableRow({ children: [new TableCell({ width: { size: CW, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, fill: "F8FAFC", color: "auto" }, margins: { top: 100, bottom: 100, left: 200, right: 120 }, borders: { top: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, bottom: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, right: { style: BorderStyle.SINGLE, size: 4, color: C.mid }, left: { style: BorderStyle.SINGLE, size: 24, color: C.ind } }, children: [new Paragraph({ spacing: { after: 60 }, children: [new TextRun({ text: label, bold: true, size: 14, color: C.ind, characterSpacing: 30 })] }), ...kids] })] })] }), spacer(140)];
 }
@@ -221,8 +230,8 @@ function renderBlocks(blocks) {
       case "h4": out.push(heading(4, b.text)); break;
       case "p": out.push(P(b.text)); break;
       case "quote": out.push(new Paragraph({ spacing: { after: 120 }, indent: { left: 400 }, border: { left: { style: BorderStyle.SINGLE, size: 18, color: C.cya, space: 8 } }, children: runs(b.text, { size: 21, italics: true }) })); break;
-      case "ul": b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break;
-      case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: ref, level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
+      case "ul": b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, alignment: AlignmentType.JUSTIFIED, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break;
+      case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: ref, level: 0 }, alignment: AlignmentType.JUSTIFIED, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
       case "callout": out.push(callout(b)); out.push(spacer(140)); break;
       case "code": out.push(...codeBlock(b)); break;
       case "formula": out.push(formula(b)); break;
@@ -429,6 +438,16 @@ const doc = new Document({
   sections: [sections[0], sections[1], tocSection, ...contentSections],
 });
 
+// conteúdo estruturado (usado para gerar o EPUB)
+fs.writeFileSync(path.join(__dirname, "book.json"), JSON.stringify({
+  title: TITLE, subtitle: SUBTITLE, author: AUTHOR, year: YEAR,
+  apresentacao: parseMd(readTxt("apresentacao.md")),
+  chapters: chapters.map((c) => ({ n: c.n, meta: c.meta, blocks: c.blocks, ex: c.ex })),
+  integrador: parseMd(readTxt("integrador.md")),
+  apx: APX.map((f) => parseMd(readTxt(f))),
+  glossario: readTxt("glossario.txt").trim().split("\n").filter(Boolean).sort((a, b) => a.localeCompare(b, "pt")),
+  refs: readTxt("referencias.txt").trim().split("\n").filter(Boolean).sort((a, b) => a.localeCompare(b, "pt")),
+}));
 Packer.toBuffer(doc).then((buf) => {
   fs.writeFileSync(OUT, buf);
   fs.writeFileSync(path.join(__dirname, "headings.json"), JSON.stringify(headings, null, 1));

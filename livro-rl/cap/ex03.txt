@@ -194,19 +194,19 @@ c) 1/2.
 d) 0.
 R: b | O gelo escorregadio torna a transição estocástica.
 
-MC: Na prática do capítulo, o K-Means foi usado para:
-a) definir estados de clientes a partir de recência, frequência e gasto.
-b) calcular o desconto.
-c) escolher ações.
-d) gerar recompensas.
-R: a | Os grupos formam os estados da cadeia de Markov.
+MC: Com γ = 1, a equação de Bellman tem solução única:
+a) sempre, em qualquer MDP.
+b) apenas em tarefas episódicas que terminam com probabilidade 1 e sob hipóteses adicionais.
+c) nunca.
+d) apenas se houver uma única ação.
+R: b | Com γ < 1, a unicidade é garantida; com γ = 1, são necessárias hipóteses adicionais.
 
-MC: Num MDP com γ = 0, o agente maximiza:
-a) apenas a recompensa imediata.
-b) o retorno infinito sem desconto.
-c) a soma de todas as recompensas futuras igualmente.
-d) a probabilidade de transição.
-R: a | Com γ = 0 só a recompensa do próximo passo conta; o agente é totalmente míope.
+MC: Em um POMDP, a crença é:
+a) uma distribuição de probabilidade sobre os estados possíveis, atualizada a cada observação.
+b) a recompensa média do agente.
+c) o número de observações já feitas.
+d) a política ótima do ambiente.
+R: a | A crença resume o histórico e é atualizada pela regra de Bayes.
 
 DISC: Explique, com um exemplo do cotidiano, a propriedade de Markov. Dê também um exemplo em que ela falha e como corrigir.
 R: No xadrez, a posição atual basta para decidir a jogada. Ela falha quando o estado omite informação, como uma foto que não mostra a velocidade do carro. Corrige-se enriquecendo o estado, por exemplo incluindo quadros anteriores.
@@ -265,5 +265,5 @@ R: Poucos estados misturam clientes diferentes e violam Markov; muitos estados d
 DISC: Como o fator de desconto γ altera o valor de vida estimado de um cliente?
 R: γ maior dá mais peso a meses futuros, elevando os valores; γ menor aproxima o valor da recompensa imediata. Em MRPs com recompensas positivas, o valor cresce com γ.
 
-DISC: Dê um exemplo do seu cotidiano ou profissão modelado como MDP e liste S, A, p, R e γ, discutindo se vale a propriedade de Markov.
-R: Resposta livre. Deve apresentar os cinco elementos de modo coerente e discutir se o estado resume o passado relevante, propondo ajustes caso não resuma.
+DISC: Explique a diferença entre estado e observação e dê um exemplo em que uma política sem memória seria prejudicada.
+R: O estado é o que de fato acontece no mundo; a observação é o que o agente percebe. No T-labirinto, um sinal visível só no início indica o lado do prêmio: quem não guarda o sinal escolhe ao acaso no cruzamento (50% de acerto). Uma crença ou uma memória (quadros empilhados, rede recorrente) resolve o problema.

@@ -73,7 +73,7 @@ def f8_dueling():
     save(fig,"f8_dueling")
 def f8_ablacao():
     import glob
-    fig,ax=plt.subplots(figsize=(8.6,3.8)); cfg=[("completo","DQN completo",GRN),("duplo","Double DQN",IND),("sem_alvo","sem rede-alvo",AMB),("sem_memoria","sem memória",RED),("nenhum","sem memória e sem rede-alvo",GRY)]
+    fig,ax=plt.subplots(figsize=(8.6,3.8)); cfg=[("completo","DQN completo",GRN),("duplo","Double DQN",IND),("sem_alvo","sem rede-alvo",AMB),("sem_memoria","sem memória",RED),("controle","controle: lote 1, com memória","#EC4899"),("nenhum","sem memória e sem rede-alvo",GRY)]
     for nome,lab,c in cfg:
         R=[np.load(f) for f in sorted(glob.glob(f"/tmp/w/abl_{nome}_*.npy"))]
         if not R: continue

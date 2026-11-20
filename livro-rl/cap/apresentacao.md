@@ -65,8 +65,14 @@ Algumas observações importantes:
 - **Os resultados numéricos variam** de uma execução para outra, pois o aprendizado por reforço envolve sorteios. Compare tendências, não casas decimais.
 
 :::atencao Nota sobre a verificação dos códigos
-Os blocos de código foram executados de ponta a ponta com Python 3.13, NumPy 2, pandas 3, scikit-learn 1.9, Gymnasium 1.4, PyTorch 2.14 e Stable-Baselines3 2.9. Os resultados numéricos exibidos no texto e as figuras de curvas de aprendizado vêm dessas execuções com os ambientes do Gymnasium. Já os trechos que baixam bases do **UCI** (`ucimlrepo`) e do **Kaggle** foram validados quanto à lógica com dados sintéticos de mesma estrutura, pois o ambiente de verificação não tinha acesso a esses repositórios. Por isso, **não citamos números obtidos com as bases reais**: ao executá-las, você verá os seus próprios resultados, que podem diferir dos de nossos testes. Nomes de colunas e identificadores podem mudar com o tempo (Apêndice J).
+Os blocos de código foram executados de ponta a ponta com Python 3.13, NumPy 2, pandas 3, scikit-learn 1.9, Gymnasium 1.4, PyTorch 2.14–2.15 e Stable-Baselines3 2.9. Os resultados numéricos exibidos no texto e as figuras de curvas de aprendizado vêm dessas execuções com os ambientes do Gymnasium. Já os trechos que baixam bases do **UCI** (`ucimlrepo`) e do **Kaggle** foram validados quanto à lógica com dados sintéticos de mesma estrutura, pois o ambiente de verificação não tinha acesso a esses repositórios. Por isso, **não citamos números obtidos com as bases reais**: ao executá-las, você verá os seus próprios resultados, que podem diferir dos de nossos testes. Nomes de colunas e identificadores podem mudar com o tempo (Apêndice J).
 :::
+
+:::saibamais Sobre esta versão (v02)
+Esta versão passou por uma revisão técnica. As condições das garantias teóricas (desconto γ, convergência do SARSA e do Q-learning, unicidade das equações de Bellman) foram explicitadas; as afirmações sobre o Double Q-learning, as políticas gaussianas, o aprendizado por reforço inverso e o MADDPG foram corrigidas; e os exemplos de código passaram a controlar melhor a aleatoriedade e a separar fontes de incerteza. Foram acrescentados: observação parcial e memória (Capítulo 3), término × truncamento, recompensa média e avaliação rigorosa de algoritmos (Capítulo 6), avaliação off-policy em sequências (Capítulo 12), aprendizado com restrições, opções e recompensas verificáveis (Capítulo 13).
+:::
+
+**Códigos executáveis.** Todos os programas do livro também estão disponíveis como arquivos `.py` (um por capítulo e apêndice), na pasta `codigo/` que acompanha o livro, junto com o arquivo `requirements.txt`, que registra as versões das bibliotecas.
 
 ## Apêndices
 

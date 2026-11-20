@@ -69,11 +69,11 @@ d) o Q-learning tabular.
 R: a | O discriminador fornece a recompensa para o aprendiz.
 
 MC: Uma vantagem do IRL sobre a BC é:
-a) a recompensa inferida pode generalizar melhor e revelar o que o especialista valoriza.
+a) a recompensa inferida pode, sob certas condições, generalizar melhor e revelar o que o especialista valoriza.
 b) ser sempre mais simples.
 c) não precisar de dados.
 d) dispensar o especialista.
-R: a | A recompensa explica as preferências, não só as ações.
+R: a | Isso depende de a recompensa ser identificável e de a tarefa de uso ser parecida com as demonstrações.
 
 MC: No AR offline, o objetivo é obter uma política:
 a) melhor que a dos dados, usando apenas o conjunto fixo.
@@ -194,19 +194,19 @@ c) a UTI é desnecessária.
 d) dados observacionais são sempre confiáveis.
 R: a | A gravidade influencia a ida à UTI e a morte.
 
-MC: Na base Bank Marketing, a coluna duration é removida da avaliação porque:
-a) só é conhecida depois do contato, vazando informação.
-b) é categórica.
-c) tem muitos ausentes.
-d) é constante.
-R: a | Não pode ser usada para decidir o canal antes do contato.
+MC: Um tamanho efetivo de amostra (ESS) muito menor que o número de trajetórias indica que:
+a) poucas trajetórias concentram quase todo o peso, e a estimativa é instável.
+b) há muitos dados independentes.
+c) o estimador é não enviesado.
+d) a política-alvo é igual à de registro.
+R: a | ESS = (Σρ)² / Σρ² mede quantas trajetórias valem de fato.
 
-MC: O SNIPS (IPS auto-normalizado) difere do IPS por:
-a) dividir pela soma dos pesos de importância, reduzindo muito a variância.
-b) não usar pesos.
-c) usar apenas o modelo.
-d) exigir ações contínuas.
-R: a | Troca um pequeno viés por menor variância.
+MC: Em avaliação off-policy sequencial, a variância do IS por trajetória cresce com o horizonte porque:
+a) o peso é um produto de razões de importância, uma por decisão.
+b) o desconto é grande.
+c) as recompensas ficam maiores.
+d) o modelo de resultado piora.
+R: a | O produto de H razões faz alguns pesos ficarem enormes e a maioria ficar quase nula.
 
 DISC: Dê três situações reais em que o AR offline é preferível ao online e explique por quê.
 R: Saúde (testar tratamentos aleatórios é antiético), direção autônoma (explorar é perigoso) e sistemas de recomendação (já existem logs extensos e experimentar custa receita). Em todas, a interação livre é cara ou arriscada.
@@ -218,7 +218,7 @@ DISC: Descreva o DAgger e explique por que ele reduz o acúmulo de erros.
 R: Executa o aprendiz, coleta os estados que ele visita, pede ao especialista os rótulos desses estados e agrega ao conjunto de treino. Assim o aprendiz é treinado exatamente nos estados em que erra, cobrindo a distribuição que ele própria gera.
 
 DISC: Compare BC, IRL e GAIL quanto ao que aprendem e a vantagens e limitações.
-R: BC aprende ações diretamente (simples, mas frágil fora da distribuição). IRL aprende uma recompensa e depois otimiza (generaliza e explica, porém é custoso). GAIL treina um discriminador como recompensa (imitação poderosa, mas instável como as GANs).
+R: BC aprende ações diretamente (simples, mas frágil fora da distribuição). IRL aprende uma recompensa e depois otimiza (pode generalizar e explicar, sob condições como a identificabilidade, porém é custoso). GAIL treina um discriminador como recompensa (imitação poderosa, mas instável como as GANs).
 
 DISC: Explique o problema do deslocamento de distribuição no AR offline.
 R: A política aprendida pode escolher ações pouco ou nunca vistas nos dados; o valor delas é extrapolado e muitas vezes superestimado. Como não há interação para corrigir, a política passa a preferir ações ilusórias e o desempenho colapsa.
@@ -265,5 +265,5 @@ R: Variar o limite (0,01; 0,05; 0,1), recalcular IPS e DR e comparar. Limites me
 DISC: Discuta por que recomendar uma política a partir de dados observacionais exige cautela mesmo com DR.
 R: O DR corrige erros de modelo ou de propensão, mas não resolve confundidores não observados nem falta de sobreposição. Sem randomização, o efeito causal estimado depende de suposições não testáveis.
 
-DISC: Dê um exemplo de aplicação em saúde de avaliação off-policy e liste os cuidados éticos e estatísticos necessários.
-R: Avaliar uma nova regra de dosagem usando prontuários antigos. Cuidados: privacidade, confundimento (gravidade), sobreposição (ações raras), intervalos de confiança conservadores, validação clínica e supervisão humana antes de qualquer uso.
+DISC: Compare IS por trajetória, IS por decisão (PDIS) e IS ponderado (WIS) em horizontes longos.
+R: O IS por trajetória usa um peso único e tem variância enorme; o PDIS pondera cada recompensa só pela razão até o seu passo, reduzindo a variância sem viés; o WIS normaliza pelos pesos, trocando um pouco de viés por muito menos variância. Em horizontes longos, todos sofrem com o ESS pequeno; recorre-se a estimadores duplamente robustos sequenciais.

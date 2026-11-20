@@ -148,6 +148,19 @@ for p in ParameterGrid({"efeito_escala": [0.0, 0.5, 1.0, 2.0]}):
 print(pd.DataFrame(linhas).pivot(index="efeito_escala", columns="política", values="receita").round(1))
 ```
 
+:::atencao Checklist experimental do projeto
+Antes de concluir qualquer coisa, confira, por escrito:
+
+1. **Objetivo:** qual é a métrica final e por que ela representa o que a loja quer?
+2. **Estado:** por que as variáveis escolhidas bastam para decidir (propriedade de Markov)? O que ficou de fora? (Capítulo 3)
+3. **Baseline simples:** o agente vence "nunca ofertar" e a regra RFM **com margem maior que a incerteza**? (Seção 6.8.3)
+4. **Repetições:** o treino foi repetido com **várias sementes** (no mínimo 5)? O intervalo de confiança é calculado **sobre as execuções de treino**, e não só sobre os episódios de avaliação?
+5. **Validação e teste:** os hiperparâmetros foram escolhidos em dados de **validação** e a política final foi avaliada em clientes **nunca vistos**?
+6. **Condições diferentes:** a política foi avaliada com outros efeitos de cupom (Seção 7) e com outros horizontes e orçamentos?
+7. **Término e truncamento:** o fim dos 6 meses é um **truncamento** (o cliente continua existindo)? Como isso foi tratado no alvo do DQN? (Seção 6.8.1)
+8. **Limites das conclusões:** o que **não** se pode concluir com um simulador cujos efeitos são hipóteses?
+:::
+
 ## 8. Do simulador ao mundo real
 
 Nenhuma conclusão do simulador pode substituir um **experimento**. Planeje, por escrito:

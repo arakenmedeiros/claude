@@ -201,12 +201,12 @@ c) foi idêntica à completa.
 d) teve retorno infinito.
 R: b | Sem quebrar a correlação, o treino fica instável e o agente não decola.
 
-MC: Valores Q que crescem sem limite durante o treino indicam, provavelmente:
-a) instabilidade ou divergência.
-b) bom desempenho.
-c) falta de exploração.
-d) um bug no gerador aleatório.
-R: a | É um sinal clássico de problemas no triângulo mortal.
+MC: Por que é necessário chamar env.action_space.seed(semente) ao tentar reproduzir o treino de um DQN?
+a) porque o espaço de ações tem o seu próprio gerador aleatório, usado em action_space.sample().
+b) para aumentar o desempenho da rede.
+c) para fixar os pesos iniciais da rede.
+d) não é necessário, pois torch.manual_seed já controla tudo.
+R: a | Fixar random, NumPy e PyTorch não controla o gerador do espaço de ações do Gymnasium.
 
 DISC: Explique, em linguagem simples, como uma rede neural aprende. Use o conceito de gradiente.
 R: A rede faz uma previsão, mede o erro (perda) e calcula, por retropropagação, o gradiente do erro em relação a cada peso. Em seguida, ajusta os pesos um pouco no sentido contrário ao gradiente, repetindo o processo muitas vezes até o erro diminuir.
@@ -265,5 +265,5 @@ R: Assume que o pedido chega na hora, que a demanda histórica não depende da d
 DISC: Compare o DQN e o Fitted Q-Iteration quanto a estabilidade, uso de dados e custo computacional.
 R: O FQI ajusta um regressor ao lote inteiro a cada iteração, com dados fixos, e tende a ser mais estável, mas é caro com muitos dados. O DQN atualiza incrementalmente com lotes da memória, escalando melhor a dados grandes, mas exige truques de estabilização.
 
-DISC: Dê um exemplo de problema em que o DQN seria apropriado e outro em que não, justificando.
-R: Adequado: jogo com ações discretas e muitos dados simulados. Inadequado: controle robótico com ações contínuas finas, pois a ação ótima exigiria maximizar Q sobre um espaço contínuo; nesse caso, usa-se DDPG, TD3 ou SAC.
+DISC: Na ablação do DQN, a configuração "sem memória" também altera o lote e o aquecimento. Por que isso limita a conclusão e como o controle ajuda?
+R: A queda de desempenho pode vir do lote minúsculo, e não da ausência de repetição de experiência. O controle (lote 1, com memória) muda só o lote e o aquecimento; se ele também falha, parte do efeito atribuído à memória é do lote. Em ablações, muda-se um fator por vez.

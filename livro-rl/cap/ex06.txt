@@ -129,7 +129,7 @@ a) duas tabelas, uma para escolher a ação e outra para avaliá-la.
 b) dois episódios por passo.
 c) duas políticas aleatórias.
 d) dois fatores de desconto.
-R: a | Separar escolha e avaliação reduz o viés.
+R: a | Separar escolha e avaliação reduz a superestimação (mas não garante estimativas sem viés).
 
 MC: O TD de n passos usa como alvo:
 a) n recompensas reais seguidas da estimativa do estado n passos adiante.
@@ -180,33 +180,33 @@ c) 5.
 d) 5.000.
 R: b | 25 posições do táxi × 5 locais do passageiro × 4 destinos.
 
-MC: O ParameterGrid do scikit-learn é útil porque:
-a) gera todas as combinações de hiperparâmetros a serem testadas.
-b) treina redes neurais.
-c) calcula o desconto.
-d) escolhe a política.
-R: a | Permite varrer sistematicamente combinações de α, ε etc.
+MC: O Q-learning diferencial estima, além de Q:
+a) a recompensa média ρ, que é descontada do ganho a cada passo.
+b) a variância das recompensas.
+c) o fator de desconto γ ótimo.
+d) a política de comportamento.
+R: a | δ = R − ρ + max Q(S′, ·) − Q(S, A); ρ é atualizada na direção de δ.
 
-MC: No CartPole tabular, o KBinsDiscretizer com strategy="quantile" cria faixas:
-a) de largura igual.
-b) com aproximadamente o mesmo número de observações em cada uma.
-c) aleatórias.
-d) sempre binárias.
-R: b | Os quantis dividem os dados em grupos de mesmo tamanho.
+MC: No alvo TD, quando o episódio é apenas truncado por limite de tempo, deve-se:
+a) zerar o valor do próximo estado.
+b) manter o bootstrap com o valor do próximo estado.
+c) reiniciar a tabela Q.
+d) trocar γ por 0.
+R: b | O futuro existe; só deixamos de observá-lo. Zera-se o futuro apenas no término.
 
-MC: No projeto de preços, o estoque não vendido no domingo:
-a) é guardado para a semana seguinte.
-b) é descartado.
-c) aumenta o lucro.
-d) vira recompensa.
-R: b | O produto é perecível; o que sobra é perdido.
+MC: Com α_t = 2^(−t) e alvo constante 1, partindo de Q = 0, depois de muitas atualizações Q fica perto de:
+a) 1,00.
+b) 0,71.
+c) 0,00.
+d) 2,00.
+R: b | O produto Π(1 − 2^(−t)) ≈ 0,289: a soma dos passos é finita, e a estimativa trava.
 
-MC: A estimativa de elasticidade com a base Online Retail exige cautela porque:
-a) os dados são observacionais e podem estar confundidos por promoções e atacado.
-b) a base é sintética.
-c) não há coluna de preço.
-d) a regressão de Poisson é proibida.
-R: a | Associação não implica causalidade; por isso usamos hipótese de segurança.
+MC: As condições clássicas sobre os passos α_t(s, a) para a convergência do SARSA e do Q-learning tabulares são:
+a) Σα = ∞ e Σα² < ∞, para cada par estado–ação.
+b) apenas que α_t diminua com o tempo.
+c) Σα < ∞.
+d) α_t constante e igual a 1.
+R: a | A soma infinita permite chegar a qualquer valor; a soma dos quadrados finita apaga o ruído.
 
 DISC: Explique o TD(0) com uma analogia do cotidiano e destaque a diferença para o Monte Carlo.
 R: Ao voltar para casa, você ajusta a previsão do tempo restante a cada trecho (TD), em vez de esperar chegar para comparar com o tempo real (MC). O TD atualiza a cada passo usando uma estimativa do próximo estado.
@@ -232,8 +232,8 @@ R: Com ε → 0 deixa de haver risco de escorregões aleatórios, e o SARSA tend
 DISC: Explique o Expected SARSA e por que ele pode ter melhor desempenho que o SARSA.
 R: Usa a média ponderada de Q(S′,a) sob a política em vez de uma ação sorteada, eliminando a variância da escolha de A′ e permitindo passos maiores e atualizações mais estáveis.
 
-DISC: Explique o viés de maximização com um exemplo simples e como o Double Q-learning o corrige.
-R: Se várias ações têm valor 0 verdadeiro, mas estimativas ruidosas, o máximo das estimativas é positivo em média. O Double Q-learning usa uma tabela para escolher e outra para avaliar, e a avaliação não herda o ruído da escolha.
+DISC: Explique o viés de maximização com um exemplo simples e como o Double Q-learning o reduz (e por que isso não garante estimativas sem viés).
+R: Se várias ações têm valor 0 verdadeiro, mas estimativas ruidosas, o máximo das estimativas é positivo em média. O Double Q-learning usa uma tabela para escolher e outra para avaliar, e a avaliação não herda o ruído da escolha. Isso reduz a superestimação, mas pode causar subestimação.
 
 DISC: Descreva TD de n passos e o que muda ao aumentar n.
 R: O alvo usa n recompensas reais e depois estima o resto. Com n maior, há menos viés (mais dados reais) e mais variância; n = 1 é TD(0) e n até o fim é MC.
@@ -262,8 +262,8 @@ R: O melhor preço fixo já está perto do ótimo; a dinâmica só ajusta com ba
 DISC: Critique a estimativa de elasticidade com dados observacionais e proponha uma forma de obter uma estimativa mais confiável.
 R: Preços variam com promoções, sazonalidade e tipos de cliente, confundindo a relação. Seria mais confiável usar experimentos controlados (testes A/B de preço) ou métodos de inferência causal com variáveis de controle.
 
-DISC: Dê um exemplo de problema real em que SARSA seria preferível ao Q-learning e justifique.
-R: Um robô que aprende a andar perto de um precipício com exploração real: erros durante o treino são caros, então convém aprender uma política que leve em conta a própria exploração, como o SARSA.
+DISC: Por que o intervalo de confiança por bootstrap sobre os episódios de avaliação não basta para comparar dois algoritmos? O que mais é necessário?
+R: Ele mede só a incerteza de uma política já treinada. É preciso repetir o treinamento com várias sementes, separar validação e teste e reportar intervalos sobre as execuções (por exemplo, com a média interquartil e perfis de desempenho).
 
-DISC: Por que, para controle sem modelo, usamos Q(S, A) em vez de V(S) nos métodos TD?
-R: Sem o modelo, saber V(S′) não permite escolher a ação que leva ao melhor próximo estado, pois não sabemos para onde cada ação levará. Estimando Q(S, A) diretamente, a política gulosa é apenas o argmax sobre as ações.
+DISC: Explique por que tratar o truncamento por limite de tempo como término pode prejudicar o aprendizado.
+R: O agente passa a acreditar que o futuro acaba, e o valor de um mesmo estado passa a depender do tempo restante, e não só do estado, o que viola a propriedade de Markov. No exemplo de um único estado, V converge para cerca de 16 em vez de 100.

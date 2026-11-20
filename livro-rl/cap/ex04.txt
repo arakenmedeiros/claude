@@ -201,12 +201,12 @@ c) Silver (2016).
 d) Ouyang (2022).
 R: a | Howard descreveu a iteração de política em 1960.
 
-MC: Na análise de sensibilidade do projeto, o objetivo de variar c e δ é:
-a) escolher a melhor semente.
-b) verificar quais conclusões sobre o cupom são robustas às hipóteses.
-c) treinar um classificador.
-d) estimar a política aleatória.
-R: b | O efeito do cupom é suposto; é preciso ver quanto as conclusões dependem disso.
+MC: Em um gridworld episódico com recompensa −1 por passo e γ = 1, a convergência da avaliação de política:
+a) não depende de nenhuma hipótese.
+b) é garantida pela contração com fator γ.
+c) exige que as políticas consideradas terminem com probabilidade 1.
+d) só ocorre com γ = 0.
+R: c | Sem desconto, a contração com fator γ não existe; é preciso supor que os episódios terminam.
 
 DISC: Explique o que é programação dinâmica e em que condição ela pode ser usada em AR.
 R: É um conjunto de métodos que calculam valores e políticas ótimas usando as equações de Bellman. Exige que o MDP seja conhecido (dinâmica e recompensas) e que o número de estados seja tratável.

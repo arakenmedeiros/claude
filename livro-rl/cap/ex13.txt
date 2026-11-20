@@ -90,11 +90,11 @@ d) um modelo do ambiente.
 R: a | O crítico central é descartado após o treino.
 
 MC: O MADDPG é um algoritmo que:
-a) usa atores e críticos centralizados para ambientes multiagente.
+a) usa atores descentralizados e críticos com informação centralizada durante o treino.
 b) só funciona com um agente.
 c) é um método tabular.
 d) só serve para jogos de tabuleiro.
-R: a | Lowe et al. (2017).
+R: a | Lowe et al. (2017): na execução, cada ator usa só a sua observação local.
 
 MC: O QMIX decompõe o valor da equipe como:
 a) uma combinação monotônica dos valores individuais dos agentes.
@@ -180,33 +180,33 @@ c) ignorar a avaliação independente.
 d) usar um único modelo com poucos dados.
 R: a | A incerteza sinaliza regiões em que o proxy é pouco confiável.
 
-MC: O hackeamento de recompensa ocorre quando:
-a) o agente obtém recompensa alta explorando falhas, sem cumprir o objetivo real.
-b) o agente é programado em Python.
-c) a recompensa é negativa.
-d) o ambiente é determinístico.
-R: a | É consequência de especificar mal a recompensa.
+MC: Com recompensas verificáveis, um verificador que aceita algumas respostas erradas:
+a) pode limitar a taxa real de acerto, pois o agente aprende a explorar as brechas do verificador.
+b) garante 100% de acerto com muitos candidatos.
+c) elimina a lei de Goodhart.
+d) dispensa avaliação independente.
+R: a | No experimento do livro, a taxa estaciona em cerca de 68%.
 
-MC: Na prática do dilema do prisioneiro com Q-learners, o resultado ao longo de várias sementes mostrou que:
-a) a cooperação pode surgir, mas é frágil e varia entre sementes.
-b) sempre há cooperação.
-c) nunca há cooperação.
-d) a recompensa é sempre a mesma.
-R: a | Algumas execuções cooperam; outras terminam em traição mútua.
+MC: Uma opção, no aprendizado hierárquico, é formada por:
+a) conjunto de iniciação, política interna e condição de término.
+b) apenas uma ação primitiva.
+c) uma tabela Q e um modelo.
+d) um crítico e um ator.
+R: a | Sutton, Precup e Singh (1999).
 
-MC: O trânsito de uma cidade, em que motoristas têm objetivos parcialmente conflitantes e parcialmente comuns, é um exemplo de problema:
-a) misto.
-b) puramente cooperativo.
-c) de soma zero estrito.
-d) sem agentes.
-R: a | Cada um quer chegar rápido, mas todos se beneficiam de um fluxo organizado.
+MC: Em comparação com o método lagrangiano, a penalização com λ fixo:
+a) só respeita o limite de custo se λ for escolhido adequadamente, e pode desperdiçar recompensa.
+b) sempre respeita o limite.
+c) aprende λ automaticamente.
+d) não usa o custo.
+R: a | No método lagrangiano, λ sobe quando o custo passa do limite e desce quando há folga.
 
-MC: Na perda do DPO, o parâmetro β controla:
-a) o quanto a política pode se afastar do modelo de referência (intensidade da regularização).
-b) o número de episódios.
-c) o desconto.
-d) a taxa de exploração.
-R: a | β maior mantém a política mais próxima da referência na interpretação de KL.
+MC: Em um MDP com restrições (CMDP), o problema é:
+a) maximizar a recompensa esperada sujeito a um limite para o custo esperado.
+b) minimizar a recompensa esperada.
+c) maximizar apenas o custo.
+d) resolver sempre com γ = 1.
+R: a | Há uma recompensa a maximizar e um custo cujo valor esperado deve ficar abaixo de um limite.
 
 DISC: Explique o que é um jogo de Markov e como ele generaliza o MDP.
 R: É um modelo com vários agentes que escolhem ações simultaneamente; as transições e as recompensas de cada agente dependem da combinação de ações. Com um só agente, reduz-se a um MDP.
@@ -262,8 +262,8 @@ R: Variam-se aleatoriamente parâmetros do simulador (atrito, massa, texturas) d
 DISC: Descreva duas fronteiras de pesquisa em AR e por que elas importam.
 R: Exploração com curiosidade, que permite aprender sem recompensas externas densas; generalização e transferência, para agentes que funcionem em ambientes novos. Ambos são necessários para aplicações fora de benchmarks.
 
-DISC: Elabore um plano de estudos de três meses para continuar após este livro, indicando leituras, práticas e um projeto.
-R: Mês 1: ler capítulos selecionados de Sutton e Barto (2018) e reimplementar algoritmos tabulares; mês 2: estudar artigos de AR profundo (DQN, PPO, SAC) e usar o Stable-Baselines3; mês 3: projeto próprio com várias sementes, comparação com baselines e relatório crítico.
+DISC: Por que penalizar o custo dentro da recompensa não equivale a impor uma restrição?
+R: Com uma penalidade fixa, o agente pode 'pagar a multa' quando o ganho compensa, e o limite de custo não é garantido. Na restrição, o multiplicador é aprendido para que o custo esperado respeite o limite.
 
-DISC: Por que aprendizes independentes tendem a oscilar em jogos de soma zero, como cara ou coroa?
-R: Cada agente se adapta ao comportamento atual do outro; quando um se torna previsível, o outro o explora e muda, o que muda a melhor resposta do primeiro. Sem convergência a estratégias fixas, as probabilidades giram em torno do equilíbrio de Nash.
+DISC: Compare recompensas de preferência (RLHF) e recompensas verificáveis: vantagens e riscos de cada uma.
+R: Preferências cobrem qualidade subjetiva, mas sofrem com a lei de Goodhart e custo de anotação. Verificadores são baratos e objetivos, mas, se incompletos ou errados, ensinam o agente a explorar brechas; exigem avaliação independente e testes mais fortes.

@@ -10,6 +10,7 @@ def treinar_dqn(semente=0, n_ep=300, usar_replay=True, usar_alvo=True, duplo=Fal
                 lote=64, tam_memoria=50_000, aquecimento=1000, troca_alvo=250, decaimento_eps=5000, env_id="CartPole-v1", verbose=False):
     random.seed(semente); np.random.seed(semente); torch.manual_seed(semente)
     env = gym.make(env_id); n_obs = env.observation_space.shape[0]; n_acoes = env.action_space.n
+    env.action_space.seed(semente)
     q = criar_rede(n_obs, n_acoes); q_alvo = criar_rede(n_obs, n_acoes); q_alvo.load_state_dict(q.state_dict())
     if not usar_alvo: q_alvo = q                                  # sem rede-alvo: o alvo usa a própria rede
     if not usar_replay: tam_memoria, lote, aquecimento = 1, 1, 1  # sem memória: aprende só com a transição mais recente
