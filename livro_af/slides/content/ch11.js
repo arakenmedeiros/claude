@@ -21,5 +21,5 @@ module.exports = {
     { k: "impacto", frase: "Federar é projeto de sistema, e não só um algoritmo.", sub: "Técnica, lei e ética andam juntas.", n: "Fixação." },
   ],
   fechamento: "O futuro é de quem une técnica, lei e confiança.",
-  proximo: "Próximo capítulo: projeto integrador final — a Federa Saúde.",
+  proximo: "Próximo capítulo: do laboratório ao mundo real — assincronia, participação, esquecimento e deriva.",
 };

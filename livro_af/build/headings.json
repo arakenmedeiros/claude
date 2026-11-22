@@ -1640,703 +1640,983 @@
   "id": "h328"
  },
  {
-  "level": 1,
-  "text": "Parte V — Projeto Final",
+  "level": 2,
+  "text": "Capítulo 12 — Do Laboratório ao Mundo Real: Assincronia, Participação, Esquecimento e Deriva",
   "id": "h329"
  },
  {
-  "level": 2,
-  "text": "Capítulo 12 — Projeto Integrador Final: do Problema ao Relatório",
+  "level": 3,
+  "text": "12.1 O mundo real não espera a rodada terminar",
   "id": "h330"
  },
  {
   "level": 3,
-  "text": "12.1 O desafio",
+  "text": "12.2 Aprendizado federado assíncrono",
   "id": "h331"
  },
  {
-  "level": 3,
-  "text": "12.2 Os dados e o cenário",
+  "level": 4,
+  "text": "12.2.1 O problema do mais lento",
   "id": "h332"
  },
  {
-  "level": 3,
-  "text": "12.3 O motor de simulação projeto.py",
+  "level": 4,
+  "text": "12.2.2 Duas soluções: FedAsync e FedBuff",
   "id": "h333"
  },
  {
-  "level": 3,
-  "text": "12.4 As nove etapas",
+  "level": 4,
+  "text": "12.2.3 O código",
   "id": "h334"
  },
  {
-  "level": 3,
-  "text": "12.5 Modelo de relatório",
+  "level": 4,
+  "text": "12.2.4 O experimento",
   "id": "h335"
  },
  {
   "level": 3,
-  "text": "12.6 Critérios de avaliação",
+  "text": "12.3 Seleção de clientes e viés de participação",
   "id": "h336"
  },
  {
   "level": 4,
-  "text": "12.6.1 Para comparar depois",
+  "text": "12.3.1 Quem aparece não é uma amostra aleatória",
   "id": "h337"
  },
  {
-  "level": 3,
-  "text": "12.7 O que você aprendeu",
+  "level": 4,
+  "text": "12.3.2 O código",
   "id": "h338"
  },
  {
-  "level": 3,
-  "text": "12.8 Para continuar estudando",
+  "level": 4,
+  "text": "12.3.3 O experimento",
   "id": "h339"
  },
  {
   "level": 3,
-  "text": "Exercícios de múltipla escolha",
+  "text": "12.4 Avaliar de verdade: clientes conhecidos, novos e partições naturais",
   "id": "h340"
  },
  {
-  "level": 3,
-  "text": "Exercícios discursivos",
+  "level": 4,
+  "text": "12.4.1 Duas perguntas diferentes",
   "id": "h341"
  },
  {
-  "level": 3,
-  "text": "Projeto integrador final",
+  "level": 4,
+  "text": "12.4.2 Partições naturais e artificiais",
   "id": "h342"
  },
  {
   "level": 4,
-  "text": "Federa Saúde: a decisão final",
+  "text": "12.4.3 O experimento",
   "id": "h343"
  },
  {
-  "level": 1,
-  "text": "Apêndice A — Gabarito dos exercícios",
+  "level": 3,
+  "text": "12.5 FedBN: a normalização que fica em casa",
   "id": "h344"
  },
  {
-  "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao Aprendizado Federado",
+  "level": 4,
+  "text": "12.5.1 O sotaque dos atributos",
   "id": "h345"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "12.5.2 Uma rede com normalização, do zero",
   "id": "h346"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "12.5.3 O experimento",
   "id": "h347"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Preparando o Terreno",
+  "level": 3,
+  "text": "12.6 Desaprendizado federado",
   "id": "h348"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "12.6.1 Esquecer é mais difícil que aprender",
   "id": "h349"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "12.6.2 O código",
   "id": "h350"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Anatomia de um Sistema Federado",
+  "level": 4,
+  "text": "12.6.3 O experimento",
   "id": "h351"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "12.7 Poucos rótulos: semissupervisionado e autossupervisionado federado",
   "id": "h352"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "12.7.1 O problema",
   "id": "h353"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Quando os Dados Não São Iguais",
+  "level": 4,
+  "text": "12.7.2 O código",
   "id": "h354"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "12.7.3 O experimento",
   "id": "h355"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "12.8 Multirrótulo e hierarquia: rótulos diferentes em cada cliente",
   "id": "h356"
  },
  {
-  "level": 2,
-  "text": "Capítulo 5 — Falando Menos",
+  "level": 4,
+  "text": "12.8.1 Um exame, vários rótulos",
   "id": "h357"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "12.8.2 O código",
   "id": "h358"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "12.8.3 O experimento",
   "id": "h359"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Cada Um do Seu Jeito",
+  "level": 3,
+  "text": "12.9 Deriva de conceito: o mundo muda",
   "id": "h360"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "12.9.1 O que é a deriva",
   "id": "h361"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "12.9.2 O código",
   "id": "h362"
  },
  {
-  "level": 2,
-  "text": "Capítulo 7 — O Que Pode Vazar",
+  "level": 4,
+  "text": "12.9.3 O experimento",
   "id": "h363"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "12.10 Lista de verificação do mundo real",
   "id": "h364"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "12.11 Resumo do capítulo",
   "id": "h365"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — Protegendo os Dados",
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
   "id": "h366"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "Exercícios discursivos",
   "id": "h367"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "Exercícios práticos em Python (scikit-learn)",
   "id": "h368"
  },
  {
-  "level": 2,
-  "text": "Capítulo 9 — Quando Alguém Trapaceia",
+  "level": 4,
+  "text": "Exercício 1 — Quanto vale esperar? O tamanho do buffer do FedBuff",
   "id": "h369"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 4,
+  "text": "Exercício 2 — Quanto o viés de disponibilidade machuca?",
   "id": "h370"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "Exercício 3 — A calibração do FedEraser: quanto treino de calibração basta?",
   "id": "h371"
  },
  {
-  "level": 2,
-  "text": "Capítulo 10 — Outros Desenhos",
+  "level": 4,
+  "text": "Exercício 4 — Quantos clientes anotam o rótulo raro?",
   "id": "h372"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "Projeto integrador do capítulo",
   "id": "h373"
  },
  {
-  "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "level": 4,
+  "text": "Um ano de operação: plano para a rede de clínicas",
   "id": "h374"
  },
  {
-  "level": 2,
-  "text": "Capítulo 11 — Fronteiras e Prática",
+  "level": 1,
+  "text": "Parte V — Projeto Final",
   "id": "h375"
  },
  {
-  "level": 3,
-  "text": "Múltipla escolha",
+  "level": 2,
+  "text": "Capítulo 13 — Projeto Integrador Final: do Problema ao Relatório",
   "id": "h376"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "13.1 O desafio",
   "id": "h377"
  },
  {
-  "level": 2,
-  "text": "Capítulo 12 — Projeto Integrador Final",
+  "level": 3,
+  "text": "13.2 Os dados e o cenário",
   "id": "h378"
  },
  {
   "level": 3,
-  "text": "Múltipla escolha",
+  "text": "13.3 O motor de simulação projeto.py",
   "id": "h379"
  },
  {
   "level": 3,
-  "text": "Discursivas (respostas-modelo)",
+  "text": "13.4 As nove etapas",
   "id": "h380"
  },
  {
-  "level": 1,
-  "text": "Apêndice B — Glossário",
+  "level": 3,
+  "text": "13.5 Modelo de relatório",
   "id": "h381"
  },
  {
-  "level": 1,
-  "text": "Apêndice C — Guia rápido de algoritmos e códigos",
+  "level": 3,
+  "text": "13.6 Critérios de avaliação",
   "id": "h382"
  },
  {
-  "level": 3,
-  "text": "C.1 Mapa de decisão",
+  "level": 4,
+  "text": "13.6.1 Para comparar depois",
   "id": "h383"
  },
  {
   "level": 3,
-  "text": "C.2 Arquivos de código do livro",
+  "text": "13.7 O que você aprendeu",
   "id": "h384"
  },
  {
   "level": 3,
-  "text": "C.3 Código completo da biblioteca fedlib.py",
+  "text": "13.8 Para continuar estudando",
   "id": "h385"
  },
  {
   "level": 3,
-  "text": "C.4 Modelo de código para um experimento federado",
+  "text": "Exercícios de múltipla escolha",
   "id": "h386"
  },
  {
   "level": 3,
-  "text": "C.5 Lista de verificação final",
+  "text": "Exercícios discursivos",
   "id": "h387"
  },
  {
-  "level": 1,
-  "text": "Apêndice D — Soluções dos exercícios práticos",
+  "level": 3,
+  "text": "Projeto integrador final",
   "id": "h388"
+ },
+ {
+  "level": 4,
+  "text": "Federa Saúde: a decisão final",
+  "id": "h389"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice A — Gabarito dos exercícios",
+  "id": "h390"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Bem-vindo ao Aprendizado Federado",
-  "id": "h389"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Conhecendo os dados dos \"hospitais\"",
-  "id": "h390"
- },
- {
-  "level": 3,
-  "text": "Exercício 2 — Quanto o tamanho do hospital importa?",
   "id": "h391"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Repetindo para não se enganar com o acaso",
+  "text": "Múltipla escolha",
   "id": "h392"
+ },
+ {
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
+  "id": "h393"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — Preparando o Terreno",
-  "id": "h393"
- },
- {
-  "level": 3,
-  "text": "Exercício 1 — Taxa de aprendizado em ação",
   "id": "h394"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Gradiente completo versus mini-lotes",
+  "text": "Múltipla escolha",
   "id": "h395"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Acurácia que engana",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h396"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Padronização federada com clientes de tamanhos diferentes",
-  "id": "h397"
  },
  {
   "level": 2,
   "text": "Capítulo 3 — Anatomia de um Sistema Federado",
+  "id": "h397"
+ },
+ {
+  "level": 3,
+  "text": "Múltipla escolha",
   "id": "h398"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Sua primeira agregação à mão",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h399"
  },
  {
-  "level": 3,
-  "text": "Exercício 2 — Reproduzindo a curva do FedAvg",
+  "level": 2,
+  "text": "Capítulo 4 — Quando os Dados Não São Iguais",
   "id": "h400"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Variando E e η",
+  "text": "Múltipla escolha",
   "id": "h401"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Calculando o custo de comunicação",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h402"
  },
  {
   "level": 2,
-  "text": "Capítulo 4 — Quando os Dados Não São Iguais",
+  "text": "Capítulo 5 — Falando Menos",
   "id": "h403"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Medindo a heterogeneidade de rótulos",
+  "text": "Múltipla escolha",
   "id": "h404"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Épocas locais e heterogeneidade",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h405"
  },
  {
-  "level": 3,
-  "text": "Exercício 3 — Heterogeneidade de quantidade: ponderar ou não?",
+  "level": 2,
+  "text": "Capítulo 6 — Cada Um do Seu Jeito",
   "id": "h406"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Quanto vale a \"coleira\" do FedProx?",
+  "text": "Múltipla escolha",
   "id": "h407"
  },
  {
-  "level": 2,
-  "text": "Capítulo 5 — Falando Menos",
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
   "id": "h408"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — Viés do arredondamento: determinístico contra estocástico",
+  "level": 2,
+  "text": "Capítulo 7 — O Que Pode Vazar",
   "id": "h409"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Calculadora de tempo por rodada",
+  "text": "Múltipla escolha",
   "id": "h410"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Esparsificação com e sem memória de erro",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h411"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Quantização com dados muito heterogêneos",
+  "level": 2,
+  "text": "Capítulo 8 — Protegendo os Dados",
   "id": "h412"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Cada Um do Seu Jeito",
+  "level": 3,
+  "text": "Múltipla escolha",
   "id": "h413"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Avaliando o modelo global cliente a cliente",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h414"
  },
  {
-  "level": 3,
-  "text": "Exercício 2 — Quantas épocas de ajuste fino?",
+  "level": 2,
+  "text": "Capítulo 9 — Quando Alguém Trapaceia",
   "id": "h415"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — O botão λ do Ditto",
+  "text": "Múltipla escolha",
   "id": "h416"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — IFCA com o número errado de grupos",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h417"
  },
  {
   "level": 2,
-  "text": "Capítulo 7 — O Que Pode Vazar",
+  "text": "Capítulo 10 — Outros Desenhos",
   "id": "h418"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Reconstruindo cinco dígitos, um por vez",
+  "text": "Múltipla escolha",
   "id": "h419"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Atualização com vários passos locais",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h420"
  },
  {
-  "level": 3,
-  "text": "Exercício 3 — Quanto tempo de treino é demais?",
+  "level": 2,
+  "text": "Capítulo 11 — Fronteiras e Prática",
   "id": "h421"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Escolhendo o limiar do atacante",
+  "text": "Múltipla escolha",
   "id": "h422"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — Protegendo os Dados",
+  "level": 3,
+  "text": "Discursivas (respostas-modelo)",
   "id": "h423"
  },
  {
-  "level": 3,
-  "text": "Exercício 1 — Resposta aleatorizada: privacidade contra precisão",
+  "level": 2,
+  "text": "Capítulo 12 — Do Laboratório ao Mundo Real",
   "id": "h424"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Qual ruído preciso para ε = 2?",
+  "text": "Múltipla escolha",
   "id": "h425"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Escolhendo a norma de corte S",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h426"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Agregação segura e clientes que desistem",
+  "level": 2,
+  "text": "Capítulo 13 — Projeto Integrador Final",
   "id": "h427"
  },
  {
-  "level": 2,
-  "text": "Capítulo 9 — Quando Alguém Trapaceia",
+  "level": 3,
+  "text": "Múltipla escolha",
   "id": "h428"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Ponto de ruptura na prática",
+  "text": "Discursivas (respostas-modelo)",
   "id": "h429"
  },
  {
-  "level": 3,
-  "text": "Exercício 2 — Troca de rótulos: até onde vai a média?",
+  "level": 1,
+  "text": "Apêndice B — Glossário",
   "id": "h430"
  },
  {
-  "level": 3,
-  "text": "Exercício 3 — Quanto aparar?",
+  "level": 1,
+  "text": "Apêndice C — Guia rápido de algoritmos e códigos",
   "id": "h431"
  },
  {
   "level": 3,
-  "text": "Exercício 4 — Quando a mediana também cai",
+  "text": "C.1 Mapa de decisão",
   "id": "h432"
  },
  {
-  "level": 2,
-  "text": "Capítulo 10 — Outros Desenhos",
+  "level": 3,
+  "text": "C.2 Arquivos de código do livro",
   "id": "h433"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Quantos participantes?",
+  "text": "C.3 Código completo da biblioteca fedlib.py",
   "id": "h434"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — Ruído no resíduo",
+  "text": "C.4 Modelo de código para um experimento federado",
   "id": "h435"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Comunicação: split learning contra FedAvg",
+  "text": "C.5 Lista de verificação final",
   "id": "h436"
  },
  {
-  "level": 3,
-  "text": "Exercício 4 — Velocidade do consenso no anel",
+  "level": 1,
+  "text": "Apêndice D — Soluções dos exercícios práticos",
   "id": "h437"
  },
  {
   "level": 2,
-  "text": "Capítulo 11 — Fronteiras e Prática",
+  "text": "Capítulo 1 — Bem-vindo ao Aprendizado Federado",
   "id": "h438"
  },
  {
   "level": 3,
-  "text": "Exercício 1 — Escolhendo k no K-means federado",
+  "text": "Exercício 1 — Conhecendo os dados dos \"hospitais\"",
   "id": "h439"
  },
  {
   "level": 3,
-  "text": "Exercício 2 — PCA federado nos dígitos",
+  "text": "Exercício 2 — Quanto o tamanho do hospital importa?",
   "id": "h440"
  },
  {
   "level": 3,
-  "text": "Exercício 3 — Regressão linear federada exata",
+  "text": "Exercício 3 — Repetindo para não se enganar com o acaso",
   "id": "h441"
- },
- {
-  "level": 3,
-  "text": "Exercício 4 — Quanto posto o adaptador precisa?",
-  "id": "h442"
- },
- {
-  "level": 1,
-  "text": "Apêndice E — Soluções de referência dos projetos integradores",
-  "id": "h443"
- },
- {
-  "level": 2,
-  "text": "Capítulo 1 — Bem-vindo ao Aprendizado Federado",
-  "id": "h444"
- },
- {
-  "level": 3,
-  "text": "Rede de Clínicas: vale a pena colaborar?",
-  "id": "h445"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — Preparando o Terreno",
-  "id": "h446"
+  "id": "h442"
  },
  {
   "level": 3,
-  "text": "Triagem com poucos dados: do zero ao modelo",
-  "id": "h447"
+  "text": "Exercício 1 — Taxa de aprendizado em ação",
+  "id": "h443"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Gradiente completo versus mini-lotes",
+  "id": "h444"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Acurácia que engana",
+  "id": "h445"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Padronização federada com clientes de tamanhos diferentes",
+  "id": "h446"
  },
  {
   "level": 2,
   "text": "Capítulo 3 — Anatomia de um Sistema Federado",
+  "id": "h447"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Sua primeira agregação à mão",
   "id": "h448"
  },
  {
   "level": 3,
-  "text": "Rede de Hospitais: do central ao federado",
+  "text": "Exercício 2 — Reproduzindo a curva do FedAvg",
   "id": "h449"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Quando os Dados Não São Iguais",
+  "level": 3,
+  "text": "Exercício 3 — Variando E e η",
   "id": "h450"
  },
  {
   "level": 3,
-  "text": "Escolhendo o algoritmo: mapa de heterogeneidade",
+  "text": "Exercício 4 — Calculando o custo de comunicação",
   "id": "h451"
  },
  {
   "level": 2,
-  "text": "Capítulo 5 — Falando Menos",
+  "text": "Capítulo 4 — Quando os Dados Não São Iguais",
   "id": "h452"
  },
  {
   "level": 3,
-  "text": "Orçamento de comunicação: qual configuração escolher?",
+  "text": "Exercício 1 — Medindo a heterogeneidade de rótulos",
   "id": "h453"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Cada Um do Seu Jeito",
+  "level": 3,
+  "text": "Exercício 2 — Épocas locais e heterogeneidade",
   "id": "h454"
  },
  {
   "level": 3,
-  "text": "Chegou um cliente novo: o que fazer com poucos dados?",
+  "text": "Exercício 3 — Heterogeneidade de quantidade: ponderar ou não?",
   "id": "h455"
  },
  {
-  "level": 2,
-  "text": "Capítulo 7 — O Que Pode Vazar",
+  "level": 3,
+  "text": "Exercício 4 — Quanto vale a \"coleira\" do FedProx?",
   "id": "h456"
  },
  {
-  "level": 3,
-  "text": "Auditoria de privacidade: qual configuração aprovar?",
+  "level": 2,
+  "text": "Capítulo 5 — Falando Menos",
   "id": "h457"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — Protegendo os Dados",
+  "level": 3,
+  "text": "Exercício 1 — Viés do arredondamento: determinístico contra estocástico",
   "id": "h458"
  },
  {
   "level": 3,
-  "text": "Orçamento de privacidade da clínica",
+  "text": "Exercício 2 — Calculadora de tempo por rodada",
   "id": "h459"
  },
  {
-  "level": 2,
-  "text": "Capítulo 9 — Quando Alguém Trapaceia",
+  "level": 3,
+  "text": "Exercício 3 — Esparsificação com e sem memória de erro",
   "id": "h460"
  },
  {
   "level": 3,
-  "text": "Parecer de segurança: qual agregador adotar?",
+  "text": "Exercício 4 — Quantização com dados muito heterogêneos",
   "id": "h461"
  },
  {
   "level": 2,
-  "text": "Capítulo 10 — Outros Desenhos",
+  "text": "Capítulo 6 — Cada Um do Seu Jeito",
   "id": "h462"
  },
  {
   "level": 3,
-  "text": "Banco e loja: quando o aprendizado vertical compensa?",
+  "text": "Exercício 1 — Avaliando o modelo global cliente a cliente",
   "id": "h463"
  },
  {
-  "level": 2,
-  "text": "Capítulo 11 — Fronteiras e Prática",
+  "level": 3,
+  "text": "Exercício 2 — Quantas épocas de ajuste fino?",
   "id": "h464"
  },
  {
   "level": 3,
-  "text": "Perfil de clientes sem juntar os cadastros",
+  "text": "Exercício 3 — O botão λ do Ditto",
   "id": "h465"
  },
  {
-  "level": 2,
-  "text": "Capítulo 12 — Projeto Integrador Final",
+  "level": 3,
+  "text": "Exercício 4 — IFCA com o número errado de grupos",
   "id": "h466"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — O Que Pode Vazar",
+  "id": "h467"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Reconstruindo cinco dígitos, um por vez",
+  "id": "h468"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Atualização com vários passos locais",
+  "id": "h469"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Quanto tempo de treino é demais?",
+  "id": "h470"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Escolhendo o limiar do atacante",
+  "id": "h471"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Protegendo os Dados",
+  "id": "h472"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Resposta aleatorizada: privacidade contra precisão",
+  "id": "h473"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Qual ruído preciso para ε = 2?",
+  "id": "h474"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Escolhendo a norma de corte S",
+  "id": "h475"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Agregação segura e clientes que desistem",
+  "id": "h476"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Quando Alguém Trapaceia",
+  "id": "h477"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Ponto de ruptura na prática",
+  "id": "h478"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Troca de rótulos: até onde vai a média?",
+  "id": "h479"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Quanto aparar?",
+  "id": "h480"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quando a mediana também cai",
+  "id": "h481"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Outros Desenhos",
+  "id": "h482"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Quantos participantes?",
+  "id": "h483"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Ruído no resíduo",
+  "id": "h484"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Comunicação: split learning contra FedAvg",
+  "id": "h485"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Velocidade do consenso no anel",
+  "id": "h486"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Fronteiras e Prática",
+  "id": "h487"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Escolhendo k no K-means federado",
+  "id": "h488"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — PCA federado nos dígitos",
+  "id": "h489"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — Regressão linear federada exata",
+  "id": "h490"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quanto posto o adaptador precisa?",
+  "id": "h491"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Do Laboratório ao Mundo Real",
+  "id": "h492"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 1 — Quanto vale esperar? O tamanho do buffer do FedBuff",
+  "id": "h493"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 2 — Quanto o viés de disponibilidade machuca?",
+  "id": "h494"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 3 — A calibração do FedEraser: quanto treino de calibração basta?",
+  "id": "h495"
+ },
+ {
+  "level": 3,
+  "text": "Exercício 4 — Quantos clientes anotam o rótulo raro?",
+  "id": "h496"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice E — Soluções de referência dos projetos integradores",
+  "id": "h497"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Bem-vindo ao Aprendizado Federado",
+  "id": "h498"
+ },
+ {
+  "level": 3,
+  "text": "Rede de Clínicas: vale a pena colaborar?",
+  "id": "h499"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Preparando o Terreno",
+  "id": "h500"
+ },
+ {
+  "level": 3,
+  "text": "Triagem com poucos dados: do zero ao modelo",
+  "id": "h501"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Anatomia de um Sistema Federado",
+  "id": "h502"
+ },
+ {
+  "level": 3,
+  "text": "Rede de Hospitais: do central ao federado",
+  "id": "h503"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Quando os Dados Não São Iguais",
+  "id": "h504"
+ },
+ {
+  "level": 3,
+  "text": "Escolhendo o algoritmo: mapa de heterogeneidade",
+  "id": "h505"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Falando Menos",
+  "id": "h506"
+ },
+ {
+  "level": 3,
+  "text": "Orçamento de comunicação: qual configuração escolher?",
+  "id": "h507"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Cada Um do Seu Jeito",
+  "id": "h508"
+ },
+ {
+  "level": 3,
+  "text": "Chegou um cliente novo: o que fazer com poucos dados?",
+  "id": "h509"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — O Que Pode Vazar",
+  "id": "h510"
+ },
+ {
+  "level": 3,
+  "text": "Auditoria de privacidade: qual configuração aprovar?",
+  "id": "h511"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Protegendo os Dados",
+  "id": "h512"
+ },
+ {
+  "level": 3,
+  "text": "Orçamento de privacidade da clínica",
+  "id": "h513"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Quando Alguém Trapaceia",
+  "id": "h514"
+ },
+ {
+  "level": 3,
+  "text": "Parecer de segurança: qual agregador adotar?",
+  "id": "h515"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 10 — Outros Desenhos",
+  "id": "h516"
+ },
+ {
+  "level": 3,
+  "text": "Banco e loja: quando o aprendizado vertical compensa?",
+  "id": "h517"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 11 — Fronteiras e Prática",
+  "id": "h518"
+ },
+ {
+  "level": 3,
+  "text": "Perfil de clientes sem juntar os cadastros",
+  "id": "h519"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 12 — Do Laboratório ao Mundo Real",
+  "id": "h520"
+ },
+ {
+  "level": 3,
+  "text": "Um ano de operação: plano para a rede de clínicas",
+  "id": "h521"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 13 — Projeto Integrador Final",
+  "id": "h522"
  },
  {
   "level": 3,
   "text": "Federa Saúde: a decisão final",
-  "id": "h467"
+  "id": "h523"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h468"
+  "id": "h524"
  }
 ]

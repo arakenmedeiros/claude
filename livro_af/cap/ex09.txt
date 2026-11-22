@@ -52,7 +52,7 @@ a) quase não muda.
 b) vai para 1.000.
 c) vai para 100.
 d) vai para zero.
-R: a | A mediana só se move se mais da metade dos valores mudar.
+R: a | Com maioria honesta, o deslocamento da mediana fica limitado pelos valores honestos; ela não vai para 1.000.
 
 MC: Em 20 alunos, um envia a nota 1.000 e os outros 19 enviam 7. A média é aproximadamente:
 a) 56,65.
@@ -199,7 +199,7 @@ a) A mediana coordenada a coordenada.
 b) A média simples.
 c) O corte de norma isolado.
 d) O FedAvg ponderado.
-R: a | A mediana só é movida quando mais da metade dos valores muda.
+R: a | Seu ponto de ruptura é próximo de 50%: com maioria honesta, o deslocamento fica limitado (mas não é nulo).
 
 MC: Qual o risco de escolher um β pequeno demais na média aparada?
 a) Restarem atacantes entre os valores mantidos, que continuam arrastando a média.
@@ -218,10 +218,10 @@ DISC: Diferencie ataque não direcionado de backdoor e diga qual é mais difíci
 R: O não direcionado destrói a acurácia geral e é facilmente notado. O backdoor mantém a acurácia normal e só falha com um gatilho, sendo muito mais difícil de detectar.
 
 DISC: Descreva o funcionamento da média aparada e o parâmetro β.
-R: Para cada coordenada, ordenam-se os valores, descartam-se os β·m menores e maiores e faz-se a média do restante. β deve ser pelo menos a fração de maliciosos.
+R: Para cada coordenada, ordenam-se os valores, descartam-se os β·m menores e maiores e faz-se a média do restante. β deve ser pelo menos a fração de maliciosos. Mas o método remove extremos, e não maliciosos: um valor malicioso no interior da distribuição (como o 2 em [0, 1, 2, 3, 4]) permanece.
 
 DISC: Explique o Krum em palavras e uma limitação.
-R: Pontua cada atualização pela soma das distâncias aos m − f − 2 vizinhos mais próximos e escolhe a de menor pontuação (a mais central). Limitação: usa uma única atualização, perdendo informação, e é sensível a dados não-IID.
+R: Pontua cada atualização pela soma das distâncias aos m − f − 2 vizinhos mais próximos e escolhe a de menor pontuação (a mais central). Limitação: usa uma única atualização, perdendo informação, é sensível a dados não-IID, e exige m > 2f + 2 (a implementação recusa configurações que violam essa condição).
 
 DISC: Explique por que o corte de norma não impede um backdoor.
 R: O backdoor pode ser implantado com atualizações de norma pequena, que o corte não altera; o corte só limita atualizações gigantes, e no experimento o ASR seguiu alto.

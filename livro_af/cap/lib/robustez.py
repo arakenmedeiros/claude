@@ -21,9 +21,11 @@ def agg_media_aparada(D, beta=0.2):
 def agg_krum(D, f=2, multi=1):
     """Krum (Blanchard et al., 2017): escolhe a(s) atualização(ões) mais 'central(is)'."""
     m = D.shape[0]
+    if m <= 2 * f + 2:
+        raise ValueError(f"Krum exige m > 2f + 2 (m = {m}, f = {f})")
     X = D.reshape(m, -1)
     dist = ((X[:, None, :] - X[None, :, :]) ** 2).sum(-1)
-    k = max(1, m - f - 2)
+    k = m - f - 2                                                          # vizinhos que entram na pontuação
     scores = np.array([np.sort(np.delete(dist[i], i))[:k].sum() for i in range(m)])
     escolhidos = np.argsort(scores)[:multi]
     return D[escolhidos].mean(axis=0)

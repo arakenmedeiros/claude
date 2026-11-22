@@ -4,7 +4,7 @@ BAGDASARYAN, E.; VEIT, A.; HUA, Y.; ESTRIN, D.; SHMATIKOV, V. How to backdoor fe
 BARUCH, G.; BARUCH, M.; GOLDBERG, Y. A little is enough: circumventing defenses for distributed learning. In: Advances in Neural Information Processing Systems (NeurIPS), v. 32, 2019.
 BERNSTEIN, J.; WANG, Y.-X.; AZIZZADENESHELI, K.; ANANDKUMAR, A. signSGD: compressed optimisation for non-convex problems. In: International Conference on Machine Learning (ICML), 2018. Proceedings of Machine Learning Research, v. 80.
 BHAGOJI, A. N.; CHAKRABORTY, S.; MITTAL, P.; CALO, S. Analyzing federated learning through an adversarial lens. In: International Conference on Machine Learning (ICML), 2019. Proceedings of Machine Learning Research, v. 97.
-BLANCHARD, P.; EL MHAMDI, E. M.; GUERRAOUI, R.; STAINER, J. Machine learning with adversaries: Byzantine tolerant gradient descent. In: Advances in Neural Information Processing Systems (NeurIPS), v. 30, 2017.
+BLANCHARD, P.; EL MHAMDI, E. M.; GUERRAOUI, R.; STAINER, J. Machine learning with adversaries: Byzantine tolerant gradient descent. In: Advances in Neural Information Processing Systems (NeurIPS), v. 30, 2017. p. 119-129.
 BOENISCH, F.; DZIEDZIC, A.; SCHUSTER, R.; SHAMSABADI, A. S.; SHUMAILOV, I.; PAPERNOT, N. When the curious abandon honesty: federated learning is not private. In: IEEE European Symposium on Security and Privacy (EuroS&P), 2023.
 BONAWITZ, K.; IVANOV, V.; KREUTER, B.; MARCEDONE, A.; MCMAHAN, H. B.; PATEL, S.; RAMAGE, D.; SEGAL, A.; SETH, K. Practical secure aggregation for privacy-preserving machine learning. In: ACM SIGSAC Conference on Computer and Communications Security (CCS), 2017. p. 1175-1191.
 BONAWITZ, K.; EICHNER, H.; GRIESKAMP, W.; HUBA, D.; INGERMAN, A.; IVANOV, V.; KIDDON, C.; KONEČNÝ, J.; MAZZOCCHI, S.; MCMAHAN, H. B.; VAN OVERVELDT, T.; PETROU, D.; RAMAGE, D.; ROSELANDER, J. Towards federated learning at scale: system design. In: Conference on Machine Learning and Systems (MLSys), 2019. Proceedings of Machine Learning and Systems, v. 1.
@@ -37,7 +37,7 @@ KOLOSKOVA, A.; LOIZOU, N.; BOREIRI, S.; JAGGI, M.; STICH, S. U. A unified theory
 KUANG, W. et al. FederatedScope-LLM: a comprehensive package for fine-tuning large language models in federated learning. In: ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD), 2024.
 LAMPORT, L.; SHOSTAK, R.; PEASE, M. The Byzantine generals problem. ACM Transactions on Programming Languages and Systems, v. 4, n. 3, p. 382-401, 1982.
 LI, Q.; DIAO, Y.; CHEN, Q.; HE, B. Federated learning on non-IID data silos: an experimental study. In: IEEE International Conference on Data Engineering (ICDE), 2022. p. 965-978.
-LI, T.; HU, S.; BEIRAMI, A.; SMITH, V. Ditto: fair and robust federated learning through personalization. In: International Conference on Machine Learning (ICML), 2021. Proceedings of Machine Learning Research, v. 139.
+LI, T.; HU, S.; BEIRAMI, A.; SMITH, V. Ditto: fair and robust federated learning through personalization. In: International Conference on Machine Learning (ICML), 2021. Proceedings of Machine Learning Research, v. 139, p. 6357-6368.
 LI, T.; SANJABI, M.; BEIRAMI, A.; SMITH, V. Fair resource allocation in federated learning. In: International Conference on Learning Representations (ICLR), 2020a.
 LI, T.; SAHU, A. K.; TALWALKAR, A.; SMITH, V. Federated learning: challenges, methods, and future directions. IEEE Signal Processing Magazine, v. 37, n. 3, p. 50-60, 2020b.
 LI, T.; SAHU, A. K.; ZAHEER, M.; SANJABI, M.; TALWALKAR, A.; SMITH, V. Federated optimization in heterogeneous networks. In: Conference on Machine Learning and Systems (MLSys), 2020c. Proceedings of Machine Learning and Systems, v. 2.
@@ -64,7 +64,7 @@ SHOKRI, R.; STRONATI, M.; SONG, C.; SHMATIKOV, V. Membership inference attacks a
 SMITH, V.; CHIANG, C.-K.; SANJABI, M.; TALWALKAR, A. Federated multi-task learning. In: Advances in Neural Information Processing Systems (NeurIPS), v. 30, 2017.
 STICH, S. U.; CORDONNIER, J.-B.; JAGGI, M. Sparsified SGD with memory. In: Advances in Neural Information Processing Systems (NeurIPS), v. 31, 2018.
 T DINH, C.; TRAN, N. H.; NGUYEN, T. D. Personalized federated learning with Moreau envelopes. In: Advances in Neural Information Processing Systems (NeurIPS), v. 33, 2020.
-TAN, A. Z.; YU, H.; CUI, L.; YANG, Q. Towards personalized federated learning. IEEE Transactions on Neural Networks and Learning Systems, 2022. Publicação antecipada (early access).
+TAN, A. Z.; YU, H.; CUI, L.; YANG, Q. Towards personalized federated learning. IEEE Transactions on Neural Networks and Learning Systems, v. 34, n. 12, p. 9587-9603, 2023. DOI: 10.1109/TNNLS.2022.3160699.
 WANG, H.; SREENIVASAN, K.; RAJPUT, S.; VISHWAKARMA, H.; AGARWAL, S.; SOHN, J.-Y.; LEE, K.; PAPAILIOPOULOS, D. Attack of the tails: yes, you really can backdoor federated learning. In: Advances in Neural Information Processing Systems (NeurIPS), v. 33, 2020a.
 WANG, J.; LIU, Q.; LIANG, H.; JOSHI, G.; POOR, H. V. Tackling the objective inconsistency problem in heterogeneous federated optimization. In: Advances in Neural Information Processing Systems (NeurIPS), v. 33, 2020b.
 WARNER, S. L. Randomized response: a survey technique for eliminating evasive answer bias. Journal of the American Statistical Association, v. 60, n. 309, p. 63-69, 1965.
@@ -72,6 +72,23 @@ XU, J.; GLICKSBERG, B. S.; SU, C.; WALKER, P.; BIAN, J.; WANG, F. Federated lear
 YANG, Q.; LIU, Y.; CHEN, T.; TONG, Y. Federated machine learning: concept and applications. ACM Transactions on Intelligent Systems and Technology, v. 10, n. 2, art. 12, 2019.
 YE, R. et al. OpenFedLLM: training large language models on decentralized private data via federated learning. In: ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD), 2024.
 YEOM, S.; GIACOMELLI, I.; FREDRIKSON, M.; JHA, S. Privacy risk in machine learning: analyzing the connection to overfitting. In: IEEE Computer Security Foundations Symposium (CSF), 2018. p. 268-282.
-YIN, D.; CHEN, Y.; RAMCHANDRAN, K.; BARTLETT, P. Byzantine-robust distributed learning: towards optimal statistical rates. In: International Conference on Machine Learning (ICML), 2018. Proceedings of Machine Learning Research, v. 80.
+YIN, D.; CHEN, Y.; RAMCHANDRAN, K.; BARTLETT, P. Byzantine-robust distributed learning: towards optimal statistical rates. In: International Conference on Machine Learning (ICML), 2018. Proceedings of Machine Learning Research, v. 80, p. 5650-5659.
 ZHU, L.; LIU, Z.; HAN, S. Deep leakage from gradients. In: Advances in Neural Information Processing Systems (NeurIPS), v. 32, 2019.
 PAILLIER, P. Public-key cryptosystems based on composite degree residuosity classes. In: International Conference on the Theory and Application of Cryptographic Techniques (EUROCRYPT), 1999. Lecture Notes in Computer Science, v. 1592, p. 223-238.
+BOURTOULE, L.; CHANDRASEKARAN, V.; CHOQUETTE-CHOO, C. A.; JIA, H.; TRAVERS, A.; ZHANG, B.; LIE, D.; PAPERNOT, N. Machine unlearning. In: IEEE Symposium on Security and Privacy (SP), 2021. p. 141-159.
+CALDAS, S.; DUDDU, S. M. K.; WU, P.; LI, T.; KONEČNÝ, J.; MCMAHAN, H. B.; SMITH, V.; TALWALKAR, A. LEAF: a benchmark for federated settings. arXiv:1812.01097, 2018.
+CAO, Y.; YANG, J. Towards making systems forget with machine unlearning. In: IEEE Symposium on Security and Privacy (SP), 2015. p. 463-480.
+CHO, Y. J.; WANG, J.; JOSHI, G. Towards understanding biased client selection in federated learning. In: International Conference on Artificial Intelligence and Statistics (AISTATS), 2022. Proceedings of Machine Learning Research, v. 151.
+GAMA, J.; ŽLIOBAITĖ, I.; BIFET, A.; PECHENIZKIY, M.; BOUCHACHIA, A. A survey on concept drift adaptation. ACM Computing Surveys, v. 46, n. 4, art. 44, p. 1-37, 2014.
+HSIEH, K.; PHANISHAYEE, A.; MUTLU, O.; GIBBONS, P. The non-IID data quagmire of decentralized machine learning. In: International Conference on Machine Learning (ICML), 2020. Proceedings of Machine Learning Research, v. 119, p. 4387-4398.
+IOFFE, S.; SZEGEDY, C. Batch normalization: accelerating deep network training by reducing internal covariate shift. In: International Conference on Machine Learning (ICML), 2015. Proceedings of Machine Learning Research, v. 37, p. 448-456.
+JEONG, W.; YOON, J.; YANG, E.; HWANG, S. J. Federated semi-supervised learning with inter-client consistency & disjoint learning. In: International Conference on Learning Representations (ICLR), 2021.
+JOTHIMURUGESAN, E.; HSIEH, K.; WANG, J.; JOSHI, G.; GIBBONS, P. B. Federated learning under distributed concept drift. In: International Conference on Artificial Intelligence and Statistics (AISTATS), 2023. Proceedings of Machine Learning Research, v. 206, p. 5834-5853.
+LEE, D.-H. Pseudo-label: the simple and efficient semi-supervised learning method for deep neural networks. In: ICML Workshop on Challenges in Representation Learning, 2013.
+LI, X.; JIANG, M.; ZHANG, X.; KAMP, M.; DOU, Q. FedBN: federated learning on non-IID features via local batch normalization. In: International Conference on Learning Representations (ICLR), 2021.
+LIU, G.; MA, X.; YANG, Y.; WANG, C.; LIU, J. FedEraser: enabling efficient client-level data removal from federated learning models. In: IEEE/ACM International Symposium on Quality of Service (IWQoS), 2021.
+NGUYEN, J.; MALIK, K.; ZHAN, H.; YOUSEFPOUR, A.; RABBAT, M.; MALEK, M.; HUBA, D. Federated learning with buffered asynchronous aggregation. In: International Conference on Artificial Intelligence and Statistics (AISTATS), 2022. Proceedings of Machine Learning Research, v. 151, p. 3581-3607.
+NISHIO, T.; YONETANI, R. Client selection for federated learning with heterogeneous resources in mobile edge. In: IEEE International Conference on Communications (ICC), 2019.
+XIE, C.; KOYEJO, S.; GUPTA, I. Asynchronous federated optimization. arXiv:1903.03934, 2019.
+YUAN, H.; MORNINGSTAR, W.; NING, L.; SINGHAL, K. What do we mean by generalization in federated learning? In: International Conference on Learning Representations (ICLR), 2022.
+ZHANG, M.-L.; ZHOU, Z.-H. A review on multi-label learning algorithms. IEEE Transactions on Knowledge and Data Engineering, v. 26, n. 8, p. 1819-1837, 2014.

@@ -7,11 +7,12 @@ Crie 10 clientes com `particao_dirichlet(ytr, 10, alfa=0.3)`, divida cada um em 
 import numpy as np
 from personalizacao import *
 
-Xtr, Xte, ytr, yte = carregar_digits()
+Xbr, Xteb, ytr, yte = carregar_digits(bruto=True)      # sem padronizar: o padronizador só verá o treino dos clientes
 partes = particao_dirichlet(ytr, 10, 0.3, seed=0)
 treino, teste = dividir_local(partes, 0.3, seed=0)
 ok = [i for i in range(10) if len(teste[i]) >= 5]
 treino = [treino[i] for i in ok]; teste = [teste[i] for i in ok]
+Xtr, Xte = padronizar_clientes(Xbr, Xteb, treino)
 
 Wg, hist = fedavg(treino, Xtr, ytr, Xte, yte, rodadas=30, epocas=5, eta=0.1, seed=0)
 por_cliente = acuracias_locais([Wg] * len(treino), teste, Xtr, ytr)
@@ -30,13 +31,14 @@ Com 10 clientes Dirichlet (α = 0,1) e o modelo global do FedAvg, aplique ajuste
 import numpy as np
 from personalizacao import *
 
-Xtr, Xte, ytr, yte = carregar_digits()
+Xbr, Xteb, ytr, yte = carregar_digits(bruto=True)      # sem padronizar: o padronizador só verá o treino dos clientes
 R = {}
 for s in range(3):
     partes = particao_dirichlet(ytr, 10, 0.1, s)
     treino, teste = dividir_local(partes, 0.3, s)
     ok = [i for i in range(10) if len(teste[i]) >= 5]
     treino = [treino[i] for i in ok]; teste = [teste[i] for i in ok]
+    Xtr, Xte = padronizar_clientes(Xbr, Xteb, treino)
     Wg, _ = fedavg(treino, Xtr, ytr, Xte, yte, rodadas=30, epocas=5, eta=0.1, seed=s)
     for E in (0, 1, 3, 5, 10, 30):
         modelos = [Wg] * len(treino) if E == 0 else \
@@ -45,7 +47,7 @@ for s in range(3):
 for E, v in R.items():
     print(f"E = {E:>2}:", resumo(np.concatenate(v)))
 ```
-@@NOTE Poucas épocas já trazem ganho grande em relação ao global puro (E = 0). O ganho se estabiliza por volta de 3 a 10 épocas. Com 30 épocas, o resultado não melhora e o pior cliente piora: sinal de sobreajuste. Mais passos nem sempre ajudam.
+@@NOTE Poucas épocas já trazem ganho grande em relação ao global puro (E = 0). O ganho se estabiliza por volta de 3 a 10 épocas (média de 0,955 para cerca de 0,973, e percentil 10 de 0,89 para cerca de 0,94). Com 30 épocas, o ganho adicional é mínimo e o pior cliente não melhora (cerca de 0,83): neste problema, mais passos já não ajudam muito. Com clientes que têm pouquíssimos dados, passos demais podem sobreajustar, e o resultado deste exercício deve ser lido com essa ressalva.
 
 @@EX 3 | O botão λ do Ditto | intermediário
 Para os mesmos 10 clientes Dirichlet (α = 0,1) e 3 sementes, varie λ ∈ {0; 0,01; 0,1; 0,5; 2; 10} no Ditto. Compare a média, o pior cliente e o percentil 10 com os do global puro.
@@ -56,21 +58,23 @@ Para os mesmos 10 clientes Dirichlet (α = 0,1) e 3 sementes, varie λ ∈ {0; 0
 import numpy as np
 from personalizacao import *
 
-Xtr, Xte, ytr, yte = carregar_digits()
+Xbr, Xteb, ytr, yte = carregar_digits(bruto=True)      # sem padronizar: o padronizador só verá o treino dos clientes
 R = {}
 for s in range(3):
     partes = particao_dirichlet(ytr, 10, 0.1, s)
     treino, teste = dividir_local(partes, 0.3, s)
     ok = [i for i in range(10) if len(teste[i]) >= 5]
     treino = [treino[i] for i in ok]; teste = [teste[i] for i in ok]
+    Xtr, Xte = padronizar_clientes(Xbr, Xteb, treino)
     Wg, _ = fedavg(treino, Xtr, ytr, Xte, yte, rodadas=30, epocas=5, eta=0.1, seed=s)
     R.setdefault("global", []).append(acuracias_locais([Wg] * len(treino), teste, Xtr, ytr))
     for lam in (0, 0.01, 0.1, 0.5, 2, 10):
-        R.setdefault(f"λ = {lam}", []).append(acuracias_locais(ditto(treino, Xtr, ytr, Wg, lam, seed=s), teste, Xtr, ytr))
+        _, pessoais = ditto(treino, Xtr, ytr, lam, seed=s)            # Ditto original (intercalado)
+        R.setdefault(f"λ = {lam}", []).append(acuracias_locais(pessoais, teste, Xtr, ytr))
 for nome, v in R.items():
     print(f"{nome:<10}", resumo(np.concatenate(v)))
 ```
-@@NOTE Com λ ≤ 0,1, os resultados são idênticos ao ajuste fino (o modelo pessoal começa no global e a coleira quase não age). Com λ = 10, o modelo pessoal fica preso ao global e a média e o percentil 10 caem em direção aos do global. Os valores intermediários (0,5 a 2) equilibram, mas neste problema o melhor resultado foi com coleira fraca.
+@@NOTE Com λ = 0, o Ditto original vira o treino puramente local: a média cai (cerca de 0,93) e o pior cliente despenca (cerca de 0,17), pois quem tem poucos dados fica sem o coletivo. Com λ grande (10), o modelo pessoal fica preso ao global e os números se aproximam dos do global puro (média cerca de 0,96, percentil 10 cerca de 0,90). Os valores intermediários equilibram: o melhor resultado aqui foi com λ = 0,1 (média cerca de 0,98, percentil 10 cerca de 0,95), seguido de λ entre 0,5 e 2. Isso mostra o papel de λ como "quanto confiar no coletivo".
 
 @@EX 4 | IFCA com o número errado de grupos | intermediário
 Na mudança de conceito (12 clientes, 3 grupos verdadeiros), rode o `ifca` com K ∈ {2, 3, 5}. Para cada K, reporte a acurácia média por cliente (3 sementes) e quantos modelos distintos foram realmente escolhidos pelos clientes.
@@ -81,13 +85,14 @@ Na mudança de conceito (12 clientes, 3 grupos verdadeiros), rode o `ifca` com K
 import numpy as np
 from personalizacao import *
 
-Xtr, Xte, ytr0, yte0 = carregar_digits()
+Xbr, Xteb, ytr0, yte0 = carregar_digits(bruto=True)      # sem padronizar: o padronizador só verá o treino dos clientes
 print(f"{'K':>3}{'acurácia média':>16}{'modelos usados (por semente)':>32}")
 for K in (2, 3, 5):
     accs, usados = [], []
     for s in range(3):
         partes, y, grupo = particao_conceitos(ytr0, 12, 3, s)
         treino, teste = dividir_local(partes, 0.3, s)
+        Xtr, Xte = padronizar_clientes(Xbr, Xteb, treino)
         modelos, escolha = ifca(treino, Xtr, y, K=K, seed=s)
         accs.append(acuracias_locais([modelos[j] for j in escolha], teste, Xtr, y).mean())
         usados.append(len(set(escolha)))
@@ -110,7 +115,7 @@ for K in (2, 3, 5):
 import numpy as np
 from personalizacao import *
 
-Xtr, Xte, ytr0, yte0 = carregar_digits()
+Xbr, Xteb, ytr0, yte0 = carregar_digits(bruto=True)      # sem padronizar: o padronizador só verá o treino dos clientes
 print(f"{'n':>4}{'global':>9}{'só local':>10}{'ajuste fino':>13}{'grupo IFCA':>12}")
 for n in (5, 20, 50):
     saida = {"global": [], "local": [], "ajuste": [], "ifca": []}
@@ -120,6 +125,7 @@ for n in (5, 20, 50):
         novos = [0, 1, 2]                                  # um cliente de cada grupo
         resto = [i for i in range(12) if i not in novos]
         tr_resto = [treino[i] for i in resto]
+        Xtr, Xte = padronizar_clientes(Xbr, Xteb, tr_resto)     # estatísticas só dos clientes antigos
         Wg, _ = fedavg(tr_resto, Xtr, y, Xte, yte0, rodadas=30, epocas=5, eta=0.1, seed=s)
         modelos, _ = ifca(tr_resto, Xtr, y, K=3, seed=s)
         for i in novos:

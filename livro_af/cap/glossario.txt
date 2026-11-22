@@ -118,3 +118,22 @@ Diffie-Hellman: protocolo para que duas partes combinem um segredo comum por um 
 q-FFL: método de justiça que dá mais peso aos clientes com maior perda.
 Aprendizado federado agnóstico: método que otimiza o pior caso sobre misturas dos clientes.
 Padronização: transformação dos atributos para média 0 e desvio padrão 1.
+Assíncrono (aprendizado federado): modo de treino em que ninguém espera o mais lento; cada cliente devolve o resultado quando termina, e o servidor o incorpora na hora ou em grupo.
+Atraso (staleness): número de versões do modelo do servidor que surgiram enquanto um cliente treinava; mede o quanto a atualização está velha.
+Deriva de conceito (concept drift): mudança, com o tempo, da relação entre os atributos e o rótulo.
+Desaprendizado (unlearning): remoção da influência de dados ou de um cliente em um modelo já treinado; o padrão de referência é o retreino sem eles.
+FedAsync: algoritmo assíncrono que mistura cada resposta ao modelo com um peso que diminui com o atraso.
+FedBN: método que mantém locais os parâmetros e as estatísticas da normalização em lote, agregando só as demais camadas.
+FedBuff: algoritmo assíncrono em que o servidor guarda K atualizações em um buffer e só então aplica a média delas.
+FedEraser: método aproximado de desaprendizado que reconstrói o modelo a partir do histórico de atualizações, com treino curto de calibração.
+Lacuna de participação: piora do modelo em clientes que nunca participaram do treino, em comparação com os que participaram.
+Máscara de rótulos: indicador de quais rótulos cada cliente anotou, usado para que a perda conte só os rótulos anotados.
+Multirrótulo: classificação em que cada exemplo pode ter vários rótulos ao mesmo tempo.
+Normalização em lote (batch normalization): camada que recentra e reescala os valores com a média e a variância do lote, com escala e deslocamento aprendidos.
+Partição natural: divisão dos dados em que cada cliente é uma entidade real, como um escritor, um usuário ou um hospital.
+Ponto de ruptura: fração de valores adversários a partir da qual um estimador pode ser levado a qualquer lugar; é cerca de 50% para a mediana e zero para a média.
+Power-of-choice: política de seleção que sorteia candidatos e escolhe os clientes de maior perda local.
+Pseudorrótulo: rótulo previsto pelo próprio modelo para um exemplo sem rótulo, usado no treino quando a confiança é alta.
+Straggler (retardatário): cliente muito mais lento que os demais, que atrasa as rodadas síncronas.
+Vizinhança (em DP): definição de quais conjuntos de dados são considerados vizinhos, por adição/remoção ou por substituição de uma pessoa.
+Viés de participação: situação em que quem participa das rodadas não é uma amostra aleatória dos clientes.

@@ -66,31 +66,34 @@ def f6_ifca():
     save(fig,"f6_ifca")
 
 def f6_rotulos():
-    Xtr,Xte,ytr,yte=carregar_digits()
-    R={"só local":[],"global":[],"global +\najuste fino":[],"Ditto":[]}
+    Xbr,Xteb,ytr,yte=carregar_digits(bruto=True)
+    R={"só local":[],"global":[],"global +\najuste fino":[],"ajuste\nproximal":[],"Ditto":[]}
     for s in range(5):
         partes=particao_dirichlet(ytr,10,0.1,s); tr,te=dividir_local(partes,0.3,s)
         ok=[i for i in range(10) if len(te[i])>=5]; tr=[tr[i] for i in ok]; te=[te[i] for i in ok]
+        Xtr,Xte=padronizar_clientes(Xbr,Xteb,tr)
         Wg,_=fedavg(tr,Xtr,ytr,Xte,yte,rodadas=30,epocas=5,eta=0.1,seed=s); z=np.zeros_like(Wg)
         R["só local"].append(acuracias_locais([treino_local(z,Xtr[p],ytr[p],30,0.1,32,0.0,s+i) for i,p in enumerate(tr)],te,Xtr,ytr))
         R["global"].append(acuracias_locais([Wg]*len(tr),te,Xtr,ytr))
         R["global +\najuste fino"].append(acuracias_locais([treino_local(Wg,Xtr[p],ytr[p],5,0.1,32,0.0,s+i) for i,p in enumerate(tr)],te,Xtr,ytr))
-        R["Ditto"].append(acuracias_locais(ditto(tr,Xtr,ytr,Wg,0.5,seed=s),te,Xtr,ytr))
-    fig,ax=plt.subplots(figsize=(7.4,4.0)); cols=[GRY,IND,GRN,AMB]
+        R["ajuste\nproximal"].append(acuracias_locais(ajuste_proximal(tr,Xtr,ytr,Wg,0.5,seed=s),te,Xtr,ytr))
+        R["Ditto"].append(acuracias_locais(ditto(tr,Xtr,ytr,0.5,seed=s)[1],te,Xtr,ytr))
+    fig,ax=plt.subplots(figsize=(8.2,4.0)); cols=[GRY,IND,GRN,CYA,AMB]
     data=[np.concatenate(v) for v in R.values()]
     parts=ax.violinplot(data,showmeans=False,showextrema=False,widths=0.8)
     for pc,c in zip(parts["bodies"],cols): pc.set_facecolor(c); pc.set_alpha(0.35); pc.set_edgecolor(c)
     for i,(d,c) in enumerate(zip(data,cols)):
         ax.scatter(np.random.default_rng(i).normal(i+1,0.05,len(d)),d,s=12,c=c,alpha=0.8,ec="white",lw=0.3)
         ax.scatter(i+1,d.mean(),marker="D",s=70,c="white",ec=INK,zorder=5); ax.text(i+1.12,d.mean(),f"{d.mean():.3f}",fontsize=8.5,va="center",fontweight="bold")
-    ax.set_xticks(range(1,5)); ax.set_xticklabels(list(R.keys())); ax.set_ylabel("acurácia no teste local do cliente"); ax.set_ylim(0.1,1.03)
+    ax.set_xticks(range(1,6)); ax.set_xticklabels(list(R.keys())); ax.set_ylabel("acurácia no teste local do cliente"); ax.set_ylim(0.1,1.03)
     ax.set_title("Cada ponto é um cliente (5 sementes); losango = média",fontsize=9.5)
     save(fig,"f6_rotulos")
 
 def f6_conceito():
-    Xtr,Xte,ytr0,yte0=carregar_digits(); A={"global":[],"só local":[],"ajuste fino\n(5 épocas)":[],"IFCA\n(K = 3)":[]}
+    Xbr,Xteb,ytr0,yte0=carregar_digits(bruto=True); A={"global":[],"só local":[],"ajuste fino\n(5 épocas)":[],"IFCA\n(K = 3)":[]}
     for s in range(3):
         partes,y,grupo=particao_conceitos(ytr0,12,3,s); tr,te=dividir_local(partes,0.3,s)
+        Xtr,Xte=padronizar_clientes(Xbr,Xteb,tr)
         Wg,_=fedavg(tr,Xtr,y,Xte,yte0,rodadas=30,epocas=5,eta=0.1,seed=s)
         loc=[treino_local(np.zeros_like(Wg),Xtr[p],y[p],30,0.1,32,0.0,i) for i,p in enumerate(tr)]
         ft=[treino_local(Wg,Xtr[p],y[p],5,0.1,32,0.0,i) for i,p in enumerate(tr)]

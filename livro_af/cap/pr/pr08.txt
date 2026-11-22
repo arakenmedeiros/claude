@@ -149,7 +149,7 @@ for nome, n, K in (("A: 150 pac., 30 cli.", 150, 30), ("B: 300 pac., 50 cli.", 3
 @@RUBRICA
 - Dois cenários, quatro níveis de ruído e cinco sementes, com ε, acurácia e AUC.
 - Interpretação correta do compromisso: mais ruído, menos acurácia, e AUC cai pouco ou nada em modelos que já vazam pouco.
-- Parecer que reconheça que ε baixo exige muito mais clientes e dados, e que nenhum nível testado oferece, ao mesmo tempo, ε baixo e acurácia alta.
+- Parecer que reconheça que, com poucos clientes e dados, ε baixo só é alcançado com muito ruído e grande perda de utilidade, e que nenhum nível testado oferece, ao mesmo tempo, ε baixo e acurácia alta.
 - Menção a limitações: contabilidade conservadora, ataque simples, dados simulados.
 @@NOTE No cenário A (30 clientes), z = 5,8 reduz a AUC do ataque (de cerca de 0,63 para 0,58), mas a acurácia cai de cerca de 0,91 para 0,59. No cenário B (50 clientes), a acurácia sofre menos (cerca de 0,93 para 0,80), e a AUC já é baixa (cerca de 0,56). Em ambos, o ε obtido (6,6 a 59) está longe de valores considerados fortes (< 1). Conclusão: com tão poucos clientes e dados, proteger formalmente custa muito. Seria preciso muito mais clientes e dados, ou aceitar um ε maior, com decisão do comitê.
 @@ALEM

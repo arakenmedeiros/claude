@@ -6,13 +6,31 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def carregar_digits(seed=0):
-    """Dígitos manuscritos da UCI (via scikit-learn), padronizados, com coluna de viés."""
+def carregar_digits(seed=0, bruto=False):
+    """Dígitos manuscritos da UCI (via scikit-learn), padronizados, com coluna de viés.
+    A padronização usa as estatísticas de TODO o conjunto de treino (atalho de simulação: equivale à
+    padronização federada do Capítulo 2). O teste global nunca entra no cálculo.
+    Com bruto=True, devolve os atributos sem padronizar e sem a coluna de viés."""
     X, y = load_digits(return_X_y=True)
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, random_state=seed, stratify=y)
+    if bruto:
+        return Xtr, Xte, ytr, yte
     esc = StandardScaler().fit(Xtr)
     mais_um = lambda A: np.hstack([esc.transform(A), np.ones((len(A), 1))])
     return mais_um(Xtr), mais_um(Xte), ytr, yte
+
+
+def padronizar_clientes(Xtr_bruto, Xte_bruto, treino):
+    """Padronização federada (Capítulo 2) usando só as somas dos dados de TREINO dos clientes.
+    Serve quando cada cliente separa um teste local: o padronizador não vê esses exemplos de teste."""
+    n = sum(len(p) for p in treino)
+    s1 = sum(Xtr_bruto[p].sum(axis=0) for p in treino)
+    s2 = sum((Xtr_bruto[p] ** 2).sum(axis=0) for p in treino)
+    mu = s1 / n
+    dp = np.sqrt(np.maximum(s2 / n - mu ** 2, 0.0))
+    dp[dp == 0] = 1.0
+    mais_um = lambda A: np.hstack([(A - mu) / dp, np.ones((len(A), 1))])
+    return mais_um(Xtr_bruto), mais_um(Xte_bruto)
 
 
 def particao_iid(y, k, seed=0):

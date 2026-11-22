@@ -1,76 +1,188 @@
-@@PROJ Federa Saúde: a decisão final | Cap12
-**Contexto.** A rede de 20 clínicas da seção 12.1 precisa de uma **recomendação técnica** sobre como treinar o modelo federado. O cenário está descrito na seção 12.2: dígitos manuscritos como substituto de dados clínicos, 20 clientes com Dirichlet α = 0,3, 70% de treino e 30% de teste local em cada cliente, e **2 clientes maliciosos** (índices 0 e 1) com ataque de *backdoor* (alvo: classe 0).
+@@EX 1 | Quanto vale esperar? O tamanho do buffer do FedBuff | básico
+Simule 20 clientes (14 rápidos, com 1 unidade de tempo, e 6 lentos, com 6 unidades), com dados IID, e rode o FedBuff com buffer *K* ∈ {1, 3, 5, 10, 20}, por 60 unidades de tempo e 3 sementes. Compare com o FedAvg síncrono. Reporte a acurácia em *t* = 10 e em *t* = 60.
 
-**Tarefas.** Use o motor `fedavg_integrado` (arquivo `projeto.py`) e as bibliotecas dos capítulos anteriores.
-
-1. **Diagnóstico:** reporte os tamanhos dos clientes e a distância de variação total média entre as distribuições de rótulos e a global.
-2. **Configurações:** avalie, com **3 sementes**, estas seis configurações:
-   1. base: agregador `media`, sem proteção;
-   2. `mediana`;
-   3. `mediana` com 8 bits;
-   4. `mediana` com 4 bits;
-   5. DP no nível do cliente (`dp_z = 1`, `S = 0,5`);
-   6. `mediana` com 4 bits **e ajuste fino local** (3 épocas) após o treino federado.
-3. **Métricas:** para cada configuração, acurácia global (teste `Xte`), **ASR** do backdoor, **KB de subida** totais, e acurácia **por cliente** (média e percentil 10) no teste local.
-4. **Critério de aprovação:** ASR ≤ 0,10 **e** acurácia global ≥ 0,90 **e** percentil 10 por cliente ≥ 0,84. Entre as aprovadas, escolha a de **menor tráfego** (em caso de empate, a de maior acurácia média por cliente).
-5. **Relatório:** redija o parecer de uma página (resumo executivo, cenário e método, tabela de resultados, riscos e limitações, recomendação e próximos passos), em linguagem acessível.
-
-**Extensão opcional.** Meça a AUC do ataque de pertencimento (Capítulo 7) para as configurações 1 e 5 e discuta o efeito da DP. Repita a análise com o α = 0,1 e relate se a recomendação muda.
-
-**Entregáveis.** Código, tabela e o relatório.
+*Pergunta:* qual *K* é melhor no começo? E ao final? Por quê?
 @@SOL
 ```python
 import numpy as np
-from projeto import *
+from avancado import *
+
+Xbr, Xteb, ytr, yte = carregar_digits(bruto=True)
+K, T = 20, 60
+tempos = np.where(np.arange(K) < 14, 1.0, 6.0)
+R = {}
+for s in range(3):
+    partes = particao_iid(ytr, K, s)
+    Xtr, Xte = padronizar_clientes(Xbr, Xteb, partes)
+    _, cv = simular_sincrono(partes, Xtr, ytr, Xte, yte, tempos, T=T, seed=s)
+    R.setdefault("síncrono", []).append((cv[10, 1], cv[59, 1]))
+    for k in (1, 3, 5, 10, 20):
+        _, cv = simular_assincrono(partes, Xtr, ytr, Xte, yte, "fedbuff", tempos, T=T, K=k, seed=s)
+        R.setdefault(f"FedBuff K={k}", []).append((cv[10, 1], cv[59, 1]))
+print(f"{'método':<16}{'acc em t=10':>12}{'acc em t=60':>12}")
+for nome, v in R.items():
+    m = np.mean(v, axis=0); print(f"{nome:<16}{m[0]:>12.3f}{m[1]:>12.3f}")
+```
+@@NOTE Todos os FedBuff superam o síncrono no começo (cerca de 0,92 a 0,95 em t = 10, contra 0,87). Neste cenário IID, o buffer pequeno (K = 1 a 3) foi o melhor, pois reage mais rápido, e o K = 20 foi o pior, pois espera respostas demais (0,915 em t = 10 e 0,951 ao final). Ao final, K de 1 a 5 ficam parecidos (cerca de 0,96). Com dados não-IID ou com privacidade, um K maior costuma ajudar a estabilizar; o experimento mostra só um ponto da troca entre velocidade e estabilidade.
+
+@@EX 2 | Quanto o viés de disponibilidade machuca? | intermediário
+Com 30 clientes Dirichlet (α = 0,1), faça a disponibilidade dos clientes dominados pelos dígitos 0 a 4 ser 0,95 e a dos demais ser *p* ∈ {0,95; 0,5; 0,2; 0,05}. Compare a seleção **uniforme** e a **entre disponíveis** (4 clientes por rodada, 5 sementes). Reporte a acurácia global e a da pior classe.
+
+*Pergunta:* a partir de que valor de *p* a pior classe sofre? A acurácia global denuncia o problema?
+@@SOL
+```python
+import numpy as np
+from avancado import *
+
+Xbr, Xteb, ytr, yte = carregar_digits(bruto=True)
+K = 30
+R = {}
+for s in range(5):
+    partes = particao_dirichlet(ytr, K, 0.1, s)
+    treino, teste = dividir_local(partes, 0.3, s)
+    ok = [i for i in range(K) if len(teste[i]) >= 5 and len(treino[i]) > 0]; treino = [treino[i] for i in ok]
+    Xtr, Xte = padronizar_clientes(Xbr, Xteb, treino)
+    dom = classe_dominante(treino, ytr)
+    for p in (0.95, 0.5, 0.2, 0.05):
+        disp = np.where(dom < 5, 0.95, p)
+        for pol in ("uniforme", "disponivel"):
+            W = fedavg_selecao(treino, Xtr, ytr, Xte, yte, pol, disp, seed=s)
+            pr = np.argmax(Xte @ W, 1)
+            R.setdefault((p, pol), []).append((acuracia(W, Xte, yte), min(np.mean(pr[yte == c] == c) for c in range(10))))
+print(f"{'p':>6}{'política':>12}{'acc global':>12}{'pior classe':>13}")
+for (p, pol), v in R.items():
+    m = np.mean(v, axis=0); print(f"{p:>6}{pol:>12}{m[0]:>12.3f}{m[1]:>13.3f}")
+```
+@@NOTE Com p = 0,95 ou 0,5, a seleção entre disponíveis não prejudica (pior classe de cerca de 0,86 a 0,88). Com p = 0,2, a pior classe cai para cerca de 0,75, e com p = 0,05, para cerca de 0,57, enquanto a acurácia global só cai de 0,955 para cerca de 0,92. A seleção uniforme não muda, pois não depende da disponibilidade. A acurácia global, sozinha, subestima o problema.
+
+@@EX 3 | A calibração do FedEraser: quanto treino de calibração basta? | intermediário
+Reproduza o cenário em que só o cliente 0 possui o dígito 9 (20 clientes). Faça a calibração no estilo FedEraser com 1, 2 e 3 épocas de calibração por rodada. Compare com o retreino exato quanto à acurácia no dígito 9, à acurácia nos demais, à perda nos dados do cliente removido, à **distância relativa** entre o modelo obtido e o do retreino exato e ao custo em épocas-cliente.
+
+*Pergunta:* mais calibração aproxima mais do retreino? Compensa o custo?
+@@SOL
+```python
+import numpy as np
+from avancado import *
 
 Xtr, Xte, ytr, yte = carregar_digits()
-K, ALFA = 20, 0.3
-global_p = np.bincount(ytr, minlength=10) / len(ytr)
+K, ALVO = 20, 9
+R = {}
+for s in range(3):
+    rng = np.random.default_rng(s); partes = [[] for _ in range(K)]
+    for i in range(len(ytr)):
+        partes[0 if ytr[i] == ALVO else rng.integers(0, K)].append(i)
+    partes = [np.array(p) for p in partes]
+    W, modelos, deltas = fedavg_historico(partes, Xtr, ytr, rodadas=30, seed=s)
+    Wr = fedavg_historico(sem_cliente(partes, 0), Xtr, ytr, rodadas=30, seed=s)[0]
+    candidatos = {"retreino exato": (Wr, 30 * 5 * 19)}
+    for e in (1, 2, 3):
+        candidatos[f"calibração, {e} época(s)"] = (calibrar_federaser(partes, 0, Xtr, ytr, modelos, deltas, epocas_cal=e, seed=s), 30 * e * 19)
+    for nome, (Wn, custo) in candidatos.items():
+        pred = np.argmax(Xte @ Wn, 1); m9 = yte == ALVO
+        R.setdefault(nome, []).append((np.mean(pred[m9] == ALVO), np.mean(pred[~m9] == yte[~m9]), perda(Wn, Xtr[partes[0]], ytr[partes[0]]),
+                                       np.linalg.norm(Wn - Wr) / np.linalg.norm(Wr), custo))
+print(f"{'método':<24}{'acc dígito 9':>13}{'acc demais':>12}{'perda removido':>16}{'dist. ao retreino':>19}{'custo':>8}")
+for nome, v in R.items():
+    m = np.mean(v, axis=0); print(f"{nome:<24}{m[0]:>13.3f}{m[1]:>12.3f}{m[2]:>16.2f}{m[3]:>19.3f}{m[4]:>8.0f}")
+```
+@@NOTE Todas as variantes zeram o dígito 9 e mantêm a acurácia nos demais (0,965 a 0,970, até um pouco acima do retreino). A diferença aparece na distância ao retreino exato e na perda nos dados removidos, que **crescem** com as épocas de calibração (distância de 0,085 para 0,164; perda de 3,18 para 3,33), enquanto o custo cresce linearmente. Ou seja, mais calibração **não** aproximou mais do retreino: a variante de 1 época foi a mais fiel e a mais barata. Uma única medida (acurácia no 9) esconderia essas diferenças.
 
-# 1) diagnóstico (semente 0)
-partes0 = particao_dirichlet(ytr, K, ALFA, 0)
-tv = [0.5 * np.abs(np.bincount(ytr[p], minlength=10) / len(p) - global_p).sum() for p in partes0 if len(p)]
-print("tamanhos dos clientes:", sorted(len(p) for p in partes0))
-print(f"distância de variação total média: {np.mean(tv):.2f}\n")
+@@EX 4 | Quantos clientes anotam o rótulo raro? | intermediário
+No problema multirrótulo (par, ≥ 5, primo), com 20 clientes, faça **só uma fração *f*** dos clientes anotar o rótulo "primo" (os demais anotam apenas "par" e "≥ 5"), com *f* ∈ {0,1; 0,3; 0,6; 1,0}. Compare o tratamento do rótulo ausente como 0 e a máscara com média por rótulo. Reporte o F1 do rótulo "primo" (5 sementes).
 
-# 2) configurações
-configs = [
-    ("1 base (média)",         dict(agregador="media"),                 False),
-    ("2 mediana",              dict(agregador="mediana"),               False),
-    ("3 mediana + 8 bits",     dict(agregador="mediana", bits=8),       False),
-    ("4 mediana + 4 bits",     dict(agregador="mediana", bits=4),       False),
-    ("5 DP (z=1)",             dict(dp_z=1.0),                          False),
-    ("6 mediana+4b+ajuste",    dict(agregador="mediana", bits=4),       True),
-]
+*Pergunta:* a máscara depende de *f*? E o tratamento como 0?
+@@SOL
+```python
+import numpy as np
+from avancado import *
 
-print(f"{'configuração':<22}{'acc glob':>9}{'ASR':>7}{'KB':>8}{'cli média':>11}{'cli p10':>9}  status")
-tabela = {}
-for nome, kw, ajustar in configs:
-    linhas = []
-    for s in range(3):
-        partes = particao_dirichlet(ytr, K, ALFA, s)
-        treino, teste = dividir_local(partes, 0.3, s)
-        W, acc, asr, bytes_ = fedavg_integrado(treino, Xtr, ytr, Xte, yte, maliciosos=(0, 1), seed=s, **kw)
-        ok = [i for i in range(K) if len(teste[i]) >= 5]
-        modelos = [treino_local(W, Xtr[treino[i]], ytr[treino[i]], 3, 0.1, 32, 0.0, i) if ajustar else W for i in ok]
-        por_cliente = acuracias_locais(modelos, [teste[i] for i in ok], Xtr, ytr)
-        linhas.append((acc, asr, bytes_ / 1024, por_cliente.mean(), np.percentile(por_cliente, 10)))
-    m = np.mean(linhas, axis=0)
-    aprovada = m[1] <= 0.10 and m[0] >= 0.90 and m[4] >= 0.84
-    tabela[nome] = (m, aprovada)
-    print(f"{nome:<22}{m[0]:>9.3f}{m[1]:>7.2f}{m[2]:>8.0f}{m[3]:>11.3f}{m[4]:>9.3f}  {'aprovada' if aprovada else 'reprovada'}")
+Xtr, Xte, ytr, yte = carregar_digits()
+Y, Yte = rotulos_multi(ytr), rotulos_multi(yte)
+K = 20
+R = {}
+for s in range(5):
+    rng = np.random.default_rng(s); partes = particao_iid(ytr, K, s)
+    for f in (0.1, 0.3, 0.6, 1.0):
+        quem = rng.permutation(K)[:max(1, int(f * K))]
+        anota = [np.array([1.0, 1.0, 1.0 if c in quem else 0.0]) for c in range(K)]
+        for nome, kw in (("ausente = 0", dict(ausente_como_zero=True, agregacao="global")), ("máscara + por rótulo", dict(agregacao="por_rotulo"))):
+            W = fedavg_multi(partes, anota, Xtr, Y, seed=s, **kw)
+            R.setdefault((f, nome), []).append(metricas_multi(W, Xte, Yte)[1][2])
+print(f"{'f':>5}{'estratégia':>24}{'F1 primo':>10}")
+for (f, nome), v in R.items():
+    print(f"{f:>5}{nome:>24}{np.mean(v):>10.3f}")
+```
+@@NOTE Tratar o ausente como 0 desaba quando poucos clientes anotam o rótulo: o F1 do rótulo "primo" é 0,00 com f = 0,1, cerca de 0,04 com f = 0,3 e cerca de 0,76 com f = 0,6, pois os clientes que não anotam o rótulo "negam" o rótulo para todos os seus exemplos. A máscara com média por rótulo se mantém estável (0,92 a 0,94), mesmo com apenas 10% dos clientes anotando. Com f = 1,0 (todos anotam), os dois são equivalentes (cerca de 0,94).
 
-aprovadas = {n: v[0] for n, v in tabela.items() if v[1]}
-melhor = min(aprovadas, key=lambda n: (round(aprovadas[n][2]), -aprovadas[n][3]))      # menor KB; empate: maior média por cliente
-print(f"\nRecomendação: {melhor} (tráfego {aprovadas[melhor][2]:.0f} KB; média por cliente {aprovadas[melhor][3]:.3f})")
+@@PROJ Um ano de operação: plano para a rede de clínicas | Cap12
+**Contexto.** A rede de clínicas (fictícia) chegou a 30 unidades. **24** participam do treino e **6** são novas. As unidades diferem no estilo dos aparelhos (diferença de atributos) e nos pacientes (Dirichlet α = 0,3). As unidades dominadas pelos dígitos 5 a 9 têm conexão lenta (6 unidades de tempo por rodada, contra 1 das demais). Uma unidade (a de índice 0) **pediu a remoção** dos seus dados do modelo. A diretoria quer um **plano de operação**.
+
+**Tarefas.**
+1. **Tempo e justiça.** Compare o FedAvg síncrono e o FedBuff (*K* = 5) por 60 unidades de tempo, em 3 sementes. Reporte a acurácia global em *t* = 15 e *t* = 30 e ao final, a média e o percentil 10 **por clínica** e a acurácia nos dados das clínicas **lentas**.
+2. **Clínicas novas.** Para o modelo escolhido, meça a acurácia média e a do pior cliente nas 6 unidades que nunca participaram do treino.
+3. **Remoção.** Compare o **retreino exato** e a **calibração** (estilo FedEraser) quanto à perda nos dados da unidade removida, à acurácia nas demais e à distância ao retreino exato.
+4. **Critérios.** Aprove o método de treino se a acurácia final for ≥ 0,88, o percentil 10 por clínica for ≥ 0,75 e a acurácia nas clínicas lentas não ficar mais de 0,03 abaixo da do síncrono. Aprove o plano de clínicas novas se a média for ≥ 0,85 e o pior cliente, ≥ 0,70. Aprove a calibração se a perda no cliente removido diferir em até 0,15 da do retreino e a acurácia nas demais ficar a até 0,02 da do retreino.
+5. **Parecer** de uma página, com resumo executivo, resultados, riscos e limitações, e recomendação.
+
+**Entregáveis.** Código, tabelas e parecer.
+@@SOL
+```python
+import numpy as np
+from avancado import *
+
+Xbr, Xteb, ytr, yte = carregar_digits(bruto=True)
+K, NOVOS, T = 30, 6, 60
+conhecidos = list(range(K - NOVOS))
+linhas = {"síncrono": [], "FedBuff (K=5)": []}
+novos_res, rem = [], {"retreino exato": [], "calibração (FedEraser)": []}
+for s in range(3):
+    partes = particao_dirichlet(ytr, K, 0.3, s)
+    Xs, _, _ = federacao_com_estilo(Xbr, partes, seed=s, intensidade=1.0)
+    treino, teste = dividir_local([partes[c] for c in conhecidos], 0.3, s)
+    pad = ajustar_padronizador(Xs, treino)                       # só com as clínicas conhecidas
+    Xall, Xg = pad(Xs), pad(Xteb)
+    tempos = np.where(classe_dominante(treino, ytr) >= 5, 6.0, 1.0)      # quem domina os dígitos 5 a 9 é lento
+    lentos = [c for c in range(len(treino)) if tempos[c] > 1 and len(teste[c]) > 0]
+    t_lento = np.concatenate([teste[c] for c in lentos])
+    for nome, f in {"síncrono": lambda: simular_sincrono(treino, Xall, ytr, Xg, yte, tempos, T=T, seed=s),
+                    "FedBuff (K=5)": lambda: simular_assincrono(treino, Xall, ytr, Xg, yte, "fedbuff", tempos, T=T, K=5, seed=s)}.items():
+        W, cv = f()
+        acc_cli = np.array([acuracia(W, Xall[t], ytr[t]) for t in teste if len(t) >= 5])
+        linhas[nome].append((cv[15, 1], cv[30, 1], acuracia(W, Xg, yte), acc_cli.mean(), np.percentile(acc_cli, 10), acuracia(W, Xall[t_lento], ytr[t_lento])))
+        if nome == "FedBuff (K=5)":
+            an = np.array([acuracia(W, Xall[partes[c]], ytr[partes[c]]) for c in range(K - NOVOS, K) if len(partes[c]) >= 5])
+            novos_res.append((an.mean(), an.min()))
+    Wf, modelos, deltas = fedavg_historico(treino, Xall, ytr, rodadas=30, seed=s)
+    Wr = fedavg_historico(sem_cliente(treino, 0), Xall, ytr, rodadas=30, seed=s)[0]
+    for nome, W in (("retreino exato", Wr), ("calibração (FedEraser)", calibrar_federaser(treino, 0, Xall, ytr, modelos, deltas, seed=s))):
+        acc_cli = np.array([acuracia(W, Xall[t], ytr[t]) for c, t in enumerate(teste) if c != 0 and len(t) >= 5])
+        rem[nome].append((perda(W, Xall[treino[0]], ytr[treino[0]]), acc_cli.mean(), np.linalg.norm(W - Wr) / np.linalg.norm(W)))
+
+print(f"{'método':<15}{'acc t=15':>9}{'acc t=30':>9}{'acc final':>10}{'média cli':>10}{'p10 cli':>9}{'clientes lentos':>16}  status")
+res = {}
+for k, v in linhas.items():
+    res[k] = np.mean(v, axis=0)
+ref_lento = res["síncrono"][5]
+for k, m in res.items():
+    ok = m[2] >= 0.88 and m[4] >= 0.75 and m[5] >= ref_lento - 0.03
+    print(f"{k:<15}{m[0]:>9.3f}{m[1]:>9.3f}{m[2]:>10.3f}{m[3]:>10.3f}{m[4]:>9.3f}{m[5]:>16.3f}  {'aprovado' if ok else 'reprovado'}")
+m = np.mean(novos_res, axis=0)
+print(f"\nclínicas novas (FedBuff): média = {m[0]:.3f} | pior = {m[1]:.3f}  {'aprovado' if m[0] >= 0.85 and m[1] >= 0.70 else 'reprovado'}")
+print(f"\n{'remoção da unidade 0':<24}{'perda nela':>11}{'acc demais':>11}{'dist. ao retreino':>19}")
+R = {k: np.mean(v, axis=0) for k, v in rem.items()}
+for k, m in R.items():
+    print(f"{k:<24}{m[0]:>11.2f}{m[1]:>11.3f}{m[2]:>19.3f}")
+c, r = R["calibração (FedEraser)"], R["retreino exato"]
+print("calibração aprovada?", abs(c[0] - r[0]) <= 0.15 and c[1] >= r[1] - 0.02)
 ```
 @@RUBRICA
-- Diagnóstico de heterogeneidade feito e interpretado.
-- Seis configurações avaliadas em três sementes, com todas as métricas (global, ASR, KB, média e percentil 10 por cliente).
-- Critério de aprovação aplicado corretamente e escolha justificada pelo menor tráfego.
-- Relatório de uma página, claro, com riscos e limitações explícitos (ataque simples, modelo simples, dados substitutos, DP sem contabilidade completa) e sem alegar privacidade formal sem garantia.
-- Extensão opcional: AUC de pertencimento e sensibilidade a α, se feita, bem interpretada.
-@@NOTE A base (média) tem ASR alto (cerca de 0,70): o backdoor funciona e a acurácia global quase não revela o problema. A mediana elimina o backdoor (ASR ≈ 0) com custo pequeno em acurácia (cerca de 1 ponto global e 2 pontos por cliente). A quantização a 8 e 4 bits reduz o tráfego em 4 e 8 vezes sem piorar os resultados. A DP com z = 1 **não** impede o backdoor (ASR em torno de 0,5): o corte e o ruído limitam a influência de cada cliente, mas não distinguem o malicioso do honesto; e ainda custa acurácia. O ajuste fino local melhora a média e o percentil 10 por cliente. Entre as configurações aprovadas, duas empatam no tráfego mínimo (195 KB): a **mediana com 4 bits** e a mesma com **ajuste fino local**; pelo critério de desempate, a recomendada é a segunda, que eleva a média por cliente de 0,92 para 0,94 sem custo de comunicação (a clínica precisa guardar um modelo próprio). Limites: o backdoor é simples (não adaptativo), o modelo é minúsculo, os dados são substitutos, e a DP não tem contabilidade completa nem protege contra servidor malicioso.
+- Comparação do síncrono e do FedBuff com todas as métricas (global, por clínica, clínicas lentas e clínicas novas), em 3 sementes.
+- Aplicação correta dos critérios de aprovação e recomendação justificada.
+- Remoção comparada por mais de uma medida (perda no cliente removido, acurácia nas demais, distância ao retreino) e custo discutido.
+- Parecer claro, com riscos e limitações explícitos (assincronia pode prejudicar clínicas lentas; a calibração é aproximada e exige guardar o histórico; dados substitutos; estilos simulados).
+- Extensão opcional: efeito do viés de disponibilidade na seleção e uso de FedBN, se feitos, bem interpretados.
+@@NOTE O síncrono não chega perto dos critérios dentro de 60 unidades de tempo (acurácia final cerca de 0,85 e percentil 10 por clínica cerca de 0,66), pois cada rodada dura 6 unidades. O FedBuff passa nos critérios (acurácia final cerca de 0,92; percentil 10 cerca de 0,81) e atende as clínicas lentas de modo equivalente ao síncrono (cerca de 0,86). Nas clínicas novas, a média fica em cerca de 0,88, mas o pior cliente é cerca de 0,78: aprovado, com a ressalva do pior caso. Na remoção, a calibração fica próxima do retreino (perda 0,36 contra 0,29; acurácia nas demais 0,916 contra 0,921) com cerca de um quinto do custo, mas a distância relativa de cerca de 0,17 lembra que é aproximada. Recomendação: FedBuff com K = 5, plano de clínicas novas com ajuste local para o pior caso, e calibração para remoções, com retreino exato quando houver exigência de garantia. Limites: dados substitutos, estilos simulados, sem contabilidade de privacidade, sem ataques.
 @@ALEM
-- **UCI:** *Optical Recognition of Handwritten Digits*, *Letter Recognition* e *Human Activity Recognition Using Smartphones* (cada voluntário como um cliente).
-- **Kaggle:** *Digit Recognizer*, *Fashion-MNIST* e *Heart Failure Prediction*, para repetir o estudo com dados diferentes.
+- **UCI:** *Adult* (partição natural por ocupação ou país), *Human Activity Recognition Using Smartphones* (cada voluntário é um cliente natural, ideal para clientes novos e estilos) e *Wine Quality*.
+- **Kaggle:** *Credit Card Fraud Detection* (deriva ao longo do tempo) e *Chest X-Ray Images (Pneumonia)* (clientes por origem do exame).
+- **LEAF:** FEMNIST (caracteres por escritor) e Shakespeare (por personagem), partições naturais clássicas de aprendizado federado.

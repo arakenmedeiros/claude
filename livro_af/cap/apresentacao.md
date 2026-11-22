@@ -15,12 +15,12 @@ Este livro explica essa ideia do começo ao fim: como funciona, onde falha, como
 
 ## Como o livro está organizado
 
-O livro tem **cinco partes** e **doze capítulos**.
+O livro tem **cinco partes** e **treze capítulos**.
 
 - **Parte I — Fundamentos:** o que é aprendizado federado, as bases de treino de modelos e o algoritmo FedAvg.
 - **Parte II — Desafios do treino federado:** dados diferentes entre clientes (não-IID), economia de comunicação e personalização.
 - **Parte III — Privacidade e segurança:** ameaças à privacidade, privacidade diferencial, agregação segura e robustez contra participantes mal-intencionados.
-- **Parte IV — Arquiteturas, aplicações e fronteiras:** aprendizado federado vertical, descentralizado e *split learning*; aprendizado não supervisionado federado, modelos de fundação, ferramentas, aplicações, regulação e ética.
+- **Parte IV — Arquiteturas, aplicações e fronteiras:** aprendizado federado vertical, descentralizado e *split learning*; aprendizado não supervisionado federado, modelos de fundação, ferramentas, aplicações, regulação e ética; e tópicos avançados do mundo real, como aprendizado assíncrono, seleção de clientes, desaprendizado, partições naturais, deriva ao longo do tempo e rótulos escassos.
 - **Parte V — Projeto final:** um estudo completo que integra todas as técnicas.
 
 Cada capítulo segue o mesmo roteiro:

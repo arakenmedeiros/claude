@@ -1,7 +1,7 @@
 from icons import *
 from matplotlib.patches import Circle as _Circle
 from matplotlib.colors import LinearSegmentedColormap
-PART={1:(IND,CYA),2:(IND,CYA),3:(IND,CYA),4:(CYA,GRN),5:(CYA,GRN),6:(CYA,GRN),7:(RED,AMB),8:(RED,AMB),9:(RED,AMB),10:(AMB,PNK),11:(AMB,PNK),12:(VIO,PNK)}
+PART={1:(IND,CYA),2:(IND,CYA),3:(IND,CYA),4:(CYA,GRN),5:(CYA,GRN),6:(CYA,GRN),7:(RED,AMB),8:(RED,AMB),9:(RED,AMB),10:(AMB,PNK),11:(AMB,PNK),12:(AMB,PNK),13:(VIO,PNK)}
 
 def net(ax,rng,n_nodes,xr,yr,c1,c2,center=None,s=1.0):
     """desenha uma estrela federada: servidor central e nós periféricos com arestas"""
@@ -72,4 +72,4 @@ def cover():
 
 if __name__=="__main__":
     cover()
-    for n in range(1,13): banner(n)
+    for n in range(1,14): banner(n)

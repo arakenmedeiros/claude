@@ -22,8 +22,8 @@ const THEME = {
   colors: { dk1: "1F2937", lt1: "FFFFFF", dk2: "111827", lt2: "F3F4F6", accent1: "4F46E5", accent2: "06B6D4", accent3: "10B981", accent4: "F59E0B", accent5: "EF4444", accent6: "8B5CF6", hlink: "4F46E5", folHlink: "8B5CF6" },
 };
 const HEX = { ind: "4F46E5", indD: "312E81", navy: "111827", cya: "06B6D4", grn: "10B981", amb: "F59E0B", red: "EF4444", vio: "8B5CF6", ink: "1F2937", gry: "6B7280", light: "F3F4F6" };
-const PART_COL = [HEX.ind, HEX.ind, HEX.ind, HEX.cya, HEX.cya, HEX.cya, HEX.red, HEX.red, HEX.red, HEX.amb, HEX.amb, HEX.vio];
-const PART_NOME = ["Parte I — Fundamentos", "Parte I — Fundamentos", "Parte I — Fundamentos", "Parte II — Desafios do treino", "Parte II — Desafios do treino", "Parte II — Desafios do treino", "Parte III — Privacidade e segurança", "Parte III — Privacidade e segurança", "Parte III — Privacidade e segurança", "Parte IV — Arquiteturas e fronteiras", "Parte IV — Arquiteturas e fronteiras", "Parte V — Projeto final"];
+const PART_COL = [HEX.ind, HEX.ind, HEX.ind, HEX.cya, HEX.cya, HEX.cya, HEX.red, HEX.red, HEX.red, HEX.amb, HEX.amb, HEX.amb, HEX.vio];
+const PART_NOME = ["Parte I — Fundamentos", "Parte I — Fundamentos", "Parte I — Fundamentos", "Parte II — Desafios do treino", "Parte II — Desafios do treino", "Parte II — Desafios do treino", "Parte III — Privacidade e segurança", "Parte III — Privacidade e segurança", "Parte III — Privacidade e segurança", "Parte IV — Arquiteturas e fronteiras", "Parte IV — Arquiteturas e fronteiras", "Parte IV — Arquiteturas e fronteiras", "Parte V — Projeto final"];
 
 // ---------------------------------------------------------------- utilidades
 const clean = (s) => s.replace(/\*\*/g, "").replace(/\*/g, "").replace(/`/g, "").replace(/\s+/g, " ").trim();
@@ -297,6 +297,6 @@ async function buildDeck(n) {
 
 (async () => {
   const args = process.argv.slice(2).map(Number).filter(Boolean);
-  const lista = args.length ? args : Array.from({ length: 12 }, (_, i) => i + 1).filter((n) => fs.existsSync(path.join(__dirname, "content", `ch${nn(n)}.js`)));
+  const lista = args.length ? args : Array.from({ length: 13 }, (_, i) => i + 1).filter((n) => fs.existsSync(path.join(__dirname, "content", `ch${nn(n)}.js`)));
   for (const n of lista) console.log("ok", await buildDeck(n));
 })().catch((e) => { console.error(e); process.exit(1); });

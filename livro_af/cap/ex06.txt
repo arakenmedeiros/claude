@@ -73,7 +73,7 @@ a) treinar o modelo pessoal só com dados locais.
 b) usar apenas o modelo global.
 c) usar dados de todos os clientes.
 d) eliminar o cliente.
-R: a | Sem penalização, não há ligação com o global.
+R: a | Sem penalização, não há ligação com o global (no Ditto original, é o treino puramente local).
 
 MC: No Ditto, um λ muito grande faz com que:
 a) o modelo pessoal fique praticamente igual ao global.
@@ -265,6 +265,6 @@ R: Porque as partições, os tamanhos e os sorteios variam; um cliente pequeno p
 DISC: Resuma o capítulo em cinco linhas, destacando uma situação em que personalizar é indispensável.
 R: Resposta pessoal coerente com o resumo: modelo global, medidas por cliente, ajuste fino, Ditto, partição, IFCA e Per-FedAvg; personalizar é indispensável em mudança de conceito.
 
-DISC: Explique por que, no Ditto com λ = 0 partindo do modelo global, o resultado coincide com o ajuste fino local.
-R: Sem a penalização, o modelo pessoal minimiza apenas o erro local a partir do global, o que é exatamente o ajuste fino. A coleira só diferencia os métodos quando λ > 0.
+DISC: Diferencie o Ditto original do ajuste proximal posterior apresentado no capítulo e explique por que, no ajuste proximal posterior com λ = 0 partindo do global, o resultado coincide com o ajuste fino local.
+R: No Ditto original, o treino é intercalado: em cada rodada, o global é atualizado como no FedAvg e, na mesma rodada, cada cliente atualiza o modelo pessoal com a coleira no global daquela rodada. No ajuste proximal posterior, o treino global termina antes, e só então se ajusta um modelo pessoal em torno de um global fixo (simplificação inspirada no Ditto). Com λ = 0, a penalização some e o modelo pessoal minimiza só o erro local a partir do global, o que é exatamente o ajuste fino. No Ditto original, λ = 0 equivale ao treino puramente local.
 

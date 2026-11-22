@@ -2,11 +2,14 @@ import numpy as np
 from fedlib import *
 
 
-def epsilon_rdp(z, rodadas, delta=1e-5):
+def epsilon_rdp(z, rodadas, delta=1e-5, vizinhanca="adicao_remocao"):
     """Limite superior de epsilon para `rodadas` aplicações do mecanismo gaussiano com multiplicador de ruído z,
-    com participação total (sem amplificação por sorteio). Usa a contabilidade de Rényi (Mironov, 2017)."""
+    com participação total (sem amplificação por sorteio). Usa a contabilidade de Rényi (Mironov, 2017).
+    Vizinhança 'adicao_remocao': sensibilidade S. Vizinhança 'substituicao': sensibilidade 2S (z efetivo = z/2)."""
     if z <= 0:
         return float("inf")
+    if vizinhanca == "substituicao":
+        z = z / 2
     alfas = np.arange(1.01, 400, 0.01)
     eps = rodadas * alfas / (2 * z ** 2) + np.log(1 / delta) / (alfas - 1)
     return float(eps.min())
@@ -16,13 +19,13 @@ def fedavg_dp(partes, X, y, Xte, yte, z=1.0, S=1.0, rodadas=30, epocas=5, eta=0.
     """FedAvg com privacidade diferencial no nível do cliente: corta cada atualização à norma S e soma ruído gaussiano."""
     rng = np.random.default_rng(seed)
     W = np.zeros((X.shape[1], classes))
-    m = sum(1 for p in partes if len(p) > 0)
+    m = len(partes)                                                      # constante pública: clientes inscritos
     historico = []
     for r in range(rodadas):
         soma = np.zeros_like(W)
         for c, p in enumerate(partes):
             if len(p) == 0:
-                continue
+                continue                                                 # cliente sem dados: atualização nula
             d = treino_local(W, X[p], y[p], epocas, eta, lote, 0.0, seed * 1000 + r * 50 + c) - W
             norma = np.linalg.norm(d)
             soma += d * min(1.0, S / (norma + 1e-12))                   # corte (clipping)

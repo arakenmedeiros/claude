@@ -1,5 +1,5 @@
 @@EX 1 | Ponto de ruptura na prática | básico
-Simule 20 clientes cujas atualizações (vetores de 50 dimensões) são honestas: `N(1, 0,1)` em cada coordenada. Faça `m` deles maliciosos, enviando o vetor constante 100. Para `m` de 0 a 9, calcule o erro (norma da diferença até o vetor honesto médio) da **média**, da **mediana**, da **média aparada (β = 0,25)** e do **Krum** (use `agg_krum` de `robustez.py` com `f=m`).
+Simule 20 clientes cujas atualizações (vetores de 50 dimensões) são honestas: `N(1, 0,1)` em cada coordenada. Faça `m` deles maliciosos, enviando o vetor constante 100. Para `m` de 0 a 8, calcule o erro (norma da diferença até o vetor honesto médio) da **média**, da **mediana**, da **média aparada (β = 0,25)** e do **Krum** (use `agg_krum` de `robustez.py` com `f=m`; lembre que o Krum exige *m > 2f + 2*, o que, com 20 clientes, limita *f* a 8).
 
 *Pergunta:* a partir de quantos maliciosos cada agregador deixa de funcionar?
 @@SOL
@@ -13,7 +13,7 @@ honestos = rng.normal(1.0, 0.1, (K, d))
 referencia = honestos.mean(axis=0)
 
 print(f"{'maliciosos':>10}{'média':>10}{'mediana':>10}{'aparada':>10}{'Krum':>10}")
-for m in range(0, 10):
+for m in range(0, 9):
     D = honestos.copy()
     D[:m] = 100.0
     D3 = D.reshape(K, d, 1)
@@ -21,7 +21,7 @@ for m in range(0, 10):
     print(f"{m:>10}{erro(agg_media(D3)):>10.2f}{erro(agg_mediana(D3)):>10.2f}"
           f"{erro(agg_media_aparada(D3, 0.25)):>10.2f}{erro(agg_krum(D3, f=max(m, 1))):>10.2f}")
 ```
-@@NOTE A média é arrastada já com **um** atacante (erro enorme). A mediana resiste enquanto os maliciosos forem menos da metade. A média aparada com β = 0,25 descarta 5 de cada lado, por isso funciona até 5 maliciosos e quebra com 6 ou mais. O Krum escolhe sempre um vetor honesto (erro constante de cerca de 0,5, pois usa um único vetor, mesmo sem atacantes), enquanto f é bem estimado e m é menor que cerca de metade dos clientes.
+@@NOTE A média é arrastada já com **um** atacante (erro enorme). A mediana resiste enquanto os maliciosos forem menos da metade (aqui, 8 de 20), mas observe que ela se desloca um pouco à medida que *m* cresce. A média aparada com β = 0,25 descarta 5 de cada lado, por isso funciona até 5 maliciosos e quebra com 6 ou mais. O Krum escolhe sempre um vetor honesto (erro constante de cerca de 0,5, pois usa um único vetor, mesmo sem atacantes), enquanto f é bem estimado e vale a condição 20 > 2f + 2, isto é, f ≤ 8. Com f = 9, a implementação recusa a configuração.
 
 @@EX 2 | Troca de rótulos: até onde vai a média? | básico
 Com 20 clientes IID e o ataque `rotulos`, varie a fração de maliciosos f ∈ {0; 0,1; 0,2; 0,3; 0,4}. Compare a acurácia final (3 sementes) da média e da mediana.

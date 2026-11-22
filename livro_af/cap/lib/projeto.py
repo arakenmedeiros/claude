@@ -33,12 +33,15 @@ def fedavg_integrado(treino, X, y, Xte, yte, agregador="media", bits=None, dp_z=
                 d = d * min(1.0, S / (np.linalg.norm(d) + 1e-12))
             if bits is not None:
                 d = quantizar(d, bits, rng); bytes_subida += int(np.ceil(n_par * bits / 8)) + 8
+                if dp_z is not None:                                      # a quantização pode AUMENTAR a norma:
+                    d = d * min(1.0, S / (np.linalg.norm(d) + 1e-12))     # corta de novo, para garantir ||d|| <= S
             else:
                 bytes_subida += 4 * n_par
             deltas.append(d)
         D = np.array(deltas)
         if dp_z is not None:
-            media = D.mean(axis=0) + rng.normal(0, dp_z * S / len(D), W.shape)    # DP: ruído na média
+            m_pub = len(treino)                                                   # denominador: constante pública
+            media = D.sum(axis=0) / m_pub + rng.normal(0, dp_z * S / m_pub, W.shape)   # DP: ruído na média
             W = W + media
         else:
             W = W + AGREGADORES[agregador](D)

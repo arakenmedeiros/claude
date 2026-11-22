@@ -166,12 +166,12 @@ c) 0,10.
 d) 0,70.
 R: a | Mais clientes diluem o ruído na média.
 
-MC: Qual a conclusão sobre o número de clientes em DP?
-a) Privacidade forte exige muitos clientes.
-b) Poucos clientes bastam.
-c) O número de clientes não importa.
-d) Mais clientes pioram a privacidade.
-R: a | O ruído da média diminui com o número de clientes.
+MC: Qual a conclusão correta sobre o número de clientes em DP-FedAvg?
+a) O ε não depende do número de clientes; mais clientes apenas tornam o mesmo ruído menos prejudicial à acurácia.
+b) Sem muitos clientes, é logicamente impossível obter qualquer garantia de DP.
+c) Mais clientes pioram a privacidade formal.
+d) O número de clientes define o valor de δ.
+R: a | O ε vem de z, das rodadas e de δ. Com poucos clientes, um ε baixo é possível, mas exige tanto ruído que a utilidade pode desabar.
 
 MC: Na agregação segura por máscaras, o que acontece ao somar as mensagens de todos os clientes?
 a) As máscaras se cancelam e o servidor obtém a soma verdadeira.
@@ -223,8 +223,8 @@ R: Local: sem confiança no servidor, mas menor utilidade. Central: maior utilid
 DISC: Descreva os dois ingredientes do DP-FedAvg e o papel de cada um.
 R: Corte: limita a norma de cada atualização a S, limitando a sensibilidade. Ruído: soma-se ao total das atualizações cortadas um ruído gaussiano com desvio z·S; depois divide-se por m.
 
-DISC: Por que privacidade forte exige muitos clientes? Use o experimento como argumento.
-R: O ruído é adicionado à soma e dividido por m; com mais clientes, seu efeito na média diminui. Com z = 3, 20 clientes caíram a 0,87, enquanto 100 clientes ficaram em 0,93.
+DISC: Muitos clientes são requisito para uma garantia de DP? Por que, na prática, eles ajudam? Use o experimento como argumento.
+R: Não são requisito: o ε depende de z, das rodadas e de δ, e foi o mesmo (≈ 10,4) para 20 e 100 clientes. Mas o ruído é adicionado à soma e dividido por m; com mais clientes, seu efeito na média diminui. Com z = 3, 20 clientes caíram a 0,87, enquanto 100 clientes ficaram em 0,93. Uma federação pequena pode alcançar ε baixo, ao preço de uma perda de utilidade que talvez a inviabilize.
 
 DISC: Calcule o desvio padrão do ruído somado à soma de atualizações com S = 0,5 e z = 4, e o desvio do ruído na média de m = 50 clientes.
 R: σ da soma = z·S = 2,0. Na média, σ/m = 2,0/50 = 0,04.
@@ -263,7 +263,7 @@ DISC: Interprete o experimento de defesa contra inversão de gradientes.
 R: Sem ruído, a correlação da reconstrução é 1,0. Com σ = 0,1, cai para cerca de 0,23, e com σ ≥ 0,5, fica próxima de zero: a combinação de corte e ruído destrói a reconstrução.
 
 DISC: Dê um exemplo de decisão de projeto em que privacidade e acurácia entram em conflito e como você a resolveria.
-R: Escolher z: valores altos dão mais privacidade, mas pioram a acurácia em poucos clientes. Resolveria aumentando o número de clientes, ajustando S, e definindo com juristas e a organização um ε aceitável.
+R: Escolher z: valores altos dão mais privacidade, mas pioram a acurácia em poucos clientes. Resolveria ajustando S e o número de rodadas, buscando mais clientes quando possível, e definindo com juristas e a organização um ε aceitável.
 
 DISC: Resuma em cinco linhas as defesas estudadas e o que cada uma protege.
 R: Resposta pessoal coerente com o resumo: DP (resultado, garantia formal); agregação segura (atualizações individuais); homomórfica e SMPC (cálculo cifrado); TEE (operador); combinação em camadas.

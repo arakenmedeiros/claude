@@ -1,270 +1,269 @@
-MC: Qual é o objetivo central do aprendizado federado?
-a) Treinar um modelo com vários donos de dados sem juntar os dados brutos.
-b) Eliminar a necessidade de dados.
-c) Substituir a privacidade diferencial.
-d) Reduzir sempre o tamanho do modelo.
-R: a | Leva o modelo até os dados em vez de levar os dados até o modelo.
+MC: Por que um cliente lento (straggler) é um problema no FedAvg síncrono?
+a) Porque a rodada só termina quando o cliente mais lento responde, e todos os outros ficam esperando.
+b) Porque o cliente lento sempre envia atualizações erradas.
+c) Porque o servidor não consegue calcular a média de poucos clientes.
+d) Porque o cliente lento precisa de mais memória no servidor.
+R: a | O tempo da rodada é o do mais lento; os demais ficam ociosos.
 
-MC: Na simulação do projeto final, o que o ASR mede?
-a) A taxa de sucesso do backdoor: imagens com gatilho classificadas como a classe alvo.
-b) A acurácia global.
-c) O tráfego total.
-d) A taxa de aprendizado.
-R: a | ASR = attack success rate.
+MC: No aprendizado federado assíncrono, o que é o "atraso" (staleness) de uma atualização?
+a) O número de versões do modelo do servidor que surgiram enquanto o cliente treinava.
+b) O tempo, em segundos, que o servidor demora para responder.
+c) A quantidade de épocas que o cliente treinou.
+d) A diferença entre a acurácia local e a global.
+R: a | A atualização foi calculada sobre uma versão velha; o atraso conta quantas versões se passaram.
 
-MC: Por que a acurácia global sozinha é insuficiente no projeto final?
-a) Porque não revela o backdoor nem a qualidade em cada cliente.
-b) Porque é sempre igual a 1.
-c) Porque não existe.
-d) Porque depende do servidor.
-R: a | É preciso medir por cliente e sob ataque.
+MC: No FedAsync, o peso com que a resposta de um cliente é misturada ao modelo:
+a) diminui à medida que o atraso aumenta.
+b) aumenta com o atraso, para compensar a demora.
+c) é sempre igual a 1.
+d) depende só do número de classes do cliente.
+R: a | a = α · (1 + atraso)^(−0,5): respostas velhas pesam menos.
 
-MC: Na base do projeto (média sem proteção), o ASR foi de cerca de:
-a) 0,70.
-b) 0,00.
-c) 0,10.
-d) 1,00 em todas as sementes.
-R: a | Com 2 de 20 clientes maliciosos, o backdoor funciona com a média.
+MC: O que o FedBuff faz com as atualizações que chegam?
+a) Guarda K atualizações em um buffer e só então aplica a média delas ao modelo.
+b) Descarta todas as atualizações que chegam atrasadas.
+c) Mistura cada atualização ao modelo no instante em que chega.
+d) Envia as atualizações de volta aos clientes sem alterar o modelo.
+R: a | O servidor acumula K respostas (cada uma reduzida por √(1 + atraso)) e então atualiza o modelo.
 
-MC: O que a mediana fez com o backdoor no projeto?
-a) Reduziu o ASR a praticamente zero, com pequeno custo de acurácia.
-b) Aumentou o ASR.
-c) Não alterou o ASR.
-d) Impediu o treino.
-R: a | Em dados com heterogeneidade moderada, a mediana resistiu ao backdoor.
+MC: Por que o FedBuff combina melhor do que a mistura individual com agregação segura e privacidade diferencial?
+a) Porque o servidor pode somar o buffer inteiro com agregação segura e acrescentar ruído de DP por buffer.
+b) Porque o FedBuff dispensa qualquer comunicação.
+c) Porque o FedBuff elimina o atraso.
+d) Porque o FedBuff usa só um cliente por vez.
+R: a | A agregação é feita sobre um grupo de atualizações, o que é compatível com somas seguras e com ruído calibrado.
 
-MC: Por que a quantização a 8 e 4 bits foi vantajosa no projeto?
-a) Reduziu o tráfego em 4 e 8 vezes sem piorar os resultados.
-b) Aumentou o tráfego.
-c) Eliminou o ruído.
-d) Substituiu o agregador.
-R: a | 386 e 195 KB contra 1.523 KB, com métricas equivalentes.
+MC: Qual é o "preço de justiça" da assincronia observado no experimento do capítulo?
+a) A acurácia nos dados dos clientes lentos foi menor nos métodos assíncronos do que no síncrono.
+b) A acurácia global caiu para perto de zero.
+c) Os clientes rápidos deixaram de participar.
+d) O servidor passou a ver os dados brutos.
+R: a | As contribuições dos lentos chegam menos vezes e atrasadas, então o modelo os atende pior.
 
-MC: Por que a DP (z = 1) não impediu o backdoor no projeto?
-a) Corte e ruído limitam a influência de cada cliente, mas não distinguem o malicioso do honesto.
-b) Porque a DP aumenta o ASR.
-c) Porque a DP exige mais clientes honestos.
-d) Porque a DP é sempre inútil.
-R: a | A DP protege contra inferência de pertencimento, não contra envenenamento direcionado.
+MC: O que é viés de participação?
+a) Quando quem participa das rodadas não é uma amostra aleatória, e a disponibilidade está ligada aos dados.
+b) Quando o servidor escolhe um otimizador diferente para cada cliente.
+c) Quando todos os clientes participam de todas as rodadas.
+d) Quando o modelo usa mais de uma camada.
+R: a | Só participa quem está disponível; se isso se relaciona aos dados, o modelo é enviesado.
 
-MC: O ajuste fino local, aplicado após o treino federado, no projeto:
-a) elevou a média e o percentil 10 por cliente, sem custo de comunicação.
-b) piorou a média.
-c) triplicou o tráfego.
-d) eliminou o backdoor.
-R: a | A média por cliente subiu de 0,92 para 0,94.
+MC: Como funciona a correção por probabilidade (ponderação por disponibilidade)?
+a) O peso de cada cliente é dividido pela probabilidade de ele estar disponível.
+b) O peso de cada cliente é multiplicado pelo seu número de épocas.
+c) Os clientes raros são removidos.
+d) O servidor sorteia sempre os mesmos clientes.
+R: a | Quem quase nunca aparece pesa mais quando aparece, como nas pesquisas de opinião.
 
-MC: Qual configuração foi recomendada no projeto de referência?
-a) Mediana com 4 bits e ajuste fino local.
-b) A média sem proteção.
-c) DP com z = 1 apenas.
-d) Nenhuma foi aprovada.
-R: a | Foi aprovada e teve o menor tráfego, com melhor média por cliente no desempate.
+MC: O que o power-of-choice faz?
+a) Sorteia candidatos disponíveis e escolhe os que têm maior perda local.
+b) Escolhe sempre os clientes com menor perda local.
+c) Escolhe os clientes mais rápidos.
+d) Escolhe os clientes com menos dados.
+R: a | Favorece quem o modelo atende pior, acelerando o aprendizado e reduzindo o viés.
 
-MC: Qual a fórmula do objetivo global do aprendizado federado?
-a) f(w) = Σ (n_k/n) · F_k(w).
-b) f(w) = Σ F_k(w)².
-c) f(w) = max F_k(w).
-d) f(w) = 0.
-R: a | Média ponderada dos erros locais pelo tamanho dos dados.
+MC: No experimento de seleção, o que a acurácia global escondia?
+a) A acurácia da pior classe caiu de cerca de 0,86 para cerca de 0,57 com a disponibilidade enviesada.
+b) Que o modelo não treinou.
+c) Que os clientes tinham dados idênticos.
+d) Que o ε era infinito.
+R: a | A média mudou pouco, mas os dígitos de clientes raramente disponíveis ficaram para trás.
 
-MC: Qual a diferença entre FedSGD e FedAvg?
-a) FedSGD dá um passo de gradiente por rodada; FedAvg faz vários passos locais.
-b) FedAvg não usa servidor.
-c) FedSGD não usa gradientes.
-d) Não há diferença.
-R: a | O FedAvg troca comunicação por computação local.
+MC: O que Yuan et al. (2022) chamam de lacuna de participação?
+a) A piora do modelo em clientes que nunca participaram do treino, de distribuições possivelmente diferentes.
+b) A diferença entre o tempo de treino e o de teste.
+c) A diferença entre dois otimizadores.
+d) A falta de clientes na rodada.
+R: a | Separa essa lacuna da lacuna em dados novos de clientes que participaram.
 
-MC: A deriva dos clientes ocorre porque:
-a) com muitos passos locais e dados diferentes, cada cliente se afasta do mínimo global.
-b) o servidor falha.
-c) o modelo é linear.
-d) os dados são IID.
-R: a | Cada cliente caminha para o seu próprio mínimo local.
+MC: Por que partições naturais (como a do LEAF) são valiosas?
+a) Porque o cliente é uma entidade real (escritor, usuário, hospital) e traz diferenças reais entre clientes.
+b) Porque dispensam avaliação.
+c) Porque têm sempre mais exemplos.
+d) Porque não têm rótulos.
+R: a | As partições artificiais (IID, shards, Dirichlet) são simulações; as naturais refletem a heterogeneidade real.
 
-MC: Qual das opções ajuda a combater a heterogeneidade dos dados?
-a) SCAFFOLD, com variáveis de controle.
-b) Quantizar para 1 bit.
-c) Aumentar o ruído.
-d) Reduzir o número de clientes a um.
-R: a | Corrige a deriva ao custo de mais comunicação.
+MC: Além da acurácia global, o que o livro recomenda relatar na avaliação de um modelo federado?
+a) Média por cliente, percentil 10 ou pior cliente, desempenho em clientes retidos e o tipo de partição.
+b) Apenas a acurácia no treino.
+c) Apenas o número de rodadas.
+d) Apenas o tamanho do modelo.
+R: a | A média esconde quem ficou para trás; é preciso olhar o pior caso e os clientes novos.
 
-MC: A memória de erro (error feedback) é essencial para:
-a) esparsificação agressiva, pois guarda o que foi cortado e o envia depois.
-b) aumentar o ASR.
-c) aumentar o lote.
-d) eliminar o servidor.
-R: a | Evita que valores pequenos nunca sejam enviados.
+MC: No cenário "novos de outra população", o que aconteceu?
+a) A média nos clientes novos (cerca de 0,79) ficou bem abaixo da dos conhecidos (cerca de 0,93).
+b) Os novos clientes tiveram acurácia melhor que os conhecidos.
+c) Não houve diferença alguma.
+d) O modelo não pôde ser avaliado.
+R: a | Os novos vinham de estilos mais extremos que os do treino, e o pior cliente novo ficou abaixo de 0,5.
 
-MC: No Ditto, o parâmetro λ controla:
-a) a coleira que prende o modelo pessoal ao global.
-b) a taxa de aprendizado do servidor.
-c) o número de clientes.
-d) a quantização.
-R: a | λ = 0 equivale ao ajuste fino; λ grande iguala o global.
+MC: No FedBN, o que permanece local em cada cliente?
+a) A escala e o deslocamento (g, b) e as estatísticas (média e variância) da normalização.
+b) Todos os pesos da rede.
+c) Apenas os rótulos.
+d) Somente a taxa de aprendizado.
+R: a | As camadas lineares são agregadas; a normalização fica em casa.
 
-MC: O IFCA é um método de personalização baseado em:
-a) agrupamento de clientes: cada um escolhe o modelo de menor perda.
-b) criptografia homomórfica.
-c) compressão.
-d) split learning.
-R: a | O servidor mantém K modelos e agrupa os clientes iterativamente.
+MC: Por que fazer a média das estatísticas de normalização entre clientes pode prejudicar quando os atributos têm "estilos" diferentes?
+a) Porque cada cliente tem média e variância diferentes, e uma média global não descreve nenhum deles bem.
+b) Porque a normalização deixa de existir.
+c) Porque os clientes passam a ter o mesmo estilo.
+d) Porque o servidor não sabe somar.
+R: a | É como misturar receitas feitas em fornos diferentes.
 
-MC: No Capítulo 7, o gradiente de um exemplo na softmax revela a entrada porque:
-a) é o produto externo x ⊗ (p − y), e o gradiente do viés é (p − y).
-b) é sempre zero.
-c) é aleatório.
-d) é criptografado.
-R: a | Dividir uma coluna pelo gradiente do viés devolve x.
+MC: Qual é uma limitação do FedBN para um cliente novo?
+a) Ele precisa de dados para estimar as suas estatísticas locais; com poucos exemplos, elas ficam ruidosas.
+b) Ele não consegue receber o modelo.
+c) Ele precisa enviar seus dados ao servidor.
+d) Ele não pode usar softmax.
+R: a | Como o FedBN personaliza, o cliente novo precisa estimar seus parâmetros de normalização.
 
-MC: A inferência de pertencimento é mais bem-sucedida quando:
-a) há poucos dados, muito treino e sobreajuste.
-b) há muitos dados e regularização.
-c) o modelo não treina.
-d) o lote é enorme.
-R: a | A perda nos membros fica muito menor que nos não membros.
+MC: Quando os clientes não têm diferença de estilo nos atributos, como se comparam o FedAvg e o FedBN no experimento?
+a) Ficam equivalentes (o FedBN é até um pouco pior, pois personaliza sem necessidade).
+b) O FedBN é muito melhor.
+c) O FedAvg falha por completo.
+d) Nenhum dos dois treina.
+R: a | Sem estilo, não há o que a normalização local absorva: 0,95 contra 0,94.
 
-MC: O que exprime o parâmetro ε na privacidade diferencial?
-a) O vazamento: menor ε, mais privacidade.
-b) A taxa de aprendizado.
-c) O número de clientes.
-d) A acurácia.
-R: a | Mede quanto a saída pode mudar pela presença de uma pessoa.
+MC: Apagar os dados de um cliente basta para que o modelo "esqueça" a influência dele?
+a) Não: o modelo continua carregando a influência aprendida.
+b) Sim, a influência desaparece sozinha.
+c) Sim, desde que o cliente pare de participar.
+d) Sim, se o modelo for pequeno.
+R: a | Apagar dados, parar de convocar e remover a influência são coisas diferentes.
 
-MC: Qual a função do corte (clipping) no DP-FedAvg?
-a) Limitar a sensibilidade de cada cliente.
-b) Aumentar o tráfego.
-c) Comprimir o modelo.
-d) Eliminar o ruído.
-R: a | Nenhum cliente muda a soma por mais que S.
+MC: O que caracteriza o desaprendizado exato?
+a) O modelo resultante equivale ao de um treino feito sem o cliente removido.
+b) O modelo é treinado por menos rodadas.
+c) O modelo guarda os dados do cliente removido.
+d) O modelo é substituído por um modelo aleatório.
+R: a | A forma garantida de obtê-lo é retreinar sem o cliente (ou, em arquiteturas especiais, retreinar só uma parte).
 
-MC: A agregação segura por máscaras garante que:
-a) o servidor veja só a soma das atualizações, e não cada uma.
-b) o modelo final não vaze nada.
-c) não haja atacantes.
-d) o ruído seja removido.
-R: a | As máscaras de pares se cancelam na soma.
+MC: Como o FedEraser (Liu et al., 2021) reconstrói o modelo sem um cliente?
+a) Reaproveita as normas das atualizações antigas dos clientes restantes e usa um treino curto de calibração como direção.
+b) Retreina tudo do zero em todos os clientes.
+c) Apaga a última camada do modelo.
+d) Adiciona ruído até que o cliente desapareça.
+R: a | Usa o histórico guardado no servidor, o que custa menos que retreinar, mas é aproximado.
 
-MC: Qual agregador é frágil a um único cliente malicioso?
-a) A média simples.
-b) A mediana.
-c) A média aparada.
-d) O Multi-Krum.
-R: a | Ponto de ruptura zero.
+MC: No experimento de desaprendizado, o que aconteceu ao apenas parar de convocar o cliente por mais 10 rodadas?
+a) O modelo ainda acertou cerca de 87% dos dígitos 9: o conhecimento permaneceu.
+b) O modelo esqueceu completamente o dígito 9.
+c) A acurácia nos demais dígitos caiu a zero.
+d) O treino falhou.
+R: a | Parar de convocar não remove a influência já incorporada.
 
-MC: Por que os agregadores robustos pioram com dados não-IID?
-a) Clientes honestos diferentes passam a parecer outliers.
-b) Porque são mais lentos.
-c) Porque usam criptografia.
-d) Porque exigem mais memória.
-R: a | Eles supõem honestos parecidos entre si.
+MC: O que ocorreu com o método de subtrair a contribuição do cliente?
+a) Zerou o dígito 9, mas danificou o resto: a perda nos dados do cliente removido (6,8) passou muito a do retreino (3,1).
+b) Foi idêntico ao retreino exato.
+c) Não alterou o modelo.
+d) Aumentou a acurácia no dígito 9.
+R: a | O modelo foi puxado demais; subtrair é barato, mas pouco fiel.
 
-MC: Por que a agregação segura e a detecção de clientes maliciosos entram em tensão?
-a) Para detectar atualizações suspeitas, o servidor precisa vê-las, e a agregação segura as esconde.
-b) Porque ambas usam ruído.
-c) Porque ambas são lentas.
-d) Porque não há tensão.
-R: a | Privacidade e robustez colidem.
+MC: Por que verificar o desaprendizado com mais de uma medida?
+a) Porque um método aproximado pode parecer funcionar em uma métrica e deixar rastros em outra.
+b) Porque as métricas são sempre iguais.
+c) Porque o retreino não pode ser verificado.
+d) Porque só a acurácia global importa.
+R: a | Use a acurácia no dado removido, a perda nele, a proximidade ao retreino e ataques de pertencimento.
 
-MC: No aprendizado vertical, o que pode vazar o rótulo?
-a) O sinal do resíduo (p − y) enviado às partes passivas.
-b) A matriz de mistura.
-c) O corte de norma.
-d) A quantização.
-R: a | Se y = 1, o resíduo é negativo; se y = 0, é positivo.
+MC: O que é um pseudorrótulo?
+a) O rótulo previsto pelo modelo para um exemplo sem rótulo, usado no treino quando a confiança é alta.
+b) Um rótulo sorteado ao acaso.
+c) Um rótulo copiado de outro cliente.
+d) Um rótulo escrito por um especialista.
+R: a | O modelo atual rotula os exemplos em que está confiante.
 
-MC: Qual arquitetura divide a rede neural em duas partes, trocando ativações e gradientes na camada de corte?
-a) Split learning.
-b) Gossip.
-c) HFL.
-d) FedAvg.
-R: a | O cliente computa as primeiras camadas e o servidor, as últimas.
+MC: Qual foi o resultado dos pseudorrótulos no experimento do capítulo?
+a) Precisão alta dos pseudorrótulos (até 0,99), mas ganho de acurácia nulo.
+b) Ganho enorme, alcançando o teto.
+c) Queda da acurácia para zero.
+d) Os pseudorrótulos não puderam ser gerados.
+R: a | Os exemplos aceitos eram os que o modelo já acertava, sem informação nova.
 
-MC: Por que o K-means federado reproduz o centralizado?
-a) Porque depende só de somas e contagens por grupo, que se combinam exatamente.
-b) Porque usa ruído.
-c) Porque ignora clientes pequenos.
-d) Porque usa mediana.
-R: a | Soma de estatísticas suficientes = estatística global.
+MC: Por que tratar o rótulo ausente como 0 (negativo) é um erro no multirrótulo federado?
+a) Porque o modelo aprende que o rótulo nunca existe nos clientes que não o anotam, e o F1 despenca.
+b) Porque o rótulo 0 não existe.
+c) Porque aumenta a acurácia demais.
+d) Porque o servidor recusa rótulos nulos.
+R: a | Ausente não é negativo; o F1 de "par" caiu de 0,91 para 0,46 no experimento.
 
-MC: Por que ajustar modelos de fundação de forma federada pede métodos como LoRA?
-a) Enviar bilhões de parâmetros por rodada é inviável; só A e B trafegam.
-b) Porque LoRA aumenta o modelo.
-c) Porque elimina o pré-treino.
-d) Porque LoRA dá garantia de privacidade.
-R: a | O ajuste de baixo posto reduz comunicação e cálculo local.
+MC: Como tratar corretamente rótulos que só alguns clientes anotam?
+a) Usar uma máscara na perda e agregar por rótulo, só com os clientes que anotam aquele rótulo.
+b) Descartar todos os clientes que não anotam tudo.
+c) Preencher os rótulos ausentes com zero.
+d) Usar apenas o cliente que anota mais rótulos.
+R: a | A perda só conta os rótulos anotados, e cada coluna é agregada pelos clientes que a anotam.
 
-MC: O aprendizado federado é uma forma de anonimização?
-a) Não: atualizações vazam e modelos memorizam, podendo ser tratados como dados pessoais.
-b) Sim, sempre.
-c) Sim, apenas em cross-silo.
-d) Sim, se usar quantização.
-R: a | É preciso base legal, minimização e defesas técnicas.
+MC: Em uma hierarquia pai-filho (dígito e paridade), o que o experimento mostrou?
+a) Derivar o pai do filho eliminou a incoerência e ainda melhorou a acurácia do pai (de cerca de 0,91 para 0,97).
+b) Os dois modelos separados nunca se contradizem.
+c) O pai nunca pode ser derivado do filho.
+d) A hierarquia piora todos os resultados.
+R: a | Os modelos separados eram incoerentes em cerca de 9% dos exemplos.
 
-MC: Qual das proposições resume bem a lição final do livro?
-a) Todo método tem um preço; decidir bem é medir esse preço e comunicá-lo com honestidade.
-b) Um bom algoritmo resolve tudo.
-c) A acurácia global basta.
-d) Privacidade e utilidade nunca conflitam.
-R: a | Compromissos entre qualidade, custo, privacidade e robustez estão em toda decisão.
+MC: Na deriva global, qual estratégia recuperou a acurácia mais rápido no experimento?
+a) Reiniciar o modelo quando o detector dispara, recuperando cerca de 0,87 em uma rodada.
+b) Continuar o treino sem mudar nada, que recuperou em uma rodada.
+c) Parar o treino.
+d) Reduzir o número de clientes.
+R: a | O detector disparou na rodada da deriva; continuar levou cerca de 10 rodadas.
 
-DISC: Explique em suas palavras o que é aprendizado federado, usando uma analogia do cotidiano, e cite dois motivos para adotá-lo.
-R: É treinar um modelo com a colaboração de vários donos de dados sem juntar os dados, como amigas que trocam só os ajustes de uma receita. Motivos: privacidade e leis; custo de mover dados; falta de confiança entre organizações.
+DISC: Explique o que é um straggler, por que ele atrapalha o FedAvg síncrono e que problema novo a assincronia traz.
+R: Straggler é um cliente muito mais lento que os demais. No FedAvg síncrono a rodada dura tanto quanto o mais lento, e os outros ficam ociosos. Na assincronia, ninguém espera, mas surge o atraso: a atualização é calculada sobre uma versão velha do modelo, e aplicá-la sem cuidado pode puxar o modelo para trás.
 
-DISC: Descreva uma rodada do FedAvg e cite quatro hiperparâmetros.
-R: O servidor sorteia clientes e envia o modelo; cada um treina localmente e devolve a atualização; o servidor agrega por média ponderada. Hiperparâmetros: C, E, B e η.
+DISC: Descreva o FedAsync e o FedBuff e compare os dois.
+R: O FedAsync mistura cada resposta ao modelo no instante em que chega, com peso α(1 + atraso)^(−0,5), que diminui com o atraso. O FedBuff guarda K atualizações em um buffer e aplica a média delas, cada uma dividida por √(1 + atraso). O FedBuff é mais estável (média de várias respostas) e mais compatível com agregação segura e DP.
 
-DISC: Explique por que dados não-IID prejudicam o treino e cite duas soluções.
-R: Cada cliente vai ao seu mínimo local (deriva), tornando a média pior e o treino lento e instável. Soluções: SCAFFOLD, FedProx, FedNova, otimizadores no servidor, personalização.
+DISC: Por que o FedBuff é mais compatível com a agregação segura e a privacidade diferencial do que a mistura individual do FedAsync?
+R: Porque o servidor opera sobre um grupo de K atualizações, que pode ser somado com agregação segura (o servidor só vê a soma) e receber ruído de DP calibrado por buffer. Na mistura individual, cada atualização é aplicada sozinha, e o servidor a veria isolada.
 
-DISC: Compare quantização e esparsificação top-k, indicando o papel da memória de erro.
-R: Quantização reduz bits por valor; top-k envia só os maiores valores e seus índices. A memória de erro guarda o que foi cortado e o soma depois, sendo crucial na esparsificação forte.
+DISC: Interprete a tabela do experimento de assincronia (tempo até 90%, acurácia global, clientes rápidos e lentos).
+R: O FedBuff foi o mais rápido (cerca de 18 unidades de tempo contra 28 do síncrono) e teve a melhor acurácia global (0,93). O FedAsync foi mais lento (cerca de 43), pois a mistura individual oscila. Os dois assíncronos atenderam pior os clientes lentos (0,86 e 0,90 contra 0,93 do síncrono): ganho de tempo com perda de justiça.
 
-DISC: Diferencie modelo global, ajuste fino local, Ditto e IFCA.
-R: Global: um modelo para todos. Ajuste fino: continua o treino local a partir do global. Ditto: modelo pessoal com coleira λ ao global. IFCA: agrupa clientes e treina um modelo por grupo.
+DISC: Explique o viés de participação e dê um exemplo do cotidiano.
+R: É a situação em que quem participa das rodadas não é uma amostra aleatória, por exemplo porque só os aparelhos carregando e no Wi-Fi são chamados e isso se relaciona ao que as pessoas fazem com eles. O modelo é treinado com uma fatia enviesada e atende mal quem fica de fora. Analogia: uma pesquisa feita só por telefone fixo em horário comercial.
 
-DISC: Explique o ataque de inversão de gradientes na softmax e por que lotes maiores o dificultam.
-R: O gradiente de um exemplo é x ⊗ (p − y), e o do viés é (p − y), logo x = coluna / gradiente do viés. Com lotes maiores, o gradiente é uma soma de vários exemplos e a reconstrução fica misturada.
+DISC: Compare a ponderação por disponibilidade e o power-of-choice como respostas ao viés de participação.
+R: A ponderação dá mais peso a quem tem baixa probabilidade de aparecer (peso dividido pela disponibilidade), exigindo estimar essa probabilidade. O power-of-choice sorteia candidatos disponíveis e escolhe os de maior perda local, favorecendo quem o modelo atende pior, ao custo de avaliar a perda dos candidatos. No experimento, a pior classe foi de 0,57 (sem correção) para 0,67 e 0,76, respectivamente.
 
-DISC: Explique a inferência de pertencimento e como ela se relaciona com o sobreajuste.
-R: Pergunta se um exemplo estava no treino, explorando a perda menor nos membros. Quanto mais o modelo decora (poucos dados, muito treino), maior a AUC do ataque.
+DISC: Por que a acurácia global pode esconder o problema da seleção enviesada? Use os números do experimento.
+R: Porque é uma média sobre todos os exemplos e muda pouco (0,955 para 0,918), enquanto a pior classe despenca (0,86 para 0,57). Quem fica para trás são os dígitos dos clientes raramente disponíveis. Por isso, é preciso olhar por classe, por cliente e o pior caso.
 
-DISC: Explique a privacidade diferencial, o papel de ε e do corte e do ruído no DP-FedAvg.
-R: A saída quase não muda com a presença de um indivíduo; ε menor, mais privacidade. O corte limita a sensibilidade e o ruído gaussiano z·S esconde a contribuição; ambos custam acurácia.
+DISC: Distinga a lacuna de dados novos e a lacuna de participação, e diga por que a segunda importa para novos usuários.
+R: A lacuna de dados novos compara o desempenho em dados novos de clientes que participaram do treino. A lacuna de participação compara o desempenho em clientes que nunca participaram, possivelmente de distribuições diferentes. A segunda importa porque, ao entregar o modelo a um novo hospital ou celular, ele é um cliente nunca visto.
 
-DISC: Por que a DP exige muitos clientes para ter ε baixo sem destruir a acurácia?
-R: O ruído é dividido pelo número de clientes na média; com poucos clientes, o mesmo ruído pesa muito. Com mais clientes, a acurácia sofre menos.
+DISC: Quais as limitações das partições artificiais e o que fazer em um projeto real?
+R: Partições artificiais (IID, shards, Dirichlet) são simulações e podem não reproduzir as diferenças reais entre clientes (estilos, hábitos, instrumentos). Em um projeto real, use partições naturais (clientes reais, como escritores, usuários ou hospitais), reserve clientes retidos para teste e relate também o pior caso.
 
-DISC: Explique como a agregação segura funciona e suas limitações.
-R: Pares de clientes compartilham segredos que se somam e subtraem, mascarando cada atualização; na soma, as máscaras se cancelam. Limitações: não protege o resultado, exige tratar desistências e tem custo de comunicação.
+DISC: Explique o FedBN, por que ele ajuda sob diferença de estilo nos atributos e quais parâmetros permanecem locais.
+R: Redes com normalização em lote usam média, variância, escala g e deslocamento b. Se os clientes têm estilos diferentes, suas estatísticas diferem, e fazer a média delas prejudica. No FedBN, g, b e as estatísticas ficam locais, e as demais camadas são agregadas. No experimento, com estilos, o FedAvg ficou em 0,88 (percentil 10 de 0,73) e o FedBN em 0,94 (0,90).
 
-DISC: Explique por que a média é frágil e cite dois agregadores robustos, com uma limitação.
-R: Um único valor extremo a arrasta. Mediana e média aparada resistem; limitação: perdem acurácia com dados não-IID e não resistem a mais da metade de maliciosos.
+DISC: Diferencie apagar os dados, parar de convocar o cliente e remover a influência do cliente no modelo.
+R: Apagar os dados elimina o armazenamento, mas o modelo continua com a influência. Parar de convocar impede novas contribuições, mas o que o cliente ensinou permanece. Remover a influência (desaprendizado) busca um modelo equivalente ao treinado sem o cliente, e é o difícil.
 
-DISC: Descreva o backdoor do experimento e por que a acurácia global não o revela.
-R: O atacante treina com imagens com gatilho rotuladas como a classe alvo e amplifica a atualização. O modelo funciona bem em imagens normais, e só erra com o gatilho; por isso a acurácia global fica intacta.
+DISC: Compare retreino exato, subtração da contribuição e calibração no estilo FedEraser quanto a custo e fidelidade, usando o experimento.
+R: O retreino exato é o padrão de referência e o mais caro (2850 épocas-cliente). A subtração custa zero, mas é pouco fiel: a perda no cliente removido foi 6,8 (retreino: 3,1) e a acurácia nos demais caiu. A calibração custou cerca de um quinto (570), com resultado próximo ao do retreino (perda 3,2; acurácia nos demais igual).
 
-DISC: Explique a tensão entre privacidade e robustez em aprendizado federado.
-R: Detectar atualizações maliciosas exige vê-las, mas a agregação segura as esconde. Defesas que inspecionam atualizações enfraquecem a privacidade, e vice-versa.
+DISC: Por que o desaprendizado aproximado não é uma garantia de apagamento, e como verificar?
+R: Porque o método pode parecer funcionar em uma medida e deixar rastros em outra. Verifique com a acurácia e a perda nos dados removidos, a distância ao modelo do retreino exato e ataques de pertencimento. Garantias formais exigem técnicas como DP ou retreino exato. Guardar o histórico de atualizações cria ainda um risco de privacidade e custo de armazenamento.
 
-DISC: Diferencie aprendizado federado horizontal, vertical e por transferência, com exemplos.
-R: Horizontal: mesmas colunas, pessoas diferentes (hospitais). Vertical: mesmas pessoas, colunas diferentes (banco e loja). Transferência: pouca sobreposição, transfere-se conhecimento.
+DISC: Explique o efeito de confirmação nos pseudorrótulos e por que eles não ajudaram no experimento.
+R: O modelo rotula exemplos sem rótulo e treina neles; um erro vira dado de treino e gera mais erros, confirmando as próprias crenças. No experimento, com limiar alto a precisão foi 0,99, mas os exemplos aceitos eram os que o modelo já acertava, sem informação nova; com limiar baixo entraram mais erros (precisão 0,88). O ganho foi nulo.
 
-DISC: Explique o vazamento do resíduo no aprendizado vertical e uma defesa.
-R: O sinal de p − y revela o rótulo aos participantes passivos. Defesas: criptografia homomórfica, ruído (DP) ou agregação segura.
+DISC: Por que o rótulo ausente não é rótulo negativo no multirrótulo federado e como tratar isso na perda e na agregação?
+R: Porque ausente significa que o cliente não anotou, e não que o rótulo é falso. Tratar como 0 ensina o modelo a achar que o rótulo nunca existe (o F1 caiu de 0,91 para 0,46). Use uma máscara na perda (só rótulos anotados contam) e agregue cada rótulo só com os clientes que o anotam.
 
-DISC: Explique por que K-means e PCA têm versões federadas exatas e dê um aviso de privacidade.
-R: Ambos dependem de somas de estatísticas locais (somas, contagens, covariâncias). Aviso: somas por grupo pequeno revelam informação; combine com agregação segura e DP.
+DISC: O que é a coerência hierárquica e como o experimento a tratou?
+R: Em uma hierarquia, o pai deve ser compatível com o filho (um dígito par implica paridade par). Modelos treinados separadamente eram incoerentes em cerca de 9% dos exemplos. Derivar o pai do filho na inferência garante a coerência e elevou a acurácia do pai de cerca de 0,91 para 0,97.
 
-DISC: Explique o papel do LoRA em modelos de fundação federados e a importância do posto.
-R: Congela W₀ e treina só A e B, reduzindo o que trafega. O posto precisa casar com a tarefa: no experimento, o posto 1 não bastou para duas duplas trocadas, e o posto 2 sim.
+DISC: Diferencie deriva global e deriva parcial e indique a estratégia adequada a cada uma.
+R: Na global, todos os clientes mudam de conceito ao mesmo tempo, e basta o modelo se readaptar: detectar e reiniciar costuma ser bom. Na parcial, só parte dos clientes muda, e um modelo único falha nos dois conceitos (0,63 e 0,45); agrupar clientes (IFCA) serve bem ambos (0,96 e 0,95). Reiniciar seria péssimo na parcial.
 
-DISC: Descreva três princípios da LGPD relevantes e uma proposta de justiça em aprendizado federado.
-R: Finalidade, minimização, segurança (também transparência e responsabilização). Justiça: aprendizado federado agnóstico ou q-FFL, que dá mais peso a clientes com maior perda.
+DISC: Qual o dilema de um detector de deriva baseado na perda média e como mitigá-lo?
+R: Se for sensível demais, dispara por ruído (falsos alarmes); se for insensível, demora a reagir. Mitigue calibrando com dados históricos, usando janelas de tempo e distinguindo deriva nos rótulos (conceito) de deriva nos atributos (população).
 
-DISC: Redija um parágrafo de recomendação para a Federa Saúde, justificando a configuração escolhida com os números do projeto.
-R: Recomenda-se mediana com quantização de 4 bits e ajuste fino local: o ASR cai de cerca de 0,70 para zero, o tráfego cai de 1.523 para 195 KB, a acurácia global fica em cerca de 0,94 e a média por cliente sobe a 0,94. Limites: ataque simples, modelo pequeno, dados substitutos e ausência de garantia formal de privacidade.
+DISC: Uma rede de clínicas adota um novo protocolo em algumas unidades. Quais problemas do capítulo podem surgir e que ações você tomaria?
+R: Resposta pessoal coerente: deriva parcial (agrupar unidades, IFCA), viés de participação (unidades com mais recursos aparecem mais), avaliação por clínica e em clínicas novas, possíveis estilos diferentes nos aparelhos (normalização local), rótulos anotados de modos diferentes (máscara) e plano para pedidos de remoção de dados.
 
-DISC: Se a Federa Saúde dobrasse o número de clientes maliciosos (de 2 para 4 em 20), quais configurações do projeto você reavaliaria e por quê?
-R: Reavaliaria a mediana e a média aparada, que perdem robustez à medida que a fração de maliciosos aproxima-se de 30 a 50%, e a DP, que não distingue maliciosos. Mediria o ASR em cada uma e consideraria Multi-Krum ou detecção adicional.
-
+DISC: Resuma o capítulo em cinco linhas, destacando um problema do mundo real que mais o surpreendeu.
+R: Resposta pessoal coerente com o resumo: assincronia (atraso, FedAsync, FedBuff), seleção e viés de participação, avaliação por cliente e clientes novos, FedBN, desaprendizado (apagar, parar, remover), pseudorrótulos e máscara de rótulos, e deriva (reiniciar ou agrupar).

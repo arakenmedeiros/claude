@@ -22,8 +22,32 @@ def resumo(acc):
     return f"média = {acc.mean():.3f} | pior cliente = {acc.min():.3f} | percentil 10 = {np.percentile(acc, 10):.3f}"
 
 
-def ditto(treino, X, y, Wg, lam=0.5, epocas=5, eta=0.1, lote=32, seed=0):
-    """Modelos pessoais v_k treinados com uma 'coleira' em direção ao modelo global Wg."""
+def ditto(treino, X, y, lam=0.5, rodadas=30, epocas=5, eta=0.1, lote=32, seed=0, classes=10):
+    """Ditto (Li et al., 2021): em cada rodada, o modelo global é treinado como no FedAvg e, em paralelo, cada cliente
+    atualiza o seu modelo pessoal v_k com uma coleira em direção ao modelo global ATUAL. Devolve (global, pessoais)."""
+    W = np.zeros((X.shape[1], classes))
+    V = [np.zeros_like(W) for _ in treino]                      # modelos pessoais, mantidos entre as rodadas
+    for r in range(rodadas):
+        locais, tamanhos = [], []
+        for c, p in enumerate(treino):
+            if len(p) == 0:
+                continue
+            rng = np.random.default_rng(seed * 1000 + r * 50 + c)
+            for _ in range(epocas):                              # passo pessoal: F_k(v) + (lam/2)||v - W||^2
+                ordem = rng.permutation(len(p))
+                for i in range(0, len(p), lote):
+                    b = p[ordem[i:i + lote]]
+                    V[c] -= eta * gradiente(V[c], X[b], y[b], lam, W)
+            locais.append(treino_local(W, X[p], y[p], epocas, eta, lote, 0.0, seed * 1000 + r * 50 + c))   # passo global
+            tamanhos.append(len(p))
+        pk = np.array(tamanhos) / sum(tamanhos)
+        W = sum(a * b for a, b in zip(pk, locais))
+    return W, V
+
+
+def ajuste_proximal(treino, X, y, Wg, lam=0.5, epocas=5, eta=0.1, lote=32, seed=0):
+    """Adaptação proximal POSTERIOR (inspirada no Ditto, mas mais simples): depois que o treino global terminou,
+    cada cliente ajusta um modelo pessoal com uma coleira em direção ao modelo global FIXO Wg."""
     pessoais = []
     for k, p in enumerate(treino):
         v, rng = Wg.copy(), np.random.default_rng(seed + k)

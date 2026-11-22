@@ -17,6 +17,12 @@
 | Não ter servidor | Aprendizado descentralizado (gossip) | 10 |
 | Agrupar ou reduzir dimensões sem rótulos | K-means e PCA federados | 11 |
 | Especializar modelos grandes | Adaptadores de baixo posto (LoRA) | 11 |
+| Clientes lentos ou que entram e saem | Aprendizado assíncrono (FedAsync, FedBuff) | 12 |
+| Quem participa não representa todos | Ponderação por disponibilidade, *power-of-choice* | 12 |
+| Atributos com "estilos" diferentes por cliente | FedBN (normalização local) | 12 |
+| Remover a influência de um cliente | Retreino exato, calibração (FedEraser), DP | 12 |
+| Poucos rótulos, ou rótulos diferentes por cliente | Pseudorrótulos, máscara de rótulos | 12 |
+| Os dados mudam com o tempo | Detector de deriva, reinício, agrupamento (IFCA) | 12 |
 
 ## C.2 Arquivos de código do livro
 
@@ -30,7 +36,8 @@
 | `robustez.py` | 9 | Agregadores robustos, ataques e FedAvg com maliciosos |
 | `arquiteturas.py` | 10 | VFL, split learning e consenso descentralizado |
 | `fronteiras.py` | 11 | K-means e PCA federados e adaptadores de baixo posto |
-| `projeto.py` | 12 | Motor do projeto final |
+| `avancado.py` | 12 | Assincronia, seleção de clientes, estilos, FedBN, desaprendizado, pseudorrótulos, multirrótulo e deriva |
+| `projeto.py` | 13 | Motor do projeto final |
 
 Os códigos completos de cada arquivo aparecem nos respectivos capítulos. A seguir, a base de todos eles.
 
@@ -45,13 +52,31 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def carregar_digits(seed=0):
-    """Dígitos manuscritos da UCI (via scikit-learn), padronizados, com coluna de viés."""
+def carregar_digits(seed=0, bruto=False):
+    """Dígitos manuscritos da UCI (via scikit-learn), padronizados, com coluna de viés.
+    A padronização usa as estatísticas de TODO o conjunto de treino (atalho de simulação: equivale à
+    padronização federada do Capítulo 2). O teste global nunca entra no cálculo.
+    Com bruto=True, devolve os atributos sem padronizar e sem a coluna de viés."""
     X, y = load_digits(return_X_y=True)
     Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.25, random_state=seed, stratify=y)
+    if bruto:
+        return Xtr, Xte, ytr, yte
     esc = StandardScaler().fit(Xtr)
     mais_um = lambda A: np.hstack([esc.transform(A), np.ones((len(A), 1))])
     return mais_um(Xtr), mais_um(Xte), ytr, yte
+
+
+def padronizar_clientes(Xtr_bruto, Xte_bruto, treino):
+    """Padronização federada (Capítulo 2) usando só as somas dos dados de TREINO dos clientes.
+    Serve quando cada cliente separa um teste local: o padronizador não vê esses exemplos de teste."""
+    n = sum(len(p) for p in treino)
+    s1 = sum(Xtr_bruto[p].sum(axis=0) for p in treino)
+    s2 = sum((Xtr_bruto[p] ** 2).sum(axis=0) for p in treino)
+    mu = s1 / n
+    dp = np.sqrt(np.maximum(s2 / n - mu ** 2, 0.0))
+    dp[dp == 0] = 1.0
+    mais_um = lambda A: np.hstack([(A - mu) / dp, np.ones((len(A), 1))])
+    return mais_um(Xtr_bruto), mais_um(Xte_bruto)
 
 
 def particao_iid(y, k, seed=0):
