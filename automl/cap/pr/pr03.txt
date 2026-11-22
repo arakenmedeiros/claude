@@ -116,6 +116,33 @@ print(res.sort_values("mean_test_score", ascending=False).head(3).to_string(inde
 print("Pior combinação:", round(res["mean_test_score"].min(), 3), "| melhor:", round(res["mean_test_score"].max(), 3))
 ```
 @@NOTE A escala importou muito: a pior combinação (sem escala) chega a 0,691, enquanto a melhor (padronização, 9 vizinhos) chega a 0,966. A diferença entre `StandardScaler` (0,966) e `MinMaxScaler` (0,961) é pequena. Esta busca é um mini-AutoML sobre o pré-processamento.
+@@EX 5 | Target encoding com e sem vazamento | avançado
+Crie uma coluna "bairro" com 400 categorias **sem relação com o alvo** (`rng.integers(0, 400, 2500)`) ao lado de três atributos numéricos, dos quais os dois primeiros determinam o alvo com ruído. Compare, no teste, um `HistGradientBoostingClassifier` com: (a) apenas os atributos numéricos; (b) o target encoding **ingênuo** (média do alvo por categoria, calculada no próprio treino); (c) o `TargetEncoder` do scikit-learn, dentro de um pipeline.
+
+*Pergunta:* qual versão vazou o alvo? Qual foi o efeito na acurácia de treino e de teste?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np, pandas as pd
+from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import TargetEncoder
+
+rng = np.random.default_rng(5); n = 2500
+x = rng.normal(size=(n, 3)); y = ((x[:, 0] + 0.5 * x[:, 1] + rng.normal(0, 1.5, n)) > 0).astype(int)
+df = pd.DataFrame({"x1": x[:, 0], "x2": x[:, 1], "x3": x[:, 2], "bairro": rng.integers(0, 400, n)})
+dtr, dte, ytr, yte = train_test_split(df, y, test_size=0.3, random_state=0, stratify=y)
+NUM = ["x1", "x2", "x3"]; hgb = lambda: HistGradientBoostingClassifier(random_state=0)
+m = hgb().fit(dtr[NUM], ytr); print(f"(a) sem bairro       : treino = {m.score(dtr[NUM], ytr):.3f} | teste = {m.score(dte[NUM], yte):.3f}")
+media = pd.Series(ytr).groupby(dtr["bairro"].values).mean()
+ing = lambda d: d[NUM].assign(te=d["bairro"].map(media).fillna(ytr.mean()).values)
+m = hgb().fit(ing(dtr), ytr); print(f"(b) TE ingênuo       : treino = {m.score(ing(dtr), ytr):.3f} | teste = {m.score(ing(dte), yte):.3f}")
+te = ColumnTransformer([("b", TargetEncoder(random_state=0), ["bairro"])], remainder="passthrough")
+m = make_pipeline(te, hgb()).fit(dtr, ytr); print(f"(c) TargetEncoder    : treino = {m.score(dtr, ytr):.3f} | teste = {m.score(dte, yte):.3f}")
+```
+@@NOTE A versão **ingênua (b)** vazou o alvo: a acurácia de treino subiu para 0,955 (contra 0,899 sem a coluna), mas a de teste caiu para 0,603, abaixo da versão que ignora a coluna (0,684). O `TargetEncoder` com *cross-fitting* **(c)** ficou praticamente igual à versão sem a coluna (teste 0,680 contra 0,684), isto é, ignorou, com razão, uma coluna inútil. A nota de treino de (c) (0,870) não é a que o modelo viu no ajuste, pois, ao prever, o codificador usa todo o treino.
 @@PROJ Pipeline robusto para dados sujos | Cap03
 **Fonte dos dados.** *Breast Cancer Wisconsin (Diagnostic)*, do repositório **UCI Machine Learning**, incluído no scikit-learn. Para o projeto, você vai **sujar** os dados de propósito, simulando o cotidiano.
 

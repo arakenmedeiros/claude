@@ -47,12 +47,12 @@ c) Remove valores extremos.
 d) Converte categorias em números.
 R: a | O resultado tem média 0 e desvio padrão 1.
 
-MC: O que faz o MinMaxScaler?
-a) Subtrai a mediana.
-b) Remove colunas constantes.
-c) Leva os valores para o intervalo de 0 a 1.
-d) Cria colunas de 0 e 1 para categorias.
-R: c | Reescala linearmente os valores usando o mínimo e o máximo.
+MC: O que é o target encoding?
+a) Substituir cada categoria pela média do alvo nos exemplos dela, o que exige cuidado com vazamento.
+b) Converter cada categoria em uma coluna de 0 ou 1.
+c) Ordenar as categorias por ordem alfabética.
+d) Remover as categorias raras.
+R: a | Funciona com muitas categorias, mas usa o alvo para construir o atributo.
 
 MC: Por que não é recomendável codificar "Recife, Natal, Salvador" como 1, 2 e 3 para a maioria dos modelos?
 a) Porque o scikit-learn não aceita números inteiros.
@@ -173,12 +173,12 @@ c) Escolher o melhor algoritmo.
 d) Remover valores ausentes.
 R: b | A semente aleatória torna o experimento reproduzível.
 
-MC: Um PowerTransformer ou QuantileTransformer é útil, por exemplo, para:
-a) dividir os dados.
-b) deixar distribuições muito assimétricas mais parecidas com um sino.
-c) codificar texto.
-d) preencher valores ausentes.
-R: b | Eles reduzem a assimetria de variáveis como renda.
+MC: Para que serve o cross-fitting (ajuste cruzado) no TargetEncoder do scikit-learn?
+a) Codificar cada exemplo com estatísticas calculadas sem ele, evitando que o exemplo veja o próprio rótulo.
+b) Acelerar o treino.
+c) Padronizar as colunas numéricas.
+d) Remover o conjunto de teste.
+R: a | Sem isso, categorias raras viram o rótulo do próprio exemplo (vazamento).
 
 MC: O que o VarianceThreshold faz?
 a) Descarta atributos que quase não variam.
@@ -265,5 +265,5 @@ R: Fixar sementes aleatórias, registrar as versões das bibliotecas, guardar o 
 DISC: Dê um exemplo de coluna cuja interpretação o AutoML não consegue deduzir sozinho e explique o risco.
 R: Uma coluna de idade com valor 999 pode ser um código de "não informado". Se tratada como número, distorce médias e escalas; só uma pessoa conhece o significado e decide o tratamento.
 
-DISC: Compare tratar os dados "à mão" e deixar o AutoML escolher o pré-processamento, apontando uma vantagem e um cuidado.
-R: O AutoML testa sistematicamente opções (imputação, escala etc.) e escolhe pela validação, economizando tempo. O cuidado é manter tudo dentro do pipeline para evitar vazamento e conferir o sentido dos dados.
+DISC: Explique por que o target encoding ingênuo vaza o alvo e como o cross-fitting resolve o problema. Use o resultado do capítulo.
+R: Calcular a média do alvo por categoria nos mesmos exemplos de treino faz cada exemplo carregar o próprio rótulo no atributo, sobretudo em categorias raras: o modelo decora. No capítulo, a versão ingênua teve acurácia de treino de 0,991 e teste de 0,563, pior que ignorar a coluna (0,651). O TargetEncoder com cross-fitting ficou em 0,656 no teste.

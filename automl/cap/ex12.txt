@@ -19,19 +19,19 @@ c) Prever a média de todos os meses.
 d) Prever um valor aleatório.
 R: a | Aproveita a sazonalidade, mas ignora a tendência.
 
-MC: O que é sazonalidade?
-a) Um padrão que se repete em períodos regulares, como o verão.
-b) O crescimento contínuo da série.
-c) Um erro de medição.
-d) O número de atributos.
-R: a | Exemplo: o ciclo anual de CO₂.
+MC: Por que interpolar linearmente uma série antes de dividir em janelas de treino e teste é um problema?
+a) Porque o valor usado para preencher uma lacuna pode depender de observações posteriores, vazando o futuro.
+b) Porque a interpolação elimina a sazonalidade.
+c) Porque a interpolação só funciona em textos.
+d) Porque aumenta o tamanho do teste.
+R: a | O capítulo usa preenchimento causal (ffill), que só usa o último valor já observado.
 
-MC: O que é tendência em uma série temporal?
-a) Um crescimento ou queda de longo prazo.
-b) Um padrão que se repete todo ano.
-c) A média das previsões.
-d) Um tipo de modelo.
-R: a | A série de CO₂ cresce ao longo das décadas.
+MC: O que é um preenchimento causal de valores ausentes em uma série?
+a) Preencher cada lacuna usando apenas informação disponível até aquele instante, como o último valor observado.
+b) Preencher usando a média da série inteira.
+c) Preencher com zeros.
+d) Apagar as linhas com lacunas.
+R: a | Respeita a informação disponível em cada instante, inclusive nas fronteiras entre treino e teste.
 
 MC: O que são atrasos (lags)?
 a) Valores passados da série usados como atributos.
@@ -62,7 +62,7 @@ d) Escolher o modelo pelo teste.
 R: a | TimeSeriesSplit respeita a ordem.
 
 MC: O que mostrou o experimento de validação com boosting em valores brutos?
-a) A validação aleatória foi muito mais otimista que a temporal (0,56 contra 1,71).
+a) A validação aleatória foi muito mais otimista que a temporal (0,58 contra 1,69).
 b) As duas deram o mesmo valor.
 c) A temporal foi melhor.
 d) O boosting extrapola bem a tendência.
@@ -73,14 +73,14 @@ a) Ridge com 24 atrasos, sem diferenciação.
 b) Boosting com 6 atrasos.
 c) Floresta com 12 atrasos.
 d) Naive.
-R: a | Erro de teste de 0,227.
+R: a | Erro de teste de 0,237.
 
 MC: Qual foi o erro de teste da previsão ingênua na série de CO₂ (últimos 36 meses)?
 a) Cerca de 1,08 ppm.
 b) Cerca de 0,23 ppm.
 c) Cerca de 5 ppm.
 d) Zero.
-R: a | O mini-AutoML teve 0,227.
+R: a | O mini-AutoML teve 0,237.
 
 MC: O que é validação em avanço (walk-forward)?
 a) Reajustar o modelo a cada novo ponto e prever o seguinte.
@@ -145,19 +145,19 @@ c) Porque usa muitas classes.
 d) Porque é proibido.
 R: a | Os números ilustram um efeito, não o desempenho em textos reais.
 
-MC: O que é o BERT (Devlin et al., 2019)?
-a) Um modelo de linguagem pré-treinado, ajustado depois para tarefas específicas.
-b) Um algoritmo de busca em grade.
-c) Uma métrica.
-d) Uma base de dados de imagens.
-R: a | Baseado em Transformers.
+MC: O que mede a perda de Hamming em um problema multirrótulo?
+a) A fração de pares exemplo-rótulo previstos incorretamente.
+b) A fração de exemplos com todos os rótulos corretos.
+c) O F1 médio dos rótulos.
+d) O número de rótulos por exemplo.
+R: a | A correspondência exata é a fração de exemplos com todos os rótulos corretos.
 
-MC: O que é ajuste fino (fine-tuning)?
-a) Reajustar um modelo pré-treinado para a sua tarefa.
-b) Remover atributos.
-c) Aumentar o teste.
-d) Trocar a métrica.
-R: a | Reaproveita o conhecimento do pré-treino.
+MC: Em um sistema RAG, qual é o risco de ajustar prompts, tamanho de trechos e k olhando as perguntas usadas para relatar o resultado?
+a) O otimismo da busca: o conjunto de avaliação deixa de ser protegido e a nota fica inflada.
+b) Nenhum: ajustar sempre melhora a avaliação.
+c) O sistema fica mais rápido.
+d) A recuperação deixa de funcionar.
+R: a | Valem o conjunto de desenvolvimento, o teste protegido e o intervalo de incerteza.
 
 MC: O que é ampliação de dados (data augmentation) em imagens?
 a) Criar novas imagens de treino com pequenas distorções das existentes.
@@ -230,13 +230,13 @@ DISC: Descreva o espaço de busca do mini-AutoML de séries temporais do capítu
 R: Modelo (Ridge ou HistGradientBoosting), atrasos (6, 12 ou 24) e diferenciação (sim ou não): 12 configurações, escolhidas por validação temporal.
 
 DISC: Compare o resultado do mini-AutoML com as linhas de base.
-R: O mini-AutoML teve MAE 0,227, contra 1,077 da ingênua e 1,413 da sazonal ingênua; a pior configuração teve 1,399.
+R: O mini-AutoML teve MAE 0,237, contra 1,077 da ingênua e 1,413 da sazonal ingênua; a pior configuração teve 1,399.
 
 DISC: Por que a previsão de 12 meses de uma vez é mais difícil que a de um mês à frente?
 R: Porque os erros se acumulam com o horizonte e os valores intermediários não são observados; por isso é preciso informar o horizonte avaliado.
 
-DISC: O que é o concept drift e como ele afeta modelos de séries?
-R: É a mudança do padrão dos dados ao longo do tempo. O modelo envelhece e perde precisão, exigindo monitoramento e reajuste.
+DISC: Compare relevância binária, cadeia de classificadores e limiares por rótulo no problema multirrótulo do capítulo.
+R: A relevância binária treina um classificador por rótulo; a cadeia usa as previsões anteriores como atributos e acerta mais exemplos por correspondência exata (0,343 contra 0,328), com F1 um pouco menor; os limiares por rótulo, escolhidos na validação, elevam o F1 (micro 0,727, macro 0,723), mas pioram a correspondência exata (0,247). Não há melhor absoluto: depende da métrica.
 
 DISC: Explique o pipeline de texto com TF-IDF.
 R: O texto é vetorizado (cada palavra ou n-grama recebe um peso que é alto se for frequente no documento e raro nos outros) e um classificador, como a regressão logística, decide a classe.
@@ -265,5 +265,5 @@ R: No teste distorcido, a acurácia subiu de 0,529 para 0,873; no limpo, caiu de
 DISC: Por que a validação deve se parecer com o uso real?
 R: Porque ela define o que a busca valoriza. Com validação distorcida, escolhem-se políticas robustas a distorção; com validação limpa, outra política seria escolhida.
 
-DISC: Quando o aprendizado por transferência é preferível?
-R: Quando há poucos dados em imagens ou texto: reaproveita-se uma rede pré-treinada em grandes conjuntos e reajusta-se para a tarefa.
+DISC: Que restrições e cuidados de avaliação surgem ao aplicar AutoML a um pipeline de RAG? Use o experimento do capítulo.
+R: Restrição de contexto (trecho x k <= 1.200 palavras) e custo por chamada. No experimento, a melhor configuração sem restrição (contexto de 3.200 palavras) teve revocação de teste de 0,847, e a melhor viável, 0,733: o preço da restrição. Com 150 consultas, o erro padrão é cerca de 0,04: relate o intervalo. É preciso conjunto de desenvolvimento e teste protegido, e atenção à contaminação do modelo pelas perguntas de avaliação.

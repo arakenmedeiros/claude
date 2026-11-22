@@ -3,5 +3,6 @@
  "2-EX2": "Proporção de casos raros: 0.04\nSempre benigno        acur=0.955 prec=0.000 revoc=0.000 AUC=0.500\nLogística comum       acur=0.973 prec=1.000 revoc=0.400 AUC=0.996\nLogística balanceada  acur=0.973 prec=0.750 revoc=0.600 AUC=0.991\n",
  "2-EX3": "30 divisões: menor=0.907  maior=1.000  média=0.967\nValidação cruzada (5 partes): média=0.949  desvio=0.038\n",
  "2-EX4": "Melhor nota de validação (100 candidatos): 0.642\nNota no teste separado                    : 0.614\nProporção da classe majoritária (linha de base): 0.627\n",
+ "2-EX5": "(a) limiar 0,5             precisão = 1.000 | revocação = 0.404 | F1 = 0.575\n(b) pesos balanceados      precisão = 0.141 | revocação = 0.692 | F1 = 0.235\n(c) limiar 0.26 (validação) precisão = 0.700 | revocação = 0.538 | F1 = 0.609\n",
  "2-PROJ0": "Formato: (1797, 64) | exemplos por classe: [178 182 177 183 181 182 181 179 174 180]\nLinha de base: 0.100\nÁrvore          validação = 0.829 (±0.033)\nk-vizinhos      validação = 0.973 (±0.009)\nReg. logística  validação = 0.971 (±0.010)\nFloresta        validação = 0.977 (±0.010)\n\nVencedor: Floresta\nTeste final: acurácia = 0.987 | F1 macro = 0.987\nConfusão mais frequente: dígito 0 previsto como 4 (1 vezes)\n"
 }

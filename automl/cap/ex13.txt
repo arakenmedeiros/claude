@@ -61,12 +61,12 @@ c) Sortear o pagador.
 d) Contar as mesas.
 R: a | Divide-se a 'conta' entre os atributos.
 
-MC: O que faz o LIME (Ribeiro et al., 2016)?
-a) Explica uma decisão ajustando um modelo simples na vizinhança dela.
-b) Treina uma rede maior.
-c) Escolhe hiperparâmetros.
-d) Remove atributos.
-R: a | É uma explicação local.
+MC: Em que escala estão, por padrão, os valores SHAP de um TreeExplainer para um classificador binário de árvores (como o LightGBM)?
+a) Na margem bruta do modelo, isto é, em log-odds, e não em pontos percentuais de probabilidade.
+b) Em probabilidade, de 0 a 1.
+c) Em acurácia.
+d) Em número de exemplos.
+R: a | margem = valor-base + soma das contribuições; P = 1 / (1 + exp(-margem)).
 
 MC: Por que 'explicar não é justificar'?
 a) Porque a explicação mostra como o modelo decidiu, não se a decisão é correta ou justa.
@@ -89,19 +89,19 @@ c) A variável medida é um mau retrato do que importa.
 d) As decisões do modelo mudam os dados futuros.
 R: a | É o caso do nosso crédito simulado.
 
-MC: O que é o viés de representação?
-a) Um grupo aparece pouco nos dados e o modelo aprende mal sobre ele.
-b) Decisões injustas do passado.
-c) Erro de medição.
-d) Erro de programação.
-R: a | Falta de exemplos de um grupo.
+MC: Qual é a diferença entre paridade demográfica e igualdade de oportunidade?
+a) A primeira iguala as taxas de seleção entre os grupos; a segunda iguala a taxa de verdadeiros positivos (TPR) entre os grupos.
+b) São o mesmo critério.
+c) A primeira iguala o TPR e a segunda, a taxa de seleção.
+d) Ambas iguala a acurácia.
+R: a | Igualar um não garante igualar o outro; a segunda depende dos rótulos.
 
-MC: O que é o viés de feedback?
-a) As decisões do modelo alteram os dados futuros e reforçam a distorção.
-b) O erro de arredondamento.
-c) Um tipo de métrica.
-d) Um tipo de ensemble.
-R: a | Cria um ciclo que se retroalimenta.
+MC: Por que os limiares por grupo devem ser escolhidos na validação e não no teste?
+a) Para que o teste meça uma regra congelada, sem adaptá-la ao conjunto que será avaliado.
+b) Porque a validação é maior que o teste.
+c) Porque o teste não tem rótulos.
+d) Porque limiares não podem ser calculados.
+R: a | Calcular o limiar sobre as pontuações do teste é uma variante transdutiva e precisa ser declarada.
 
 MC: O que mede a taxa de seleção?
 a) A proporção de pessoas aprovadas em cada grupo.
@@ -129,14 +129,14 @@ a) O grupo 1 continuou sendo aprovado menos; o viés circulou por outras variáv
 b) O viés desapareceu.
 c) A acurácia caiu a zero.
 d) O grupo 0 foi prejudicado.
-R: a | Seleção 0,48/0,39 e TPR real 0,83/0,69.
+R: a | Seleção 0,48/0,39 e TPR real 0,81/0,68.
 
-MC: Por que o crédito simulado permite conhecer a 'verdade'?
-a) Porque a capacidade real de pagamento foi gerada por nós e é conhecida.
-b) Porque os dados são reais.
-c) Porque o modelo a revela.
-d) Porque o teste a contém.
-R: a | No mundo real, essa verdade é desconhecida.
+MC: O que é a predição conforme (conformal prediction)?
+a) Um método que devolve, para cada caso, um conjunto de classes plausíveis, com garantia de cobertura média sob trocabilidade.
+b) Um método que treina uma rede maior.
+c) Um tipo de ensemble.
+d) Uma técnica de padronização.
+R: a | Vovk, Gammerman e Shafer (2005); Angelopoulos e Bates (2023).
 
 MC: O que são limiares por grupo?
 a) Pontos de corte diferentes por grupo para decidir a partir da probabilidade.
@@ -146,11 +146,11 @@ d) Faixas de preço.
 R: a | No capítulo, igualam a taxa de seleção.
 
 MC: O que aconteceu com a acurácia contra a verdade ao usar limiares por grupo no capítulo?
-a) Subiu de 0,847 para 0,858.
+a) Subiu de 0,846 para 0,857.
 b) Caiu a zero.
 c) Não foi medida.
 d) Caiu para 0,5.
-R: a | A acurácia contra o histórico caiu de 0,818 para 0,801.
+R: a | A acurácia contra o histórico caiu de 0,809 para 0,785 (paridade demográfica, com o limiar escolhido na validação).
 
 MC: Por que o resultado do ajuste de limiares não deve ser generalizado?
 a) Porque vale para o cenário simulado, em que a verdade é conhecida; no mundo real há trade-offs e rótulos enviesados.
@@ -160,7 +160,7 @@ d) Porque o limiar é aleatório.
 R: a | A escolha do critério é uma decisão humana e social.
 
 MC: No Exercício 4, o que ocorreu ao igualar o TPR contra o histórico enviesado?
-a) O TPR real do grupo 1 não melhorou (0,67 para 0,63).
+a) O TPR real do grupo 1 quase não melhorou (0,64 para 0,68).
 b) A disparidade real desapareceu.
 c) A acurácia dobrou.
 d) O TPR do grupo 0 caiu a zero.
@@ -180,12 +180,12 @@ c) Esconder o custo.
 d) Abolir o aprendizado de máquina.
 R: a | Green AI.
 
-MC: Qual é o primeiro passo para estimar o custo de um AutoML?
-a) Contar quantos modelos serão treinados.
-b) Medir o tamanho da tela.
-c) Escolher a semente.
-d) Mudar a métrica.
-R: a | Treinos × tempo por treino × consumo.
+MC: O que mede o ECE (erro de calibração esperado)?
+a) A distância média entre a probabilidade prevista e a frequência observada, em faixas de probabilidade.
+b) O tempo de treino.
+c) A acurácia média.
+d) O número de parâmetros.
+R: a | Um modelo calibrado diz 70% quando 70% dos casos de fato ocorrem.
 
 MC: Qual das alternativas é um limite do AutoML?
 a) Não define o problema nem corrige dados ruins.
@@ -223,8 +223,8 @@ R: Global: o que o modelo valoriza em geral (importância média de atributos). 
 DISC: Explique a importância por permutação e uma limitação.
 R: Embaralha-se uma coluna e mede-se a queda de desempenho. Com atributos correlacionados, a importância se reparte de forma instável e é propriedade do modelo, não do mundo.
 
-DISC: Explique a ideia do SHAP com a analogia do capítulo.
-R: Como dividir de forma justa a conta do restaurante pela contribuição média de cada pessoa em todas as ordens, o SHAP divide a diferença entre a previsão e a média entre os atributos (valores de Shapley).
+DISC: Em que escala estão os valores SHAP no exemplo do capítulo e como converter uma explicação local em probabilidade?
+R: Em log-odds (margem bruta). A conta é margem = valor-base + soma das contribuições SHAP e probabilidade = 1/(1 + exp(-margem)). No exemplo, valor-base de -0,53 e soma de -4,90 dão margem de -5,43, ou P = 0,0044, igual ao predict_proba.
 
 DISC: Por que explicar não é justificar?
 R: A explicação mostra como o modelo decidiu, não se a decisão é justa. Um modelo enviesado pode ser perfeitamente explicável.
@@ -236,22 +236,22 @@ DISC: Explique taxa de seleção e igualdade de oportunidade.
 R: Taxa de seleção: proporção de aprovados no grupo. Igualdade de oportunidade: entre quem mereceria a aprovação, a taxa de aprovação (TPR) deve ser igual entre os grupos.
 
 DISC: Por que o crédito simulado do capítulo tem rótulos enviesados e como isso aparece nos números?
-R: As decisões históricas exigiam mais do grupo 1: aprovação de 0,29 contra 0,51, embora a proporção de bons pagadores fosse parecida (0,49 contra 0,51).
+R: As decisões históricas exigiam mais do grupo 1: aprovação de 0,29 contra 0,51, embora a proporção de bons pagadores fosse a mesma (0,50 nos dois grupos).
 
 DISC: Por que apagar o atributo sensível não elimina o viés?
 R: Porque variáveis proxy (renda, CEP) o reconstroem e os rótulos históricos já carregam o viés; o modelo aprende o mesmo padrão.
 
-DISC: Descreva o resultado do teste 'com CEP' e 'sem CEP'.
-R: Em ambos, o grupo 1 foi aprovado menos (seleção 0,38 e 0,39 contra 0,48) e teve TPR real menor (0,67 e 0,69 contra 0,81 e 0,83).
+DISC: Explique a calibração e o que o capítulo mostrou com o boosting agressivo.
+R: Calibrar é fazer as probabilidades corresponderem às frequências observadas, usando um calibrador (sigmoide ou isotônico) ajustado em dados não usados no treino do modelo. O boosting agressivo foi superconfiante: ECE de 0,180 e perda logarítmica de 1,13; com a sigmoide ajustada na validação, o ECE caiu para 0,026 e a perda para 0,46.
 
 DISC: Explique a mitigação por limiares por grupo e seus resultados no capítulo.
-R: Escolhe-se um limiar menor para o grupo 1 para igualar a taxa de seleção. A seleção igualou-se (0,49), o TPR real do grupo 1 subiu de 0,67 para 0,81 e a acurácia contra a verdade subiu de 0,847 para 0,858.
+R: Escolhe-se, na validação, um limiar menor para o grupo 1 (cerca de 0,29) para igualar a taxa de seleção, e a regra é congelada e avaliada no teste. A seleção ficou próxima (0,49 e 0,52), o TPR real do grupo 1 subiu de 0,67 para 0,84 e a acurácia contra a verdade subiu de 0,846 para 0,857.
 
 DISC: Por que o resultado da mitigação não prova que ela resolve o viés em dados reais?
 R: Em dados reais a verdade é desconhecida, os rótulos podem ser enviesados e as definições de justiça podem entrar em conflito. A escolha do critério é decisão humana, social e, às vezes, legal.
 
 DISC: Por que igualar o TPR contra os rótulos históricos pode não corrigir a disparidade real?
-R: Porque o histórico é o enviesado: igualar contra ele considera 'correto' o que ele aprovou. No exercício, o TPR real do grupo 1 até caiu (0,67 para 0,63).
+R: Porque o histórico é o enviesado: igualar contra ele considera 'correto' o que ele aprovou. No exercício, o TPR real do grupo 1 quase não mudou (0,64 para 0,68).
 
 DISC: Como detectar proxies?
 R: Treinar um classificador para prever o atributo sensível a partir dos demais atributos: AUC alta indica que o grupo pode ser reconstruído; remover atributos um a um mostra os que mais contribuem.
@@ -262,8 +262,8 @@ R: Contando quantos modelos serão treinados (× tempo por treino × consumo). R
 DISC: Cite cinco limites do AutoML.
 R: Não define o problema; não corrige dados ruins; não há almoço grátis; otimiza a validação (otimismo da seleção); não prevê mudanças do mundo; tem custo; pode esconder decisões.
 
-DISC: Que perguntas a lista de verificação ética propõe antes, durante e depois?
-R: Antes: quem é afetado, origem dos dados, ausentes, rótulos. Durante: linha de base e modelo interpretável, validação adequada, desempenho por grupo. Depois: explicação, contestação, monitoramento, custo.
+DISC: Descreva os passos da predição conforme dividida e como interpretar os conjuntos de previsão e a abstenção.
+R: Na calibração, calcula-se 1 menos a probabilidade da classe verdadeira de cada caso; toma-se o quantil correspondente à cobertura desejada (com correção de amostra finita); no caso novo, incluem-se as classes com probabilidade pelo menos 1 - q. Conjunto unitário indica segurança; com duas classes, abstenção (encaminhar a uma pessoa). No capítulo, a cobertura foi de 0,903 (alvo 0,90), com 22% de abstenções e acurácia de 0,875 nos casos decididos.
 
 DISC: Por que o AutoML 'desloca' a responsabilidade humana, mas não a elimina?
 R: Porque automatiza a busca de modelos, mas não decide o problema, a métrica, a qualidade dos dados, a justiça, a explicação nem o monitoramento, que continuam humanos.

@@ -107,6 +107,31 @@ for nome, (d, rot, ru) in politicas.items():
     print(f"{nome:<16s} teste limpo = {m.score(Xte, yte):.3f} | teste distorcido = {m.score(Xte_d, yte):.3f}")
 ```
 @@NOTE Sob distorção, a política das três juntas foi a melhor (0,876), seguida de só deslocamento (0,809) e só rotação (0,687); só ruído (0,527) praticamente não ajudou, igual a não ampliar (0,533), pois o teste distorcido não contém ruído. No teste limpo, todas ficaram entre 0,947 e 0,955, com perda de no máximo 1 ponto. A lição: a ampliação deve **imitar a variação do uso real** (deslocamento e rotação, aqui); ruído é inútil quando o teste não o tem.
+@@EX 5 | Multirrótulo: a métrica decide | avançado
+Gere `make_multilabel_classification(3000, 25, n_classes=5, n_labels=2, length=50, allow_unlabeled=False, random_state=2)`, separe teste (30%) e validação (30% do restante). Compare, no teste, a relevância binária (`OneVsRestClassifier` com regressão logística) com limiar 0,5 e com **um limiar por rótulo** escolhido na validação (maximizando o F1 de cada rótulo). Mostre a perda de Hamming, o F1 micro, o F1 macro e a correspondência exata.
+
+*Pergunta:* qual regra é melhor? Isso depende da métrica?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.datasets import make_multilabel_classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, f1_score, hamming_loss
+from sklearn.model_selection import train_test_split
+from sklearn.multiclass import OneVsRestClassifier
+
+X, Y = make_multilabel_classification(3000, 25, n_classes=5, n_labels=2, length=50, allow_unlabeled=False, random_state=2)
+Xa, Xte, Ya, Yte = train_test_split(X, Y, test_size=0.3, random_state=0)
+Xtr, Xva, Ytr, Yva = train_test_split(Xa, Ya, test_size=0.3, random_state=1)
+br = OneVsRestClassifier(LogisticRegression(max_iter=2000)).fit(Xtr, Ytr); Pv, Pt = br.predict_proba(Xva), br.predict_proba(Xte)
+cand = np.linspace(0.05, 0.9, 86)
+t = np.array([cand[int(np.argmax([f1_score(Yva[:, j], (Pv[:, j] >= c).astype(int), zero_division=0) for c in cand]))] for j in range(Y.shape[1])])
+for nome, P in (("limiar 0,5", (Pt >= 0.5).astype(int)), ("limiar por rótulo", (Pt >= t).astype(int))):
+    print(f"{nome:<18s} Hamming = {hamming_loss(Yte, P):.3f} | F1 micro = {f1_score(Yte, P, average='micro'):.3f} | F1 macro = {f1_score(Yte, P, average='macro'):.3f} | exato = {accuracy_score(Yte, P):.3f}")
+print("Limiares por rótulo:", t.round(2))
+```
+@@NOTE Com o limiar 0,5, a perda de Hamming é 0,188, o F1 micro 0,784, o F1 macro 0,711 e a correspondência exata 0,370. Com limiares por rótulo, o F1 macro sobe para 0,731 e o micro para 0,788, mas a perda de Hamming sobe levemente (0,190) e a correspondência exata cai (0,353). Os limiares escolhidos variam de 0,27 a 0,56. Portanto, **depende da métrica**: os limiares por rótulo favorecem o F1 (sobretudo o macro, que dá voz aos rótulos raros) e prejudicam um pouco a correspondência exata; as diferenças são pequenas e, com 900 exemplos de teste, estão perto do ruído.
 @@PROJ Previsão de manchas solares com mini-AutoML | Cap12
 **Fonte dos dados.** Série anual de **manchas solares** (1700 a 2008), incluída na biblioteca `statsmodels` (`sm.datasets.sunspots`; originalmente de séries públicas de observação solar). Se preferir, use uma série do Kaggle ou da UCI de sua escolha (por exemplo, consumo de energia) e adapte as tarefas.
 

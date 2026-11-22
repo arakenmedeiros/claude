@@ -75,19 +75,19 @@ c) ImageNet.
 d) Boston Housing.
 R: a | 1.797 imagens 8×8 de dígitos, 10 classes.
 
-MC: Qual modelo do scikit-learn foi usado para treinar as arquiteturas?
-a) MLPClassifier, um perceptron multicamadas.
-b) KNeighborsClassifier.
-c) DecisionTreeClassifier.
-d) LinearRegression.
-R: a | O MLPClassifier permite escolher camadas e ativação.
+MC: Qual é a diferença entre o custo de construir a tabela do mini-NAS e o custo das consultas que simulam a busca?
+a) A tabela exigiu 620 treinos, pagos uma vez; as 18.000 consultas custaram uma fração de segundo, mas em NAS real cada consulta seria um treino.
+b) Os dois custos são iguais.
+c) As consultas custam mais que a tabela.
+d) Nenhum dos dois envolve treino.
+R: a | Por isso o experimento é barato e subestima o custo de uma busca real.
 
-MC: Como é medido o tamanho de uma rede no capítulo?
-a) Pelo número de parâmetros (pesos e vieses).
-b) Pelo número de linhas do conjunto de dados.
-c) Pelo tempo de execução do Python.
-d) Pelo número de classes.
-R: a | Parâmetros são os pesos e vieses aprendidos.
+MC: O que mostrou o mini-NAS com avaliações ruidosas (sementes de treino diferentes)?
+a) As duas estratégias pioraram em relação à tabela fixa, mas a evolução continuou à frente da aleatória no posto mediano (8 contra 12).
+b) Que o ruído não afeta a busca.
+c) Que a aleatória passou a vencer por 10 pontos.
+d) Que o treino é determinístico.
+R: a | O desvio mediano entre sementes foi de cerca de 0,8 ponto; o Spearman entre sementes, 0,92.
 
 MC: Qual é a ideia da busca por aprendizado por reforço (Zoph; Le, 2017)?
 a) Um controlador gera arquiteturas e usa a nota delas como recompensa para melhorar.
@@ -232,8 +232,8 @@ R: Aleatória: sorteia. Reforço: um controlador gera arquiteturas e recebe a no
 DISC: Explique a evolução regularizada e por que descartar a mais velha ajuda.
 R: Em cada passo sorteia-se uma amostra, escolhe-se a melhor, gera-se uma filha por mutação e remove-se a mais velha. Isso favorece arquiteturas que continuam boas e evita que uma sorte isolada domine a população.
 
-DISC: Descreva quatro tipos de mutação usados no mini-NAS.
-R: Mudar a largura de uma camada, inserir uma camada, remover uma camada e trocar a função de ativação.
+DISC: O que o experimento com sementes extras de treino acrescentou ao mini-NAS?
+R: Mostrou que cada arquitetura foi treinada uma única vez no experimento original: treinar de novo com outras sementes muda a nota (desvio mediano de cerca de 0,008; Spearman de 0,92 entre sementes) e que, com avaliações ruidosas, as buscas pioram (posto mediano 12 e 8, em vez de 6 e 1,5), embora a evolução continue à frente. Os números originais eram otimistas por ignorarem o ruído do treinamento.
 
 DISC: O que é compartilhamento de pesos e qual problema ele resolve?
 R: Reaproveitar pesos entre candidatas, tratadas como partes de uma grande rede. Resolve o alto custo de treinar cada arquitetura do zero.

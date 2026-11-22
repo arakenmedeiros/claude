@@ -75,12 +75,12 @@ c) Usar apenas com redes neurais.
 d) Nada, pois é padrão.
 R: b | As classes ainda são experimentais e exigem habilitação explícita.
 
-MC: Em HalvingGridSearchCV, o recurso padrão que cresce a cada rodada é:
-a) o número de exemplos de treino.
-b) o número de atributos.
-c) o número de classes.
-d) o valor do hiperparâmetro C.
-R: a | As primeiras rodadas usam poucos exemplos; as seguintes, mais.
+MC: Qual é a principal característica do ASHA em relação ao Successive Halving síncrono?
+a) Trabalhadores livres não esperam: promovem um candidato (se estiver entre os 1/η melhores até agora) ou começam um novo.
+b) Exige que todos os candidatos terminem cada degrau antes de decidir.
+c) Dispensa o uso de checkpoints.
+d) Garante resultados idênticos com a mesma semente.
+R: a | Li et al. (2020): evita a espera pelo mais lento em buscas com muitos trabalhadores.
 
 MC: No exemplo do capítulo, qual foi a economia aproximada de custo da busca halving em relação à grade completa?
 a) Cerca de 83%.
@@ -201,12 +201,12 @@ c) Cortar 99% dos candidatos na primeira rodada.
 d) Evitar usar curvas de aprendizado.
 R: a | Cortes mais suaves e orçamento inicial maior reduzem o risco.
 
-MC: Em um torneio do Hyperband, a quantidade de recurso por candidato:
-a) aumenta a cada rodada, enquanto o número de candidatos diminui.
-b) diminui a cada rodada, enquanto o número de candidatos aumenta.
-c) permanece constante em todas as rodadas.
-d) é sorteada aleatoriamente a cada época.
-R: a | Menos candidatos recebem mais recursos a cada rodada, como no Successive Halving.
+MC: Por que uma busca assíncrona pode não ser reproduzível apenas fixando a semente?
+a) Porque a ordem de chegada dos resultados depende do tempo de cada tarefa, e isso muda as decisões de promoção.
+b) Porque a semente é ignorada pelo Python.
+c) Porque o ASHA usa sempre números aleatórios diferentes.
+d) Porque os dados mudam a cada execução.
+R: a | Na simulação, com os mesmos candidatos, o assíncrono escolheu 3 candidatos diferentes.
 
 DISC: Explique, com uma analogia do cotidiano, por que treinar todos os candidatos até o fim é um desperdício.
 R: Em uma peneira de futebol, treinar 270 jovens por um ano seria caro; um treino curto já revela os mais fracos. Do mesmo modo, muitas configurações ruins mostram sua fraqueza cedo, e treiná-las até o fim desperdiça recursos.
@@ -259,11 +259,11 @@ R: O ranking pode mudar (orçamento inicial razoável, η menor); fidelidade bai
 DISC: Por que é importante guardar o estado do modelo (checkpoint) em métodos multifidelidade?
 R: Para retomar o treino de onde parou quando um candidato avança de rodada, sem recomeçar do zero e sem gastar épocas repetidas.
 
-DISC: Como o fator η afeta o Successive Halving? Compare η = 2 e η = 5.
-R: Com η menor, os cortes são mais suaves (mais rodadas, menos risco de eliminar campeãs lentas, mais custo). Com η maior, os cortes são agressivos (poucas rodadas, mais economia, mais risco).
+DISC: Explique o ASHA e os resultados da simulação do capítulo (ocupação, tempo, qualidade e reprodutibilidade).
+R: O ASHA é o Successive Halving assíncrono: ao ficar livre, um trabalhador promove um candidato entre os 1/η melhores do degrau ou começa um novo. Na simulação, a ocupação dos trabalhadores foi maior (0,64 contra 0,48 com 8; 0,22 contra 0,15 com 32), o tempo total foi parecido (397 e 404; 339 e 325), a qualidade do escolhido foi um pouco melhor (0,844 contra 0,839) e a escolha final variou com o ruído de tempo (3 candidatos distintos, o mais frequente em 79% das execuções), enquanto o síncrono foi sempre igual.
 
 DISC: Por que o capítulo recomenda avaliar o vencedor em um teste final treinado com orçamento completo?
 R: Porque a seleção usou notas de baixa fidelidade e ruidosas; o desempenho real do vencedor deve ser medido em dados nunca usados, com o modelo treinado completamente.
 
-DISC: Por que o Hyperband é mais robusto que um único Successive Halving quando não sabemos o quão confiável é o corte precoce?
-R: Porque ele roda vários torneios com graus diferentes de agressividade, de muitos candidatos com pouco treino até poucos candidatos com treino completo. Se o corte precoce for pouco confiável, os torneios conservadores compensam.
+DISC: Como o BOHB escolhe os candidatos novos e por que mantém uma fração sorteada ao acaso?
+R: Usa um modelo TPE construído com as avaliações do maior orçamento que já reúne observações suficientes, e não com todas as fidelidades misturadas. Mantém uma fração fixa de candidatos aleatórios para continuar explorando e preservar a garantia de convergência do Hyperband quando o modelo está enganado.

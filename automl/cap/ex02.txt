@@ -19,12 +19,12 @@ c) agrupamento.
 d) detecção de duplicatas.
 R: a | Quando o alvo é um número contínuo, trata-se de regressão.
 
-MC: Decidir se um e-mail é spam ou não spam é um problema de:
-a) regressão.
-b) classificação.
-c) redução de dimensionalidade.
-d) otimização contínua.
-R: b | O alvo é uma categoria; portanto, classificação.
+MC: Em um problema com 5% de casos positivos, o que mover o limiar de decisão (de 0,5 para um valor escolhido na validação) tende a fazer?
+a) Deslocar o ponto de operação entre precisão e revocação, sem aumentar a capacidade de separar as classes (a AUC quase não muda).
+b) Aumentar a AUC do modelo.
+c) Eliminar a necessidade de um conjunto de teste.
+d) Transformar o problema em regressão.
+R: a | O limiar escolhe onde cortar a probabilidade; pesos e reamostragem também deslocam esse ponto.
 
 MC: Qual algoritmo funciona fazendo uma série de perguntas de sim ou não, como no jogo "20 perguntas"?
 a) k-vizinhos.
@@ -68,12 +68,12 @@ c) Não há diferença.
 d) Hiperparâmetros só existem em redes neurais.
 R: b | Parâmetros são aprendidos pelo modelo; hiperparâmetros são "botões" fixados antes do treino.
 
-MC: Qual dos itens abaixo é um hiperparâmetro de uma árvore de decisão?
-a) O limite de corte escolhido em um nó.
-b) A profundidade máxima.
-c) O atributo escolhido na raiz.
-d) A classe prevista em uma folha.
-R: b | A profundidade máxima é definida antes do treino. Os demais itens são aprendidos.
+MC: Por que a reamostragem (oversampling) deve ser feita dentro de cada dobra, e não antes de dividir os dados?
+a) Porque, antes de dividir, cópias do mesmo exemplo caem no treino e na validação, o que é vazamento e infla a nota.
+b) Porque a reamostragem só funciona em regressão.
+c) Porque dentro da dobra o modelo fica mais lento.
+d) Porque a validação precisa ter o dobro de exemplos.
+R: a | No capítulo, o F1 em validação cruzada foi 0,783 (errado) contra 0,290 (certo).
 
 MC: Subajuste (underfitting) ocorre quando o modelo:
 a) decora o ruído do treino.
@@ -265,5 +265,5 @@ R: Guardar um conjunto de teste intocado para avaliar apenas o modelo final, ou 
 DISC: Por que o capítulo diz que "a escolha da métrica define o que o AutoML vai otimizar"? Dê um exemplo de escolha ruim.
 R: O AutoML busca maximizar a métrica fornecida. Em dados desbalanceados, escolher acurácia levaria a modelos que ignoram a classe rara; o ideal seria F1, revocação ou AUC.
 
-DISC: Dê um exemplo do seu cotidiano de sobreajuste (decorar sem entender) e relacione-o ao conceito em aprendizado de máquina.
-R: Um aluno decora as respostas do simulado e vai mal na prova com questões diferentes. Equivale ao modelo que acerta o treino e erra em dados novos.
+DISC: Compare pesos de classe, reamostragem e ajuste do limiar como respostas ao desbalanceamento de classes.
+R: Pesos e reamostragem fazem o erro na classe rara custar mais no treino; o ajuste do limiar muda o ponto de corte da probabilidade, escolhido na validação. No capítulo, pesos e oversampling subiram a revocação (0,33 para 0,72), mas derrubaram a precisão (0,87 para 0,17) e o F1, enquanto o limiar escolhido na validação elevou o F1 de 0,478 para 0,571. A reamostragem só vale dentro das dobras.

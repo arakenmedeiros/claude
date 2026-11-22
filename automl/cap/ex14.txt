@@ -12,12 +12,12 @@ c) A dívida técnica não existe em ML.
 d) Basta treinar o modelo.
 R: a | Há coleta de dados, configuração, infraestrutura e monitoramento ao redor.
 
-MC: Qual é a analogia do capítulo para MLOps?
-a) A cozinha do restaurante: servir todos os dias com a mesma qualidade.
-b) Um jogo de tabuleiro.
-c) Uma viagem de avião.
-d) Um campeonato.
-R: a | Criar a receita é só uma parte do trabalho.
+MC: O que é o AutoML com restrições?
+a) A busca da melhor acurácia sujeita a limites que não podem ser violados, como latência, tamanho do modelo e disparidade entre grupos.
+b) A busca que ignora o custo.
+c) Uma busca sem conjunto de teste.
+d) Um tipo de ensemble.
+R: a | No capítulo: 3 ms, 1.000 kB e disparidade de 0,065.
 
 MC: Quais são as etapas do ciclo de vida do modelo?
 a) Dados, treino, validação, implantação, monitoramento e retreino.
@@ -152,19 +152,19 @@ c) Uma competição de acurácia no treino.
 d) Trocar o modelo a cada semana.
 R: a | Evita trocas por ruído.
 
-MC: Por que o desafiante precisa ganhar 'com margem'?
-a) Para não trocar o modelo por diferenças que são só ruído amostral.
-b) Porque o campeão não pode perder.
-c) Para aumentar o custo.
-d) Porque a regra é arbitrária.
-R: a | Ex.: diferença maior que 2 erros padrão.
+MC: Por que o erro padrão de UMA acurácia não serve como régua para a diferença entre dois modelos avaliados nos mesmos casos?
+a) Porque os acertos e erros dos dois modelos são dependentes; é preciso analisar a diferença caso a caso (análise pareada).
+b) Porque o erro padrão é sempre zero.
+c) Porque a diferença nunca tem incerteza.
+d) Porque os modelos usam dados diferentes.
+R: a | Use o bootstrap pareado ou o teste de McNemar, com uma melhoria mínima de interesse.
 
-MC: No Exercício 4, em quantas das 20 repetições o desafiante assumiu?
-a) Em 9 de 20.
-b) Em todas.
-c) Em nenhuma.
-d) Em 20 de 20.
-R: a | Mesmo com ganho médio positivo, nem sempre passa da margem.
+MC: No Exercício 4, quantas das 20 repetições o desafiante assumiu pela regra ingênua e pela regra pareada (com melhoria mínima de 0,5 ponto)?
+a) 9 pela ingênua e 4 pela pareada.
+b) 20 e 20.
+c) 0 e 0.
+d) 4 pela ingênua e 9 pela pareada.
+R: a | A regra ingênua trocaria o modelo mais vezes do que a evidência sustenta.
 
 MC: O que o Exercício 3 mostrou sobre o PSI com poucos dados?
 a) Com amostras pequenas, o PSI é instável e pode passar do alerta sem deriva alguma.
@@ -174,7 +174,7 @@ d) O PSI é sempre zero.
 R: a | A 'produção' tinha só 54 casos.
 
 MC: Qual foi o resultado de latência do ensemble no projeto integrador?
-a) Cerca de 50 ms por previsão, acima do orçamento de 20 ms.
+a) Cerca de 27 a 50 ms por previsão (varia por execução), acima do orçamento de 20 ms.
 b) Cerca de 0,1 ms.
 c) Exatamente 20 ms.
 d) Não foi medida.
@@ -194,12 +194,12 @@ c) Esconda os limites do modelo.
 d) Evite baselines.
 R: a | Um relatório honesto vale mais que um ganho vistoso sem teste.
 
-MC: Por que o Exercício 1 recarrega o modelo e compara as previsões?
-a) Para confirmar que o modelo salvo reproduz exatamente as previsões do original.
-b) Para aumentar a acurácia.
-c) Para reduzir o tamanho do arquivo.
-d) Para escolher hiperparâmetros.
-R: a | Reprodutibilidade: previsões idênticas após salvar e carregar.
+MC: Se o intervalo de confiança da diferença entre campeão e desafiante inclui o zero, qual é a conclusão correta?
+a) Os dados não bastam para dizer qual é melhor; ausência de evidência não é evidência de ausência.
+b) Os modelos são idênticos.
+c) O desafiante é pior.
+d) A diferença é só ruído.
+R: a | A diferença pode ser real, mas pequena demais para ser detectada com estes casos.
 
 MC: Qual é a melhor resposta quando o PSI de um atributo passa de 0,25?
 a) Investigar: comparar o desempenho com rótulos recentes e avaliar um retreino.
@@ -211,8 +211,8 @@ R: a | O alarme pede investigação, não ação automática.
 DISC: Explique, com a analogia da cozinha, por que um modelo no notebook ainda não é um produto.
 R: Criar a receita (o modelo) é só uma parte; servir todo dia, com qualidade, exige estoque, higiene, equipe e controle (dados, infraestrutura, monitoramento): o trabalho de MLOps.
 
-DISC: Resuma a mensagem de Sculley et al. (2015) sobre dívida técnica em ML.
-R: O código do modelo é pequeno diante do sistema (coleta e verificação de dados, atributos, configuração, infraestrutura, monitoramento). Esse entorno gera dívida técnica escondida que cobra juros ao longo do tempo.
+DISC: O que é o AutoML com restrições? Compare filtrar depois, penalizar e buscar com restrições.
+R: É maximizar a acurácia sujeita a limites (latência, memória, energia, disparidade). Filtrar depois descarta modelos inviáveis, mas desperdiça tentativas; penalizar subtrai uma penalidade, criando mais um botão; buscar com restrições faz o otimizador aprender onde elas são satisfeitas (Gelbart et al., 2014). No capítulo, só 9 de 60 tentativas do TPE comum foram viáveis, contra 46 de 60 com restrições; o custo da restrição foi de 0,2 ponto de acurácia.
 
 DISC: Descreva as seis etapas do ciclo de vida de um modelo.
 R: Dados, treino e busca, validação, implantação, monitoramento e retreino, voltando aos dados; o ciclo é contínuo.
@@ -241,11 +241,11 @@ R: O PSI da renda cresce mês a mês (cruza 0,10 no mês 2 e 0,25 no mês 4) e o
 DISC: Por que 'alarme não é diagnóstico'? Dê um exemplo dos dados do livro.
 R: Deriva dos dados não implica queda de desempenho: no projeto integrador, com PSI de 0,304, a acurácia contra a verdade não caiu (0,853 para 0,864). O alarme pede investigação com rótulos.
 
-DISC: Descreva o desafio entre campeão e desafiante e a regra de margem.
-R: O modelo novo, treinado com dados recentes, é comparado ao em produção em dados recentes com rótulos; só assume se a diferença superar uma margem (por exemplo, 2 erros padrão), evitando trocas por ruído.
+DISC: Descreva o desafio entre campeão e desafiante com análise pareada e melhoria mínima de interesse.
+R: Os dois modelos são avaliados nos mesmos casos recentes; calcula-se a diferença de acertos por caso e seu intervalo de confiança por bootstrap pareado (ou o teste de McNemar). O desafiante assume se o limite inferior do intervalo for maior que uma melhoria mínima δ (0,5 ponto no capítulo). Na série do mês 6, a diferença foi de +1,4 ponto, com IC de 95% de +0,07 a +2,70 e McNemar p = 0,047: há alguma evidência de melhora, mas não de que supere δ, e o campeão fica por ora.
 
 DISC: O que o Exercício 4 mostrou sobre a decisão de trocar o modelo?
-R: O ganho médio do desafiante foi positivo (+0,015), mas ele só assumiu em 9 de 20 repetições; é preciso margem, mais dados e consideração do custo.
+R: O ganho médio do desafiante foi positivo (+0,015), mas ele assumiu em 9 de 20 repetições pela regra ingênua e em 4 pela regra pareada; é preciso análise pareada, margem mínima, mais dados e consideração do custo.
 
 DISC: Por que o PSI é instável com poucos dados? Dê o exemplo do Exercício 3.
 R: Com 10 faixas e só 54 casos, a proporção por faixa oscila muito. No Wine, mesmo sem deriva, o PSI de total_phenols foi 0,954; as regras práticas valem para amostras grandes.
@@ -254,7 +254,7 @@ DISC: Liste os dez passos do roteiro completo de um projeto de AutoML.
 R: Problema e métrica; teste final e vazamento; linhas de base; pipeline; busca; ensemble e ferramentas; teste único por grupo; explicar e auditar; implantar com ficha; monitorar e retreinar.
 
 DISC: Resuma o resultado do projeto integrador e a recomendação.
-R: A busca escolheu a regressão logística; os métodos ficaram empatados no teste (0,804 a 0,808); o ensemble custou cerca de 50 ms contra o orçamento de 20 ms. Recomenda-se o modelo simples, com monitoramento por grupo, limiares sujeitos a revisão, contestação e revisão humana.
+R: A busca escolheu a regressão logística; os métodos ficaram empatados no teste (0,804 a 0,808); o ensemble custou cerca de 27 a 50 ms (varia por execução) contra o orçamento de 20 ms. Recomenda-se o modelo simples, com monitoramento por grupo, limiares sujeitos a revisão, contestação e revisão humana.
 
 DISC: Por que o projeto integrador diz que o ensemble 'não se justifica'?
 R: Não ganhou do modelo simples no teste (diferenças dentro do ruído), estourou o orçamento de latência e é mais difícil de explicar.
@@ -262,8 +262,8 @@ R: Não ganhou do modelo simples no teste (diferenças dentro do ruído), estour
 DISC: Quais salvaguardas você exigiria para implantar um modelo de crédito auditado?
 R: Monitoramento de desempenho, deriva e disparidades por grupo; canal de contestação; revisão humana; revisão jurídica do uso de limiares ou atributos sensíveis; registro da ficha e do custo.
 
-DISC: O que significa 'busque o projeto mais honesto'?
-R: Valorizar relatórios que reconhecem empates, limites, custo e incerteza, em vez de anunciar ganhos pequenos sem teste de significância.
+DISC: Por que 'ausência de evidência não é evidência de ausência' ao comparar um desafiante com o campeão?
+R: Porque, se o intervalo inclui o zero, a conclusão não é que os modelos são iguais, mas que os dados não bastam para distinguir. A melhora pode ser real e pequena; a resposta prática (não trocar ainda, coletar mais casos) é a mesma, mas o raciocínio muda.
 
 DISC: Por que o PSI e o KS não substituem a avaliação com rótulos recentes?
 R: Eles detectam mudanças nos dados de entrada, mas não dizem se o desempenho caiu nem se a relação entre atributos e resposta mudou; só os rótulos recentes permitem medir o desempenho real.
