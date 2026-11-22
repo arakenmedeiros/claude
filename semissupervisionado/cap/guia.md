@@ -33,7 +33,7 @@ Salve estes arquivos na mesma pasta dos seus scripts. Todos foram usados nos exp
 | `contrastivo.py` | `ntxent`, `pre_treinar` (SimCLR e rotação), `sonda_linear`, `ajuste_fino`, `carregar_ou_treinar` | 12, 18 |
 | `generativos.py` | `VAE`, `treinar_vae`, `treinar_m2`, `treinar_sgan`, `treinar_mlp` | 13 |
 
-Parâmetros mais úteis de `treinar_ssl`: `passos` (orçamento de treino), `peso` (peso da perda não supervisionada), `limiar` (confiança do FixMatch e da UDA), `ema` (fator da média móvel), `forte` e `fraco` (funções de aumento), `yu` (rótulos verdadeiros dos não rotulados, **só para diagnóstico**) e `relatar` (passos em que se mede o teste).
+Parâmetros mais úteis de `treinar_ssl`: `passos` (orçamento de treino), `peso` (peso da perda não supervisionada), `limiar` (confiança do FixMatch e da UDA adaptada), `ema` (fator da média móvel), `forte` e `fraco` (funções de aumento), `yu` (rótulos verdadeiros dos não rotulados, **só para diagnóstico**) e `relatar` (passos em que se mede o teste).
 
 ## C.4 Receita: comparar com o modelo de referência
 
@@ -87,7 +87,7 @@ def comparar(X, y, n_rot=20, sementes=20):
 | Você precisa de um ponto de partida simples com qualquer classificador | Self-training | 4 |
 | Os dados formam grupos ou curvas bem definidos | Label Spreading | 8 |
 | Você não sabe se vale a pena | Diagnóstico de viabilidade (projeto do Capítulo 3) | 3 |
-| Os dados sem rótulo são imagens e há bons aumentos | UDA ou FixMatch, contra uma CNN com aumento como referência | 10, 11 |
+| Os dados sem rótulo são imagens e há bons aumentos | UDA adaptada ou FixMatch, contra uma CNN com aumento como referência | 10, 11 |
 | Há muito dado sem rótulo e tempo de computação | Pré-treino auto-supervisionado (SimCLR) e sonda linear | 12 |
 | Você tem texto | Representação aprendida com o texto sem rótulo (LSA ou modelo de linguagem) + modelo linear | 14 |
 | Você tem tabelas ou séries | Referência supervisionada forte; teste com cautela; divisão no tempo nas séries | 16 |

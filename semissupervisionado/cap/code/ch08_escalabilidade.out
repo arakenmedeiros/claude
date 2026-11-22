@@ -1,0 +1,14 @@
+MNIST, PCA de 50 componentes, 100 rótulos sorteados entre os n exemplos. Grafo de k vizinhos (matriz esparsa) x kernel RBF (matriz densa)
+     n | tempo do grafo | tempo do Label Spreading (knn) | arestas | memória do grafo esparso | memória de uma matriz densa n x n | tempo do Label Spreading (RBF)
+  2000 |        0.12 s |                       0.01 s |   20000 |                 0.3 MB |                       32 MB | 0.1 s
+  5000 |        0.11 s |                       0.05 s |   50000 |                 0.8 MB |                      200 MB | 0.6 s
+ 10000 |        0.16 s |                       0.16 s |  100000 |                 1.7 MB |                      800 MB | não executado
+ 20000 |        0.50 s |                       0.46 s |  200000 |                 3.4 MB |                     3200 MB | não executado
+
+Diagnóstico de componentes sem nenhum rótulo (n = 10.000, 100 rótulos), conforme o número de vizinhos k
+k  | componentes | nós em componentes sem nenhum rotulado
+ 1 |        2079 | 93.7% (9373 nós)
+ 2 |          11 | 0.4% (45 nós)
+ 3 |           1 | 0.0% (0 nós)
+ 5 |           1 | 0.0% (0 nós)
+10 |           1 | 0.0% (0 nós)

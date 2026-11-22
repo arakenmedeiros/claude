@@ -13,11 +13,11 @@ d) p(y | x).
 R: d | O discriminativo aprende a probabilidade da classe dado o exemplo, ou a fronteira.
 
 MC: Qual dos modelos abaixo é generativo?
-a) Naive Bayes.
+a) Máquina de vetores de suporte.
 b) Regressão logística.
-c) Máquina de vetores de suporte.
-d) Árvore de decisão.
-R: a | O Naive Bayes modela p(x | y) e p(y).
+c) Árvore de decisão.
+d) Naive Bayes.
+R: d | O Naive Bayes modela p(x | y) e p(y).
 
 MC: A regra de Bayes escreve p(y | x) como proporcional a:
 a) apenas p(x).
@@ -62,11 +62,11 @@ d) Nenhuma.
 R: b | Estimar matrizes completas com poucos exemplos é instável.
 
 MC: No passo E do EM semissupervisionado, calcula-se:
-a) a probabilidade de cada exemplo sem rótulo pertencer a cada classe (responsabilidades).
-b) o rótulo verdadeiro dos exemplos.
-c) o número de atributos.
-d) a acurácia no teste.
-R: a | O passo E dá a cada exemplo sem rótulo uma probabilidade por classe.
+a) a acurácia no teste.
+b) o número de atributos.
+c) a probabilidade de cada exemplo sem rótulo pertencer a cada classe (responsabilidades).
+d) o rótulo verdadeiro dos exemplos.
+R: c | O passo E dá a cada exemplo sem rótulo uma probabilidade por classe.
 
 MC: No passo M do EM, o modelo é reestimado:
 a) ignorando os exemplos sem rótulo.
@@ -90,11 +90,11 @@ d) não diminui.
 R: d | A garantia do EM é que a verossimilhança não decresce, embora possa parar em um máximo local.
 
 MC: No experimento com 6 rótulos e duas gaussianas, a acurácia só com os rotulados foi 80,6%. Com o EM, foi:
-a) 91,8%.
-b) 100%.
-c) 50%.
-d) 80,6%.
-R: a | O ganho foi de 11,2 p.p., melhor em 26 dos 30 conjuntos de dados.
+a) 50%.
+b) 80,6%.
+c) 91,8%.
+d) 100%.
+R: c | O ganho foi de 11,2 p.p., melhor em 26 dos 30 conjuntos de dados.
 
 MC: Por que 6 rótulos dão estimativas ruins das gaussianas?
 a) Porque os rótulos estão errados.
@@ -153,11 +153,11 @@ d) independentes entre si, dada a classe.
 R: d | É a suposição "ingênua" do método.
 
 MC: No experimento SMS, por que o Naive Bayes só com os 40 rotulados (metade spam) foi tão ruim (F1 44,5%)?
-a) A amostra rotulada tem 50% de spam, mas na realidade são 13,4%, e o modelo superestima o spam.
-b) O teste estava errado.
-c) O Naive Bayes não funciona com texto.
-d) Não havia palavras.
-R: a | A proporção de classes da amostra rotulada distorce a prior.
+a) O teste estava errado.
+b) A amostra rotulada tem 50% de spam, mas na realidade são 13,4%, e o modelo superestima o spam.
+c) Não havia palavras.
+d) O Naive Bayes não funciona com texto.
+R: b | A proporção de classes da amostra rotulada distorce a prior.
 
 MC: Com a proporção real de spam informada ao Naive Bayes, o F1 só com rotulados subiu para:
 a) 90,3%.
@@ -174,11 +174,11 @@ d) 24,8%.
 R: c | O ganho foi de cerca de 21 p.p. sobre a referência forte.
 
 MC: Com peso muito pequeno (0,05), o NB + EM teve F1 de:
-a) 24,8%, pior que a referência.
-b) 90%.
-c) 100%.
-d) 69,2%.
-R: a | Pesos pequenos não foram suficientes e pioraram o resultado nesse experimento.
+a) 69,2%.
+b) 100%.
+c) 24,8%, pior que a referência.
+d) 90%.
+R: c | Pesos pequenos não foram suficientes e pioraram o resultado nesse experimento.
 
 MC: Na estratégia "cluster-e-rotula", o GMM é ajustado:
 a) sem nenhum exemplo.
@@ -201,12 +201,12 @@ c) medir a acurácia no teste.
 d) padronizar os atributos.
 R: b | O BIC penaliza modelos mais complexos.
 
-MC: O self-training pode ser visto como:
-a) um EM "duro", em que o passo E escolhe uma única classe por exemplo.
-b) uma rede neural.
-c) um método de grafos.
-d) uma validação cruzada.
-R: a | Em vez de probabilidades, usa-se o rótulo mais provável.
+MC: A propriedade de que a log-verossimilhança não diminui a cada iteração do EM garante que:
+a) a sequência de valores da log-verossimilhança converge (sob condições razoáveis), mas não que o máximo seja global nem que os parâmetros convirjam.
+b) o máximo global sempre será encontrado.
+c) não existem soluções degeneradas.
+d) o resultado não depende da inicialização.
+R: a | O EM tende a um ponto estacionário, em geral um máximo local.
 
 DISC: Explique a diferença entre classificadores generativos e discriminativos e dê um exemplo de cada.
 R: O generativo estima p(x | y) e p(y) e classifica pela regra de Bayes (exemplo: Naive Bayes). O discriminativo estima diretamente p(y | x) ou a fronteira (exemplo: regressão logística).
@@ -227,7 +227,7 @@ DISC: Descreva os passos E e M do EM semissupervisionado.
 R: E: com o modelo atual, calcula-se para cada exemplo sem rótulo a probabilidade de cada classe (responsabilidades); os rotulados têm responsabilidade 1 na classe verdadeira. M: reestimam-se médias, covariâncias e proporções contando cada exemplo proporcionalmente à responsabilidade. Repete-se até estabilizar.
 
 DISC: O que é a log-verossimilhança no caso semissupervisionado e como ela se comporta ao longo do EM?
-R: É a soma, para os rotulados, de log p(x, y) e, para os sem rótulo, de log da soma sobre as classes de p(x, y). Não diminui a cada iteração, mas pode convergir para um máximo local.
+R: É a soma, para os rotulados, de log p(x, y) e, para os sem rótulo, de log da soma sobre as classes de p(x, y). Não diminui a cada iteração, o que garante que ela convirja como sequência, mas não que os parâmetros convirjam nem que o máximo seja global: o EM tende a um ponto estacionário (em geral, um máximo local) e pode degenerar, por exemplo quando uma gaussiana colapsa sobre um ponto.
 
 DISC: Interprete o resultado do EM com 6 rótulos (80,6% para 91,8%).
 R: Com 6 pontos, média e covariância são mal estimadas. As centenas de pontos sem rótulo revelam a forma das nuvens, e o EM melhora a estimativa. O ganho foi de 11,2 p.p., melhor em 26 dos 30 conjuntos.
@@ -265,5 +265,5 @@ R: No passo E do EM, atribui-se uma probabilidade a cada classe; no self-trainin
 DISC: Quando você escolheria um modelo generativo semissupervisionado e quando evitaria?
 R: Escolheria com poucos rótulos, quando a forma das classes é razoavelmente descrita pela distribuição escolhida (por exemplo, texto com Naive Bayes) e há muitos dados sem rótulo. Evitaria quando a classe não corresponde a uma gaussiana ou quando a estrutura mais forte dos dados é outra.
 
-DISC: Descreva um problema da sua área em que uma abordagem generativa faria sentido e cite um risco da suposição.
-R: Resposta pessoal coerente. Deve descrever a "receita" de cada classe, a existência de muitos dados sem rótulo e um risco, como a classe ser formada por vários subgrupos que a distribuição escolhida não captura.
+DISC: Explique a degeneração de uma mistura gaussiana (variância tendendo a zero) e como mitigá-la.
+R: Se uma gaussiana se concentra em um único ponto, sua variância tende a zero e a verossimilhança cresce sem limite, sem que o modelo seja útil. Mitiga-se com regularização das covariâncias (reg_covar), boa inicialização e uso dos rótulos conhecidos.

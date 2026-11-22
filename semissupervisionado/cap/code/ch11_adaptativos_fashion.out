@@ -1,0 +1,7 @@
+Fashion-MNIST, 300 rótulos (30 por classe) + 10.000 sem rótulo, 2000 passos, 2 sorteios: limiares fixo e adaptativos
+método                                    | aluno (teste)  | peso/fração dos alvos | precisão dos alvos
+só rotulados                              | 76.3% ± 2.0 |                  -- | --
+FixMatch (limiar fixo 0,95)               | 76.8% ± 0.1 |                59.6% | 91.4%
+FlexMatch                                 | 77.8% ± 0.9 |                99.8% | 77.1%
+FreeMatch                                 | 78.3% ± 0.1 |                78.8% | 86.0%
+SoftMatch                                 | 77.7% ± 0.3 |                84.8% | 83.5%

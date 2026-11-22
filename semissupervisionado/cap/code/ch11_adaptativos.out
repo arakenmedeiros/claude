@@ -1,0 +1,6 @@
+MNIST, 100 rótulos + 10.000 sem rótulo, 1500 passos, 3 sorteios: limiares fixo e adaptativos (versões simplificadas)
+método                                    | aluno (teste)  | peso/fração dos alvos | precisão dos alvos
+FixMatch (limiar fixo 0,95)               | 95.2% ± 0.3 |                72.9% | 98.8%
+FlexMatch (limiar por classe, crescente)  | 96.1% ± 0.3 |                93.0% | 96.5%
+FreeMatch (limiar global e por classe, por EMA) | 96.1% ± 0.3 |                87.7% | 97.9%
+SoftMatch (peso suave, sem limiar)        | 96.0% ± 0.2 |                89.1% | 97.3%

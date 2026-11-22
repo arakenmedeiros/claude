@@ -41,18 +41,18 @@ d) do uso de probabilidades pi.
 R: c | Laine e Aila (2017) o chamaram assim pelo formato do diagrama.
 
 MC: No Temporal Ensembling, o alvo de consistência é:
-a) uma média móvel das previsões feitas ao longo das épocas anteriores.
+a) uma previsão aleatória.
 b) a previsão da última época apenas.
-c) uma previsão aleatória.
+c) uma média móvel das previsões feitas ao longo das épocas anteriores.
 d) o rótulo verdadeiro.
-R: a | Evita a segunda passada pela rede, mas guarda uma previsão por exemplo.
+R: c | Evita a segunda passada pela rede, mas guarda uma previsão por exemplo.
 
 MC: A principal desvantagem do Temporal Ensembling é:
-a) guardar uma previsão por exemplo e só atualizá-la uma vez por época.
-b) não usar dados sem rótulo.
+a) não funcionar com imagens.
+b) guardar uma previsão por exemplo e só atualizá-la uma vez por época.
 c) exigir mais rótulos.
-d) não funcionar com imagens.
-R: a | Alvos ficam desatualizados em conjuntos grandes.
+d) não usar dados sem rótulo.
+R: b | Alvos ficam desatualizados em conjuntos grandes.
 
 MC: No Mean Teacher, o professor é:
 a) o próprio conjunto de teste.
@@ -62,11 +62,11 @@ d) um conjunto de regras.
 R: b | A média tende a ser mais estável e precisa que o aluno.
 
 MC: No Mean Teacher, quem recebe o gradiente é:
-a) somente o aluno.
-b) somente o professor.
-c) nenhum dos dois.
-d) os dois igualmente.
-R: a | O professor é atualizado pela média dos pesos do aluno.
+a) somente o professor.
+b) os dois igualmente.
+c) somente o aluno.
+d) nenhum dos dois.
+R: c | O professor é atualizado pela média dos pesos do aluno.
 
 MC: A média móvel exponencial dos pesos (EMA) com fator 0,99 significa que, a cada passo:
 a) o professor copia o aluno.
@@ -76,11 +76,11 @@ d) o aluno mantém 99% de seus pesos.
 R: b | Por isso o professor muda devagar.
 
 MC: A rampa de peso (ramp-up) serve para:
-a) aumentar gradualmente o peso da perda não supervisionada no início do treino.
-b) reduzir a taxa de aprendizado.
-c) aumentar o número de camadas.
-d) embaralhar os lotes.
-R: a | No começo as previsões são ruins e não devem servir de alvo.
+a) aumentar o número de camadas.
+b) embaralhar os lotes.
+c) aumentar gradualmente o peso da perda não supervisionada no início do treino.
+d) reduzir a taxa de aprendizado.
+R: c | No começo as previsões são ruins e não devem servir de alvo.
 
 MC: Se o peso da consistência for grande demais no início do treino, o risco é:
 a) a rede decorar os rótulos.
@@ -97,18 +97,18 @@ d) contagem de rótulos.
 R: c | Ambas medem a diferença entre duas distribuições de probabilidade.
 
 MC: Em um treino de consistência, a perda total é:
-a) a perda supervisionada (rotulados) mais o peso vezes a perda de consistência.
-b) somente a perda de consistência.
+a) somente a perda de consistência.
+b) somente a perda supervisionada.
 c) a média dos pesos.
-d) somente a perda supervisionada.
-R: a | Os dois termos ajudam de formas diferentes.
+d) a perda supervisionada (rotulados) mais o peso vezes a perda de consistência.
+R: d | Os dois termos ajudam de formas diferentes.
 
 MC: Na UDA (Unsupervised Data Augmentation), o alvo vem:
-a) da previsão na versão fraca do exemplo, enquanto o aluno vê a versão fortemente aumentada.
+a) da versão forte e o aluno vê a fraca.
 b) de uma média das previsões do conjunto de teste.
-c) da versão forte e o aluno vê a fraca.
+c) da previsão na versão fraca do exemplo, enquanto o aluno vê a versão fortemente aumentada.
 d) de um rótulo humano.
-R: a | A consistência passa a ser entre versão fraca e forte.
+R: c | A consistência passa a ser entre versão fraca e forte.
 
 MC: O afiamento (sharpening) com temperatura menor que 1 faz com que a distribuição de probabilidades:
 a) troque de classe.
@@ -117,7 +117,7 @@ c) fique mais uniforme.
 d) tenha soma maior que 1.
 R: b | Torna o alvo mais decidido.
 
-MC: A máscara de confiança na UDA serve para:
+MC: A máscara de confiança na UDA adaptada serve para:
 a) descartar os exemplos rotulados.
 b) usar na consistência apenas os exemplos cujo alvo tem confiança alta.
 c) aumentar a taxa de aprendizado.
@@ -174,18 +174,18 @@ d) maior na referência supervisionada.
 R: c | Caso contrário, o ganho pode vir apenas do treino extra.
 
 MC: Escolher o peso da consistência olhando a acurácia no teste:
-a) é uma forma de vazamento e produz estimativas otimistas.
-b) não afeta os resultados.
-c) é a prática recomendada.
-d) é obrigatório.
-R: a | O correto é usar uma validação separada ou valores fixados a priori.
+a) é a prática recomendada.
+b) é uma forma de vazamento e produz estimativas otimistas.
+c) é obrigatório.
+d) não afeta os resultados.
+R: b | O correto é usar uma validação separada ou valores fixados a priori.
 
 MC: A quantidade de dados sem rótulo costuma ter efeito:
-a) crescente, mas com retornos decrescentes.
-b) sempre negativo.
-c) nenhum.
-d) sempre linear.
-R: a | Os primeiros exemplos sem rótulo acrescentam mais que os últimos.
+a) sempre linear.
+b) nenhum.
+c) sempre negativo.
+d) crescente, mas com retornos decrescentes.
+R: d | Os primeiros exemplos sem rótulo acrescentam mais que os últimos.
 
 MC: O dropout, mantido durante o treino de consistência, funciona como:
 a) uma função de ativação.
@@ -201,12 +201,12 @@ c) os dados são completamente aleatórios.
 d) existem aumentos de dados confiáveis que preservam a classe.
 R: d | A qualidade da perturbação determina a qualidade do sinal.
 
-MC: A ideia de fundo que une Π-model, Mean Teacher e UDA é:
-a) a previsão deve ser sempre a classe majoritária.
-b) o professor deve ser maior que o aluno.
-c) a previsão do modelo deve ser estável sob perturbações que não mudam a classe.
-d) os rótulos devem ser descartados após o treino.
-R: c | Os métodos diferem em como o alvo é obtido.
+MC: Na UDA do artigo original, a máscara de confiança é medida:
+a) sobre o professor EMA, sempre.
+b) depois do afiamento, sobre o alvo afiado.
+c) antes do afiamento, sobre a distribuição prevista pelo modelo.
+d) apenas sobre os exemplos rotulados.
+R: c | Na UDA adaptada do livro, a medida é feita depois do afiamento.
 
 DISC: Explique a ideia da regularização por consistência e por que ela usa exemplos sem rótulo.
 R: Exige que versões perturbadas de um mesmo exemplo recebam previsões parecidas. Isso não depende do rótulo, então qualquer exemplo, rotulado ou não, produz um sinal de treino.
@@ -232,11 +232,11 @@ R: Aumenta gradualmente o peso da consistência. Sem ela, no início as previsõ
 DISC: Explique por que prever sempre a mesma classe para todos os exemplos satisfaz a consistência e como se evita isso.
 R: As previsões seriam idênticas sob qualquer perturbação, e a perda seria zero. A perda supervisionada nos rotulados e a rampa de peso impedem que a rede se acomode nessa solução.
 
-DISC: Descreva a UDA: o que é a versão fraca, a forte, o afiamento e a máscara de confiança.
+DISC: Descreva a UDA adaptada: o que é a versão fraca, a forte, o afiamento e a máscara de confiança.
 R: O alvo é a previsão na versão fraca (leve), afiada por uma temperatura menor que 1 e filtrada para exemplos de confiança alta. O aluno vê a versão forte e é treinado a aproximar-se do alvo.
 
-DISC: Compare Π-model, Mean Teacher e UDA quanto à origem do alvo e ao fluxo do gradiente.
-R: Π-model: alvo da mesma rede, gradiente nos dois ramos. Mean Teacher: alvo do professor EMA, gradiente só no aluno. UDA: alvo da versão fraca, afiado e filtrado, sem gradiente no alvo, aluno na versão forte.
+DISC: Compare Π-model, Mean Teacher e UDA adaptada quanto à origem do alvo e ao fluxo do gradiente.
+R: Π-model: alvo da mesma rede, gradiente nos dois ramos. Mean Teacher: alvo do professor EMA, gradiente só no aluno. UDA adaptada: alvo da versão fraca, afiado e filtrado, sem gradiente no alvo, aluno na versão forte.
 
 DISC: O que é o VAT e em que ele difere do aumento de dados?
 R: Perturba cada exemplo na direção em que a previsão do modelo mais muda (perturbação adversarial virtual), sem exigir rótulos. O aumento usa transformações pré-definidas, não calculadas a partir do modelo.
@@ -265,5 +265,5 @@ R: Sorteia um lote de rotulados e outro de não rotulados, aplica perturbações
 DISC: Por que o professor deve ser avaliado separadamente do aluno no experimento?
 R: Porque os dois são modelos diferentes, e o professor por EMA costuma ser mais estável. Relatar apenas um pode esconder diferenças relevantes.
 
-DISC: Resuma quando a regularização por consistência é uma boa escolha e quando pode não ser.
-R: Boa quando há aumentos confiáveis que preservam a classe (como em imagens) e uma rede flexível. Pode falhar se as perturbações mudam a classe, se faltam bons aumentos ou se o orçamento de treino é pequeno.
+DISC: Explique em que a UDA adaptada do livro difere da UDA original e o que o experimento mostrou sobre cada diferença.
+R: Usa um professor EMA e mede a confiança depois do afiamento. No experimento, o professor quase não mudou o resultado (95,2% nos dois casos), e a máscara após o afiamento deixou passar mais alvos (91,8% contra 73%) e deu 0,8 ponto a mais, sem conclusão firme.

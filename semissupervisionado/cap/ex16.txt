@@ -1,9 +1,9 @@
 MC: Dados tabulares costumam ser:
-a) heterogêneos, misturando atributos numéricos e categóricos de escalas diferentes.
-b) sempre séries temporais.
+a) sempre texto.
+b) heterogêneos, misturando atributos numéricos e categóricos de escalas diferentes.
 c) sempre imagens.
-d) sempre texto.
-R: a | Isso dificulta definir distâncias e aumentos naturais.
+d) sempre séries temporais.
+R: b | Isso dificulta definir distâncias e aumentos naturais.
 
 MC: Em dados tabulares, um problema para métodos que usam distância (grafos, k-vizinhos) é:
 a) uso de GPUs.
@@ -69,11 +69,11 @@ d) irrelevante.
 R: c | Com poucos exemplos, o resultado varia muito.
 
 MC: Em uma base pequena com poucos rótulos, a escolha de quais exemplos são rotulados:
-a) afeta muito o resultado, e por isso se usam vários sorteios.
-b) é feita pelo teste.
-c) não afeta.
+a) não afeta.
+b) afeta muito o resultado, e por isso se usam vários sorteios.
+c) é feita pelo teste.
 d) é sempre a melhor possível.
-R: a | Daí a variação grande entre sorteios.
+R: b | Daí a variação grande entre sorteios.
 
 MC: O conjunto Adult (renda > 50 mil) tem aproximadamente:
 a) 0% de exemplos positivos.
@@ -111,17 +111,17 @@ d) usar o futuro no treino.
 R: c | Respeita a ordem do tempo.
 
 MC: No experimento da temperatura, a acurácia com o corte aleatório foi:
-a) maior que com o corte temporal, indicando otimismo.
-b) exatamente igual.
-c) impossível de calcular.
+a) exatamente igual.
+b) impossível de calcular.
+c) maior que com o corte temporal, indicando otimismo.
 d) menor que com o corte temporal.
-R: a | Por exemplo, 79,9% contra 74,9% com 30 rótulos para a regressão logística.
+R: c | Por exemplo, 79,9% contra 73,8% com 30 rótulos para a regressão logística.
 
 MC: A diferença entre as duas divisões foi maior para os métodos baseados em vizinhança porque:
 a) janelas vizinhas no tempo são parecidas e os vizinhos 'vazam' informação.
-b) eles têm menos parâmetros.
-c) eles não usam dados.
-d) eles usam rótulos do teste.
+b) eles usam rótulos do teste.
+c) eles têm menos parâmetros.
+d) eles não usam dados.
 R: a | Os vizinhos de uma janela de teste são janelas quase idênticas no treino.
 
 MC: Uma janela deslizante de 30 dias com passo 1 gera janelas:
@@ -194,19 +194,19 @@ c) usar só dados sem rótulo.
 d) aplicar o método mais complexo.
 R: b | Antes de pensar em semissupervisionado.
 
-MC: O uso de um conjunto de validação separado, em dados tabulares pequenos, é difícil porque:
-a) validação é proibida.
-b) não há dados sem rótulo.
-c) não há teste.
-d) há poucos exemplos rotulados, e dividir os poucos rótulos aumenta a variação.
-R: d | Daí a validação cruzada nos rotulados.
+MC: Na regressão semissupervisionada com regularização pelo Laplaciano (LapRLS), um peso muito grande do Laplaciano tende a:
+a) achatar as previsões e piorar o R².
+b) eliminar a necessidade de rótulos.
+c) transformar o problema em classificação.
+d) melhorar sempre o R².
+R: a | No experimento, o R² caiu com o peso 1.000.
 
-MC: Na prática, antes de investir em semissupervisionado em tabelas, convém:
-a) evitar a referência.
-b) usar só o teste.
-c) medir o ganho em um diagnóstico simples, comparando com a referência supervisionada.
-d) assumir que haverá ganho.
-R: c | O benchmark do capítulo mostra que o ganho é incerto.
+MC: Uma divisão temporal sem vazamento em janelas deslizantes exige que:
+a) as janelas se sobreponham.
+b) nenhuma janela de teste tenha dia em comum com o treino, com uma faixa de exclusão na fronteira.
+c) as janelas sejam sorteadas ao acaso.
+d) o teste seja o passado e o treino, o futuro.
+R: b | Classificar pelo dia central não basta.
 
 DISC: Explique por que dados tabulares são mais difíceis para os métodos semissupervisionados baseados em distância ou aumento do que imagens.
 R: Os atributos são heterogêneos, com escalas e significados diferentes, e não há transformações naturais que preservem a classe. Distâncias podem ser dominadas por atributos irrelevantes, e a hipótese de agrupamento pode não valer.
@@ -233,7 +233,7 @@ DISC: O que significa vazamento em séries temporais e como a divisão aleatóri
 R: O teste contém informação semelhante à do treino. Janelas deslizantes vizinhas compartilham quase todos os pontos, então uma janela de teste tem 'gêmeas' no treino, e a avaliação fica otimista.
 
 DISC: Interprete a diferença entre o corte aleatório e o temporal no experimento da temperatura.
-R: Com o corte aleatório, a acurácia foi maior (por exemplo, 79,9% contra 74,9% para a regressão logística com 30 rótulos), e mais ainda para o 1-vizinho e o Label Spreading (cerca de 6 a 10 pontos), pelo vazamento.
+R: Com o corte aleatório, a acurácia foi maior (por exemplo, 79,9% contra 73,8% para a regressão logística com 30 rótulos), e mais ainda para o 1-vizinho e o Label Spreading (cerca de 7 a 10 pontos), pelo vazamento.
 
 DISC: Por que o corte temporal fornece uma estimativa mais honesta do desempenho futuro?
 R: Imita o uso real: treinar com o passado e prever o futuro, o que inclui a deriva dos dados.
@@ -262,8 +262,8 @@ R: Usar o modelo para indicar os exemplos mais incertos para um especialista rot
 DISC: Quais são as limitações do experimento com séries temporais do capítulo?
 R: Uma só série (Melbourne), um problema relativamente fácil (estações), poucos tipos de atributos, e o corte temporal inclui deriva sazonal e anual. Não generaliza para outras séries.
 
-DISC: Discuta como escolher entre self-training e Label Spreading em dados tabulares.
-R: Depende da estrutura: o Label Spreading exige agrupamento nos atributos padronizados; o self-training exige um classificador bem calibrado. Decidir com um diagnóstico em validação e vários sorteios.
+DISC: Explique por que dividir janelas pelo dia central não evita o vazamento e como corrigir.
+R: Uma janela cujo centro está no treino pode compartilhar quase todos os dias com uma janela de teste vizinha. Corrige-se separando pelo intervalo inteiro de cada janela, descartando as que cruzam a fronteira e acrescentando uma faixa de exclusão.
 
-DISC: Resuma as lições do Capítulo 16.
-R: Em tabelas e séries, o ganho do semissupervisionado é incerto e específico de cada base; a referência supervisionada forte, a métrica adequada e a divisão correta (temporal) são decisivos; e os resultados negativos devem ser relatados.
+DISC: Resuma o resultado da regressão semissupervisionada do capítulo.
+R: A LapRLS com peso pequeno ficou igual ao núcleo ridge, e com pesos maiores piorou muito; modelos supervisionados (ridge linear, floresta) foram melhores ou equivalentes. O ganho do grafo não apareceu.

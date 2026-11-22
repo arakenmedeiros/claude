@@ -1,9 +1,9 @@
 MC: Segundo Oliver et al. (2018), um problema comum na avaliação de métodos semissupervisionados é:
-a) comparar com referências supervisionadas fracas ou mal ajustadas.
-b) usar GPUs.
-c) usar muitos rótulos.
-d) usar imagens.
-R: a | O ganho aparente pode desaparecer com uma referência forte.
+a) usar GPUs.
+b) usar imagens.
+c) comparar com referências supervisionadas fracas ou mal ajustadas.
+d) usar muitos rótulos.
+R: c | O ganho aparente pode desaparecer com uma referência forte.
 
 MC: Ajustar hiperparâmetros olhando o conjunto de teste:
 a) é obrigatório.
@@ -20,18 +20,18 @@ d) maior que a escolhida por validação, mostrando o otimismo.
 R: d | 94,5% contra 93,1%.
 
 MC: Um conjunto de validação separado, quando há muito poucos rótulos, é:
-a) difícil de obter, pois dividir os poucos rótulos aumenta a variação.
-b) sempre grande.
-c) proibido.
-d) desnecessário.
-R: a | Daí a validação cruzada nos rotulados.
+a) sempre grande.
+b) difícil de obter, pois dividir os poucos rótulos aumenta a variação.
+c) desnecessário.
+d) proibido.
+R: b | Daí a validação cruzada nos rotulados.
 
 MC: A validação cruzada nos exemplos rotulados serve para:
-a) escolher hiperparâmetros sem usar o teste.
-b) usar o teste no treino.
-c) reduzir os dados sem rótulo.
-d) criar pseudo-rótulos.
-R: a | Esconde parte dos rótulos para validar.
+a) reduzir os dados sem rótulo.
+b) criar pseudo-rótulos.
+c) usar o teste no treino.
+d) escolher hiperparâmetros sem usar o teste.
+R: d | Esconde parte dos rótulos para validar.
 
 MC: O teste pareado compara dois métodos:
 a) em sorteios diferentes.
@@ -71,8 +71,8 @@ R: d | −0,5 ponto, com intervalo [−2,0; +0,9].
 MC: No experimento pareado do capítulo, o Label Spreading (k = 10) obteve:
 a) ganho médio de cerca de 8 pontos, em todos os 30 sorteios.
 b) ganhos em 15 dos 30 sorteios.
-c) ganho nulo.
-d) perda média de 8 pontos.
+c) perda média de 8 pontos.
+d) ganho nulo.
 R: a | +7,9 pontos, com 30 vitórias e 0 derrotas.
 
 MC: Comparar muitos métodos e relatar só o melhor causa:
@@ -121,7 +121,7 @@ MC: Para imagens com poucos rótulos e muitos dados sem rótulo, os métodos mai
 a) k-means.
 b) S3VM.
 c) regressão linear.
-d) UDA e FixMatch (consistência e pseudo-rótulos com aumento).
+d) UDA adaptada e FixMatch (consistência e pseudo-rótulos com aumento).
 R: d | Resultados do MNIST nos Capítulos 10 e 11.
 
 MC: Para texto com poucos rótulos, a ação com mais retorno vista no livro foi:
@@ -132,11 +132,11 @@ d) usar mais camadas.
 R: c | Foi o ganho mais robusto no Capítulo 14.
 
 MC: Para dados em forma de grafo (redes sociais, citações), uma escolha natural é:
-a) métodos de grafos, como o Label Propagation e as redes neurais de grafos.
-b) a UDA.
+a) a UDA adaptada.
+b) métodos de grafos, como o Label Propagation e as redes neurais de grafos.
 c) o MixMatch.
 d) o SimCLR.
-R: a | A informação 'escorre' pelas arestas.
+R: b | A informação 'escorre' pelas arestas.
 
 MC: Em um sistema real, os pseudo-rótulos podem amplificar vieses porque:
 a) dispensam validação.
@@ -174,11 +174,11 @@ d) reduz o teste.
 R: b | Como visto na acurácia por categoria no Fashion-MNIST.
 
 MC: O custo computacional e ambiental dos métodos profundos deve ser considerado porque:
-a) pré-treinos e muitos passos consomem energia e tempo.
+a) só os dados custam.
 b) não há custo em CPU.
-c) só os dados custam.
-d) são sempre baratos.
-R: a | Um método mais simples pode ser suficiente.
+c) são sempre baratos.
+d) pré-treinos e muitos passos consomem energia e tempo.
+R: d | Um método mais simples pode ser suficiente.
 
 MC: A reprodutibilidade em um projeto semissupervisionado exige:
 a) usar sorteios diferentes a cada vez.
@@ -194,19 +194,19 @@ c) apenas o teste.
 d) a referência, os sorteios, as métricas, as limitações e os resultados negativos.
 R: d | Para que as conclusões sejam confiáveis.
 
-MC: Quando NÃO usar um método semissupervisionado?
-a) quando há rótulos suficientes e o método não supera a referência, ou quando os dados sem rótulo não representam a população.
-b) quando houver poucos rótulos.
-c) sempre que houver dados sem rótulo.
-d) quando houver imagens.
-R: a | A complexidade extra precisa se justificar.
+MC: Em um problema de conjunto aberto (open set), os dados sem rótulo:
+a) não têm nenhuma estrutura.
+b) têm exatamente as mesmas classes dos rotulados.
+c) são sempre rotulados depois.
+d) contêm classes ausentes dos exemplos rotulados.
+R: d | Um classificador comum só responde com classes conhecidas.
 
-MC: A rotulagem ativa pode ser combinada ao semissupervisionado para:
-a) aumentar o teste.
-b) reduzir a validação.
-c) rotular só os exemplos mais informativos e aproveitar os demais sem rótulo.
-d) eliminar todos os rótulos.
-R: c | Usa o orçamento de rotulagem de forma eficiente.
+MC: Ao contar o custo total de rotulagem, deve-se incluir:
+a) nenhum rótulo.
+b) apenas os rótulos de teste.
+c) apenas os rótulos de treino.
+d) os rótulos de treino, validação, teste e auditoria, além do esforço de achar casos raros.
+R: d | Um teste de 50 exemplos tem incerteza de cerca de 8 pontos.
 
 DISC: Liste cinco armadilhas de avaliação em aprendizado semissupervisionado e explique duas.
 R: Referência fraca, ajuste no teste, validação irreal, descasamento de classes, poucos sorteios, vazamento. Ex.: referência fraca superestima o ganho; ajuste no teste torna a estimativa otimista.
@@ -233,7 +233,7 @@ DISC: Como detectar exemplos 'de fora' nos dados sem rótulo? Dê um método.
 R: Usar um modelo treinado só nas classes conhecidas (por exemplo, o erro de reconstrução de um VAE ou a baixa confiança de um classificador) e sinalizar os exemplos com pontuação anômala.
 
 DISC: Descreva um diagrama de decisão para escolher um método conforme o tipo de dado.
-R: Imagens: UDA ou FixMatch com aumento; texto: representação com texto sem rótulo (LSA/pré-treino); tabelas: modelo supervisionado forte e diagnóstico simples; grafos: Label Propagation ou GNN; séries: divisão temporal e atributos de janelas.
+R: Imagens: UDA adaptada ou FixMatch com aumento; texto: representação com texto sem rótulo (LSA/pré-treino); tabelas: modelo supervisionado forte e diagnóstico simples; grafos: Label Propagation ou GNN; séries: divisão temporal e atributos de janelas.
 
 DISC: Quando não usar um método semissupervisionado?
 R: Quando há rótulos suficientes, o método não supera a referência forte, os dados sem rótulo vêm de outra população ou o custo de complexidade não se justifica.
@@ -262,8 +262,8 @@ R: O modelo semissupervisionado indica os exemplos mais incertos ou informativos
 DISC: O que um relatório honesto deve conter?
 R: Descrição dos dados e da divisão, referência forte, número de sorteios, médias e desvios, intervalos ou testes, resultados negativos, limitações e riscos éticos.
 
-DISC: Compare as lições principais dos Capítulos 10 a 16 em termos de qual método funcionou melhor em cada tipo de dado.
-R: Imagens (MNIST): UDA e FixMatch; representação (SimCLR) ajudou em MNIST mas não em Fashion-MNIST; texto: LSA ajudou; tabelas e séries: ganhos incertos; generativos: pouco ganho.
+DISC: Explique, com os resultados do capítulo, por que um método que melhora o acerto nas classes conhecidas pode piorar a segurança diante de classes desconhecidas.
+R: O Label Spreading subiu o acerto nos dígitos conhecidos (92,4% para 96,3%), mas a AUROC para reconhecer o desconhecido caiu (0,892 para 0,727): a propagação espalha classes conhecidas para exemplos de fora, com alta confiança.
 
-DISC: Resuma as cinco perguntas essenciais antes de acreditar em um ganho semissupervisionado.
-R: A referência é forte e justa? O teste ficou fora de qualquer escolha? Houve vários sorteios e incerteza reportada? Os dados sem rótulo vêm da mesma população? Os resultados negativos foram relatados?
+DISC: Mostre, com um exemplo numérico, por que o custo total de rotular inclui validação, teste e a busca por classes raras.
+R: Para 90 casos positivos de uma classe com 1% de prevalência, é preciso rotular cerca de 9.000 exemplos; e um teste de 50 exemplos tem incerteza de ±8,3 pontos, insuficiente para comparar métodos.

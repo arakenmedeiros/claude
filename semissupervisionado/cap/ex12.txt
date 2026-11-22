@@ -1,9 +1,9 @@
 MC: O aprendizado auto-supervisionado:
-a) aprende uma representação com dados sem rótulo, usando uma tarefa inventada cujo 'rótulo' vem dos próprios dados.
-b) não usa redes neurais.
+a) não usa redes neurais.
+b) aprende uma representação com dados sem rótulo, usando uma tarefa inventada cujo 'rótulo' vem dos próprios dados.
 c) usa apenas rótulos humanos.
 d) exige que todos os exemplos tenham rótulo.
-R: a | Depois, poucos rótulos são usados para a tarefa final.
+R: b | Depois, poucos rótulos são usados para a tarefa final.
 
 MC: Uma tarefa-pretexto (pretext task) é:
 a) um tipo de rótulo humano.
@@ -13,11 +13,11 @@ d) a tarefa final do projeto.
 R: b | Como prever a rotação de uma imagem.
 
 MC: Na tarefa de prever a rotação, o 'rótulo' é:
-a) o ângulo aplicado à imagem, gerado automaticamente.
-b) a cor da imagem.
-c) a classe do objeto.
-d) o nome do arquivo.
-R: a | Não custa nenhum trabalho humano.
+a) a classe do objeto.
+b) o nome do arquivo.
+c) a cor da imagem.
+d) o ângulo aplicado à imagem, gerado automaticamente.
+R: d | Não custa nenhum trabalho humano.
 
 MC: Para acertar a rotação de um dígito, a rede precisa:
 a) decorar os rótulos.
@@ -83,11 +83,11 @@ d) não precisar de lotes enormes.
 R: d | Os negativos vêm de lotes anteriores.
 
 MC: O BYOL e o SimSiam se distinguem do SimCLR porque:
-a) funcionam sem exemplos negativos.
-b) não usam redes.
-c) não usam aumento.
-d) exigem muitos rótulos.
-R: a | Usam um alvo estável, parecido com o professor do Mean Teacher.
+a) não usam aumento.
+b) exigem muitos rótulos.
+c) funcionam sem exemplos negativos.
+d) não usam redes.
+R: c | Usam um alvo estável, parecido com o professor do Mean Teacher.
 
 MC: A cabeça de projeção, no SimCLR, é usada:
 a) para o ajuste fino.
@@ -105,17 +105,17 @@ R: b | Mede a qualidade da representação.
 
 MC: O ajuste fino (fine-tuning) consiste em:
 a) continuar treinando toda a rede, a partir do codificador pré-treinado, com os rótulos.
-b) congelar toda a rede.
+b) usar só dados sem rótulo.
 c) apagar o codificador.
-d) usar só dados sem rótulo.
+d) congelar toda a rede.
 R: a | Usa os poucos rótulos para adaptar os pesos.
 
 MC: Um codificador com pesos aleatórios, sem treino, serve como referência porque:
-a) mostra o que a própria arquitetura já entrega sem nenhum aprendizado.
-b) usa rótulos.
-c) é o melhor possível.
-d) dispensa a sonda linear.
-R: a | O ganho do pré-treino deve ser medido contra ele.
+a) é o melhor possível.
+b) dispensa a sonda linear.
+c) mostra o que a própria arquitetura já entrega sem nenhum aprendizado.
+d) usa rótulos.
+R: c | O ganho do pré-treino deve ser medido contra ele.
 
 MC: No pré-treino auto-supervisionado, os rótulos das imagens:
 a) são usados como pseudo-rótulos.
@@ -125,18 +125,18 @@ d) não são usados.
 R: d | Os rótulos só entram na etapa final.
 
 MC: Uma vantagem do pré-treino auto-supervisionado é:
-a) poder usar muitos dados sem rótulo, que são baratos.
-b) funcionar sem aumento de dados.
-c) não precisar de computação.
-d) dispensar os rótulos para sempre.
-R: a | Os poucos rótulos são usados só no final.
+a) dispensar os rótulos para sempre.
+b) poder usar muitos dados sem rótulo, que são baratos.
+c) funcionar sem aumento de dados.
+d) não precisar de computação.
+R: b | Os poucos rótulos são usados só no final.
 
 MC: Para comparar a sonda linear com a referência supervisionada, é justo:
-a) usar os mesmos rótulos e relatar a variação entre sorteios.
-b) usar rótulos só na referência.
-c) usar mais rótulos na sonda.
-d) usar o teste para escolher a sonda.
-R: a | Os mesmos 100 rótulos para todas as abordagens.
+a) usar rótulos só na referência.
+b) usar o teste para escolher a sonda.
+c) usar os mesmos rótulos e relatar a variação entre sorteios.
+d) usar mais rótulos na sonda.
+R: c | Os mesmos 100 rótulos para todas as abordagens.
 
 MC: Se o pré-treino e a avaliação usam imagens do mesmo conjunto de treino, o cuidado necessário é:
 a) nenhum cuidado.
@@ -146,11 +146,11 @@ d) usar todos os rótulos no pré-treino.
 R: c | Evita vazamento.
 
 MC: A diferença entre o pré-treino por rotação e o contrastivo é que:
-a) o primeiro prevê a rotação aplicada, e o segundo aproxima versões do mesmo exemplo.
-b) o segundo não usa aumento.
-c) o primeiro usa o teste.
-d) o primeiro usa rótulos humanos.
-R: a | São tarefas-pretexto diferentes.
+a) o primeiro usa rótulos humanos.
+b) o primeiro usa o teste.
+c) o segundo não usa aumento.
+d) o primeiro prevê a rotação aplicada, e o segundo aproxima versões do mesmo exemplo.
+R: d | São tarefas-pretexto diferentes.
 
 MC: A representação aprendida é útil quando:
 a) todos os exemplos ficam iguais.
@@ -174,11 +174,11 @@ d) a rede treinada com aumento e a representação aprendida costumam fazer muit
 R: d | Compare com referências fortes.
 
 MC: A principal ideia que une os capítulos 10, 11 e 12 é:
-a) usar os dados sem rótulo de forma que o modelo seja estável diante de perturbações.
-b) evitar redes neurais.
-c) usar só rótulos.
-d) descartar os dados sem rótulo.
-R: a | Seja por consistência, pseudo-rótulos ou contraste.
+a) usar só rótulos.
+b) descartar os dados sem rótulo.
+c) evitar redes neurais.
+d) usar os dados sem rótulo de forma que o modelo seja estável diante de perturbações.
+R: d | Seja por consistência, pseudo-rótulos ou contraste.
 
 MC: Em texto, a tarefa de preencher palavras escondidas é uma tarefa-pretexto usada por:
 a) o PCA.
@@ -201,12 +201,12 @@ c) relatado, junto com as condições do experimento.
 d) omitido.
 R: c | A honestidade exige reportar o que se mede.
 
-MC: Em um experimento justo de pré-treino, o número de rótulos usados na sonda linear e na referência supervisionada deve ser:
-a) irrelevante.
-b) maior na referência.
-c) maior na sonda.
-d) o mesmo.
-R: d | Para que a comparação seja justa.
+MC: No aprendizado por transferência, a tarefa-fonte é:
+a) a tarefa, em geral com muitos dados, em que a rede foi treinada antes de ser reaproveitada.
+b) um tipo de aumento de dados.
+c) a tarefa final do projeto.
+d) o conjunto de teste.
+R: a | As camadas aprendidas são reaproveitadas na tarefa-alvo.
 
 DISC: Explique a ideia do aprendizado auto-supervisionado com a analogia da criança que olha fotos sem nomes.
 R: A criança aprende a agrupar e reconhecer padrões sem rótulos. Depois, com poucos nomes, generaliza facilmente. A rede, igualmente, aprende uma representação sem rótulos e só depois usa poucos rótulos.
@@ -265,5 +265,5 @@ R: MNIST é fácil; foram usadas 10.000 imagens, 1.500 passos em CPU e poucos so
 DISC: Quando o aprendizado contrastivo pode falhar?
 R: Quando os aumentos destroem informação relevante ou mudam a classe, quando o pré-treino é curto, ou quando os dados sem rótulo são muito diferentes dos dados da tarefa final.
 
-DISC: Descreva uma receita prática para usar auto-supervisão com poucos rótulos.
-R: Pré-treinar um codificador com os dados sem rótulo, avaliar com sonda linear contra referências, fazer ajuste fino com os rótulos se compensar, e comparar sempre com a referência supervisionada forte.
+DISC: Compare o pré-treino sem rótulo, a transferência de uma tarefa-fonte rotulada e o treino do zero com aumento de dados.
+R: O pré-treino sem rótulo usa os dados do próprio problema; a transferência reaproveita uma rede treinada com rótulos em outra tarefa, e funciona melhor se a tarefa for parecida e maior; o treino do zero com aumento é a referência forte, contra a qual os dois devem ser comparados.

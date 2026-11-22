@@ -47,7 +47,7 @@ c) ganhos pequenos (cerca de 1 ponto), dentro do ruído.
 d) perdas de 20 pontos.
 R: c | 72,5%, 72,2% e 72,2% contra 71,2%.
 
-MC: Com 300 rótulos, no Fashion-MNIST, o maior ganho foi do Pseudo-Label e da UDA, de cerca de:
+MC: Com 300 rótulos, no Fashion-MNIST, o maior ganho foi do Pseudo-Label e da UDA adaptada, de cerca de:
 a) 10 pontos.
 b) 3 pontos percentuais.
 c) 30 pontos.
@@ -218,7 +218,7 @@ DISC: Por que o aumento forte pode prejudicar no Fashion-MNIST?
 R: Rotações grandes, apagamentos e ruído podem destruir detalhes que distinguem classes parecidas e tornar a tarefa difícil demais para o orçamento de treino.
 
 DISC: Compare os métodos semissupervisionados com a referência nos três tamanhos de conjunto rotulado.
-R: Com 100 rótulos: ganhos de cerca de 1 ponto. Com 300: Pseudo-Label e UDA ganham cerca de 3 pontos, e o FixMatch, 0,5. Com 1.000: praticamente nenhum ganho.
+R: Com 100 rótulos: ganhos de cerca de 1 ponto. Com 300: Pseudo-Label e UDA adaptada ganham cerca de 3 pontos, e o FixMatch, 0,5. Com 1.000: praticamente nenhum ganho.
 
 DISC: Por que o ganho diminui quando há mais rótulos?
 R: Com mais rótulos, o modelo supervisionado aprende mais por si só, e o sinal adicional dos dados sem rótulo é menos necessário, além de o ruído dos pseudo-rótulos poder prejudicar.
@@ -259,8 +259,8 @@ R: Evita vazamento: escolher o aumento no teste daria estimativas otimistas. Usa
 DISC: Como explicar a um gerente que o ganho do semissupervisionado foi modesto?
 R: Mostrando os números por rótulos e por categoria, com a incerteza, explicando que o método ajuda pouco nesse problema e mostrando o custo-benefício de rotular mais.
 
-DISC: Compare o desempenho do Pseudo-Label, FixMatch e UDA no Fashion-MNIST com o que se viu no MNIST.
-R: No MNIST, os ganhos foram maiores (2 a 3 pontos sobre 93%) e a UDA foi a melhor; no Fashion-MNIST, foram de 1 a 3 pontos, dependentes do número de rótulos, e a ordem não foi estável.
+DISC: Compare o desempenho do Pseudo-Label, FixMatch e UDA adaptada no Fashion-MNIST com o que se viu no MNIST.
+R: No MNIST, os ganhos foram maiores (2 a 3 pontos sobre 93%) e a UDA adaptada foi a melhor; no Fashion-MNIST, foram de 1 a 3 pontos, dependentes do número de rótulos, e a ordem não foi estável.
 
 DISC: Por que o experimento com 100 rótulos não permite declarar um método vencedor no Fashion-MNIST?
 R: As diferenças (72,2% a 72,5%) são menores que o desvio entre sorteios, e há apenas dois sorteios.

@@ -1,0 +1,6 @@
+Regressão com 20 ou 50 rótulos, 20 sorteios. R² no teste (30%) | gamma do núcleo = 1/(número de atributos); gA = 0,01; variamos gI (peso do Laplaciano), sem escolher o melhor no teste
+base                                    | rótulos | Ridge linear   | floresta aleatória | núcleo ridge (gI = 0) | LapRLS gI = 1 | gI = 100 | gI = 1000
+Diabetes (UCI/scikit-learn)             |      20 |  0.131 ± 0.106 |  0.225 ± 0.084 |  0.212 ± 0.076 |  0.213 ± 0.076 |  0.177 ± 0.078 |  0.048 ± 0.069
+Diabetes (UCI/scikit-learn)             |      50 |  0.295 ± 0.077 |  0.247 ± 0.061 |  0.290 ± 0.059 |  0.292 ± 0.058 |  0.261 ± 0.047 |  0.081 ± 0.041
+Friedman nº 1 (simulada, 1.000 exemplos) |      20 |  0.457 ± 0.149 |  0.347 ± 0.098 |  0.426 ± 0.084 |  0.424 ± 0.084 |  0.290 ± 0.075 |  0.095 ± 0.052
+Friedman nº 1 (simulada, 1.000 exemplos) |      50 |  0.683 ± 0.025 |  0.587 ± 0.051 |  0.582 ± 0.048 |  0.580 ± 0.048 |  0.423 ± 0.051 |  0.138 ± 0.031

@@ -3,7 +3,7 @@ from ssl_profundo import *
 
 X, y, X_te, y_te = carregar_mnist()
 PASSOS = 1500
-print(f"UDA no MNIST (100 rótulos, {PASSOS} passos, 1 sorteio): quantas imagens sem rótulo? (0 = só a referência supervisionada)")
+print(f"UDA adaptada no MNIST (100 rótulos, {PASSOS} passos, 1 sorteio): quantas imagens sem rótulo? (0 = só a referência supervisionada)")
 print("sem rótulo | aluno (teste) | professor EMA (teste)")
 idx = sortear_rotulados(y, 10, 0); pool = np.setdiff1d(np.arange(len(X)), idx)
 _, _, h = treinar_ssl("sup", X[idx], y[idx], X[pool[:10]], passos=PASSOS, semente=0, X_teste=X_te, y_teste=y_te, relatar=(PASSOS,))

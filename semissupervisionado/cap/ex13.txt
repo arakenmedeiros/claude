@@ -72,7 +72,7 @@ MC: No experimento do capítulo, a regressão logística sobre os atributos do V
 a) um resultado abaixo da regressão logística sobre os pixels.
 b) um resultado igual ao FixMatch.
 c) 100% de acurácia.
-d) um resultado muito acima da UDA.
+d) um resultado muito acima da UDA adaptada.
 R: a | 72,6% contra 76,5%.
 
 MC: Uma explicação possível para os atributos do VAE não ajudarem a classificar é que:
@@ -189,7 +189,7 @@ R: b | São aplicações muito difundidas.
 
 MC: Em nosso experimento, o método mais forte para 100 rótulos no MNIST entre os vistos foi:
 a) o VAE (72,6%).
-b) a UDA (96,0%), seguida do FixMatch (95,2%).
+b) a UDA adaptada (96,0%), seguida do FixMatch (95,2%).
 c) a GAN (77,8%).
 d) o M2 (75,5%).
 R: b | Os métodos generativos ficaram bem abaixo.

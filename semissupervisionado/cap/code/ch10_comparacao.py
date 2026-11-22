@@ -6,7 +6,7 @@ PASSOS, SEMENTES = 1500, 3
 print(f"MNIST, 100 rótulos + 10.000 imagens sem rótulo, CNN, {PASSOS} passos de treino, {SEMENTES} sorteios dos rotulados")
 print("método                          | aluno (teste)   | professor EMA (teste)")
 res = {}
-for nome, metodo in [("só rotulados (referência)", "sup"), ("Π-model", "pi"), ("Mean Teacher", "mt"), ("UDA (afiada + confiança)", "uda")]:
+for nome, metodo in [("só rotulados (referência)", "sup"), ("Π-model", "pi"), ("Mean Teacher", "mt"), ("UDA adaptada (prof. EMA)", "uda")]:
     a, p = [], []
     for s in range(SEMENTES):
         idx = sortear_rotulados(y, 10, s)

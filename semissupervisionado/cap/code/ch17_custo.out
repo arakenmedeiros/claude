@@ -1,0 +1,21 @@
+1) Incerteza de uma acurácia estimada em um teste de n exemplos (acurácia verdadeira de 90%): metade da largura do IC de 95%
+n do teste | ± (pontos percentuais)
+        50 | 8.3
+       100 | 5.9
+       200 | 4.2
+       500 | 2.6
+      1000 | 1.9
+      2000 | 1.3
+
+2) Quantos exemplos é preciso rotular, em média, para obter m casos da classe rara (prevalência p)? Custo = m / p
+prevalência | 20 no treino | + 20 na validação | + 50 no teste (90 positivos no total)
+        24% |           83 |               167 | 375
+         5% |          400 |               800 | 1800
+         1% |         2000 |              4000 | 9000
+
+3) Orçamento total de rótulos (500) dividido entre treino, validação e teste, com a precisão do teste (± em p.p., acurácia 90%)
+treino | validação | teste | ± do teste
+   450 |        25 |    25 | 11.8
+   350 |        75 |    75 | 6.8
+   250 |       100 |   150 | 4.8
+   150 |       150 |   200 | 4.2

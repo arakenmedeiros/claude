@@ -58,7 +58,7 @@ def f11_comparacao():
     uda = pct(out("ch10_comparacao").splitlines()[5].split("|")[1].split("±")[0])
     fig, ax = plt.subplots(figsize=(7.4, 3.9)); ax.bar(range(4), v, yerr=d, color=[GRY, AMB, IND, GRN], width=0.55, capsize=4, ecolor=INK)
     for i, val in enumerate(v): ax.text(i, val + d[i] + 0.15, f"{val:.1f}%".replace(".", ","), ha="center", fontsize=9.5, fontweight="bold")
-    ax.axhline(uda, c=RED, ls="--", lw=1.6); ax.text(3.45, uda + 0.12, "UDA (Cap. 10): " + f"{uda:.1f}%".replace(".", ","), color=RED, fontsize=8.5, ha="right")
+    ax.axhline(uda, c=RED, ls="--", lw=1.6); ax.text(3.45, uda + 0.12, "UDA adaptada (Cap. 10): " + f"{uda:.1f}%".replace(".", ","), color=RED, fontsize=8.5, ha="right")
     ax.set_xticks(range(4)); ax.set_xticklabels(nomes, fontsize=9); ax.set_ylim(90, 97.2); ax.set_ylabel("acurácia no teste (%)"); ax.set_title("MNIST, 100 rótulos + 10.000 sem rótulo (média de 3 sorteios)"); ax.grid(axis="y", alpha=0.25)
     save(fig, "f11_comparacao")
 

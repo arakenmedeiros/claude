@@ -83,6 +83,21 @@ As referências são artigos de periódicos e de conferências de referência da
 As referências foram preparadas a partir do conhecimento do autor da edição. Não foi possível consultar bases bibliográficas online durante a elaboração desta edição. Antes de citar em um trabalho acadêmico, confira volumes, páginas e DOI nas fontes originais.
 :::
 
+## Sobre esta edição revisada
+
+Esta edição incorpora uma revisão técnica detalhada da versão anterior. As principais mudanças foram:
+
+- **UDA:** a implementação do livro passou a ser identificada como **"UDA adaptada"** (professor EMA e máscara de confiança medida depois do afiamento), e a Seção 10.5.1 compara com a **UDA fiel ao artigo**;
+- **Comparações experimentais:** a Seção 11.5.1 separa o efeito do aumento de dados do efeito dos pseudo-rótulos; a Seção 10.5.2 estima a economia de rótulos com protocolos equivalentes;
+- **MixMatch:** a descrição das diferenças em relação ao artigo original foi corrigida;
+- **Grafos:** a interpretação da conectividade (Capítulo 8) foi corrigida, com uma nova seção sobre escalabilidade;
+- **EM:** a discussão de convergência (Capítulo 6) explicita as hipóteses e a degeneração das misturas gaussianas;
+- **Séries temporais:** a divisão treino-teste (Capítulo 16) passou a usar o intervalo inteiro de cada janela, com faixa de exclusão;
+- **Avaliação:** o alcance dos intervalos de confiança foi explicitado, com variação das divisões treino-teste (Capítulo 17);
+- **Referências:** duplicidades e divergências de ano foram corrigidas.
+
+Foram acrescentados os temas de **limiares adaptativos** (FlexMatch, FreeMatch e SoftMatch) e de **classes desbalanceadas nos dados sem rótulo** (Capítulo 11), **transferência de uma tarefa-fonte** (Capítulo 12), **regressão semissupervisionada** (Capítulo 16), **classes desconhecidas (conjunto aberto)** e **custo total da rotulagem** (Capítulo 17).
+
 ## Uma sugestão de estudo
 
 Estude em blocos curtos. Leia uma seção, execute os códigos, mude um número e observe. Depois responda às questões do capítulo e resolva os exercícios práticos. Por fim, faça o projeto. **Errar faz parte**: cada resultado inesperado é uma pista sobre o seu método ou sobre os seus dados.

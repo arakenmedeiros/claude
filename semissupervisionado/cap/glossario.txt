@@ -165,3 +165,8 @@ Calibração: concordância entre a confiança de um modelo e a frequência real
 ECE (erro de calibração esperado): média da diferença entre confiança e acurácia, calculada por faixas de confiança.
 Abstenção: decisão do sistema de não responder quando a confiança é baixa, encaminhando o caso a uma pessoa.
 Superconfiança: situação em que a confiança do modelo é maior que sua acurácia.
+Limiar adaptativo: limiar de confiança que muda ao longo do treino ou de classe para classe, como no FlexMatch e no FreeMatch.
+Alinhamento de distribuição: correção dos alvos para que a média das previsões nos dados sem rótulo se aproxime de uma distribuição de classes desejada.
+Conjunto aberto (open set): situação em que os dados sem rótulo contêm classes ausentes dos rotulados.
+Aprendizado por transferência: reaproveitar uma rede treinada em uma tarefa-fonte para outra tarefa, com poucos rótulos.
+Regressão semissupervisionada: previsão de um valor numérico usando exemplos rotulados e sem rótulo.

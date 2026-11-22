@@ -96,7 +96,7 @@ c) um rótulo humano.
 d) o conjunto de teste.
 R: a | Capítulo 10.
 
-MC: A UDA obtém o alvo:
+MC: A UDA adaptada obtém o alvo:
 a) da versão fraca do exemplo, afiado e filtrado pela confiança.
 b) da versão forte.
 c) de um sorteio.
@@ -146,9 +146,9 @@ d) um classificador.
 R: a | Capítulo 13.
 
 MC: Nos experimentos do Capítulo 13, os métodos generativos:
-a) foram idênticos à UDA.
+a) foram idênticos à UDA adaptada.
 b) superaram todos os demais.
-c) ficaram muito atrás de UDA e FixMatch na classificação com 100 rótulos.
+c) ficaram muito atrás de UDA adaptada e FixMatch na classificação com 100 rótulos.
 d) não puderam ser executados.
 R: c | Resultado modesto em nosso orçamento.
 
@@ -223,8 +223,8 @@ R: Propaga rótulos por um grafo de similaridade com uma matriz normalizada e o 
 DISC: Explique por que a referência supervisionada precisa ser forte, usando o exemplo do MNIST.
 R: Contra a regressão logística, o Label Spreading parecia ganhar 12 pontos; contra uma CNN com aumento e mais passos, o ganho sumiu. A referência fraca superestima o método.
 
-DISC: Descreva a regularização por consistência e as diferenças entre Π-model, Mean Teacher e UDA.
-R: Exige previsões iguais para versões perturbadas. Π-model: mesma rede, duas perturbações. Mean Teacher: alvo do professor (EMA). UDA: alvo da versão fraca, afiado e filtrado, e aluno na versão forte.
+DISC: Descreva a regularização por consistência e as diferenças entre Π-model, Mean Teacher e UDA adaptada.
+R: Exige previsões iguais para versões perturbadas. Π-model: mesma rede, duas perturbações. Mean Teacher: alvo do professor (EMA). UDA adaptada: alvo da versão fraca, afiado e filtrado, e aluno na versão forte.
 
 DISC: Descreva o FixMatch e explique o papel do limiar e dos aumentos fraco e forte.
 R: A previsão confiante na versão fraca vira pseudo-rótulo para a versão forte. O limiar filtra alvos duvidosos; o aumento forte obriga a rede a reconhecer a classe apesar das distorções.
@@ -233,7 +233,7 @@ DISC: Explique o viés de confirmação e como mitigá-lo.
 R: Erros confiantes viram alvos e são reforçados. Mitigam-se com limiar, aumento forte, referências fortes, medir a precisão dos alvos e validar com rótulos reais.
 
 DISC: Compare o pré-treino contrastivo com os métodos de consistência e pseudo-rótulos, citando os resultados do livro.
-R: O SimCLR aprende uma representação sem rótulos e depois usa poucos rótulos (91,8% no MNIST), mas com nosso orçamento não superou a CNN supervisionada forte (93,2%), nem a UDA (96,0%) ou o FixMatch (95,2%).
+R: O SimCLR aprende uma representação sem rótulos e depois usa poucos rótulos (91,8% no MNIST), mas com nosso orçamento não superou a CNN supervisionada forte (93,2%), nem a UDA adaptada (96,0%) ou o FixMatch (95,2%).
 
 DISC: Por que os métodos generativos profundos ajudaram pouco nos experimentos do livro?
 R: Gerar é mais difícil que classificar, o treino é delicado e o orçamento era limitado; os de consistência e contraste são mais simples e fortes.
@@ -245,7 +245,7 @@ DISC: Por que o limiar do self-training não é portátil? Dê um exemplo do liv
 R: Depende da escala das probabilidades do modelo. No Yelp, com a LSA, 0,8 não adicionou nada, 0,7 adicionou quase tudo (F1 caiu a 40%) e 0,6 deu 74,7%.
 
 DISC: Explique o vazamento em séries temporais e como evitá-lo.
-R: Janelas sobrepostas tornam o teste quase idêntico ao treino no corte aleatório (otimismo de 5 a 10 pontos). Evita-se dividindo no tempo, com folga entre treino e teste.
+R: Janelas sobrepostas tornam o teste quase idêntico ao treino no corte aleatório (otimismo de 3 a 10 pontos). Evita-se dividindo no tempo, com folga entre treino e teste.
 
 DISC: Qual a mensagem do benchmark com oito bases do Capítulo 16?
 R: O ganho do semissupervisionado depende da base: claro no Digits, incerto em Glass e Iris, e nulo ou negativo nas demais. Relatar todas as bases é essencial.

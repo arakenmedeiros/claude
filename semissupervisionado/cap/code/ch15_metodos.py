@@ -5,7 +5,7 @@ X, y, X_te, y_te = carregar_fashion()
 nomes_cl = ["camiseta", "calça", "pulôver", "vestido", "casaco", "sandália", "camisa", "tênis", "bolsa", "bota"]
 moderado = lambda x: aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)       # aumento "forte" adequado a roupas (Capítulos 9 a 11)
 PASSOS, SEMENTES = 2000, 2
-metodos = [("só rotulados", "sup"), ("Pseudo-Label", "pseudo"), ("FixMatch (0,95)", "fixmatch"), ("UDA", "uda")]
+metodos = [("só rotulados", "sup"), ("Pseudo-Label", "pseudo"), ("FixMatch (0,95)", "fixmatch"), ("UDA adaptada", "uda")]
 print(f"Fashion-MNIST, 10.000 imagens sem rótulo, CNN, {PASSOS} passos, {SEMENTES} sorteios. Acerto no teste (média ± desvio)")
 print("rótulos (por classe) | " + " | ".join(f"{n:16s}" for n, _ in metodos))
 modelos = {}

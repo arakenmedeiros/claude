@@ -1,7 +1,8 @@
 Temperaturas mínimas diárias (Melbourne, 1981-1990): 3621 janelas de 30 dias; classes: 2 = verão (dez-fev), 0 = inverno (jun-ago), 1 = meia-estação (demais meses)
+Divisão temporal: 2526 janelas de treino (terminam até 31/12/1987) e 1036 de teste (começam 30 dias depois de 01/01/1988); nenhuma janela de teste tem dia em comum com o treino
 Acurácia no teste, 20 sorteios, para dois números de rótulos e duas formas de dividir treino e teste
-rótulos | divisão do teste                          | reg. logística | 1-vizinho    | Label Spreading (knn, k = 10)
-     30 | aleatória (janelas se sobrepõem)                  |  79.9% ± 3.8 |  75.2% ± 3.2 |  74.6% ± 4.0
-     30 | temporal (treino até 1987, teste de 1988 em diante) |  74.9% ± 4.4 |  69.3% ± 5.9 |  68.0% ± 4.5
-    150 | aleatória (janelas se sobrepõem)                  |  85.3% ± 1.4 |  82.6% ± 1.6 |  83.3% ± 1.5
-    150 | temporal (treino até 1987, teste de 1988 em diante) |  82.1% ± 1.9 |  74.4% ± 3.1 |  73.7% ± 2.3
+rótulos | divisão do teste                           | reg. logística | 1-vizinho    | Label Spreading (knn, k = 10)
+     30 | aleatória (janelas se sobrepõem)                   |  79.9% ± 3.8 |  75.2% ± 3.2 |  74.6% ± 4.0
+     30 | temporal, sem janelas em comum e com faixa de 30 dias |  73.8% ± 4.7 |  68.4% ± 6.5 |  67.8% ± 4.5
+    150 | aleatória (janelas se sobrepõem)                   |  85.3% ± 1.4 |  82.6% ± 1.6 |  83.3% ± 1.5
+    150 | temporal, sem janelas em comum e com faixa de 30 dias |  82.3% ± 2.2 |  73.6% ± 4.2 |  73.8% ± 3.3

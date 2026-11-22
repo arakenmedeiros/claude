@@ -73,7 +73,7 @@ d = np.array(res[True]) - np.array(res[False])
 print("sorteios em que a consistência ajudou / empatou / piorou:", int((d > 0).sum()), "/", int((d == 0).sum()), "/", int((d < 0).sum()), "| ganho médio: %+.1f p.p." % (100 * d.mean()))
 ```
 @@NOTE Sem consistência, a MLP obteve 87,1% ± 6,6; com consistência (Π-model, ruído gaussiano), 94,9% ± 3,6, um ganho médio de 7,8 pontos percentuais. A consistência ajudou em 9 dos 10 sorteios e piorou em 1. Nas duas luas, a perturbação por ruído é adequada (um pequeno deslocamento do ponto não muda a classe), e a rede é pequena e rápida. É um bom exemplo de que o método funciona quando a perturbação respeita a estrutura do problema. Atenção ao desvio de 6,6 pontos da referência, que mostra o quanto o resultado depende de quais 10 pontos foram rotulados.
-@@EX 4 | O limiar de confiança da UDA | avançado
+@@EX 4 | O limiar de confiança da UDA adaptada | avançado
 No **MNIST** (100 rótulos; `sortear_rotulados(y, 10, 0)`; 10.000 imagens sem rótulo sorteadas do restante), treine com `treinar_ssl("uda", ...)`, 1.000 passos, variando o **limiar de confiança** (`limiar` = 0, 0,8 e 0,95). Passe `yu=y[u]` apenas para medir a **fração** de exemplos que passam pelo filtro e a **precisão** dos alvos que passam (os rótulos verdadeiros não entram no treino). Mostre também a acurácia no teste.
 
 *Pergunta:* que efeito tem o limiar? A precisão dos alvos que passam aumenta com o limiar?
@@ -108,15 +108,15 @@ for f in [0.9, 0.99, 0.999]:
     print(f"{f:9.3f} | {100 * h[0][1]:.1f}% | {100 * h[0][2]:.1f}%")
 ```
 @@NOTE O fator 0,9 deu 94,9% (aluno) e 95,1% (professor); 0,99, 94,7% e 95,0%; e 0,999, 92,6% e 92,8%. Com 1.000 passos, o fator 0,999 faz o professor guardar cerca de 37% (0,999 elevado a 1.000) dos pesos **iniciais**, ainda quase aleatórios, e por isso ele fica defasado e o próprio aluno, que aprende com o alvo dele, piora. Fatores de 0,9 e 0,99 funcionaram de modo semelhante. A regra: o fator deve ser compatível com a duração do treino (mais passos permitem fatores mais altos).
-@@PROJ Rotulando roupas com consistência: UDA e Mean Teacher no Fashion-MNIST | Cap10
+@@PROJ Rotulando roupas com consistência: UDA adaptada e Mean Teacher no Fashion-MNIST | Cap10
 **Fonte dos dados.** *Fashion-MNIST* (Zalando Research; também no Kaggle), 70.000 imagens 28×28 de 10 tipos de peças de roupa (`carregar_fashion()` de `utilidades.py`, espelho público).
 
-**Contexto.** No Capítulo 9, o aumento de dados forte **piorou** a CNN no Fashion-MNIST, e a melhor referência foi a CNN com aumento fraco. Antes de recomendar um método de consistência, a loja precisa saber se a UDA ou o Mean Teacher superam essa referência **com um aumento adequado a roupas**.
+**Contexto.** No Capítulo 9, o aumento de dados forte **piorou** a CNN no Fashion-MNIST, e a melhor referência foi a CNN com aumento fraco. Antes de recomendar um método de consistência, a loja precisa saber se a UDA adaptada ou o Mean Teacher superam essa referência **com um aumento adequado a roupas**.
 
 **Tarefas.**
 1. Defina um aumento "moderado" para roupas: rotação de até 10°, escala de 10% e deslocamento de até 10% (função `aumentar` de `utilidades.py`, sem apagar e sem ruído). Use-o como `forte` em `treinar_ssl`, e deslocamento de até 8% como `fraco`.
-2. Com 100 rótulos (10 por classe), 10.000 imagens de treino sem rótulo, 1.500 passos e dois sorteios, compare no teste: a referência (`sup`), o Mean Teacher (peso 10) e a UDA.
-3. Para a UDA, reporte também a fração de alvos que passam pelo filtro de confiança e a precisão deles (`yu`).
+2. Com 100 rótulos (10 por classe), 10.000 imagens de treino sem rótulo, 1.500 passos e dois sorteios, compare no teste: a referência (`sup`), o Mean Teacher (peso 10) e a UDA adaptada.
+3. Para a UDA adaptada, reporte também a fração de alvos que passam pelo filtro de confiança e a precisão deles (`yu`).
 4. Escreva uma recomendação (8 a 10 linhas): algum método compensa? A confiança do modelo é um bom filtro neste problema?
 
 **Entregáveis.** Código, tabela e recomendação.
@@ -128,7 +128,7 @@ from ssl_profundo import *
 X, y, X_te, y_te = carregar_fashion()
 moderado = lambda x: aumentar(x, rotacao=10, escala=0.1, deslocamento=0.1)
 print("método                 | acerto do aluno | acerto do professor | fração que passa | precisão dos alvos  (Fashion-MNIST, 100 rótulos, 1.500 passos)")
-for nome, metodo, peso in [("só rotulados (sup)", "sup", 1.0), ("Mean Teacher (w=10)", "mt", 10.0), ("UDA", "uda", 1.0)]:
+for nome, metodo, peso in [("só rotulados (sup)", "sup", 1.0), ("Mean Teacher (w=10)", "mt", 10.0), ("UDA adaptada", "uda", 1.0)]:
     r = []
     for s in range(2):
         idx = sortear_rotulados(y, 10, s); u = np.random.RandomState(100 + s).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
@@ -141,10 +141,10 @@ for nome, metodo, peso in [("só rotulados (sup)", "sup", 1.0), ("Mean Teacher (
 @@RUBRICA
 - O aumento é adequado ao problema (moderado), e a referência supervisionada usa o mesmo aumento e o mesmo número de passos.
 - Foram usados dois sorteios dos rotulados e os mesmos não rotulados e o mesmo teste para todos os métodos.
-- A fração e a precisão dos alvos da UDA são calculadas com `yu` apenas como diagnóstico, sem entrar no treino.
+- A fração e a precisão dos alvos da UDA adaptada são calculadas com `yu` apenas como diagnóstico, sem entrar no treino.
 - A comparação distingue aluno de professor.
 - A recomendação é coerente com os números e discute o ruído entre sorteios.
-@@NOTE Com 100 rótulos, a referência obteve 70,9% (aluno) e 71,2% (professor). O Mean Teacher (peso 10) obteve 72,8% e 72,6%, e a UDA, 72,6% e 72,3%: ganhos de cerca de **1,7 a 1,9 ponto** no aluno, no limite do ruído entre sorteios (dois sorteios). Na UDA, passam pelo filtro 88,5% dos alvos, mas a **precisão** deles é de apenas **75,0%** (no MNIST, era de 96,4%): o modelo é confiante e erra com frequência em roupas parecidas (camisa, camiseta, pulôver), e portanto a confiança é um filtro **ruim** neste problema. Recomendação: o ganho é modesto e pouco seguro, não justifica, por si só, um sistema mais complexo; vale testar com mais sorteios, mais passos ou com uma representação melhor (Capítulo 12). Limites: dois sorteios, 1.500 passos e uma só configuração de aumento.
+@@NOTE Com 100 rótulos, a referência obteve 70,9% (aluno) e 71,2% (professor). O Mean Teacher (peso 10) obteve 72,8% e 72,6%, e a UDA adaptada, 72,6% e 72,3%: ganhos de cerca de **1,7 a 1,9 ponto** no aluno, no limite do ruído entre sorteios (dois sorteios). Na UDA adaptada, passam pelo filtro 88,5% dos alvos, mas a **precisão** deles é de apenas **75,0%** (no MNIST, era de 96,4%): o modelo é confiante e erra com frequência em roupas parecidas (camisa, camiseta, pulôver), e portanto a confiança é um filtro **ruim** neste problema. Recomendação: o ganho é modesto e pouco seguro, não justifica, por si só, um sistema mais complexo; vale testar com mais sorteios, mais passos ou com uma representação melhor (Capítulo 12). Limites: dois sorteios, 1.500 passos e uma só configuração de aumento.
 @@ALEM
 - **UCI:** Optical Recognition of Handwritten Digits e as bases sintéticas das duas luas.
 - **Kaggle:** Fashion-MNIST e Digit Recognizer.

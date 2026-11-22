@@ -1,0 +1,8 @@
+MNIST, CNN só com rotulados, aumento forte, 1500 passos, 3 sorteios: a curva da referência
+rótulos (por dígito) | acerto no teste
+  100 ( 10)        | 93.2% ± 0.8
+  300 ( 30)        | 95.0% ± 0.4
+ 1000 (100)        | 96.5% ± 0.2
+acerto de 94.9%: equivale a cerca de 285 rótulos da referência
+acerto de 95.4%: equivale a cerca de 414 rótulos da referência
+acerto de 96.0%: equivale a cerca de 660 rótulos da referência

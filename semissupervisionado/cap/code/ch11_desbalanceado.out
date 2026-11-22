@@ -1,0 +1,5 @@
+MNIST, 100 rótulos balanceados; os sem rótulo seguem proporções desiguais (classe 0: 24%, classe 9: 2%); teste balanceado; 1500 passos, 2 sorteios
+método                                  | acerto médio (teste balanceado) | acerto nas classes 7 a 9 | acerto nas classes 0 a 2 | acerto ponderado pela proporção dos sem rótulo
+só rotulados                            | 93.6% ± 0.7                  | 91.8%                   | 95.7%                   | 94.6%
+FixMatch                                | 94.7% ± 0.1                  | 90.1%                   | 98.0%                   | 96.5%
+FixMatch + alinhamento uniforme         | 94.7% ± 0.2                  | 90.7%                   | 97.9%                   | 96.4%

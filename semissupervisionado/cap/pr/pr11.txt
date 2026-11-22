@@ -101,7 +101,7 @@ for T in [0.2, 0.5, 1.0]:
 @@PROJ Pseudo-rótulos para roupas: FixMatch, Pseudo-Label e o limiar no Fashion-MNIST | Cap11
 **Fonte dos dados.** *Fashion-MNIST* (Zalando Research; também no Kaggle), 70.000 imagens 28×28 de 10 tipos de peças de roupa (`carregar_fashion()` de `utilidades.py`, espelho público).
 
-**Contexto.** No Capítulo 10, os métodos de consistência deram ganhos modestos no Fashion-MNIST, e a precisão dos alvos da UDA foi de só 75%. Agora a loja quer saber se os pseudo-rótulos do FixMatch, com um **limiar de confiança**, fazem melhor, e **o que acontece com um limiar baixo**.
+**Contexto.** No Capítulo 10, os métodos de consistência deram ganhos modestos no Fashion-MNIST, e a precisão dos alvos da UDA adaptada foi de só 75%. Agora a loja quer saber se os pseudo-rótulos do FixMatch, com um **limiar de confiança**, fazem melhor, e **o que acontece com um limiar baixo**.
 
 **Tarefas.**
 1. Use o aumento moderado do Capítulo 10 (rotação de até 10°, escala de 10%, deslocamento de até 10%) como `forte` e o deslocamento de até 8% como `fraco`.

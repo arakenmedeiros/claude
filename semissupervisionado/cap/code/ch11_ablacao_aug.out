@@ -1,0 +1,6 @@
+MNIST, 100 rótulos + 10.000 sem rótulo, 1500 passos, 3 sorteios: separando o efeito do aumento do efeito dos pseudo-rótulos
+configuração                                              | aluno (teste)
+só rotulados, aumento forte [referência dos Capítulos 10 a 18] | 93.2% ± 0.8
+só rotulados, aumento fraco                               | 91.1% ± 1.0
+Pseudo-Label (rotulados com aumento fraco) [o do Capítulo 11] | 94.3% ± 0.8
+Pseudo-Label com aumento FORTE nos rotulados              | 96.0% ± 0.3

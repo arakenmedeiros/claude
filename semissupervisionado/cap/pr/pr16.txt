@@ -14,7 +14,7 @@ for (k, a), (_, b) in zip(atributos(w).items(), atributos(emb).items()): print(f
 ```
 @@NOTE A média, o desvio, o mínimo e o máximo **não mudam** ao embaralhar a janela (14,900; 2,468; 11 e 19), porque dependem só do **conjunto** de valores. Já a **tendência** (0,782 para −0,042) e a **autocorrelação** (0,731 para −0,417) mudam muito, pois capturam a **ordem** no tempo: a janela original sobe de forma regular, e a embaralhada não. Portanto, os atributos de estatística descritiva ignoram a dinâmica; para distinguir séries que têm os mesmos valores em outra ordem, são necessários atributos como a tendência e a autocorrelação (ou representações aprendidas).
 @@EX 2 | O vazamento some quando as janelas não se sobrepõem? | intermediário
-Com as temperaturas diárias de Melbourne (Seção 16.5; classes: verão, inverno e meia-estação), gere janelas de 30 dias com **passo** (stride) de 1, 5 e 30 dias. Para cada passo, treine o 1-vizinho com 50 rótulos por classe (20 sorteios) e meça o acerto com a divisão **aleatória** e com a **temporal** (treino até 1987, teste de 1988 em diante).
+Com as temperaturas diárias de Melbourne (Seção 16.5; classes: verão, inverno e meia-estação), gere janelas de 30 dias com **passo** (stride) de 1, 5 e 30 dias. Para cada passo, treine o 1-vizinho com 50 rótulos por classe (20 sorteios) e meça o acerto com a divisão **aleatória** e com a **temporal** (janelas que terminam até 1987 no treino; janelas que começam 30 dias depois de 01/01/1988 no teste).
 
 *Pergunta:* o otimismo da divisão aleatória diminui com menos sobreposição?
 @@SOL
@@ -32,11 +32,11 @@ d = pd.read_csv(baixar("https://raw.githubusercontent.com/jbrownlee/Datasets/mas
 feat = lambda w: [w.mean(), w.std(), w.min(), w.max(), np.polyfit(np.arange(J), w, 1)[0], np.corrcoef(w[:-1], w[1:])[0, 1]]
 print("passo | janelas | 1-vizinho, divisão aleatória | 1-vizinho, divisão temporal | diferença")
 for passo in [1, 5, 30]:
-    X, y, ano = [], [], []
+    X, y, ini, fim = [], [], [], []
     for i in range(0, len(t) - J + 1, passo):
-        mes = datas[i + J // 2].month; X.append(feat(t[i:i + J])); y.append(2 if mes in (12, 1, 2) else 0 if mes in (6, 7, 8) else 1); ano.append(datas[i + J // 2].year)
-    X, y, ano = np.array(X), np.array(y), np.array(ano); r0 = np.random.RandomState(0); perm = r0.permutation(len(y)); res = {}
-    for nome, (tr, te) in {"aleatória": (perm[:int(0.7 * len(y))], perm[int(0.7 * len(y)):]), "temporal": (np.where(ano <= 1987)[0], np.where(ano >= 1988)[0])}.items():
+        mes = datas[i + J // 2].month; X.append(feat(t[i:i + J])); y.append(2 if mes in (12, 1, 2) else 0 if mes in (6, 7, 8) else 1); ini.append(datas[i]); fim.append(datas[i + J - 1])
+    X, y, ini, fim = np.array(X), np.array(y), pd.to_datetime(np.array(ini)), pd.to_datetime(np.array(fim)); r0 = np.random.RandomState(0); perm = r0.permutation(len(y)); res = {}
+    for nome, (tr, te) in {"aleatória": (perm[:int(0.7 * len(y))], perm[int(0.7 * len(y)):]), "temporal": (np.where(fim <= pd.Timestamp("1987-12-31"))[0], np.where(ini >= pd.Timestamp("1988-01-01") + pd.Timedelta(days=J))[0])}.items():
         esc = StandardScaler().fit(X[tr]); v = []
         for s in range(20):
             r = np.random.RandomState(s); idx = np.concatenate([r.choice(np.where(y[tr] == k)[0], 50 if passo < 30 else 20, replace=False) for k in range(3)])
@@ -44,7 +44,7 @@ for passo in [1, 5, 30]:
         res[nome] = np.mean(v)
     print(f"{passo:5d} | {len(y):7d} | {100 * res['aleatória']:27.1f}% | {100 * res['temporal']:26.1f}% | {100 * (res['aleatória'] - res['temporal']):+.1f} p.p.")
 ```
-@@NOTE Com passo 1 (3.621 janelas), o 1-vizinho teve 82,6% na divisão aleatória e 74,4% na temporal (+8,1 pontos de otimismo); com passo 5 (725 janelas), 81,9% e 70,8% (+11,1); com passo 30, em que as janelas **não se sobrepõem** (121 janelas), 77,6% e 77,2% (+0,3). O otimismo da divisão aleatória **desaparece quando não há sobreposição**, o que confirma que o vazamento vem das janelas quase idênticas (no passo 5, ainda há 25 dias em comum entre janelas vizinhas). Atenção: com passo 30, o teste temporal tem poucas janelas, e a estimativa é ruidosa, de modo que o +0,3 não deve ser lido com precisão. Observe também que o corte temporal tem acurácia **menor** para os passos 1 e 5 (74,4% e 70,8%) do que para o passo 30 (77,2%), mas isso envolve conjuntos de teste diferentes.
+@@NOTE Com passo 1 (3.621 janelas), o 1-vizinho teve 82,6% na divisão aleatória e 73,6% na temporal (+8,9 pontos de otimismo); com passo 5 (725 janelas), 81,9% e 71,0% (+11,0); com passo 30, em que as janelas **não se sobrepõem** (121 janelas), 77,6% e 75,9% (+1,7). O otimismo da divisão aleatória **quase desaparece quando não há sobreposição**, o que confirma que o vazamento vem das janelas quase idênticas (no passo 5, ainda há 25 dias em comum entre janelas vizinhas). Atenção: com passo 30, o teste tem poucas janelas (algumas dezenas), e a estimativa é ruidosa, de modo que a diferença de +1,7 não deve ser lida com precisão. Observe também que, nesta versão, a divisão temporal nunca compartilha um dia entre treino e teste, ao contrário de uma divisão pelo ano do dia central, que deixaria janelas de fronteira em comum.
 @@EX 3 | Sonar: escala, redução de dimensão e Label Spreading | intermediário
 No **Sonar** (208 sinais de sonar, 60 atributos, mina ou rocha), com 5 rótulos por classe (20 sorteios), compare no teste (30%): a regressão logística; o Label Spreading (knn, k = 7) sobre os atributos padronizados; e o Label Spreading sobre as **10 primeiras componentes do PCA** (PCA ajustado no treino, atributos padronizados antes).
 

@@ -35,7 +35,7 @@ def f10_modelos():
         ax.text(x0 + 15, 14, nota, ha="center", va="center", fontsize=7.6, linespacing=1.35)
     painel(1, "Π-model", IND, ["duas perturbações"], ("Rede\n(mesma)", "#EEF2FF", IND), "As duas previsões vêm da\nmesma rede e as duas recebem\no ajuste (gradiente).")
     painel(35, "Mean Teacher", GRN, ["duas perturbações"], ("Professor\n(EMA)", "#ECFDF5", GRN), "O alvo vem do professor, uma\nmédia móvel dos pesos do aluno.\nSó o aluno recebe gradiente.")
-    painel(69, "UDA", AMB, ["versão fraca e forte"], ("Rede\n(visão fraca)", "#FFFBEB", AMB), "O alvo (afiado e filtrado pela\nconfiança) vem da versão fraca;\no aluno vê a versão forte.")
+    painel(69, "UDA adaptada", AMB, ["versão fraca e forte"], ("Rede\n(visão fraca)", "#FFFBEB", AMB), "O alvo (afiado e filtrado pela\nconfiança) vem da versão fraca;\no aluno vê a versão forte.")
     save(fig, "f10_modelos")
 
 def f10_rampa():
@@ -54,7 +54,7 @@ def _tab(nome, ini):
     return R
 
 def f10_comparacao():
-    R = _tab("ch10_comparacao", 2)[:4]; nomes = ["só rotulados\n(referência)", "Π-model", "Mean\nTeacher", "UDA"]
+    R = _tab("ch10_comparacao", 2)[:4]; nomes = ["só rotulados\n(referência)", "Π-model", "Mean\nTeacher", "UDA\nadaptada"]
     fig, ax = plt.subplots(figsize=(7.6, 4.0)); x = np.arange(4); w = 0.36
     b1 = ax.bar(x - w / 2, [r[1] for r in R], w, color=[GRY, IND, GRN, AMB], label="aluno"); b2 = ax.bar(x + w / 2, [r[2] for r in R], w, color=[GRY, IND, GRN, AMB], alpha=0.55, hatch="//", edgecolor="white", label="professor EMA")
     for b in list(b1) + list(b2): ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 0.12, f"{b.get_height():.1f}".replace(".", ","), ha="center", fontsize=8.3, fontweight="bold")
@@ -76,7 +76,7 @@ def f10_quantidade():
     R = _tab("ch10_quantidade", 2); n = [0, 100, 1000, 10000, 40000]
     fig, ax = plt.subplots(figsize=(7.2, 3.8)); ax.plot(range(5), [r[1] for r in R], "-o", c=AMB, lw=2.6, ms=7, label="aluno"); ax.plot(range(5), [r[2] for r in R], "-s", c=GRN, lw=2.2, label="professor (EMA)")
     for i, r in enumerate(R): ax.text(i, r[1] + (0.12 if i == 0 else -0.45), f"{r[1]:.1f}".replace(".", ","), ha="center", fontsize=8.5, fontweight="bold", color="#B45309")
-    ax.set_ylim(92.6, 96.9); ax.set_xticks(range(5)); ax.set_xticklabels(["0\n(referência)", "100", "1.000", "10.000", "40.000"]); ax.set_xlabel("imagens sem rótulo"); ax.set_ylabel("acurácia no teste (%)"); ax.set_title("UDA: quanto ajudam os dados sem rótulo? (um sorteio)"); ax.legend(frameon=False, fontsize=8.5, loc="lower right"); ax.grid(alpha=0.25)
+    ax.set_ylim(92.6, 96.9); ax.set_xticks(range(5)); ax.set_xticklabels(["0\n(referência)", "100", "1.000", "10.000", "40.000"]); ax.set_xlabel("imagens sem rótulo"); ax.set_ylabel("acurácia no teste (%)"); ax.set_title("UDA adaptada: quanto ajudam os dados sem rótulo? (um sorteio)"); ax.legend(frameon=False, fontsize=8.5, loc="lower right"); ax.grid(alpha=0.25)
     save(fig, "f10_quantidade")
 
 if __name__ == "__main__":

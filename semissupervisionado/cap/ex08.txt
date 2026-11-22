@@ -1,9 +1,9 @@
 MC: Nos métodos baseados em grafos, cada exemplo (com ou sem rótulo) é:
-a) um nó do grafo.
-b) um peso.
-c) uma classe.
-d) uma aresta.
-R: a | Os exemplos são os nós; as arestas ligam exemplos parecidos.
+a) um peso.
+b) um nó do grafo.
+c) uma aresta.
+d) uma classe.
+R: b | Os exemplos são os nós; as arestas ligam exemplos parecidos.
 
 MC: Uma aresta do grafo liga:
 a) treino e teste.
@@ -27,11 +27,11 @@ d) sempre 1.
 R: b | O peso decai com a distância, e gamma controla a velocidade.
 
 MC: Qual grafo é denso (n² arestas)?
-a) O do kernel RBF.
+a) O que não tem pesos.
 b) Nenhum dos dois.
 c) O de k vizinhos.
-d) O que não tem pesos.
-R: a | No RBF todos se ligam a todos, com pesos pequenos para pontos distantes.
+d) O do kernel RBF.
+R: d | No RBF todos se ligam a todos, com pesos pequenos para pontos distantes.
 
 MC: Um problema de usar poucos vizinhos é:
 a) os rótulos serem sempre errados.
@@ -56,8 +56,8 @@ R: c | Depois, os nós rotulados voltam ao valor original.
 
 MC: O "clamping" no Label Propagation significa:
 a) os rótulos conhecidos nunca mudam durante a propagação.
-b) o grafo é normalizado.
-c) todos os rótulos são apagados.
+b) todos os rótulos são apagados.
+c) o grafo é normalizado.
 d) os vizinhos são trocados.
 R: a | Os nós rotulados são recolocados no valor original a cada passo.
 
@@ -111,18 +111,18 @@ d) a matriz de pesos normalizada, D^(-1/2) W D^(-1/2).
 R: d | A normalização evita que nós muito conectados dominem.
 
 MC: No Digits com 50 rótulos, com k = 3, o grafo tinha:
-a) 3 componentes conexos, e a acurácia foi de 53,3%.
-b) 100 componentes.
-c) nenhuma aresta.
-d) apenas 1 componente e acurácia de 94%.
-R: a | Os rótulos não chegavam a todas as partes do grafo.
+a) apenas 1 componente e acurácia de 94%.
+b) 3 componentes conexos, e a acurácia foi de 53,3%.
+c) 100 componentes.
+d) nenhuma aresta.
+R: b | Os rótulos não chegavam a todas as partes do grafo.
 
 MC: Com k = 50 no Digits, a pureza das arestas foi de:
-a) 78,9%, e a acurácia caiu para 90,9%.
-b) 50%.
-c) 100%.
-d) 99%.
-R: a | Muitas pontes aparecem com k grande.
+a) 100%.
+b) 99%.
+c) 78,9%, e a acurácia caiu para 90,9%.
+d) 50%.
+R: c | Muitas pontes aparecem com k grande.
 
 MC: O melhor valor de k no experimento do Digits (50 rótulos) foi:
 a) 3, com 53,3%.
@@ -140,9 +140,9 @@ R: d | Quanto maior, menos pontes entre classes.
 
 MC: Na tabela de alpha e k, o pior resultado (86,9%) ocorreu com:
 a) k = 5 e alpha = 0,05.
-b) k = 10 e alpha = 0,5.
-c) k = 7 e alpha = 0,2.
-d) k = 15 e alpha = 0,8.
+b) k = 7 e alpha = 0,2.
+c) k = 15 e alpha = 0,8.
+d) k = 10 e alpha = 0,5.
 R: a | Grafo quase desconexo e alpha muito baixo impedem a propagação.
 
 MC: O valor padrão do kernel no LabelSpreading do scikit-learn é:
@@ -153,11 +153,11 @@ d) knn, com k = 7.
 R: b | Esse padrão pode falhar em dados com distâncias grandes.
 
 MC: No Digits, o kernel RBF com gamma = 20 obteve acurácia de:
-a) 10,0%, o acaso em dez classes.
-b) 94%.
-c) 100%.
+a) 100%.
+b) 10,0%, o acaso em dez classes.
+c) 94%.
 d) 50%.
-R: a | Todos os pesos das arestas viram praticamente zero.
+R: b | Todos os pesos das arestas viram praticamente zero.
 
 MC: Por que o RBF com gamma = 20 falhou no Digits?
 a) O Digits tem poucos exemplos.
@@ -188,11 +188,11 @@ d) 99%.
 R: c | O ganho foi de cerca de 12 pontos percentuais.
 
 MC: A acurácia do Label Spreading nos exemplos sem rótulo do treino (81,8%) foi menor que no teste (88,7%) porque:
-a) o predict suaviza o resultado ao consultar vários vizinhos do grafo de treino.
-b) o grafo é diferente.
+a) os rótulos estavam errados.
+b) o predict suaviza o resultado ao consultar vários vizinhos do grafo de treino.
 c) o teste é sempre mais fácil.
-d) os rótulos estavam errados.
-R: a | As duas medidas respondem a perguntas distintas (transdutiva e indutiva).
+d) o grafo é diferente.
+R: b | As duas medidas respondem a perguntas distintas (transdutiva e indutiva).
 
 MC: As redes neurais de grafos (GNN) se parecem com o Label Propagation porque:
 a) dispensam os rótulos.
@@ -201,12 +201,12 @@ c) a informação escorre pelas arestas, mas a GNN usa atributos e pesos aprendi
 d) são iguais ao k vizinhos.
 R: c | A GNN combina os atributos dos vizinhos com pesos aprendidos.
 
-MC: O que acontece com um pedaço do grafo que não contém nenhum exemplo rotulado?
-a) Ele recebe o rótulo mais comum do grafo.
-b) Ele é eliminado automaticamente.
-c) Ele passa a ser rotulado pelo teste.
-d) Ele não recebe informação de rótulos e fica sem classificação confiável.
-R: d | Sem caminho até um nó rotulado, nenhum rótulo se propaga para ele.
+MC: Para o Label Spreading funcionar, o grafo de vizinhos:
+a) precisa ser sempre conexo.
+b) precisa ter uma única aresta por nó.
+c) não precisa ser conexo, mas cada componente que se pretende rotular deve conter algum exemplo rotulado.
+d) não pode ter nenhum exemplo rotulado.
+R: c | Forçar a conexão total pode criar pontes entre classes.
 
 DISC: Explique, com a analogia do boato, como os rótulos se propagam em um grafo.
 R: Cada pessoa ouve os vizinhos e adota a mistura do que ouve. Dois nós conhecem seu rótulo e os demais vão sendo influenciados pelos vizinhos: quem está perto do nó azul fica azul, e quem está perto do laranja fica laranja.
@@ -265,5 +265,5 @@ R: Ambos fazem a informação escorrer pelas arestas. O Label Propagation não t
 DISC: Em que situações os métodos de grafos são uma boa escolha e quando devem ser evitados?
 R: São boa escolha quando exemplos parecidos tendem a ter o mesmo rótulo (suavidade), os dados formam estruturas conectadas e há uma boa representação. Devem ser evitados quando o grafo não captura a semelhança relevante, há muitas pontes ou o volume é grande demais para o grafo escolhido.
 
-DISC: Planeje um experimento para escolher k e alpha em um problema seu com poucos rótulos.
-R: Padronizar, construir grafos com vários k e verificar conectividade, usar rótulos escondidos ou validação cruzada nos rotulados para comparar combinações de k e alpha, preferir valores padrão razoáveis (k entre 7 e 15, alpha entre 0,2 e 0,8), repetir sorteios e comparar com a referência supervisionada.
+DISC: Descreva três cuidados para usar métodos de grafos com muitos exemplos sem rótulo.
+R: Usar matrizes esparsas (grafo de k vizinhos, e não RBF denso), busca aproximada de vizinhos para evitar n² comparações e diagnóstico de componentes sem nenhum rotulado, que não recebem informação.

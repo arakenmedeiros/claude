@@ -67,7 +67,7 @@ def f17_decisao():
     fig, ax = canvas(9.4, 5.4, (0, 100), (0, 58))
     ax.text(50, 55.5, "Por onde começar? Um fluxo de decisão (a ser verificado no seu problema)", ha="center", fontsize=10.2, fontweight="bold")
     rbox(ax, 36, 44, 28, 8, "Qual é o tipo de dado?", fc=NAVY, tc="white", bold=True, fs=9, r=2)
-    itens = [("Imagens", "aumentos confiáveis?\nUDA / FixMatch;\nmuito dado: pré-treino", IND, 1), ("Texto", "representação com\ntexto sem rótulo (LSA,\nmodelo de linguagem)\n+ modelo linear", CYA, 21), ("Tabela", "referência forte (GBM);\ntestar self-training e\nLabel Spreading", GRN, 41), ("Série", "atributos de janelas;\ndivisão no tempo", AMB, 61), ("Grafo", "Label Propagation;\nredes neurais de grafos", RED, 81)]
+    itens = [("Imagens", "aumentos confiáveis?\nUDA ou FixMatch;\nmuito dado: pré-treino", IND, 1), ("Texto", "representação com\ntexto sem rótulo (LSA,\nmodelo de linguagem)\n+ modelo linear", CYA, 21), ("Tabela", "referência forte (GBM);\ntestar self-training e\nLabel Spreading", GRN, 41), ("Série", "atributos de janelas;\ndivisão no tempo", AMB, 61), ("Grafo", "Label Propagation;\nredes neurais de grafos", RED, 81)]
     for t, d, c, x in itens:
         rbox(ax, x, 24, 18, 14, "", fc="white", ec=c, lw=2, r=2); rbox(ax, x, 33, 18, 5, t, fc=c, tc="white", bold=True, fs=8.6, r=2); ax.text(x + 9, 28, d, ha="center", va="center", fontsize=6.9, linespacing=1.35)
         arrow(ax, (50, 44), (x + 9, 38.3), GRY, lw=1.2, ms=8)
@@ -99,7 +99,7 @@ def f15_aumento():
 
 def f15_metodos():
     L = [l for l in out("ch15_metodos").splitlines()[2:5] if "|" in l]; V = [[pct(x.split("±")[0]) for x in l.split("|")[1:]] for l in L]; V = np.array(V)
-    fig, ax = plt.subplots(figsize=(8.4, 4.0)); x = np.arange(3); w = 0.2; nomes = ["só rotulados", "Pseudo-Label", "FixMatch", "UDA"]
+    fig, ax = plt.subplots(figsize=(8.4, 4.0)); x = np.arange(3); w = 0.2; nomes = ["só rotulados", "Pseudo-Label", "FixMatch", "UDA adaptada"]
     for k, (c, n) in enumerate(zip([GRY, AMB, IND, RED], nomes)):
         ax.bar(x + (k - 1.5) * w, V[:, k], w, color=c, label=n)
         for i in range(3): ax.text(x[i] + (k - 1.5) * w, V[i, k] + 0.3, f"{V[i, k]:.1f}".replace(".", ","), ha="center", fontsize=6.8)
@@ -109,7 +109,7 @@ def f15_metodos():
 def f15_categorias():
     L = [l for l in out("ch15_metodos").splitlines() if "%" in l and "|" in l and l.split("|")[0].strip() in ["camiseta", "calça", "pulôver", "vestido", "casaco", "sandália", "camisa", "tênis", "bolsa", "bota"]]
     nomes = [l.split("|")[0].strip() for l in L]; V = np.array([[pct(x) for x in l.split("|")[1:]] for l in L]); fig, ax = plt.subplots(figsize=(8.6, 4.2)); x = np.arange(10); w = 0.2
-    for k, (c, n) in enumerate(zip([GRY, AMB, IND, RED], ["só rotulados", "Pseudo-Label", "FixMatch", "UDA"])): ax.bar(x + (k - 1.5) * w, V[:, k], w, color=c, label=n)
+    for k, (c, n) in enumerate(zip([GRY, AMB, IND, RED], ["só rotulados", "Pseudo-Label", "FixMatch", "UDA adaptada"])): ax.bar(x + (k - 1.5) * w, V[:, k], w, color=c, label=n)
     ax.set_xticks(x); ax.set_xticklabels(nomes, fontsize=8, rotation=30); ax.set_ylim(0, 108); ax.set_ylabel("acerto no teste (%)"); ax.legend(frameon=False, fontsize=8, ncol=4, loc="upper center"); ax.grid(axis="y", alpha=0.25); ax.set_title("Acerto por categoria com 100 rótulos (um sorteio)")
     save(fig, "f15_categorias")
 

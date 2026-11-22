@@ -1,0 +1,10 @@
+import numpy as np
+print("1) Incerteza de uma acurácia estimada em um teste de n exemplos (acurácia verdadeira de 90%): metade da largura do IC de 95%")
+print("n do teste | ± (pontos percentuais)")
+for n in [50, 100, 200, 500, 1000, 2000]: print(f"{n:10d} | {100 * 1.96 * np.sqrt(0.9 * 0.1 / n):.1f}")
+print("\n2) Quantos exemplos é preciso rotular, em média, para obter m casos da classe rara (prevalência p)? Custo = m / p")
+print("prevalência | 20 no treino | + 20 na validação | + 50 no teste (90 positivos no total)")
+for p in [0.24, 0.05, 0.01]: print(f"{100 * p:10.0f}% | {20 / p:12.0f} | {40 / p:17.0f} | {90 / p:.0f}")
+print("\n3) Orçamento total de rótulos (500) dividido entre treino, validação e teste, com a precisão do teste (± em p.p., acurácia 90%)")
+print("treino | validação | teste | ± do teste")
+for tr, va, te in [(450, 25, 25), (350, 75, 75), (250, 100, 150), (150, 150, 200)]: print(f"{tr:6d} | {va:9d} | {te:5d} | {100 * 1.96 * np.sqrt(0.09 / te):.1f}")

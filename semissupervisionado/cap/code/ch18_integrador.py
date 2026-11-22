@@ -17,7 +17,7 @@ G = kneighbors_graph(Z, 10); i, j = G.nonzero(); print(f"Diagnóstico: com 10 vi
 
 # ---------- 2. Os métodos, com os mesmos rotulados e os mesmos não rotulados ----------
 enc = carregar_ou_treinar("simclr_forte", lambda: pre_treinar(Xu_pre, "simclr", passos=1500, lote=128))
-nomes = ["regressão logística, pixels", "Label Spreading, PCA 50", "CNN só com rotulados", "Pseudo-Label", "FixMatch", "UDA", "SimCLR + sonda linear"]
+nomes = ["regressão logística, pixels", "Label Spreading, PCA 50", "CNN só com rotulados", "Pseudo-Label", "FixMatch", "UDA adaptada", "SimCLR + sonda linear"]
 res = {n: [] for n in nomes}; modelos0 = {}
 for s in range(SORTEIOS):
     idx = sortear_rotulados(y, 10, s); u = np.random.RandomState(100 + s).choice(np.setdiff1d(np.arange(len(X)), idx), 10000, replace=False)
@@ -43,7 +43,7 @@ for n in nomes:
     print(f"{n:28s} | {100 * d.mean():+5.1f}  | [{100 * lo:+5.1f}; {100 * hi:+5.1f}]    | {int((d > 0).sum())} / {int((d < 0).sum())}             | {stats.ttest_rel(res[n], ref).pvalue:.4f}")
 
 # ---------- 4. Análise por classe (sorteio 0): onde o melhor método ajuda ----------
-melhor = max(["Pseudo-Label", "FixMatch", "UDA"], key=lambda n: np.mean(res[n])); print(f"\nAcerto por dígito no teste (sorteio 0): CNN só com rotulados x {melhor}")
+melhor = max(["Pseudo-Label", "FixMatch", "UDA adaptada"], key=lambda n: np.mean(res[n])); print(f"\nAcerto por dígito no teste (sorteio 0): CNN só com rotulados x {melhor}")
 pred = {}
 for n in ["CNN só com rotulados", melhor]:
     m = modelos0[n]; m.eval()

@@ -1,0 +1,15 @@
+Digits, 50 rótulos. Label Spreading (k = 10) menos regressão logística, em 10 divisões treino-teste diferentes x 10 sorteios de rotulados
+divisão | diferença média nos 10 sorteios (p.p.)
+      0 | +7.5
+      1 | +8.2
+      2 | +7.4
+      3 | +7.7
+      4 | +5.3
+      5 | +7.8
+      6 | +6.9
+      7 | +7.5
+      8 | +9.4
+      9 | +6.5
+
+Só variando os rotulados (divisão 0 fixa, 10 sorteios): +7.5 p.p., IC 95% [+6.6; +8.5]
+Variando também a divisão treino-teste (10 divisões): +7.4 p.p., IC 95% [+6.7; +8.1]; desvio entre as médias das divisões: 1.0 p.p.

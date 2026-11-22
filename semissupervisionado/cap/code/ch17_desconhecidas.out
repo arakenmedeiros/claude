@@ -1,0 +1,4 @@
+Digits: 25 rótulos, só dos dígitos 0 a 4 (5 por dígito). Sem rótulo: TODO o treino, inclusive os dígitos 5 a 9. Teste: dígitos 0 a 4 (conhecidos) e 5 a 9 (desconhecidos). 10 sorteios
+método                        | acerto nos conhecidos | AUROC (desconhecido x conhecido) | desconhecidos rejeitados | conhecidos rejeitados
+reg. logística (só rotulados) |                 92.4% | 0.892 ± 0.021              |                   49.9% | 7.2%
+Label Spreading (usa os sem rótulo) |                 96.3% | 0.727 ± 0.048              |                   53.2% | 14.3%
