@@ -98,3 +98,44 @@ def f6_comparacao():
 
 if __name__=="__main__":
     for fn_ in (f6_peneira,f6_fidelidade,f6_curvas,f6_brackets,f6_bohb,f6_comparacao): fn_()
+
+def f6_asha():
+    import heapq
+    EP=[1,3,9,27]; ETA=3; N=27; W=4
+    r=np.random.default_rng(4); c=np.exp(r.normal(0,0.8,N)); q=r.beta(2,5,N); tau=r.uniform(2,20,N)
+    nota=lambda i,k: q[i]*(1-np.exp(-EP[k]/tau[i]))
+    dur=lambda i,k: (EP[k]-(EP[k-1] if k>0 else 0))*c[i]
+    # síncrono
+    sync=[]; t=0.0; vivos=list(range(N))
+    for k in range(len(EP)):
+        livre=[t]*W; notas={}
+        for i in vivos:
+            w=int(np.argmin(livre)); d=dur(i,k); sync.append((w,livre[w],livre[w]+d,k)); livre[w]+=d; notas[i]=nota(i,k)
+        t=max(livre)
+        if k<len(EP)-1: vivos=sorted(vivos,key=lambda i:-notas[i])[:len(vivos)//ETA]
+    T_s=t
+    # assíncrono
+    K=len(EP); feitos=[dict() for _ in range(K)]; prom=[set() for _ in range(K)]; novos=list(range(N)); ev=[]; asy=[]; t=0.0; livres=list(range(W))
+    def prox():
+        for k in range(K-2,-1,-1):
+            ordem=sorted(feitos[k],key=lambda i:-feitos[k][i])
+            for i in ordem[:len(ordem)//ETA]:
+                if i not in prom[k]: prom[k].add(i); return i,k+1
+        return (novos.pop(0),0) if novos else None
+    while True:
+        while livres:
+            tarefa=prox()
+            if tarefa is None: break
+            i,k=tarefa; w=livres.pop(0); d=dur(i,k); asy.append((w,t,t+d,k)); heapq.heappush(ev,(t+d,i,k,w))
+        if not ev: break
+        t,i,k,w=heapq.heappop(ev); feitos[k][i]=nota(i,k); livres.append(w)
+    T_a=t
+    fig,axs=plt.subplots(2,1,figsize=(7.6,4.2),sharex=True)
+    for ax,L,tit,Tt in ((axs[0],sync,"Síncrono: cada degrau espera o mais lento (buracos brancos)",T_s),(axs[1],asy,"Assíncrono (ASHA): trabalhador livre pega logo a próxima tarefa",T_a)):
+        for w,a,b,k in L: ax.barh(w,b-a,left=a,height=.8,color=CL[k],edgecolor="white",lw=.4)
+        ax.set_yticks(range(W)); ax.set_yticklabels([f"trab. {w+1}" for w in range(W)],fontsize=7); ax.set_title(tit,fontsize=8.8,loc="left"); ax.invert_yaxis()
+        ax.axvline(Tt,color=GRY,ls="--",lw=1); ax.text(Tt,-0.9,f" fim: {Tt:.0f}",fontsize=7.5,color=GRY,va="bottom")
+    axs[1].set_xlabel("tempo (segundos simulados)")
+    from matplotlib.patches import Patch
+    axs[0].legend(handles=[Patch(color=CL[k],label=f"{EP[k]} época(s)") for k in range(len(EP))],frameon=False,fontsize=7,ncol=4,loc="upper right",bbox_to_anchor=(1.0,1.5))
+    fig.tight_layout(); save(fig,"f6_asha")
