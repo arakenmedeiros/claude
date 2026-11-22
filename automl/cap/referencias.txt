@@ -1,7 +1,7 @@
 AKIBA, T.; SANO, S.; YANASE, T.; OHTA, T.; KOYAMA, M. Optuna: a next-generation hyperparameter optimization framework. In: ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD), 2019.
 BERGMEIR, C.; BENÍTEZ, J. M. On the use of cross-validation for time series predictor evaluation. Information Sciences, 2012.
 BERGSTRA, J.; BARDENET, R.; BENGIO, Y.; KÉGL, B. Algorithms for hyper-parameter optimization. In: Advances in Neural Information Processing Systems (NIPS), v. 24, 2011. p. 2546-2554.
-BERGSTRA, J.; BENGIO, Y. Random search for hyper-parameter optimization. Journal of Machine Learning Research, v. 13, p. 281-305, 2012.
+BERGSTRA, J.; BENGIO, Y. Random search for hyper-parameter optimization. Journal of Machine Learning Research, v. 13, p. 281-305, 2012. Disponível em: https://www.jmlr.org/papers/v13/bergstra12a.html.
 BISCHL, B. et al. Hyperparameter optimization: foundations, algorithms, best practices, and open challenges. WIREs Data Mining and Knowledge Discovery, v. 13, n. 2, 2023.
 BREIMAN, L. Random forests. Machine Learning, v. 45, n. 1, p. 5-32, 2001.
 BRAZDIL, P.; VAN RIJN, J. N.; SOARES, C.; VANSCHOREN, J. Metalearning: applications to automated machine learning and data mining. 2. ed. Cham: Springer, 2022.
@@ -16,7 +16,7 @@ DUA, D.; GRAFF, C. UCI Machine Learning Repository. Irvine: University of Califo
 ELSKEN, T.; METZEN, J. H.; HUTTER, F. Neural architecture search: a survey. Journal of Machine Learning Research, v. 20, n. 55, p. 1-21, 2019.
 ERICKSON, N. et al. AutoGluon-Tabular: robust and accurate AutoML for structured data. In: ICML Workshop on Automated Machine Learning (AutoML), 2020.
 FALKNER, S.; KLEIN, A.; HUTTER, F. BOHB: robust and efficient hyperparameter optimization at scale. In: International Conference on Machine Learning (ICML), 2018. PMLR, v. 80, p. 1437-1446.
-FEURER, M.; EGGENSPERGER, K.; FALKNER, S.; LINDAUER, M.; HUTTER, F. Auto-Sklearn 2.0: hands-free AutoML via meta-learning. Journal of Machine Learning Research, v. 23, n. 261, p. 1-61, 2022.
+FEURER, M.; EGGENSPERGER, K.; FALKNER, S.; LINDAUER, M.; HUTTER, F. Auto-Sklearn 2.0: hands-free AutoML via meta-learning. Journal of Machine Learning Research, v. 23, n. 261, p. 1-61, 2022. Disponível em: https://www.jmlr.org/papers/v23/21-0992.html.
 FEURER, M.; KLEIN, A.; EGGENSPERGER, K.; SPRINGENBERG, J. T.; BLUM, M.; HUTTER, F. Efficient and robust automated machine learning. In: Advances in Neural Information Processing Systems (NIPS), v. 28, 2015. p. 2962-2970.
 FEURER, M.; SPRINGENBERG, J. T.; HUTTER, F. Initializing Bayesian hyperparameter optimization via meta-learning. In: AAAI Conference on Artificial Intelligence, 2015. p. 1128-1135.
 FISHER, R. A. The use of multiple measurements in taxonomic problems. Annals of Eugenics, v. 7, n. 2, p. 179-188, 1936.
@@ -48,7 +48,7 @@ LEDELL, E.; POIRIER, S. H2O AutoML: scalable automatic machine learning. In: ICM
 LI, L.; JAMIESON, K.; DESALVO, G.; ROSTAMIZADEH, A.; TALWALKAR, A. Hyperband: a novel bandit-based approach to hyperparameter optimization. Journal of Machine Learning Research, v. 18, n. 185, p. 1-52, 2018.
 LINDAUER, M. et al. SMAC3: a versatile Bayesian optimization package for hyperparameter optimization. Journal of Machine Learning Research, v. 23, n. 54, p. 1-9, 2022.
 LIU, H.; SIMONYAN, K.; YANG, Y. DARTS: differentiable architecture search. In: International Conference on Learning Representations (ICLR), 2019.
-LORENA, A. C.; GARCIA, L. P. F.; LEHMANN, J.; SOUTO, M. C. P.; HO, T. K. How complex is your classification problem? A survey on measuring classification complexity. ACM Computing Surveys, v. 52, n. 5, art. 107.
+LORENA, A. C.; GARCIA, L. P. F.; LEHMANN, J.; SOUTO, M. C. P.; HO, T. K. How complex is your classification problem? A survey on measuring classification complexity. ACM Computing Surveys, v. 52, n. 5, art. 107, 2019. DOI: 10.1145/3347711.
 LUNDBERG, S. M.; LEE, S.-I. A unified approach to interpreting model predictions. In: Advances in Neural Information Processing Systems (NIPS), v. 30, 2017.
 MAKRIDAKIS, S.; SPILIOTIS, E.; ASSIMAKOPOULOS, V. The M4 Competition: 100,000 time series and 61 forecasting methods. International Journal of Forecasting, v. 36, n. 1, p. 54-74, 2020.
 MEHRABI, N.; MORSTATTER, F.; SAXENA, N.; LERMAN, K.; GALSTYAN, A. A survey on bias and fairness in machine learning. ACM Computing Surveys, v. 54, n. 6, art. 115, 2021.
@@ -70,8 +70,8 @@ SHAHRIARI, B.; SWERSKY, K.; WANG, Z.; ADAMS, R. P.; DE FREITAS, N. Taking the hu
 SNOEK, J.; LAROCHELLE, H.; ADAMS, R. P. Practical Bayesian optimization of machine learning algorithms. In: Advances in Neural Information Processing Systems (NIPS), v. 25, 2012. p. 2951-2959.
 STRUBELL, E.; GANESH, A.; MCCALLUM, A. Energy and policy considerations for deep learning in NLP. In: Annual Meeting of the Association for Computational Linguistics (ACL), 2019. p. 3645-3650.
 TAN, M.; LE, Q. V. EfficientNet: rethinking model scaling for convolutional neural networks. In: International Conference on Machine Learning (ICML), 2019. PMLR, v. 97, p. 6105-6114.
-THORNTON, C.; HUTTER, F.; HOOS, H. H.; LEYTON-BROWN, K. Auto-WEKA: combined selection and hyperparameter optimization of classification algorithms. 2013.
-VANSCHOREN, J.; VAN RIJN, J. N.; BISCHL, B.; TORGO, L. OpenML: networked science in machine learning. SIGKDD Explorations, v. 15, n. 2, p. 49-60.
+THORNTON, C.; HUTTER, F.; HOOS, H. H.; LEYTON-BROWN, K. Auto-WEKA: combined selection and hyperparameter optimization of classification algorithms. In: ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD), 19., 2013. Proceedings [...], p. 847-855, 2013. Pré-publicação em arXiv:1208.3719.
+VANSCHOREN, J.; VAN RIJN, J. N.; BISCHL, B.; TORGO, L. OpenML: networked science in machine learning. SIGKDD Explorations, v. 15, n. 2, p. 49-60, 2013.
 VARMA, S.; SIMON, R. Bias in error estimation when using cross-validation for model selection. BMC Bioinformatics, v. 7, art. 91, 2006.
 VASWANI, A. et al. Attention is all you need. In: Advances in Neural Information Processing Systems (NIPS), v. 30, 2017. p. 5998-6008.
 WANG, C.; WU, Q.; WEIMER, M.; ZHU, E. FLAML: a fast and lightweight AutoML library. In: Conference on Machine Learning and Systems (MLSys), 2021.
@@ -80,3 +80,15 @@ WOLPERT, D. H. The lack of a priori distinctions between learning algorithms. Ne
 ZOPH, B.; LE, Q. V. Neural architecture search with reinforcement learning. In: International Conference on Learning Representations (ICLR), 2017.
 ZOPH, B.; VASUDEVAN, V.; SHLENS, J.; LE, Q. V. Learning transferable architectures for scalable image recognition. In: IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2018.
 ZÖLLER, M.-A.; HUBER, M. F. Benchmark and survey of automated machine learning frameworks. Journal of Artificial Intelligence Research, v. 70, p. 409-472, 2021.
+LI, L.; JAMIESON, K.; ROSTAMIZADEH, A. et al. A system for massively parallel hyperparameter tuning. In: Conference on Machine Learning and Systems (MLSys), 3., 2020. Proceedings [...], p. 230-246, 2020.
+GUO, C.; PLEISS, G.; SUN, Y.; WEINBERGER, K. Q. On calibration of modern neural networks. In: International Conference on Machine Learning (ICML), 34., 2017. Proceedings of Machine Learning Research, v. 70, p. 1321-1330, 2017.
+ANGELOPOULOS, A. N.; BATES, S. Conformal prediction: a gentle introduction. Foundations and Trends in Machine Learning, v. 16, n. 4, p. 494-591, 2023. DOI: 10.1561/2200000101.
+VOVK, V.; GAMMERMAN, A.; SHAFER, G. Algorithmic learning in a random world. New York: Springer, 2005. DOI: 10.1007/b106715.
+PARGENT, F.; PFISTERER, F.; THOMAS, J.; BISCHL, B. Regularized target encoding outperforms traditional methods in supervised machine learning with high cardinality features. Computational Statistics, v. 37, n. 5, p. 2671-2692, 2022. DOI: 10.1007/s00180-022-01207-6.
+HE, H.; GARCIA, E. A. Learning from imbalanced data. IEEE Transactions on Knowledge and Data Engineering, v. 21, n. 9, p. 1263-1284, 2009. DOI: 10.1109/TKDE.2008.239.
+SAITO, T.; REHMSMEIER, M. The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. PLoS ONE, v. 10, n. 3, art. e0118432, 2015. DOI: 10.1371/journal.pone.0118432.
+ZHANG, M.-L.; ZHOU, Z.-H. A review on multi-label learning algorithms. IEEE Transactions on Knowledge and Data Engineering, v. 26, n. 8, p. 1819-1837, 2014. DOI: 10.1109/TKDE.2013.39.
+READ, J.; PFAHRINGER, B.; HOLMES, G.; FRANK, E. Classifier chains for multi-label classification. Machine Learning, v. 85, n. 3, p. 333-359, 2011. DOI: 10.1007/s10994-011-5256-5.
+GELBART, M. A.; SNOEK, J.; ADAMS, R. P. Bayesian optimization with unknown constraints. In: Conference on Uncertainty in Artificial Intelligence (UAI), 30., 2014. Proceedings [...], 2014.
+HOLLMANN, N.; MÜLLER, S.; EGGENSPERGER, K.; HUTTER, F. TabPFN: a transformer that solves small tabular classification problems in a second. In: International Conference on Learning Representations (ICLR), 2023.
+LEWIS, P. et al. Retrieval-augmented generation for knowledge-intensive NLP tasks. In: Advances in Neural Information Processing Systems (NeurIPS), v. 33, 2020.
