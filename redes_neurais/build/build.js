@@ -211,7 +211,7 @@ function codeRuns(line) {
 }
 function codeBlock(b) {
   const plain = ["bash", "saída", "algoritmo"].includes(b.lang);
-  const kids = b.code.map((ln) => new Paragraph({ spacing: { after: 0, line: 240 }, children: plain ? [new TextRun({ text: ln || " ", font: MONO, size: 15, color: C.ink })] : codeRuns(ln) }));
+  const kids = b.code.map((ln) => new Paragraph({ style: "SourceCode", spacing: { after: 0, line: 240 }, children: plain ? [new TextRun({ text: ln || " ", font: MONO, size: 15, color: C.ink })] : codeRuns(ln) }));
   const label = b.lang === "algoritmo" ? "PSEUDOCÓDIGO" : b.lang ? b.lang.toUpperCase() : "CÓDIGO";
   const colr = b.lang === "algoritmo" ? C.vio : C.ind;
   const bd = { style: BorderStyle.SINGLE, size: 4, color: C.mid };
@@ -555,12 +555,13 @@ const doc = new Document({
       { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true, run: { size: 44, bold: true, color: C.indD, font: FONT }, paragraph: { spacing: { before: 240, after: 240 }, outlineLevel: 0 } },
       { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true, run: { size: 40, bold: true, color: C.ind, font: FONT }, paragraph: { spacing: { before: 120, after: 240 }, outlineLevel: 1, border: { bottom: { style: BorderStyle.SINGLE, size: 12, color: C.amb, space: 6 } } } },
       { id: "Heading3", name: "Heading 3", basedOn: "Normal", next: "Normal", quickFormat: true, run: { size: 30, bold: true, color: C.indD, font: FONT }, paragraph: { spacing: { before: 360, after: 140 }, outlineLevel: 2 } },
+      { id: "SourceCode", name: "Source Code", basedOn: "Normal", run: { font: MONO, size: 15 }, paragraph: { spacing: { after: 0 }, alignment: AlignmentType.LEFT } },
       { id: "Heading4", name: "Heading 4", basedOn: "Normal", next: "Normal", quickFormat: true, run: { size: 25, bold: true, color: "4338CA", font: FONT }, paragraph: { spacing: { before: 240, after: 100 }, outlineLevel: 3 } },
       tocStyle(1, 0, true, 22, C.indD, 160), tocStyle(2, 0, true, 21, C.ink, 100), tocStyle(3, 300, false, 19, C.ink, 0), tocStyle(4, 700, false, 18, C.gry, 0),
     ],
   },
   numbering: { config: numberingConfigs },
-  sections: [...coverSections, tocSection, ...contentSections],
+  sections: process.env.EPUB ? [...contentSections] : [...coverSections, tocSection, ...contentSections],
 });
 
 Packer.toBuffer(doc).then((buf) => {

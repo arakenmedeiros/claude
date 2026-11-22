@@ -66,6 +66,11 @@ for item in zin.infolist():
     data = zin.read(item.filename)
     if item.filename == "word/document.xml":
         data = doc.encode("utf8")
+    if item.filename == "word/styles.xml":      # estilo Normal explícito: leitores (pandoc, Word) passam a reconhecer os títulos
+        st = data.decode("utf8")
+        if 'w:styleId="Normal"' not in st:
+            st = st.replace("</w:docDefaults>", '</w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>', 1)
+        data = st.encode("utf8")
     zout.writestr(item, data)
 zout.close()
 shutil.rmtree(tmp)
