@@ -1,5 +1,5 @@
 @@EX 1 | Validação aleatória ou temporal? | básico
-Com a série mensal de CO₂ de Mauna Loa (`statsmodels.api.datasets.co2`, médias mensais), monte atributos com os 12 últimos valores e o mês do ano, tendo como alvo a **diferença para o mesmo mês do ano anterior**. Reserve os últimos 36 meses e, com os dados restantes, estime o MAE de uma regressão `Ridge` com `KFold(5, shuffle=True)` e com `TimeSeriesSplit(5, test_size=12)`.
+Com a série mensal de CO₂ de Mauna Loa (`statsmodels.api.datasets.co2`; preencha as semanas ausentes com o último valor já observado, `ffill`, e calcule médias mensais), monte atributos com os 12 últimos valores e o mês do ano, tendo como alvo a **diferença para o mesmo mês do ano anterior**. Reserve os últimos 36 meses e, com os dados restantes, estime o MAE de uma regressão `Ridge` com `KFold(5, shuffle=True)` e com `TimeSeriesSplit(5, test_size=12)`.
 
 *Pergunta:* qual validação foi mais otimista? Por que o embaralhamento é perigoso em séries?
 @@SOL
@@ -20,7 +20,7 @@ for nome, cv in (("aleatória", KFold(5, shuffle=True, random_state=0)), ("tempo
     e = [np.abs(Ridge(1.0).fit(X[tr], a[tr]).predict(X[va]) - a[va]).mean() for tr, va in cv.split(X)]
     print(f"Validação {nome}: MAE = {np.mean(e):.3f}")
 ```
-@@NOTE O MAE foi de 0,248 com a validação aleatória e de 0,295 com a temporal: a aleatória é **otimista**, embora, neste caso (um modelo linear em série diferenciada), a diferença seja pequena. Com um modelo que não extrapola, como o boosting sobre valores brutos, a diferença é enorme (0,56 contra 1,71 no capítulo). O embaralhamento é perigoso porque deixa o modelo treinar com meses posteriores aos que ele prevê, algo impossível na prática.
+@@NOTE O MAE foi de 0,261 com a validação aleatória e de 0,305 com a temporal: a aleatória é **otimista**, embora, neste caso (um modelo linear em série diferenciada), a diferença seja pequena. Com um modelo que não extrapola, como o boosting sobre valores brutos, a diferença é enorme (0,58 contra 1,69 no capítulo). O embaralhamento é perigoso porque deixa o modelo treinar com meses posteriores aos que ele prevê, algo impossível na prática.
 @@EX 2 | Três linhas de base | básico
 Na mesma série, nos últimos 36 meses, calcule o MAE de previsões um mês à frente de três linhas de base: (a) **ingênua** (valor do mês anterior); (b) **sazonal ingênua** (mesmo mês do ano anterior); (c) **média móvel de 12 meses** (média dos 12 últimos valores).
 

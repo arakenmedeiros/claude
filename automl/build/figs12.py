@@ -99,3 +99,15 @@ if __name__=="__main__":
     for fn_ in (f12_dominios,f12_validacao,f12_lags,f12_previsao,f12_texto,f12_augmentation,f12_resultado_aug,f12_quadro):
         try: fn_()
         except FileNotFoundError as e: print("pendente",fn_.__name__,e)
+
+def f12_rag():
+    fig,ax=canvas(8.6,3.9)
+    ax.text(50,96,"RAG: o pipeline e seus botões",ha="center",fontsize=11,fontweight="bold")
+    B=[("Documentos","corte em trechos\n(tamanho, sobreposição)",GRY),("Recuperação","TF-IDF ou vetores;\nn-gramas; k trechos",IND),("Contexto","ordem e limite\nde palavras/tokens",CYA),("Instrução","modelo de prompt,\nexemplos, formato",AMB),("Modelo de\nlinguagem","pré-treinado;\najuste eficiente",GRN)]
+    for i,(t,d,c) in enumerate(B):
+        x=1.5+i*19.8
+        rbox(ax,x,56,17.6,26,t,fc=c,ec=c,fs=8.4,tc="white",bold=True,r=2)
+        rbox(ax,x,22,17.6,30,d,fc="white",ec=c,fs=7.6,tc=INK,lw=2,r=2)
+        if i<4: arrow(ax,(x+17.9,69),(x+19.5,69),lw=1.6,ms=9)
+    ax.text(50,10,"Restrições: limite de contexto, custo por chamada, tempo de resposta.   Cuidado: avaliação em conjunto protegido.",ha="center",fontsize=8,color=GRY,style="italic")
+    save(fig,"f12_rag")
