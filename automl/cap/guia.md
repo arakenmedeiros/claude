@@ -15,7 +15,13 @@ Use esta tabela como ponto de partida. Ela resume o que aprendemos; o ideal é s
 | Máxima precisão e há tempo e memória | Ensembles (média, stacking, seleção de Caruana) | 9 |
 | Quer um modelo pronto rapidamente | Ferramenta de AutoML (FLAML, Auto-sklearn, AutoGluon, H2O) | 10 |
 | Rede neural com arquitetura a definir | NAS, com espaço pequeno e linha de base aleatória | 11 |
-| Dados em série temporal | Validação temporal, atrasos, diferenciação | 12 |
+| Dados em série temporal | Validação temporal, atrasos, diferenciação, preenchimento causal | 12 |
+| Muitos trabalhadores em paralelo | ASHA (Successive Halving assíncrono); registre a ordem das promoções | 6 |
+| Limites de latência, memória ou disparidade | Busca com restrições (TPE com `constraints_func`) | 14 |
+| Classe muito rara | Métricas de precisão e revocação, limiar na validação, reamostragem só dentro das dobras | 2 |
+| Categoria com centenas de valores | Target encoding com cross-fitting (`TargetEncoder`) | 3 |
+| Vários rótulos por exemplo | Relevância binária ou cadeia; limiares por rótulo; escolha a métrica antes | 12 |
+| Poucos dados tabulares, quer evitar a busca | Considerar modelos fundacionais (TabPFN), medindo custo de inferência | 10 |
 
 ## C.2 Receitas de código
 
@@ -105,6 +111,24 @@ pi = permutation_importance(modelo, Xte, yte, n_repeats=10, random_state=0)
 # por grupo: taxa de seleção = pred[grupo == k].mean(); TPR = pred[(grupo == k) & (y_verdade == 1)].mean()
 ```
 
+### Calibração e predição conforme
+
+```python
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.frozen import FrozenEstimator
+cal = CalibratedClassifierCV(FrozenEstimator(modelo), method="sigmoid").fit(Xval, yval)   # dados que não treinaram o modelo
+# conforme dividida (2 classes): escore = 1 - prob. da classe verdadeira na calibração; q = quantil ceil((n+1)(1-alfa))/n
+conjunto = prob_teste >= 1 - q                                                            # classes plausíveis; 2 classes = abstenção
+```
+
+### Comparar dois modelos nos mesmos casos (análise pareada)
+
+```python
+dif = (modelo_b.predict(X) == y).astype(int) - (modelo_a.predict(X) == y).astype(int)   # +1: só B acertou; -1: só A acertou
+ic = np.percentile([dif[rng.integers(0, len(dif), len(dif))].mean() for _ in range(5000)], [2.5, 97.5])
+# McNemar exato: scipy.stats.binomtest(c, b + c, 0.5), com b e c = número de discordâncias de cada lado
+```
+
 ### Salvar e recarregar o pipeline
 
 ```python
@@ -125,6 +149,9 @@ pipe = joblib.load("modelo.joblib")                   # nunca carregue arquivos 
 | Correlação de Spearman | concordância entre as ordens de duas listas (1 = mesma ordem) |
 | Posto médio | média das posições de um método em várias bases (1 = melhor) |
 | PSI | soma, por faixa, de (proporção nova − proporção antiga) × log(proporção nova ÷ antiga) |
+| Log-odds | logaritmo de p ÷ (1 − p); SHAP de árvores binárias está nessa escala |
+| ECE | média ponderada da diferença absoluta entre a probabilidade prevista e a frequência observada, por faixa |
+| Diferença pareada | média, caso a caso, de acerto de B menos acerto de A; use IC por bootstrap |
 | Taxa de seleção | proporção de aprovados em um grupo |
 
 ## C.4 Lista de verificação de um projeto
@@ -153,7 +180,7 @@ pipe = joblib.load("modelo.joblib")                   # nunca carregue arquivos 
 - Retreine com **campeão e desafiante**, com margem.
 - Mantenha pessoas no circuito e canal de contestação.
 
-## C.5 As dez armadilhas mais comuns
+## C.5 As doze armadilhas mais comuns
 
 1. **Escolher pelo teste** (o teste vira validação).
 2. **Vazamento** por pré-processar antes de dividir.
@@ -165,6 +192,8 @@ pipe = joblib.load("modelo.joblib")                   # nunca carregue arquivos 
 8. **Achar que remover o atributo sensível elimina o viés** (proxies e rótulos enviesados).
 9. **Ignorar o custo** (tempo, energia, latência).
 10. **Esquecer o monitoramento** depois da implantação.
+11. **Escolher limiares ou calibradores no teste** (ou na mesma amostra que será avaliada).
+12. **Usar o erro padrão de uma acurácia** como régua para a diferença entre dois modelos.
 
 ## C.6 Mapa dos capítulos
 

@@ -1,0 +1,37 @@
+body { font-family: serif; line-height: 1.45; margin: 0 4%; }
+p { text-align: justify; hyphens: auto; -webkit-hyphens: auto; margin: 0 0 0.7em 0; }
+li { text-align: justify; margin-bottom: 0.3em; }
+h1 { font-family: sans-serif; color: #312E81; font-size: 1.7em; margin: 1.2em 0 0.6em; page-break-before: always; }
+h1.semnum { text-align: center; font-size: 2.2em; margin-top: 3em; }
+h1.parte { color: #4F46E5; text-align: left; font-size: 1.9em; }
+h2 { font-family: sans-serif; color: #4F46E5; font-size: 1.3em; margin: 1.4em 0 0.5em; }
+h3 { font-family: sans-serif; color: #1F2937; font-size: 1.1em; margin: 1.1em 0 0.4em; }
+p.autor { text-align: center; font-size: 1.2em; }
+p.descricao-parte { font-style: italic; }
+figure { margin: 1em 0; text-align: center; }
+figure img { max-width: 100%; height: auto; }
+figcaption { font-size: 0.8em; font-style: italic; color: #6B7280; text-align: center; }
+figure.banner img { width: 100%; }
+section.capa { text-align: center; }
+section.capa img { max-width: 100%; max-height: 95vh; }
+pre { background: #F3F4F6; border-radius: 4px; padding: 0.6em; font-size: 0.72em; line-height: 1.3; white-space: pre-wrap; word-wrap: break-word; text-align: left; }
+pre.saida { background: #1E1B4B; color: #A7F3D0; }
+code { font-family: monospace; font-size: 0.88em; color: #B91C1C; }
+pre code { color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: 0.8em 0; font-size: 0.85em; }
+th { background: #4F46E5; color: #FFFFFF; padding: 0.3em 0.5em; text-align: left; }
+td { border: 1px solid #E5E7EB; padding: 0.3em 0.5em; vertical-align: top; text-align: left; }
+div.callout { border-left: 4px solid #06B6D4; background: #F5F8FF; padding: 0.5em 0.9em; margin: 1em 0; }
+div.callout.atencao { border-left-color: #F59E0B; background: #FFFBEB; }
+div.callout.dica { border-left-color: #10B981; background: #ECFDF5; }
+div.callout.memorize { border-left-color: #EC4899; background: #FDF2F8; }
+div.callout.saibamais { border-left-color: #8B5CF6; background: #F5F3FF; }
+div.callout.exemplo, div.callout.objetivos { border-left-color: #4F46E5; background: #EEF2FF; }
+p.callout-titulo { font-family: sans-serif; font-weight: bold; font-size: 0.85em; margin-bottom: 0.4em; }
+p.formula { text-align: center; font-family: monospace; background: #EEF2FF; padding: 0.5em; }
+p.nota, p.nivel { color: #6B7280; font-size: 0.9em; }
+p.nivel { font-weight: bold; font-size: 0.75em; color: #4F46E5; }
+p.alt { margin-left: 1.5em; margin-bottom: 0.2em; text-align: left; }
+p.ref { text-indent: -1.5em; margin-left: 1.5em; font-size: 0.88em; }
+p.gloss { margin-bottom: 0.4em; }
+blockquote { border-left: 3px solid #C7D2FE; margin-left: 0.5em; padding-left: 0.8em; color: #374151; }

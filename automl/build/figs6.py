@@ -71,7 +71,7 @@ def f6_bohb():
     rbox(ax,3,50,28,30,"Hyperband\n\neconomiza\navaliações com\ncortes precoces",fc=IND,ec=IND,fs=8.8,tc="white",bold=True,r=2)
     rbox(ax,69,50,28,30,"Otimização\nbayesiana (TPE)\n\ngera candidatos\ninteligentes",fc=GRN,ec=GRN,fs=8.8,tc="white",bold=True,r=2)
     ax.text(50,66,"+",ha="center",fontsize=26,fontweight="bold",color=INK)
-    rbox(ax,22,12,56,24,"BOHB: o Hyperband organiza os torneios, mas os candidatos\nnão são sorteados ao acaso: vêm de um modelo TPE\ntreinado com os resultados de cada fidelidade",fc="#FEF3C7",ec=AMB,fs=8.5,tc=INK,lw=2,r=2)
+    rbox(ax,22,12,56,24,"BOHB: o Hyperband organiza os torneios; os candidatos vêm de um\nmodelo TPE feito com o maior orçamento que já tem observações\nsuficientes, e uma fração fica sorteada ao acaso",fc="#FEF3C7",ec=AMB,fs=8.5,tc=INK,lw=2,r=2)
     arrow(ax,(17,49),(32,37),c=GRY,lw=1.6,ms=10); arrow(ax,(83,49),(68,37),c=GRY,lw=1.6,ms=10)
     save(fig,"f6_bohb")
 

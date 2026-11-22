@@ -55,7 +55,7 @@ Os códigos usam **Python** e, sobretudo, a biblioteca **scikit-learn**, acompan
 | Matplotlib | 3.11.2 |
 | Optuna / FLAML | 5.0.0 / 2.7.0 |
 | SHAP / XGBoost / LightGBM | 0.54.1 / 3.4.1 / 4.7.0 |
-| statsmodels | 0.15.0 |
+| statsmodels / joblib / threadpoolctl | 0.15.0 / 1.6.0 / 3.8.0 |
 
 Diferenças pequenas nos números são normais com outras versões. Você pode executar tudo no seu computador ou no **Google Colab**, gratuito e no navegador.
 
@@ -80,3 +80,17 @@ Este livro procura ser transparente sobre o que foi executado durante a sua elab
 Boa leitura, e bons experimentos!
 
 *Araken de Medeiros Santos*
+
+## O que mudou nesta edição
+
+Esta edição incorpora uma revisão técnica do texto anterior. Em resumo:
+
+- **Protocolo de justiça (Cap. 13):** os limiares por grupo agora são escolhidos em um **conjunto de validação** e avaliados no teste (antes, eram calculados sobre o próprio teste); a paridade demográfica é distinguida da igualdade de oportunidade; os valores SHAP aparecem na escala correta (log-odds), com o valor-base.
+- **Campeão e desafiante (Cap. 14):** a comparação passou a ser **pareada** (bootstrap e teste de McNemar), com uma melhoria mínima de interesse prático.
+- **Comparação de ferramentas (Cap. 10):** os métodos agora recebem o **mesmo tempo de relógio e 1 núcleo**, e o experimento registra tempo, CPU, número de configurações e pico de memória; o `max_iter` do boosting entrou no espaço de busca; o exemplo do TPOT foi identificado como da série 0.x.
+- **Séries temporais (Cap. 12):** o preenchimento de valores ausentes é **causal** (sem olhar o futuro).
+- **NAS (Cap. 11):** o experimento passou a separar o custo da tabela, o custo das consultas e a variação do treinamento (sementes), e a repetir a comparação com avaliações ruidosas.
+- **BOHB (Cap. 6):** descrição mais precisa; nova seção sobre busca distribuída e assíncrona (ASHA).
+- **Ambiente e reprodutibilidade:** versões fixadas de todas as bibliotecas e um `requirements.txt`; os códigos usam diretórios **relativos**; o repositório traz os scripts de cada capítulo.
+- **Bibliografia:** dados completados (Auto-WEKA, OpenML, Lorena et al.) e novas referências, verificadas por busca.
+- **Novos temas:** dados desbalanceados e limiares (Cap. 2); target encoding sem vazamento (Cap. 3); ASHA (Cap. 6); modelos fundacionais tabulares (Cap. 10); calibração, predição conforme e abstenção (Cap. 13); AutoML com restrições (Cap. 14); AutoML multirrótulo e sistemas com LLM e RAG (Cap. 12).

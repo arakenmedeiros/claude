@@ -130,3 +130,30 @@ Variância: sensibilidade do modelo ou da estimativa às variações dos dados.
 Vetorização: transformação de textos em vetores numéricos.
 Warm start: partida a quente; começar a busca por configurações que funcionaram em problemas parecidos.
 XGBoost: biblioteca de boosting de árvores.
+Abstenção: decisão de não responder (ou de encaminhar a uma pessoa) quando o modelo está em dúvida, por exemplo quando o conjunto de previsão tem duas classes.
+ASHA: versão assíncrona do Successive Halving, em que um trabalhador livre promove um candidato ou começa um novo, sem esperar os demais.
+AutoML com restrições: busca da melhor acurácia sujeita a limites, como latência, tamanho do modelo e disparidade entre grupos.
+Bootstrap pareado: reamostragem de casos com reposição para estimar a incerteza da diferença entre dois modelos avaliados nos mesmos casos.
+Brier (escore de): erro quadrático médio entre a probabilidade prevista e o resultado (0 ou 1); mede a qualidade das probabilidades.
+Cadeia de classificadores: estratégia multirrótulo em que cada modelo recebe, como atributos extras, as previsões dos anteriores.
+Calibração: ajuste das probabilidades de um modelo para que "70%" corresponda a cerca de 70% de ocorrências.
+Checkpoint: ponto de salvamento do estado de um treino, que permite continuá-lo de onde parou.
+Cross-fitting: codificar ou ajustar cada exemplo com estatísticas calculadas sem ele, para evitar que veja o próprio rótulo.
+ECE (erro de calibração esperado): distância média entre a probabilidade prevista e a frequência observada, em faixas de probabilidade.
+Hamming (perda de): fração de pares exemplo-rótulo previstos incorretamente, em problemas multirrótulo.
+Limiar de decisão: valor de probabilidade a partir do qual o modelo responde "positivo"; deve ser escolhido na validação, de acordo com o custo dos erros.
+Log-odds: logaritmo da razão de chances; escala em que os valores SHAP de classificadores de árvores são expressos por padrão.
+LLM: modelo de linguagem de grande porte, pré-treinado em enormes volumes de texto.
+McNemar (teste de): teste sobre as discordâncias entre dois modelos avaliados nos mesmos casos.
+Modelo fundacional: modelo pré-treinado em grande escala, reaproveitável em muitas tarefas, como o TabPFN para dados tabulares.
+Multirrótulo: problema em que cada exemplo pode ter vários rótulos ao mesmo tempo.
+Oversampling: repetição de exemplos da classe rara para equilibrar as classes no treino.
+Paridade demográfica: critério de justiça em que a taxa de seleção é igual entre os grupos.
+Precisão média (AP): área sob a curva de precisão e revocação; resume o desempenho na classe rara.
+Predição conforme: método que devolve conjuntos de classes plausíveis, com garantia média de cobertura sob trocabilidade.
+RAG: geração aumentada por recuperação; o sistema busca trechos relevantes e os entrega a um modelo de linguagem como contexto.
+TabPFN: modelo fundacional para dados tabulares pequenos, que prevê em uma única passagem, sem busca de hiperparâmetros por conjunto.
+Target encoding: substituição de uma categoria pela média do alvo nos exemplos dela; exige cross-fitting para evitar vazamento.
+Trocabilidade: hipótese de que os casos novos são tão "sorteáveis" quanto os da calibração, base da garantia da predição conforme.
+Undersampling: descarte de exemplos da classe comum para equilibrar as classes no treino.
+Valor-base (SHAP): margem média do modelo, à qual se somam as contribuições dos atributos.

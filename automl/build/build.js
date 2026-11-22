@@ -102,17 +102,17 @@ function heading(level, text, opts = {}) {
   return new Paragraph({ heading: lv, pageBreakBefore: !!opts.pageBreak, keepNext: true, children: [new TextRun({ text })] });
 }
 function P(text, o = {}) {
-  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.LEFT, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
+  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.JUSTIFIED, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
 }
 function noBorder() { const n = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }; return { top: n, bottom: n, left: n, right: n }; }
 
 function calloutParas(body, color) {
   const out = []; let para = [];
-  const flush = () => { if (para.length) { out.push(new Paragraph({ spacing: { after: 80, line: 280 }, children: runs(para.join(" "), { size: 20 }) })); para = []; } };
+  const flush = () => { if (para.length) { out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, spacing: { after: 80, line: 280 }, children: runs(para.join(" "), { size: 20 }) })); para = []; } };
   let i = 0;
   while (i < body.length) {
     const ln = body[i];
-    if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
+    if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, numbering: { reference: "bul", level: 0 }, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
     if (ln.trim() === "") { flush(); i++; continue; }
     para.push(ln.trim()); i++;
   }
@@ -205,8 +205,8 @@ function renderBlocks(blocks) {
       case "h4": out.push(heading(4, b.text)); break;
       case "p": out.push(P(b.text)); break;
       case "quote": out.push(new Paragraph({ spacing: { after: 120 }, indent: { left: 400 }, border: { left: { style: BorderStyle.SINGLE, size: 18, color: C.cya, space: 8 } }, children: runs(b.text, { size: 21, italics: true }) })); break;
-      case "ul": b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break;
-      case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: ref, level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
+      case "ul": b.items.forEach((it) => out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, numbering: { reference: "bul", level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break;
+      case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, numbering: { reference: ref, level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
       case "callout": out.push(callout(b)); out.push(spacer(140)); break;
       case "code": out.push(...codeBlock(b)); break;
       case "formula": out.push(formula(b)); break;
@@ -347,8 +347,8 @@ const PART_DESC = {
   "Parte I — Fundamentos": "O terreno comum: o que é AutoML e por que ele existe, o essencial de aprendizado de máquina para quem começa do zero e como montar pipelines confiáveis, sem vazamento de dados.",
   "Parte II — Otimização de Hiperparâmetros": "O coração do AutoML: como buscar bons ajustes de forma inteligente. Da busca em grade e aleatória à otimização bayesiana, ao Hyperband e aos métodos evolutivos.",
   "Parte III — Automação do Pipeline": "Automatizar o que vem antes e depois do modelo: atributos, meta-aprendizado, ensembles e as principais ferramentas de AutoML em ação.",
-  "Parte IV — AutoML Avançado": "Fronteiras do campo: a busca automática de arquiteturas de redes neurais (NAS) e o AutoML para séries temporais, texto e imagens.",
-  "Parte V — AutoML Responsável e em Produção": "Como confiar, explicar e colocar em produção: explicabilidade, ética, vieses, custo ambiental, MLOps e um projeto integrador final.",
+  "Parte IV — Redes Neurais e Novos Domínios": "Fronteiras do campo: a busca automática de arquiteturas de redes neurais (NAS) e o AutoML para séries temporais, texto, imagens, problemas multirrótulo e sistemas com LLM e RAG.",
+  "Parte V — Responsabilidade e Prática": "Como confiar, explicar e colocar em produção: explicabilidade, ética, vieses, calibração e incerteza, custo, restrições, MLOps e um projeto integrador final.",
 };
 const PART_COL = { "Parte I": C.ind, "Parte II": C.cya, "Parte III": C.grn, "Parte IV": C.amb, "Parte V": C.vio };
 
@@ -470,6 +470,87 @@ for (const c of chapters) {
   const lines = readTxt("referencias.txt").trim().split("\n").filter(Boolean).sort((a, b) => a.localeCompare(b, "pt"));
   for (const ln of lines) kids.push(new Paragraph({ keepLines: true, spacing: { after: 90, line: 264 }, indent: { left: 420, hanging: 420 }, children: [new TextRun({ text: ln, size: 19 })] }));
   contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Referências") }, footers: { default: mkFooter() }, children: kids });
+}
+
+
+// ---------------------------------------------------------------- saída HTML (para o EPUB)
+if (process.env.EMIT_HTML) {
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const inl = (t) => esc(t).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\*([^*\s][^*]*)\*/g, "<em>$1</em>");
+  const H = []; const add = (x) => H.push(x);
+  const hBlocks = (blocks) => {
+    for (const b of blocks) {
+      switch (b.t) {
+        case "p": add(`<p>${inl(b.text)}</p>`); break;
+        case "h3": add(`<h2>${inl(b.text)}</h2>`); break;
+        case "h4": add(`<h3>${inl(b.text)}</h3>`); break;
+        case "ul": add("<ul>" + b.items.map((x) => `<li>${inl(x)}</li>`).join("") + "</ul>"); break;
+        case "ol": add("<ol>" + b.items.map((x) => `<li>${inl(x)}</li>`).join("") + "</ol>"); break;
+        case "quote": add(`<blockquote><p>${inl(b.text)}</p></blockquote>`); break;
+        case "formula": add(`<p class="formula">${esc(b.text)}</p>`); break;
+        case "code": add(`<pre class="${b.lang === "saída" ? "saida" : "codigo"}"><code>${esc(b.code.join("\n"))}</code></pre>`); break;
+        case "fig": add(`<figure><img src="figs/${b.id}.png" alt="${esc(b.caption)}" /><figcaption>${inl(b.caption)}</figcaption></figure>`); break;
+        case "table": { const R = b.rows; add("<table><thead><tr>" + R[0].map((c) => `<th>${inl(c)}</th>`).join("") + "</tr></thead><tbody>" + R.slice(1).map((r) => "<tr>" + r.map((c) => `<td>${inl(c)}</td>`).join("") + "</tr>").join("") + "</tbody></table>"); break; }
+        case "callout": {
+          const lab = { dica: "DICA", atencao: "ATENÇÃO", cotidiano: "NO SEU DIA A DIA", saibamais: "SAIBA MAIS", exemplo: "EXEMPLO", memorize: "MEMORIZE" }[b.kind] || b.kind.toUpperCase();
+          const inner = parseMd(b.body.join("\n")).blocks; const save = H.length; add(`<div class="callout ${b.kind}"><p class="callout-titulo"><strong>${esc(lab)}: ${inl(b.title)}</strong></p>`); hBlocks(inner); add("</div>"); break; }
+      }
+    }
+  };
+  const apr = parseMd(readTxt("apresentacao.md")); add(`<h1>Apresentação</h1>`); hBlocks(apr.blocks);
+  for (const c of chapters) {
+    if (c.meta.part) {
+      const [pnum] = c.meta.part.split(" — "); const list = []; for (let k = chapters.indexOf(c); k < chapters.length; k++) { if (k > chapters.indexOf(c) && chapters[k].meta.part) break; list.push(chapters[k]); }
+      add(`<h1 class="parte">${esc(c.meta.part)}</h1><p class="descricao-parte">${esc(PART_DESC[c.meta.part] || "")}</p><ul>` + list.map((x) => `<li>Cap. ${x.n} — ${esc(x.meta.title)}</li>`).join("") + "</ul>");
+    }
+    add(`<h1>Capítulo ${c.n} — ${esc(c.meta.title)}</h1><figure class="banner"><img src="figs/banner${c.meta.banner || c.n}.png" alt="Ilustração do capítulo ${c.n}" /></figure>`);
+    add(`<div class="callout objetivos"><p class="callout-titulo"><strong>OBJETIVOS DE APRENDIZAGEM</strong></p><p><strong>Ao final deste capítulo você será capaz de:</strong></p><ul>` + c.meta.obj.map((o) => `<li>${inl(o)}</li>`).join("") + "</ul></div>");
+    hBlocks(c.blocks);
+    add(`<h2>Exercícios de múltipla escolha</h2><p class="nota">Escolha <strong>uma</strong> alternativa em cada questão. O gabarito está no Apêndice A.</p>`);
+    c.ex.mc.forEach((q, i) => add(`<div class="questao"><p><strong>Questão ${i + 1}.</strong> ${inl(q.stem)}</p>` + q.opts.map((o, k) => `<p class="alt">${"abcd"[k]}) ${inl(o)}</p>`).join("") + "</div>"));
+    add(`<h2>Exercícios discursivos</h2><p class="nota">Responda com suas palavras, em poucas linhas. Compare depois com a resposta-modelo do Apêndice A.</p><ol>` + c.ex.dc.map((q) => `<li>${inl(q.stem)}</li>`).join("") + "</ol>");
+    if (c.pr) {
+      const exs = c.pr.items.filter((x) => x.kind === "EX"); const proj = c.pr.items.find((x) => x.kind === "PROJ");
+      if (exs.length) {
+        add(`<h2>Exercícios práticos em Python (scikit-learn)</h2><p class="nota">Resolva os exercícios no seu computador (ou no Google Colab). Tente resolver <strong>antes</strong> de consultar a solução, no Apêndice D. Os scripts de referência estão na pasta <code>codigo/</code> do repositório que acompanha o livro.</p>`);
+        for (const it of exs) { add(`<h3>Exercício ${it.num} — ${inl(it.title)}</h3><p class="nivel">NÍVEL: ${esc(it.level.toUpperCase())}</p>`); hBlocks(parseMd(it.stmt.join("\n")).blocks); }
+      }
+      if (c.pr.alem.length) { add(`<div class="callout saibamais"><p class="callout-titulo"><strong>SAIBA MAIS: Para ir além: bases públicas da UCI e do Kaggle</strong></p>`); hBlocks(parseMd(c.pr.alem.join("\n")).blocks); add(`<p>Estes conjuntos não foram usados nem testados nos códigos do livro. Confira, nos sites, a descrição, a licença e as colunas antes de usá-los.</p></div>`); }
+      if (proj) { add(`<h2>${c.n === 14 ? "Projeto integrador final" : "Projeto integrador do capítulo"}</h2><h3>${inl(proj.title)}</h3>`); hBlocks(parseMd(proj.stmt.join("\n")).blocks); add(`<p class="nota">A solução de referência está no Apêndice E.</p>`); }
+    }
+  }
+  add(`<h1>Apêndice A — Gabarito dos exercícios</h1><p>Nas questões de múltipla escolha, aparecem a alternativa correta e uma breve justificativa. Nas discursivas, aparece uma <strong>resposta-modelo</strong>: a sua resposta pode ser redigida de outro modo, desde que contemple as mesmas ideias.</p>`);
+  for (const c of chapters) {
+    add(`<h2>Capítulo ${c.n} — ${esc(c.meta.title.split(":")[0])}</h2><h3>Múltipla escolha</h3><table><thead><tr><th>Questão</th><th>Resposta</th><th>Justificativa</th></tr></thead><tbody>` + c.ex.mc.map((q, i) => `<tr><td>${i + 1}</td><td>${q.ans})</td><td>${inl(q.why)}</td></tr>`).join("") + "</tbody></table>");
+    add(`<h3>Discursivas (respostas-modelo)</h3><ol>` + c.ex.dc.map((q) => `<li>${inl(q.ans)}</li>`).join("") + "</ol>");
+  }
+  add(`<h1>Apêndice B — Glossário</h1><p>Termos técnicos usados no livro, explicados de forma simples.</p>`);
+  for (const ln of readTxt("glossario.txt").trim().split("\n").filter(Boolean).sort((a, b) => a.localeCompare(b, "pt"))) { const k = ln.indexOf(":"); add(`<p class="gloss"><strong>${esc(ln.slice(0, k))}</strong> — ${inl(ln.slice(k + 1).trim())}</p>`); }
+  const guia = parseMd(readTxt("guia.md")); add(`<h1>${esc(guia.meta.title)}</h1>`); hBlocks(guia.blocks);
+  add(`<h1>Apêndice D — Soluções dos exercícios práticos</h1><p>Cada solução traz o código, a <strong>saída obtida</strong> na elaboração do livro e um comentário sobre o que observar.</p>`);
+  for (const c of chapters) {
+    if (!c.pr) continue; const exs = c.pr.items.filter((x) => x.kind === "EX"); if (!exs.length) continue;
+    add(`<h2>Capítulo ${c.n} — ${esc(c.meta.title.split(":")[0])}</h2>`);
+    for (const it of exs) {
+      add(`<h3>Exercício ${it.num} — ${inl(it.title)}</h3>`); hBlocks([{ t: "code", lang: "python", code: codeOf(it) }]);
+      const sd = saidaOf(c.n, it); if (sd) hBlocks([{ t: "code", lang: "saída", code: sd }]);
+      if (it.note.length) hBlocks([{ t: "callout", kind: "exemplo", title: "O que observar", body: it.note }]);
+    }
+  }
+  add(`<h1>Apêndice E — Soluções de referência dos projetos integradores</h1><p>Estas são <strong>soluções de referência</strong>: caminhos possíveis, e não os únicos. Os critérios de avaliação de cada projeto aparecem antes do código.</p>`);
+  for (const c of chapters) {
+    if (!c.pr) continue; const proj = c.pr.items.find((x) => x.kind === "PROJ"); if (!proj) continue;
+    add(`<h2>Capítulo ${c.n} — ${esc(c.meta.title.split(":")[0])}</h2><h3>${inl(proj.title)}</h3>`);
+    if (proj.rubrica.filter((l) => l.trim()).length) { add(`<p><strong>Critérios de avaliação</strong></p>`); hBlocks(parseMd(proj.rubrica.join("\n")).blocks); }
+    hBlocks([{ t: "code", lang: "python", code: codeOf(proj) }]);
+    const sd = saidaOf(c.n, proj); if (sd) hBlocks([{ t: "code", lang: "saída", code: sd }]);
+    if (proj.note.length) hBlocks([{ t: "callout", kind: "exemplo", title: "Discussão dos resultados", body: proj.note }]);
+  }
+  add(`<h1>Referências</h1>`);
+  for (const ln of readTxt("referencias.txt").trim().split("\n").filter(Boolean).sort((a, b) => a.localeCompare(b, "pt"))) add(`<p class="ref">${esc(ln)}</p>`);
+  const outDir = path.join(__dirname, "epub"); fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(path.join(outDir, "livro.html"), `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><title>${TITLE}: ${SUBTITLE}</title></head><body>${H.join("\n")}</body></html>`);
+  console.log("HTML gerado:", H.length, "blocos"); process.exit(0);
 }
 
 // ---------------------------------------------------------------- TOC
