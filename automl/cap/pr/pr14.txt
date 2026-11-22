@@ -72,9 +72,9 @@ print(f"alcohol com +30%   : KS = {ks_2samp(Xr[:, j], Xd[:, j]).statistic:.3f} |
 ```
 @@NOTE **Atenção:** mesmo sem deriva alguma, o PSI de alguns atributos passou do limite de alerta (por exemplo, `total_phenols` 0,954 e `nonflavanoid_phenols` 0,591), porque a "produção" tem apenas 54 casos e o PSI, calculado em 10 faixas, é muito instável com poucos dados. O KS do `alcohol` sem deriva foi 0,098 (PSI 0,115, no alerta); com +30%, o KS chegou a 1,000 e o PSI a 8,192, uma deriva óbvia. Lição: o PSI exige **amostras razoáveis** (centenas ou milhares de casos) e as regras práticas de 0,10 e 0,25 não valem para amostras pequenas; use também testes estatísticos e inspeção visual.
 @@EX 4 | Quando trocar o campeão? | avançado
-No crédito simulado (função abaixo), treine o campeão em dados de `infl=0`. Para 20 repetições (sementes diferentes), gere dados recentes com `infl=0,5`, treine um desafiante com 2.000 casos e compare ambos em 2.000 casos de desafio. Conte em quantas repetições o desafiante "assume" pela regra de margem (diferença > 2 erros padrão).
+No crédito simulado (função abaixo), treine o campeão em dados de `infl=0`. Para 20 repetições (sementes diferentes), gere dados recentes com `infl=0,5`, treine um desafiante com 2.000 casos e compare ambos em 2.000 casos de desafio. Conte em quantas repetições o desafiante "assume" por duas regras: (a) a regra **ingênua** (diferença maior que 2 erros padrão **de uma acurácia**) e (b) a regra **pareada** (limite inferior do intervalo de confiança de 95% da diferença, por *bootstrap* pareado, maior que δ = 0,5 ponto percentual).
 
-*Pergunta:* o desafiante assume sempre? Que regra você usaria para evitar trocas por ruído?
+*Pergunta:* o desafiante assume sempre? As duas regras concordam? Por que a análise pareada é a mais adequada?
 @@SOL
 ```python
 import warnings; warnings.filterwarnings("ignore")
@@ -92,16 +92,21 @@ def gera(n=6000, vies=0.6, p_min=0.3, seed=0, infl=0.0):
     return np.c_[renda, emprego, divida, cep, score], g, y_hist, y_real
 
 X0, g0, y0, _ = gera(5000, seed=1); campeao = HistGradientBoostingClassifier(random_state=0).fit(X0[:, [0, 1, 2, 4]], y0)
-assume, difs = 0, []
+ing, par, difs = 0, 0, []
+rng = np.random.default_rng(0)
 for s in range(20):
     X, g, yh, yr = gera(4000, seed=100 + s, infl=0.5); X = X[:, [0, 1, 2, 4]]
     des = HistGradientBoostingClassifier(random_state=0).fit(X[:2000], yr[:2000])
-    ac, ad = campeao.score(X[2000:], yr[2000:]), des.score(X[2000:], yr[2000:])
-    ep = np.sqrt(ad * (1 - ad) / 2000); difs.append(ad - ac); assume += (ad - ac) > 2 * ep
+    ok_c, ok_d = campeao.predict(X[2000:]) == yr[2000:], des.predict(X[2000:]) == yr[2000:]
+    dif = ok_d.astype(int) - ok_c.astype(int); n = len(dif); ad = ok_d.mean()
+    ep = np.sqrt(ad * (1 - ad) / n); difs.append(dif.mean())
+    ing += dif.mean() > 2 * ep                                                       # regra ingênua
+    lo = np.percentile([dif[rng.integers(0, n, n)].mean() for _ in range(1000)], 2.5)
+    par += lo > 0.005                                                                 # regra pareada com melhoria mínima
 print(f"Diferença média (desafiante - campeão) = {np.mean(difs):+.3f} | mínima = {min(difs):+.3f} | máxima = {max(difs):+.3f}")
-print(f"O desafiante assumiu em {assume} de 20 repetições")
+print(f"Regra ingênua assumiu em {ing} de 20 repetições | regra pareada (δ = 0,005) assumiu em {par} de 20")
 ```
-@@NOTE A diferença média do desafiante sobre o campeão foi de +0,015 (de −0,005 a +0,030), e ele assumiu em apenas 9 das 20 repetições pela regra de margem. Ou seja, **o desafiante não assume sempre**, mesmo havendo um ganho médio positivo, pois em boa parte das amostras a diferença não passa de 2 erros padrão. Para evitar trocas por ruído, use margem estatística, avalie em mais dados (ou em várias janelas de tempo) e considere o custo do retreino.
+@@NOTE A diferença média do desafiante sobre o campeão foi de +0,015 (de −0,004 a +0,030). A regra **ingênua** (2 erros padrão de uma acurácia) fez o desafiante assumir em 9 das 20 repetições; a regra **pareada** (limite inferior do IC de 95% da diferença acima de δ = 0,5 ponto) o fez assumir em apenas 4. Ou seja, **o desafiante não assume sempre**, e a regra ingênua **trocaria o modelo mais vezes do que a evidência sustenta**: ela usa a régua da incerteza de uma só acurácia e ignora a melhoria mínima de interesse. A análise pareada trata a diferença caso a caso, usa os mesmos casos nos dois modelos e permite impor δ. Para evitar trocas por ruído, use análise pareada, avalie em mais dados (ou em várias janelas de tempo) e considere o custo do retreino.
 @@PROJ Projeto integrador: AutoML de ponta a ponta, com ética e produção | Cap14
 **Fonte dos dados.** Crédito **simulado** (função abaixo), com 20% do grupo minoritário (`p_min=0.25`), viés histórico de 0,5 (`vies=0.5`) e semente 11. Para uma versão com dados reais, use uma base pública da UCI ou do Kaggle com atributo sensível (por exemplo, *Adult*, *German Credit* ou *Give Me Some Credit*), respeitando licenças e restrições legais.
 
@@ -155,7 +160,7 @@ def psi(ref, novo, k=10):
 NOMES = ["renda", "tempo_emprego", "razao_divida", "score_historico"]
 X, g, yh, yr = gera(6000, vies=0.5, p_min=0.25, seed=11); X = X[:, [0, 1, 2, 4]]            # sem cep e sem grupo
 Xa, Xte, ya, yte, ga, gte, yra, yrte = train_test_split(X, yh, g, yr, test_size=0.25, random_state=0, stratify=yh)
-Xtr, Xv, ytr, yv = train_test_split(Xa, ya, test_size=0.25, random_state=0, stratify=ya)
+Xtr, Xv, ytr, yv, gtr, gv = train_test_split(Xa, ya, ga, test_size=0.25, random_state=0, stratify=ya)
 
 def constroi(p):
     if p["alg"] == "lr": return make_pipeline(StandardScaler(), LogisticRegression(C=p["C"], max_iter=2000))
@@ -189,6 +194,13 @@ pred_ens = (P(modelos, Xte) >= 0.5).astype(int)
 cands = {"reg. logística (base)": base_lr.predict(Xte), "floresta padrão (base)": base_rf.predict(Xte), "melhor único": modelos[0].predict(Xte), "ensemble por algoritmo": pred_ens}
 print("\nTESTE FINAL (n = %d, erro padrão ~ %.3f):" % (len(yte), np.sqrt(0.8 * 0.2 / len(yte))))
 for nome, p in cands.items(): print(f"  {nome:<24s} acurácia = {(p == yte).mean():.3f}")
+rng = np.random.default_rng(0)
+def ic_pareado(pa, pb):                                     # diferença de acertos (a - b) e IC de 95% por bootstrap pareado
+    d = (pa == yte).astype(int) - (pb == yte).astype(int); bs = [d[rng.integers(0, len(d), len(d))].mean() for _ in range(2000)]
+    return d.mean(), np.percentile(bs, 2.5), np.percentile(bs, 97.5)
+for nome in ("melhor único", "ensemble por algoritmo"):
+    m, lo, hi = ic_pareado(cands[nome], cands["reg. logística (base)"])
+    print(f"  {nome} - reg. logística: diferença = {m:+.4f} | IC 95% pareado = [{lo:+.4f}, {hi:+.4f}]")
 
 def rel(nome, pred):
     s = [pred[gte == k].mean() for k in (0, 1)]; t = [pred[(gte == k) & (yrte == 1)].mean() for k in (0, 1)]
@@ -199,8 +211,9 @@ print("  Permutação do melhor único:", {n: round(float(v), 3) for n, v in zip
 Xg_tr, Xg_te, g_tr, g_te = train_test_split(X, g, test_size=0.3, random_state=0, stratify=g)
 pg = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xg_tr, g_tr)
 print("  AUC para prever o grupo pelos atributos: %.3f" % roc_auc_score(g_te, pg.predict_proba(Xg_te)[:, 1]))
-p = P(modelos, Xte); sel0 = (p[gte == 0] >= 0.5).mean(); t1 = np.quantile(p[gte == 1], 1 - sel0)
-rel("ensemble + limiares", np.where(gte == 0, p >= 0.5, p >= t1).astype(int))
+pv, p = P(modelos, Xv), P(modelos, Xte)
+sel0 = (pv[gv == 0] >= 0.5).mean(); t1 = np.quantile(pv[gv == 1], 1 - sel0)          # limiar escolhido na VALIDAÇÃO
+rel("ensemble + limiar (valid.)", np.where(gte == 0, p >= 0.5, p >= t1).astype(int))
 
 pasta = tempfile.mkdtemp(); joblib.dump(modelos[0], os.path.join(pasta, "modelo.joblib"))
 ficha = {"python": sys.version.split()[0], "scikit-learn": sklearn.__version__, "semente": 0, "hash_treino": hashlib.sha256(Xtr.tobytes()).hexdigest()[:16]}
@@ -220,7 +233,7 @@ print(f"  Deriva (inflação de 40%): PSI da renda = {psi(Xtr[:, 0], Xd[:, 0]):.
 - A auditoria por grupo inclui seleção, TPR real, proxies (AUC) e mitigação, discutindo trade-offs.
 - A ficha do modelo, a latência frente ao orçamento e a simulação de deriva foram apresentadas.
 - O relatório é honesto: cita limites, custo da busca, a natureza simulada dos dados e salvaguardas.
-@@NOTE A busca (TPE, 30 tentativas) escolheu a **regressão logística** (C ≈ 0,065, CV 0,800): o problema simulado é praticamente linear, e o modelo simples bastou. No teste final (1.500 casos, erro padrão cerca de 0,010), regressão logística (0,808), melhor único (0,806), ensemble por algoritmo (0,804) e floresta padrão (0,785) ficam todos próximos: **as diferenças entre os três primeiros estão dentro do ruído**, e só a floresta padrão ficou um pouco abaixo. O ensemble não se justifica aqui, sobretudo porque ele custou **50,5 ms por previsão, acima do orçamento de 20 ms**, contra 0,5 ms do melhor único (o valor depende da máquina, mas a ordem de grandeza é o ponto). Na auditoria, o ensemble seleciona 0,47 do grupo 0 e 0,38 do grupo 1 e tem TPR real de 0,83 contra 0,72; os atributos permitem prever o grupo com AUC de 0,650 (sem o CEP-score o proxy é mais fraco, mas a renda ainda carrega informação). Com limiares por grupo, a seleção se iguala (0,47) e o TPR real do grupo 1 sobe para 0,82, com a acurácia contra a verdade se mantendo (0,855 contra 0,851) e leve queda contra o histórico (0,797). Na deriva de 40% de inflação, o PSI da renda foi 0,304 (acima de 0,25, "mudança grande"), mas a acurácia contra a verdade **não caiu** (0,853 para 0,864): alarme não é diagnóstico, e a deriva é um sinal para investigar. Recomendação: implantar o **melhor único (ou a regressão logística)**, que é simples, rápido e interpretável, com monitoramento por grupo, limiares por grupo sujeitos a revisão jurídica, canal de contestação e revisão humana. Limites: dados simulados, uma única semente e um problema quase linear.
+@@NOTE A busca (TPE, 30 tentativas) escolheu a **regressão logística** (C ≈ 0,065, CV 0,800): o problema simulado é praticamente linear, e o modelo simples bastou. No teste final (1.500 casos, erro padrão cerca de 0,010), regressão logística (0,808), melhor único (0,806), ensemble por algoritmo (0,804) e floresta padrão (0,785) ficam próximos. A comparação **pareada** com a regressão logística confirma: as diferenças do melhor único (−0,002; IC de 95% de −0,005 a +0,001) e do ensemble (−0,004; IC de −0,013 a +0,005) **incluem o zero**; não há evidência de que algum deles supere a regressão logística, e a floresta padrão ficou um pouco abaixo. O ensemble não se justifica aqui, sobretudo porque ele custou **cerca de 27 ms por previsão, acima do orçamento de 20 ms** (em outra execução, mais de 30 ms), contra 0,2 ms do melhor único; os valores dependem da máquina, mas a ordem de grandeza é o ponto. Na auditoria, o ensemble seleciona 0,47 do grupo 0 e 0,38 do grupo 1 e tem TPR real de 0,83 contra 0,72; os atributos permitem prever o grupo com AUC de 0,650 (sem o CEP-score o proxy é mais fraco, mas a renda ainda carrega informação). Com o limiar do grupo 1 escolhido **na validação** e avaliado uma vez no teste, a seleção fica 0,47/0,45 e o TPR real do grupo 1 sobe para 0,81, com a acurácia contra a verdade em 0,855 (contra 0,851) e leve queda contra o histórico (0,799). Na deriva de 40% de inflação, o PSI da renda foi 0,304 (acima de 0,25, "mudança grande"), mas a acurácia contra a verdade **não caiu** (0,853 para 0,864): alarme não é diagnóstico, e a deriva é um sinal para investigar. Recomendação: implantar o **melhor único (ou a regressão logística)**, que é simples, rápido e interpretável, com monitoramento por grupo, limiares sujeitos a revisão jurídica, canal de contestação e revisão humana. Limites: dados simulados, uma única semente e um problema quase linear.
 @@ALEM
 - **UCI:** Adult, Statlog German Credit, Bank Marketing (marketing bancário, com muitos exemplos).
 - **Kaggle:** Give Me Some Credit, Home Credit Default Risk e Titanic (para praticar o fluxo completo).
