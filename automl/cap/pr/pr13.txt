@@ -88,7 +88,7 @@ for i, nome in enumerate(NOMES): print(f"  sem {nome:<16s} AUC = {auc([j for j i
 ```
 @@NOTE Mesmo sem o grupo, os atributos permitem prevê-lo com AUC de 0,857 (0,5 seria o acaso). O atributo que mais contribui é o `cep_score` (a AUC cai a 0,694 sem ele), seguido da `renda` (0,827). Os demais quase não pesam. Isso mostra que **remover o atributo sensível não impede o modelo de "conhecê-lo"**: variáveis proxy o reconstroem. Note ainda que, mesmo sem o `cep_score`, o grupo continua previsível pela renda; portanto, retirar só o proxy mais óbvio não basta.
 @@EX 4 | Igualdade de oportunidade com os rótulos disponíveis | avançado
-No crédito simulado, treine um `HistGradientBoostingClassifier` nos rótulos históricos (sem o grupo). Escolha, **usando apenas o teste e os rótulos históricos**, um limiar para o grupo 1 que iguale o **TPR contra o histórico** ao do grupo 0 (limiar 0,5 para o grupo 0). Depois, como só a simulação permite, calcule a acurácia contra a verdade e o TPR real de cada grupo.
+No crédito simulado, treine um `HistGradientBoostingClassifier` nos rótulos históricos (sem o grupo). Separe 30% para teste e, do restante, 25% para **validação**. Escolha, **usando apenas a validação e os rótulos históricos**, um limiar para o grupo 1 que iguale o **TPR contra o histórico** ao do grupo 0 (limiar 0,5 para o grupo 0). Congele os limiares e avalie no teste: calcule o TPR histórico e, como só a simulação permite, a acurácia contra a verdade e o TPR real de cada grupo.
 
 *Pergunta:* igualar o TPR contra o histórico enviesado resolve a disparidade real? Compare com o limiar único.
 @@SOL
@@ -109,16 +109,53 @@ def gera(n=6000, vies=0.6, p_min=0.3, seed=0):
     return np.c_[renda, emprego, divida, cep, score], g, y_hist, y_real
 
 X, g, yh, yr = gera()
-Xtr, Xte, gtr, gte, ytr, yte, yrtr, yrte = train_test_split(X, g, yh, yr, test_size=0.3, random_state=0, stratify=yh)
-p = HistGradientBoostingClassifier(random_state=0).fit(Xtr, ytr).predict_proba(Xte)[:, 1]
-alvo = (p[(gte == 0) & (yte == 1)] >= 0.5).mean()
+Xa, Xte, ga, gte, ya, yte, yra, yrte = train_test_split(X, g, yh, yr, test_size=0.3, random_state=0, stratify=yh)
+Xtr, Xva, gtr, gva, ytr, yva, yrtr, yrva = train_test_split(Xa, ga, ya, yra, test_size=0.25, random_state=1, stratify=ya)
+modelo = HistGradientBoostingClassifier(random_state=0).fit(Xtr, ytr)
+pva, p = modelo.predict_proba(Xva)[:, 1], modelo.predict_proba(Xte)[:, 1]
+alvo = (pva[(gva == 0) & (yva == 1)] >= 0.5).mean()                 # TPR histórico do grupo 0, na VALIDAÇÃO
 cand = np.linspace(0.05, 0.9, 171)
-t1 = min(cand, key=lambda t: abs((p[(gte == 1) & (yte == 1)] >= t).mean() - alvo))
+t1 = min(cand, key=lambda t: abs((pva[(gva == 1) & (yva == 1)] >= t).mean() - alvo))   # limiar escolhido na validação
 for nome, pred in (("limiar único 0,5", (p >= 0.5).astype(int)), (f"limiar do grupo 1 = {t1:.2f}", np.where(gte == 0, p >= 0.5, p >= t1).astype(int))):
     tprh = [pred[(gte == k) & (yte == 1)].mean() for k in (0, 1)]; tprr = [pred[(gte == k) & (yrte == 1)].mean() for k in (0, 1)]
     print(f"{nome:<24s} TPR histórico = {tprh[0]:.2f}/{tprh[1]:.2f} | TPR real = {tprr[0]:.2f}/{tprr[1]:.2f} | acc verdade = {(pred == yrte).mean():.3f}")
 ```
-@@NOTE O limiar do grupo 1 (0,54) igualou o TPR contra o **histórico** (0,77 nos dois grupos), mas o TPR **real** do grupo 1 caiu de 0,67 para 0,63, e a acurácia contra a verdade caiu de 0,831 para 0,826. Ou seja, igualar a oportunidade usando os **rótulos enviesados** como referência não corrige a disparidade real, e pode até piorá-la: o critério considera "correto" o que o histórico aprovou. Se o rótulo é parte do problema, não pode ser o padrão de comparação.
+@@NOTE O limiar do grupo 1 (0,48), escolhido na **validação**, aproximou o TPR contra o **histórico** (0,77 e 0,81 no teste; a igualdade exata não se repete, pois o teste é outra amostra), mas o TPR **real** do grupo 1 foi de apenas 0,64 para 0,68, ainda muito abaixo do grupo 0 (0,82), e a acurácia contra a verdade quase não mudou (0,834 para 0,839). Ou seja, igualar a oportunidade usando os **rótulos enviesados** como referência não corrige a disparidade real: o critério considera "correto" o que o histórico aprovou. Se o rótulo é parte do problema, não pode ser o padrão de comparação.
+@@EX 5 | Calibração e conjuntos de previsão conformes | avançado
+No conjunto **Breast Cancer Wisconsin** (UCI), separe 40% para teste, e do restante 50% para **calibração** (`random_state=0`, estratificado). Treine uma floresta aleatória (200 árvores) no treino. (a) Compare Brier, perda logarítmica e ECE (10 faixas) no teste, antes e depois de calibrar a floresta com o método sigmoide **na calibração** (`FrozenEstimator`). (b) Construa conjuntos de previsão conformes (α = 0,10) usando a calibração, e meça a cobertura no teste, o tamanho médio dos conjuntos e a fração de casos em que o modelo se abstém (conjunto com as duas classes).
+
+*Pergunta:* a floresta já era bem calibrada? A cobertura ficou perto de 90%? O que mudaria se o teste fosse pequeno?
+@@SOL
+```python
+import warnings; warnings.filterwarnings("ignore")
+import numpy as np
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.datasets import load_breast_cancer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.frozen import FrozenEstimator
+from sklearn.metrics import brier_score_loss, log_loss
+from sklearn.model_selection import train_test_split
+
+def ece(p, y, faixas=10):
+    f = np.minimum((p * faixas).astype(int), faixas - 1)
+    return sum((f == k).mean() * abs(p[f == k].mean() - y[f == k].mean()) for k in range(faixas) if (f == k).any())
+
+X, y = load_breast_cancer(return_X_y=True)
+Xa, Xte, ya, yte = train_test_split(X, y, test_size=0.4, stratify=y, random_state=0)
+Xtr, Xcal, ytr, ycal = train_test_split(Xa, ya, test_size=0.5, stratify=ya, random_state=0)
+rf = RandomForestClassifier(200, random_state=0, n_jobs=-1).fit(Xtr, ytr)
+cal = CalibratedClassifierCV(FrozenEstimator(rf), method="sigmoid").fit(Xcal, ycal)
+for nome, m in (("floresta bruta", rf), ("floresta + sigmoide", cal)):
+    p = m.predict_proba(Xte)[:, 1]
+    print(f"{nome:<20s} Brier = {brier_score_loss(yte, p):.4f} | perda log = {log_loss(yte, p):.4f} | ECE = {ece(p, yte):.4f}")
+
+pc, pt = rf.predict_proba(Xcal), rf.predict_proba(Xte); alfa = 0.10
+esc = 1 - pc[np.arange(len(ycal)), ycal]; n = len(esc)
+q = np.quantile(esc, min(1.0, np.ceil((n + 1) * (1 - alfa)) / n), method="higher")
+conj = pt >= 1 - q; tam = conj.sum(1)
+print(f"Cobertura no teste = {conj[np.arange(len(yte)), yte].mean():.3f} (alvo {1 - alfa:.2f}) | tamanho médio = {tam.mean():.2f} | abstenção = {(tam == 2).mean():.1%} | conjuntos vazios = {(tam == 0).mean():.1%}")
+```
+@@NOTE A floresta já era razoavelmente calibrada: o ECE foi de 0,051 para 0,045 após a calibração sigmoide, e Brier e perda logarítmica quase não mudaram (0,0423 e 0,0431; 0,150 e 0,148). Calibrar nem sempre traz ganho grande: depende do modelo. Na conforme, a cobertura no teste foi de 0,890, perto do alvo de 0,90; a diferença (um pouco mais de 1 ponto) é compatível com a oscilação de um teste de apenas 228 casos (erro padrão de cerca de 0,02), pois a garantia é **média**, e não vale exatamente em cada amostra. Como o modelo é muito confiante, não houve abstenção por conjunto de duas classes (0%), mas 9,2% dos conjuntos ficaram **vazios**: quando as probabilidades ficam em faixas que não passam do corte 1 − q, nenhuma classe é incluída, o que também sinaliza um caso estranho e deve ir para revisão. Com um teste pequeno, a cobertura medida oscilaria mais, e com poucos dados de calibração o quantil seria instável.
 @@PROJ Auditoria ética de um modelo de AutoML | Cap13
 **Fonte dos dados.** Crédito **simulado** pelo código do capítulo, com parâmetros diferentes dos do texto: grupo minoritário de 20% (`p_min=0.2`), viés histórico de 0,4 (`vies=0.4`) e semente 7. (Se quiser trabalhar com dados reais, escolha uma base pública do Kaggle ou da UCI que contenha um atributo sensível, como *Adult* ou *German Credit*, e respeite a licença e as restrições legais de uso.)
 
@@ -127,12 +164,12 @@ for nome, pred in (("limiar único 0,5", (p >= 0.5).astype(int)), (f"limiar do g
 **Atenção ética.** Os dados são simulados. Em dados reais, decisões que usam atributos sensíveis podem ser restritas por lei, e a auditoria deve envolver especialistas jurídicos e representantes das pessoas afetadas.
 
 **Tarefas.**
-1. Gere os dados, separe 30% para teste (estratificado pelo rótulo histórico) e treine, **sem o atributo grupo**, o FLAML (`max_iter=20`, `time_budget=120`, `metric="accuracy"`) e uma regressão logística com `StandardScaler` (modelo interpretável).
+1. Gere os dados, separe 30% para teste (estratificado pelo rótulo histórico) e, do restante, 25% para **validação** (usada só para escolher limiares). Treine no conjunto de treino, **sem o atributo grupo**, o FLAML (`max_iter=20`, `time_budget=120`, `metric="accuracy"`) e uma regressão logística com `StandardScaler` (modelo interpretável).
 2. Compare as duas acurácias contra o histórico e decida, pela regra do empate técnico, qual seria preferível.
 3. Para o modelo do FLAML, calcule a **importância por permutação** e comente.
 4. Calcule, por grupo, a **taxa de seleção** e o **TPR real** dos dois modelos.
 5. Teste se o grupo pode ser previsto pelos atributos (AUC) e discuta o papel de proxies.
-6. Aplique **limiares por grupo** para igualar a taxa de seleção no modelo do FLAML e reporte acurácia contra o histórico, contra a verdade e TPR real.
+6. Escolha **na validação** o limiar do grupo 1 que iguala a taxa de seleção (paridade demográfica) no modelo do FLAML, congele-o e reporte no teste a acurácia contra o histórico, contra a verdade e o TPR real. Explique por que a paridade demográfica não é igualdade de oportunidade.
 7. Registre o **custo** (número de treinos e tempo de busca).
 8. Escreva um relatório curto (10 a 12 linhas) com recomendações: o modelo pode ser implantado? Que salvaguardas (monitoramento, contestação, revisão humana) você exigiria?
 
@@ -162,7 +199,8 @@ def gera(n=6000, vies=0.6, p_min=0.3, seed=0):
 
 NOMES = ["renda", "tempo_emprego", "razao_divida", "cep_score", "score_historico"]
 X, g, yh, yr = gera(vies=0.4, p_min=0.2, seed=7)
-Xtr, Xte, gtr, gte, ytr, yte, yrtr, yrte = train_test_split(X, g, yh, yr, test_size=0.3, random_state=0, stratify=yh)
+Xa, Xte, ga, gte, ya, yte, yra, yrte = train_test_split(X, g, yh, yr, test_size=0.3, random_state=0, stratify=yh)
+Xtr, Xva, gtr, gva, ytr, yva, yrtr, yrva = train_test_split(Xa, ga, ya, yra, test_size=0.25, random_state=1, stratify=ya)
 t0 = time.time(); a = AutoML()
 a.fit(Xtr, ytr, task="classification", time_budget=120, max_iter=20, metric="accuracy", eval_method="cv", n_splits=3, seed=0, verbose=0)
 tempo = time.time() - t0
@@ -177,8 +215,9 @@ def rel(nome, pred):
 rel("FLAML", a.predict(Xte)); rel("Reg. logística", lr.predict(Xte))
 pg = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)).fit(Xtr, gtr)
 print("AUC para prever o grupo pelos atributos: %.3f" % roc_auc_score(gte, pg.predict_proba(Xte)[:, 1]))
-p = a.predict_proba(Xte)[:, 1]; sel0 = (p[gte == 0] >= 0.5).mean(); t1 = np.quantile(p[gte == 1], 1 - sel0)
-rel("FLAML + limiares grupo", np.where(gte == 0, p >= 0.5, p >= t1).astype(int))
+pva, p = a.predict_proba(Xva)[:, 1], a.predict_proba(Xte)[:, 1]
+sel0 = (pva[gva == 0] >= 0.5).mean(); t1 = np.quantile(pva[gva == 1], 1 - sel0)      # limiar escolhido na VALIDAÇÃO
+rel("FLAML + limiar (valid.)", np.where(gte == 0, p >= 0.5, p >= t1).astype(int))
 print(f"Limiar do grupo 1 = {t1:.2f} | melhorias em config_history = {len(a.config_history)} | tempo de busca = {tempo:.0f} s")
 ```
 @@RUBRICA
@@ -186,9 +225,9 @@ print(f"Limiar do grupo 1 = {t1:.2f} | melhorias em config_history = {len(a.conf
 - A comparação entre FLAML e regressão logística usou a regra do empate técnico.
 - As métricas foram calculadas por grupo (seleção e TPR real) para os dois modelos.
 - O papel dos proxies foi investigado (AUC para prever o grupo) e discutido.
-- A mitigação foi aplicada e discutida com trade-offs, sem declarar o problema resolvido.
+- O limiar por grupo foi escolhido na validação e avaliado uma vez no teste; a diferença entre paridade demográfica e igualdade de oportunidade foi discutida, com trade-offs, sem declarar o problema resolvido.
 - O relatório cita o custo, as salvaguardas e as limitações da simulação.
-@@NOTE FLAML escolheu `lgbm` e obteve 0,800 de acurácia, contra 0,796 da regressão logística: **empate técnico**, o que, pela regra do capítulo, favorece o modelo interpretável. A importância por permutação é dominada pela `renda` (0,128); o `cep_score` quase não pesa (0,0), mas isso não o inocenta, pois a renda carrega informação do grupo: o grupo pode ser previsto pelos atributos com AUC de 0,833. As disparidades persistem nos dois modelos (seleção de 0,48/0,37 no FLAML; TPR real de 0,83/0,71). Com limiares por grupo, a seleção se iguala (0,48/0,49), o TPR real do grupo 1 sobe para 0,87 e a acurácia contra a verdade se mantém (0,856), com pequena queda contra o histórico (0,791). O custo da busca foi pequeno (4 melhorias registradas e cerca de 1 segundo), pois foi limitada a 20 tentativas. Recomendação: não implantar sem revisão humana, monitoramento por grupo e canal de contestação; os resultados valem para a **simulação**, não para dados reais.
+@@NOTE FLAML escolheu `lgbm` e obteve 0,796 de acurácia, contra 0,797 da regressão logística: **empate técnico**, o que, pela regra do capítulo, favorece o modelo interpretável. A importância por permutação é dominada pela `renda` (0,146); o `cep_score` quase não pesa (0,0), mas isso não o inocenta, pois a renda carrega informação do grupo: o grupo pode ser previsto pelos atributos com AUC de 0,833. As disparidades persistem nos dois modelos (seleção de 0,50/0,39 no FLAML e 0,46/0,35 na regressão logística; TPR real de 0,83/0,73 e 0,82/0,70). Com o limiar do grupo 1 escolhido **na validação** (0,30) e avaliado uma vez no teste, a seleção fica 0,50/0,53 (não é exatamente igual, pois o teste é outra amostra) e o TPR real do grupo 1 sobe para 0,90, até acima do grupo 0 (0,83): a regra calibrada em uma amostra pode "passar do ponto" em outra, e convém monitorar. A acurácia contra a verdade sobe levemente (0,842 para 0,847) e a acurácia contra o histórico cai (0,796 para 0,780). Lembre que paridade demográfica (igualar seleção) não é igualdade de oportunidade (igualar TPR). O custo da busca foi pequeno (6 melhorias registradas e cerca de 1 segundo), pois foi limitada a 20 tentativas. Recomendação: não implantar sem revisão humana, monitoramento por grupo e canal de contestação; os resultados valem para a **simulação**, não para dados reais.
 @@ALEM
 - **UCI:** Adult (renda, com atributos sensíveis) e Statlog German Credit (crédito).
 - **Kaggle:** Give Me Some Credit e COMPAS (justiça criminal, muito discutido na literatura de equidade).

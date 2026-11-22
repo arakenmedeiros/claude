@@ -51,7 +51,7 @@ def f14_deriva():
     fig.tight_layout(); save(fig,"f14_deriva")
 
 def f14_monitor():
-    d=json.load(open("/home/user/claude/automl/build/f14_deriva.json")); m=[r["mes"] for r in d]
+    d=json.load(open("/home/user/claude/automl/build/resultados/f14_deriva.json")); m=[r["mes"] for r in d]
     fig,ax=plt.subplots(figsize=(6.8,3.5))
     ax.plot(m,[r["psi_renda"] for r in d],"-o",color=RED,lw=2.2,label="PSI da renda (muda)"); ax.plot(m,[r["psi_emp"] for r in d],"-o",color=GRY,lw=2,label="PSI do tempo de emprego (estável)")
     ax.axhline(0.10,color=AMB,ls="--",lw=1); ax.text(0.05,0.115,"alerta (0,10)",fontsize=7.5,color=AMB); ax.axhline(0.25,color=RED,ls="--",lw=1); ax.text(0.05,0.265,"mudança grande (0,25)",fontsize=7.5,color=RED)

@@ -65,7 +65,7 @@ def f11_espaco():
     save(fig,"f11_espaco")
 
 def f11_mapa():
-    T=json.load(open("/home/user/claude/automl/build/f11_cache.json")); P=np.array([r["params"] for r in T]); A=np.array([r["v40"] for r in T])
+    T=json.load(open("/home/user/claude/automl/build/resultados/f11_cache.json")); P=np.array([r["params"] for r in T]); A=np.array([r["v40"] for r in T])
     fig,ax=plt.subplots(figsize=(6.8,3.7))
     L=np.array([len(r["arq"][0]) for r in T])
     for l,c in zip((1,2,3),(IND,AMB,GRN)): ax.scatter(P[L==l],A[L==l],s=16,color=c,alpha=.55,label=f"{l} camada(s) oculta(s)",zorder=3)
@@ -88,7 +88,7 @@ def f11_estrategias():
     save(fig,"f11_estrategias")
 
 def f11_busca():
-    d=json.load(open("/home/user/claude/automl/build/f11_busca.json")); fig,ax=plt.subplots(figsize=(6.6,3.5))
+    d=json.load(open("/home/user/claude/automl/build/resultados/f11_busca.json")); fig,ax=plt.subplots(figsize=(6.6,3.5))
     for (n,c) in (("aleatória",GRY),("evolução",GRN)):
         C=np.array(d["curvas"][n]); x=np.arange(1,C.shape[1]+1)
         ax.plot(x,np.median(C,0),color=c,lw=2.4,label=n); ax.fill_between(x,np.percentile(C,25,0),np.percentile(C,75,0),color=c,alpha=.2)
@@ -108,7 +108,7 @@ def f11_estimativas():
     save(fig,"f11_estimativas")
 
 def f11_fidelidade():
-    d=json.load(open("/home/user/claude/automl/build/f11_fid.json")); a=np.array(d["v10"]); b=np.array(d["v40"])
+    d=json.load(open("/home/user/claude/automl/build/resultados/f11_fid.json")); a=np.array(d["v10"]); b=np.array(d["v40"])
     fig,ax=plt.subplots(figsize=(5.4,4.0)); ax.scatter(a,b,s=16,color=IND,alpha=.55); ax.plot([0.1,1],[0.1,1],"--",color=GRY,lw=1)
     ax.set_xlabel("acurácia com 10 iterações (barata)"); ax.set_ylabel("acurácia com 40 iterações"); ax.set_title(f"Spearman = {d['rho']:.2f}: a ordem se preserva bem",fontsize=10)
     ax.grid(color=MID,lw=.5); save(fig,"f11_fidelidade")

@@ -13,7 +13,7 @@ def run(code,timeout=1500):
     h=hashlib.md5(code.encode()).hexdigest(); cf=f"{CACHE}/{h}.out"
     if os.path.exists(cf): return open(cf).read(),0
     p=f"/tmp/gen_{h}.py"; open(p,"w").write(code)
-    r=subprocess.run(["python3","-W","ignore",p],capture_output=True,text=True,timeout=timeout,cwd="/tmp")
+    r=subprocess.run(["python3","-W","ignore",p],capture_output=True,text=True,timeout=timeout,cwd=ROOT+"/build")
     if r.returncode!=0: return r.stderr[-1200:],1
     open(cf,"w").write(r.stdout); return r.stdout,0
 def trunc(out,maxl=22,maxc=104):

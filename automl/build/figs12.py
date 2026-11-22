@@ -48,7 +48,7 @@ def f12_lags():
     save(fig,"f12_lags")
 
 def f12_previsao():
-    d=json.load(open("/home/user/claude/automl/build/f12_ts.json")); h=len(d["hist"]); H=len(d["real"])
+    d=json.load(open("/home/user/claude/automl/build/resultados/f12_ts.json")); h=len(d["hist"]); H=len(d["real"])
     fig,ax=plt.subplots(figsize=(7.0,3.5)); x0=np.arange(h); x1=np.arange(h,h+H)
     ax.plot(x0,d["hist"],color=GRY,lw=1.8,label="histórico (treino)"); ax.plot(x1,d["real"],color=INK,lw=2.4,label="real")
     ax.plot(x1,d["auto"],color=GRN,lw=2,label="mini-AutoML (Ridge)"); ax.plot(x1,d["ing"],color=AMB,lw=1.8,ls="--",label="ingênua")

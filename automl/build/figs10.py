@@ -38,7 +38,7 @@ def f10_botoes():
     save(fig,"f10_botoes")
 
 def f10_orcamento():
-    d=json.load(open("/home/user/claude/automl/build/f10_orcamento.json"))
+    d=json.load(open("/home/user/claude/automl/build/resultados/f10_orcamento.json"))
     ks=sorted(d,key=int); fig,ax=plt.subplots(figsize=(6.6,3.4))
     for j,k in enumerate(ks):
         for v in d[k]: ax.scatter(int(k),v,s=46,color=CL[1],zorder=3,alpha=.8)
@@ -61,7 +61,7 @@ def f10_justa():
     save(fig,"f10_justa")
 
 def f10_bench():
-    d=json.load(open("/home/user/claude/automl/build/f10_cache.json")); res=d["res"]; ms=d["metodos"]; bs=list(res)
+    d=json.load(open("/home/user/claude/automl/build/resultados/f10_cache.json")); res=d["res"]; ms=d["metodos"]; bs=list(res)
     fig,axs=plt.subplots(1,len(bs),figsize=(8.6,3.4))
     for a,b in zip(axs,bs):
         for j,m in enumerate(ms):

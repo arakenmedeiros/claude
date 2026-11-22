@@ -29,7 +29,7 @@ def f13_explicacao():
     save(fig,"f13_explicacao")
 
 def f13_importancia():
-    d=json.load(open("/home/user/claude/automl/build/f13_expl.json")); nm=d["nomes"]
+    d=json.load(open("/home/user/claude/automl/build/resultados/f13_expl.json")); nm=d["nomes"]
     fig,axs=plt.subplots(1,2,figsize=(8.4,3.2),gridspec_kw={"width_ratios":[1.1,1]})
     o=np.argsort(d["shap"]); a=axs[0]; y=np.arange(len(nm))
     sh=np.array(d["shap"])/max(d["shap"]); pm=np.array(d["perm"])/max(d["perm"])
@@ -37,7 +37,7 @@ def f13_importancia():
     a.set_yticks(y); a.set_yticklabels([nm[i] for i in o],fontsize=8); a.set_title("Importância global",fontsize=9.5); a.legend(frameon=False,fontsize=7,loc="lower right")
     b=axs[1]; loc=np.array(d["local"]); o2=np.argsort(np.abs(loc)); b.barh(np.arange(len(nm)),loc[o2],color=[RED if v<0 else GRN for v in loc[o2]])
     b.set_yticks(np.arange(len(nm))); b.set_yticklabels([f"{nm[i]} = {d['valores'][i]:.1f}" for i in o2],fontsize=7.6); b.axvline(0,color=INK,lw=1)
-    b.set_title(f"Explicação local (P(aprovar) = {d['p']:.2f})",fontsize=9.5); b.set_xlabel("contribuição SHAP",fontsize=8)
+    b.set_title(f"Local: base {d['base']:+.2f} + soma {sum(d['local']):+.2f} = {d['margem']:+.2f} log-odds (P = {d['p']:.3f})",fontsize=8.2); b.set_xlabel("contribuição SHAP (log-odds)",fontsize=8)
     fig.tight_layout(); save(fig,"f13_importancia")
 
 def f13_metricas():
@@ -66,9 +66,9 @@ def f13_proxy():
     save(fig,"f13_proxy")
 
 def f13_justica():
-    d=json.load(open("/home/user/claude/automl/build/f13_just.json"))
+    d=json.load(open("/home/user/claude/automl/build/resultados/f13_just.json"))
     fig,axs=plt.subplots(1,2,figsize=(8.2,3.2))
-    cfg=[("limiar\núnico","base"),("sem o\nCEP","sem_cep"),("limiares\npor grupo","ajust")]
+    cfg=[("limiar\núnico","base"),("paridade\ndemográfica","dp"),("oport. c/ rótulos\nhistóricos","eo")]
     for a,(chave,tit) in zip(axs,(("sel","Taxa de seleção"),("tpr","TPR real (entre quem pagaria)"))):
         x=np.arange(3); w=.36
         for k,(c,lab) in enumerate(((IND,"grupo 0"),(AMB,"grupo 1"))):
