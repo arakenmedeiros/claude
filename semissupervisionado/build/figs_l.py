@@ -77,7 +77,7 @@ def f17_decisao():
     save(fig, "f17_decisao")
 
 def f16_serie():
-    L = [l for l in out("ch16_serie").splitlines()[3:] if "|" in l]; R = []
+    L = [l for l in out("ch16_serie").splitlines() if "|" in l and l.split("|")[0].strip().isdigit()]; R = []
     for l in L:
         p = [x.strip() for x in l.split("|")]; R.append((int(p[0]), "alea" if p[1].startswith("aleat") else "temp", [pct(x.split("±")[0]) for x in p[2:5]]))
     fig, axs = plt.subplots(1, 2, figsize=(9.4, 3.7), sharey=True)
