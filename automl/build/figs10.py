@@ -52,7 +52,7 @@ def f10_orcamento():
 def f10_justa():
     fig,ax=canvas(8.6,4.0)
     ax.text(50,97,"Seis cuidados para uma comparação justa",ha="center",fontsize=11,fontweight="bold")
-    C=[("1","mesmos dados e\nmesmas divisões",IND),("2","mesmo orçamento\n(tempo ou tentativas)",CYA),("3","teste final intocado,\nvisto uma só vez",GRN),("4","várias divisões\npara ver a variação",AMB),("5","várias bases\nde dados",VIO),("6","linhas de base\nsimples",PNK)]
+    C=[("1","mesmos dados e\nmesmas divisões",IND),("2","mesmos recursos:\ntempo, núcleos,\nmemória",CYA),("3","teste final intocado,\nvisto uma só vez",GRN),("4","várias divisões\npara ver a variação",AMB),("5","várias bases\nde dados",VIO),("6","linhas de base\nsimples",PNK)]
     for i,(n,t,c) in enumerate(C):
         x=2+(i%3)*33; y=52 if i<3 else 8
         rbox(ax,x,y,30,38,"",fc="white",ec=c,lw=2.2,r=2)
@@ -66,10 +66,10 @@ def f10_bench():
     for a,b in zip(axs,bs):
         for j,m in enumerate(ms):
             v=res[b][m]; a.scatter([j]*len(v),v,s=22,color=CL[j],alpha=.55,zorder=3); a.plot([j-.3,j+.3],[np.mean(v)]*2,color=CL[j],lw=3,zorder=4)
-        a.set_title(b,fontsize=9.5); a.set_xticks(range(len(ms))); a.set_xticklabels(["Flor.","Boost.","Busca","FLAML"],fontsize=6.3,rotation=0); a.grid(axis="y",color=MID,lw=.6)
+        a.set_title(b,fontsize=9.5); a.set_xticks(range(len(ms))); a.set_xticklabels(["Flor.","Boost.","Aleat.","TPE","FLAML"],fontsize=5.6,rotation=0); a.grid(axis="y",color=MID,lw=.6)
         allv=[x for m in ms for x in res[b][m]]; a.set_ylim(min(allv)-0.015,max(allv)+0.015)
     axs[0].set_ylabel("acurácia no teste")
-    fig.suptitle("Quatro métodos em quatro bases (pontos = divisões; traço = média)",fontsize=9.6,fontweight="bold",y=1.03); fig.tight_layout(); save(fig,"f10_bench")
+    fig.suptitle("Cinco métodos em quatro bases (pontos = divisões; traço = média)",fontsize=9.6,fontweight="bold",y=1.03); fig.tight_layout(); save(fig,"f10_bench")
 
 def f10_decisao():
     fig,ax=canvas(8.6,4.4)
