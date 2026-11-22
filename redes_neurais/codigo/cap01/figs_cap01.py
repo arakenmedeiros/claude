@@ -70,14 +70,15 @@ salvar(fig, "f1_linha_tempo")
 
 # ---- f1_mapa: mapa do livro
 fig, ax = plt.subplots(figsize=(10, 4.2)); ax.set_xlim(0, 10); ax.set_ylim(0, 4.2); ax.axis("off"); ax.grid(False)
-caixa(ax, 0.1, 3.0, 4.6, 0.9, "PARTE 1 — Fundamentos\nCap. 1 Introdução · Cap. 2 Matemática e Python", cor=COR["ind"], fs=9.5, bold=True)
-caixa(ax, 5.3, 3.0, 4.6, 0.9, "PARTE 2 — Treinamento de redes\nPerceptron → Backpropagation → 4 famílias de algoritmos", cor=COR["cya"], fs=9.5, bold=True)
-caps = [("3", "Perceptron", COR["ind"]), ("4", "Backprop\ne MLP", COR["red"]), ("5", "QPROP", COR["amb"]), ("6", "RPROP\n+ 3 variantes", COR["grn"]), ("7", "Levenberg–\nMarquardt", COR["vio"]), ("8", "DBD e EDBD", COR["pnk"])]
+caixa(ax, 0.1, 3.0, 3.0, 0.9, "PARTE 1 — Fundamentos\nCap. 1 Introdução\nCap. 2 Matemática e Python", cor=COR["ind"], fs=8.5, bold=True)
+caixa(ax, 3.3, 3.0, 4.3, 0.9, "PARTE 2 — Treinamento de redes\nPerceptron → Backpropagation → 4 famílias", cor=COR["cya"], fs=8.5, bold=True)
+caixa(ax, 7.8, 3.0, 2.1, 0.9, "PARTE 3 — Moderno\nCap. 9", cor=COR["grn"], fs=8.5, bold=True)
+caps = [("3", "Perceptron", COR["ind"]), ("4", "Backprop\ne MLP", COR["red"]), ("5", "QPROP", COR["amb"]), ("6", "RPROP\n+ 3 variantes", COR["grn"]), ("7", "Levenberg–\nMarquardt", COR["vio"]), ("8", "DBD e EDBD", COR["pnk"]), ("9", "Do clássico\nao moderno", COR["cya"])]
 for i, (n, t, c) in enumerate(caps):
-    x = 0.15 + i * 1.64
-    caixa(ax, x, 1.1, 1.45, 1.2, f"Cap. {n}\n{t}", cor=c, fc="white", fs=9, bold=True)
-    if i < 5: seta(ax, (x + 1.47, 1.7), (x + 1.62, 1.7), cor=COR["gry"], ms=9)
+    x = 0.15 + i * 1.40
+    caixa(ax, x, 1.1, 1.2, 1.2, f"Cap. {n}\n{t}", cor=c, fc="white", fs=8, bold=True)
+    if i < 6: seta(ax, (x + 1.22, 1.7), (x + 1.38, 1.7), cor=COR["gry"], ms=8)
 ax.text(5, 0.55, "Do neurônio isolado ao treinamento eficiente: cada capítulo acrescenta uma ideia sobre o anterior", ha="center", fontsize=10, style="italic", color=COR["gry"])
-ax.text(2.6, 0.1, "gradiente, derivada, Newton", ha="center", fontsize=8.5, color=COR["gry"]); ax.text(7.8, 0.1, "gradientes locais → passos adaptativos → curvatura", ha="center", fontsize=8.5, color=COR["gry"])
+ax.text(2.6, 0.1, "gradiente, derivada, Newton", ha="center", fontsize=8.5, color=COR["gry"]); ax.text(7.8, 0.1, "gradientes locais → passos adaptativos → curvatura → otimizadores modernos", ha="center", fontsize=8.5, color=COR["gry"])
 salvar(fig, "f1_mapa")
 print("figuras do cap. 1 ok")

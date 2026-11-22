@@ -7,12 +7,14 @@ Foi escrito para um **público misto**: estudantes de graduação e pós-gradua�
 
 ## O que você vai encontrar
 
-O livro tem **duas partes e oito capítulos**.
+O livro tem **três partes e nove capítulos**.
 
 - **Parte 1 — Introdução e fundamentos matemáticos e computacionais.** O Capítulo 1 situa o problema (o que é uma rede, o que significa "aprender", uma primeira rede funcionando). O Capítulo 2 reúne a matemática e as ferramentas computacionais.
 - **Parte 2 — Perceptron e treinamento de redes de múltiplas camadas.** O Capítulo 3 estuda o perceptron e suas limitações. O Capítulo 4 deduz o **backpropagation** e o perceptron de múltiplas camadas. Os Capítulos 5 a 8 apresentam algoritmos que aceleram ou estabilizam o treinamento: **Quickprop** (5), **RPROP e suas variantes** (6), **Levenberg–Marquardt** (7) e **Delta-Bar-Delta e sua versão estendida** (8).
 
-Cada capítulo traz situação inicial, objetivos, pré-requisitos, demonstrações passo a passo, exemplos resolvidos, figuras, algoritmos em pseudocódigo, implementações em Python, erros frequentes, síntese, **30 questões de múltipla escolha** e **20 discursivas** (240 e 160 no livro todo), exercícios práticos com scikit-learn e um projeto. O livro termina com um **projeto integrador** e apêndices (gabaritos comentados, símbolos e dimensões, revisão matemática, instalação, guia dos códigos, glossário, quadro comparativo e correspondência com o scikit-learn e o SciPy).
+- **Parte 3 — Do treinamento clássico ao moderno.** O Capítulo 9 é uma ponte: SGD com momento e Nesterov, AdaGrad, RMSProp, Adam e AdamW; regularização; backpropagation em grafos gerais e diferenciação automática; perdas numericamente estáveis; saídas multirrótulo; produtos Hessiana–vetor; e um roteiro de diagnóstico do treinamento.
+
+Cada capítulo traz situação inicial, objetivos, pré-requisitos, demonstrações passo a passo, exemplos resolvidos, figuras, algoritmos em pseudocódigo, implementações em Python, erros frequentes, síntese, **30 questões de múltipla escolha** e **20 discursivas** (270 e 180 no livro todo), exercícios práticos com scikit-learn e um projeto. O livro termina com um **projeto integrador** e apêndices (gabaritos comentados, símbolos e dimensões, revisão matemática, instalação, guia dos códigos, glossário, quadro comparativo e correspondência com o scikit-learn e o SciPy).
 
 ## Como estudar
 
@@ -30,10 +32,10 @@ As implementações próprias são identificadas como **"implementação didáti
 ## Limitações e honestidade intelectual
 
 - **Fontes.** Os artigos originais de Fahlman (1988), Jacobs (1988), Riedmiller e Braun (1993), Igel e Hüsken (2000, 2003) e Minai e Williams (1990) **não foram lidos diretamente** na preparação do texto: as formulações seguem a literatura secundária e a notação do livro, com ressalvas onde há dúvida. Os parâmetros do scikit-learn citados foram conferidos na versão 1.9.1; o comportamento numérico não foi comparado algoritmo a algoritmo.
-- **Originalidade.** O livro é um texto independente. O livro de referência indicado na encomenda do projeto **não foi consultado**.
+- **Originalidade.** O livro é um texto independente, escrito a partir da literatura e de experimentos próprios.
 - **Dados.** Os experimentos usam bases embutidas no scikit-learn (originárias do repositório UCI) e dados sintéticos. Os códigos que baixam bases externas (UCI, Kaggle) são sugeridos como extensão e **não foram executados** aqui.
-- **Resultados numéricos.** Foram obtidos com NumPy 2.5.3, SciPy 1.18.1 e scikit-learn 1.9.1, em um único computador e, em geral, com poucas sementes. **Valem para o problema e a configuração descritos; não são afirmações universais** sobre os algoritmos.
-- **Registro de pendências.** O arquivo `PENDENCIAS.md` que acompanha o material lista o que foi e o que não foi verificado.
+- **Resultados numéricos.** Foram obtidos com NumPy 2.5.3, SciPy 1.18.1 e scikit-learn 1.9.1 (e JAX 0.12.1, só nas verificações opcionais do Capítulo 9), em um único computador e, em geral, com poucas sementes. **Valem para o problema e a configuração descritos; não são afirmações universais** sobre os algoritmos.
+- **Material complementar.** O pacote `rnbook` está listado integralmente no Apêndice L e acompanha o livro, com os scripts de cada capítulo, os testes, o `requirements.txt` e o registro de pendências (`PENDENCIAS.md`), que lista o que foi e o que não foi verificado.
 
 Bom estudo!
 

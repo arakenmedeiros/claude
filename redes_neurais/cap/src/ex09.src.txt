@@ -1,0 +1,299 @@
+MC: No momento clássico, $v_{t+1}=\mu v_t-\eta g_t$ e $\theta_{t+1}=\theta_t+v_{t+1}$. Com gradiente constante $g$, a velocidade converge para
++ $v_\infty=-\eta g/(1-\mu)$
+- $v_\infty=-\eta g$
+- $v_\infty=-\eta g\,\mu$
+- $v_\infty=0$
+- $v_\infty=-\eta g/\mu$
+R: Em regime, $v=\mu v-\eta g$, logo $v(1-\mu)=-\eta g$.
+
+MC: Com $\mu=0{,}9$, o passo efetivo do momento, em direções de gradiente consistente, é aproximadamente
++ dez vezes o do SGD simples.
+- igual ao do SGD simples.
+- nove décimos do do SGD simples.
+- cem vezes o do SGD simples.
+- nulo.
+R: $1/(1-\mu)=10$; nas direções que oscilam, as contribuições se cancelam.
+
+MC: A principal diferença entre o momento de Nesterov e o momento clássico é que o de Nesterov
++ avalia o gradiente no ponto para onde a velocidade já levaria o parâmetro.
+- usa a Hessiana para corrigir o passo.
+- adapta uma taxa diferente para cada peso.
+- usa apenas o sinal do gradiente.
+- dispensa a taxa de aprendizagem.
+R: O gradiente é calculado em $\theta+\mu v$ (ou, equivalentemente, na forma reescrita de Sutskever et al.).
+
+MC: No AdaGrad, a soma acumulada $G_t=\sum g_i^2$ só cresce. Uma consequência é que
++ o passo efetivo de cada peso tende a diminuir ao longo do treino.
+- o passo efetivo cresce sem limite.
+- o método se torna igual ao RPROP.
+- o gradiente passa a ser ignorado.
+- a taxa se torna negativa.
+R: O denominador $\sqrt{G_t}$ cresce, e o passo $\eta g/\sqrt{G_t}$ diminui.
+
+MC: O RMSProp difere do AdaGrad porque substitui a soma de quadrados por
++ uma média móvel exponencial dos quadrados dos gradientes.
+- o sinal do gradiente.
+- a média dos gradientes sem elevar ao quadrado.
+- o produto de dois gradientes consecutivos.
+- a inversa da Hessiana.
+R: $s_t=\rho s_{t-1}+(1-\rho)g_t^2$ esquece o passado distante, e o passo efetivo não decai indefinidamente.
+
+MC: No Adam, o denominador do passo usa
++ a raiz do segundo momento não centrado do gradiente, $\sqrt{\hat v_t}$.
+- o desvio-padrão do gradiente.
+- a norma da Hessiana.
+- o máximo dos gradientes passados.
+- a soma dos gradientes passados.
+R: $\hat v_t$ estima $\mathbb{E}[g^2]$, e não a variância $\mathbb{E}[g^2]-\mathbb{E}[g]^2$.
+
+MC: A correção de viés do Adam, $\hat m_t=m_t/(1-\beta_1^t)$, é necessária porque
++ $m_0=0$, o que faz $m_t$ subestimar a média do gradiente nos primeiros passos.
+- o gradiente é sempre enviesado.
+- $\beta_1$ é maior que 1.
+- o minilote tem tamanho 1.
+- $\varepsilon$ é muito grande.
+R: Sob gradiente estacionário, $\mathbb{E}[m_t]=\bar g(1-\beta_1^t)$.
+
+MC: Com $\beta_1=0{,}9$ e gradiente constante igual a $1$, o valor de $m_2$ (com $m_0=0$) é
++ $0{,}19$
+- $0{,}10$
+- $0{,}90$
+- $1{,}00$
+- $0{,}29$
+R: $m_1=0{,}1$ e $m_2=0{,}9\cdot0{,}1+0{,}1=0{,}19$; com a correção, $\hat m_2=0{,}19/(1-0{,}81)=1$.
+
+MC: Se o gradiente é multiplicado por uma constante $c>0$, o passo do Adam (desprezando $\varepsilon$)
++ não muda.
+- é multiplicado por $c$.
+- é multiplicado por $c^2$.
+- é dividido por $c$.
+- muda de sinal.
+R: Numerador e raiz do denominador são ambos multiplicados por $c$.
+
+MC: No experimento do capítulo, ao multiplicar o gradiente por $c=100$, o SGD com momento (taxa $0{,}01$) ficou com valores não finitos e o Adam terminou com o mesmo valor que sem a mudança. Isso ilustra que o Adam é
++ praticamente invariante à escala da perda, ao contrário do SGD.
+- sempre melhor que o SGD em qualquer problema.
+- imune a taxas de aprendizagem muito grandes.
+- um método de segunda ordem.
+- equivalente ao RPROP.
+R: A invariância à escala é uma propriedade do passo normalizado; o experimento tinha uma semente e taxas não ajustadas.
+
+MC: Somar $\tfrac\lambda2\|\theta\|^2$ à perda e usar SGD equivale a
++ um decaimento de pesos de fator $1-\eta\lambda$ por passo.
+- adicionar ruído gaussiano aos pesos.
+- usar dropout com $p=\lambda$.
+- zerar os pesos menores que $\lambda$.
+- dividir o gradiente por $\lambda$.
+R: $\theta\leftarrow\theta-\eta(g+\lambda\theta)=(1-\eta\lambda)\theta-\eta g$.
+
+MC: No Adam com penalidade L2 (acoplada), o termo $\lambda\theta$ entra no gradiente e é dividido por $\sqrt{\hat v_t}$. Isso faz com que
++ pesos com gradientes grandes sejam menos regularizados que pesos com gradientes pequenos.
+- todos os pesos sejam regularizados do mesmo modo.
+- a regularização desapareça.
+- apenas os vieses sejam regularizados.
+- o decaimento dependa apenas de $\eta$.
+R: A normalização por peso muda o efeito do decaimento; o AdamW corrige isso.
+
+MC: O AdamW difere do Adam com L2 porque
++ aplica o decaimento de pesos separadamente, fora da normalização do gradiente.
+- elimina o segundo momento.
+- usa a Hessiana.
+- usa taxa de aprendizagem negativa.
+- só funciona com lote inteiro.
+R: $\theta\leftarrow\theta-\eta\hat m/(\sqrt{\hat v}+\varepsilon)-\eta\lambda\theta$.
+
+MC: No scikit-learn, o parâmetro `alpha` de `MLPClassifier`, mesmo com `solver='adam'`, é
++ uma penalidade L2 acoplada ao gradiente.
+- um decaimento de pesos desacoplado, como no AdamW.
+- a taxa de aprendizagem inicial.
+- o coeficiente $\beta_1$.
+- o número de neurônios ocultos.
+R: A taxa inicial é `learning_rate_init`; `alpha` soma a penalidade L2 à perda.
+
+MC: No dropout invertido com probabilidade de descarte $p$, cada ativação mantida é multiplicada por
++ $1/(1-p)$ durante o treino, e nada é feito na inferência.
+- $p$ durante a inferência.
+- $1-p$ durante o treino.
+- $1/p$ durante o treino.
+- zero em ambas as fases.
+R: Assim $\mathbb{E}[m/(1-p)]=1$ e a média da ativação é preservada.
+
+MC: Em um grafo de computação, se um nó $u$ alimenta dois ramos que depois se reúnem, o gradiente $\partial E/\partial u$ é
++ a soma das contribuições dos dois ramos.
+- o produto das contribuições dos dois ramos.
+- a contribuição do ramo mais curto.
+- a média das contribuições, dividida por dois.
+- zero.
+R: A regra da cadeia soma as contribuições de todos os filhos do nó.
+
+MC: Em uma conexão residual $h=F(x)+x$, com $\delta=\partial E/\partial h$, o gradiente em relação a $x$ é
++ $J_F^T\delta+\delta$
+- $J_F^T\delta$
+- $J_F^T\delta\cdot\delta$
+- $\delta$ apenas
+- $J_F\,\delta^T$
+R: O caminho identidade leva $\delta$ adiante sem multiplicá-lo por pesos.
+
+MC: Se uma mesma matriz de pesos $W$ é usada em duas camadas, $\partial E/\partial W$ é
++ a soma das contribuições de cada uso de $W$.
+- apenas a contribuição do último uso.
+- o produto das contribuições.
+- sempre zero.
+- a contribuição do primeiro uso, vezes dois.
+R: Para $y=w(wx)$ com $w=3$ e $x=2$: $\partial y/\partial w=wx+wx=6+6=12$.
+
+MC: Para uma perda escalar, uma passagem reversa da diferenciação automática fornece
++ o gradiente em relação a todos os parâmetros, com custo da mesma ordem que o da avaliação da perda.
+- apenas uma componente do gradiente.
+- a Hessiana completa.
+- a Jacobiana completa de qualquer função, sempre.
+- apenas o valor da perda.
+R: É um produto vetor–Jacobiana com o vetor $1$ da saída escalar.
+
+MC: Para calcular a Jacobiana de uma função com $m$ saídas pelo modo reverso são necessárias
++ $m$ passagens reversas.
+- uma única passagem.
+- $P$ passagens diretas obrigatoriamente, nunca reversas.
+- $m^2$ passagens.
+- nenhuma passagem adicional.
+R: Cada passagem reversa fornece uma linha da Jacobiana (é o que `MLP.jacobiana` faz no Cap. 7).
+
+MC: Calcular $\log(1-\sigma(z))$ de forma ingênua falha para $z$ grande porque
++ $\sigma(z)$ arredonda para $1$ e o argumento do logaritmo vira zero.
+- a sigmoide deixa de ser derivável.
+- $\log$ não está definido para números positivos.
+- $z$ grande torna a perda negativa.
+- a sigmoide retorna valores maiores que $1$.
+R: Em precisão dupla, a perda ingênua deixa de ser finita a partir de $z\approx36{,}75$ (para $t=0$).
+
+MC: O truque do log-sum-exp consiste em escrever $\log\sum_je^{z_j}$ como
++ $m+\log\sum_je^{z_j-m}$, com $m=\max_jz_j$.
+- $\sum_j\log e^{z_j}$.
+- $\max_j z_j$.
+- $\log\sum_j z_j$.
+- $\sum_j e^{z_j-m}$.
+R: Todos os expoentes ficam $\le0$, evitando estouro.
+
+MC: Para $z=(1000;\,999)$, com a classe verdadeira 1, a entropia cruzada estável vale aproximadamente
++ $0{,}313$
+- $1000$
+- $0$
+- $0{,}693$
+- não é calculável
+R: $\mathrm{logsumexp}=1000+\log(1+e^{-1})=1000{,}313$, e $L=1000{,}313-1000=0{,}313$.
+
+MC: Com softmax e entropia cruzada, o gradiente da perda em relação ao logit $z_k$ é
++ $p_k-t_k$
+- $p_k(1-p_k)$
+- $(p_k-t_k)\,p_k(1-p_k)$
+- $t_k/p_k$
+- $-\log p_k$
+R: Derivando $\log\sum e^{z_j}-\sum t_jz_j$, obtém-se $p_k-t_k$.
+
+MC: Em um problema multirrótulo (um exemplo pode ter vários rótulos), a saída adequada é
++ uma sigmoide por rótulo, com entropia cruzada binária por rótulo.
+- uma softmax sobre todos os rótulos.
+- uma única saída linear.
+- uma saída degrau.
+- um único neurônio com ReLU.
+R: As saídas são independentes e não precisam somar 1.
+
+MC: Para os logits $z=(2;\,1;\,-1;\,0{,}5)$, a soma das sigmoides e a soma da softmax valem, respectivamente, cerca de
++ $2{,}50$ e $1{,}00$
+- $1{,}00$ e $2{,}50$
+- $1{,}00$ e $1{,}00$
+- $2{,}50$ e $2{,}50$
+- $4{,}00$ e $1{,}00$
+R: A softmax normaliza as saídas; as sigmoides são independentes.
+
+MC: O produto Hessiana–vetor pode ser aproximado, sem formar $H$, por
++ $[g(\theta+\epsilon v)-g(\theta-\epsilon v)]/(2\epsilon)$
+- $g(\theta)\,v$
+- $H^{-1}v$
+- $\|g\|\,v$
+- $g(\theta)/v$
+R: É a derivada direcional do gradiente na direção $v$ (duas avaliações do gradiente).
+
+MC: Para resolver $(J^TJ+\mu I)\mathbf{d}=-g$ sem formar $J^TJ$, pode-se usar
++ o gradiente conjugado, com produtos $J^T(Jv)+\mu v$.
+- a inversão direta de $J$.
+- o método de Newton puro.
+- a regra de Manhattan.
+- o RPROP.
+R: O CG precisa apenas do produto matriz–vetor da matriz do sistema.
+
+MC: Em um diagnóstico de treinamento, uma razão de gradientes (saída/entrada) de ordem $10^{4}$ em uma rede de 10 camadas com sigmoides sugere
++ gradientes muito pequenos nas camadas iniciais, e a causa depende também dos pesos e da inicialização.
+- que o gradiente da rede está limitado por $4^{-10}$.
+- que a rede generaliza bem.
+- que a perda é convexa.
+- que a taxa de aprendizagem é ótima.
+R: O limite $\sigma'\le1/4$ ilustra só a contribuição das ativações; os pesos também multiplicam o gradiente.
+
+MC: A normalização de camada (layer norm) calcula a média e a variância
++ ao longo das unidades da camada, separadamente para cada amostra.
+- ao longo das amostras do minilote, para cada unidade.
+- ao longo de todas as épocas de treino.
+- apenas sobre os pesos da camada.
+- apenas sobre o gradiente da camada.
+R: Na normalização em lote, as estatísticas vêm do minilote (com estatísticas acumuladas na inferência); na de camada, de cada amostra, sem depender do lote.
+
+DISC: Deduza a velocidade limite do momento clássico com gradiente constante $g$ e calcule seu valor para $\eta=0{,}01$, $\mu=0{,}9$ e $g=2$. Compare com o SGD simples.
+R: Em regime, $v=\mu v-\eta g$, logo $v_\infty=-\eta g/(1-\mu)$. Com os valores dados, $v_\infty=-0{,}01\cdot2/0{,}1=-0{,}2$, enquanto o SGD simples dá o passo $-\eta g=-0{,}02$: o passo efetivo é $10$ vezes maior. Se o gradiente alterna de sinal, as contribuições sucessivas se cancelam e a velocidade não cresce.
+
+DISC: Com $m_0=0$, $\beta_1=0{,}9$ e gradiente constante igual a $1$, calcule $m_t$ e $\hat m_t$ para $t=1,2,3$ e interprete.
+R: $m_1=0{,}1$; $m_2=0{,}9\cdot0{,}1+0{,}1=0{,}19$; $m_3=0{,}9\cdot0{,}19+0{,}1=0{,}271$. Os fatores de correção são $1-\beta_1^t=0{,}1;\ 0{,}19;\ 0{,}271$, e $\hat m_t=1$ nos três casos: sem a correção, as estimativas subestimam a média do gradiente nos primeiros passos; com ela, a estimativa é exata para gradiente constante.
+
+DISC: Deduza a correção de viés do primeiro momento do Adam, indicando a hipótese usada.
+R: Desenrolando, $m_t=(1-\beta_1)\sum_{i=1}^t\beta_1^{t-i}g_i$. Supondo $\mathbb{E}[g_i]=\bar g$ para todo $i$, $\mathbb{E}[m_t]=(1-\beta_1)\bar g\sum_{i=1}^t\beta_1^{t-i}=\bar g(1-\beta_1^t)$ (soma geométrica). Logo, $\hat m_t=m_t/(1-\beta_1^t)$ tem esperança $\bar g$. A hipótese (gradiente estacionário) é uma aproximação; a dedução justifica a correção, mas não garante convergência.
+
+DISC: Dois pesos têm gradientes $g=(1;\,0{,}1)$ constantes. Execute dois passos do AdaGrad com $\eta=0{,}5$ e $\varepsilon\approx0$. O que a normalização faz?
+R: Passo 1: $G=(1;\,0{,}01)$ e o passo é $\eta g/\sqrt G=(0{,}5;\,0{,}5)$. Passo 2: $G=(2;\,0{,}02)$ e o passo é $(0{,}354;\,0{,}354)$. A normalização dá o mesmo passo a pesos com gradientes de escalas muito diferentes, e o passo efetivo cai com $1/\sqrt{t}$ (a soma só cresce).
+
+DISC: Mostre que o passo do Adam (com $\varepsilon\to0$) não muda quando o gradiente é multiplicado por $c>0$. Por que o SGD não tem essa propriedade?
+R: Com $g\to cg$: $m\to cm$ e $v\to c^2v$, logo $\hat m\to c\hat m$ e $\sqrt{\hat v}\to c\sqrt{\hat v}$, e $\hat m/\sqrt{\hat v}$ não muda. No SGD, o passo é $\eta g$, que é multiplicado por $c$: a escala da perda altera o passo efetivo (por isso o SGD divergiu com $c=100$ no experimento do capítulo). O $\varepsilon$ quebra a invariância quando $\sqrt{\hat v}$ é comparável a $\varepsilon$.
+
+DISC: Dois pesos recebem gradientes de dados constantes $g=-s$ com $s=(4;\,0{,}4)$ (empurrando para fora), com $\lambda=0{,}2$. Encontre o equilíbrio do Adam com L2 e do AdamW, e comente.
+R: **Adam com L2:** o equilíbrio ocorre quando o gradiente total é zero: $-s+\lambda w=0$, $w=s/\lambda=(20;\,2)$, **dependente** da escala de cada gradiente. **AdamW:** o passo do Adam tem módulo $\eta$ e o decaimento é $\eta\lambda w$; no equilíbrio, $\eta=\eta\lambda w$, $w=1/\lambda=5$ para ambos, **independente** da escala. Comentário: no Adam com L2, a normalização por $\sqrt{\hat v}$ faz o decaimento depender do tamanho do gradiente de cada peso; o AdamW desacopla o decaimento.
+
+DISC: Para $f(w)=\tfrac12w^2$, $\theta=1$, $v_0=-1$, $\mu=0{,}9$ e $\eta=0{,}1$, calcule um passo do momento clássico e um passo do momento de Nesterov (gradiente no ponto à frente). Comente a diferença.
+R: **Clássico:** $g(1)=1$, $v=0{,}9(-1)-0{,}1\cdot1=-1$, e $\theta=1-1=0$. **Nesterov:** o ponto à frente é $1+0{,}9(-1)=0{,}1$, com $g=0{,}1$; $v=-0{,}9-0{,}01=-0{,}91$ e $\theta=1-0{,}91=0{,}09$. O Nesterov percebe, pelo gradiente à frente, que o ponto já está perto do mínimo (e que a velocidade vai ultrapassá-lo) e reduz a correção; o clássico usa o gradiente no ponto atual e ultrapassa mais.
+
+DISC: Explique por que o limite $\sigma'\le1/4$ e o produto $4^{-L}$ não constituem um limite geral para o gradiente de uma rede profunda. Que outros fatores intervêm?
+R: Na retropropagação, $\delta^{(l)}=\big((W^{(l+1)})^T\delta^{(l+1)}\big)\odot\phi'(z^{(l)})$: o gradiente é multiplicado, em cada camada, por uma matriz de pesos **e** por uma derivada de ativação. O limite $\sigma'\le1/4$ cobre só o segundo fator; se as normas dos pesos forem grandes, o produto pode compensar (ou agravar) a redução. Portanto, o tamanho do gradiente por camada depende conjuntamente das ativações, das normas dos pesos, da profundidade e da inicialização, e $4^{-L}$ só ilustra a contribuição das ativações.
+
+DISC: Mostre que o dropout invertido preserva a média da ativação, e explique por que nada se faz na inferência.
+R: Seja $m_j\sim\mathrm{Bernoulli}(1-p)$ e a ativação mascarada $\tilde h_j=m_jh_j/(1-p)$. Então $\mathbb{E}[\tilde h_j]=\mathbb{E}[m_j]h_j/(1-p)=(1-p)h_j/(1-p)=h_j$. Como a média da ativação no treino já coincide com o valor sem máscara, na inferência usa-se a rede completa sem reescala adicional. No experimento do capítulo ($p=0{,}3$, 200 000 máscaras), as médias coincidiram com $h$ até a terceira casa decimal.
+
+DISC: Seja $h=F(x)+x$ com $F(x)=Wx$, $W=0{,}1\,I$ ($2\times2$) e $\delta=\partial E/\partial h=(1;\,1)$. Calcule $\partial E/\partial x$ e compare com a rede sem a conexão residual.
+R: Com a conexão residual, $\partial E/\partial x=W^T\delta+\delta=0{,}1\,(1;1)+(1;1)=(1{,}1;\,1{,}1)$. Sem ela ($h=Wx$), $\partial E/\partial x=W^T\delta=(0{,}1;\,0{,}1)$. O caminho identidade preserva o gradiente (fator $1$) em vez de multiplicá-lo por $W$, o que atenua o desaparecimento em redes profundas.
+
+DISC: Considere $y=w\,(w\,x)$ com $x=2$ e $w=3$. Calcule $\partial y/\partial w$ pelo grafo (somando as contribuições dos dois usos de $w$) e verifique por derivação direta.
+R: Seja $a=wx=6$ e $y=wa=18$. Uso externo: $\partial y/\partial w|_{\text{ext}}=a=6$. Uso interno: $\partial y/\partial a\cdot\partial a/\partial w=w\cdot x=3\cdot2=6$. Soma: $12$. Direta: $y=w^2x$, $\partial y/\partial w=2wx=12$. Coincidem.
+
+DISC: Para $z=(1000;\,999)$ e classe verdadeira 1, calcule a entropia cruzada com o log-sum-exp estável e as probabilidades da softmax. Por que a forma ingênua falha?
+R: $m=1000$; $\mathrm{logsumexp}=1000+\log(e^0+e^{-1})=1000+\log(1{,}3679)=1000{,}3133$. A perda é $L=1000{,}3133-1000=0{,}3133$, e $p=(0{,}7311;\,0{,}2689)$. Ingenuamente, $e^{1000}$ estoura (`inf`), e $\mathrm{inf}/\mathrm{inf}$ dá `nan`.
+
+DISC: Deduza $\partial L/\partial z_k=p_k-t_k$ para a entropia cruzada com softmax a partir de $L=\log\sum_je^{z_j}-\sum_jt_jz_j$.
+R: $\dfrac{\partial}{\partial z_k}\log\sum_je^{z_j}=\dfrac{e^{z_k}}{\sum_je^{z_j}}=p_k$ e $\dfrac{\partial}{\partial z_k}\sum_jt_jz_j=t_k$. Logo $\partial L/\partial z_k=p_k-t_k$. Isto generaliza o $\delta=y-t$ do Capítulo 4 a qualquer número de classes.
+
+DISC: Distinga saídas multiclasse e multirrótulo. Para os logits $z=(2;\,1;\,-1;\,0{,}5)$, calcule as saídas de cada abordagem e suas somas.
+R: **Multiclasse** (classes exclusivas): softmax, $p=(0{,}6095;\,0{,}2242;\,0{,}0303;\,0{,}1360)$, soma $1$. **Multirrótulo** (rótulos simultâneos): sigmoide por logit, $(0{,}8808;\,0{,}7311;\,0{,}2689;\,0{,}6225)$, soma $2{,}5033$: as saídas são independentes. Em ambas, $\partial L/\partial z_k=p_k-t_k$, mas a perda é, respectivamente, a entropia cruzada categórica e a soma das entropias cruzadas binárias.
+
+DISC: Para $f(x,y)=x^2y$, calcule $Hv$ em $(1;\,2)$ com $v=(1;\,-1)$ analiticamente e pela diferença central do gradiente. Por que o resultado é exato aqui?
+R: $g=(2xy;\,x^2)$ e $H=\begin{pmatrix}2y&2x\\2x&0\end{pmatrix}$; em $(1;2)$, $Hv=(4-2;\ 2)=(2;\,2)$. Pela diferença central: $g_1(\theta\pm\epsilon v)=2(1\pm\epsilon)(2\mp\epsilon)$, cuja diferença dividida por $2\epsilon$ vale $2$; $g_2=(1\pm\epsilon)^2$, cuja diferença dividida por $2\epsilon$ vale $2$. É exato porque o gradiente é, ao longo de $v$, um polinômio de grau 2 e a diferença central elimina o termo quadrático.
+
+DISC: Aplique o gradiente conjugado a $A=\mathrm{diag}(2;\,1)$ e $b=(2;\,1)$, partindo de $x=0$. Mostre que converge em duas iterações.
+R: $r_0=p_0=b=(2;1)$, $Ap_0=(4;1)$, $\alpha_0=\dfrac{r_0^Tr_0}{p_0^TAp_0}=\dfrac{5}{9}$, $x_1=(10/9;\,5/9)$, $r_1=(-2/9;\,4/9)$, $\beta_0=\dfrac{r_1^Tr_1}{r_0^Tr_0}=\dfrac{20/81}{5}=\dfrac4{81}$, $p_1=r_1+\beta_0p_0=(-10/81;\,40/81)$, $\alpha_1=0{,}9$ e $x_2=(1;\,1)$, que satisfaz $Ax=b$. Em dimensão 2, o CG converge em no máximo 2 iterações (aritmética exata).
+
+DISC: Descreva como resolver o sistema do LM, $(J^TJ+\mu I)\mathbf{d}=-g$, sem formar $J^TJ$, e discuta vantagens e limites.
+R: Usa-se o gradiente conjugado com o operador $v\mapsto J^T(Jv)+\mu v$: cada aplicação requer um produto Jacobiana–vetor (por diferenças finitas ou modo direto) e um vetor–Jacobiana (retropropagação), e a memória é $O(P)$ em vez de $O(P^2)$. **Vantagens:** memória e custo por iteração interna baixos quando $P$ é grande. **Limites:** exige $J^TJ+\mu I$ definida positiva e tolerância adequada do CG; muitas iterações internas indicam mau condicionamento; com $P$ pequeno ($25$ no experimento), não há ganho de tempo (9 iterações do LM nos dois casos; 148 produtos no CG).
+
+DISC: A tabela do capítulo mostra, no ponto inicial, razão de gradientes (saída/entrada) de $4{,}7\times10^4$ para sigmoide com Xavier e de $2{,}9$ para tanh com Xavier. Interprete e diga que conclusão não se pode tirar.
+R: Com sigmoides, o gradiente da primeira camada é $4{,}7\times10^4$ vezes menor que o da última, indicando atualizações muito mais lentas nas camadas iniciais; com tanh e Xavier, a razão é $2{,}9$, bem mais equilibrada. **Não se pode concluir** que isso se deve apenas à derivada $\sigma'\le1/4$: pesos, profundidade e inicialização também intervêm; o resultado é do ponto inicial, de uma arquitetura, de uma semente e de 64 amostras aleatórias, e não de um treinamento completo.
+
+DISC: Projete um experimento honesto para comparar SGD com momento e Adam em uma rede pequena, indicando dados, protocolo, métricas e como evitar as armadilhas apontadas no capítulo.
+R: Dados: um problema de regressão ou classificação com partições treino/validação/teste feitas antes de qualquer pré-processamento (escalonador ajustado só no treino). Protocolo: mesma arquitetura, lote e número de épocas; grades de **mesmo tamanho** para os dois métodos, com extensão além da borda quando o melhor valor está na borda; hiperparâmetros escolhidos na validação com sementes separadas das de avaliação; pelo menos 10 sementes. Métricas: mediana e intervalo do desempenho de teste, época em que cruza um limiar, tempo e divergências. Armadilhas: ajustar e avaliar nas mesmas sementes, grades desiguais, borda de grade, relatar só a melhor semente, generalizar de um problema. Registrar versões, sementes e orçamento de ajuste.
+
+DISC: Escreva em Python uma função `bce_logits(Z, T)` que devolva a perda binária estável (soma sobre rótulos, média sobre amostras) e o gradiente em relação aos logits, e explique como testá-la com logits extremos.
+R: Esboço: `L = np.maximum(Z, 0) - Z * T + np.log1p(np.exp(-np.abs(Z)))`; `perda = np.mean(np.sum(L, axis=1))`; `sig = scipy.special.expit(Z)`; `grad = (sig - T) / Z.shape[0]`. Teste: com $Z=(800;\,-800)$ e $T=(0;\,1)$, a perda deve ser $1600$ (a forma ingênua dá `inf`); compare o gradiente com diferenças finitas em logits moderados (erro relativo da ordem de $10^{-8}$ ou menor) e verifique que não há `nan` com $|z|$ grande.

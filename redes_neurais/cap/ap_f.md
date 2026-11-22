@@ -12,6 +12,7 @@ Todos os caminhos são relativos à pasta `codigo/`.
 | 6 | `cap06/cap06.py`, `cap06/cap06_1d.py` | RPROP e variantes, parada antecipada; rastreio do passo em uma variável |
 | 7 | `cap07/cap07.py` | Newton, Gauss–Newton e Levenberg–Marquardt; comparação com o SciPy; custo |
 | 8 | `cap08/cap08.py` | delta-delta, DBD e EDBD; quadráticas; rede 1–8–1; sensibilidade |
+| 9 | `cap09/cap09.py` | otimizadores de minilote, AdamW, autodiferenciação em grafos, perdas estáveis, produtos Hessiana–vetor, LM com CG e diagnóstico |
 
 ## Pacote `rnbook`
 
@@ -23,7 +24,14 @@ Todos os caminhos são relativos à pasta `codigo/`.
 | `gradcheck.py` | gradiente numérico por diferença central e erro relativo |
 | `perceptron.py` | `PerceptronDidatico` |
 | `otimizadores.py` | `gradiente_descendente`, `gd_estocastico`, `quickprop`, `rprop` (quatro variantes), `levenberg_marquardt`, `levenberg_marquardt_nielsen`, `gauss_newton`, `delta_delta`, `delta_bar_delta`, `delta_bar_delta_estendido` |
+| `modernos.py` | `sgd_momento` (clássico e Nesterov), `adagrad`, `rmsprop`, `adam` (com AdamW), `hvp_dif_finitas`, `jvp_dif_finitas`, `gradiente_conjugado`, `lm_sem_matriz`, `diagnostico` |
+| `perdas.py` | `logsumexp`, softmax estável, entropia cruzada e perda binária a partir de logits (e versões ingênuas, para comparação) |
+| `autodiff.py` | diferenciação automática reversa didática (`No`) e normalização de camada |
 | `estilo.py`, `desenho.py` | estilo das figuras e desenho de diagramas de redes |
+
+## Onde obter os arquivos
+
+O código-fonte completo do pacote `rnbook` está impresso no **Apêndice L**. Os scripts de cada capítulo, os testes, o `requirements.txt`, os notebooks e o registro de pendências (`PENDENCIAS.md`) acompanham o livro como material complementar, na pasta `codigo/` (e `notebooks/`) do repositório que o distribui.
 
 ## Testes
 

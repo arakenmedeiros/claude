@@ -228,7 +228,7 @@ MC: No "Olá, rede", o RMSE de treino ($0{,}1434$) ficou abaixo do ruído verdad
 - o ruído dos dados foi estimado incorretamente pelo gerador.
 - a rede é pequena demais para o problema.
 - o algoritmo de Levenberg–Marquardt é sempre superior aos demais.
-R: Um modelo flexível pode reduzir o erro de treino abaixo do ruído por sobreajuste. Um único experimento não permite concluir superioridade de algoritmos.
+R: Um modelo flexível pode ter erro de treino baixo por ajustar parte do ruído; isso justifica investigar o sobreajuste, mas só dados independentes permitem concluí-lo. Um único experimento não permite concluir superioridade de algoritmos.
 
 MC: Na convenção do livro, a camada $l$ calcula
 + $\mathbf{z}^{(l)}=W^{(l)}\mathbf{a}^{(l-1)}+\mathbf{b}^{(l)}$ e $\mathbf{a}^{(l)}=\phi_l(\mathbf{z}^{(l)})$.
@@ -271,8 +271,8 @@ R: O livro analisou, com rigor matemático, limites de **perceptrons de uma cama
 DISC: Dê um exemplo de um mesmo vetor de gradientes sendo usado por dois otimizadores diferentes. Por que isso mostra que backpropagation e otimização são conceitos distintos?
 R: O backpropagation fornece $\mathbf{g}=\nabla E(\theta)$ em um ponto. O gradiente descendente faz $\theta\leftarrow\theta-\eta\mathbf{g}$; o RPROP usa apenas o **sinal** de cada componente, $\theta_i\leftarrow\theta_i-\Delta_i\,\mathrm{sinal}(g_i)$, com passos $\Delta_i$ adaptativos. O mesmo $\mathbf{g}$ alimenta regras de atualização diferentes; logo, o cálculo do gradiente e a regra de atualização são etapas separadas e independentes.
 
-DISC: No experimento "Olá, rede", o erro de treino (RMSE $=0{,}1434$) ficou abaixo do ruído ($0{,}15$). Explique o que isso sugere e descreva um procedimento para verificar a generalização.
-R: Sugere que a rede (25 parâmetros para 40 pontos) está ajustando parte do ruído, isto é, **sobreajuste** leve. Procedimento: gerar ou reservar dados **novos** (validação/teste) que não participaram do treino; calcular o RMSE neles. Se for maior que o do treino, há perda de generalização. Pode-se reduzir neurônios, usar parada antecipada ou regularização, e comparar o erro de validação.
+DISC: No experimento "Olá, rede", o erro de treino (RMSE $=0{,}1434$) ficou abaixo do ruído ($0{,}15$). Explique o que isso sugere e descreva um procedimento para verificar a generalização. Isso comprova sobreajuste?
+R: **Não prova** sobreajuste: o RMSE amostral de 40 pontos flutua em torno do desvio verdadeiro, e ajustar 25 parâmetros reduz naturalmente o erro de treino (o erro esperado de treino de um modelo linear nos parâmetros seria $\sigma\sqrt{(N-P)/N}\approx0{,}09$). O resultado apenas justifica investigar. Procedimento: gerar ou reservar dados **novos** (validação/teste) que não participaram do treino; calcular o RMSE neles. Se for bem maior que o do treino, há indício de perda de generalização. Pode-se reduzir neurônios, usar parada antecipada ou regularização, e comparar o erro de validação.
 
 DISC: Escreva uma função em Python que receba a lista de neurônios por camada (por exemplo, `[3, 4, 2]`) e devolva o número total de parâmetros. Teste com `[3, 4, 2]` e `[1, 8, 1]`.
 R: Solução de referência:

@@ -87,7 +87,7 @@ for h in hQ: ax[0].semilogy(h, color=COR["ind"], alpha=0.45, lw=1)
 ax[0].semilogy([], [], color=COR["amb"], label=f"gradiente descendente ($\\eta$={etaG})"); ax[0].semilogy([], [], color=COR["ind"], label=f"Quickprop ($\\epsilon$={epsQ}, $\\mu$=1,75)"); ax[0].axhline(0.5 * 0.15 ** 2, color=COR["gry"], ls=":"); ax[0].legend(fontsize=8)
 ax[0].set_xlabel("época"); ax[0].set_ylabel("perda $E/N$"); ax[0].set_title("10 sementes, rede 1–8–1, lote")
 finG = [h[-1] for h in hG]; finQ = [h[-1] for h in hQ]
-print("após 300 épocas: GD mediana %.4f [%.4f, %.4f] | Quickprop mediana %.4f [%.4f, %.4f] | piso do ruído %.5f" % (np.median(finG), min(finG), max(finG), np.median(finQ), min(finQ), max(finQ), 0.5 * 0.15 ** 2))
+print("após 300 épocas: GD mediana %.4f [%.4f, %.4f] | Quickprop mediana %.4f [%.4f, %.4f] | referência do ruído %.5f" % (np.median(finG), min(finG), max(finG), np.median(finQ), min(finQ), max(finQ), 0.5 * 0.15 ** 2))
 for lim in (0.03, 0.02):
     eG = [int(np.argmax(np.array(h) < lim)) if (np.array(h) < lim).any() else None for h in hG]; eQ = [int(np.argmax(np.array(h) < lim)) if (np.array(h) < lim).any() else None for h in hQ]
     print("épocas para E/N<%.2f: GD %s | Quickprop %s" % (lim, eG, eQ))

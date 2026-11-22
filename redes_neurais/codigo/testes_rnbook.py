@@ -80,3 +80,33 @@ def teste_gn_lm_nielsen():
     assert np.isfinite(a.historico['perda'][-1])
 if __name__=="__main__":
     teste_gn_lm_nielsen()
+
+def teste_lm_posto_deficiente():
+    A=rng.normal(size=(20,2)); Jm=np.column_stack([A[:,0],A[:,0],A[:,1]]); y=rng.normal(size=20)
+    r=O.levenberg_marquardt(np.zeros(3),lambda th: Jm@th-y,lambda th: Jm,mu0=1e-20,max_iter=50)
+    print("LM com J de posto deficiente e mu0=1e-20:",r.motivo,r.n_iter); assert np.isfinite(r.historico['perda'][-1])
+
+def teste_modernos():
+    from rnbook import modernos as MD, perdas as PL, autodiff as AD
+    N=60; X=rng.uniform(0,1,(N,1)); T=np.sin(2*np.pi*X)
+    rede=MLP([1,6,1],["tanh","identidade"],semente=0); fun=lambda th: rede.perda(th,X,T)/N; gam=lambda th,idx: rede.grad(th,X[idx],T[idx])
+    for nome,f,kw in (("sgd",MD.sgd_momento,dict(taxa=0.02,momento=0.9)),("nesterov",MD.sgd_momento,dict(taxa=0.02,momento=0.9,nesterov=True)),
+                      ("adagrad",MD.adagrad,dict(taxa=0.3)),("rmsprop",MD.rmsprop,dict(taxa=0.01)),("adam",MD.adam,dict(taxa=0.01)),("adamw",MD.adam,dict(taxa=0.01,weight_decay=0.01))):
+        res=f(rede.theta,gam,N,fun,tamanho_lote=10,epocas=60,semente=0,**kw); print("%s: E/N %.4f -> %.4f"%(nome,res.historico['perda'][0],res.historico['perda'][-1]))
+        assert res.historico['perda'][-1]<res.historico['perda'][0]
+    # autodiff = backprop
+    ps=rede.desempacotar(rede.theta); W1,b1,W2,b2=[AD.No(x) for x in (ps[0][0],ps[0][1],ps[1][0],ps[1][1])]
+    Er=((((AD.No(X)@W1.T+b1).tanh()@W2.T+b2)-T).quadrado().soma())*0.5; Er.retropropagar()
+    g=np.concatenate([W1.grad.ravel(),b1.grad.ravel(),W2.grad.ravel(),b2.grad.ravel()]); assert np.allclose(g,rede.grad(rede.theta,X,T)); print("autodiff == backprop")
+    # hvp e CG
+    gf=lambda t: rede.grad(t,X,T); H=np.array([(gf(rede.theta+1e-5*e)-gf(rede.theta-1e-5*e))/2e-5 for e in np.eye(rede.n_params)]); H=(H+H.T)/2
+    v=rng.normal(size=rede.n_params); assert np.linalg.norm(MD.hvp_dif_finitas(gf,rede.theta,v)-H@v)<1e-6*np.linalg.norm(H@v)
+    A=np.diag(np.arange(1.,6.)); b=rng.normal(size=5); x,k=MD.gradiente_conjugado(lambda u: A@u,b,tol=1e-12); assert np.allclose(A@x,b) and k<=5
+    # perdas estáveis
+    Z=np.array([[1000.,0.,-1000.]]); T1=np.array([[0.,1.,0.]]); assert abs(PL.ce_logits(Z,T1)[0]-1000)<1e-9
+    Zm=rng.normal(size=(5,3)); Tm=(rng.random((5,3))>.5).astype(float)
+    gn=grad_numerico(lambda z: PL.bce_logits(z.reshape(5,3),Tm)[0],Zm.ravel()); assert erro_relativo(PL.bce_logits(Zm,Tm)[1].ravel(),gn)<1e-7
+    print("modernos: OK")
+
+if __name__=="__main__":
+    teste_lm_posto_deficiente(); teste_modernos(); print("TODOS OS TESTES OK (inclui cap. 9)")

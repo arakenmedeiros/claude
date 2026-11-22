@@ -4,11 +4,11 @@ const SK = fs.readdirSync("/root/.claude/skills/synced").map((d) => path.join("/
 const { applyTheme } = require(SK);
 const FIGS = path.join(__dirname, "..", "..", "figs"), OUT = path.join(__dirname, "..", "..", "slides");
 fs.mkdirSync(OUT, { recursive: true });
-const data = { ...require("./data1.js"), ...require("./data2.js") }; const extras = require("./data3.js");
+const d4 = require("./data4.js"); const data = { ...require("./data1.js"), ...require("./data2.js"), ...d4.slides }; const extras = { ...require("./data3.js"), ...d4.extras };
 const THEME = { name: "RedesNeurais", headFontFace: "Calibri", bodyFontFace: "Calibri", colors: { dk1: "1F2937", lt1: "FFFFFF", dk2: "1E1B4B", lt2: "EEF2FF", accent1: "4F46E5", accent2: "F59E0B", accent3: "10B981", accent4: "06B6D4", accent5: "EF4444", accent6: "8B5CF6", hlink: "4F46E5", folHlink: "8B5CF6" } };
 const pngSize = (f) => { const b = fs.readFileSync(f); return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) }; };
 const AUTOR = "Araken de Medeiros Santos", LIVRO = "Backpropagation e Redes Neurais";
-const NOMES = { 1: "Introdução", 2: "Fundamentos matemáticos e Python", 3: "Perceptron", 4: "Backpropagation e MLP", 5: "Quickprop", 6: "RPROP e variantes", 7: "Levenberg–Marquardt", 8: "Delta-Bar-Delta e EDBD" };
+const NOMES = { 1: "Introdução", 2: "Fundamentos matemáticos e Python", 3: "Perceptron", 4: "Backpropagation e MLP", 5: "Quickprop", 6: "RPROP e variantes", 7: "Levenberg–Marquardt", 8: "Delta-Bar-Delta e EDBD", 9: "Do classico ao moderno" };
 
 async function deck(n) {
   const d = data[n]; const pres = new pptxgen(); pres.layout = "LAYOUT_16x9"; pres.title = `${LIVRO} — Capítulo ${n}`; pres.author = AUTOR; pres.theme = { headFontFace: "Calibri", bodyFontFace: "Calibri" };
@@ -76,4 +76,4 @@ async function deck(n) {
   const file = path.join(OUT, `cap${String(n).padStart(2, "0")}_${NOMES[n].normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9]+/g, "_")}.pptx`);
   await pres.writeFile({ fileName: file }); await applyTheme(file, THEME); console.log("ok", file, d.slides.length + 1, "slides");
 }
-(async () => { for (let n = 1; n <= 8; n++) await deck(n); })();
+(async () => { for (let n = 1; n <= 9; n++) await deck(n); })();

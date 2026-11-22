@@ -99,8 +99,8 @@ runs["LM Nielsen"] = O.levenberg_marquardt_nielsen(th0, res, jac, max_iter=60, t
 runs["iRPROP−"] = O.rprop(th0, lambda t: rede.perda(t, X, T), lambda t: rede.grad(t, X, T), variante="irprop-", max_iter=300, tol_grad=0)
 runs["Quickprop"] = O.quickprop(th0, lambda t: rede.perda(t, X, T), lambda t: rede.grad(t, X, T), epsilon=0.05 / N, max_iter=300, tol_grad=0)
 runs["Gradiente descendente"] = O.gradiente_descendente(th0, lambda t: rede.perda(t, X, T), lambda t: rede.grad(t, X, T), taxa=0.5 / N, max_iter=300, tol_grad=0)
-lim = 1.1 * 0.5 * N * 0.15 ** 2  # 10% acima do piso do ruído
-print("limiar de perda (10%% acima do piso do ruído, E soma): %.4f" % lim)
+lim = 1.1 * 0.5 * N * 0.15 ** 2  # 10% acima da referência do ruído
+print("limiar de perda (10%% acima da referência do ruído, E soma): %.4f" % lim)
 fig, ax = plt.subplots(figsize=(6.6, 3.9)); cores = [COR["ind"], COR["vio"], COR["grn"], COR["amb"], COR["red"]]
 for (nm, r_), c in zip(runs.items(), cores):
     h = np.array(r_.historico["perda"]); k = int(np.argmax(h < lim)) if (h < lim).any() else None; ax.semilogy(h, color=c, label=nm)
@@ -135,5 +135,5 @@ for s_ in range(10):
     rd = MLP([1, 8, 1], ["tanh", "identidade"], semente=s_); rs = lambda th: rd.residuos(th, X, T); jc = lambda th: rd.jacobiana(th, X)
     vals["HM"].append(O.levenberg_marquardt(rd.theta, rs, jc, max_iter=200).historico["perda"][-1]); vals["Nielsen"].append(O.levenberg_marquardt_nielsen(rd.theta, rs, jc, max_iter=200).historico["perda"][-1]); vals["scipy lm"].append(0.5 * (lambda s: s.fun @ s.fun)(least_squares(rs, rd.theta, jac=jc, method="lm", max_nfev=400)))
 for k, v in vals.items(): print("10 sementes %-9s: E final mediana %.4f [mín %.4f, máx %.4f]" % (k, np.median(v), min(v), max(v)))
-print("piso do ruído E = N sigma^2/2 = %.4f" % (0.5 * N * 0.15 ** 2))
+print("referência do ruído E = N sigma^2/2 = %.4f" % (0.5 * N * 0.15 ** 2))
 print("OK cap07")

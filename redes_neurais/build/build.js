@@ -85,6 +85,13 @@ numberingConfigs.push({ reference: "bul", levels: [
   { level: 1, format: LevelFormat.BULLET, text: "–", alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 1000, hanging: 280 } } } } ] });
 
 // ------------------------------------------------------------------ parser md
+function splitRow(r) {
+  const t = r.trim().replace(/^\|/, "").replace(/\|\s*$/, ""); const out = []; let cur = "", inM = false;
+  for (let k = 0; k < t.length; k++) { const ch = t[k];
+    if (ch === "$" && t[k - 1] !== "\\") inM = !inM;
+    if (ch === "|" && !inM && t[k - 1] !== "\\") { out.push(cur.trim()); cur = ""; } else cur += ch; }
+  out.push(cur.trim()); return out;
+}
 function parseMd(text) {
   const lines = text.split("\n");
   const blocks = []; const meta = { obj: [] };
@@ -110,7 +117,7 @@ function parseMd(text) {
       blocks.push({ t: "formula", tex: m[1].trim(), label: m[2] || null });
       continue;
     }
-    if (ln.startsWith("|")) { flush(); const rows = []; while (i < lines.length && lines[i].startsWith("|")) { rows.push(lines[i]); i++; } blocks.push({ t: "table", rows: rows.filter((r) => !/^\|\s*-{2,}/.test(r)).map((r) => r.replace(/^\||\|\s*$/g, "").split("|").map((c) => c.trim())) }); continue; }
+    if (ln.startsWith("|")) { flush(); const rows = []; while (i < lines.length && lines[i].startsWith("|")) { rows.push(lines[i]); i++; } blocks.push({ t: "table", rows: rows.filter((r) => !/^\|\s*:?-{2,}/.test(r)).map(splitRow) }); continue; }
     if (/^- /.test(ln)) { flush(); const items = []; while (i < lines.length && /^- /.test(lines[i])) { items.push(lines[i].slice(2)); i++; } blocks.push({ t: "ul", items }); continue; }
     if (/^\d+\. /.test(ln)) { flush(); const items = []; while (i < lines.length && /^\d+\. /.test(lines[i])) { items.push(lines[i].replace(/^\d+\.\s+/, "")); i++; } blocks.push({ t: "ol", items }); continue; }
     if (ln.trim() === "") { flush(); i++; continue; }
@@ -132,19 +139,25 @@ function heading(level, text, opts = {}) {
   return new Paragraph({ heading: lv, pageBreakBefore: !!opts.pageBreak, keepNext: true, children: [new TextRun({ text })] });
 }
 function P(text, o = {}) {
-  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.LEFT, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
+  return new Paragraph({ spacing: { after: 120, line: 300 }, alignment: o.align || AlignmentType.JUSTIFIED, keepNext: o.keepNext, indent: o.indent, children: runs(text, { size: 21, ...(o.run || {}) }) });
 }
 function calloutParas(body) {
   const out = []; let para = [];
-  const flush = () => { if (para.length) { out.push(new Paragraph({ spacing: { after: 80, line: 280 }, children: runs(para.join(" "), { size: 20 }) })); para = []; } };
+  const J = AlignmentType.JUSTIFIED;
+  const flush = () => { if (para.length) { out.push(new Paragraph({ alignment: J, spacing: { after: 80, line: 280 }, children: runs(para.join(" "), { size: 20 }) })); para = []; } };
   let i = 0;
   while (i < body.length) {
     const ln = body[i];
-    if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
-    if (ln.startsWith("$$")) { // fórmula dentro de callout (sem número)
+    if (/^- /.test(ln)) { flush(); while (i < body.length && /^- /.test(body[i])) { out.push(new Paragraph({ alignment: J, numbering: { reference: "bul", level: 0 }, spacing: { after: 60, line: 276 }, children: runs(body[i].slice(2), { size: 20 }) })); i++; } continue; }
+    if (/^\d+\. /.test(ln)) { flush(); while (i < body.length && /^\d+\. /.test(body[i])) { const mm = body[i].match(/^(\d+)\.\s+(.*)$/); out.push(new Paragraph({ alignment: J, spacing: { after: 60, line: 276 }, indent: { left: 400, hanging: 400 }, tabStops: [{ type: TabStopType.LEFT, position: 400 }], children: [new TextRun({ text: mm[1] + ".", bold: true, size: 20 }), new TextRun({ text: "\t", size: 20 }), ...runs(mm[2], { size: 20 })] })); i++; } continue; }
+    if (ln.startsWith("|")) { flush(); const rows = []; while (i < body.length && body[i].startsWith("|")) { rows.push(body[i]); i++; } out.push(...calloutTable(rows)); continue; }
+    if (ln.startsWith("$$")) { // fórmula dentro de callout; numerada se tiver rótulo
       let buf = ln; while (!/\$\$\s*(\{eq:[\w-]+\})?\s*$/.test(buf) || buf.trim() === "$$") { i++; if (i >= body.length) throw new Error("fórmula sem fim: " + ln.slice(0, 60)); buf += "\n" + body[i]; } i++;
+      const lm = buf.match(/\{eq:([\w-]+)\}\s*$/); const lab = lm ? lm[1] : null;
       const tex = buf.replace(/^\$\$/, "").replace(/\s*\{eq:[\w-]+\}\s*$/, "").replace(/\$\$\s*$/, "").trim();
-      out.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 40, after: 100 }, children: [new TextRun({ text: mathMarker(tex, true), size: 21 })] }));
+      const num = lab && eqLabels[lab];
+      if (num) out.push(new Paragraph({ spacing: { before: 40, after: 100 }, tabStops: [{ type: TabStopType.CENTER, position: 4500 }, { type: TabStopType.RIGHT, position: 9000 }], children: [new TextRun({ text: "\t", size: 21 }), new TextRun({ text: mathMarker(tex, true), size: 21 }), new TextRun({ text: "\t(" + num + ")", size: 20, color: C.gry })] }));
+      else out.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 40, after: 100 }, children: [new TextRun({ text: mathMarker(tex, true), size: 21 })] }));
       continue;
     }
     if (ln.trim() === "") { flush(); i++; continue; }
@@ -152,6 +165,16 @@ function calloutParas(body) {
   }
   flush();
   return out;
+}
+function calloutTable(rowsRaw) {
+  const rows = rowsRaw.filter((r) => !/^\|\s*:?-{2,}/.test(r)).map(splitRow);
+  const n = rows[0].length; const W = CW - 400;
+  const lens = new Array(n).fill(0).map((_, j) => Math.max(...rows.map((r) => Math.min(40, Math.max(6, (r[j] || "").length)))));
+  const tot = lens.reduce((a, c) => a + c, 0);
+  const widths = lens.map((l) => Math.max(700, Math.floor((l / tot) * W))); widths[n - 1] += W - widths.reduce((a, c) => a + c, 0);
+  const bd = { style: BorderStyle.SINGLE, size: 4, color: C.mid };
+  const trs = rows.map((r, ri) => new TableRow({ tableHeader: ri === 0, cantSplit: true, children: r.map((c, j) => new TableCell({ width: { size: widths[j], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, fill: ri === 0 ? C.ind : ri % 2 === 0 ? "F5F7FF" : "FFFFFF", color: "auto" }, margins: { top: 40, bottom: 40, left: 70, right: 70 }, borders: { top: bd, bottom: bd, left: bd, right: bd }, children: [new Paragraph({ spacing: { after: 0, line: 252 }, children: runs(c, { size: 17, bold: ri === 0, color: ri === 0 ? "FFFFFF" : C.ink }) })] })) }));
+  return [new Table({ width: { size: W, type: WidthType.DXA }, columnWidths: widths, rows: trs }), spacer(80)];
 }
 const CALL = {
   dica: { c: C.grn, f: "ECFDF5", label: "DICA" }, atencao: { c: C.amb, f: "FFFBEB", label: "ATENÇÃO" }, cotidiano: { c: C.cya, f: "ECFEFF", label: "NO SEU DIA A DIA" },
@@ -234,9 +257,9 @@ function renderBlocks(blocks) {
       case "h3": out.push(heading(3, b.text)); break;
       case "h4": out.push(heading(4, b.text)); break;
       case "p": out.push(P(b.text)); break;
-      case "quote": out.push(new Paragraph({ spacing: { after: 120 }, indent: { left: 400 }, border: { left: { style: BorderStyle.SINGLE, size: 18, color: C.cya, space: 8 } }, children: runs(b.text, { size: 21, italics: true }) })); break;
-      case "ul": b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: "bul", level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break;
-      case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ numbering: { reference: ref, level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
+      case "quote": out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, spacing: { after: 120 }, indent: { left: 400 }, border: { left: { style: BorderStyle.SINGLE, size: 18, color: C.cya, space: 8 } }, children: runs(b.text, { size: 21, italics: true }) })); break;
+      case "ul": b.items.forEach((it) => out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, numbering: { reference: "bul", level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break;
+      case "ol": { const ref = newNumRef(); b.items.forEach((it) => out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, numbering: { reference: ref, level: 0 }, spacing: { after: 70, line: 288 }, children: runs(it, { size: 21 }) }))); out.push(spacer(60)); break; }
       case "callout": out.push(callout(b)); out.push(spacer(140)); break;
       case "code": out.push(...codeBlock(b)); break;
       case "formula": out.push(...formula(b)); break;
@@ -251,6 +274,7 @@ function numberBlocks(blocks, chap) {
   let e = 0, f = 0;
   for (const b of blocks) {
     if (b.t === "formula") { e++; b.num = `${chap}.${e}`; if (b.label) eqLabels[b.label] = b.num; }
+    if (b.t === "callout") { for (const ln of b.body || []) { const m = ln.match(/\$\$.*\{eq:([\w-]+)\}\s*$/); if (m) { e++; eqLabels[m[1]] = `${chap}.${e}`; } } }
     if (b.t === "fig") { f++; b.num = `${chap}.${f}`; figLabels[b.id] = b.num; }
   }
 }
@@ -281,12 +305,12 @@ function exercises(ex) {
   out.push(heading(3, "Exercícios de múltipla escolha", { pageBreak: true }));
   out.push(P("Escolha **uma** alternativa em cada questão. O gabarito comentado está no Apêndice A.", { run: { color: C.gry } }));
   ex.mc.forEach((q, i) => {
-    out.push(new Paragraph({ keepNext: true, spacing: { before: 140, after: 60, line: 276 }, children: [new TextRun({ text: `Questão ${i + 1}. `, bold: true, color: C.ind, size: 21 }), ...runs(q.stem, { size: 21 })] }));
-    q.opts.forEach((o, k) => out.push(new Paragraph({ keepNext: k < 4, keepLines: true, spacing: { after: 30, line: 264 }, indent: { left: 500, hanging: 300 }, children: [new TextRun({ text: "abcde"[k] + ")\t", bold: true, color: C.gry, size: 20 }), ...runs(o, { size: 20 })], tabStops: [{ type: TabStopType.LEFT, position: 500 }] })));
+    out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, keepNext: true, spacing: { before: 140, after: 60, line: 276 }, children: [new TextRun({ text: `Questão ${i + 1}. `, bold: true, color: C.ind, size: 21 }), ...runs(q.stem, { size: 21 })] }));
+    q.opts.forEach((o, k) => out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, keepNext: k < 4, keepLines: true, spacing: { after: 30, line: 264 }, indent: { left: 500, hanging: 300 }, children: [new TextRun({ text: "abcde"[k] + ")\t", bold: true, color: C.gry, size: 20 }), ...runs(o, { size: 20 })], tabStops: [{ type: TabStopType.LEFT, position: 500 }] })));
   });
   out.push(heading(3, "Exercícios discursivos", { pageBreak: true }));
   out.push(P("Resolva por escrito, mostrando as etapas. As soluções estão no Apêndice B.", { run: { color: C.gry } }));
-  ex.dc.forEach((q, i) => out.push(new Paragraph({ keepLines: true, spacing: { before: 120, after: 80, line: 288 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 21 }), ...runs(q.stem, { size: 21 })] })));
+  ex.dc.forEach((q, i) => out.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, keepLines: true, spacing: { before: 120, after: 80, line: 288 }, indent: { left: 500, hanging: 500 }, tabStops: [{ type: TabStopType.LEFT, position: 500 }], children: [new TextRun({ text: `${i + 1}.\t`, bold: true, color: C.ind, size: 21 }), ...runs(q.stem, { size: 21 })] })));
   return out;
 }
 
@@ -359,7 +383,7 @@ const coverSections = [];
     ] });
 }
 
-const CHAPS = 8;
+const CHAPS = 9;
 const chapters = [];
 for (let n = 1; n <= CHAPS; n++) {
   const nn = String(n).padStart(2, "0");
@@ -372,8 +396,9 @@ for (let n = 1; n <= CHAPS; n++) {
 const PART_DESC = {
   "Parte 1 — Introdução e fundamentos matemáticos e computacionais": "O vocabulário, a história e as ferramentas: derivadas, gradientes, métodos de otimização, mínimos quadrados e o ambiente Python, para que nada do que vem depois pareça mágica.",
   "Parte 2 — Perceptron e treinamento de redes de múltiplas camadas": "Do neurônio de Rosenblatt ao backpropagation e, em seguida, aos algoritmos que aceleram o treinamento: Quickprop, RPROP e suas variantes, Levenberg–Marquardt e Delta-Bar-Delta.",
+  "Parte 3 — Do treinamento clássico ao moderno": "A ponte entre os métodos históricos e a prática atual: otimizadores modernos, grafos de computação gerais, diferenciação automática, perdas estáveis, regularização e diagnóstico do treinamento.",
 };
-const PART_COL = { "Parte 1": C.ind, "Parte 2": C.cya };
+const PART_COL = { "Parte 1": C.ind, "Parte 2": C.cya, "Parte 3": C.grn };
 
 const contentSections = [];
 // Apresentação
@@ -486,10 +511,24 @@ for (const [f, h] of apOrder) if (fs.existsSync(path.join(CAP, f))) contentSecti
   }
   contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Apêndice K — Projetos") }, footers: { default: mkFooter() }, children: kids });
 }
+// Apêndice L: código-fonte do pacote rnbook
+{
+  const kids = [heading(1, "Apêndice L — Código-fonte do pacote rnbook")];
+  kids.push(P("Listagem completa do pacote `rnbook` (implementações didáticas do livro), na versão usada nos experimentos. Linhas com mais de 100 caracteres foram quebradas na impressão (continuação indicada por `↳`); os arquivos originais acompanham o material complementar (pasta `codigo/rnbook`)."));
+  const RN = path.join(ROOT, "codigo", "rnbook");
+  const wrap = (ln) => { const out = []; let t = ln; while (t.length > 100) { let k = t.lastIndexOf(" ", 100); if (k < 40) k = 100; out.push(t.slice(0, k)); t = "↳ " + " ".repeat(4) + t.slice(k).trimStart(); } out.push(t); return out; };
+  for (const f of ["__init__.py", "ativacoes.py", "rede.py", "backprop_escalar.py", "gradcheck.py", "perceptron.py", "otimizadores.py"]) {
+    const p = path.join(RN, f); if (!fs.existsSync(p)) continue;
+    kids.push(heading(2, `rnbook/${f}`));
+    const lines = fs.readFileSync(p, "utf8").replace(/\r/g, "").replace(/\s+$/, "").split("\n").flatMap(wrap);
+    for (let k = 0; k < lines.length; k += 70) kids.push(...codeBlock({ lang: "python", code: lines.slice(k, k + 70) }));
+  }
+  contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Apêndice L — Código-fonte do rnbook") }, footers: { default: mkFooter() }, children: kids });
+}
 // Referências
 {
   const kids = [heading(1, "Referências")];
-  kids.push(P("Fontes citadas ao longo do texto. Nota de verificação: os dados bibliográficos foram registrados a partir do conhecimento do autor e NÃO foram conferidos em bases externas nesta elaboração (a rede do ambiente não permitiu); confira-os antes de citar. Os textos completos dos artigos originais de Fahlman (1988), Jacobs (1988), Riedmiller e Braun (1993), Igel e Hüsken (2000, 2003), Minai e Williams (1990) e Hagan e Menhaj (1994) não puderam ser consultados na elaboração deste livro — ver Apresentação.", { run: { color: C.gry } }));
+  kids.push(P("Fontes citadas ao longo do texto. Os textos integrais de Fahlman (1988), Jacobs (1988), Riedmiller e Braun (1993), Igel e Hüsken (2000, 2003), Minai e Williams (1990) e Hagan e Menhaj (1994) não foram consultados na íntegra na elaboração deste livro (ver Apresentação); confira os originais antes de citar páginas ou resultados específicos.", { run: { color: C.gry } }));
   const lines = readTxt("referencias.txt").trim().split("\n").filter(Boolean).sort((a, b) => a.localeCompare(b, "pt"));
   for (const ln of lines) kids.push(new Paragraph({ keepLines: true, spacing: { after: 90, line: 264 }, indent: { left: 420, hanging: 420 }, children: runs(ln, { size: 19 }) }));
   contentSections.push({ properties: secProps({ type: SectionType.NEXT_PAGE }), headers: { default: mkHeader("Referências") }, footers: { default: mkFooter() }, children: kids });

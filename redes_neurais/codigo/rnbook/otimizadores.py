@@ -255,7 +255,10 @@ def levenberg_marquardt(theta0, res, jac, mu0=1e-3, mu_inc=10.0, mu_dec=0.1,
             D = np.eye(len(theta)) if escala == "identidade" else np.diag(np.maximum(Dpiso, 1e-12))
             try:
                 delta = np.linalg.solve(JTJ + mu * D, -g)
-            except np.linalg.LinAlgError:
+            except np.linalg.LinAlgError:          # sistema singular: mais amortecimento
+                mu *= mu_inc
+                continue
+            if not np.all(np.isfinite(delta)):      # solução não finita: mais amortecimento
                 mu *= mu_inc
                 continue
             r_novo = res(theta + delta)

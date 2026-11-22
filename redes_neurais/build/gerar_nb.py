@@ -2,7 +2,7 @@
 import re, os, glob, nbformat as nbf
 R = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 TIT = {1: "Introdução", 2: "Fundamentos matemáticos e Python/scikit-learn", 3: "Perceptron", 4: "Backpropagation e MLP",
-       5: "Quickprop", 6: "RPROP e variantes", 7: "Levenberg–Marquardt (LMBP)", 8: "Delta-Bar-Delta e EDBD"}
+       5: "Quickprop", 6: "RPROP e variantes", 7: "Levenberg–Marquardt (LMBP)", 8: "Delta-Bar-Delta e EDBD", 9: "Do treinamento clássico ao moderno"}
 sys_nb = {}
 def parse_pr(path):
     out, cur, mode = [], None, None
@@ -14,7 +14,7 @@ def parse_pr(path):
         if cur is not None and mode in ("stmt", "sol"): cur[mode].append(ln)
     return out
 os.makedirs(os.path.join(R, "notebooks"), exist_ok=True)
-for n in range(1, 9):
+for n in range(1, 10):
     nb = nbf.v4.new_notebook(); c = nb.cells
     c.append(nbf.v4.new_markdown_cell(f"# Capítulo {n} — {TIT[n]}\n\nCódigos do livro *Backpropagation e Redes Neurais* (Araken de Medeiros Santos).\n\n"
         "> **Aviso:** este notebook foi gerado a partir dos scripts do livro e **não foi executado como notebook**; as saídas reportadas no texto vêm da execução dos scripts `.py` correspondentes. "

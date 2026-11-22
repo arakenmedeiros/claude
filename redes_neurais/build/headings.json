@@ -1146,422 +1146,422 @@
  },
  {
   "level": 1,
-  "text": "Projeto integrador final",
+  "text": "Parte 3 — Do treinamento clássico ao moderno",
   "id": "h230"
  },
  {
   "level": 2,
-  "text": "Comparação de treinadores em classificação e regressão",
+  "text": "Capítulo 9 — Do treinamento clássico ao moderno",
   "id": "h231"
+ },
+ {
+  "level": 3,
+  "text": "9.1 SGD em minilotes, momento e Nesterov",
+  "id": "h232"
+ },
+ {
+  "level": 3,
+  "text": "9.2 Taxas adaptativas por acumulação: AdaGrad, RMSProp e Adam",
+  "id": "h233"
+ },
+ {
+  "level": 4,
+  "text": "Comparação em uma rede 1–8–1",
+  "id": "h234"
+ },
+ {
+  "level": 3,
+  "text": "9.3 Regularização e dinâmica de treinamento",
+  "id": "h235"
+ },
+ {
+  "level": 4,
+  "text": "Penalidade L2 e decaimento de pesos",
+  "id": "h236"
+ },
+ {
+  "level": 4,
+  "text": "Dropout e normalização",
+  "id": "h237"
+ },
+ {
+  "level": 3,
+  "text": "9.4 Backpropagation em grafos gerais e diferenciação automática",
+  "id": "h238"
+ },
+ {
+  "level": 4,
+  "text": "O código (implementação didática do livro)",
+  "id": "h239"
+ },
+ {
+  "level": 4,
+  "text": "Produtos vetor–Jacobiana, Jacobiana–vetor e bibliotecas",
+  "id": "h240"
+ },
+ {
+  "level": 3,
+  "text": "9.5 Perdas numericamente estáveis",
+  "id": "h241"
+ },
+ {
+  "level": 3,
+  "text": "9.6 Saídas multiclasse e multirrótulo",
+  "id": "h242"
+ },
+ {
+  "level": 3,
+  "text": "9.7 Produtos Hessiana–vetor e LM sem formar matrizes",
+  "id": "h243"
+ },
+ {
+  "level": 3,
+  "text": "9.8 Diagnóstico sistemático do treinamento",
+  "id": "h244"
+ },
+ {
+  "level": 3,
+  "text": "9.9 Como escolher? Um roteiro, não uma regra",
+  "id": "h245"
+ },
+ {
+  "level": 3,
+  "text": "Erros frequentes",
+  "id": "h246"
+ },
+ {
+  "level": 3,
+  "text": "Síntese",
+  "id": "h247"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios de múltipla escolha",
+  "id": "h248"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios discursivos",
+  "id": "h249"
+ },
+ {
+  "level": 3,
+  "text": "Exercícios práticos em Python (scikit-learn)",
+  "id": "h250"
+ },
+ {
+  "level": 4,
+  "text": "Exercício prático 9.1 — Um Adam vetorizado, do zero",
+  "id": "h251"
+ },
+ {
+  "level": 4,
+  "text": "Exercício prático 9.2 — SGD com momento, Adam e L-BFGS no scikit-learn",
+  "id": "h252"
+ },
+ {
+  "level": 4,
+  "text": "Exercício prático 9.3 — Saídas multirrótulo no scikit-learn",
+  "id": "h253"
+ },
+ {
+  "level": 3,
+  "text": "Projeto do capítulo",
+  "id": "h254"
+ },
+ {
+  "level": 4,
+  "text": "Diagnóstico e comparação de otimizadores com validação",
+  "id": "h255"
+ },
+ {
+  "level": 1,
+  "text": "Projeto integrador final",
+  "id": "h256"
+ },
+ {
+  "level": 2,
+  "text": "Comparação de treinadores em classificação e regressão",
+  "id": "h257"
  },
  {
   "level": 1,
   "text": "Apêndice A — Gabaritos comentados",
-  "id": "h232"
+  "id": "h258"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Introdução",
-  "id": "h233"
+  "id": "h259"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — Fundamentos matemáticos e Python/scikit-learn",
-  "id": "h234"
+  "id": "h260"
  },
  {
   "level": 2,
   "text": "Capítulo 3 — Perceptron",
-  "id": "h235"
+  "id": "h261"
  },
  {
   "level": 2,
   "text": "Capítulo 4 — Backpropagation e perceptrons de múltiplas camadas — MLP",
-  "id": "h236"
+  "id": "h262"
  },
  {
   "level": 2,
   "text": "Capítulo 5 — Quick Propagation — QPROP",
-  "id": "h237"
+  "id": "h263"
  },
  {
   "level": 2,
   "text": "Capítulo 6 — Propagação resiliente — RPROP",
-  "id": "h238"
+  "id": "h264"
  },
  {
   "level": 2,
   "text": "Capítulo 7 — Levenberg–Marquardt e backpropagation — LMBP",
-  "id": "h239"
+  "id": "h265"
  },
  {
   "level": 2,
   "text": "Capítulo 8 — Delta-Bar-Delta e Delta-Bar-Delta Estendido",
-  "id": "h240"
+  "id": "h266"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Do treinamento clássico ao moderno",
+  "id": "h267"
  },
  {
   "level": 1,
   "text": "Apêndice B — Respostas das questões discursivas",
-  "id": "h241"
+  "id": "h268"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Introdução",
-  "id": "h242"
+  "id": "h269"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — Fundamentos matemáticos e Python/scikit-learn",
-  "id": "h243"
+  "id": "h270"
  },
  {
   "level": 2,
   "text": "Capítulo 3 — Perceptron",
-  "id": "h244"
+  "id": "h271"
  },
  {
   "level": 2,
   "text": "Capítulo 4 — Backpropagation e perceptrons de múltiplas camadas — MLP",
-  "id": "h245"
+  "id": "h272"
  },
  {
   "level": 2,
   "text": "Capítulo 5 — Quick Propagation — QPROP",
-  "id": "h246"
+  "id": "h273"
  },
  {
   "level": 2,
   "text": "Capítulo 6 — Propagação resiliente — RPROP",
-  "id": "h247"
+  "id": "h274"
  },
  {
   "level": 2,
   "text": "Capítulo 7 — Levenberg–Marquardt e backpropagation — LMBP",
-  "id": "h248"
+  "id": "h275"
  },
  {
   "level": 2,
   "text": "Capítulo 8 — Delta-Bar-Delta e Delta-Bar-Delta Estendido",
-  "id": "h249"
- },
- {
-  "level": 1,
-  "text": "Apêndice C — Símbolos, notação e dimensões",
-  "id": "h250"
- },
- {
-  "level": 3,
-  "text": "C.1 Convenções gerais",
-  "id": "h251"
- },
- {
-  "level": 3,
-  "text": "C.2 Tabela de símbolos",
-  "id": "h252"
- },
- {
-  "level": 3,
-  "text": "C.3 Verificação de dimensões",
-  "id": "h253"
- },
- {
-  "level": 1,
-  "text": "Apêndice D — Revisão matemática",
-  "id": "h254"
- },
- {
-  "level": 3,
-  "text": "D.1 Derivadas e regra da cadeia",
-  "id": "h255"
- },
- {
-  "level": 3,
-  "text": "D.2 Gradiente, Jacobiana e Hessiana",
-  "id": "h256"
- },
- {
-  "level": 3,
-  "text": "D.3 Série de Taylor",
-  "id": "h257"
- },
- {
-  "level": 3,
-  "text": "D.4 Álgebra linear essencial",
-  "id": "h258"
- },
- {
-  "level": 3,
-  "text": "D.5 Quadráticas e passo ótimo",
-  "id": "h259"
- },
- {
-  "level": 3,
-  "text": "D.6 Probabilidade e estatística mínimas",
-  "id": "h260"
- },
- {
-  "level": 1,
-  "text": "Apêndice E — Instalação, reprodução e versões",
-  "id": "h261"
- },
- {
-  "level": 3,
-  "text": "E.1 Ambiente",
-  "id": "h262"
- },
- {
-  "level": 3,
-  "text": "E.2 Instalação",
-  "id": "h263"
- },
- {
-  "level": 3,
-  "text": "E.3 Pacote rnbook",
-  "id": "h264"
- },
- {
-  "level": 3,
-  "text": "E.4 Reprodutibilidade",
-  "id": "h265"
- },
- {
-  "level": 3,
-  "text": "E.5 O que não foi executado",
-  "id": "h266"
- },
- {
-  "level": 1,
-  "text": "Apêndice F — Guia dos códigos",
-  "id": "h267"
- },
- {
-  "level": 3,
-  "text": "Pacote rnbook",
-  "id": "h268"
- },
- {
-  "level": 3,
-  "text": "Testes",
-  "id": "h269"
- },
- {
-  "level": 1,
-  "text": "Apêndice G — Glossário",
-  "id": "h270"
- },
- {
-  "level": 1,
-  "text": "Apêndice H — Quadro comparativo dos algoritmos",
-  "id": "h271"
- },
- {
-  "level": 3,
-  "text": "H.1 Quando considerar cada método (orientação, não regra)",
-  "id": "h272"
- },
- {
-  "level": 1,
-  "text": "Apêndice I — Correspondência entre o pacote do livro, o scikit-learn e o SciPy",
-  "id": "h273"
- },
- {
-  "level": 3,
-  "text": "I.1 Solvers do scikit-learn e o que os distingue",
-  "id": "h274"
- },
- {
-  "level": 3,
-  "text": "I.2 Diferenças práticas importantes",
-  "id": "h275"
- },
- {
-  "level": 1,
-  "text": "Apêndice J — Soluções dos exercícios práticos",
   "id": "h276"
  },
  {
   "level": 2,
-  "text": "Capítulo 1 — Introdução",
+  "text": "Capítulo 9 — Do treinamento clássico ao moderno",
   "id": "h277"
  },
  {
-  "level": 3,
-  "text": "Exercício prático 1.1 — Primeira rede com MLPRegressor",
+  "level": 1,
+  "text": "Apêndice C — Símbolos, notação e dimensões",
   "id": "h278"
  },
  {
   "level": 3,
-  "text": "Exercício prático 1.2 — Classificando flores com MLPClassifier",
+  "text": "C.1 Convenções gerais",
   "id": "h279"
  },
  {
   "level": 3,
-  "text": "Exercício prático 1.3 — Abrindo a rede: dimensões e parâmetros",
+  "text": "C.2 Tabela de símbolos",
   "id": "h280"
  },
  {
-  "level": 2,
-  "text": "Capítulo 2 — Fundamentos matemáticos e Python/scikit-learn",
+  "level": 3,
+  "text": "C.3 Verificação de dimensões",
   "id": "h281"
  },
  {
-  "level": 3,
-  "text": "Exercício prático 2.1 — Conferindo derivadas das ativações",
+  "level": 1,
+  "text": "Apêndice D — Revisão matemática",
   "id": "h282"
  },
  {
   "level": 3,
-  "text": "Exercício prático 2.2 — Mínimos quadrados de quatro maneiras",
+  "text": "D.1 Derivadas e regra da cadeia",
   "id": "h283"
  },
  {
   "level": 3,
-  "text": "Exercício prático 2.3 — Um neurônio sigmoide é uma regressão logística",
+  "text": "D.2 Gradiente, Jacobiana e Hessiana",
   "id": "h284"
  },
  {
-  "level": 2,
-  "text": "Capítulo 3 — Perceptron",
+  "level": 3,
+  "text": "D.3 Série de Taylor",
   "id": "h285"
  },
  {
   "level": 3,
-  "text": "Exercício prático 3.1 — Seu próprio perceptron nas portas lógicas",
+  "text": "D.4 Álgebra linear essencial",
   "id": "h286"
  },
  {
   "level": 3,
-  "text": "Exercício prático 3.2 — Seu perceptron contra o do scikit-learn",
+  "text": "D.5 Quadráticas e passo ótimo",
   "id": "h287"
  },
  {
   "level": 3,
-  "text": "Exercício prático 3.3 — Esta base é linearmente separável?",
+  "text": "D.6 Probabilidade e estatística mínimas",
   "id": "h288"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Backpropagation e perceptrons de múltiplas camadas — MLP",
+  "level": 1,
+  "text": "Apêndice E — Instalação, reprodução e versões",
   "id": "h289"
  },
  {
   "level": 3,
-  "text": "Exercício prático 4.1 — Backpropagation vetorizado em 20 linhas",
+  "text": "E.1 Ambiente",
   "id": "h290"
  },
  {
   "level": 3,
-  "text": "Exercício prático 4.2 — XOR com MLPClassifier: depende da semente?",
+  "text": "E.2 Instalação",
   "id": "h291"
  },
  {
   "level": 3,
-  "text": "Exercício prático 4.3 — Regressão com MLP: ele supera um modelo linear?",
+  "text": "E.3 Pacote rnbook",
   "id": "h292"
  },
  {
-  "level": 2,
-  "text": "Capítulo 5 — Quick Propagation — QPROP",
+  "level": 3,
+  "text": "E.4 Reprodutibilidade",
   "id": "h293"
  },
  {
   "level": 3,
-  "text": "Exercício prático 5.1 — O passo do Quickprop para um peso",
+  "text": "E.5 O que não foi executado",
   "id": "h294"
  },
  {
-  "level": 3,
-  "text": "Exercício prático 5.2 — Quickprop contra os otimizadores do scikit-learn",
+  "level": 1,
+  "text": "Apêndice F — Guia dos códigos",
   "id": "h295"
  },
  {
   "level": 3,
-  "text": "Exercício prático 5.3 — Sensibilidade do Quickprop a $\\varepsilon$ e $\\mu$",
+  "text": "Pacote rnbook",
   "id": "h296"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Propagação resiliente — RPROP",
+  "level": 3,
+  "text": "Onde obter os arquivos",
   "id": "h297"
  },
  {
   "level": 3,
-  "text": "Exercício prático 6.1 — Um RPROP vetorizado, do zero",
+  "text": "Testes",
   "id": "h298"
  },
  {
-  "level": 3,
-  "text": "Exercício prático 6.2 — Parada antecipada no scikit-learn",
+  "level": 1,
+  "text": "Apêndice G — Glossário",
   "id": "h299"
  },
  {
-  "level": 3,
-  "text": "Exercício prático 6.3 — As quatro variantes na base Breast Cancer",
+  "level": 1,
+  "text": "Apêndice H — Quadro comparativo dos algoritmos",
   "id": "h300"
  },
  {
-  "level": 2,
-  "text": "Capítulo 7 — Levenberg–Marquardt e backpropagation — LMBP",
+  "level": 3,
+  "text": "H.1 Quando considerar cada método (orientação, não regra)",
   "id": "h301"
  },
  {
-  "level": 3,
-  "text": "Exercício prático 7.1 — Ajuste de curva por mínimos quadrados não lineares",
+  "level": 1,
+  "text": "Apêndice I — Correspondência entre o pacote do livro, o scikit-learn e o SciPy",
   "id": "h302"
  },
  {
   "level": 3,
-  "text": "Exercício prático 7.2 — LM com parada antecipada contra o lbfgs do scikit-learn",
+  "text": "I.1 Solvers do scikit-learn e o que os distingue",
   "id": "h303"
  },
  {
   "level": 3,
-  "text": "Exercício prático 7.3 — O preço do LM: memória e tempo em função de $P$",
+  "text": "I.2 Diferenças práticas importantes",
   "id": "h304"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — Delta-Bar-Delta e Delta-Bar-Delta Estendido",
-  "id": "h305"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 8.1 — O Delta-Bar-Delta vetorizado, do zero",
-  "id": "h306"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 8.2 — Escala do erro: a delta-delta sofre, o DBD menos",
-  "id": "h307"
- },
- {
-  "level": 3,
-  "text": "Exercício prático 8.3 — DBD e EDBD na base Breast Cancer, com validação",
-  "id": "h308"
- },
- {
   "level": 1,
-  "text": "Apêndice K — Projetos: soluções de referência",
-  "id": "h309"
+  "text": "Apêndice J — Soluções dos exercícios práticos",
+  "id": "h305"
  },
  {
   "level": 2,
   "text": "Capítulo 1 — Introdução",
-  "id": "h310"
+  "id": "h306"
  },
  {
   "level": 3,
-  "text": "Quanto a arquitetura importa? Explorando larguras de uma camada oculta",
-  "id": "h311"
+  "text": "Exercício prático 1.1 — Primeira rede com MLPRegressor",
+  "id": "h307"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 1.2 — Classificando flores com MLPClassifier",
+  "id": "h308"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 1.3 — Abrindo a rede: dimensões e parâmetros",
+  "id": "h309"
  },
  {
   "level": 2,
   "text": "Capítulo 2 — Fundamentos matemáticos e Python/scikit-learn",
+  "id": "h310"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 2.1 — Conferindo derivadas das ativações",
+  "id": "h311"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 2.2 — Mínimos quadrados de quatro maneiras",
   "id": "h312"
  },
  {
   "level": 3,
-  "text": "O custo da má escala: padronização e condicionamento",
+  "text": "Exercício prático 2.3 — Um neurônio sigmoide é uma regressão logística",
   "id": "h313"
  },
  {
@@ -1571,72 +1571,287 @@
  },
  {
   "level": 3,
-  "text": "Quando o perceptron funciona (e quando não)? Separabilidade em bases reais",
+  "text": "Exercício prático 3.1 — Seu próprio perceptron nas portas lógicas",
   "id": "h315"
  },
  {
-  "level": 2,
-  "text": "Capítulo 4 — Backpropagation e perceptrons de múltiplas camadas — MLP",
+  "level": 3,
+  "text": "Exercício prático 3.2 — Seu perceptron contra o do scikit-learn",
   "id": "h316"
  },
  {
   "level": 3,
-  "text": "Reconhecendo dígitos: arquitetura, otimizador e generalização",
+  "text": "Exercício prático 3.3 — Esta base é linearmente separável?",
   "id": "h317"
  },
  {
   "level": 2,
-  "text": "Capítulo 5 — Quick Propagation — QPROP",
+  "text": "Capítulo 4 — Backpropagation e perceptrons de múltiplas camadas — MLP",
   "id": "h318"
  },
  {
   "level": 3,
-  "text": "Orçamento igual: Quickprop, gradiente descendente e L-BFGS em dois problemas",
+  "text": "Exercício prático 4.1 — Backpropagation vetorizado em 20 linhas",
   "id": "h319"
  },
  {
-  "level": 2,
-  "text": "Capítulo 6 — Propagação resiliente — RPROP",
+  "level": 3,
+  "text": "Exercício prático 4.2 — XOR com MLPClassifier: depende da semente?",
   "id": "h320"
  },
  {
   "level": 3,
-  "text": "RPROP com parada antecipada em dígitos manuscritos",
+  "text": "Exercício prático 4.3 — Regressão com MLP: ele supera um modelo linear?",
   "id": "h321"
  },
  {
   "level": 2,
-  "text": "Capítulo 7 — Levenberg–Marquardt e backpropagation — LMBP",
+  "text": "Capítulo 5 — Quick Propagation — QPROP",
   "id": "h322"
  },
  {
   "level": 3,
-  "text": "LM em dígitos manuscritos: quanto custa e quanto rende?",
+  "text": "Exercício prático 5.1 — O passo do Quickprop para um peso",
   "id": "h323"
  },
  {
-  "level": 2,
-  "text": "Capítulo 8 — Delta-Bar-Delta e Delta-Bar-Delta Estendido",
+  "level": 3,
+  "text": "Exercício prático 5.2 — Quickprop contra os otimizadores do scikit-learn",
   "id": "h324"
  },
  {
   "level": 3,
-  "text": "Otimizadores adaptativos em regressão: Friedman #1",
+  "text": "Exercício prático 5.3 — Sensibilidade do Quickprop a $\\varepsilon$ e $\\mu$",
   "id": "h325"
  },
  {
   "level": 2,
-  "text": "Projeto integrador final",
+  "text": "Capítulo 6 — Propagação resiliente — RPROP",
   "id": "h326"
  },
  {
   "level": 3,
-  "text": "Comparação de treinadores em classificação e regressão",
+  "text": "Exercício prático 6.1 — Um RPROP vetorizado, do zero",
   "id": "h327"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 6.2 — Parada antecipada no scikit-learn",
+  "id": "h328"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 6.3 — As quatro variantes na base Breast Cancer",
+  "id": "h329"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Levenberg–Marquardt e backpropagation — LMBP",
+  "id": "h330"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 7.1 — Ajuste de curva por mínimos quadrados não lineares",
+  "id": "h331"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 7.2 — LM com parada antecipada contra o lbfgs do scikit-learn",
+  "id": "h332"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 7.3 — O preço do LM: memória e tempo em função de $P$",
+  "id": "h333"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Delta-Bar-Delta e Delta-Bar-Delta Estendido",
+  "id": "h334"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 8.1 — O Delta-Bar-Delta vetorizado, do zero",
+  "id": "h335"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 8.2 — Escala do erro: a delta-delta sofre, o DBD menos",
+  "id": "h336"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 8.3 — DBD e EDBD na base Breast Cancer, com validação",
+  "id": "h337"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Do treinamento clássico ao moderno",
+  "id": "h338"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 9.1 — Um Adam vetorizado, do zero",
+  "id": "h339"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 9.2 — SGD com momento, Adam e L-BFGS no scikit-learn",
+  "id": "h340"
+ },
+ {
+  "level": 3,
+  "text": "Exercício prático 9.3 — Saídas multirrótulo no scikit-learn",
+  "id": "h341"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice K — Projetos: soluções de referência",
+  "id": "h342"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 1 — Introdução",
+  "id": "h343"
+ },
+ {
+  "level": 3,
+  "text": "Quanto a arquitetura importa? Explorando larguras de uma camada oculta",
+  "id": "h344"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 2 — Fundamentos matemáticos e Python/scikit-learn",
+  "id": "h345"
+ },
+ {
+  "level": 3,
+  "text": "O custo da má escala: padronização e condicionamento",
+  "id": "h346"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 3 — Perceptron",
+  "id": "h347"
+ },
+ {
+  "level": 3,
+  "text": "Quando o perceptron funciona (e quando não)? Separabilidade em bases reais",
+  "id": "h348"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 4 — Backpropagation e perceptrons de múltiplas camadas — MLP",
+  "id": "h349"
+ },
+ {
+  "level": 3,
+  "text": "Reconhecendo dígitos: arquitetura, otimizador e generalização",
+  "id": "h350"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 5 — Quick Propagation — QPROP",
+  "id": "h351"
+ },
+ {
+  "level": 3,
+  "text": "Orçamento igual: Quickprop, gradiente descendente e L-BFGS em dois problemas",
+  "id": "h352"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 6 — Propagação resiliente — RPROP",
+  "id": "h353"
+ },
+ {
+  "level": 3,
+  "text": "RPROP com parada antecipada em dígitos manuscritos",
+  "id": "h354"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 7 — Levenberg–Marquardt e backpropagation — LMBP",
+  "id": "h355"
+ },
+ {
+  "level": 3,
+  "text": "LM em dígitos manuscritos: quanto custa e quanto rende?",
+  "id": "h356"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 8 — Delta-Bar-Delta e Delta-Bar-Delta Estendido",
+  "id": "h357"
+ },
+ {
+  "level": 3,
+  "text": "Otimizadores adaptativos em regressão: Friedman #1",
+  "id": "h358"
+ },
+ {
+  "level": 2,
+  "text": "Capítulo 9 — Do treinamento clássico ao moderno",
+  "id": "h359"
+ },
+ {
+  "level": 3,
+  "text": "Diagnóstico e comparação de otimizadores com validação",
+  "id": "h360"
+ },
+ {
+  "level": 2,
+  "text": "Projeto integrador final",
+  "id": "h361"
+ },
+ {
+  "level": 3,
+  "text": "Comparação de treinadores em classificação e regressão",
+  "id": "h362"
+ },
+ {
+  "level": 1,
+  "text": "Apêndice L — Código-fonte do pacote rnbook",
+  "id": "h363"
+ },
+ {
+  "level": 2,
+  "text": "rnbook/__init__.py",
+  "id": "h364"
+ },
+ {
+  "level": 2,
+  "text": "rnbook/ativacoes.py",
+  "id": "h365"
+ },
+ {
+  "level": 2,
+  "text": "rnbook/rede.py",
+  "id": "h366"
+ },
+ {
+  "level": 2,
+  "text": "rnbook/backprop_escalar.py",
+  "id": "h367"
+ },
+ {
+  "level": 2,
+  "text": "rnbook/gradcheck.py",
+  "id": "h368"
+ },
+ {
+  "level": 2,
+  "text": "rnbook/perceptron.py",
+  "id": "h369"
+ },
+ {
+  "level": 2,
+  "text": "rnbook/otimizadores.py",
+  "id": "h370"
  },
  {
   "level": 1,
   "text": "Referências",
-  "id": "h328"
+  "id": "h371"
  }
 ]

@@ -9,6 +9,9 @@
 | Delta-delta | 1ª | taxa por peso | sim | $\alpha_0$, $\gamma$ | $O(P)$ | frágil; dependente da escala |
 | Delta-Bar-Delta | 1ª | taxa por peso | sim | $\alpha_0$, $\kappa$, $\phi$, $\theta$ | $O(P)$ | quatro hiperparâmetros; só em lote |
 | EDBD (versão didática) | 1ª | taxa e momento por peso | sim | $\ge9$ | $O(P)$ | mais parâmetros; limites $\alpha_{\max}$, $\mu_{\max}$ |
+| SGD com momento / Nesterov (Cap. 9) | 1ª | nada (taxa global; velocidade acumulada) | sim | $\eta$, $\mu$ | $O(P)$ por minilote | padrão em minilotes; sensível à escala da perda |
+| AdaGrad, RMSProp (Cap. 9) | 1ª | passo por peso, por acumulação de $g^2$ | normalizada | $\eta$, $\rho$ | $O(P)$ por minilote | AdaGrad: passo decai; RMSProp: média móvel |
+| Adam, AdamW (Cap. 9) | 1ª | passo por peso, por $\hat m/\sqrt{\hat v}$ | normalizada | $\eta$, $\beta_1$, $\beta_2$, $\varepsilon$, $\lambda$ | $O(P)$ por minilote | quase invariante à escala da perda; AdamW desacopla o decaimento |
 
 :::limite Como usar este quadro
 O quadro resume propriedades **conceituais**. Ele não classifica os algoritmos por desempenho: os experimentos do livro mostram que o resultado depende do problema, da arquitetura, da inicialização e do ajuste de hiperparâmetros, e que os métodos ficam, com frequência, empatados dentro da variação entre sementes.
@@ -20,4 +23,4 @@ O quadro resume propriedades **conceituais**. Ele não classifica os algoritmos 
 - **Muitos pesos ou muitas amostras:** métodos de primeira ordem; memória e tempo do LM tornam-no inviável (por exemplo, $J$ de $10^{10}$ elementos).
 - **Insensibilidade à escala do gradiente:** RPROP.
 - **Curvaturas muito diferentes entre pesos, treinamento em lote:** DBD/EDBD podem ajudar, ao custo de mais hiperparâmetros.
-- **Minilotes ruidosos:** os métodos de lote deste livro não são projetados para esse regime.
+- **Minilotes ruidosos:** os métodos de lote dos Capítulos 5 a 8 não são projetados para esse regime; use os do Capítulo 9 (SGD com momento, Adam, AdamW).

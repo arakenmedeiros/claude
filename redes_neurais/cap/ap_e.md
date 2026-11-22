@@ -13,6 +13,8 @@ Os experimentos foram executados em Python 3 com as versões abaixo (arquivo `co
 | pandas | 3.0.5 |
 | nbformat | 5.11.1 |
 
+Para as verificações **opcionais** do Capítulo 9 com diferenciação automática de biblioteca, usou-se também o **JAX 0.12.1** (`pip install jax`); o PyTorch não foi executado.
+
 ## E.2 Instalação
 
 ```python

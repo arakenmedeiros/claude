@@ -49,3 +49,27 @@
 **Taxa de aprendizagem.** Fator que multiplica o gradiente no passo do gradiente descendente.
 
 **Vazamento de dados.** Uso de informação de validação ou teste durante o treino ou o pré-processamento.
+
+**AdaGrad.** Método que divide o passo de cada peso pela raiz da soma acumulada dos quadrados dos gradientes.
+
+**Adam / AdamW.** Otimizadores com estimativas dos primeiro e segundo momentos do gradiente e correção de viés; o AdamW aplica o decaimento de pesos de forma desacoplada.
+
+**Autodiferenciação (modo reverso).** Cálculo do gradiente propagando produtos vetor–Jacobiana em um grafo de computação, em ordem topológica reversa.
+
+**Dropout.** Regularização que descarta ativações aleatoriamente durante o treino (na versão invertida, as mantidas são reescaladas por $1/(1-p)$).
+
+**Gradiente conjugado (CG).** Método iterativo para resolver sistemas simétricos definidos positivos usando só produtos matriz–vetor.
+
+**Logit.** Valor de saída antes da sigmoide ou da softmax.
+
+**Log-sum-exp.** Forma estável de calcular $\log\sum_je^{z_j}$, subtraindo o máximo.
+
+**Multirrótulo.** Problema em que cada exemplo pode ter vários rótulos simultâneos (sigmoide por rótulo).
+
+**Nesterov (momento de).** Variante do momento que avalia o gradiente no ponto para onde a velocidade levaria o parâmetro.
+
+**Normalização de camada.** Normaliza cada amostra pela média e variância calculadas ao longo das unidades da camada.
+
+**Produto Hessiana–vetor.** $Hv$ obtido sem formar a Hessiana, por diferenças do gradiente ou por diferenciação automática.
+
+**Conexão residual.** Atalho $h=F(x)+x$ que leva o gradiente adiante sem multiplicá-lo por pesos.

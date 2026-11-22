@@ -1,0 +1,190 @@
+@@EX 1 | Um Adam vetorizado, do zero | iniciante
+Implemente o Adam em NumPy (sem o pacote `rnbook`) e verifique duas propriedades: o primeiro passo tem módulo $\approx\eta$ e o passo é invariante à escala do gradiente.
+
+1. Escreva `passo_adam(theta, g, estado, t, eta, b1, b2, eps)` com correção de viés.
+2. Para $g=(0{,}5;\,-4;\,0{,}01)$ e $\eta=0{,}1$, calcule o primeiro passo.
+3. Repita com o gradiente multiplicado por $c=1000$ e compare.
+4. Rode 2000 passos em $f(x,y)=\tfrac12(x^2+10y^2)$ a partir de $(2{,}5;\,1{,}2)$ com $\eta=0{,}05$ e informe $f$ final.
+
+**Pergunta:** por que o passo de cada peso tem módulo próximo de $\eta$ no primeiro passo?
+@@SOL
+```python
+import numpy as np
+
+
+def passo_adam(theta, g, estado, t, eta=0.1, b1=0.9, b2=0.999, eps=1e-8):
+    estado["m"] = b1 * estado["m"] + (1 - b1) * g
+    estado["v"] = b2 * estado["v"] + (1 - b2) * g * g
+    mh = estado["m"] / (1 - b1 ** t)                 # correção de viés
+    vh = estado["v"] / (1 - b2 ** t)
+    return theta - eta * mh / (np.sqrt(vh) + eps)
+
+
+g = np.array([0.5, -4.0, 0.01])
+for c in (1.0, 1000.0):
+    est = {"m": np.zeros(3), "v": np.zeros(3)}
+    novo = passo_adam(np.zeros(3), c * g, est, 1)
+    print("c = %-6g primeiro passo:" % c, np.round(novo, 6))
+
+lam = np.array([1.0, 10.0])
+th = np.array([2.5, 1.2]); est = {"m": np.zeros(2), "v": np.zeros(2)}
+for t in range(1, 2001):
+    th = passo_adam(th, lam * th, est, t, eta=0.05)
+print("f final após 2000 passos: %.3e" % (0.5 * np.sum(lam * th ** 2)))
+```
+@@NOTE O primeiro passo foi $(-0{,}1;\,+0{,}1;\,-0{,}1)$ **nos dois casos**, $c=1$ e $c=1000$: cada peso se moveu $\eta=0{,}1$ no sentido oposto ao do seu gradiente, embora os gradientes tivessem escalas de $0{,}01$ a $4$ (e de $10$ a $4000$ com $c=1000$). **Resposta:** em $t=1$, a correção de viés dá $\hat m_1=g_1$ e $\hat v_1=g_1^2$, de modo que $\hat m_1/(\sqrt{\hat v_1}+\varepsilon)=g_1/(|g_1|+\varepsilon)\approx\mathrm{sinal}(g_1)$ (aqui $\varepsilon=10^{-8}\ll|g_1|$). A invariância à escala vale enquanto $\sqrt{\hat v}$ for muito maior que $\varepsilon$. Na quadrática, após 2000 passos com $\eta=0{,}05$, $f\approx3\times10^{-91}$ (praticamente zero, por esta função simples e sem ruído; em redes, o Adam não converge desse modo).
+@@EX 2 | SGD com momento, Adam e L-BFGS no scikit-learn | intermediário
+Compare os solvers `'sgd'` (com momento de Nesterov), `'adam'` e `'lbfgs'` de `MLPRegressor` em **Friedman #1** (`make_friedman1`, 600 amostras, `noise=1.0`, `random_state=0`), com parada antecipada nos dois primeiros.
+
+1. Separe 60/20/20 (`random_state=0`) e padronize com o treino.
+2. Rede de 20 neurônios ocultos (tanh), `max_iter=500`; `sgd`: `learning_rate_init=0.01`, `momentum=0.9`, `nesterovs_momentum=True`, `early_stopping=True`; `adam`: `learning_rate_init=0.01`, `early_stopping=True`; `lbfgs`: sem parada antecipada.
+3. Para 5 sementes (`random_state`), registre o $R^2$ de teste (mediana e intervalo), o número de iterações e o tempo.
+4. Verifique, em `MLPRegressor.validation_scores_`, que a pontuação monitorada é o $R^2$ de validação.
+
+**Pergunta:** o que se pode concluir sobre qual solver é melhor?
+@@SOL
+```python
+import time
+import warnings
+import numpy as np
+from sklearn.datasets import make_friedman1
+from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
+from sklearn.preprocessing import StandardScaler
+
+warnings.filterwarnings("ignore")
+X, y = make_friedman1(n_samples=600, n_features=10, noise=1.0, random_state=0)
+X_tmp, X_te, y_tmp, y_te = train_test_split(X, y, test_size=0.2, random_state=0)
+X_tr, X_va, y_tr, y_va = train_test_split(X_tmp, y_tmp, test_size=0.25, random_state=0)
+esc = StandardScaler().fit(X_tr)
+Xtr, Xte = esc.transform(X_tr), esc.transform(X_te)
+cfg = {
+    "sgd (Nesterov)": dict(solver="sgd", learning_rate_init=0.01, momentum=0.9, nesterovs_momentum=True, early_stopping=True),
+    "adam": dict(solver="adam", learning_rate_init=0.01, early_stopping=True),
+    "lbfgs": dict(solver="lbfgs"),
+}
+for nome, kw in cfg.items():
+    r2, its, tt = [], [], []
+    for s in range(5):
+        m = MLPRegressor(hidden_layer_sizes=(20,), activation="tanh", max_iter=500, random_state=s, **kw)
+        t0 = time.perf_counter(); m.fit(Xtr, y_tr); tt.append(time.perf_counter() - t0)
+        r2.append(r2_score(y_te, m.predict(Xte))); its.append(m.n_iter_)
+    print("%-15s R2 teste %.3f [%.3f; %.3f] | iterações (mediana) %d | tempo %.2f s" % (nome, np.median(r2), min(r2), max(r2), np.median(its), np.mean(tt)))
+m = MLPRegressor(hidden_layer_sizes=(20,), activation="tanh", solver="adam", early_stopping=True, max_iter=500, random_state=0).fit(Xtr, y_tr)
+vs = np.array(m.validation_scores_)
+print("validation_scores_: primeiro %.3f, melhor %.3f, último %.3f; best_validation_score_ = %.3f" % (vs[0], vs.max(), vs[-1], m.best_validation_score_))
+```
+@@NOTE Com 600 amostras (teste de 120): $R^2$ de teste mediano $0{,}878$ [$0{,}738$; $0{,}909$] para o `sgd` com Nesterov (mediana de $113$ iterações), $0{,}809$ [$0{,}676$; $0{,}823$] para o `adam` ($174$ iterações) e $0{,}758$ [$0{,}689$; $0{,}795$] para o `lbfgs` ($500$ iterações, ou seja, atingiu `max_iter`); tempos de $0{,}05$ a $0{,}07$ s. Em `validation_scores_` (adam, semente 0), o primeiro valor foi $-4{,}991$ e o melhor, $0{,}683$: a pontuação monitorada é o **$R^2$ de validação** (que pode ser negativo no início), e não a perda. **Resposta:** os intervalos se sobrepõem em parte, a configuração dos solvers **não foi ajustada** (só `learning_rate_init=0{,}01` e `max_iter=500`), a parada antecipada só atua em `sgd` e `adam` (o `lbfgs` rodou até `max_iter`, sem convergir) e o teste tem 120 amostras: **não** se pode declarar um solver melhor; o experimento só mostra o procedimento e a ordem de grandeza dos resultados nesta configuração.
+@@EX 3 | Saídas multirrótulo no scikit-learn | intermediário
+Treine um `MLPClassifier` em um problema **multirrótulo** sintético e confirme que as saídas não somam 1.
+
+1. Gere os dados com `make_multilabel_classification(n_samples=600, n_features=12, n_classes=4, n_labels=2, random_state=0)`; separe 70/30 e padronize com o treino.
+2. Treine `MLPClassifier(hidden_layer_sizes=(16,), max_iter=500, random_state=0)` com $Y$ como matriz indicadora.
+3. Calcule `predict_proba` no teste e a soma das probabilidades por amostra (mediana e intervalo); calcule a acurácia por rótulo e a de subconjunto (todos os rótulos corretos).
+4. Verifique `clf.out_activation_` e `clf.n_outputs_`.
+
+**Pergunta:** por que usar softmax seria inadequado aqui?
+@@SOL
+```python
+import warnings
+import numpy as np
+from sklearn.datasets import make_multilabel_classification
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+
+warnings.filterwarnings("ignore")
+X, Y = make_multilabel_classification(n_samples=600, n_features=12, n_classes=4, n_labels=2, random_state=0)
+X_tr, X_te, Y_tr, Y_te = train_test_split(X, Y, test_size=0.3, random_state=0)
+esc = StandardScaler().fit(X_tr)
+Xtr, Xte = esc.transform(X_tr), esc.transform(X_te)
+clf = MLPClassifier(hidden_layer_sizes=(16,), max_iter=500, random_state=0).fit(Xtr, Y_tr)
+P = clf.predict_proba(Xte)
+soma = P.sum(axis=1)
+print("ativação de saída:", clf.out_activation_, "| saídas:", clf.n_outputs_)
+print("soma das probabilidades por amostra: mediana %.3f [%.3f; %.3f]" % (np.median(soma), soma.min(), soma.max()))
+pred = clf.predict(Xte)
+print("acurácia por rótulo:", np.round((pred == Y_te).mean(axis=0), 3), "| acurácia de subconjunto: %.3f" % np.mean(np.all(pred == Y_te, axis=1)))
+```
+@@NOTE A ativação de saída foi `logistic` e `n_outputs_` $=4$. A soma das probabilidades por amostra teve mediana $1{,}546$ [$0{,}406$; $2{,}917$]: **não** é $1$. A acurácia por rótulo foi $(0{,}806;\,0{,}767;\,0{,}833;\,0{,}850)$ e a de subconjunto (todos os rótulos corretos), $0{,}506$, bem menor que as por rótulo, como esperado (basta errar um rótulo). **Resposta:** a softmax obriga as probabilidades a somarem $1$, o que equivale a supor **uma** classe por exemplo; em multirrótulo, os rótulos podem ocorrer juntos e cada um precisa de uma probabilidade própria, o que se obtém com uma sigmoide por rótulo e a perda binária por rótulo (que o `MLPClassifier` usa com matrizes indicadoras).
+@@PROJ Diagnóstico e comparação de otimizadores com validação | avançado
+**Objetivo.** Treinar a mesma rede com otimizadores clássicos e modernos do livro, instrumentando o treinamento com o diagnóstico do Capítulo 9, e comparar com um protocolo honesto.
+
+**Dados.** *Breast Cancer Wisconsin (Diagnostic)* (UCI; embutida no scikit-learn), rede 30–10–1 (tanh, saída sigmoide), erro quadrático.
+
+**Tarefas.**
+1. Separe 60/20/20 estratificado (`random_state=0`); padronize com o treino.
+2. Compare: SGD com momento, Adam, iRPROP− e o `lbfgs` do scikit-learn. Para os três primeiros, minilote de 32 (os dois primeiros) ou lote inteiro (iRPROP−), 100 épocas.
+3. Escolha $\eta$ em uma grade de 4 valores por método, com **uma semente de ajuste** (100), pela perda de validação; relate se o melhor valor está na borda da grade.
+4. Com 5 sementes (0 a 4), registre acurácia de validação e de teste (mediana e intervalo) e tempo.
+5. Aplique `modernos.diagnostico` ao final do treino do Adam (semente 0): norma do gradiente por camada, razão de atualização e saturação.
+6. Redija 10 a 12 linhas: o que o experimento sustenta, o que **não** sustenta e que mudanças o tornariam mais confiável.
+
+**Para ir além (não executado no livro).** Repita com bases UCI/Kaggle não incluídas no scikit-learn; use validação cruzada repetida e *bootstrap* para intervalos; compare com `solver='adam'` do scikit-learn e discuta as diferenças de implementação.
+@@RUBRICA
+- Partições feitas antes do escalonamento; escalonador ajustado só no treino; teste usado só no relato.
+- Mesma semente de ajuste (separada das de avaliação) e grades de mesmo tamanho; borda da grade reconhecida.
+- Uso correto do diagnóstico e interpretação prudente (ponto único, uma semente).
+- Conclusão limitada ao problema e à arquitetura.
+@@SOL
+```python
+import itertools
+import warnings
+import numpy as np
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+from rnbook import MLP, modernos as MD, otimizadores as O
+
+warnings.filterwarnings("ignore")
+X, y = load_breast_cancer(return_X_y=True)
+X_tmp, X_te, y_tmp, y_te = train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+X_tr, X_va, y_tr, y_va = train_test_split(X_tmp, y_tmp, test_size=0.25, random_state=0, stratify=y_tmp)
+esc = StandardScaler().fit(X_tr)
+Xtr, Xva, Xte = esc.transform(X_tr), esc.transform(X_va), esc.transform(X_te)
+Ttr, Tva = y_tr[:, None].astype(float), y_va[:, None].astype(float)
+N = len(y_tr)
+acc = lambda r, th, Xa, ya: float(np.mean((r.prever(Xa, th).ravel() > 0.5) == ya))
+
+
+def treinar(metodo, semente, eta):
+    r = MLP([30, 10, 1], ["tanh", "sigmoide"], semente=semente)
+    fun = lambda th: r.perda(th, Xtr, Ttr) / N
+    gam = lambda th, idx: r.grad(th, Xtr[idx], Ttr[idx])
+    if metodo == "SGD+momento":
+        res = MD.sgd_momento(r.theta, gam, N, fun, taxa=eta, momento=0.9, tamanho_lote=32, epocas=100, semente=semente)
+    elif metodo == "Adam":
+        res = MD.adam(r.theta, gam, N, fun, taxa=eta, tamanho_lote=32, epocas=100, semente=semente)
+    else:
+        res = O.rprop(r.theta, fun, lambda th: r.grad(th, Xtr, Ttr) / N, variante="irprop-", delta0=eta,
+                      max_iter=100, tol_grad=0)
+    return r, res
+
+
+grades = {"SGD+momento": (0.003, 0.01, 0.03, 0.1), "Adam": (0.0003, 0.001, 0.003, 0.01), "iRPROP-": (0.01, 0.03, 0.1, 0.3)}
+for metodo, grade in grades.items():
+    sc = []
+    for eta in grade:
+        r, res = treinar(metodo, 100, eta)
+        v = float(np.mean((r.prever(Xva, res.theta) - Tva) ** 2))
+        sc.append(v if np.isfinite(v) else np.inf)
+    eta = grade[int(np.argmin(sc))]
+    va, te = [], []
+    for s in range(5):
+        r, res = treinar(metodo, s, eta)
+        va.append(acc(r, res.theta, Xva, y_va)); te.append(acc(r, res.theta, Xte, y_te))
+    print("%-12s eta=%-6g (borda da grade: %s) | val %.3f [%.3f; %.3f] | teste %.3f [%.3f; %.3f]"
+          % (metodo, eta, eta in (grade[0], grade[-1]), np.median(va), min(va), max(va), np.median(te), min(te), max(te)))
+sk = [MLPClassifier(hidden_layer_sizes=(10,), activation="tanh", solver="lbfgs", max_iter=300, random_state=s).fit(Xtr, y_tr) for s in range(5)]
+print("lbfgs (sklearn) val %.3f | teste %.3f [%.3f; %.3f]" % (np.median([m.score(Xva, y_va) for m in sk]), np.median([m.score(Xte, y_te) for m in sk]),
+      min(m.score(Xte, y_te) for m in sk), max(m.score(Xte, y_te) for m in sk)))
+r, res = treinar("Adam", 0, 0.003)
+r0 = MLP([30, 10, 1], ["tanh", "sigmoide"], semente=0)
+d = MD.diagnostico(r, res.theta, Xtr, Ttr, passo=res.theta - r0.theta)
+print("diagnóstico do Adam (eta=0,003, semente 0): finito =", d["finito"], "| perda de treino (soma) = %.3f" % d["perda"])
+print("  norma do gradiente por camada:", np.round(d["norma_grad_por_camada"], 4))
+print("  razão ||variação total||/||pesos|| por camada:", np.round(d["razao_atualizacao_por_camada"], 3), "| saturação nas ocultas:", np.round(d["saturacao_por_camada"], 3))
+```
+@@NOTE Todos os melhores $\eta$ ficaram **na borda da grade** ($0{,}1$ para o SGD com momento, $0{,}01$ para o Adam e $0{,}01$ para o iRPROP− como $\Delta_0$, o menor valor testado): uma grade maior poderia mudar o resultado. Acurácia de teste mediana (5 sementes; teste com 114 amostras, uma amostra vale $0{,}88$ ponto): SGD com momento $0{,}974$ [$0{,}965$; $0{,}974$]; Adam $0{,}965$ [$0{,}947$; $0{,}974$]; iRPROP− $0{,}956$ [$0{,}947$; $0{,}956$]; `lbfgs` do scikit-learn $0{,}965$ [$0{,}947$; $0{,}974$]; validação de $0{,}974$ a $0{,}991$. **Diagnóstico do Adam** (semente 0, $\eta=0{,}003$): valores finitos; normas do gradiente por camada $(0{,}380;\,0{,}392)$, equilibradas entre as duas camadas; razão $\|\Delta\theta\|/\|\theta\|$ **acumulada desde a inicialização** de $0{,}74$ e $0{,}56$ (grande, por serem 100 épocas, e não por atualização); $57\%$ das ocultas com $|a|>0{,}95$ (rede bastante saturada após o treino). **Conclusão prudente:** as diferenças ($1$ a $2$ amostras de teste) estão dentro da variação entre sementes; não se declara vencedor. O diagnóstico é de um ponto, uma semente e uma arquitetura, e a saturação alta pode ser normal em um problema fácil de separar. Faltam validação cruzada, mais sementes, grades maiores e mais bases.

@@ -27,6 +27,11 @@ Amostras nas **linhas**: $X\in\mathbb{R}^{N\times n_0}$, alvos $T\in\mathbb{R}^{
 | $\beta,\ \mu$ | coeficiente de momento; parâmetro de amortecimento de LM | escalar |
 | $\Delta_i$ | passo individual do RPROP | $P$ |
 | $\kappa,\phi,\theta_{\text{DBD}}$ | aumento aditivo, redução multiplicativa e memória do DBD | escalares |
+| $\mu$ (Cap. 9) | coeficiente de momento (no LM, $\mu$ é o amortecimento) | escalar |
+| $m_t,\ v_t$ | primeiro e segundo momentos do gradiente (Adam) | $P$ |
+| $\beta_1,\beta_2,\varepsilon$ | fatores de esquecimento e constante de estabilidade do Adam | escalares |
+| $\lambda$ | coeficiente de L2 ou de decaimento de pesos | escalar |
+| $z,\ p,\ t$ | logits, probabilidades e alvos (Cap. 9) | $N\times K$ |
 
 :::atencao Dois usos de $\theta$
 Neste livro, $\theta$ (sem índice) é o vetor de **parâmetros**. No Capítulo 8, a constante de memória do Delta-Bar-Delta aparece como $\theta$ nas fórmulas do texto e como `teta` no código; o contexto distingue os dois usos.
