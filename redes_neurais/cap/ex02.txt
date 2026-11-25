@@ -100,7 +100,7 @@ b) $1/10$
 c) $2/11\approx0{,}182$
 d) $1/11$
 e) $0{,}5$
-R: c | $\eta^*=2/(\lambda_{\min}+\lambda_{\max})=2/11$, com fator $(\kappa-1)/(\kappa+1)=9/11$.
+R: c | $\eta^*=2/(\lambda_{\min}+\lambda_{\max})=2/11$, com fator $\rho(\eta^*)=\max_i|1-\eta^*\lambda_i|=(\kappa-1)/(\kappa+1)=9/11$.
 
 MC: Com $\lambda_{\max}=10$ e $\eta=0{,}25$, o gradiente descendente na direção do autovalor $10$
 a) converge, porque $\eta<1$.

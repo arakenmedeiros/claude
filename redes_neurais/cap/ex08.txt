@@ -158,7 +158,7 @@ d) depois do teste de sinal e do passo, para que o teste use $\bar g(t-1)$.
 e) a cada duas iterações, de forma alternada.
 R: d | Se $\bar g$ já contiver $g(t)$, o produto fica quase sempre positivo e a taxa só cresce.
 
-MC: Na rede 1–8–1 do capítulo, o piso do ruído da perda $E/N$ com $E=\tfrac12\sum r^2$ e ruído $\mathcal N(0;0{,}15^2)$ vale
+MC: Na rede 1–8–1 do capítulo, a referência do ruído (erro esperado em dados novos) da perda $E/N$ com $E=\tfrac12\sum r^2$ e ruído $\mathcal N(0;0{,}15^2)$ vale
 a) $0{,}15$.
 b) $0{,}15^2=0{,}0225$.
 c) $2\cdot0{,}15^2=0{,}045$.
@@ -176,7 +176,7 @@ R: b | Ajustar e avaliar nas mesmas sementes superestima os métodos com mais hi
 
 MC: Na comparação da rede 1–8–1, o que os resultados **autorizam** concluir?
 a) O EDBD é sempre superior ao momento em qualquer problema.
-b) EDBD e gradiente descendente com momento chegaram ao piso do ruído, sem que se possa declarar um superior ao outro.
+b) EDBD e gradiente descendente com momento chegaram à referência do ruído, sem que se possa declarar um superior ao outro.
 c) O DBD é superior a qualquer método de segunda ordem.
 d) A delta-delta é o melhor método adaptativo.
 e) O gradiente descendente simples é o mais robusto.
@@ -192,7 +192,7 @@ R: d | Mais tentativas aumentam a chance de uma boa configuração nas sementes 
 
 MC: Na análise de sensibilidade do DBD, com $\alpha_0=0{,}1$ e $\theta=0{,}9$, a combinação $\kappa=0{,}2$ e $\phi=0{,}05$ levou a
 a) o melhor resultado da grade.
-b) perda final igual ao piso do ruído.
+b) perda final igual à referência do ruído.
 c) perda final igual a zero.
 d) um resultado idêntico ao de $\kappa=0{,}005$.
 e) divergência (aumento rápido com redução fraca).
@@ -284,7 +284,7 @@ DISC: Descreva o protocolo experimental do capítulo para comparar os otimizador
 R: (1) Hiperparâmetros escolhidos em grades pequenas usando as sementes 0 a 4. (2) Desempenho medido em 10 outras sementes (5 a 14), para não avaliar o método onde foi ajustado. (3) Relato de mediana e extremos, e não da melhor execução, que esconde a variabilidade. (4) Mesma rede, dados e épocas (300, lote inteiro) para todos. (5) Reconhecimento explícito das desigualdades do protocolo (64 combinações para o EDBD e 8 para o momento) e dos limites (um problema, uma arquitetura, só lote). As conclusões se restringem ao que esses dados autorizam.
 
 DISC: A perda final mediana do EDBD ($0{,}0121$) e do momento ($0{,}0120$) quase coincidem. O que a diferença de épocas até $0{,}03$ (98 contra 161) autoriza concluir? Cite três limitações.
-R: Autoriza dizer que, neste problema e com esses hiperparâmetros, a mediana do EDBD cruzou $0{,}03$ antes. Limitações: (i) um único problema e uma única arquitetura; (ii) o EDBD recebeu mais combinações na busca (64 contra 8), o que lhe dá vantagem de seleção; (iii) as perdas finais são praticamente iguais (ambas no piso do ruído, $0{,}01125$) e a diferença de velocidade pode depender da faixa de taxas da grade; além disso, sem testes estatísticos e sem medir a variação entre sementes na época de cruzamento. Não se pode generalizar "EDBD supera o momento".
+R: Autoriza dizer que, neste problema e com esses hiperparâmetros, a mediana do EDBD cruzou $0{,}03$ antes. Limitações: (i) um único problema e uma única arquitetura; (ii) o EDBD recebeu mais combinações na busca (64 contra 8), o que lhe dá vantagem de seleção; (iii) as perdas finais são praticamente iguais (ambas na referência do ruído, $0{,}01125$) e a diferença de velocidade pode depender da faixa de taxas da grade; além disso, sem testes estatísticos e sem medir a variação entre sementes na época de cruzamento. Não se pode generalizar "EDBD supera o momento".
 
 DISC: Interprete a figura de sensibilidade do DBD: o que as duas ordens de grandeza de variação na perda final dizem sobre o uso prático do método?
 R: Com $\alpha_0$ e $\theta$ fixos, apenas $\kappa$ e $\phi$ fizeram a perda final variar de $0{,}0154$ a $0{,}0799$ (e houve divergência para $\kappa=0{,}2$, $\phi=0{,}05$). O método adaptativo troca o ajuste de uma taxa pelo ajuste de quatro hiperparâmetros; o ganho de "adaptar" pode ser consumido pela busca, e é preciso um protocolo de seleção com validação (ou sementes separadas) para não se enganar. Há uma região boa (aumento forte e redução forte), mas ela é estreita e específica do problema.

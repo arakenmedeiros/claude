@@ -22,13 +22,13 @@ d) $2$
 e) $0{,}1$
 R: a | $\sigma'(z)=\sigma(1-\sigma)$ é máxima em $\sigma=0{,}5$, com valor $0{,}25$.
 
-MC: Em uma rede com 10 camadas de sigmoides, o fator multiplicativo das derivadas das ativações no gradiente da primeira camada é, no máximo, da ordem de
+MC: Em uma rede com 10 camadas de sigmoides, o produto dos limites superiores $\sigma'\le1/4$ das derivadas das ativações (apenas essa contribuição) é da ordem de
 a) $0{,}25$
 b) $10^{-2}$
 c) $4^{-10}\approx9{,}5\times10^{-7}$
 d) $2^{-10}\approx10^{-3}$
 e) $1$
-R: c | Cada camada contribui com um fator $\le1/4$; o produto de dez fatores é $\le4^{-10}$ (antes de considerar os pesos).
+R: c | Cada camada contribui com um fator $\le1/4$ vindo da derivada da ativação, e o produto de dez fatores é $\le4^{-10}$. Isso ilustra só a contribuição das ativações: o gradiente também é multiplicado pelas matrizes de pesos, e a norma dos pesos, a profundidade e a inicialização determinam o resultado; $4^{-L}$ não é um limite geral para o gradiente da rede.
 
 MC: Para uma ReLU, se $z<0$ para todas as amostras de treino, o neurônio
 a) tem derivada $1$ e aprende mais rápido.
